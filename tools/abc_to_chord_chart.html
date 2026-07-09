@@ -1421,6 +1421,15 @@
         </div>
 
         <div class="row" style="margin-top:10px;">
+          <label for="autoOptimizeLyricsFontSize"><strong>Automatically optimize text font size for tunes with lyrics</strong></label>
+          <span class="setting-control-with-help"><select id="autoOptimizeLyricsFontSize"
+                  title="Automatically make text in tunes with lyrics as large as possible without overflowing the available width">
+            <option value="0">No</option>
+            <option value="1" selected>Yes</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-auto-optimize-lyrics-font" aria-label="Open instructions for Automatically optimize text font size for tunes with lyrics" title="Open instructions for Automatically optimize text font size for tunes with lyrics">?</button></span>
+        </div>
+
+        <div id="websiteTextFontSizeRow" class="row" style="margin-top:10px;">
           <label for="websiteTextFontSize"><strong>Text font size (tune with lyrics)</strong></label>
           <span class="setting-control-with-help"><input id="websiteTextFontSize"
                  type="number"
@@ -1597,7 +1606,7 @@
 // Helper for getting elements by ID
 const $ = (id) => document.getElementById(id);
 
-const TOOL_VERSION = "1.0.1";
+const TOOL_VERSION = "1.0.8";
 
 // Are we on iOS?
 //
@@ -1704,7 +1713,21 @@ async function downloadFile(filename, text, mimeType) {
   return await shareOrDownloadFile(text, filename, mimeType || "application/octet-stream");
 }
 
+function syncWebsiteTextFontSizeWithLyricsVisibility() {
+  const row = $("websiteTextFontSizeRow");
+  const optimize = $("autoOptimizeLyricsFontSize");
+
+  if (!row || !optimize) return;
+
+  const shouldHide = (optimize.value === "1");
+  row.hidden = shouldHide;
+  row.style.display = shouldHide ? "none" : "";
+}
+
 function applyAllSettingsSideEffects_AfterLoad() {
+  // Keep dependent Website Settings visibility correct
+  syncWebsiteTextFontSizeWithLyricsVisibility();
+
   // Keep page-number feature gating correct
   syncPageNumberControlAvailability();
 
@@ -1864,7 +1887,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 12, // Chord Chart Settings include composer and trailing metadata tag options
+    v: 13, // Website Settings include automatic per-tune lyric font-size optimization
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -1882,6 +1905,7 @@ function getUIStateForSave_SettingsOnly() {
     websiteTitleFontSize: $("websiteTitleFontSize") ? $("websiteTitleFontSize").value : "14",
     websiteSubtitleFontSize: $("websiteSubtitleFontSize") ? $("websiteSubtitleFontSize").value : "12",
     websiteTextFontSizeNoLyrics: $("websiteTextFontSizeNoLyrics") ? $("websiteTextFontSizeNoLyrics").value : "12",
+    autoOptimizeLyricsFontSize: $("autoOptimizeLyricsFontSize") ? $("autoOptimizeLyricsFontSize").value : "1",
     websiteTextFontSize: $("websiteTextFontSize") ? $("websiteTextFontSize").value : "8",
     justifyTitles: $("justifyTitles") ? $("justifyTitles").value : "center",
 
@@ -1923,6 +1947,8 @@ function applyUIStateFromObj_SettingsOnly(st) {
     (st.websiteSubtitleFontSize != null) ? String(st.websiteSubtitleFontSize) : "12";
   if ($("websiteTextFontSizeNoLyrics")) $("websiteTextFontSizeNoLyrics").value =
     (st.websiteTextFontSizeNoLyrics != null) ? String(st.websiteTextFontSizeNoLyrics) : "12";
+  if ($("autoOptimizeLyricsFontSize")) $("autoOptimizeLyricsFontSize").value =
+    (st.autoOptimizeLyricsFontSize === "0") ? "0" : "1";
   if ($("websiteTextFontSize")) $("websiteTextFontSize").value =
     (st.websiteTextFontSize != null) ? String(st.websiteTextFontSize) : "8";
   if ($("justifyTitles")) $("justifyTitles").value =
@@ -2095,6 +2121,7 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "websiteTitleFontSize",
     "websiteSubtitleFontSize",
     "websiteTextFontSizeNoLyrics",
+    "autoOptimizeLyricsFontSize",
     "websiteTextFontSize",
     "justifyTitles",
         "paperSize",
@@ -2151,19 +2178,23 @@ function getChartMonoFontStack(value) {
 function getChartFontNameForABC(value) {
   switch (String(value || "system")) {
     case "courier":
-    case "courier-bold":
       return "Courier New";
+    case "courier-bold":
+      return "Courier New Bold";
     case "consolas":
-    case "consolas-bold":
       return "Consolas";
+    case "consolas-bold":
+      return "Consolas Bold";
     case "menlo":
-    case "menlo-bold":
       return "Menlo";
+    case "menlo-bold":
+      return "Menlo Bold";
     case "monaco":
       return "Monaco";
     case "lucida":
-    case "lucida-bold":
       return "Lucida Console";
+    case "lucida-bold":
+      return "Lucida Console Bold";
     case "system":
     default:
       return "monospace";
@@ -2206,6 +2237,11 @@ const WEBSITE_EXPORT_DEFAULT_STAFF_WIDTH = 556;
 const WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX = 556;
 const WEBSITE_EXPORT_STAFFWIDTH_SAFETY_MARGIN = 1.08;
 const WEBSITE_EXPORT_STAFFWIDTH_ROUNDING = 25;
+const WEBSITE_EXPORT_LYRIC_FONT_TARGET_RATIO = 0.97;
+const WEBSITE_EXPORT_LYRIC_MEASUREMENT_CALIBRATION = 0.985;
+const WEBSITE_EXPORT_LYRIC_FONT_MEASUREMENT_CALIBRATION = 0.98;
+const WEBSITE_EXPORT_MIN_OPTIMIZED_LYRIC_FONT_SIZE = 10.7;
+const WEBSITE_EXPORT_FONT_SIZE_FLOOR_FACTOR = 100;
 
 let gWebsiteExportMeasureCanvas = null;
 
@@ -2235,7 +2271,7 @@ function measureChartLineWidthPx(line, chartFontValue, textFontSize) {
   return ctx.measureText(String(line || "")).width;
 }
 
-function calculateRequiredStaffWidthForChart(chartLines, chartFontValue, textFontSize) {
+function getWidestMeasuredChartLineWidthPx(chartLines, chartFontValue, textFontSize) {
   const lines = Array.isArray(chartLines) ? chartLines : [];
   let longestMeasuredWidthPx = 0;
 
@@ -2246,8 +2282,99 @@ function calculateRequiredStaffWidthForChart(chartLines, chartFontValue, textFon
     );
   });
 
-  const widthWithSafetyMargin =
-    longestMeasuredWidthPx * WEBSITE_EXPORT_STAFFWIDTH_SAFETY_MARGIN;
+  return longestMeasuredWidthPx;
+}
+
+function calculateOptimizedLyricsTextFontSize(
+  chartLines,
+  chartFontValue,
+  availableTextWidthPx = WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX
+) {
+  const safeAvailableWidthPx = Number.isFinite(Number(availableTextWidthPx))
+    ? Math.max(1, Number(availableTextWidthPx))
+    : WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX;
+
+  const targetWidthPx =
+    safeAvailableWidthPx * WEBSITE_EXPORT_LYRIC_FONT_TARGET_RATIO;
+
+  // Measure at 100 px for stable precision, then scale linearly. The generated
+  // chord-chart rows already contain the preserved alignment spaces produced
+  // from w: lyrics, so the widest rendered row is the real overflow constraint.
+  const measurementFontSize = 100;
+  const measuredWidthPx = getWidestMeasuredChartLineWidthPx(
+    chartLines,
+    chartFontValue,
+    measurementFontSize
+  ) * WEBSITE_EXPORT_LYRIC_FONT_MEASUREMENT_CALIBRATION;
+
+  if (!(measuredWidthPx > 0)) return 1;
+
+  const calculatedSize =
+    targetWidthPx * measurementFontSize / measuredWidthPx;
+
+  const clampedSize = Math.max(1, Math.min(144, calculatedSize));
+
+  // Floor rather than round so a hundredth-of-a-pixel rounding step can never
+  // push the widest measured row above the 97% target.
+  return Math.floor(
+    clampedSize * WEBSITE_EXPORT_FONT_SIZE_FLOOR_FACTOR
+  ) / WEBSITE_EXPORT_FONT_SIZE_FLOOR_FACTOR;
+}
+
+function calculateOptimizedLyricsStaffWidth(chartLines, chartFontValue) {
+  const defaultOptimizedSize = calculateOptimizedLyricsTextFontSize(
+    chartLines,
+    chartFontValue,
+    WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX
+  );
+
+  if (defaultOptimizedSize >= WEBSITE_EXPORT_MIN_OPTIMIZED_LYRIC_FONT_SIZE) {
+    return null;
+  }
+
+  const longestMeasuredWidthAtMinimumSize =
+    getWidestMeasuredChartLineWidthPx(
+      chartLines,
+      chartFontValue,
+      WEBSITE_EXPORT_MIN_OPTIMIZED_LYRIC_FONT_SIZE
+    ) * WEBSITE_EXPORT_LYRIC_MEASUREMENT_CALIBRATION;
+
+  if (!(longestMeasuredWidthAtMinimumSize > 0)) return null;
+
+  const requiredUsableWidthPx =
+    longestMeasuredWidthAtMinimumSize / WEBSITE_EXPORT_LYRIC_FONT_TARGET_RATIO;
+
+  const proportionalStaffWidth =
+    WEBSITE_EXPORT_DEFAULT_STAFF_WIDTH *
+    (requiredUsableWidthPx / WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX);
+
+  return Math.max(
+    WEBSITE_EXPORT_DEFAULT_STAFF_WIDTH,
+    Math.ceil(
+      proportionalStaffWidth / WEBSITE_EXPORT_STAFFWIDTH_ROUNDING
+    ) * WEBSITE_EXPORT_STAFFWIDTH_ROUNDING
+  );
+}
+
+function formatWebsiteTextFontSize(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "1";
+  return Number.isInteger(n) ? String(n) : n.toFixed(2);
+}
+
+function calculateRequiredStaffWidthForChart(
+  chartLines,
+  chartFontValue,
+  textFontSize,
+  safetyMargin = WEBSITE_EXPORT_STAFFWIDTH_SAFETY_MARGIN
+) {
+  const longestMeasuredWidthPx = getWidestMeasuredChartLineWidthPx(
+    chartLines,
+    chartFontValue,
+    textFontSize
+  );
+
+  const widthWithSafetyMargin = longestMeasuredWidthPx * safetyMargin;
 
   if (widthWithSafetyMargin <= WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX) {
     return null;
@@ -2291,16 +2418,40 @@ function buildChordChartsAsABC() {
 
     const chartLines = chartText.split("\n");
     const hasLyrics = section.dataset.hasLyrics === "1";
+    const chartFontValue =
+      $("chartMonoFont") ? $("chartMonoFont").value : "system";
+    const autoOptimizeLyricsFontSize =
+      $("autoOptimizeLyricsFontSize")
+        ? ($("autoOptimizeLyricsFontSize").value === "1")
+        : true;
 
-    const textSize = hasLyrics
-      ? sizes.textSizeWithLyrics
-      : sizes.textSizeNoLyrics;
+    let requiredStaffWidth = null;
+    let textSize = hasLyrics ? sizes.textSizeWithLyrics : sizes.textSizeNoLyrics;
 
-    const requiredStaffWidth = calculateRequiredStaffWidthForChart(
-      chartLines,
-      $("chartMonoFont") ? $("chartMonoFont").value : "system",
-      textSize
-    );
+    if (hasLyrics && autoOptimizeLyricsFontSize) {
+      requiredStaffWidth = calculateOptimizedLyricsStaffWidth(
+        chartLines,
+        chartFontValue
+      );
+
+      const availableTextWidthPx = requiredStaffWidth == null
+        ? WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX
+        : WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX *
+          (requiredStaffWidth / WEBSITE_EXPORT_DEFAULT_STAFF_WIDTH);
+
+      textSize = calculateOptimizedLyricsTextFontSize(
+        chartLines,
+        chartFontValue,
+        availableTextWidthPx
+      );
+    } else {
+      requiredStaffWidth = calculateRequiredStaffWidthForChart(
+        chartLines,
+        chartFontValue,
+        textSize,
+        WEBSITE_EXPORT_STAFFWIDTH_SAFETY_MARGIN
+      );
+    }
 
     lines.push(`X:${index + 1}`);
 
@@ -2316,7 +2467,7 @@ function buildChordChartsAsABC() {
 
     lines.push(`%%titlefont ${fontName} ${sizes.titleSize}`);
     lines.push(`%%subtitlefont ${fontName} ${sizes.subtitleSize}`);
-    lines.push(`%%textfont ${fontName} ${textSize}`);
+    lines.push(`%%textfont ${fontName} ${formatWebsiteTextFontSize(textSize)}`);
     lines.push(`T:${title}`);
 
     chartLines.forEach((line) => {
@@ -5074,8 +5225,10 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
   if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value = "12";
   if ($("websiteTextFontSizeNoLyrics")) $("websiteTextFontSizeNoLyrics").value = "12";
+  if ($("autoOptimizeLyricsFontSize")) $("autoOptimizeLyricsFontSize").value = "1";
   if ($("websiteTextFontSize")) $("websiteTextFontSize").value = "8";
   if ($("justifyTitles")) $("justifyTitles").value = "center";
+  syncWebsiteTextFontSizeWithLyricsVisibility();
 
   // Print Settings defaults
   if ($("paperSize")) $("paperSize").value = "letter";
@@ -5465,8 +5618,10 @@ function wireUp() {
     if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
     if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value = "12";
     if ($("websiteTextFontSizeNoLyrics")) $("websiteTextFontSizeNoLyrics").value = "12";
+    if ($("autoOptimizeLyricsFontSize")) $("autoOptimizeLyricsFontSize").value = "1";
     if ($("websiteTextFontSize")) $("websiteTextFontSize").value = "8";
     if ($("justifyTitles")) $("justifyTitles").value = "center";
+    syncWebsiteTextFontSizeWithLyricsVisibility();
 
     $("paperSize").value = "letter";
     $("orientation").value = "portrait";
@@ -5690,6 +5845,7 @@ function wireUp() {
   [
     "websiteTitleFontSize",
     "websiteSubtitleFontSize",
+    "websiteTextFontSizeNoLyrics",
     "websiteTextFontSize"
   ].forEach((id) => {
     const el = $(id);
@@ -5699,6 +5855,13 @@ function wireUp() {
       saveStateSoon_SettingsOnly();
     });
   });
+
+  if ($("autoOptimizeLyricsFontSize")) {
+    $("autoOptimizeLyricsFontSize").addEventListener("change", function () {
+      syncWebsiteTextFontSizeWithLyricsVisibility();
+      if ($("out").children.length) generateCharts();
+    });
+  }
 
   if ($("showPageNumbers")) {
     $("showPageNumbers").addEventListener("change", function() {
@@ -6004,7 +6167,7 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Website Settings</div>' +
 
-      '    The Website Settings control the ABC font and title-layout directives written by <b>Save Chord Chart as ABC</b> and <b>Open in Website Builder</b>. The selected <b>Chord chart font</b> is used as the font family.<br/><br/>' +
+      '    The Website Settings control the ABC font and title-layout directives written by <b>Save Chord Chart as ABC</b> and <b>Open in Website Builder</b>. The selected <b>Chord chart font</b> is used as the font family. When a <b>(Bold)</b> font option is selected, <code>Bold</code> is also written into the generated <code>%%titlefont</code>, <code>%%subtitlefont</code>, and <code>%%textfont</code> directives.<br/><br/>' +
 
       '    <div id="instructions-setting-title-font-size" style="font-weight:700; margin-bottom:6px;">Title font size</div>' +
       '    Sets the <code>%%titlefont</code> size in the generated ABC. Default: 14. Valid range: 1 through 144.<br/><br/>' +
@@ -6015,8 +6178,12 @@ function wireUp() {
       '    <div id="instructions-setting-text-font-no-lyrics" style="font-weight:700; margin-bottom:6px;">Text font size (tune without lyrics)</div>' +
       '    Sets the <code>%%textfont</code> size used for generated tunes that do not contain <code>w:</code> or <code>W:</code> lyric lines. Default: 12. Valid range: 1 through 144.<br/><br/>' +
 
+      '    <div id="instructions-setting-auto-optimize-lyrics-font" style="font-weight:700; margin-bottom:6px;">Automatically optimize text font size for tunes with lyrics</div>' +
+      '    <b>Yes</b> (default): automatically makes the text in each tune with lyrics as large as possible while keeping the longest lines within the available width.<br/>' +
+      '    <b>No</b>: uses the fixed <b>Text font size (tune with lyrics)</b> setting instead.<br/><br/>' +
+
       '    <div id="instructions-setting-text-font-with-lyrics" style="font-weight:700; margin-bottom:6px;">Text font size (tune with lyrics)</div>' +
-      '    Sets the <code>%%textfont</code> size used for generated tunes that contain <code>w:</code> or <code>W:</code> lyric lines. Default: 8. Valid range: 1 through 144.<br/><br/>' +
+      '    Sets the fixed <code>%%textfont</code> size used for generated tunes that contain <code>w:</code> or <code>W:</code> lyric lines when <b>Automatically optimize text font size for tunes with lyrics</b> is <b>No</b>. Default: 8. Valid range: 1 through 144.<br/><br/>' +
 
       '    <div id="instructions-setting-justify-titles" style="font-weight:700; margin-bottom:6px;">Justify titles</div>' +
       '    Controls title alignment in generated ABC and websites.<br/>' +
@@ -6024,9 +6191,9 @@ function wireUp() {
       '    <b>Left</b> adds <code>%left_justify_titles</code> immediately below each generated <code>X:</code> tag.<br/><br/>' +
 
       '    <div style="font-weight:700; margin-bottom:6px;">Automatic website width adjustment</div>' +
-      '    When generating ABC for saving or for the Website Builder, the tool measures the widest generated chord-chart line using the selected chord chart font, its bold setting if applicable, and the text font size selected for that tune based on whether it contains <code>w:</code> or <code>W:</code> lyrics. The tool allows a small safety margin for font-rendering differences. If the measured width plus that margin does not fit within the normal ABC staff width of 556, the tool automatically adds a per-tune <code>%%staffwidth</code> directive with additional horizontal space. Tunes that fit within the normal width, including the safety margin, do not receive a <code>%%staffwidth</code> directive.<br/><br/>' +
+      '    The tool automatically gives wider chord charts more horizontal space when needed so long lines fit without being cut off.<br/><br/>' +
 
-      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: an existing saved Text font size continues to be used for tunes with lyrics, while the text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent. The title/composer blank-line setting defaults to No when absent. The composer setting defaults to No and the metadata tag field defaults to blank when those newer settings are absent or invalid. Add blank lines between chart rows defaults to No when that setting is absent.' +
+      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: automatic lyric font-size optimization defaults to Yes when the setting is absent; an existing saved Text font size continues to be retained for use when optimization is No; the text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent. The title/composer blank-line setting defaults to No when absent. The composer setting defaults to No and the metadata tag field defaults to blank when those newer settings are absent or invalid. Add blank lines between chart rows defaults to No when that setting is absent.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
