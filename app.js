@@ -57231,13 +57231,17 @@ function showWelcomeScreen() {
   sendGoogleAnalytics("dialog", "showWelcomeScreen");
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica"><strong>Please visit my <a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a> page for complete instructions and demo videos on how to use the tools.</strong></p>';
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please check out the <strong><a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a></strong> for complete instructions and demo videos on how to use the tools.</p>';
   if (gIsQuickEditor) {
     modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">The Quick Editor is optimized for editing and playback of larger tunebooks.</p>';
   }
+  else{
+    if (isPureDesktopBrowser()){
+      modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the <strong>Guided Tour</strong> button for a step-by-step walkthrough of using the tool to create a simple PDF tunebook.</p>';
+    }
+  }
 
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Each ABC tune <strong>must</strong> begin with an X: tag.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Open" to open ABC, MusicXML, BWW, or MIDI files from your system.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Add" to add ABC MusicXML, BWW, or MIDI files or tune templates.</p>';
