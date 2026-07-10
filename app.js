@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3287_070826_1030";
+var gVersionNumber = "3288_070926_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_6jul2026;
+        var updatePresented = localStorage.sawUpdate_9jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_6jul2026 = true;
+          localStorage.sawUpdate_9jul2026 = true;
 
         }
 
@@ -57193,22 +57193,22 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 36 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 July 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">Added a <strong>Guided Tour</strong> button to the startup screen.</p>';
+  modal_msg += '<p style="font-size:12pt;">Click the button to walk through a guided tour of adding tunes, making an edit, changing the tablature view, transposing a tune, and finally exporting a PDF file.</p>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>The iOS share sheet now used for PDF export.</strong></p>';
   modal_msg += '<p style="font-size:12pt;">iPhone and iPad now uses an iOS share sheet to save or share exported PDF files.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>The MusicXML importer has been improved to better handle multiple chords on a long note or rest.</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Previously, if a long note or rest in the transcoded MusicXML had multiple chords associated with it, it would render and play incorrectly.</p>';
-  modal_msg += '<p style="font-size:12pt;">The MusicXML importer now automatically splits those long notes/rest into multiple shorter notes/rests with ties as required for the notes and spreads the chords between the split notes/rests.</p>';
-  modal_msg += '<p style="font-size:12pt;">This is particularly useful for importing complex MusicXML jazz arrangements.</p>';
+  modal_msg += '<p style="font-size:12pt;">This makes it fast and easy to save the PDF to the Files area of the device, share it in an email, or send it to another tool.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63879,13 +63879,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_6jul2026;
+    var updatePresented = localStorage.sawUpdate_9jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_6jul2026 = true;
+      localStorage.sawUpdate_9jul2026 = true;
 
     }
 
