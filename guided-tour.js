@@ -622,7 +622,7 @@
       {
         title: "You’re Ready to Export",
         target: function () { return getTopmostElementByClass("modal_flat_ok"); },
-        body: '<p>You just completed the core <strong>ABC Transcription Tools</strong> workflow.</p><p><strong>Add tunes → Edit the ABC → Choose a notation or tablature view → Transpose when needed → Export.</strong></p><p>Click <strong>Export</strong> to generate your first PDF. The guided tour ends here, and the normal PDF export will continue.</p><p>You can click the <strong>?</strong> in the upper-left corner of the tool or any dialog to jump directly to the <strong>User Guide</strong> section for the tool or dialog.</p>'
+        body: '<p>You just completed the core <strong>ABC Transcription Tools</strong> workflow.</p><p><strong>Add tunes → Edit the ABC → Choose a notation or tablature view → Transpose when needed → Export.</strong></p><p>Click <strong>Export</strong> to generate your first PDF. After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p><p>The guided tour ends here, and the normal PDF export will continue.</p><p>You can click the <strong>?</strong> in the upper-left corner of the tool or any dialog to jump directly to the <strong>User Guide</strong> section for the tool or dialog.</p>'
       }
     ];
   }
