@@ -516,7 +516,7 @@
         }
       },
       {
-        title: "5. The ABC Editor Is the Source",
+        title: "5. How the ABC Editor Works",
         target: getCooleysABCEditorTarget,
         skipTargetScroll: true,
         beforeResolveTarget: async function () {
@@ -586,6 +586,7 @@
       },
       {
         title: "11. Transpose the First Tune Back Down",
+        cardWidth: 560,
         selector: "#transposedown",
         body: '<p>Now we’ll use <strong>Transpose Down</strong> once. Click <strong>Next</strong> to reverse the previous semitone transposition and restore the tune to its original pitch.</p><p><strong>Transpose Up</strong> and <strong>Transpose Down</strong> are especially useful for quickly finding a better range for an instrument or singer.</p>',
         afterNext: function () {
