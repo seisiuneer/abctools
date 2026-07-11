@@ -491,11 +491,21 @@
         }
       },
       {
-        title:"8. Open the Chord Charts in the Website Builder",
+        title:"8. Justify Website Titles to the Left",
+        selector:"#justifyTitles",
+        width:590,
+        body:'<p>The website title size is now set to <strong>18</strong>.</p><p>Click <strong>Next</strong> to change <strong>Justify titles</strong> from <strong>Center</strong> to <strong>Left</strong> for the website generated from these chord charts.</p>',
+        afterNext:async function () {
+          api.setJustifyTitles("left");
+          await waitMs(150);
+        }
+      },
+      {
+        title:"9. Open the Chord Charts in the Website Builder",
         selector:"#generateWebsiteBtn",
         width:690,
         finalActionLabel:"Open Website Builder",
-        body:'<p>The website title font size is now set to <strong>18</strong>.</p><p>Click <strong>Open Website Builder</strong> to send the chord charts to the abcjs-eskin Website Builder.</p><p>The Website Builder has its own Guided Tour, which is a good way to learn how to preview, customize, and save the finished website.</p><p>This completes the Chord Chart Generator tour.</p>',
+        body:'<p>The website title font size is set to <strong>18</strong>, and the titles will be left-justified.</p><p>Click <strong>Open Website Builder</strong> to send the chord charts to the abcjs-eskin Website Builder.</p><p>The Website Builder has its own Guided Tour, which is a good way to learn how to preview, customize, and save the finished website.</p><p>This completes the Chord Chart Generator tour.</p>',
         afterDone:function () {
           api.launchWebsiteBuilder();
         }

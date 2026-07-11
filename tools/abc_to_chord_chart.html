@@ -6478,6 +6478,14 @@ window.ChordChartGuidedTourAPI = Object.freeze({
     saveUIStateToLocalStorage_SettingsOnly();
   },
 
+  setJustifyTitles(value) {
+    const control = $("justifyTitles");
+    if (!control) return;
+    control.value = value === "left" ? "left" : "center";
+    control.dispatchEvent(new Event("change", { bubbles: true }));
+    saveUIStateToLocalStorage_SettingsOnly();
+  },
+
   launchWebsiteBuilder() {
     launchAbcjsEskinWebsiteBuilderFromChordCharts();
   }
@@ -6495,7 +6503,7 @@ WaitForReady(wireUp);
 <script type="text/javascript" src="lz-string.min.js"></script>
 <script type="text/javascript" src="pako.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
-<script type="text/javascript" src="abc-chord-chart-guided-tour.js?v=1"></script>
+<script type="text/javascript" src="abc-chord-chart-guided-tour.js?v=2"></script>
 
 </body>
 </html>
