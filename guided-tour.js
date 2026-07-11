@@ -688,6 +688,8 @@
     if (gTourRunning) return;
     if (typeof isPureDesktopBrowser === "function" && !isPureDesktopBrowser()) return;
 
+    sendGoogleAnalytics("dialog", "GuidedTour");
+
     injectGuidedTourStyles();
     gTourRunning = true;
 
