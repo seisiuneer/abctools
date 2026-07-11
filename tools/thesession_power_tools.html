@@ -85,12 +85,8 @@
     *, *::before, *::after{ box-sizing:border-box; }
 
     body{
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      padding:
-        calc(var(--page-pad-top) + env(safe-area-inset-top))
-        calc(var(--page-pad) + env(safe-area-inset-right))
-        calc(var(--page-pad) + env(safe-area-inset-bottom))
-        calc(var(--page-pad) + env(safe-area-inset-left));
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding:0;
       box-sizing:border-box;
       overflow:hidden;
       font-size:var(--fs-base);
@@ -101,24 +97,18 @@
     .app, .main, .left, .right, .card, .taWrap{ min-width:0; }
 
     .app{
-      height: calc(100vh - (2 * var(--page-pad)));
+      height:100vh;
       display:flex;
       flex-direction:column;
       gap:14px;
       overflow:hidden;
       min-height:0;
-
-      padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
+      padding-bottom:calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
     }
 
-    @supports (height: 100dvh){
+    @supports (height:100dvh){
       .app{
-        height: calc(
-          100dvh
-          - (2 * var(--page-pad))
-          - env(safe-area-inset-top)
-          - env(safe-area-inset-bottom)
-        );
+        height:100dvh;
       }
     }
 
@@ -236,7 +226,12 @@
       overflow-x:hidden;
       min-height:0;
       min-width:0;
-      -webkit-overflow-scrolling: touch;
+      margin:
+        0
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        0
+        calc(var(--page-pad) + env(safe-area-inset-left));
+      -webkit-overflow-scrolling:touch;
     }
 
     .left{
@@ -678,8 +673,16 @@
     @media (max-width: 980px){
       body{
         overflow:auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+        -webkit-overflow-scrolling:touch;
+        padding-bottom:calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      }
+
+      .main{
+        margin:
+          0
+          calc(14px + env(safe-area-inset-right))
+          0
+          calc(14px + env(safe-area-inset-left));
       }
 
       .app{
@@ -1331,9 +1334,17 @@
     }
 
     .heroCard{
-      border:1px solid var(--builder-green-dark);
-      border-radius:10px;
-      padding:16px 20px 14px;
+      flex:0 0 auto;
+      width:100%;
+      margin:0;
+      border:0;
+      border-bottom:1px solid var(--builder-green-dark);
+      border-radius:0;
+      padding:
+        calc(16px + env(safe-area-inset-top))
+        calc(20px + env(safe-area-inset-right))
+        14px
+        calc(20px + env(safe-area-inset-left));
       background:
         linear-gradient(135deg, #0d4c2f, #176b43),
         repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,.025) 12px 24px);
@@ -1562,14 +1573,44 @@
 
     @media (max-width:720px){
       .heroCard{
-        padding:13px 18px 12px;
-        border-radius:10px;
+        padding:
+          calc(13px + env(safe-area-inset-top))
+          calc(18px + env(safe-area-inset-right))
+          12px
+          calc(18px + env(safe-area-inset-left));
+        border-radius:0;
       }
+    }
+
+    .session-power-tools-guided-tour-launch-button{
+      display:none;
+      position:fixed;
+      top:12px;
+      left:12px;
+      z-index:2400;
+      appearance:none;
+      min-width:124px;
+      padding:9px 16px;
+      color:#fff;
+      background:#687178;
+      border:1px solid #565e64;
+      border-radius:6px;
+      box-shadow:0 3px 9px rgba(0,0,0,.28);
+      font:750 14px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      cursor:pointer;
+    }
+
+    .session-power-tools-guided-tour-launch-button:hover,
+    .session-power-tools-guided-tour-launch-button:focus-visible{
+      background:#565e64;
+      outline:2px solid rgba(255,255,255,.85);
+      outline-offset:2px;
     }
   </style>
 </head>
 
 <body>
+  <button id="session-power-tools-guided-tour-launch-button" class="session-power-tools-guided-tour-launch-button" type="button">Guided Tour</button>
   <div class="app">
 
     <div class="heroCard">
@@ -5108,6 +5149,10 @@ const content =
   '    This tool fetches ABC tune settings from <b>thesession.org</b> using either a <b>tune URL</b> or a <b>member URL</b>, then combines the results into a single ABC output that you can copy, save, open in the ABC Transcription Tools, or send directly to the abcjs-eskin Website Builder.' +
   '  </div>' +
 
+  '  <div style="margin-bottom:16px;">' +
+  '    On desktop browsers, click the <b>Guided Tour</b> button at the top left of the window for a step-by-step demonstration using the example tune and member URLs. The tour fetches the real tune settings from thesession.org, shows how to download the ABC file, and finishes by opening the results in the abcjs-eskin Website Builder.' +
+  '  </div>' +
+
   '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
   '  <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/zIE86i-Caws" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
@@ -5374,10 +5419,82 @@ function sendGoogleAnalytics(theCategory, theAction, theLabel) {
     }
   }
 }
+
+window.SessionPowerToolsGuidedTourAPI = Object.freeze({
+  reset() {
+    resetUIToDefaults();
+  },
+
+  setTuneExample() {
+    $("tuneUrl").value = "https://thesession.org/tunes/1";
+    $("onlyChords").checked = false;
+  },
+
+  setMemberExample() {
+    $("tuneUrl").value = "https://thesession.org/members/12799";
+    $("memberSourceMode").value = "submitted";
+    $("onlyChords").checked = false;
+    $("memberSort").value = "orig";
+  },
+
+  async fetchCurrentExample(timeoutMs) {
+    if (!navigator.onLine) {
+      throw new Error("The Guided Tour could not continue because the Internet connection is offline.");
+    }
+
+    const button = $("btnFetch");
+    if (!button) throw new Error("The Fetch button is not available.");
+
+    button.click();
+
+    const startedAt = Date.now();
+    while (!fetchInProgress && Date.now() - startedAt < 1500) {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+    const limit = Math.max(10000, Number(timeoutMs) || 180000);
+    while (fetchInProgress && Date.now() - startedAt < limit) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    if (fetchInProgress) {
+      throw new Error("The Guided Tour stopped because the fetch took too long. Please try again later.");
+    }
+
+    if (!lastResult || !String(outEl.value || "").trim()) {
+      throw new Error("The Guided Tour could not fetch the example from thesession.org. Please check your Internet connection and try again later.");
+    }
+  },
+
+  async downloadABCFile() {
+    const button = $("btnDownload");
+    if (!button || button.disabled) {
+      throw new Error("There are no fetched tune settings available to download.");
+    }
+
+    button.click();
+
+    const startedAt = Date.now();
+    let modalSeen = false;
+    while (Date.now() - startedAt < 300000) {
+      const modal = document.querySelector(
+        ".modal_filename_main, .modal_flat_main, .modal_compact_main"
+      );
+      if (modal) modalSeen = true;
+      if (modalSeen && !modal) return;
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  },
+
+  launchWebsiteBuilder() {
+    launchAbcjsEskinWebsiteBuilderFromOutput();
+  }
+});
 </script>
 
 <script type="text/javascript" src="pako.min.js?v=11"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=11"></script>
+<script type="text/javascript" src="thesession-power-tools-guided-tour.js?v=1"></script>
 
 </body>
 </html>
