@@ -115,16 +115,10 @@
     body{
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       font-size: var(--fs-base);
-      line-height: 1.35;
+      line-height:1.35;
       color:#000;
-      -webkit-text-size-adjust: 100%;
-
-      padding:
-        calc(var(--page-pad-top) + env(safe-area-inset-top))
-        calc(var(--page-pad) + env(safe-area-inset-right))
-        calc(var(--page-pad) + env(safe-area-inset-bottom))
-        calc(var(--page-pad) + env(safe-area-inset-left));
-
+      -webkit-text-size-adjust:100%;
+      padding:0;
       overflow:auto;
     }
 
@@ -132,26 +126,19 @@
     .app, .main, .left, .right, .card, .taWrap, .chartsWrap{ min-width:0; }
 
     .app{
-      height: calc(100vh - (2 * var(--page-pad)));
+      height:100vh;
       display:flex;
       flex-direction:column;
-      gap: var(--gap);
+      gap:var(--gap);
       overflow:hidden;
       min-height:0;
 
       /* Reserve space for fixed Instructions bar */
-      padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
+      padding-bottom:calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
     }
 
-    @supports (height: 100dvh){
-      .app{
-        height: calc(
-          100dvh
-          - (2 * var(--page-pad))
-          - env(safe-area-inset-top)
-          - env(safe-area-inset-bottom)
-        );
-      }
+    @supports (height:100dvh){
+      .app{ height:100dvh; }
     }
 
     /* ============================================================
@@ -178,10 +165,15 @@
     .main{
       flex:1;
       display:flex;
-      gap: var(--gap);
+      gap:var(--gap);
       overflow:hidden;
       min-height:0;
       min-width:0;
+      margin:
+        0
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        0
+        calc(var(--page-pad) + env(safe-area-inset-left));
     }
 
     .left, .right{
@@ -580,6 +572,31 @@
     }
 
 
+    .chord-chart-guided-tour-launch-button{
+      display:none;
+      position:fixed;
+      top:12px;
+      left:12px;
+      z-index:2400;
+      appearance:none;
+      min-width:124px;
+      padding:9px 16px;
+      color:#fff;
+      background:#687178;
+      border:1px solid #565e64;
+      border-radius:6px;
+      box-shadow:0 3px 9px rgba(0,0,0,.28);
+      font:750 14px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      cursor:pointer;
+    }
+
+    .chord-chart-guided-tour-launch-button:hover,
+    .chord-chart-guided-tour-launch-button:focus-visible{
+      background:#565e64;
+      outline:2px solid rgba(255,255,255,.85);
+      outline-offset:2px;
+    }
+
     /* ============================================================
        ABC Input card: only this card flexes tall
        ============================================================ */
@@ -965,8 +982,16 @@
     @media (max-width: 980px){
       body{
         overflow:auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+        -webkit-overflow-scrolling:touch;
+        padding-bottom:calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      }
+
+      .main{
+        margin:
+          0
+          calc(14px + env(safe-area-inset-right))
+          0
+          calc(14px + env(safe-area-inset-left));
       }
 
       .app{
@@ -1058,7 +1083,10 @@
         padding-bottom:0 !important;
       }
 
-      .main{ display:block !important; }
+      .main{
+        display:block !important;
+        margin:0 !important;
+      }
 
       .noprint,
       #cardControls,
@@ -1163,15 +1191,23 @@
     }
 
     .heroCard{
-      position: relative;
-      border: 1px solid var(--builder-green-dark);
-      border-radius: 10px;
-      padding: 16px 20px 14px 20px;
+      position:relative;
+      flex:0 0 auto;
+      width:100%;
+      margin:0;
+      border:0;
+      border-bottom:5px solid var(--builder-accent);
+      border-radius:0;
+      padding:
+        calc(16px + env(safe-area-inset-top))
+        calc(20px + env(safe-area-inset-right))
+        14px
+        calc(20px + env(safe-area-inset-left));
       background:
         linear-gradient(135deg, rgba(15, 53, 102, .97), rgba(23, 74, 139, .96)),
         repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,.025) 12px 24px);
-      overflow: hidden;
-      text-align: center;
+      overflow:hidden;
+      text-align:center;
     }
 
     .heroBadge{
@@ -1214,8 +1250,12 @@
 
     @media (max-width: 720px){
       .heroCard{
-        padding: 13px 18px 12px;
-        border-radius: 10px;
+        padding:
+          calc(13px + env(safe-area-inset-top))
+          calc(18px + env(safe-area-inset-right))
+          12px
+          calc(18px + env(safe-area-inset-left));
+        border-radius:0;
       }
 
       .heroTitle{
@@ -1248,6 +1288,7 @@
 </head>
 
 <body>
+<button id="chord-chart-guided-tour-launch-button" class="chord-chart-guided-tour-launch-button" type="button">Guided Tour</button>
 <div class="app">
 
   <div class="noprint heroCard">
@@ -6043,6 +6084,9 @@ function wireUp() {
       '    This utility extracts the chords from ABC tunes and generates clean, printable chord charts.' +
       '    The printed barlines and line breaks match the original ABC exactly.' +
       '  </div>' +
+      '  <div style="margin-bottom:16px;">' +
+      '    On desktop browsers, a guided tour showing the basic chord-chart workflow is available from the <b>Guided Tour</b> button at the top left of the window.' +
+      '  </div>' +
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
       '  <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/Y0W-djyMk_c" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
@@ -6393,6 +6437,52 @@ function wireUp() {
 
 }
 
+window.ChordChartGuidedTourAPI = Object.freeze({
+  resetAndLoadExample(abcText) {
+    $("out").innerHTML = "";
+    resetAllSettingsToDefaults_Persisted();
+
+    $("abcIn").value = String(abcText || "");
+    gLoadedFileName = "guided-tour-example-tunes.abc";
+    setLoadedFileNameDisplay(gLoadedFileName);
+    gSavedChordFileName = "";
+    gSavedABCFileName = "";
+
+    $("out").innerHTML = "";
+    syncActionButtons();
+    generateCharts();
+    syncActionButtons();
+
+    const count = splitAbcIntoTunes($("abcIn").value).length;
+    setStatus(`Loaded Guided Tour example collection. Found ${count} tunes and generated the chord charts.`);
+  },
+
+  setChartFont(value) {
+    const control = $("chartMonoFont");
+    if (!control) return;
+    control.value = value;
+    control.dispatchEvent(new Event("change", { bubbles: true }));
+    saveUIStateToLocalStorage_SettingsOnly();
+  },
+
+  saveChordChartsAsText() {
+    return saveChordChart();
+  },
+
+  setWebsiteTitleFontSize(value) {
+    const control = $("websiteTitleFontSize");
+    if (!control) return;
+    control.value = String(value);
+    control.dispatchEvent(new Event("input", { bubbles: true }));
+    control.dispatchEvent(new Event("change", { bubbles: true }));
+    saveUIStateToLocalStorage_SettingsOnly();
+  },
+
+  launchWebsiteBuilder() {
+    launchAbcjsEskinWebsiteBuilderFromChordCharts();
+  }
+});
+
 function WaitForReady(fn) {
   if (document.readyState !== 'loading') { fn(); return; }
   document.addEventListener('DOMContentLoaded', fn);
@@ -6405,6 +6495,7 @@ WaitForReady(wireUp);
 <script type="text/javascript" src="lz-string.min.js"></script>
 <script type="text/javascript" src="pako.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+<script type="text/javascript" src="abc-chord-chart-guided-tour.js?v=1"></script>
 
 </body>
 </html>
