@@ -668,10 +668,10 @@
         }
       },
       {
-        title: "You’re Ready to Export",
+        title: "14. You’re Ready to Export the PDF",
         cardWidth: 560,
         target: function () { return getTopmostElementByClass("modal_flat_ok"); },
-        body: '<p>You just completed the core <strong>ABC Transcription Tools</strong> workflow.</p><p>Click <strong>Done</strong> to generate your first PDF. After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p>',
+        body: '<p>Click <strong>Done</strong> to generate and export your first PDF. After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p>',
         afterDone: function () { closeTopDialog(); }
       }
     ];
