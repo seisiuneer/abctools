@@ -761,8 +761,6 @@
     if (gTourRunning) return;
     if (typeof isPureDesktopBrowser === "function" && !isPureDesktopBrowser()) return;
 
-    sendGoogleAnalytics("dialog", "GuidedTour");
-
     injectGuidedTourStyles();
     gTourRunning = true;
 
@@ -1026,6 +1024,8 @@
         btn.addEventListener("click", function () {
           var id = btn.getAttribute("data-tour");
           clearGuidedTourUI();
+
+          sendGoogleAnalytics("dialog", "GuidedTour_"+id);
 
           if (id === "first") runABCFirstUseGuidedTour();
           else runAdditionalGuidedTour(id);
