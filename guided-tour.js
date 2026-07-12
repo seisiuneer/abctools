@@ -885,6 +885,10 @@
     ["addtitle","addsubtitle","addtoc","addindex","pageheader","pagefooter","qrcode_link","caption_for_qrcode"].forEach(function (id) {
       setControlValue(id, "", "input");
     });
+
+    var qrCodeCheckbox = document.getElementById("bAdd_QRCode") ||
+      document.querySelector('[name="bAdd_QRCode"]');
+    if (qrCodeCheckbox) qrCodeCheckbox.checked = false;
   }
 
   function setPDFPlaybackInstrumentValues() {
