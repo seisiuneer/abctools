@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3293_071226_0200";
+var gVersionNumber = "3294_071226_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_12jul2026;
+        var updatePresented = localStorage.sawUpdate_12jul2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_12jul2026 = true;
+          localStorage.sawUpdate_12jul2026a = true;
 
         }
 
@@ -57200,7 +57200,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New: Interactive Guided Tours</strong> (desktop browsers only)</p>';
-  modal_msg += '<p style="font-size:12pt;">Explore six step-by-step guided tours that walk you through the ABC Transcription Tools’ most popular features and workflows.</p>';
+  modal_msg += '<p style="font-size:12pt;">Explore eight step-by-step guided tours that walk you through the ABC Transcription Tools’ most popular features and workflows.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -63883,13 +63883,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_12jul2026;
+    var updatePresented = localStorage.sawUpdate_12jul2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_12jul2026 = true;
+      localStorage.sawUpdate_12jul2026a = true;
 
     }
 

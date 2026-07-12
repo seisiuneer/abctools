@@ -826,6 +826,138 @@
     });
   }
 
+  function stripGuidedTourSampleChords() {
+    if (typeof getABCEditorText !== "function" || typeof setABCEditorText !== "function") return;
+
+    var source = getABCEditorText();
+    var lines = source.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+    var insideTuneBody = false;
+
+    for (var i = 0; i < lines.length; i++) {
+      if (/^\s*X\s*:/.test(lines[i])) {
+        insideTuneBody = false;
+        continue;
+      }
+
+      if (/^\s*K\s*:/.test(lines[i])) {
+        insideTuneBody = true;
+        continue;
+      }
+
+      if (insideTuneBody) {
+        lines[i] = lines[i].replace(/"(?:[^"\\]|\\.)*"/g, "");
+      }
+    }
+
+    var updated = lines.join("\n");
+    if (updated === source) return;
+
+    setABCEditorText(updated);
+    window.gIsDirty = true;
+    window.gForceFullRender = true;
+
+    if (typeof RenderAsync === "function") RenderAsync(true, null);
+  }
+
+  function setGuidedTourCheckbox(id, checked) {
+    var el = document.getElementById(id) || document.querySelector('[name="' + id + '"]');
+    if (!el) return null;
+    el.checked = !!checked;
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+    return el;
+  }
+
+  function configureGuidedTourBackupChordSettings() {
+    setControlValue("scope", "all");
+    setControlValue("threshold", "0.75");
+    setControlValue("fallback", "75");
+
+    setGuidedTourCheckbox("substitutions", true);
+    setGuidedTourCheckbox("Dmajor", true);
+    setGuidedTourCheckbox("Gmajor", true);
+    setGuidedTourCheckbox("Cmajor", true);
+    setGuidedTourCheckbox("Fmajor", true);
+    setGuidedTourCheckbox("Gmajor_Eminor", false);
+    setGuidedTourCheckbox("Amajor_Bdorian", false);
+  }
+
+  function isGuidedTourElementVisible(el) {
+    if (!el) return false;
+    var style = window.getComputedStyle(el);
+    var rect = el.getBoundingClientRect();
+    return style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      rect.width > 0 &&
+      rect.height > 0;
+  }
+
+  function findVisibleButtonByLabel(label) {
+    var candidates = document.querySelectorAll('input[type="button"], input[type="submit"], button');
+
+    for (var i = candidates.length - 1; i >= 0; i--) {
+      var el = candidates[i];
+      var displayedLabel = el.tagName === "INPUT"
+        ? (el.value || "").trim()
+        : (el.textContent || "").trim();
+
+      if (displayedLabel === label && isGuidedTourElementVisible(el)) {
+        return el;
+      }
+    }
+
+    return null;
+  }
+
+  function findVisibleElementContainingText(textToFind) {
+    var candidates = document.querySelectorAll("div, p, span");
+    for (var i = candidates.length - 1; i >= 0; i--) {
+      var el = candidates[i];
+      var text = (el.textContent || "").trim();
+      if (text.indexOf(textToFind) < 0) continue;
+
+      var style = window.getComputedStyle(el);
+      var rect = el.getBoundingClientRect();
+      if (style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  async function waitForVisibleText(textToFind, timeoutMs) {
+    var timeout = typeof timeoutMs === "number" ? timeoutMs : 120000;
+    var started = Date.now();
+
+    while (Date.now() - started < timeout) {
+      var el = findVisibleElementContainingText(textToFind);
+      if (el) return el;
+      await waitMs(100);
+    }
+
+    return null;
+  }
+
+  async function runGuidedTourBackupChordMatching() {
+    var addChordsButton = findVisibleButtonByLabel("Add Chords");
+    if (!addChordsButton) return;
+
+    addChordsButton.click();
+
+    var completion = await waitForVisibleText("Add Tune Backup Chords Complete", 180000);
+    if (!completion) {
+      completion = await waitForVisibleText("Tune Backup Chords Added", 5000);
+    }
+
+    if (completion) {
+      await waitMs(250);
+
+      var completionOK = findVisibleButtonByLabel("OK");
+      if (completionOK) completionOK.click();
+
+      await waitMs(600);
+    }
+  }
+
   function stripGuidedTourSamplePlaybackAnnotations() {
     if (typeof getABCEditorText !== "function" || typeof setABCEditorText !== "function") return;
 
@@ -843,7 +975,7 @@
     if (typeof RenderAsync === "function") RenderAsync(true, null);
   }
 
-  async function addGuidedTourTunes(addThree, stripSamplePlaybackAnnotations) {
+  async function addGuidedTourTunes(addThree, stripSamplePlaybackAnnotations, stripSampleChords) {
     AddABC();
     await waitMs(350);
     clickIfPresent("#addnewreel");
@@ -859,6 +991,11 @@
     if (stripSamplePlaybackAnnotations) {
       stripGuidedTourSamplePlaybackAnnotations();
       await waitMs(350);
+    }
+
+    if (stripSampleChords) {
+      stripGuidedTourSampleChords();
+      await waitMs(500);
     }
 
     setTab("b1");
@@ -920,6 +1057,86 @@
       { title:"Configure Tune Trainer Speed Settings", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looper_start_percent");}, body:'<p>The tour will set the starting tempo to <strong>50%</strong>, ending tempo to <strong>100%</strong>, tempo increment to <strong>10%</strong>, increment after <strong>1</strong> time through the tune, and disable the countdown.</p>', afterNext:function(){ setControlValue("looper_start_percent","50","input"); setControlValue("looper_end_percent","100","input"); setControlValue("looper_increment","10","input"); setControlValue("looper_count","1","input"); setControlValue("looper_docountdown",false); return waitMs(300); } },
       { title:"Apply Settings and Reload", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looperreset");}, body:'<p>Changed <strong>Tune Trainer</strong> settings must be applied before playback.</p><p>Click <strong>Apply Changes and Reload</strong>. After the <strong>Tune Trainer</strong> reloads, click <strong>Next</strong>.</p>', afterNext:function(){ return waitMs(500); } },
       { title:"Run a Training Session", cardTargetGap:150, cardWidth:620, target:getPlayerPlayButton, beforeResolveTarget:function(){ return waitForElement("button.abcjs-midi-start",2500); }, body:'<p>Click the <strong>Play</strong> button to start a looping tune training session.</p><p>Each time through the tune, playback speeds up by 10% until it reaches 100%.</p><p>Click <strong>Done</strong> when you are ready to end the tour.</p>' }
+    ];
+
+    if (tourId === "backupchords") return [
+      {
+        title:"Automatically Add Chords to Tunes",
+        cardWidth:620,
+        body:'<p>This tour will add <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong> to the editor without chords.</p><p>It will then use <strong>Add Tune Backup Chords</strong> to add style- and key/mode-appropriate chords automatically.</p>',
+        afterNext:function(){ return addGuidedTourTunes(true, false, true); }
+      },
+      {
+        title:"Open More Tools",
+        cardWidth:560,
+        selector:"#toggleadvancedcontrols",
+        body:'<p>The automatic backup chord feature is available in the <strong>More Tools</strong> dialog.</p><p>Click <strong>Next</strong> to open <strong>More Tools</strong>.</p>',
+        afterNext:function(){ clickIfPresent("#toggleadvancedcontrols"); return waitMs(700); }
+      },
+      {
+        title:"Switch to the ABC Features Tab",
+        cardWidth:560,
+        target:function(){ return document.querySelector('[data-tab="adv-tab-injection"]'); },
+        body:'<p>The tour will switch to the <strong>ABC Features</strong> tab, which contains tools that modify or enhance the ABC.</p>',
+        afterNext:function(){
+          if (typeof AdvancedControls_SelectTab === "function") {
+            AdvancedControls_SelectTab("adv-tab-injection");
+          }
+          return waitMs(350);
+        }
+      },
+      {
+        title:"Open Add Tune Backup Chords",
+        cardWidth:620,
+        selector:"#addtunebackupchords",
+        body:'<p><strong>Add Tune Backup Chords</strong> compares each measure against already-chorded traditional Irish tune settings from The Session and copies chords from the closest compatible matches.</p><p>Click <strong>Next</strong> to open the settings dialog.</p>',
+        afterNext:function(){ clickIfPresent("#addtunebackupchords"); return waitMs(650); }
+      },
+      {
+        title:"Configure the Chord Matching Settings",
+        cardTop:80,
+        cardWidth:700,
+        target:function(){ return document.getElementById("scope") || document.querySelector('[name="scope"]'); },
+        beforeResolveTarget:function(){ return waitForElement("#scope, [name='scope']", 3000); },
+        body:'<p>The tour will process <strong>All tunes</strong> using the default settings of a minimum match score of <strong>0.75</strong> and fallback match percentage of <strong>75%</strong>.</p><p>Limited key/mode substitution checking and the D, G, C, and F major alternatives will be enabled. The G major as E minor and A major as B Dorian advanced substitutions will be disabled.</p><p>Click <strong>Next</strong> to apply these settings.</p>',
+        afterNext:function(){ configureGuidedTourBackupChordSettings(); return waitMs(350); }
+      },
+      {
+        title:"Add Chords",
+        cardTop:80,
+        cardWidth:650,
+        target:function(){ return findVisibleButtonByLabel("Add Chords"); },
+        body:'<p>The settings are ready. Click <strong>Next</strong> and the tour will press <strong>Add Chords</strong> to add style- and key/mode-appropriate backup chords to all three tunes.</p><p>Chord matching may take a little while while the tune measures are compared against the database.</p>',
+        afterNext:function(){ return runGuidedTourBackupChordMatching(); }
+      },
+      {
+        title:"Close More Tools",
+        cardWidth:560,
+        target:function(){ return findVisibleButtonByLabel("OK"); },
+        body:'<p>The <strong>Add Tune Backup Chords Complete</strong> message has been acknowledged and the chords have been added.</p><p>Click <strong>Next</strong> to close the <strong>More Tools</strong> dialog.</p>',
+        afterNext:function(){ var okButton=findVisibleButtonByLabel("OK"); if(okButton) okButton.click(); return waitMs(500); }
+      },
+      {
+        title:"Chords Added to the Tunes",
+        cardWidth:650,
+        target:getCooleysABCEditorTarget,
+        skipTargetScroll:true,
+        beforeResolveTarget:async function(){
+          scrollABCEditorToTop();
+          var editor=getEditorTarget();
+          if(editor){
+            try{
+              editor.scrollIntoView({behavior:"smooth",block:"start",inline:"nearest"});
+              await waitMs(240);
+            }
+            catch(err){
+              editor.scrollIntoView();
+              await waitMs(80);
+            }
+          }
+        },
+        body:'<p>Backup chords have now been added directly to the ABC for all three tunes.</p><p>Because they are standard ABC chord annotations, you can review, edit, remove, or save them just like any other part of the tune.</p>'
+      }
     ];
 
     if (tourId === "pdf") return [
@@ -1010,6 +1227,7 @@
         '<button data-tour="playing">Playing Your Tunes</button>' +
         '<button data-tour="mp3">Export an MP3 Audio File</button>' +
         '<button data-tour="trainer">Practice Tunes with the Tune Trainer</button>' +
+        '<button data-tour="backupchords">Automatically Add Chords to Tunes</button>' +
         '<button data-tour="pdf">Export a PDF with Title Page, Table of Contents, Index, and Play Links</button>' +
         '<button data-tour="website">Export a Tunebook Website</button>' +
         '<button data-tour="share">Creating a Share Link for Email or Social Media Posts</button>' +
