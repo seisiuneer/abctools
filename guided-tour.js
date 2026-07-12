@@ -579,8 +579,8 @@
         afterNext: function () { editFirstTuneTitle(); return waitMs(850); }
       },
       {
-        title: "6. Changes Immediately Update the Notation",
-        cardWidth: 560,
+        title: "6. ABC Changes Immediately Update the Notation",
+        cardWidth: 630,
         target: getEditedCooleysNotationTarget,
         skipTargetScroll: true,
         beforeTargetScroll: async function () {
@@ -671,7 +671,7 @@
         title: "14. You’re Ready to Export the PDF",
         cardWidth: 560,
         target: function () { return getTopmostElementByClass("modal_flat_ok"); },
-        body: '<p>Click <strong>Done</strong> to generate and export your first PDF. After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p>',
+        body: '<p>Click <strong>Done</strong> to generate and export your first PDF.</p><p>After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p>',
         afterDone: function () { closeTopDialog(); }
       }
     ];
