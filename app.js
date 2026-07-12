@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3291_071126_0900";
+var gVersionNumber = "3292_071226_0130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_9jul2026;
+        var updatePresented = localStorage.sawUpdate_12jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_9jul2026 = true;
+          localStorage.sawUpdate_12jul2026 = true;
 
         }
 
@@ -57193,14 +57193,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 July 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">On desktop browsers, added a <strong>Guided Tour</strong> button to the startup screen.</p>';
-  modal_msg += '<p style="font-size:12pt;">Click the button to walk through a guided tour of adding tunes, making an edit, changing the tablature view, transposing a tune, and finally exporting a PDF file.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New: Interactive Guided Tours</strong> (desktop browsers only)</p>';
+  modal_msg += '<p style="font-size:12pt;">Explore six step-by-step guided tours that walk you through the ABC Transcription Tools’ most popular features and workflows.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -63883,13 +63883,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_9jul2026;
+    var updatePresented = localStorage.sawUpdate_12jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_9jul2026 = true;
+      localStorage.sawUpdate_12jul2026 = true;
 
     }
 

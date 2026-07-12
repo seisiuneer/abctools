@@ -14,6 +14,7 @@
   var gTourHighlightedEl = null;
   var gTourRunning = false;
   var gTourVirtualTarget = null;
+  var gTourUseLongerArrows = false;
 
   function injectGuidedTourStyles() {
     if (document.getElementById("abc-guided-tour-styles")) return;
@@ -112,6 +113,13 @@
         filter: drop-shadow(0 1px 2px rgba(0,0,0,.2));
       }
 
+
+      .abc-guided-tour-tour-list { display:grid; grid-template-columns:1fr; gap:10px; margin-top:16px; }
+      .abc-guided-tour-tour-list button { padding:10px 14px; text-align:left; border:1px solid #aaa; border-radius:6px; background:#e5e5e5; color:#000; font-size:12pt; cursor:pointer; }
+      .abc-guided-tour-tour-list button:hover { background:#d5d5d5; }
+      .abc-guided-tour-selector { width:min(615px, calc(100vw - 24px)); }
+      .abc-guided-tour-selector p { font-size:13pt; line-height:19pt; }
+
       .abc-guided-tour-target-highlight {
         position: relative;
         z-index: 2147483644 !important;
@@ -169,11 +177,11 @@
       var card = document.createElement("div");
       card.className = "abc-guided-tour-card";
       card.innerHTML =
-        '<h2>Zoom Out to Continue the Guided Tour</h2>' +
-        '<p>This guided tour works best with the <strong>ABC editor and notation side by side</strong>.</p>' +
+        '<h2>Zoom Out to Run the Guided Tours</h2>' +
+        '<p>These guided tours only work with the <strong>ABC editor and notation side by side</strong>.</p>' +
         '<p>Your browser is currently showing the stacked layout. Zoom the browser out or resize the window wider until the ABC editor is on the left and the notation is on the right.</p>' +
         '<p><strong>Windows:</strong> Ctrl&nbsp;&minus;&nbsp;&nbsp;&nbsp; <strong>Mac:</strong> &#8984;&nbsp;&minus;</p>' +
-        '<p><strong>The tour will continue automatically as soon as the side-by-side layout appears.</strong></p>' +
+        '<p><strong>The Guided Tours selector will open automatically as soon as the side-by-side layout appears.</strong></p>' +
         '<div class="abc-guided-tour-card-footer">' +
           '<div class="abc-guided-tour-buttons">' +
             '<button type="button" data-action="exit">Close Tour</button>' +
@@ -183,10 +191,10 @@
       document.body.appendChild(card);
       gTourCard = card;
 
-      var placement = chooseGuidedTourCardPlacement(null);
-      card.style.left = placement.left + "px";
-      card.style.top = Math.max(25, Math.round((window.innerHeight - card.offsetHeight) / 2)) + "px";
-      card.style.width = placement.width + "px";
+      var zoomCardWidth = Math.min(760, window.innerWidth - 24);
+      card.style.width = zoomCardWidth + "px";
+      card.style.left = Math.max(12, Math.round((window.innerWidth - zoomCardWidth) / 2)) + "px";
+      card.style.top = "150px";
 
       var finished = false;
       var timer = null;
@@ -249,6 +257,37 @@
 
     var abc = document.getElementById("abc");
     if (abc) abc.scrollTop = 0;
+  }
+
+  function getABCEditorTopTarget() {
+    if (window.gEnableSyntax && window.gTheCM && typeof window.gTheCM.getWrapperElement === "function") {
+      var wrapper = window.gTheCM.getWrapperElement();
+      var firstLine = wrapper ? wrapper.querySelector(".CodeMirror-line") : null;
+      return firstLine || wrapper;
+    }
+
+    var abc = document.getElementById("abc");
+    if (!abc) return null;
+
+    var rect = abc.getBoundingClientRect();
+    var cs = window.getComputedStyle(abc);
+    var lineHeight = parseFloat(cs.lineHeight);
+    if (!isFinite(lineHeight)) lineHeight = parseFloat(cs.fontSize) * 1.2;
+    var paddingTop = parseFloat(cs.paddingTop) || 0;
+    var paddingLeft = parseFloat(cs.paddingLeft) || 0;
+
+    var marker = document.createElement("div");
+    marker.setAttribute("aria-hidden", "true");
+    marker.style.position = "fixed";
+    marker.style.left = Math.round(rect.left + paddingLeft) + "px";
+    marker.style.top = Math.round(rect.top + paddingTop) + "px";
+    marker.style.width = Math.min(240, Math.max(140, rect.width - paddingLeft - 8)) + "px";
+    marker.style.height = Math.max(18, Math.round(lineHeight * 2)) + "px";
+    marker.style.pointerEvents = "none";
+    marker.style.zIndex = "2147483643";
+    document.body.appendChild(marker);
+    gTourVirtualTarget = marker;
+    return marker;
   }
 
   function getCooleysABCEditorTarget() {
@@ -344,7 +383,7 @@
   }
 
   function chooseGuidedTourCardPlacement(targetEl, preferredWidth) {
-    var gap = 18;
+    var gap = gTourUseLongerArrows ? 60 : 18;
     var vw = window.innerWidth;
     var vh = window.innerHeight;
     var cardWidth = Math.min(preferredWidth || 460, vw - 24);
@@ -386,15 +425,17 @@
     return { left: left, top: top, width: cardWidth };
   }
 
-  function drawGuidedTourArrow(cardEl, targetEl) {
+  function drawGuidedTourArrow(cardEl, targetEl, step) {
     if (!cardEl || !targetEl) return;
 
     var cardRect = cardEl.getBoundingClientRect();
     var targetRect = targetEl.getBoundingClientRect();
     var startX = cardRect.left + cardRect.width / 2;
     var startY = cardRect.top + cardRect.height / 2;
-    var endX = targetRect.left + targetRect.width / 2;
-    var endY = targetRect.top + targetRect.height / 2;
+    var endX = targetRect.left + targetRect.width / 2 +
+      (step && typeof step.arrowTargetOffsetX === "number" ? step.arrowTargetOffsetX : 0);
+    var endY = targetRect.top + targetRect.height / 2 +
+      (step && typeof step.arrowTargetOffsetY === "number" ? step.arrowTargetOffsetY : 0);
     var midX = (startX + endX) / 2;
     var path = "M " + startX + " " + startY + " Q " + midX + " " + startY + ", " + endX + " " + endY;
 
@@ -482,14 +523,15 @@
   function getGuidedTourSteps() {
     return [
       {
-        title: "Welcome to ABC Transcription Tools",
+        title: "Welcome to the ABC Transcription Tools",
         cardWidth: 560,
-        body: '<p>In a few minutes, you will complete your first ABC tunebook project.</p><p>You will <strong>add three example tunes, make an edit and see the notation update, try a tablature view, transpose a tune up and back down, and export a PDF</strong>.</p><p>The tour uses the real controls, so what you see is exactly how the tool works.</p>'
+        body: '<p>In a few minutes, you will build your first ABC tunebook.</p><p>You will add three example tunes, make an edit and see the notation update, try Mandolin tablature and Tin Whistle fingering views, transpose a tune up and back down a semitone, and export a PDF.</p>'
       },
       {
-        title: "1. Add Some Tunes",
+        title: "1. Add Three Example Tunes",
+        cardWidth: 560,
         selector: "#newabcfile",
-        body: '<p>Most editing sessions start by opening a file or adding tunes. For this tour, we’ll start with <strong>Add</strong>. Click <strong>Next</strong> to open the <strong>Add</strong> dialog.</p><p>The <strong>Add</strong> dialog includes sample tunes, templates, file import, tune search, and other ways to build an ABC collection.</p>',
+        body: '<p>Most editing sessions start by opening a file or adding tunes. For this tour, we’ll start with <strong>Add</strong>. Click <strong>Next</strong> to open the <strong>Add</strong> dialog.</p><p>The <strong>Add</strong> dialog includes sample tunes, templates, file import, tune search, and other ways to build an ABC tunebook.</p>',
         afterNext: function () { AddABC(); return waitMs(350); }
       },
       {
@@ -507,7 +549,7 @@
       {
         title: "4. Add \"Alexander’s\"",
         selector: "#addnewhornpipe",
-        body: '<p>Add <strong>Alexander’s</strong>, an example hornpipe. You now have a three-tune tunebook.</p><p>After this step, the <strong>Add</strong> dialog will close so you can work with the tunes.</p>',
+        body: '<p>Add <strong>Alexander’s</strong>, an example hornpipe. You now have a three-tune tunebook.</p>',
         afterNext: async function () {
           document.getElementById("addnewhornpipe").click();
           await waitMs(350);
@@ -516,7 +558,8 @@
         }
       },
       {
-        title: "5. How the ABC Editor Works",
+        title: "5. Edit the ABC",
+        cardWidth: 560,
         target: getCooleysABCEditorTarget,
         skipTargetScroll: true,
         beforeResolveTarget: async function () {
@@ -536,7 +579,8 @@
         afterNext: function () { editFirstTuneTitle(); return waitMs(850); }
       },
       {
-        title: "6. Editing Updates the Music",
+        title: "6. Changes Immediately Update the Notation",
+        cardWidth: 560,
         target: getEditedCooleysNotationTarget,
         skipTargetScroll: true,
         beforeTargetScroll: async function () {
@@ -557,13 +601,13 @@
         body: '<p>The notation has automatically updated from your edited ABC. This is the basic workflow: <strong>Edit the ABC and immediately see the musical result</strong>.</p><p>You can edit notes, titles, chords, rhythms, key signatures, and formatting commands in the same way.</p>'
       },
       {
-        title: "7. Try Mandolin Tablature",
+        title: "7. Show Mandolin Tablature",
         target: function () { return document.querySelector('label[for="b3"]'); },
         body: '<p>The buttons below the editor let you choose how the tunes are displayed.</p><p>Let’s try <strong>Mandolin</strong> tablature. The same ABC will now be displayed with GDAE mandolin tablature.</p>',
         afterNext: function () { setTab("b3"); return waitMs(850); }
       },
       {
-        title: "8. Try Tin Whistle Fingering",
+        title: "8. Show Tin Whistle Fingering",
         target: function () { return document.querySelector('label[for="b9"]'); },
         body: '<p>Now try <strong>Whistle</strong>. Instrument-specific views are just another way to display the tune; you do not need to change the ABC.</p><p>This is useful for quickly creating instrument-specific notation from the same ABC.</p>',
         afterNext: function () { setTab("b9"); return waitMs(900); }
@@ -575,9 +619,10 @@
         afterNext: function () { setTab("b1"); selectFirstTune(); return waitMs(850); }
       },
       {
-        title: "10. Transpose the First Tune Up",
+        title: "10. Transpose \"Cooley's\" Up One Semitone",
+        cardWidth: 560,
         selector: "#transposeup",
-        body: '<p>The cursor is positioned in the first tune, so the transpose buttons will act on that tune.</p><p><strong>Transpose Up</strong> moves it up one semitone. Watch the ABC key and notes change along with the rendered notation.</p>',
+        body: '<p>The cursor is positioned in <strong>Cooley\'s</strong>, so the transpose buttons will act on that one tune.</p><p><strong>Transpose Up</strong> shifts it up one semitone. Watch the ABC key and notes change along with the rendered notation.</p>',
         afterNext: function () {
           selectFirstTune();
           TransposeUp({ shiftKey: false, altKey: false });
@@ -585,10 +630,10 @@
         }
       },
       {
-        title: "11. Transpose the First Tune Back Down",
+        title: "11. Transpose \"Cooley's\" Back Down",
         cardWidth: 560,
         selector: "#transposedown",
-        body: '<p>Now we’ll use <strong>Transpose Down</strong> once. Click <strong>Next</strong> to reverse the previous semitone transposition and restore the tune to its original pitch.</p><p><strong>Transpose Up</strong> and <strong>Transpose Down</strong> are especially useful for quickly finding a better range for an instrument or singer.</p>',
+        body: '<p>Now we’ll use <strong>Transpose Down</strong> once. Click <strong>Next</strong> to reverse the previous +1 semitone transposition and restore <strong>Cooley\'s</strong> to its original pitch.</p><p><strong>Transpose Up</strong> and <strong>Transpose Down</strong> are especially useful for quickly finding a better range for an instrument or singer.</p>',
         afterNext: function () {
           selectFirstTune();
           TransposeDown({ shiftKey: false, altKey: false });
@@ -597,8 +642,9 @@
       },
       {
         title: "12. Export Your First PDF",
+        cardWidth: 560,
         target: function () { return document.getElementById("saveaspdf") || document.getElementById("pdfbuttonicon"); },
-        body: '<p>You have now added tunes, edited ABC, switched to a tablature view and back to standard notation, and transposed a tune.</p><p>Let’s turn the three tunes into a printable PDF. Click <strong>Next</strong> to open <strong>Export PDF</strong>.</p>',
+        body: '<p>You have now added tunes, edited ABC, switched to a tablature view and back to standard notation, and transposed a tune.</p><p>Let’s turn the three tunes into a printable PDF.</p><p>Click <strong>Next</strong> to open <strong>Export PDF</strong>.</p>',
         afterNext: function () {
           setGuidedTourPDFExportBaseline();
           PDFExportDialog();
@@ -607,6 +653,7 @@
       },
       {
         title: "13. Choose One Tune per Page",
+        cardWidth: 560,
         target: function () {
           return document.getElementById("configure_tunelayout") || document.getElementsByName("configure_tunelayout")[0] || null;
         },
@@ -622,8 +669,10 @@
       },
       {
         title: "You’re Ready to Export",
+        cardWidth: 560,
         target: function () { return getTopmostElementByClass("modal_flat_ok"); },
-        body: '<p>You just completed the core <strong>ABC Transcription Tools</strong> workflow.</p><p><strong>Add tunes → Edit the ABC → Choose a notation or tablature view → Transpose when needed → Export.</strong></p><p>Click <strong>Export</strong> to generate your first PDF. After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p><p>The guided tour ends here, and the normal PDF export will continue.</p><p>You can click the <strong>?</strong> in the upper-left corner of the tool or any dialog to jump directly to the <strong>User Guide</strong> section for the tool or dialog.</p>'
+        body: '<p>You just completed the core <strong>ABC Transcription Tools</strong> workflow.</p><p>Click <strong>Done</strong> to generate your first PDF. After the export is complete, the PDF file will be found in the default <strong>Downloads</strong> directory for your browser.</p>',
+        afterDone: function () { closeTopDialog(); }
       }
     ];
   }
@@ -665,9 +714,33 @@
       card.style.width = placement.width + "px";
 
       var maxCardTop = Math.max(12, window.innerHeight - card.offsetHeight - 12);
-      card.style.top = Math.max(12, Math.min(placement.top, maxCardTop)) + "px";
+      var requestedTop;
 
-      drawGuidedTourArrow(card, targetEl);
+      if (targetEl && typeof step.cardTargetGap === "number") {
+        var targetRect = targetEl.getBoundingClientRect();
+        var gap = step.cardTargetGap;
+        var aboveTop = targetRect.top - gap - card.offsetHeight;
+        var belowTop = targetRect.bottom + gap;
+        var canFitAbove = aboveTop >= 12;
+        var canFitBelow = belowTop <= maxCardTop;
+
+        if (canFitAbove) requestedTop = aboveTop;
+        else if (canFitBelow) requestedTop = belowTop;
+        else {
+          var aboveRoom = targetRect.top - 12;
+          var belowRoom = window.innerHeight - targetRect.bottom - 12;
+          requestedTop = aboveRoom >= belowRoom
+            ? Math.max(12, targetRect.top - gap - card.offsetHeight)
+            : Math.min(maxCardTop, targetRect.bottom + gap);
+        }
+      }
+      else {
+        requestedTop = (typeof step.cardTop === "number") ? step.cardTop : placement.top;
+      }
+
+      card.style.top = Math.max(12, Math.min(requestedTop, maxCardTop)) + "px";
+
+      drawGuidedTourArrow(card, targetEl, step);
 
       Array.prototype.forEach.call(card.querySelectorAll("button[data-action]"), function (btn) {
         btn.addEventListener("click", function () {
@@ -694,9 +767,6 @@
     gTourRunning = true;
 
     try {
-      var sideBySideReady = await waitForGuidedTourSideBySide();
-      if (!sideBySideReady) return;
-
       var steps = getGuidedTourSteps();
       var index = 0;
 
@@ -712,11 +782,256 @@
           continue;
         }
 
+        if (action === "done" && typeof step.afterDone === "function") {
+          await step.afterDone();
+        }
+
         break;
       }
     }
     finally {
       clearGuidedTourUI();
+      gTourRunning = false;
+    }
+  }
+
+
+
+  function setControlValue(idOrName, value, eventName) {
+    var el = document.getElementById(idOrName) || document.querySelector('[name="' + idOrName + '"]');
+    if (!el) return null;
+    if (el.type === "checkbox") el.checked = !!value;
+    else el.value = value;
+    el.dispatchEvent(new Event(eventName || "change", { bubbles: true }));
+    return el;
+  }
+
+  function clickIfPresent(selector) {
+    var el = typeof selector === "string" ? document.querySelector(selector) : selector;
+    if (el) el.click();
+    return el;
+  }
+
+  function waitForElement(selector, timeoutMs) {
+    var timeout = typeof timeoutMs === "number" ? timeoutMs : 2500;
+    var started = Date.now();
+    return new Promise(function (resolve) {
+      function check() {
+        var el = document.querySelector(selector);
+        if (el || Date.now() - started >= timeout) {
+          resolve(el || null);
+          return;
+        }
+        setTimeout(check, 50);
+      }
+      check();
+    });
+  }
+
+  function stripGuidedTourSamplePlaybackAnnotations() {
+    if (typeof getABCEditorText !== "function" || typeof setABCEditorText !== "function") return;
+
+    var text = getABCEditorText();
+    var blockPattern = /(?:^|\n)[ \t]*%[ \t]*\r?\n[ \t]*% Use the FatBoy soundfont:[ \t]*\r?\n[ \t]*%soundfont fatboy[ \t]*\r?\n[ \t]*%[ \t]*\r?\n[ \t]*% Use an Acoustic Grand Piano sound for the Melody, Bass, and Chords:[ \t]*\r?\n[ \t]*%%MIDI program 0[ \t]*\r?\n[ \t]*%%MIDI bassprog 0[ \t]*\r?\n[ \t]*%%MIDI chordprog 0[ \t]*\r?\n[ \t]*%[ \t]*\r?\n[ \t]*% Set the Bass and Chord volumes \(0-127\):[ \t]*\r?\n[ \t]*%%MIDI bassvol 64[ \t]*\r?\n[ \t]*%%MIDI chordvol 64[ \t]*(?=\r?\n|$)/g;
+
+    var updated = text.replace(blockPattern, "");
+
+    if (updated === text) return;
+
+    setABCEditorText(updated);
+    window.gIsDirty = true;
+    window.gForceFullRender = true;
+
+    if (typeof RenderAsync === "function") RenderAsync(true, null);
+  }
+
+  async function addGuidedTourTunes(addThree, stripSamplePlaybackAnnotations) {
+    AddABC();
+    await waitMs(350);
+    clickIfPresent("#addnewreel");
+    await waitMs(350);
+    if (addThree) {
+      clickIfPresent("#addnewjig");
+      await waitMs(350);
+      clickIfPresent("#addnewhornpipe");
+      await waitMs(350);
+    }
+    if (typeof AddABCCallback === "function") AddABCCallback();
+
+    if (stripSamplePlaybackAnnotations) {
+      stripGuidedTourSamplePlaybackAnnotations();
+      await waitMs(350);
+    }
+
+    setTab("b1");
+    selectFirstTune();
+    await waitMs(500);
+  }
+
+  function getPlayerPlayButton() {
+    return document.querySelector("button.abcjs-midi-start");
+  }
+
+  function getPlayerTempoControl() {
+    return document.querySelector(".abcjs-midi-tempo") || document.querySelector(".abcjs-midi-current-tempo-wrapper");
+  }
+
+  function closeTopDialog() {
+    var buttons = document.getElementsByClassName("modal_flat_ok");
+    if (buttons && buttons.length) buttons[buttons.length - 1].click();
+  }
+
+  function clearPDFTunebookTextFields() {
+    ["addtitle","addsubtitle","addtoc","addindex","pageheader","pagefooter","qrcode_link","caption_for_qrcode"].forEach(function (id) {
+      setControlValue(id, "", "input");
+    });
+  }
+
+  function setPDFPlaybackInstrumentValues() {
+    setControlValue("sound_font", "fatboy");
+    setControlValue("melody_instrument", "1");
+    setControlValue("bass_instrument", "1");
+    setControlValue("chord_instrument", "1");
+    setControlValue("bass_volume", "64", "input");
+    setControlValue("chord_volume", "64", "input");
+  }
+
+  function getAdditionalGuidedTourSteps(tourId) {
+    if (tourId === "playing") return [
+      { title:"Playing Tunes", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates the built-in tune player using <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong>.</p>', afterNext:function(){ return addGuidedTourTunes(true); } },
+      { title:"Open the Player", cardTargetGap:150, cardWidth:560, selector:"#playbutton", body:'<p>Click <strong>Next</strong> to open <strong>Cooley’s</strong> in the Player.</p>', afterNext:function(){ clickIfPresent("#playbutton"); return waitMs(1200); } },
+      { title:"Play and Stop Cooley’s", cardTargetGap:75, cardWidth:560, target:getPlayerPlayButton, body:'<p>Click the <strong>Play</strong> button to start playing <strong>Cooley’s</strong>. Click it again to stop playback.</p><p>Click the <strong>Tempo Percentage</strong> control on the right side of the control bar to change the tempo.</p><p>When the tune is stopped, click <strong>Next</strong>.</p>' },
+      { title:"Go to The Kesh", cardTargetGap:150, cardWidth:560, target:function(){ return document.getElementById("abcplayer_nextbutton"); }, body:'<p>You can move through the tunebook using the previous- and next-tune buttons.</p><p>Click <strong>Next</strong> and the tour will use the <strong>next tune</strong> button to go to <strong>The Kesh</strong>.</p>', afterNext:function(){ clickIfPresent("#abcplayer_nextbutton"); return waitMs(500); } },
+      { title:"Go to Alexander’s", cardTargetGap:150, cardWidth:560, target:function(){ return document.getElementById("abcplayer_nextbutton"); }, body:'<p>Click <strong>Done</strong> and the tour will use the <strong>next tune</strong> button again to go to <strong>Alexander’s</strong> and finish the tour.</p>', afterDone:function(){ clickIfPresent("#abcplayer_nextbutton"); } }
+    ];
+
+    if (tourId === "mp3") return [
+      { title:"Export MP3 Audio File", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates how to export a tune as an MP3 audio file with reverb.</p><p>Click <strong>Next</strong> to add <strong>Cooley’s</strong> to the editor.</p>', afterNext:function(){ return addGuidedTourTunes(false); } },
+      { title:"Open the Player", cardTargetGap:150, cardWidth:560, selector:"#playbutton", body:'<p>Click <strong>Next</strong> to open <strong>Cooley’s</strong> in the <strong>Player</strong>.</p>', afterNext:function(){ clickIfPresent("#playbutton"); return waitMs(1200); } },
+      { title:"Open Audio Export", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("abcplayer_exportbutton");}, beforeResolveTarget:function(){return waitForElement("#abcplayer_exportbutton",2500);}, body:'<p>Click <strong>Next</strong> to open <strong>Export Audio, Image, or PDF</strong>.</p>', afterNext:function(){ clickIfPresent("#abcplayer_exportbutton"); return waitMs(500); } },
+      { title:"Export MP3 File with Reverb", cardTargetGap:150, cardWidth:600, target:function(){return document.getElementById("abcplayer_mp3reverbbutton");}, beforeResolveTarget:function(){return waitForElement("#abcplayer_mp3reverbbutton",2500);}, body:'<p>The tune audio will be encoded as an <strong>MP3 file with reverb</strong> and saved in the browser’s default <strong>Downloads</strong> directory.</p><p>Click <strong>Done</strong> to start creating and saving the MP3 file.</p>', afterDone:function(){ clickIfPresent("#abcplayer_mp3reverbbutton"); } }
+    ];
+
+    if (tourId === "trainer") return [
+      { title:"Practice Tunes with the Tune Trainer", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates progressive-speed practice in the <strong>Tune Trainer</strong> using <strong>Cooley’s</strong>.</p>', afterNext:function(){ return addGuidedTourTunes(false); } },
+      { title:"Open Tune Trainer", cardTargetGap:150, cardWidth:560, selector:"#tunetrainerbutton", body:'<p>Click <strong>Next</strong> to open the <strong>Tune Trainer</strong>.</p>', afterNext:function(){ clickIfPresent("#tunetrainerbutton"); return waitMs(1400); } },
+      { title:"Configure Tune Trainer Speed Settings", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looper_start_percent");}, body:'<p>The tour will set the starting tempo to <strong>50%</strong>, ending tempo to <strong>100%</strong>, tempo increment to <strong>10%</strong>, increment after <strong>1</strong> time through the tune, and disable the countdown.</p>', afterNext:function(){ setControlValue("looper_start_percent","50","input"); setControlValue("looper_end_percent","100","input"); setControlValue("looper_increment","10","input"); setControlValue("looper_count","1","input"); setControlValue("looper_docountdown",false); return waitMs(300); } },
+      { title:"Apply Settings and Reload", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looperreset");}, body:'<p>Changed <strong>Tune Trainer</strong> settings must be applied before playback.</p><p>Click <strong>Apply Changes and Reload</strong>. After the <strong>Tune Trainer</strong> reloads, click <strong>Next</strong>.</p>', afterNext:function(){ return waitMs(500); } },
+      { title:"Run a Training Session", cardTargetGap:150, cardWidth:620, target:getPlayerPlayButton, beforeResolveTarget:function(){ return waitForElement("button.abcjs-midi-start",2500); }, body:'<p>Click the <strong>Play</strong> button to start a looping tune training session.</p><p>Each time through the tune, playback speeds up by 10% until it reaches 100%.</p><p>Click <strong>Done</strong> when you are ready to end the tour.</p>' }
+    ];
+
+    if (tourId === "pdf") return [
+      { title:"Export PDF with Tunebook Features", cardWidth:560, body:'<p>This tour creates a three-tune PDF tunebook with a title page, hyperlinked Table of Contents and Index, page header, and clickable playback links.</p>' },
+      { title:"Add Three Example Tunes",cardWidth:530, body:'<p>The Export PDF tour will add <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong> to the ABC editor.</p><p>Click <strong>Next</strong> to add the three example tunes.</p>', afterNext:function(){ return addGuidedTourTunes(true, true); } },
+      { title:"Open Export PDF", selector:"#saveaspdf", body:'<p>Click <strong>Next</strong> to open the <strong>Export PDF Tunebook</strong> dialog.</p>', afterNext:function(){ PDFExportDialog(); return waitMs(650); } },
+      { title:"Open Inject All PDF Tunebook Features", cardWidth:530, selector:"#tunebookbuilder", body:'<p>Click <strong>Next</strong> to open <strong>Inject All PDF Tunebook Features</strong>.</p>', afterNext:function(){ clickIfPresent("#tunebookbuilder"); return waitMs(650); } },
+      { title:"Start with All PDF Features Disabled", target:function(){return document.querySelector('[name="addtitle"]');}, body:'<p>The tour will clear all text fields so the PDF tunebook features can be built from scratch.</p><p>If a text field for a feature is empty, that feature won\'t be added to the exported PDF file.</p>', afterNext:function(){ clearPDFTunebookTextFields(); return waitMs(250); } },
+      { title:"Set the Tunebook Title", target:function(){return document.querySelector('[name="addtitle"]');}, body:'<p>Set the tunebook title to <strong>My First PDF Tunebook</strong>.</p>', afterNext:function(){ setControlValue("addtitle","My First PDF Tunebook","input"); return waitMs(200); } },
+      { title:"Set the Table of Contents Title", target:function(){return document.querySelector('[name="addtoc"]');}, body:'<p>Set the table of contents title to <strong>Table of Contents</strong>.</p>', afterNext:function(){ setControlValue("addtoc","Table of Contents","input"); return waitMs(200); } },
+      { title:"Set the Index Title", target:function(){return document.querySelector('[name="addindex"]');}, body:'<p>Set the index title to <strong>Index</strong>.</p>', afterNext:function(){ setControlValue("addindex","Index","input"); return waitMs(200); } },
+      { title:"Set the Page Header Text", target:function(){return document.querySelector('[name="pageheader"]');}, body:'<p>Set the page header text to <strong>This is the Page Header</strong>.</p>', afterNext:function(){ setControlValue("pageheader","This is the Page Header","input"); return waitMs(200); } },
+      { title:"Enable the Add Playback Links Checkbox", cardTop:150, cardWidth:600, beforeResolveTarget:function(){ var checkbox=document.getElementById("bAdd_add_all_playback_links") || document.querySelector('[name="bAdd_add_all_playback_links"]'); if(checkbox) checkbox.checked=true; }, body:'<p>This option is now enabled, making each tune title in the PDF a playback link. Clicking a title in the finished PDF will open and play that tune.</p><p>Click <strong>Next</strong> to continue.</p>' },
+      { title:"Set Melody and Backup Instruments and Volumes", cardTop:150, cardWidth:630, body:'<p>The tour will set the soundfont to <strong>FatBoy</strong>, the Melody, Bass, and Chord instruments to <strong>Acoustic Grand Piano</strong>, and both Bass and Chord volumes to <strong>64</strong>.</p><p>In the exported PDF, you can click the title of any tune to play the tune using the instruments set in this dialog.</p><p>Click <strong>Next</strong> to apply these playback settings.</p>', afterNext:function(){ setPDFPlaybackInstrumentValues(); return waitMs(300); } },
+      { title:"Inject the PDF Tunebook Features", target:function(){return getTopmostElementByClass("modal_flat_ok");}, body:'<p>Click <strong>Next</strong> to inject these PDF tunebook feature annotations at the top of the ABC.</p>', afterNext:function(){ closeTopDialog(); return waitMs(900); } },
+      { title:"PDF Tunebook Feature Annotations Added to the ABC", cardWidth:650, arrowTargetOffsetX:-110, target:getABCEditorTopTarget, skipTargetScroll:true, beforeResolveTarget:async function(){ scrollABCEditorToTop(); var editor=getEditorTarget(); if(editor){ try{ editor.scrollIntoView({behavior:"smooth",block:"start",inline:"nearest"}); await waitMs(240); } catch(err){ editor.scrollIntoView(); await waitMs(80); } } }, body:'<p>The PDF tunebook annotations have been added at the <strong>top of the ABC</strong>.</p><p>They are ordinary ABC directives, so you can edit them manually later if you want to change the tunebook title, table of contents, page header, playback settings, or other PDF features.</p>' },
+      { title:"Choose PDF Output Settings", target:function(){return document.querySelector('[name="configure_papersize"]');}, body:'<p>The tour will set the output to <strong>Letter</strong>, <strong>Portrait</strong>, <strong>One Tune Per Page</strong>, with page numbers at the <strong>Bottom Center</strong>.</p>', afterNext:function(){ setControlValue("configure_papersize","letter"); setControlValue("configure_orientation","portrait"); setControlValue("configure_tunelayout","one"); setControlValue("configure_pagenumber","bc"); return waitMs(300); } },
+      { title:"Export the PDF", target:function(){return getTopmostElementByClass("modal_flat_ok");}, body:'<p>After export completes, the PDF will be found in the browser’s default <strong>Downloads</strong> directory.</p><p>Remember to save the ABC as well so the injected PDF annotations are available for later use.</p><p>Click <strong>Done</strong> to generate and save the PDF.</p>', afterDone:function(){ closeTopDialog(); } }
+    ];
+
+    if (tourId === "website") return [
+      { title:"Export Tunebook Website", cardWidth:560, body:'<p>This tour sends the three example tunes to the <strong>abcjs-eskin Website Builder</strong> where you can fully configure and export the website.</p>' },
+      { title:"Add Three Example Tunes", cardWidth:530, body:'<p>The Export Website tour will add <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong> to the ABC editor.</p><p>Click <strong>Next</strong> to add the three example tunes.</p>', afterNext:function(){ return addGuidedTourTunes(true, true); } },
+      { title:"Open Export Website", selector:"#saveaswebsite", body:'<p>Click <strong>Next</strong> to open Website Export.</p>', afterNext:function(){ clickIfPresent("#saveaswebsite"); return waitMs(700); } },
+      { title:"Open abcjs-eskin Website Builder", target:function(){return document.getElementById("external_abcjs_eskin_website") || document.querySelector('[title*="Website Builder"]');}, body:'<p>Using this ABC, you can configure, preview, and export a complete, mobile-ready, printable website in a variety of musical genre-specific visual themes, with considerable control over tune navigation and playback instruments.</p><p>Be sure to try its guided tour for an introduction to its major features.</p><p>Click <strong>Done</strong> to open the <strong>abcjs-eskin Website Builder</strong>.</p>', afterDone:function(){ clickIfPresent(document.getElementById("external_abcjs_eskin_website") || document.querySelector('[title*="Website Builder"]')); } }
+    ];
+
+    if (tourId === "share") return [
+      { title:"Sharing Tunes with a Share Link", cardWidth:620, body:'<p><strong>Share Links</strong> are a great way to share one or more tunes in an email or social media post.</p><p>Opening a share link can display the tune or tunes in a <strong>full-screen</strong> view, open them in the <strong>Editor</strong>, or open them in the <strong>Player</strong>.</p><p>For this tour, we’ll create a share link that opens in the <strong>Player</strong>.</p>' },
+      { title:"Create a Share Link",cardWidth:530, body:'<p>This tour will create a share link for <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong> that opens in the <strong>Player</strong>.</p><p>Click <strong>Next</strong> to add the three example tunes.</p>', afterNext:function(){ return addGuidedTourTunes(true); } },
+      { title:"Open Sharing", selector:"#togglesharecontrols", body:'<p>Click <strong>Next</strong> to open the Sharing Controls dialog. The generated share URL will appear there.</p>', afterNext:function(){ clickIfPresent("#togglesharecontrols"); return waitMs(700); } },
+      { title:"Make the Share Link Open in the Player", cardWidth:530, selector:"#addautoplay", body:'<p>Clicking <strong>Add Auto-Play</strong> makes the share link open directly in the Player.</p>', afterNext:function(){ clickIfPresent("#addautoplay"); return waitMs(300); } },
+      { title:"Copy Share URL to the Clipboard", selector:"#copyurl", body:'<p>Click <strong>Next</strong> to copy the share link to the clipboard.</p>', afterNext:function(){ clickIfPresent("#copyurl"); return waitMs(300); } },
+      { title:"Test Share URL in a New Tab", selector:"#testurl", body:'<p>The share link is now on the clipboard and can be pasted into an email, message, or social media post.</p><p>Clicking <strong>Test Share URL</strong> opens the share link in a new browser tab so you can see exactly what recipients will see.</p><p>Click <strong>Done</strong> to test the share URL and finish the tour.</p>', afterDone:function(){ clickIfPresent("#testurl"); } }
+    ];
+
+    return [];
+  }
+
+  async function runAdditionalGuidedTour(tourId) {
+    if (gTourRunning) return;
+    if (typeof isPureDesktopBrowser === "function" && !isPureDesktopBrowser()) return;
+    injectGuidedTourStyles();
+    gTourUseLongerArrows = true;
+    gTourRunning = true;
+    try {
+      var steps = getAdditionalGuidedTourSteps(tourId);
+      for (var index=0; index<steps.length; index++) {
+        var step=steps[index];
+        var action=await showGuidedTourStepCard(step,index,steps.length);
+        if (action === "next") {
+          if (typeof step.afterNext === "function") await step.afterNext();
+          continue;
+        }
+        if (action === "done" && typeof step.afterDone === "function") await step.afterDone();
+        break;
+      }
+    } finally {
+      clearGuidedTourUI();
+      gTourUseLongerArrows = false;
+      gTourRunning=false;
+    }
+  }
+
+  async function showGuidedTourSelector() {
+    if (gTourRunning) return;
+    if (typeof isPureDesktopBrowser === "function" && !isPureDesktopBrowser()) return;
+
+    injectGuidedTourStyles();
+    gTourRunning = true;
+
+    try {
+      var sideBySideReady = await waitForGuidedTourSideBySide();
+      if (!sideBySideReady) return;
+
+      clearGuidedTourUI();
+
+      var overlay = document.createElement("div");
+      overlay.className = "abc-guided-tour-overlay";
+      document.body.appendChild(overlay);
+      gTourOverlay = overlay;
+
+      var card = document.createElement("div");
+      card.className = "abc-guided-tour-card abc-guided-tour-selector";
+      card.innerHTML = '<h2>Guided Tours</h2><p>These step-by-step guided tours walk you through the most commonly used features and workflows in the <strong>ABC Transcription Tools</strong>:</p>' +
+        '<div class="abc-guided-tour-tour-list">' +
+        '<button data-tour="first">Build Your First ABC Tunebook</button>' +
+        '<button data-tour="playing">Playing Tunes</button>' +
+        '<button data-tour="mp3">Export MP3 Audio File</button>' +
+        '<button data-tour="trainer">Practice Tunes with the Tune Trainer</button>' +
+        '<button data-tour="pdf">Export PDF with Title Page, Table of Contents, Index, and Play Links</button>' +
+        '<button data-tour="website">Export Tunebook Website</button>' +
+        '<button data-tour="share">Creating a Share Link</button>' +
+        '</div><div class="abc-guided-tour-card-footer"><div class="abc-guided-tour-buttons"><button type="button" data-action="cancel">Cancel</button></div></div>';
+
+      document.body.appendChild(card);
+      gTourCard = card;
+      card.style.left = Math.max(12, Math.round((window.innerWidth - card.offsetWidth) / 2)) + "px";
+      card.style.top = "100px";
+
+      Array.prototype.forEach.call(card.querySelectorAll("button[data-tour]"), function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-tour");
+          clearGuidedTourUI();
+
+          if (id === "first") runABCFirstUseGuidedTour();
+          else runAdditionalGuidedTour(id);
+        });
+      });
+
+      card.querySelector('[data-action="cancel"]').addEventListener("click", clearGuidedTourUI);
+      overlay.addEventListener("click", clearGuidedTourUI, { once: true });
+    }
+    finally {
       gTourRunning = false;
     }
   }
@@ -730,6 +1045,7 @@
   }
 
   window.StartABCFirstUseGuidedTour = runABCFirstUseGuidedTour;
+  window.ShowABCGuidedTourSelector = showGuidedTourSelector;
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
