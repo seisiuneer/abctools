@@ -898,7 +898,7 @@
 
   function getAdditionalGuidedTourSteps(tourId) {
     if (tourId === "playing") return [
-      { title:"Playing Tunes", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates the built-in tune player using <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong>.</p>', afterNext:function(){ return addGuidedTourTunes(true); } },
+      { title:"Playing Your Tunes", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates the built-in tune player using <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong>.</p>', afterNext:function(){ return addGuidedTourTunes(true); } },
       { title:"Open the Player", cardTargetGap:150, cardWidth:560, selector:"#playbutton", body:'<p>Click <strong>Next</strong> to open <strong>Cooley’s</strong> in the Player.</p>', afterNext:function(){ clickIfPresent("#playbutton"); return waitMs(1200); } },
       { title:"Play and Stop Cooley’s", cardTargetGap:75, cardWidth:560, target:getPlayerPlayButton, body:'<p>Click the <strong>Play</strong> button to start playing <strong>Cooley’s</strong>. Click it again to stop playback.</p><p>Click the <strong>Tempo Percentage</strong> control on the right side of the control bar to change the tempo.</p><p>When the tune is stopped, click <strong>Next</strong>.</p>' },
       { title:"Go to The Kesh", cardTargetGap:150, cardWidth:560, target:function(){ return document.getElementById("abcplayer_nextbutton"); }, body:'<p>You can move through the tunebook using the previous- and next-tune buttons.</p><p>Click <strong>Next</strong> and the tour will use the <strong>next tune</strong> button to go to <strong>The Kesh</strong>.</p>', afterNext:function(){ clickIfPresent("#abcplayer_nextbutton"); return waitMs(500); } },
@@ -906,7 +906,7 @@
     ];
 
     if (tourId === "mp3") return [
-      { title:"Export MP3 Audio File", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates how to export a tune as an MP3 audio file with reverb.</p><p>Click <strong>Next</strong> to add <strong>Cooley’s</strong> to the editor.</p>', afterNext:function(){ return addGuidedTourTunes(false); } },
+      { title:"Export an MP3 Audio File", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates how to export a tune as an MP3 audio file with reverb.</p><p>Click <strong>Next</strong> to add <strong>Cooley’s</strong> to the editor.</p>', afterNext:function(){ return addGuidedTourTunes(false); } },
       { title:"Open the Player", cardTargetGap:150, cardWidth:560, selector:"#playbutton", body:'<p>Click <strong>Next</strong> to open <strong>Cooley’s</strong> in the <strong>Player</strong>.</p>', afterNext:function(){ clickIfPresent("#playbutton"); return waitMs(1200); } },
       { title:"Open Audio Export", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("abcplayer_exportbutton");}, beforeResolveTarget:function(){return waitForElement("#abcplayer_exportbutton",2500);}, body:'<p>Click <strong>Next</strong> to open <strong>Export Audio, Image, or PDF</strong>.</p>', afterNext:function(){ clickIfPresent("#abcplayer_exportbutton"); return waitMs(500); } },
       { title:"Export MP3 File with Reverb", cardTargetGap:150, cardWidth:600, target:function(){return document.getElementById("abcplayer_mp3reverbbutton");}, beforeResolveTarget:function(){return waitForElement("#abcplayer_mp3reverbbutton",2500);}, body:'<p>The tune audio will be encoded as an <strong>MP3 file with reverb</strong> and saved in the browser’s default <strong>Downloads</strong> directory.</p><p>Click <strong>Done</strong> to start creating and saving the MP3 file.</p>', afterDone:function(){ clickIfPresent("#abcplayer_mp3reverbbutton"); } }
@@ -921,7 +921,7 @@
     ];
 
     if (tourId === "pdf") return [
-      { title:"Export PDF with Tunebook Features", cardWidth:560, body:'<p>This tour creates a three-tune PDF tunebook with a title page, hyperlinked Table of Contents and Index, page header, and clickable playback links.</p>' },
+      { title:"Export a PDF with Tunebook Features", cardWidth:560, body:'<p>This tour creates a three-tune PDF tunebook with a title page, hyperlinked Table of Contents and Index, page header, and clickable playback links.</p>' },
       { title:"Add Three Example Tunes",cardWidth:530, body:'<p>The Export PDF tour will add <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong> to the ABC editor.</p><p>Click <strong>Next</strong> to add the three example tunes.</p>', afterNext:function(){ return addGuidedTourTunes(true, true); } },
       { title:"Open Export PDF", selector:"#saveaspdf", body:'<p>Click <strong>Next</strong> to open the <strong>Export PDF Tunebook</strong> dialog.</p>', afterNext:function(){ PDFExportDialog(); return waitMs(650); } },
       { title:"Open Inject All PDF Tunebook Features", cardWidth:530, selector:"#tunebookbuilder", body:'<p>Click <strong>Next</strong> to open <strong>Inject All PDF Tunebook Features</strong>.</p>', afterNext:function(){ clickIfPresent("#tunebookbuilder"); return waitMs(650); } },
@@ -939,7 +939,7 @@
     ];
 
     if (tourId === "website") return [
-      { title:"Export Tunebook Website", cardWidth:560, body:'<p>This tour sends the three example tunes to the <strong>abcjs-eskin Website Builder</strong> where you can fully configure and export the website.</p>' },
+      { title:"Export a Tunebook Website", cardWidth:560, body:'<p>This tour sends the three example tunes to the <strong>abcjs-eskin Website Builder</strong> where you can fully configure and export the website.</p>' },
       { title:"Add Three Example Tunes", cardWidth:530, body:'<p>The Export Website tour will add <strong>Cooley’s</strong>, <strong>The Kesh</strong>, and <strong>Alexander’s</strong> to the ABC editor.</p><p>Click <strong>Next</strong> to add the three example tunes.</p>', afterNext:function(){ return addGuidedTourTunes(true, true); } },
       { title:"Open Export Website", selector:"#saveaswebsite", body:'<p>Click <strong>Next</strong> to open Website Export.</p>', afterNext:function(){ clickIfPresent("#saveaswebsite"); return waitMs(700); } },
       { title:"Open abcjs-eskin Website Builder", target:function(){return document.getElementById("external_abcjs_eskin_website") || document.querySelector('[title*="Website Builder"]');}, body:'<p>Using this ABC, you can configure, preview, and export a complete, mobile-ready, printable website in a variety of musical genre-specific visual themes, with considerable control over tune navigation and playback instruments.</p><p>Be sure to try its guided tour for an introduction to its major features.</p><p>Click <strong>Done</strong> to open the <strong>abcjs-eskin Website Builder</strong>.</p>', afterDone:function(){ clickIfPresent(document.getElementById("external_abcjs_eskin_website") || document.querySelector('[title*="Website Builder"]')); } }
@@ -1005,12 +1005,12 @@
       card.innerHTML = '<h2>Guided Tours</h2><p>These step-by-step guided tours walk you through the most commonly used features and workflows in the <strong>ABC Transcription Tools</strong>:</p>' +
         '<div class="abc-guided-tour-tour-list">' +
         '<button data-tour="first">Build Your First ABC Tunebook</button>' +
-        '<button data-tour="playing">Playing Tunes</button>' +
-        '<button data-tour="mp3">Export MP3 Audio File</button>' +
+        '<button data-tour="playing">Playing Your Tunes</button>' +
+        '<button data-tour="mp3">Export an MP3 Audio File</button>' +
         '<button data-tour="trainer">Practice Tunes with the Tune Trainer</button>' +
-        '<button data-tour="pdf">Export PDF with Title Page, Table of Contents, Index, and Play Links</button>' +
-        '<button data-tour="website">Export Tunebook Website</button>' +
-        '<button data-tour="share">Creating a Share Link</button>' +
+        '<button data-tour="pdf">Export a PDF with Title Page, Table of Contents, Index, and Play Links</button>' +
+        '<button data-tour="website">Export a Tunebook Website</button>' +
+        '<button data-tour="share">Creating a Share Link for Email or Social Media Posts</button>' +
         '</div><div class="abc-guided-tour-card-footer"><div class="abc-guided-tour-buttons"><button type="button" data-action="cancel">Cancel</button></div></div>';
 
       document.body.appendChild(card);
