@@ -1053,10 +1053,15 @@
 
     if (tourId === "trainer") return [
       { title:"Practice Tunes with the Tune Trainer", cardTargetGap:150, cardWidth:560, body:'<p>This tour demonstrates progressive-speed practice in the <strong>Tune Trainer</strong> using <strong>Cooley’s</strong>.</p>', afterNext:function(){ return addGuidedTourTunes(false); } },
-      { title:"Open Tune Trainer", cardTargetGap:150, cardWidth:560, selector:"#tunetrainerbutton", body:'<p>Click <strong>Next</strong> to open the <strong>Tune Trainer</strong>.</p>', afterNext:function(){ clickIfPresent("#tunetrainerbutton"); return waitMs(1400); } },
+      { title:"Open Tune Trainer", cardTargetGap:150, cardWidth:560, selector:"#tunetrainerbutton", body:'<p>Click <strong>Next</strong> to open the <strong>Tune Trainer</strong>.</p>', afterNext:function(){ clickIfPresent("#tunetrainerbutton"); return waitMs(1200); } },
       { title:"Configure Tune Trainer Speed Settings", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looper_start_percent");}, body:'<p>The tour will set the starting tempo to <strong>50%</strong>, ending tempo to <strong>100%</strong>, tempo increment to <strong>10%</strong>, increment after <strong>1</strong> time through the tune, and disable the countdown.</p>', afterNext:function(){ setControlValue("looper_start_percent","50","input"); setControlValue("looper_end_percent","100","input"); setControlValue("looper_increment","10","input"); setControlValue("looper_count","1","input"); setControlValue("looper_docountdown",false); return waitMs(300); } },
-      { title:"Apply Settings and Reload", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looperreset");}, body:'<p>Changed <strong>Tune Trainer</strong> settings must be applied before playback.</p><p>Click <strong>Apply Changes and Reload</strong>. After the <strong>Tune Trainer</strong> reloads, click <strong>Next</strong>.</p>', afterNext:function(){ return waitMs(500); } },
-      { title:"Run a Training Session", cardTargetGap:150, cardWidth:620, target:getPlayerPlayButton, beforeResolveTarget:function(){ return waitForElement("button.abcjs-midi-start",2500); }, body:'<p>Click the <strong>Play</strong> button to start a looping tune training session.</p><p>Each time through the tune, playback speeds up by 10% until it reaches 100%.</p><p>Click <strong>Done</strong> when you are ready to end the tour.</p>' }
+      { title:"Apply Settings and Reload", cardTargetGap:150, cardWidth:560, target:function(){return document.getElementById("looperreset");}, body:'<p>Changed <strong>Tune Trainer</strong> settings must be applied before playback.</p><p>Click <strong>Next</strong> and the tour will press <strong>Apply Changes and Reload</strong> for you.</p>', afterNext:function(){ clickIfPresent("#looperreset"); return waitMs(1200); } },
+      { title:"Run a Training Session", cardTargetGap:150, cardWidth:620, target:getPlayerPlayButton, beforeResolveTarget:function(){ return waitForElement("button.abcjs-midi-start",2500); }, body:'<p>Click the <strong>Play</strong> button to start a looping tune training session.</p><p>Each time through the tune, playback speeds up by 10% until it reaches 100%.</p><p>Stop playback when you are ready, then click <strong>Next</strong> to learn about phrase-by-phrase practice.</p>' },
+      { title:"Practice with the Phrase Builder", cardTargetGap:150, cardWidth:650, target:function(){return document.getElementById("trainer_phrase_builder");}, beforeResolveTarget:function(){return waitForElement("#trainer_phrase_builder",2500);}, body:'<p>The <strong>Phrase Builder</strong> can break a tune into short phrases for <strong>call-and-response</strong> practice.</p><p>Each phrase is followed by the same number of measures of rests, giving you time to play the phrase back yourself.</p><p>Click <strong>Next</strong> to open the <strong>Phrase Builder</strong>.</p>', afterNext:function(){ clickIfPresent("#trainer_phrase_builder"); return waitMs(700); } },
+      { title:"Set the Phrase Length and Rest Padding", cardTop:80, cardWidth:650, target:function(){return document.getElementById("phraseLength") || document.querySelector('[name="phraseLength"]');}, beforeResolveTarget:function(){return waitForElement("#phraseLength, [name='phraseLength']",2500);}, body:'<p>The tour will set the phrase length to <strong>2 measures</strong> and the additional full-measure rest padding to <strong>0</strong>.</p><p>This creates two-measure phrases followed by two measures of rests.</p><p>Click <strong>Next</strong> to apply these settings.</p>', afterNext:function(){ setControlValue("phraseLength","2","input"); setControlValue("phrasePadding","0","input"); return waitMs(300); } },
+      { title:"Build the Phrase-by-Phrase Tune", cardTop:80, cardWidth:620, target:function(){return findVisibleButtonByLabel("Build");}, body:'<p>Click <strong>Next</strong> and the tour will press <strong>Build</strong>.</p><p>The Phrase Builder will close and the Tune Trainer will reload with Cooley’s broken into two-measure phrases followed by two measures of rests.</p>', afterNext:function(){ var buildButton=findVisibleButtonByLabel("Build"); if(buildButton) buildButton.click(); return waitMs(1200); } },
+      { title:"Enable the Metronome", cardTargetGap:150, cardWidth:650, target:function(){return document.getElementById("looper_metronomebutton");}, beforeResolveTarget:function(){return waitForElement("#looper_metronomebutton",3500);}, shouldSkip:async function(){ var button=await waitForElement("#looper_metronomebutton",3500); return !button || button.value !== "Enable Metronome"; }, body:'<p>Phrase-by-phrase call-and-response practice works best with the <strong>metronome</strong> enabled so you can keep steady time during both the played phrases and the rests.</p><p>Click <strong>Next</strong> and the tour will enable the metronome for you.</p>', afterNext:function(){ var button=document.getElementById("looper_metronomebutton"); if(button && button.value === "Enable Metronome") button.click(); return waitMs(350); } },
+      { title:"Practice the Tune Phrase by Phrase", cardTargetGap:150, cardWidth:650, target:getPlayerPlayButton, beforeResolveTarget:function(){return waitForElement("button.abcjs-midi-start",3500);}, body:'<p>The tune is now arranged for call-and-response practice: listen to each two-measure phrase, then play it back during the following two measures of rests.</p><p>With the metronome keeping steady time, click the <strong>Play</strong> button to practice the phrases using the same increasing tempo settings as before.</p><p>Click <strong>Done</strong> when you are ready to end the tour.</p>' }
     ];
 
     if (tourId === "backupchords") return [
@@ -1186,6 +1191,19 @@
       var steps = getAdditionalGuidedTourSteps(tourId);
       for (var index=0; index<steps.length; index++) {
         var step=steps[index];
+
+        if (typeof step.shouldSkip === "function") {
+          if (typeof step._guidedTourSkip === "undefined") {
+            step._guidedTourSkip = !!(await step.shouldSkip());
+          }
+
+          if (step._guidedTourSkip) {
+            continue;
+          }
+        }
+
+        // Use the original fixed step positions and total so the numbering
+        // never changes after a conditional step is evaluated.
         var action=await showGuidedTourStepCard(step,index,steps.length);
         if (action === "next") {
           if (typeof step.afterNext === "function") await step.afterNext();
