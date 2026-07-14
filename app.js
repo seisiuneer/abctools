@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3297_071326_2000";
+var gVersionNumber = "3298_071426_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_12jul2026a;
+        var updatePresented = localStorage.sawUpdate_14jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_12jul2026a = true;
+          localStorage.sawUpdate_14jul2026 = true;
 
         }
 
@@ -57193,14 +57193,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 14 July 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New: Interactive Guided Tours</strong> (desktop browsers only)</p>';
-  modal_msg += '<p style="font-size:12pt;">Explore eight step-by-step guided tours that walk you through the ABC Transcription Tools’ most popular features and workflows.</p>';
+  modal_msg += '<p style="font-size:12pt;">Click the <strong>✦ Guided Tours ✦</strong> button on the launch screen to explore eight step-by-step guided tours that walk you through the ABC Transcription Tools’ most popular features and workflows.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -57230,33 +57230,38 @@ function showWelcomeScreen() {
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "showWelcomeScreen");
 
-  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to My ABC Transcription Tools!</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please check out the <strong><a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a></strong> for complete instructions and demo videos on how to use the tools.</p>';
-  if (gIsQuickEditor) {
-    modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">The Quick Editor is optimized for editing and playback of larger tunebooks.</p>';
-  }
-  else{
+  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Welcome to the ABC Transcription Tools!</p>';
+
+  if (!gIsQuickEditor){
     if (isPureDesktopBrowser()){
-      modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the <strong>Guided Tour</strong> button for a step-by-step walkthrough of using the tool to create a simple PDF tunebook.</p>';
+      modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click the <strong>✦ Guided Tours ✦</strong> button for step-by-step walkthroughs of the most common ABC playback and tunebook creation workflows.</p>';
     }
+  }
+
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Please check out the <strong><a href="userguide.html" target="_blank" title="ABC Transcription Tools User Guide">User Guide</a></strong> for complete instructions and demo videos on how to use the tools.</p>';
+
+  if (gIsQuickEditor) {
+    modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">The <strong>Quick Editor</strong> is optimized for editing and playback of larger tunebooks.</p>';
   }
 
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">To begin, type or paste tunes in ABC format into the text area.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Notation updates instantly as you make changes to the ABC.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Open" to open ABC, MusicXML, BWW, or MIDI files from your system.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Add" to add ABC MusicXML, BWW, or MIDI files or tune templates.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click <strong>Open</strong> or <strong>Add</strong> to open or add ABC, MusicXML, BWW, or MIDI files from your system.</p>';
   if (isPureDesktopBrowser()) {
     modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">You may drag-and-drop ABC, MusicXML, BWW, or MIDI files onto the editor area to add them.</p>';
   }
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">Click <strong>Search for Tunes</strong> to find tunes by name.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click the Zoom-Out arrows at the top-right to view the notation full screen.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click "Save" to save all the ABC text to an ABC text file.</p>';
+   modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click <strong>Play</strong> to play the current tune.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click <strong>Train</strong> to practice the current tune increasing tempos.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click the <strong>Zoom-Out</strong> arrows at the top-right to view the notation full screen.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click <strong>Save</strong> to save all the ABC to an ABC text file.</p>';
+
   if (!gIsQuickEditor) {
-    modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click "Export PDF" to export your tunebook in PDF format.</p>';
-    modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click "Export Website" to export your tunebook as a website.</p>';
+    modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click <strong>Export PDF</strong> to export your tunebook in PDF format.</p>';
   }
-  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click "Play" to play or train on the tune currently being edited.</p>';
+  
+  modal_msg += '<p style="font-size:12pt;line-height:16pt;font-family:helvetica">• Click <strong>Export Website</strong> to export your tunebook as a website.</p>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
@@ -63883,13 +63888,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_12jul2026a;
+    var updatePresented = localStorage.sawUpdate_14jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_12jul2026a = true;
+      localStorage.sawUpdate_14jul2026 = true;
 
     }
 
