@@ -114,11 +114,83 @@
       }
 
 
-      .abc-guided-tour-tour-list { display:grid; grid-template-columns:1fr; gap:10px; margin-top:16px; }
-      .abc-guided-tour-tour-list button { padding:10px 14px; text-align:left; border:1px solid #aaa; border-radius:6px; background:#e5e5e5; color:#000; font-size:12pt; cursor:pointer; }
-      .abc-guided-tour-tour-list button:hover { background:#d5d5d5; }
-      .abc-guided-tour-selector { width:min(615px, calc(100vw - 24px)); }
-      .abc-guided-tour-selector p { font-size:13pt; line-height:19pt; }
+      .abc-guided-tour-tour-list {
+        display:grid;
+        grid-template-columns:1fr;
+        gap:10px;
+        margin-top:18px;
+      }
+
+      .abc-guided-tour-tour-list button {
+        position:relative;
+        padding:12px 16px;
+        text-align:left;
+        border:1px solid #a7c1cf;
+        border-radius:10px;
+        background:linear-gradient(180deg, #ffffff 0%, #f9fcfd 56%, #f1f7fa 100%);
+        color:#17384a;
+        font-size:12pt;
+        font-weight:600;
+        cursor:pointer;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 2px 5px rgba(40,85,108,.12);
+        transition:transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease, background 120ms ease;
+      }
+
+      .abc-guided-tour-tour-list button:hover {
+        transform:translateY(-1px);
+        border-color:#6f9db3;
+        background:linear-gradient(180deg, #ffffff 0%, #f6fafc 50%, #ebf4f8 100%);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,1), 0 5px 10px rgba(40,85,108,.17);
+      }
+
+      .abc-guided-tour-tour-list button:active {
+        transform:translateY(0);
+        box-shadow:inset 0 1px 2px rgba(40,85,108,.10), 0 1px 3px rgba(40,85,108,.12);
+      }
+
+      .abc-guided-tour-selector {
+        width:min(640px, calc(100vw - 24px));
+        background:white;
+        border:1px solid #b4cad5;
+        border-radius:18px;
+        box-shadow:0 18px 42px rgba(40,82,105,.21), inset 0 1px 0 rgba(255,255,255,.95);
+        padding:28px;
+      }
+
+      .abc-guided-tour-selector h2 {
+        text-align:center;
+        margin-bottom:12px;
+        color:#245a73 !important;
+        font-size:1.75em;
+        letter-spacing:.2px;
+        text-shadow:0 1px 0 #fff;
+      }
+
+      .abc-guided-tour-selector > p {
+        max-width:560px;
+        margin:0 auto 6px auto;
+        text-align:center;
+        font-size:13pt;
+        line-height:19pt;
+        color:#2b3f49 !important;
+      }
+
+      .abc-guided-tour-selector .abc-guided-tour-card-footer {
+        border-top:0;
+        margin-top:18px;
+        padding-top:0;
+      }
+
+      .abc-guided-tour-selector .abc-guided-tour-card-footer button {
+        min-width:110px;
+        border-color:#aaa;
+        background:linear-gradient(180deg, #f8f8f8 0%, #e6e6e6 100%);
+        box-shadow:inset 0 1px 0 #fff, 0 2px 4px rgba(0,0,0,.10);
+      }
+
+      .abc-guided-tour-selector .abc-guided-tour-card-footer button:hover {
+        background:linear-gradient(180deg, #ffffff 0%, #dddddd 100%);
+      }
 
       .abc-guided-tour-target-highlight {
         position: relative;
@@ -1239,9 +1311,9 @@
 
       var card = document.createElement("div");
       card.className = "abc-guided-tour-card abc-guided-tour-selector";
-      card.innerHTML = '<h2>Guided Tours</h2><p>These step-by-step guided tours walk you through the most commonly used features and workflows in the <strong>ABC Transcription Tools</strong>:</p>' +
+      card.innerHTML = '<h2>✦ Guided Tours ✦</h2><p>Choose a tour and explore the most popular features of the <strong>ABC Transcription Tools</strong> step by step.</p>' +
         '<div class="abc-guided-tour-tour-list">' +
-        '<button data-tour="first">Build Your First ABC Tunebook</button>' +
+        '<button data-tour="first">Getting Started – Build Your First ABC Tunebook</button>' +
         '<button data-tour="playing">Playing Your Tunes</button>' +
         '<button data-tour="mp3">Export an MP3 Audio File</button>' +
         '<button data-tour="trainer">Practice Tunes with the Tune Trainer</button>' +
