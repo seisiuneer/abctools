@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABC Sustained Note Limiter</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ABC Sustained Note Limiter" />
+    <meta property="og:description" content="ABC Sustained Note Limiter" />
+    <meta
+      property="og:url"
+      content="https://michaeleskin.com/tools/abc_sustained_note_limiter.html"
+    />
+    <meta property="og:site_name" content="ABC Sustained Note Limiter" />
+    <meta
+      property="og:image"
+      content="https://michaeleskin.com/abctools/img/abc-icon.png"
+    />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta
+      name="msapplication-TileImage"
+      content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bd: 1px solid rgba(127, 127, 127, 0.35);
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        color: #000;
+        background: #fff;
+      }
+      body {
+        padding: 18px 32px 150px;
+      }
+      .app {
+        max-width: 1500px;
+        margin: auto;
+      }
+      .hero {
+        border: 1px solid rgba(127, 127, 127, 0.22);
+        border-radius: 18px;
+        padding: 18px 20px 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(244, 248, 255, 0.95),
+          rgba(252, 252, 252, 0.98)
+        );
+        margin-bottom: 14px;
+      }
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(24px, 2vw + 16px, 34px);
+      }
+      .hero p {
+        margin: 10px 0 0;
+        line-height: 1.5;
+        color: #333;
+      }
+      .main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .column {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+      }
+      .card {
+        border: var(--bd);
+        border-radius: 12px;
+        padding: 14px;
+        min-width: 0;
+      }
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 20px;
+      }
+      .inputHeader {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .inputHeader h2 {
+        margin: 0;
+      }
+      .fileWrap {
+        flex: 1;
+        min-width: 260px;
+      }
+      input,
+      button,
+      textarea {
+        font: inherit;
+      }
+      input[type="file"] {
+        width: 100%;
+      }
+      input[type="file"]::file-selector-button,
+      button {
+        border: 1px solid #d3dbe7;
+        background: #f0f3f8;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      input[type="file"]::file-selector-button {
+        margin-right: 12px;
+        background: #eef7f1;
+        border-color: #c9ded1;
+      }
+      button.primary {
+        background: #e8f1ff;
+        border-color: #9dbaf2;
+      }
+      button:disabled {
+        opacity: 0.42;
+        cursor: default;
+      }
+      .taWrap {
+        border: var(--bd);
+        border-radius: 10px;
+        height: 52vh;
+        min-height: 360px;
+        display: flex;
+        overflow: hidden;
+        margin-top: 12px;
+      }
+      .taWrap textarea {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        resize: none;
+        padding: 12px;
+        font-family: var(--mono);
+        line-height: 1.35;
+        overflow: auto;
+      }
+      .buttonRow {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+      .buttonRow button {
+        flex: 1 1 180px;
+      }
+      .settings {
+        background: linear-gradient(
+          180deg,
+          rgba(244, 248, 255, 0.82),
+          rgba(252, 252, 252, 0.96)
+        );
+        border-radius: 18px;
+      }
+      .settingLine {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .settingLine label {
+        font-weight: 650;
+      }
+      .settingLine input {
+        width: 90px;
+        border: var(--bd);
+        border-radius: 10px;
+        padding: 9px 10px;
+      }
+      .note {
+        font-size: 0.95em;
+        color: #444;
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+      .status {
+        font-family: var(--mono);
+        white-space: pre-wrap;
+        border: var(--bd);
+        border-radius: 10px;
+        padding: 10px;
+        min-height: 48px;
+        line-height: 1.45;
+      }
+      .footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        border-top: var(--bd);
+        padding: 12px 32px calc(12px + env(safe-area-inset-bottom));
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+      }
+      .footer button {
+        flex: 1;
+      }
+      .drag {
+        outline: 3px solid rgba(157, 186, 242, 0.4);
+        background: #f7faff;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 100;
+      }
+      .modalBox {
+        background: #fff;
+        max-width: 760px;
+        max-height: 80vh;
+        overflow: auto;
+        margin: 8vh auto;
+        padding: 24px;
+        border-radius: 12px;
+      }
+      .modalBox h2 {
+        margin-top: 0;
+      }
+      .modalBox li {
+        margin-bottom: 8px;
+        line-height: 1.45;
+      }
+      .modalBox button {
+        width: 100%;
+        margin-top: 14px;
+      }
+      @media (max-width: 980px) {
+        body {
+          padding: 16px 16px 150px;
+        }
+        .main {
+          grid-template-columns: 1fr;
+        }
+        .taWrap {
+          height: 42vh;
+          min-height: 300px;
+        }
+        .footer {
+          padding-left: 16px;
+          padding-right: 16px;
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 600px) {
+        .buttonRow {
+          flex-direction: column;
+        }
+        .buttonRow button {
+          width: 100%;
+        }
+        .fileWrap {
+          min-width: 0;
+        }
+        .modalBox {
+          margin: 12px;
+          max-height: calc(100vh - 24px);
+        }
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="daypilot-modal.min-3.10.1.js?v=1"
+    ></script>
+  </head>
+  <body>
+    <div class="app">
+      <section class="hero">
+        <h1>ABC Sustained Note Limiter</h1>
+        <p>
+          Limits tied notes in each ABC voice to a specified maximum duration by
+          removing only ties that cross measure lines.
+        </p>
+      </section>
+      <div class="main">
+        <div class="column">
+          <section class="card settings">
+            <h2>Limiter Setting</h2>
+            <div class="settingLine">
+              <label for="maxSeconds">Maximum sustained duration:</label
+              ><input
+                id="maxSeconds"
+                type="number"
+                min="0.1"
+                step="0.1"
+                value="10"
+              /><span>seconds</span>
+            </div>
+            <div class="note">
+              Each tune is processed independently using its own current
+              <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. Tempo, meter,
+              unit-note-length, and voice changes within a tune are honored.
+            </div>
+          </section>
+          <section class="card" id="inputCard">
+            <div class="inputHeader">
+              <h2>Input ABC</h2>
+              <div class="fileWrap">
+                <input
+                  id="fileInput"
+                  type="file"
+                  accept=".abc,.txt,.ABC,.TXT"
+                  multiple
+                />
+              </div>
+            </div>
+            <div class="taWrap">
+              <textarea
+                id="input"
+                spellcheck="false"
+                placeholder="Paste ABC notation here, or open one or more ABC files."
+              ></textarea>
+            </div>
+            <div class="buttonRow">
+              <button id="processButton" class="primary">
+                Limit Sustained Notes</button
+              ><button id="clearButton">Clear</button>
+            </div>
+          </section>
+        </div>
+        <div class="column">
+          <section class="card">
+            <h2>Processed ABC</h2>
+            <div class="taWrap">
+              <textarea id="output" spellcheck="false" readonly></textarea>
+            </div>
+            <div class="buttonRow">
+              <button id="copyButton" disabled>Copy Results</button
+              ><button id="saveButton" disabled>Save ABC File</button
+              ><button id="sendButton" disabled>
+                Send to ABC Transcription Tools
+              </button>
+            </div>
+          </section>
+          <section class="card">
+            <h2>Status</h2>
+            <div id="status" class="status">Enter or open ABC notation.</div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <button id="instructionsButton">Instructions</button
+      ><button id="openToolsButton">Open ABC Transcription Tools</button>
+    </div>
+    <div id="modal" class="modal">
+      <div class="modalBox">
+        <h2>ABC Sustained Note Limiter</h2>
+        <ul>
+          <li>
+            Paste ABC notation into the input area or open one or more
+            <b>.abc</b> or <b>.txt</b> files.
+          </li>
+          <li>
+            Click <b>Limit Sustained Notes</b>. Every tune and voice is analyzed
+            independently.
+          </li>
+          <li>
+            A tie is removed only when it carries a matching note or chord tone
+            across a measure line and retaining the next tied segment would
+            exceed the selected duration.
+          </li>
+          <li>
+            Tempo is read from <b>Q:</b>. Meter and default note length are read
+            from <b>M:</b> and <b>L:</b>. Inline field changes are supported.
+          </li>
+          <li>
+            If no usable tempo is present, that tune is left unchanged and
+            reported in the status.
+          </li>
+          <li>
+            The output preserves all input text except for tie hyphens that must
+            be removed.
+          </li>
+        </ul>
+        <button id="closeModal">Close</button>
+      </div>
+    </div>
+    <script>
+      "use strict";
+      const inputEl = document.getElementById("input"),
+        outputEl = document.getElementById("output"),
+        statusEl = document.getElementById("status");
+      let saveFilename = "sustained_note_limited.abc",
+        shareURL = "";
+      const $ = (id) => document.getElementById(id);
+      function esc(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+      function splitTunes(text) {
+        const re = /^X\s*:/gm,
+          m = [];
+        let x;
+        while ((x = re.exec(text))) m.push(x.index);
+        if (!m.length) return [{ start: 0, end: text.length, text }];
+        const out = [];
+        if (m[0] > 0)
+          out.push({
+            start: 0,
+            end: m[0],
+            text: text.slice(0, m[0]),
+            preamble: true,
+          });
+        for (let i = 0; i < m.length; i++)
+          out.push({
+            start: m[i],
+            end: i + 1 < m.length ? m[i + 1] : text.length,
+            text: text.slice(m[i], i + 1 < m.length ? m[i + 1] : text.length),
+          });
+        return out;
+      }
+      function frac(s, def) {
+        if (!s) return def;
+        const m = String(s)
+          .trim()
+          .match(/^(\d+)\s*\/\s*(\d+)$/);
+        return m && +m[2] ? +m[1] / +m[2] : def;
+      }
+      function meterValue(s) {
+        s = String(s || "").trim();
+        if (/^C\|?$/.test(s)) return s === "C|" ? 2 / 2 : 4 / 4;
+        return frac(s, 4 / 4);
+      }
+      function defaultLForMeter(m) {
+        return m < 0.75 ? 1 / 16 : 1 / 8;
+      }
+      function parseTempo(q, currentL) {
+        q = String(q || "")
+          .replace(/"[^"]*"/g, "")
+          .trim();
+        let m = q.match(
+          /((?:\d+\/\d+)(?:\s*\+\s*\d+\/\d+)*)\s*=\s*(\d+(?:\.\d+)?)/,
+        );
+        if (m) {
+          const beat = m[1].split("+").reduce((a, v) => a + frac(v, 0), 0);
+          return beat > 0 ? { beat, bpm: +m[2] } : null;
+        }
+        m = q.match(/^(\d+(?:\.\d+)?)$/);
+        return m ? { beat: currentL, bpm: +m[1] } : null;
+      }
+      function durationFactor(s) {
+        if (!s) return 1;
+        if (/^\d+$/.test(s)) return +s;
+        let m = s.match(/^(\d*)\/(\d*)$/);
+        if (m) return (m[1] ? +m[1] : 1) / (m[2] ? +m[2] : 2);
+        return 1;
+      }
+      function pitchKey(tok) {
+        return tok.replace(/(\d+\/\d+|\d+\/|\/\d+|\d+|\/)+$/, "");
+      }
+      function chordKeys(tok) {
+        const inner = tok.slice(1, tok.lastIndexOf("]"));
+        const re =
+          /(?:\^\^|__|\^|_|=)?[A-Ga-g][,']*(?:\d+\/\d+|\d+\/|\/\d+|\d+|\/)?/g;
+        return [...inner.matchAll(re)]
+          .map((m) => pitchKey(m[0]))
+          .sort()
+          .join(",");
+      }
+      function noteDur(tok, L) {
+        const m = tok.match(/(\d+\/\d+|\d+\/|\/\d+|\d+|\/)$/);
+        return L * durationFactor(m ? m[1] : "");
+      }
+      function chordDur(tok, L) {
+        const end = tok.slice(tok.lastIndexOf("]") + 1);
+        return L * durationFactor(end);
+      }
+      function secondsFor(whole, tempo) {
+        return tempo && tempo.beat > 0 && tempo.bpm > 0
+          ? ((whole / tempo.beat) * 60) / tempo.bpm
+          : NaN;
+      }
+      function maskNonMusic(line) {
+        let out = line.split("");
+        let inQuote = false;
+        for (let i = 0; i < line.length; i++) {
+          if (line[i] === '"') {
+            inQuote = !inQuote;
+            out[i] = " ";
+            continue;
+          }
+          if (inQuote) {
+            out[i] = " ";
+            continue;
+          }
+          if (line[i] === "%") {
+            for (let j = i; j < line.length; j++) out[j] = " ";
+            break;
+          }
+        }
+        return out.join("");
+      }
+      function scanTune(tune, baseOffset, maxSec) {
+        let headerMeter = 4 / 4,
+          headerL = 1 / 8,
+          headerTempo = null,
+          voice = "default",
+          inBody = false,
+          explicitL = false;
+        const eventsByVoice = new Map(),
+          measureByVoice = new Map();
+        const globalMeterChanges = new Map(),
+          globalTempoChanges = new Map(),
+          globalLChanges = new Map();
+        let skippedTempo = false;
+        const lines = tune.split(/(?<=\n)/);
+        let offset = baseOffset;
+        function currentMeasure(v) {
+          return measureByVoice.get(v) || 0;
+        }
+        function setMeasure(v, n) {
+          measureByVoice.set(v, n);
+        }
+        function arr(v = voice) {
+          if (!eventsByVoice.has(v)) eventsByVoice.set(v, []);
+          return eventsByVoice.get(v);
+        }
+        function recordChange(map, measure, value) {
+          if (!map.has(measure)) map.set(measure, value);
+        }
+        for (const raw of lines) {
+          const line = raw.replace(/[\r\n]+$/, "");
+          const field = line.match(/^\s*([A-Za-z]):\s*(.*)$/);
+          if (field) {
+            const k = field[1],
+              v = field[2];
+            if (k === "X") {
+              inBody = false;
+            } else if (!inBody && k === "M") {
+              headerMeter = meterValue(v);
+              if (!explicitL) headerL = defaultLForMeter(headerMeter);
+            } else if (!inBody && k === "L") {
+              headerL = frac(v, headerL);
+              explicitL = true;
+            } else if (!inBody && k === "Q") {
+              headerTempo = parseTempo(v, headerL) || headerTempo;
+            } else if (k === "V") {
+              voice = v.trim().split(/\s+/)[0] || "default";
+              if (!measureByVoice.has(voice)) setMeasure(voice, 0);
+            } else if (k === "K" && !inBody) {
+              inBody = true;
+            } else if (inBody && k === "M") {
+              recordChange(
+                globalMeterChanges,
+                currentMeasure(voice),
+                meterValue(v),
+              );
+            } else if (inBody && k === "L") {
+              recordChange(
+                globalLChanges,
+                currentMeasure(voice),
+                frac(v, headerL),
+              );
+            } else if (inBody && k === "Q") {
+              recordChange(
+                globalTempoChanges,
+                currentMeasure(voice),
+                parseTempo(v, headerL),
+              );
+            }
+            offset += raw.length;
+            continue;
+          }
+          if (!inBody) {
+            offset += raw.length;
+            continue;
+          }
+          let s = maskNonMusic(line),
+            i = 0;
+          while (i < s.length) {
+            let im = s.slice(i).match(/^\[([A-Za-z]):([^\]]*)\]/);
+            if (im) {
+              const k = im[1],
+                v = im[2],
+                measure = currentMeasure(voice);
+              if (k === "M")
+                recordChange(globalMeterChanges, measure, meterValue(v));
+              else if (k === "L")
+                recordChange(globalLChanges, measure, frac(v, headerL));
+              else if (k === "Q") {
+                const q = parseTempo(v, headerL);
+                if (q) recordChange(globalTempoChanges, measure, q);
+              } else if (k === "V") {
+                voice = v.trim().split(/\s+/)[0] || "default";
+                if (!measureByVoice.has(voice)) setMeasure(voice, 0);
+              }
+              i += im[0].length;
+              continue;
+            }
+            const bar = s.slice(i).match(/^(\|\]|\[\||\|:|:\||::|\|\||\|)/);
+            if (bar) {
+              arr().push({
+                type: "bar",
+                index: offset + i,
+                len: bar[0].length,
+                measure: currentMeasure(voice),
+              });
+              setMeasure(voice, currentMeasure(voice) + 1);
+              i += bar[0].length;
+              continue;
+            }
+            const chord = s
+              .slice(i)
+              .match(
+                /^\[(?![A-Za-z]:)(?:[^\]\n]|\][0-9\/])*\](?:\d+\/\d+|\d+\/|\/\d+|\d+|\/)?/,
+              );
+            if (chord) {
+              const tok = chord[0];
+              arr().push({
+                type: "note",
+                key: "[" + chordKeys(tok) + "]",
+                wholeFactor: chordDur(tok, 1),
+                measure: currentMeasure(voice),
+                index: offset + i,
+                end: offset + i + tok.length,
+              });
+              i += tok.length;
+              continue;
+            }
+            const note = s
+              .slice(i)
+              .match(
+                /^(?:\^\^|__|\^|_|=)?[A-Ga-g][,']*(?:\d+\/\d+|\d+\/|\/\d+|\d+|\/)?/,
+              );
+            if (note) {
+              const tok = note[0];
+              arr().push({
+                type: "note",
+                key: pitchKey(tok),
+                wholeFactor: noteDur(tok, 1),
+                measure: currentMeasure(voice),
+                index: offset + i,
+                end: offset + i + tok.length,
+              });
+              i += tok.length;
+              continue;
+            }
+            if (s[i] === "-")
+              arr().push({
+                type: "tie",
+                index: offset + i,
+                measure: currentMeasure(voice),
+              });
+            i++;
+          }
+          offset += raw.length;
+        }
+        function stateAt(measure) {
+          let meter = headerMeter,
+            L = headerL,
+            tempo = headerTempo;
+          for (let m = 0; m <= measure; m++) {
+            if (globalMeterChanges.has(m)) meter = globalMeterChanges.get(m);
+            if (globalLChanges.has(m)) L = globalLChanges.get(m);
+            if (globalTempoChanges.has(m) && globalTempoChanges.get(m))
+              tempo = globalTempoChanges.get(m);
+          }
+          return { meter, L, tempo };
+        }
+        for (const events of eventsByVoice.values())
+          for (const e of events)
+            if (e.type === "note") {
+              const st = stateAt(e.measure);
+              e.dur = secondsFor(e.wholeFactor * st.L, st.tempo);
+              if (!isFinite(e.dur)) skippedTempo = true;
+            }
+        const removals = [];
+        let chains = 0,
+          voicesProcessed = 0;
+        for (const events of eventsByVoice.values()) {
+          voicesProcessed++;
+          for (let i = 0; i < events.length; i++) {
+            if (events[i].type !== "note") continue;
+            const segs = [events[i]],
+              ties = [],
+              crossesBar = [];
+            let j = i + 1,
+              key = events[i].key;
+            while (j < events.length) {
+              let tie = null,
+                cross = false,
+                next = null;
+              for (; j < events.length; j++) {
+                const e = events[j];
+                if (e.type === "tie" && !tie) tie = e;
+                else if (e.type === "bar") cross = true;
+                else if (e.type === "note") {
+                  next = e;
+                  j++;
+                  break;
+                }
+              }
+              if (!tie || !next || next.key !== key) break;
+              segs.push(next);
+              ties.push(tie);
+              crossesBar.push(cross);
+            }
+            if (segs.length < 2) {
+              continue;
+            }
+            i = Math.max(i, j - 1);
+            if (!crossesBar.some(Boolean)) continue;
+            chains++;
+            let elapsed = Number(segs[0].dur);
+            if (!isFinite(elapsed)) continue;
+            for (let k = 0; k < ties.length; k++) {
+              const nextDuration = Number(segs[k + 1].dur);
+              if (!isFinite(nextDuration)) break;
+              if (crossesBar[k] && elapsed + nextDuration > maxSec + 1e-9) {
+                removals.push(ties[k].index);
+                elapsed = nextDuration;
+              } else {
+                elapsed += nextDuration;
+              }
+            }
+          }
+        }
+        return { removals, chains, voicesProcessed, skippedTempo };
+      }
+      function processABC(text, maxSec) {
+        const parts = splitTunes(text),
+          rem = [];
+        let tunes = 0,
+          chains = 0,
+          voices = 0,
+          skipped = 0;
+        for (const p of parts) {
+          if (p.preamble) continue;
+          tunes++;
+          const r = scanTune(p.text, p.start, maxSec);
+          rem.push(...r.removals);
+          chains += r.chains;
+          voices += r.voicesProcessed;
+          if (r.skippedTempo) skipped++;
+        }
+        let out = text;
+        rem
+          .sort((a, b) => b - a)
+          .forEach((i) => (out = out.slice(0, i) + out.slice(i + 1)));
+        return { out, removed: rem.length, tunes, voices, chains, skipped };
+      }
+      function setOutput(text) {
+        outputEl.value = text;
+        const yes = !!text;
+        $("copyButton").disabled = !yes;
+        $("saveButton").disabled = !yes;
+        $("sendButton").disabled = !yes;
+        shareURL = "";
+      }
+      function changed() {
+        setOutput("");
+        statusEl.textContent = inputEl.value.trim()
+          ? "Input changed. Click Limit Sustained Notes."
+          : "Enter or open ABC notation.";
+      }
+      $("processButton").onclick = () => {
+        const text = inputEl.value;
+        if (!text.trim()) return;
+        const max = Number($("maxSeconds").value);
+        if (!(max > 0)) {
+          statusEl.textContent = "Maximum duration must be greater than zero.";
+          return;
+        }
+        try {
+          const r = processABC(text, max);
+          setOutput(r.out);
+          statusEl.innerHTML =
+            "Processed <b>" +
+            r.tunes +
+            "</b> tune" +
+            (r.tunes === 1 ? "" : "s") +
+            " across <b>" +
+            r.voices +
+            "</b> voice" +
+            (r.voices === 1 ? "" : "s") +
+            " and examined <b>" +
+            r.chains +
+            "</b> barline-crossing tied-note chain" +
+            (r.chains === 1 ? "" : "s") +
+            ".<br>Removed <b>" +
+            r.removed +
+            "</b> measure-crossing tie" +
+            (r.removed === 1 ? "" : "s") +
+            "." +
+            (r.skipped
+              ? "<br><b>Warning:</b> " +
+                r.skipped +
+                " tune" +
+                (r.skipped === 1 ? " was" : "s were") +
+                " encountered without a usable tempo at one or more notes; those affected chains were left unchanged."
+              : "");
+        } catch (e) {
+          console.error(e);
+          statusEl.textContent = "Could not process the ABC: " + e.message;
+        }
+      };
+      $("clearButton").onclick = () => {
+        inputEl.value = "";
+        $("fileInput").value = "";
+        saveFilename = "sustained_note_limited.abc";
+        changed();
+      };
+      inputEl.addEventListener("input", changed);
+      $("maxSeconds").addEventListener("input", changed);
+      async function loadFiles(files) {
+        const good = [...files].filter((f) => /\.(abc|txt)$/i.test(f.name));
+        if (!good.length) {
+          statusEl.textContent =
+            "No supported .abc or .txt files were selected.";
+          return;
+        }
+        const texts = await Promise.all(good.map((f) => f.text()));
+        inputEl.value = texts.join("\n\n");
+        saveFilename =
+          good.length === 1
+            ? good[0].name.replace(/\.(abc|txt)$/i, "") + "_limited.abc"
+            : "sustained_note_limited.abc";
+        changed();
+        statusEl.textContent =
+          "Loaded " +
+          good.length +
+          " file" +
+          (good.length === 1 ? "" : "s") +
+          ".";
+      }
+      $("fileInput").onchange = (e) => loadFiles(e.target.files);
+      const card = $("inputCard");
+      ["dragenter", "dragover"].forEach((n) =>
+        card.addEventListener(n, (e) => {
+          e.preventDefault();
+          card.classList.add("drag");
+        }),
+      );
+      ["dragleave", "drop"].forEach((n) =>
+        card.addEventListener(n, (e) => {
+          e.preventDefault();
+          card.classList.remove("drag");
+        }),
+      );
+      card.addEventListener("drop", (e) => loadFiles(e.dataTransfer.files));
+      $("copyButton").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(outputEl.value);
+          statusEl.textContent = "Processed ABC copied to the clipboard.";
+        } catch (e) {
+          outputEl.select();
+          document.execCommand("copy");
+          statusEl.textContent = "Processed ABC copied to the clipboard.";
+        }
+      };
+      function downloadBlob(blob, name) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(a.href);
+          a.remove();
+        }, 1000);
+      }
+      function sanitizeABCFileName(name) {
+        name = String(name || "")
+          .trim()
+          .replace(/^.*[\\/]/, "")
+          .replace(/\.abc$/i, "");
+        name = name
+          .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+          .replace(/\s+/g, " ")
+          .replace(/[. ]+$/g, "")
+          .trim();
+        if (!name) name = "sustained_note_limited";
+        return name + ".abc";
+      }
+      $("saveButton").onclick = async () => {
+        if (
+          typeof DayPilot === "undefined" ||
+          !DayPilot.Modal ||
+          typeof DayPilot.Modal.prompt !== "function"
+        ) {
+          statusEl.textContent =
+            "The DayPilot filename dialog could not be loaded. Check the internet connection and try again.";
+          return;
+        }
+        const modal = await DayPilot.Modal.prompt(
+          "Enter a filename for the processed ABC file:",
+          saveFilename,
+          { okText: "Save", cancelText: "Cancel", width: 460 },
+        );
+        if (modal.canceled) return;
+        saveFilename = sanitizeABCFileName(modal.result);
+        const blob = new Blob([outputEl.value], {
+            type: "text/plain;charset=utf-8",
+          }),
+          file = new File([blob], saveFilename, {
+            type: "text/plain;charset=utf-8",
+          });
+        try {
+          if (
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({ files: [file] })
+          ) {
+            await navigator.share({
+              files: [file],
+              title: "Sustained Note Limiter ABC",
+            });
+            statusEl.textContent = "Shared " + saveFilename + ".";
+            return;
+          }
+        } catch (e) {
+          if (e.name === "AbortError") return;
+        }
+        downloadBlob(blob, saveFilename);
+        statusEl.textContent = "Saved " + saveFilename;
+      };
+      function bytesToB64Url(bytes) {
+        let bin = "";
+        for (let i = 0; i < bytes.length; i++)
+          bin += String.fromCharCode(bytes[i]);
+        return btoa(bin)
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+      }
+      async function deflateText(text) {
+        if (typeof CompressionStream === "undefined")
+          throw new Error(
+            "This browser does not support share-link compression. Copy or save the output instead.",
+          );
+        const stream = new Blob([new TextEncoder().encode(text)])
+          .stream()
+          .pipeThrough(new CompressionStream("deflate"));
+        return bytesToB64Url(
+          new Uint8Array(await new Response(stream).arrayBuffer()),
+        );
+      }
+      $("sendButton").onclick = async () => {
+        try {
+          statusEl.textContent =
+            "Preparing ABC Transcription Tools share link…";
+          const def = await deflateText(outputEl.value);
+          const u = new URL("https://michaeleskin.com/abctools/abctools.html");
+          u.searchParams.set("def", def);
+          u.searchParams.set("format", "noten");
+          u.searchParams.set("name", "Sustained_Note_Limiter");
+          u.searchParams.set("editor", "1");
+          shareURL = u.href;
+          if (shareURL.length > 8100)
+            throw new Error(
+              "The generated share link is too long. Save or copy the ABC instead.",
+            );
+          window.open(shareURL, "_blank", "noopener");
+          statusEl.textContent =
+            "Opened the processed ABC in the ABC Transcription Tools.";
+        } catch (e) {
+          statusEl.textContent = e.message;
+        }
+      };
+      $("openToolsButton").onclick = () =>
+        window.open(
+          "https://michaeleskin.com/abctools/abctools.html",
+          "_blank",
+          "noopener",
+        );
+      $("instructionsButton").onclick = () =>
+        ($("modal").style.display = "block");
+      $("closeModal").onclick = () => ($("modal").style.display = "none");
+      $("modal").onclick = (e) => {
+        if (e.target === $("modal")) $("modal").style.display = "none";
+      };
+    </script>
+  </body>
+</html>
