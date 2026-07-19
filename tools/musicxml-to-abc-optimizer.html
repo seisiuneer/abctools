@@ -719,6 +719,22 @@
         line-height: 1.15;
       }
 
+
+      .optionControlRow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:8px 0 0 30px; }
+      .optionControlRow.disabled { opacity:.5; }
+      .optionControlRow input[type="number"] { width:90px; border:var(--bd); border-radius:10px; padding:9px 10px; background:#fff; color:#000; }
+      .styledSelect {
+        -webkit-appearance:none; -moz-appearance:none; appearance:none;
+        min-width:190px; border:var(--bd); border-radius:10px;
+        padding:9px 44px 9px 12px; color:#17241c; -webkit-text-fill-color:#17241c;
+        background-color:#fff;
+        background-image:linear-gradient(45deg,transparent 50%,#17241c 50%),linear-gradient(135deg,#17241c 50%,transparent 50%);
+        background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+        background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+        box-shadow:none; cursor:pointer;
+      }
+      .styledSelect::-ms-expand { display:none; }
+      .styledSelect:disabled { cursor:default; }
 </style>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
 </head>
@@ -750,6 +766,26 @@
               <label for="percussionOption">Convert percussion voices for General MIDI playback</label>
             </div>
           </div>
+          <div class="optionLine">
+            <input id="reformatOption" type="checkbox" />
+            <div class="optionText">
+              <label for="reformatOption">Reformat music to a fixed number of measures per staff</label>
+              <div class="optionControlRow disabled" id="measuresRow">
+                <label for="measuresPerStaff">Measures per staff:</label>
+                <input id="measuresPerStaff" type="number" min="1" max="8" step="1" value="4" disabled />
+              </div>
+            </div>
+          </div>
+          <div class="optionLine">
+            <input id="soundfontOption" type="checkbox" />
+            <div class="optionText">
+              <label for="soundfontOption">Inject a soundfont command into each tune</label>
+              <div class="optionControlRow disabled" id="soundfontRow">
+                <label for="soundfontSelect">Soundfont:</label>
+                <select id="soundfontSelect" class="styledSelect" disabled></select>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
       <section class="card" id="inputCard">
@@ -779,14 +815,16 @@
   <h2>MusicXML to ABC Optimizer</h2>
   <ul>
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
-    <li>Select one or both optimization options. The <b>Process ABC</b> button is available only while at least one option is selected.</li>
+    <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Convert percussion voices for General MIDI playback</b> detects voices declared with <b>perc</b> or <b>clef=perc</b>, interprets their percussion note mappings using the tune's key signature, and rewrites them as ordinary treble-clef voices using <b>%%MIDI program 128</b>.</li>
     <li>If a percussion voice contains any <b>I:percmap</b> directives, those mappings are used and <b>%%MIDI drummap</b> directives are treated only as fallback data. If the same source note has conflicting mappings, the <b>I:percmap</b> mapping takes priority and the conflict is reported.</li>
     <li>General MIDI Level 2 percussion numbers 27 through 87 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
     <li>Converted percussion notes are written two octaves higher with <b>transpose=-24</b> to keep the notes near the staff while preserving their General MIDI drum pitches.</li>
     <li>For converted percussion voices, <b>K:none</b>, MIDI channel 10, old program and percussion-map directives, and <b>stafflines=1</b> are removed. A voice name containing the complete word <b>automobile</b> is changed to <b>nm="GM Drums"</b>, and any existing short voice name is changed to <b>snm="GM Drums"</b>. The converted voice inherits the tune's existing key signature.</li>
-    <li>When both options are selected, long-note shortening is performed before percussion remapping.</li>
+    <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
+    <li><b>Inject a soundfont command into each tune</b> removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and inserts the selected <b>%soundfont &lt;id&gt;</b> command immediately after the first <b>K:</b> field.</li>
+    <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, and soundfont injection.</li>
     <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
     <li>Use the output buttons to copy, save, or send the processed ABC directly to the ABC Transcription Tools.</li>
   </ul>
@@ -1632,6 +1670,170 @@ function convertABC(text) {
 
 
 
+const SOUNDFONT_OPTIONS = [
+  {id:"fluid",name:"Fluid"},{id:"musyng",name:"Musyng Kite"},
+  {id:"fatboy",name:"FatBoy"},{id:"canvas",name:"Canvas"},
+  {id:"mscore",name:"MScore"},{id:"arachno",name:"Arachno"},
+  {id:"fluidhq",name:"FluidHQ"}
+];
+
+function injectSoundfontCommands(text, soundfontId) {
+  const parts = splitTunesForLimiter(String(text || ''));
+  let changedTunes = 0;
+  const output = parts.map(part => {
+    if (part.preamble) return part.text;
+    const lines = part.text.replace(/\r\n?/g,'\n').split('\n')
+      .filter(line => !/^\s*%(?:soundfont|abcjs_soundfont)(?:\s|$)/i.test(line));
+    const keyIndex = lines.findIndex(line => /^\s*K\s*:/.test(line));
+    if (keyIndex >= 0) {
+      lines.splice(keyIndex + 1, 0, `%soundfont ${soundfontId}`);
+      changedTunes++;
+    }
+    return lines.join('\n');
+  });
+  return {text:output.join(''),changedTunes};
+}
+
+function stripTrailingMeasureNumber(line) {
+  return String(line || '').replace(/\s+%\s*\d+\s*$/,'').replace(/\s+$/,'');
+}
+
+function isABCFieldOrDirective(line) {
+  return /^\s*(?:[A-Za-z]:|%%|I:|%)/.test(line);
+}
+
+function maskNonNoteText(text) {
+  let out='', inQuote=false, inDecoration=false, graceDepth=0;
+  for (let i=0;i<text.length;i++) {
+    const ch=text[i];
+    if (ch === '"' && !inDecoration && graceDepth === 0) { inQuote=!inQuote; continue; }
+    if (inQuote) continue;
+    if (ch === '!' && graceDepth === 0) { inDecoration=!inDecoration; continue; }
+    if (inDecoration) continue;
+    if (ch === '{') { graceDepth++; continue; }
+    if (ch === '}' && graceDepth) { graceDepth--; continue; }
+    if (ch === '[') {
+      const inline=text.slice(i).match(/^\[[A-Za-z]:[^\]]*\]/);
+      if (inline) { i += inline[0].length - 1; continue; }
+    }
+    out += ch;
+  }
+  return out;
+}
+
+function hasMusicContent(text) {
+  return /(?:[\^_=]*[A-Ga-g][,']*|[zZxX])/.test(maskNonNoteText(text));
+}
+
+function matchMeasureSeparatorAt(text,index) {
+  const m=text.slice(index).match(/^(?::\|(?:\[[1-9][0-9]*|[1-9][0-9]*)?|\|\](?:\[[1-9][0-9]*|[1-9][0-9]*)?|\|:(?:\[[1-9][0-9]*|[1-9][0-9]*)?|\|\|(?:\[[1-9][0-9]*|[1-9][0-9]*)?|::(?:\[[1-9][0-9]*|[1-9][0-9]*)?|\[\|(?:\[[1-9][0-9]*|[1-9][0-9]*)?|\|(?:\[[1-9][0-9]*|[1-9][0-9]*)?)/);
+  return m ? m[0] : '';
+}
+
+function splitMusicIntoNumberedLines(musicText, measuresPerStaff, startingMeasure) {
+  const lines=[];
+  let current='', sinceBoundary='', measureNumber=startingMeasure, measuresOnLine=0;
+  let inQuote=false, inDecoration=false, graceDepth=0, chordDepth=0;
+
+  const append=value => { current += value; sinceBoundary += value; };
+  const emit=() => {
+    const cleaned=current.replace(/\s+/g,' ').trim();
+    if (cleaned) lines.push(`${cleaned} % ${measureNumber}`);
+    current=''; sinceBoundary=''; measuresOnLine=0;
+  };
+
+  for (let i=0;i<musicText.length;) {
+    const ch=musicText[i];
+    if (ch === '"' && !inDecoration && graceDepth===0 && chordDepth===0) {
+      inQuote=!inQuote; append(ch); i++; continue;
+    }
+    if (!inQuote && ch === '!' && graceDepth===0 && chordDepth===0) {
+      inDecoration=!inDecoration; append(ch); i++; continue;
+    }
+    if (!inQuote && !inDecoration) {
+      if (ch === '{') graceDepth++;
+      else if (ch === '}' && graceDepth) graceDepth--;
+      else if (ch === '[' && graceDepth===0) {
+        const inline=musicText.slice(i).match(/^\[[A-Za-z]:[^\]]*\]/);
+        if (inline) { append(inline[0]); i += inline[0].length; continue; }
+        if (!matchMeasureSeparatorAt(musicText,i)) chordDepth++;
+      } else if (ch === ']' && chordDepth) chordDepth--;
+    }
+    if (!inQuote && !inDecoration && graceDepth===0 && chordDepth===0) {
+      const separator=matchMeasureSeparatorAt(musicText,i);
+      if (separator) {
+        const hadMusic=hasMusicContent(sinceBoundary);
+        append(separator); i += separator.length;
+        if (hadMusic) {
+          measureNumber++; measuresOnLine++; sinceBoundary='';
+          if (measuresOnLine >= measuresPerStaff) emit();
+        }
+        continue;
+      }
+    }
+    append(ch); i++;
+  }
+
+  if (hasMusicContent(sinceBoundary)) { measureNumber++; measuresOnLine++; }
+  if (current.trim()) emit();
+  return {lines,lastMeasure:measureNumber};
+}
+
+function reformatTuneMeasures(tuneText, measuresPerStaff) {
+  const lines=String(tuneText || '').replace(/\r\n?/g,'\n').split('\n');
+  const output=[], measureByVoice=new Map();
+  let activeVoice='default', inBody=false, buffer=[];
+
+  const voiceMeasure=()=>measureByVoice.get(activeVoice) || 0;
+  const flushBuffer=()=>{
+    if (!buffer.length) return;
+    const joined=buffer.map(stripTrailingMeasureNumber).filter(Boolean).join(' ');
+    buffer=[];
+    if (!joined.trim()) return;
+    const result=splitMusicIntoNumberedLines(joined,measuresPerStaff,voiceMeasure());
+    output.push(...result.lines);
+    measureByVoice.set(activeVoice,result.lastMeasure);
+  };
+
+  for (const rawLine of lines) {
+    const line=stripTrailingMeasureNumber(rawLine);
+    const voiceField=line.match(/^\s*V\s*:\s*([^\s]+)/);
+    if (voiceField) {
+      flushBuffer();
+      activeVoice=voiceField[1] || 'default';
+      if (!measureByVoice.has(activeVoice)) measureByVoice.set(activeVoice,0);
+      output.push(line);
+      continue;
+    }
+    if (!inBody) {
+      output.push(line);
+      if (/^\s*K\s*:/.test(line)) inBody=true;
+      continue;
+    }
+    if (!line.trim() || isABCFieldOrDirective(line)) {
+      flushBuffer(); output.push(line); continue;
+    }
+    if (/%/.test(line)) {
+      flushBuffer(); output.push(line); continue;
+    }
+    buffer.push(line);
+  }
+  flushBuffer();
+  return output.join('\n');
+}
+
+function reformatABCMeasures(text, measuresPerStaff) {
+  const parts=splitTunesForLimiter(String(text || ''));
+  let tunesReformatted=0;
+  const output=parts.map(part=>{
+    if (part.preamble) return part.text;
+    tunesReformatted++;
+    return reformatTuneMeasures(part.text,measuresPerStaff);
+  });
+  return {text:output.join(''),tunesReformatted};
+}
+
+
 
 
 const inputEl = document.getElementById('input');
@@ -1659,12 +1861,18 @@ function hasABCTune(text) {
 }
 
 function updateOptionState() {
-  const shorten = $('shortenOption').checked;
-  const percussion = $('percussionOption').checked;
-  const hasTune = hasABCTune(inputEl.value);
-  $('processButton').disabled = !(hasTune && (shorten || percussion));
-  $('maxSeconds').disabled = !shorten;
-  $('durationRow').classList.toggle('disabled', !shorten);
+  const shorten=$('shortenOption').checked;
+  const percussion=$('percussionOption').checked;
+  const reformat=$('reformatOption').checked;
+  const soundfont=$('soundfontOption').checked;
+  const hasTune=hasABCTune(inputEl.value);
+  $('processButton').disabled=!(hasTune && (shorten || percussion || reformat || soundfont));
+  $('maxSeconds').disabled=!shorten;
+  $('durationRow').classList.toggle('disabled',!shorten);
+  $('measuresPerStaff').disabled=!reformat;
+  $('measuresRow').classList.toggle('disabled',!reformat);
+  $('soundfontSelect').disabled=!soundfont;
+  $('soundfontRow').classList.toggle('disabled',!soundfont);
 }
 function changed(message) {
   setOutput('');
@@ -1716,13 +1924,14 @@ $('processButton').onclick = () => {
   const original = inputEl.value;
   if (!original.trim()) { statusEl.textContent = 'Paste or open an ABC file first.'; return; }
   if (!hasABCTune(original)) { statusEl.textContent = 'No ABC tune was found. A tune must include an X: tag.'; return; }
-  const doShorten = $('shortenOption').checked;
-  const doPercussion = $('percussionOption').checked;
-  if (!doShorten && !doPercussion) return;
-  let text = original;
-  let splitTotal = 0;
-  let unmappedTotal = 0;
-  let outOfRangeMappedTotal = 0;
+  const doShorten=$('shortenOption').checked;
+  const doPercussion=$('percussionOption').checked;
+  const doReformat=$('reformatOption').checked;
+  const doSoundfont=$('soundfontOption').checked;
+  if (!doShorten && !doPercussion && !doReformat && !doSoundfont) return;
+  let text=original;
+  let splitTotal=0, unmappedTotal=0, outOfRangeMappedTotal=0;
+  let tunesReformatted=0, soundfontTunes=0;
   let longSummaries = [];
   let percussionSummaries = [];
   try {
@@ -1735,15 +1944,37 @@ $('processButton').onclick = () => {
       longSummaries = r.tuneSummaries;
     }
     if (doPercussion) {
-      const r = convertABC(text);
-      text = r.text;
-      const totals = percussionAggregate(r.stats);
-      unmappedTotal = totals.unmapped;
-      outOfRangeMappedTotal = totals.outOfRangeMapped;
-      percussionSummaries = r.stats.tuneSummaries;
+      const r=convertABC(text);
+      text=r.text;
+      const totals=percussionAggregate(r.stats);
+      unmappedTotal=totals.unmapped;
+      outOfRangeMappedTotal=totals.outOfRangeMapped;
+      percussionSummaries=r.stats.tuneSummaries;
+    }
+    if (doReformat) {
+      const measures=Number($('measuresPerStaff').value);
+      if (!Number.isInteger(measures) || measures<1 || measures>8) {
+        statusEl.textContent='Measures per staff must be a whole number from 1 through 8.';
+        return;
+      }
+      const r=reformatABCMeasures(text,measures);
+      text=r.text; tunesReformatted=r.tunesReformatted;
+    }
+    if (doSoundfont) {
+      const soundfontId=$('soundfontSelect').value;
+      if (!SOUNDFONT_OPTIONS.some(option=>option.id===soundfontId)) {
+        statusEl.textContent='Select a valid soundfont.';
+        return;
+      }
+      const r=injectSoundfontCommands(text,soundfontId);
+      text=r.text; soundfontTunes=r.changedTunes;
     }
 
-    const baseTunes = doShorten ? longSummaries : percussionSummaries;
+    let baseTunes=doShorten ? longSummaries : percussionSummaries;
+    if (!baseTunes.length) {
+      baseTunes=splitTunesForLimiter(text).filter(part=>!part.preamble)
+        .map((part,index)=>({index:index+1,title:tuneTitle(part.text,index+1)}));
+    }
     const byIndex = new Map();
     for (const tune of baseTunes) {
       byIndex.set(tune.index, {
@@ -1770,11 +2001,14 @@ $('processButton').onclick = () => {
     $('detailsButton').disabled = false;
 
     setOutput(text);
-    statusEl.textContent = [
+    const statusLines=[
       `Split long notes: ${splitTotal}.`,
       `Unmapped percussion notes replaced by rests: ${unmappedTotal}.`,
       `Out-of-range mapped notes replaced by rests: ${outOfRangeMappedTotal}.`
-    ].join('\n');
+    ];
+    if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}.`);
+    if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}.`);
+    statusEl.textContent=statusLines.join('\n');
   } catch (e) {
     console.error(e);
     processingReport = [];
@@ -1790,9 +2024,13 @@ $('clearButton').onclick = () => {
   changed();
 };
 inputEl.addEventListener('input', () => changed());
-$('shortenOption').addEventListener('change', () => changed());
-$('percussionOption').addEventListener('change', () => changed());
-$('maxSeconds').addEventListener('input', () => changed());
+$('shortenOption').addEventListener('change',()=>changed());
+$('percussionOption').addEventListener('change',()=>changed());
+$('reformatOption').addEventListener('change',()=>changed());
+$('soundfontOption').addEventListener('change',()=>changed());
+$('maxSeconds').addEventListener('input',()=>changed());
+$('measuresPerStaff').addEventListener('input',()=>changed());
+$('soundfontSelect').addEventListener('change',()=>changed());
 
 async function loadFiles(files) {
   const good = [...files].filter(f => /\.(abc|txt)$/i.test(f.name));
@@ -1992,6 +2230,9 @@ function startABCTranscriptionToolsHandshake() {
   });
 }
 
+$('soundfontSelect').innerHTML=SOUNDFONT_OPTIONS
+  .map(option=>`<option value="${option.id}">${option.name}</option>`).join('');
+$('soundfontSelect').value='fluid';
 updateOptionState();
 startABCTranscriptionToolsHandshake();
 </script>
