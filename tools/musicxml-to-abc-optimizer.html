@@ -279,6 +279,24 @@
         width: 100%;
         margin-top: 14px;
       }
+
+      #reportModal .modalBox {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      #reportContent {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      #closeReportModal {
+        flex: 0 0 auto;
+        margin-top: 14px;
+      }
       @media (max-width: 980px) {
         body {
           padding: 16px 16px 150px;
@@ -320,6 +338,387 @@
       .durationRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 0 30px; }
       .durationRow input { width: 90px; border: var(--bd); border-radius: 10px; padding: 9px 10px; }
       .durationRow.disabled { opacity: 0.5; }
+
+      /* Chord Chart Generator-inspired page styling */
+      :root {
+        --page-pad: 32px;
+        --gap: 14px;
+        --helpbar-height: 68px;
+        --purple: #4b1f68;
+        --purple-dark: #321247;
+        --purple-mid: #633184;
+        --accent: #d8ad45;
+        --green: #176b43;
+        --green-dark: #0d4c2f;
+        --blue: #174a8b;
+        --blue-dark: #0f3566;
+        --teal: #087f8c;
+        --teal-dark: #066873;
+        --red: #8f2f2f;
+        --red-dark: #742424;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        padding: 0;
+        overflow: hidden;
+        font-size: clamp(15px, 1.05vw + 12px, 17px);
+        line-height: 1.35;
+      }
+
+      .app {
+        max-width: none;
+        height: 100vh;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+        overflow: hidden;
+        padding-bottom: calc(var(--helpbar-height) + env(safe-area-inset-bottom));
+      }
+
+      @supports (height: 100dvh) {
+        .app {
+          height: 100dvh;
+        }
+      }
+
+      .hero {
+        flex: 0 0 auto;
+        width: 100%;
+        margin: 0;
+        border: 0;
+        border-bottom: 5px solid var(--accent);
+        border-radius: 0;
+        padding:
+          calc(16px + env(safe-area-inset-top))
+          calc(20px + env(safe-area-inset-right))
+          14px
+          calc(20px + env(safe-area-inset-left));
+        background:
+          linear-gradient(135deg, rgba(50, 18, 71, 0.98), rgba(99, 49, 132, 0.97)),
+          repeating-linear-gradient(
+            45deg,
+            transparent 0 12px,
+            rgba(255, 255, 255, 0.025) 12px 24px
+          );
+        overflow: hidden;
+        text-align: center;
+      }
+
+      .hero h1 {
+        margin: 0;
+        color: #fff;
+        font-size: clamp(1.95rem, 4vw, 2.3rem);
+        line-height: 1.1;
+      }
+
+      .hero p {
+        max-width: 850px;
+        margin: 12px auto 0;
+        color: #eee3f4;
+        line-height: 1.5;
+        font-size: 16px;
+      }
+
+      .main {
+        flex: 1 1 auto;
+        min-height: 0;
+        min-width: 0;
+        display: flex;
+        grid-template-columns: none;
+        gap: var(--gap);
+        overflow: hidden;
+        margin:
+          0
+          calc(var(--page-pad) + env(safe-area-inset-right))
+          0
+          calc(var(--page-pad) + env(safe-area-inset-left));
+      }
+
+      .column {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+        overflow: hidden;
+      }
+
+      .column:first-child {
+        flex: 1 1 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .column:last-child {
+        flex: 1 1 0;
+      }
+
+      .card {
+        border: var(--bd);
+        border-radius: 12px;
+        padding: 14px;
+        min-width: 0;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: clamp(19px, 1.1vw + 15px, 23px);
+      }
+
+      #inputCard,
+      .column:last-child > .card:first-child {
+        flex: 1 1 auto;
+        min-height: 260px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #inputCard .taWrap,
+      .column:last-child > .card:first-child .taWrap {
+        flex: 1 1 auto;
+        min-height: 160px;
+      }
+
+      .settings {
+        flex: 0 0 auto;
+        border-radius: 12px;
+        background: #faf7fc;
+      }
+
+      .taWrap {
+        height: auto;
+        min-height: 0;
+        flex: 1 1 auto;
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      button,
+      input[type="file"]::file-selector-button {
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-weight: 600;
+      }
+
+      button {
+        border: 1px solid var(--green-dark);
+        background: var(--green);
+        color: #fff;
+      }
+
+      button:hover {
+        background: var(--green-dark);
+      }
+
+      button.primary,
+      #processButton {
+        background: var(--teal);
+        border-color: var(--teal-dark);
+      }
+
+      button.primary:hover,
+      #processButton:hover {
+        background: var(--teal-dark);
+      }
+
+      #clearButton {
+        background: var(--red);
+        border-color: var(--red-dark);
+      }
+
+      #clearButton:hover {
+        background: var(--red-dark);
+      }
+
+      #saveButton {
+        background: var(--blue);
+        border-color: var(--blue-dark);
+      }
+
+      #saveButton:hover {
+        background: var(--blue-dark);
+      }
+
+      #copyButton,
+      #detailsButton {
+        background: #eee7f3;
+        border-color: #cbb8d8;
+        color: var(--purple-dark);
+      }
+
+      #copyButton:hover,
+      #detailsButton:hover {
+        background: #e3d7eb;
+      }
+
+      #sendButton {
+        background: var(--purple-mid);
+        border-color: var(--purple-dark);
+      }
+
+      #sendButton:hover {
+        background: var(--purple-dark);
+      }
+
+      input[type="file"]::file-selector-button {
+        background: var(--green);
+        border-color: var(--green-dark);
+        color: #fff;
+      }
+
+      .status {
+        max-height: 220px;
+        overflow: auto;
+        background: #fff;
+      }
+
+      .footer {
+        min-height: var(--helpbar-height);
+        background: #fff;
+        padding:
+          12px
+          calc(var(--page-pad) + env(safe-area-inset-right))
+          calc(12px + env(safe-area-inset-bottom))
+          calc(var(--page-pad) + env(safe-area-inset-left));
+      }
+
+      .footer button {
+        border-radius: 6px;
+      }
+
+      .modalBox {
+        border: 1px solid #333;
+        box-shadow: 0 0 15px -2px rgba(0, 0, 0, 0.75);
+      }
+
+      @media (max-width: 980px) {
+        body {
+          overflow: auto;
+          padding: 0 0 calc(var(--helpbar-height) + env(safe-area-inset-bottom));
+        }
+
+        .app {
+          height: auto;
+          min-height: 100vh;
+          overflow: visible;
+        }
+
+        .main {
+          flex-direction: column;
+          overflow: visible;
+          margin:
+            0
+            calc(14px + env(safe-area-inset-right))
+            0
+            calc(14px + env(safe-area-inset-left));
+        }
+
+        .column,
+        .column:first-child,
+        .column:last-child {
+          overflow: visible;
+          min-height: auto;
+        }
+
+        #inputCard,
+        .column:last-child > .card:first-child {
+          flex: 0 0 auto;
+          min-height: auto;
+        }
+
+        .taWrap,
+        #inputCard .taWrap,
+        .column:last-child > .card:first-child .taWrap {
+          height: 48vh;
+          min-height: 320px;
+        }
+
+        .footer {
+          padding-left: calc(14px + env(safe-area-inset-left));
+          padding-right: calc(14px + env(safe-area-inset-right));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .hero {
+          padding:
+            calc(13px + env(safe-area-inset-top))
+            calc(18px + env(safe-area-inset-right))
+            12px
+            calc(18px + env(safe-area-inset-left));
+        }
+
+        .hero h1 {
+          font-size: clamp(1.12rem, 5.2vw, 1.42rem);
+          line-height: 1.03;
+          white-space: nowrap;
+        }
+
+        .hero p {
+          max-width: 34em;
+          margin-top: 6px;
+          font-size: 0.92rem;
+          line-height: 1.28;
+        }
+      }
+
+
+      #instructionsButton,
+      #openToolsButton {
+        background: #4f565b;
+        border-color: #3d4449;
+        color: #fff;
+      }
+
+      #instructionsButton:hover,
+      #openToolsButton:hover {
+        background: #3d4449;
+      }
+
+
+      /* Vertically center the section labels with their adjacent controls. */
+      .inputHeader,
+      .statusHeader {
+        align-items: center;
+      }
+
+      .inputHeader h2,
+      .statusHeader h2 {
+        display: flex;
+        align-items: center;
+        min-height: 46px;
+        margin: 0;
+        line-height: 1.1;
+      }
+
+      .fileWrap {
+        display: flex;
+        align-items: center;
+        min-height: 46px;
+      }
+
+      .fileWrap input[type="file"] {
+        display: block;
+        margin: 0;
+        line-height: 1.15;
+      }
+
+      .statusHeader button {
+        min-height: 46px;
+        margin: 0;
+        padding: 10px 14px;
+        line-height: 1.15;
+      }
+
 </style>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
 </head>
@@ -379,7 +778,7 @@
 <div id="modal" class="modal"><div class="modalBox">
   <h2>MusicXML to ABC Optimizer</h2>
   <ul>
-    <li>Paste ABC notation into the input area or open one or more <b>.abc</b> or <b>.txt</b> files.</li>
+    <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
     <li>Select one or both optimization options. The <b>Process ABC</b> button is available only while at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Convert percussion voices for General MIDI playback</b> detects voices declared with <b>perc</b> or <b>clef=perc</b>, interprets their percussion note mappings using the tune's key signature, and rewrites them as ordinary treble-clef voices using <b>%%MIDI program 128</b>.</li>
@@ -1241,6 +1640,7 @@ const statusEl = document.getElementById('status');
 const $ = id => document.getElementById(id);
 let saveFilename = 'musicxml_to_abc_optimized.abc';
 let shareURL = '';
+let shareLinkCheckId = 0;
 let processingReport = [];
 
 function setOutput(text) {
@@ -1248,13 +1648,21 @@ function setOutput(text) {
   const yes = !!text;
   $('copyButton').disabled = !yes;
   $('saveButton').disabled = !yes;
-  $('sendButton').disabled = !yes;
+  $('sendButton').disabled = true;
   shareURL = '';
+
+  const checkId = ++shareLinkCheckId;
+  if (yes) updateSendButtonAvailability(text, checkId);
 }
+function hasABCTune(text) {
+  return /^\s*X\s*:/m.test(String(text || ''));
+}
+
 function updateOptionState() {
   const shorten = $('shortenOption').checked;
   const percussion = $('percussionOption').checked;
-  $('processButton').disabled = !(shorten || percussion);
+  const hasTune = hasABCTune(inputEl.value);
+  $('processButton').disabled = !(hasTune && (shorten || percussion));
   $('maxSeconds').disabled = !shorten;
   $('durationRow').classList.toggle('disabled', !shorten);
 }
@@ -1307,6 +1715,7 @@ function buildProcessingReport(rows) {
 $('processButton').onclick = () => {
   const original = inputEl.value;
   if (!original.trim()) { statusEl.textContent = 'Paste or open an ABC file first.'; return; }
+  if (!hasABCTune(original)) { statusEl.textContent = 'No ABC tune was found. A tune must include an X: tag.'; return; }
   const doShorten = $('shortenOption').checked;
   const doPercussion = $('percussionOption').checked;
   if (!doShorten && !doPercussion) return;
@@ -1418,7 +1827,7 @@ $('saveButton').onclick = async () => {
   if (typeof DayPilot==='undefined' || !DayPilot.Modal || typeof DayPilot.Modal.prompt!=='function') {
     statusEl.textContent='The DayPilot filename dialog could not be loaded. Check the internet connection and try again.'; return;
   }
-  const modal=await DayPilot.Modal.prompt('Enter a filename for the processed ABC file:',saveFilename,{okText:'Save',cancelText:'Cancel',width:460});
+  const modal=await DayPilot.Modal.prompt('Enter a filename for the processed ABC file:',saveFilename,{okText:'Save',cancelText:'Cancel',width:460,top:150,scrollWithPage:false});
   if(modal.canceled) return;
   saveFilename=sanitizeABCFileName(modal.result);
   const blob=new Blob([outputEl.value],{type:'text/plain;charset=utf-8'});
@@ -1437,17 +1846,33 @@ async function deflateText(text) {
   const stream=new Blob([new TextEncoder().encode(text)]).stream().pipeThrough(new CompressionStream('deflate'));
   return bytesToB64Url(new Uint8Array(await new Response(stream).arrayBuffer()));
 }
-$('sendButton').onclick = async () => {
+async function buildABCTranscriptionToolsShareURL(text) {
+  const def = await deflateText(text);
+  const u = new URL('https://michaeleskin.com/abctools/abctools.html');
+  u.searchParams.set('def', def);
+  u.searchParams.set('format', 'noten');
+  u.searchParams.set('name', 'MusicXML_to_ABC_Optimizer');
+  u.searchParams.set('editor', '1');
+  return u.href;
+}
+async function updateSendButtonAvailability(text, checkId) {
   try {
-    statusEl.textContent='Preparing ABC Transcription Tools share link…';
-    const def=await deflateText(outputEl.value);
-    const u=new URL('https://michaeleskin.com/abctools/abctools.html');
-    u.searchParams.set('def',def); u.searchParams.set('format','noten'); u.searchParams.set('name','MusicXML_to_ABC_Optimizer'); u.searchParams.set('editor','1');
-    shareURL=u.href;
-    if(shareURL.length>8100) throw new Error('The generated share link is too long. Save or copy the ABC instead.');
-    window.open(shareURL,'_blank','noopener');
-    statusEl.textContent='Opened the processed ABC in the ABC Transcription Tools.';
-  } catch(e) { statusEl.textContent=e.message; }
+    const candidate = await buildABCTranscriptionToolsShareURL(text);
+    if (checkId !== shareLinkCheckId || text !== outputEl.value) return;
+    if (candidate.length <= 8100) {
+      shareURL = candidate;
+      $('sendButton').disabled = false;
+    }
+  } catch (e) {
+    if (checkId !== shareLinkCheckId) return;
+    shareURL = '';
+    $('sendButton').disabled = true;
+  }
+}
+$('sendButton').onclick = () => {
+  if (!shareURL || shareURL.length > 8100) return;
+  window.open(shareURL,'_blank','noopener');
+  statusEl.textContent='Opened the processed ABC in the ABC Transcription Tools.';
 };
 $('openToolsButton').onclick=()=>window.open('https://michaeleskin.com/abctools/abctools.html','_blank','noopener');
 $('instructionsButton').onclick=()=>($('modal').style.display='block');
@@ -1456,7 +1881,119 @@ $('closeModal').onclick=()=>($('modal').style.display='none');
 $('closeReportModal').onclick=()=>($('reportModal').style.display='none');
 $('modal').onclick=e=>{if(e.target===$('modal')) $('modal').style.display='none';};
 $('reportModal').onclick=e=>{if(e.target===$('reportModal')) $('reportModal').style.display='none';};
+
+/* ============================================================
+   ABC Transcription Tools direct-transfer message support
+   Uses the same startup handshake and message format as the
+   ABC Chord Chart Generator and abcjs-eskin Website Builder.
+   ============================================================ */
+function trustedABCTranscriptionToolsMessage(event) {
+  const expectedSources = [];
+
+  if (window.opener) expectedSources.push(window.opener);
+  if (window.parent && window.parent !== window) expectedSources.push(window.parent);
+
+  if (expectedSources.length && !expectedSources.includes(event.source)) {
+    return false;
+  }
+
+  if (window.location.protocol === 'file:') {
+    return true;
+  }
+
+  return event.origin === window.location.origin ||
+    event.origin === 'https://michaeleskin.com';
+}
+
+function countTunesForReceivedABC(abcText) {
+  return splitTunesForLimiter(String(abcText || ''))
+    .filter(part => !part.preamble)
+    .length;
+}
+
+function acknowledgeABCTranscriptionToolsLoad(event, messageId, tuneCount) {
+  if (!event.source || typeof event.source.postMessage !== 'function') return;
+
+  try {
+    event.source.postMessage({
+      type: 'abcjsEskinWebsiteBuilderABCLoaded',
+      messageId,
+      tuneCount
+    }, event.origin && event.origin !== 'null' ? event.origin : '*');
+  } catch (error) {
+    console.warn('Unable to acknowledge ABC Transcription Tools load message.', error);
+  }
+}
+
+function loadABCFromABCTranscriptionTools(data, event) {
+  const abcText = typeof data.abc === 'string' ? data.abc : '';
+  const sourceName = String(data.sourceName || 'external ABC source').trim() ||
+    'external ABC source';
+
+  if (!abcText.trim()) {
+    statusEl.textContent = `${sourceName} did not send any ABC text.`;
+    return;
+  }
+
+  try {
+    inputEl.value = abcText;
+    $('fileInput').value = '';
+    saveFilename = 'musicxml_to_abc_optimized.abc';
+    changed();
+
+    const tuneCount = countTunesForReceivedABC(abcText);
+    if (tuneCount === 0) {
+      statusEl.textContent = `Loaded ABC from ${sourceName}. No tunes found.`;
+    } else if (tuneCount === 1) {
+      statusEl.textContent = `Loaded ABC from ${sourceName}. Found 1 tune. Select the desired options, then click Process ABC.`;
+    } else {
+      statusEl.textContent = `Loaded ABC from ${sourceName}. Found ${tuneCount} tunes. Select the desired options, then click Process ABC.`;
+    }
+
+    acknowledgeABCTranscriptionToolsLoad(event, data.messageId || '', tuneCount);
+  } catch (error) {
+    console.error(error);
+    statusEl.textContent = error && error.message ? error.message : String(error);
+  }
+}
+
+function handleABCTranscriptionToolsMessage(event) {
+  if (!trustedABCTranscriptionToolsMessage(event)) return;
+
+  const data = event.data || {};
+  if (data.type !== 'abcjsEskinWebsiteBuilderLoadABC') return;
+
+  loadABCFromABCTranscriptionTools(data, event);
+}
+
+function notifyABCTranscriptionToolsReady() {
+  const message = { type: 'abcjsEskinWebsiteBuilderReady' };
+  const targets = [];
+
+  if (window.opener) targets.push(window.opener);
+  if (window.parent && window.parent !== window) targets.push(window.parent);
+
+  targets.forEach(target => {
+    try {
+      target.postMessage(message, '*');
+    } catch (error) {
+      console.warn('Unable to notify ABC Transcription Tools that the optimizer is ready.', error);
+    }
+  });
+}
+
+let abcTranscriptionToolsHandshakeStarted = false;
+function startABCTranscriptionToolsHandshake() {
+  if (abcTranscriptionToolsHandshakeStarted) return;
+  abcTranscriptionToolsHandshakeStarted = true;
+  window.addEventListener('message', handleABCTranscriptionToolsMessage);
+  [0, 250, 750, 1500].forEach(delay => {
+    setTimeout(notifyABCTranscriptionToolsReady, delay);
+  });
+}
+
 updateOptionState();
+startABCTranscriptionToolsHandshake();
 </script>
 </body>
 </html>
