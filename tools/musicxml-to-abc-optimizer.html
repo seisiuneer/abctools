@@ -353,8 +353,10 @@
   <ul>
     <li>Paste ABC notation into the input area or open one or more <b>.abc</b> or <b>.txt</b> files.</li>
     <li>Select one or both optimization options. The <b>Process ABC</b> button is available only while at least one option is selected.</li>
-    <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values.</li>
+    <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Convert percussion voices for General MIDI playback</b> detects voices declared with <b>perc</b> or <b>clef=perc</b>, interprets their percussion note mappings using the tune's key signature, and rewrites them as ordinary treble-clef voices using <b>%%MIDI program 128</b>.</li>
+    <li>If a percussion voice contains any <b>I:percmap</b> directives, those mappings are used and <b>%%MIDI drummap</b> directives are treated only as fallback data. If the same source note has conflicting mappings, the <b>I:percmap</b> mapping takes priority and the conflict is reported.</li>
+    <li>Only General MIDI percussion numbers 35 through 81 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
     <li>Converted percussion notes are written two octaves higher with <b>transpose=-24</b> to keep the notes near the staff while preserving their General MIDI drum pitches.</li>
     <li>For converted percussion voices, <b>K:none</b>, MIDI channel 10, old program and percussion-map directives, and <b>stafflines=1</b> are removed. A voice name containing the complete word <b>automobile</b> is changed to <b>nm="GM Drums"</b>, and any existing short voice name is changed to <b>snm="GM Drums"</b>. The converted voice inherits the tune's existing key signature.</li>
     <li>When both options are selected, long-note shortening is performed before percussion remapping.</li>
@@ -473,9 +475,12 @@ function splitTunesForLimiter(text) {
           headerTempo = null,
           voice = "default",
           inBody = false,
-          explicitL = false;
+          explicitL = false,
+          headerKey = keySignature('C');
         const eventsByVoice = new Map(),
-          measureByVoice = new Map();
+          measureByVoice = new Map(),
+          keyByVoice = new Map(),
+          accidentalsByVoice = new Map();
         const globalMeterChanges = new Map(),
           globalTempoChanges = new Map(),
           globalLChanges = new Map();
@@ -491,6 +496,35 @@ function splitTunesForLimiter(text) {
         function arr(v = voice) {
           if (!eventsByVoice.has(v)) eventsByVoice.set(v, []);
           return eventsByVoice.get(v);
+        }
+        function keyFor(v = voice) {
+          if (!keyByVoice.has(v)) keyByVoice.set(v, {...headerKey});
+          return keyByVoice.get(v);
+        }
+        function accidentalState(v = voice) {
+          if (!accidentalsByVoice.has(v)) accidentalsByVoice.set(v, new Map());
+          return accidentalsByVoice.get(v);
+        }
+        function resetMeasureAccidentals(v = voice) {
+          accidentalState(v).clear();
+        }
+        function noteIdentity(tok, v = voice) {
+          const bare = pitchKey(tok);
+          const m = bare.match(/^([\^_=]*)([A-Ga-g])([,']*)$/);
+          if (!m) return null;
+          const explicit = m[1];
+          const letter = m[2];
+          const marks = m[3];
+          const parsed = parseABCPitch(bare, keyFor(v), accidentalState(v));
+          if (!parsed) return null;
+          return {
+            position: letter + marks,
+            accidental: parsed.accidental,
+            explicit: !!explicit,
+            prefix: parsed.accidental > 0 ? '^'.repeat(parsed.accidental) : parsed.accidental < 0 ? '_'.repeat(-parsed.accidental) : '=',
+            letter,
+            marks
+          };
         }
         function recordChange(map, measure, value) {
           if (!map.has(measure)) map.set(measure, value);
@@ -514,8 +548,17 @@ function splitTunesForLimiter(text) {
             } else if (k === "V") {
               voice = v.trim().split(/\s+/)[0] || "default";
               if (!measureByVoice.has(voice)) setMeasure(voice, 0);
+              keyFor(voice);
+              accidentalState(voice);
             } else if (k === "K" && !inBody) {
+              headerKey = keySignature(v);
+              for (const id of measureByVoice.keys()) keyByVoice.set(id, {...headerKey});
+              keyByVoice.set(voice, {...headerKey});
+              resetMeasureAccidentals(voice);
               inBody = true;
+            } else if (inBody && k === "K") {
+              keyByVoice.set(voice, keySignature(v));
+              resetMeasureAccidentals(voice);
             } else if (inBody && k === "M") {
               recordChange(
                 globalMeterChanges,
@@ -550,7 +593,10 @@ function splitTunesForLimiter(text) {
               const k = im[1],
                 v = im[2],
                 measure = currentMeasure(voice);
-              if (k === "M")
+              if (k === "K") {
+                keyByVoice.set(voice, keySignature(v));
+                resetMeasureAccidentals(voice);
+              } else if (k === "M")
                 recordChange(globalMeterChanges, measure, meterValue(v));
               else if (k === "L")
                 recordChange(globalLChanges, measure, frac(v, headerL));
@@ -560,6 +606,8 @@ function splitTunesForLimiter(text) {
               } else if (k === "V") {
                 voice = v.trim().split(/\s+/)[0] || "default";
                 if (!measureByVoice.has(voice)) setMeasure(voice, 0);
+                keyFor(voice);
+                accidentalState(voice);
               }
               i += im[0].length;
               continue;
@@ -573,6 +621,7 @@ function splitTunesForLimiter(text) {
                 measure: currentMeasure(voice),
               });
               setMeasure(voice, currentMeasure(voice) + 1);
+              resetMeasureAccidentals(voice);
               i += bar[0].length;
               continue;
             }
@@ -586,6 +635,8 @@ function splitTunesForLimiter(text) {
               arr().push({
                 type: "note",
                 key: "[" + chordKeys(tok) + "]",
+                identity: null,
+                token: tok,
                 wholeFactor: chordDur(tok, 1),
                 measure: currentMeasure(voice),
                 index: offset + i,
@@ -601,9 +652,12 @@ function splitTunesForLimiter(text) {
               );
             if (note) {
               const tok = note[0];
+              const identity = noteIdentity(tok, voice);
               arr().push({
                 type: "note",
                 key: pitchKey(tok),
+                identity,
+                token: tok,
                 wholeFactor: noteDur(tok, 1),
                 measure: currentMeasure(voice),
                 index: offset + i,
@@ -641,7 +695,8 @@ function splitTunesForLimiter(text) {
               e.dur = secondsFor(e.wholeFactor * st.L, st.tempo);
               if (!isFinite(e.dur)) skippedTempo = true;
             }
-        const removals = [];
+        const removals = [],
+          insertions = [];
         let chains = 0,
           voicesProcessed = 0;
         for (const events of eventsByVoice.values()) {
@@ -667,7 +722,14 @@ function splitTunesForLimiter(text) {
                   break;
                 }
               }
-              if (!tie || !next || next.key !== key) break;
+              if (!tie || !next) break;
+              const firstIdentity = segs[0].identity;
+              const nextIdentity = next.identity;
+              const sameSinglePitch = firstIdentity && nextIdentity &&
+                firstIdentity.position === nextIdentity.position &&
+                (!nextIdentity.explicit || nextIdentity.accidental === firstIdentity.accidental);
+              const sameChord = !firstIdentity && !nextIdentity && next.key === key;
+              if (!sameSinglePitch && !sameChord) break;
               segs.push(next);
               ties.push(tie);
               crossesBar.push(cross);
@@ -685,6 +747,17 @@ function splitTunesForLimiter(text) {
               if (!isFinite(nextDuration)) break;
               if (crossesBar[k] && elapsed + nextDuration > maxSec + 1e-9) {
                 removals.push(ties[k].index);
+                const reattack = segs[k + 1];
+                const sourceIdentity = segs[0].identity;
+                if (sourceIdentity && reattack.identity &&
+                    sourceIdentity.accidental !== reattack.identity.accidental) {
+                  const existingPrefix = (reattack.token.match(/^[\^_=]*/) || [''])[0];
+                  insertions.push({
+                    index: reattack.index,
+                    removeLength: existingPrefix.length,
+                    text: sourceIdentity.prefix
+                  });
+                }
                 elapsed = nextDuration;
               } else {
                 elapsed += nextDuration;
@@ -692,11 +765,12 @@ function splitTunesForLimiter(text) {
             }
           }
         }
-        return { removals, chains, voicesProcessed, skippedTempo };
+        return { removals, insertions, chains, voicesProcessed, skippedTempo };
       }
       function shortenLongNotes(text, maxSec) {
         const parts = splitTunesForLimiter(text),
-          rem = [];
+          rem = [],
+          insertions = [];
         let tunes = 0,
           chains = 0,
           voices = 0,
@@ -706,15 +780,22 @@ function splitTunesForLimiter(text) {
           tunes++;
           const r = scanTune(p.text, p.start, maxSec);
           rem.push(...r.removals);
+          insertions.push(...r.insertions);
           chains += r.chains;
           voices += r.voicesProcessed;
           if (r.skippedTempo) skipped++;
         }
         let out = text;
-        rem
-          .sort((a, b) => b - a)
-          .forEach((i) => (out = out.slice(0, i) + out.slice(i + 1)));
-        return { out, removed: rem.length, tunes, voices, chains, skipped };
+        const edits = [
+          ...rem.map(index => ({index, removeLength:1, text:''})),
+          ...insertions
+        ];
+        edits
+          .sort((a, b) => b.index - a.index || b.removeLength - a.removeLength)
+          .forEach(edit => {
+            out = out.slice(0, edit.index) + edit.text + out.slice(edit.index + edit.removeLength);
+          });
+        return { out, removed: rem.length, accidentalsAdded: insertions.length, tunes, voices, chains, skipped };
       }
       
 const GM_NAMES = {
@@ -851,11 +932,15 @@ function splitTunesForPercussion(text) {
 }
 
 function parseMapLine(line) {
-  let m = line.match(/^%%MIDI\s+drummap\s+(\S+)\s+(\d+)\b/i);
+  let m = line.match(/^%%MIDI\s+drummap\s+(\S+)\s+(-?\d+)\b/i);
   if (m) return {source:m[1], midi:Number(m[2]), kind:'drummap'};
-  m = line.match(/^I:percmap\s+(\S+)\s+\S+\s+(\d+)\b/i);
+  m = line.match(/^I:percmap\s+(\S+)\s+\S+\s+(-?\d+)\b/i);
   if (m) return {source:m[1], midi:Number(m[2]), kind:'percmap'};
   return null;
+}
+
+function addCount(map, key) {
+  map.set(key, (map.get(key) || 0) + 1);
 }
 
 function convertMusicLine(line, state, stats) {
@@ -888,16 +973,22 @@ function convertMusicLine(line, state, stats) {
     if (m) {
       const token = m[1];
       const parsed = parseABCPitch(token, state.sourceKey, state.measureAccidentals);
-      const mapped = parsed ? state.mapBySourceMidi.get(parsed.midi) : undefined;
-      if (mapped !== undefined) {
-        const replacement = midiToABC(mapped + 24);
+      const mapping = parsed ? state.mapBySourceMidi.get(parsed.midi) : undefined;
+      if (mapping && mapping.valid) {
+        const replacement = midiToABC(mapping.midi + 24);
         out += replacement;
         stats.notesConverted++;
-        stats.usedMidi.add(mapped);
+        stats.usedMidi.add(mapping.midi);
       } else {
-        out += token;
-        const key = token;
-        stats.unmapped.set(key,(stats.unmapped.get(key)||0)+1);
+        // Preserve the original duration suffix, which is parsed separately,
+        // by replacing only the pitch token with a rest.
+        out += 'z';
+        if (mapping && !mapping.valid) {
+          addCount(stats.outOfRangeNotes, token);
+        } else {
+          addCount(stats.unmapped, token);
+        }
+        stats.notesRested++;
       }
       i += token.length; continue;
     }
@@ -937,15 +1028,73 @@ function convertTune(lines, tuneIndex, overall) {
     // Interpret percussion source spellings in the same key signature as the
     // tune's pitched voices. K:none on imported percussion voices is ignored.
     const sourceKey = keySignature(targetKey);
-    const mapBySourceMidi = new Map();
+    const parsedEntries = [];
     const dummyAcc = new Map();
+
     for (const entry of info.maps) {
       const p = parseABCPitch(entry.source, sourceKey, dummyAcc);
       dummyAcc.clear();
-      if (p) mapBySourceMidi.set(p.midi, entry.midi);
+      if (p) parsedEntries.push({...entry, sourceMidi:p.midi});
     }
+
+    // I:percmap is authoritative whenever at least one usable I:percmap line
+    // exists in this voice. %%MIDI drummap is used only as a voice-level fallback.
+    const hasPercmap = parsedEntries.some(entry => entry.kind === 'percmap');
+    const selectedKind = hasPercmap ? 'percmap' : 'drummap';
+    const selectedEntries = parsedEntries.filter(entry => entry.kind === selectedKind);
+    const mapBySourceMidi = new Map();
+    const conflicts = [];
+    const outOfRangeMappings = [];
+
+    for (const entry of selectedEntries) {
+      const prior = mapBySourceMidi.get(entry.sourceMidi);
+      if (prior && prior.midi !== entry.midi) {
+        conflicts.push({
+          source:entry.source,
+          sourceMidi:entry.sourceMidi,
+          kept:prior.midi,
+          rejected:entry.midi,
+          kind:selectedKind
+        });
+        continue;
+      }
+
+      const valid = entry.midi >= 35 && entry.midi <= 81;
+      if (!prior) mapBySourceMidi.set(entry.sourceMidi,{midi:entry.midi,valid,kind:selectedKind,source:entry.source});
+      if (!valid) outOfRangeMappings.push({source:entry.source,midi:entry.midi,kind:selectedKind});
+    }
+
+    // Report cross-kind conflicts as well. The selected I:percmap value wins.
+    if (hasPercmap) {
+      const chosenBySource = new Map(selectedEntries.map(entry => [entry.sourceMidi,entry]));
+      for (const entry of parsedEntries) {
+        if (entry.kind !== 'drummap') continue;
+        const chosen = chosenBySource.get(entry.sourceMidi);
+        if (chosen && chosen.midi !== entry.midi) {
+          conflicts.push({
+            source:chosen.source,
+            sourceMidi:entry.sourceMidi,
+            kept:chosen.midi,
+            rejected:entry.midi,
+            kind:'percmap-over-drummap'
+          });
+        }
+      }
+    }
+
     states.set(info.id,{sourceKey:keySignature(targetKey), targetKey, measureAccidentals:new Map(), mapBySourceMidi});
-    statsByVoice.set(info.id,{notesConverted:0,unmapped:new Map(),usedMidi:new Set(),mapCount:mapBySourceMidi.size});
+    statsByVoice.set(info.id,{
+      notesConverted:0,
+      notesRested:0,
+      unmapped:new Map(),
+      outOfRangeNotes:new Map(),
+      usedMidi:new Set(),
+      mapCount:mapBySourceMidi.size,
+      selectedKind,
+      ignoredFallbackCount:hasPercmap ? parsedEntries.filter(entry => entry.kind === 'drummap').length : 0,
+      conflicts,
+      outOfRangeMappings
+    });
   }
 
   const removedIndexes = new Set([...perc.values()].flatMap(x=>[...x.remove]));
@@ -981,16 +1130,39 @@ function convertTune(lines, tuneIndex, overall) {
   for (const [id,s] of statsByVoice) {
     overall.voices++;
     overall.notes += s.notesConverted;
+    overall.rested += s.notesRested;
     for (const midi of s.usedMidi) overall.usedMidi.add(midi);
     if (s.unmapped.size) overall.unmapped.push({tune:tuneIndex,voice:id,items:[...s.unmapped]});
-    overall.voiceSummaries.push({tune:tuneIndex,voice:id,mapCount:s.mapCount,notes:s.notesConverted});
+    if (s.outOfRangeNotes.size) overall.outOfRangeNotes.push({tune:tuneIndex,voice:id,items:[...s.outOfRangeNotes]});
+    if (s.outOfRangeMappings.length) overall.outOfRangeMappings.push({tune:tuneIndex,voice:id,items:s.outOfRangeMappings});
+    if (s.conflicts.length) overall.conflicts.push({tune:tuneIndex,voice:id,items:s.conflicts});
+    overall.voiceSummaries.push({
+      tune:tuneIndex,
+      voice:id,
+      mapCount:s.mapCount,
+      notes:s.notesConverted,
+      rested:s.notesRested,
+      selectedKind:s.selectedKind,
+      ignoredFallbackCount:s.ignoredFallbackCount
+    });
   }
   return out;
 }
 
 function convertABC(text) {
   if (!text.trim()) throw new Error('Paste or open an ABC file first.');
-  const overall = {tunesWithPerc:0,voices:0,notes:0,usedMidi:new Set(),unmapped:[],voiceSummaries:[]};
+  const overall = {
+    tunesWithPerc:0,
+    voices:0,
+    notes:0,
+    rested:0,
+    usedMidi:new Set(),
+    unmapped:[],
+    outOfRangeNotes:[],
+    outOfRangeMappings:[],
+    conflicts:[],
+    voiceSummaries:[]
+  };
   const chunks = splitTunesForPercussion(text);
   const converted = chunks.map((lines,i)=>convertTune(lines,i+1,overall)).flat().join('\n');
   return {text:converted,stats:overall};
@@ -1029,11 +1201,23 @@ function changed(message) {
 }
 function percussionSummary(stats) {
   let msg = `Remapped ${stats.voices} percussion voice${stats.voices===1?'':'s'} in ${stats.tunesWithPerc} tune${stats.tunesWithPerc===1?'':'s'} and rewrote ${stats.notes} note${stats.notes===1?'':'s'}.`;
-  if (!stats.voices) msg = 'No percussion voices were found.';
-  if (stats.unmapped.length) {
-    const count = stats.unmapped.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0);
-    msg += ` Warning: ${count} percussion note occurrence${count===1?' was':'s were'} not mapped and remained unchanged.`;
-  }
+  if (!stats.voices) return 'No percussion voices were found.';
+
+  const detail = [];
+  const unmappedCount = stats.unmapped.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0);
+  const outOfRangeNoteCount = stats.outOfRangeNotes.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0);
+  const conflictCount = stats.conflicts.reduce((n,v)=>n+v.items.length,0);
+  const outOfRangeMappingCount = stats.outOfRangeMappings.reduce((n,v)=>n+v.items.length,0);
+  const fallbackIgnored = stats.voiceSummaries.reduce((n,v)=>n+v.ignoredFallbackCount,0);
+
+  if (stats.rested) msg += ` Replaced ${stats.rested} unsafe percussion note occurrence${stats.rested===1?'':'s'} with rest${stats.rested===1?'':'s'}.`;
+  if (fallbackIgnored) detail.push(`${fallbackIgnored} %%MIDI drummap directive${fallbackIgnored===1?' was':'s were'} ignored because I:percmap was available`);
+  if (conflictCount) detail.push(`${conflictCount} conflicting mapping${conflictCount===1?' was':'s were'} found; I:percmap took priority where applicable`);
+  if (outOfRangeMappingCount) detail.push(`${outOfRangeMappingCount} selected mapping${outOfRangeMappingCount===1?' was':'s were'} outside GM range 35–81`);
+  if (outOfRangeNoteCount) detail.push(`${outOfRangeNoteCount} note occurrence${outOfRangeNoteCount===1?' used an':'s used'} out-of-range mapping and ${outOfRangeNoteCount===1?'was':'were'} replaced with ${outOfRangeNoteCount===1?'a rest':'rests'}`);
+  if (unmappedCount) detail.push(`${unmappedCount} unmapped note occurrence${unmappedCount===1?' was':'s were'} replaced with ${unmappedCount===1?'a rest':'rests'}`);
+
+  if (detail.length) msg += ' Warning: ' + detail.join('; ') + '.';
   return msg;
 }
 
@@ -1051,7 +1235,7 @@ $('processButton').onclick = () => {
       if (!(max > 0)) { statusEl.textContent = 'Maximum sustained duration must be greater than zero.'; return; }
       const r = shortenLongNotes(text, max);
       text = r.out;
-      messages.push(`Long-note shortening: processed ${r.tunes} tune${r.tunes===1?'':'s'} across ${r.voices} voice${r.voices===1?'':'s'}; removed ${r.removed} measure-crossing tie${r.removed===1?'':'s'} from ${r.chains} examined tied-note chain${r.chains===1?'':'s'}.${r.skipped ? ` Warning: ${r.skipped} tune${r.skipped===1?' had':'s had'} notes without a usable tempo; affected chains were left unchanged.` : ''}`);
+      messages.push(`Long-note shortening: processed ${r.tunes} tune${r.tunes===1?'':'s'} across ${r.voices} voice${r.voices===1?'':'s'}; removed ${r.removed} measure-crossing tie${r.removed===1?'':'s'} from ${r.chains} examined tied-note chain${r.chains===1?'':'s'}${r.accidentalsAdded ? ` and added ${r.accidentalsAdded} explicit accidental${r.accidentalsAdded===1?'':'s'} to preserve re-attacked pitches` : ''}.${r.skipped ? ` Warning: ${r.skipped} tune${r.skipped===1?' had':'s had'} notes without a usable tempo; affected chains were left unchanged.` : ''}`);
     }
     if (doPercussion) {
       const r = convertABC(text);
