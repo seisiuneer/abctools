@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3300_071526_1430";
+var gVersionNumber = "3301_071926_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -65771,6 +65771,211 @@ function launchAbcChordChartGenerator(){
     }, 15000);
 }
 
+
+//
+// Hidden direct transfer to the MusicXML to ABC Optimizer.
+// Launched only by Alt+Shift-clicking the ABC Chord Chart Generator image
+// in the Open ABC in External Tool dialog.
+//
+var gMusicXMLToABCOptimizerURL = "https://michaeleskin.com/tools/musicxml-to-abc-optimizer.html";
+
+function launchMusicXMLToABCOptimizer(abcText){
+
+    if (!gAllowWebExport){
+        return;
+    }
+
+    if (!abcText || !/^\s*X\s*:/m.test(abcText)){
+        showAbcChordChartGeneratorMessage(
+            "There are no ABC tunes to send to the MusicXML to ABC Optimizer.",
+            520
+        );
+        return;
+    }
+
+    if (!isRunningFromOfficialMichaeleskinDomain()){
+        showAbcChordChartGeneratorMessage(
+            "Direct ABC transfer to the MusicXML to ABC Optimizer is only available from the official online version at https://michaeleskin.com.",
+            560
+        );
+        return;
+    }
+
+    if (!navigator.onLine){
+        showAbcChordChartGeneratorMessage(
+            "The MusicXML to ABC Optimizer is not available while offline. Please reconnect to the internet and try again.",
+            560
+        );
+        return;
+    }
+
+    sendGoogleAnalytics("action","OpenInMusicXMLToABCOptimizer");
+
+    var optimizerURL = gMusicXMLToABCOptimizerURL;
+    var targetOrigin = getAbcChordChartGeneratorTargetOrigin(optimizerURL);
+    var separator = (optimizerURL.indexOf("?") === -1) ? "?" : "&";
+    var launchURL = optimizerURL + separator + "cb=" + encodeURIComponent(String(Date.now()));
+    var messageId = "abctools-musicxml-abc-optimizer-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    var optimizerWindow = null;
+    var optimizerReadyReceived = false;
+    var loadMessageAttempted = false;
+    var loadMessageAcknowledged = false;
+    var failureMessageShown = false;
+    var cleanupTimer = null;
+    var closedCheckTimer = null;
+    var fallbackTimers = [];
+
+    var sourceName = "ABC Transcription Tools";
+    if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
+        sourceName += " - " + gDisplayedName.trim();
+    }
+
+    var loadMessage = {
+        type: "abcjsEskinWebsiteBuilderLoadABC",
+        messageId: messageId,
+        abc: abcText,
+        sourceName: sourceName,
+        replaceExisting: true
+    };
+
+    function cleanupOptimizerLaunchHandlers(){
+        window.removeEventListener("message", handleOptimizerLaunchMessage);
+
+        if (cleanupTimer){
+            clearTimeout(cleanupTimer);
+            cleanupTimer = null;
+        }
+
+        if (closedCheckTimer){
+            clearInterval(closedCheckTimer);
+            closedCheckTimer = null;
+        }
+
+        fallbackTimers.forEach(function(timer){
+            clearTimeout(timer);
+        });
+        fallbackTimers = [];
+    }
+
+    function showOptimizerLaunchFailure(message, width){
+        if (loadMessageAcknowledged || failureMessageShown){
+            cleanupOptimizerLaunchHandlers();
+            return;
+        }
+
+        failureMessageShown = true;
+        cleanupOptimizerLaunchHandlers();
+        showAbcChordChartGeneratorMessage(message, width || 620);
+    }
+
+    function postABCToOptimizer(){
+        if (!optimizerWindow || optimizerWindow.closed){
+            showOptimizerLaunchFailure(
+                "The MusicXML to ABC Optimizer window was closed before the tunes could be transferred.",
+                600
+            );
+            return;
+        }
+
+        if (loadMessageAcknowledged || failureMessageShown){
+            return;
+        }
+
+        try {
+            loadMessageAttempted = true;
+            optimizerWindow.postMessage(loadMessage, targetOrigin);
+        }
+        catch (error) {
+            console.error("Unable to send ABC to the MusicXML to ABC Optimizer:", error);
+            showOptimizerLaunchFailure(
+                "ABC Transcription Tools could not send the tunes to the MusicXML to ABC Optimizer. Browser security settings may have blocked the transfer.",
+                650
+            );
+        }
+    }
+
+    function handleOptimizerLaunchMessage(event){
+        if (!optimizerWindow || event.source !== optimizerWindow){
+            return;
+        }
+
+        if (targetOrigin !== "*" && event.origin !== targetOrigin){
+            return;
+        }
+
+        var data = event.data || {};
+
+        if (data.type === "abcjsEskinWebsiteBuilderReady"){
+            optimizerReadyReceived = true;
+            postABCToOptimizer();
+            return;
+        }
+
+        if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
+            loadMessageAcknowledged = true;
+            cleanupOptimizerLaunchHandlers();
+        }
+    }
+
+    window.addEventListener("message", handleOptimizerLaunchMessage);
+
+    optimizerWindow = window.open(launchURL, "_blank");
+
+    if (!optimizerWindow){
+        cleanupOptimizerLaunchHandlers();
+        showAbcChordChartGeneratorMessage(
+            "The MusicXML to ABC Optimizer window was blocked by the browser. Please allow popups for this site and try again.",
+            560
+        );
+        return;
+    }
+
+    closedCheckTimer = setInterval(function(){
+        if (optimizerWindow && optimizerWindow.closed && !loadMessageAcknowledged){
+            showOptimizerLaunchFailure(
+                "The MusicXML to ABC Optimizer window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+                650
+            );
+        }
+    }, 1000);
+
+    [1200, 2400, 4200].forEach(function(delay){
+        fallbackTimers.push(setTimeout(function(){
+            if (!loadMessageAcknowledged && !failureMessageShown){
+                postABCToOptimizer();
+            }
+        }, delay));
+    });
+
+    cleanupTimer = setTimeout(function(){
+        if (loadMessageAcknowledged){
+            cleanupOptimizerLaunchHandlers();
+            return;
+        }
+
+        if (!optimizerReadyReceived){
+            showOptimizerLaunchFailure(
+                "The MusicXML to ABC Optimizer opened, but ABC Transcription Tools did not receive a ready message from it.",
+                680
+            );
+            return;
+        }
+
+        if (loadMessageAttempted){
+            showOptimizerLaunchFailure(
+                "ABC Transcription Tools sent the tunes to the MusicXML to ABC Optimizer, but did not receive confirmation that they loaded.",
+                700
+            );
+            return;
+        }
+
+        showOptimizerLaunchFailure(
+            "ABC Transcription Tools could not complete the transfer to the MusicXML to ABC Optimizer.",
+            700
+        );
+    }, 15000);
+}
+
 function OpenInABCJSEskinWebsiteBuilder(abcText,isFromPlayer){
 
   sendGoogleAnalytics("action", "OpenInABCJSEskinWebsiteBuilder");
@@ -65882,7 +66087,12 @@ function openInExternalTool(theABC, isFromPlayer){
   };
 
   elem = document.getElementById("external_chord_chart");
-  if (elem) elem.onclick = function(){
+  if (elem) elem.onclick = function(event){
+    if (event && event.altKey){
+      launchMusicXMLToABCOptimizer(theABC);
+      return;
+    }
+
     OpenInABCChordChartGenerator(theABC,isFromPlayer);
   };
 
