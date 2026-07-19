@@ -199,6 +199,31 @@
         line-height: 1.5;
         margin-top: 10px;
       }
+      .statusHeader {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .statusHeader h2 { margin: 0; }
+      .statusHeader button { padding: 7px 11px; }
+      .reportTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+      }
+      .reportTable th,
+      .reportTable td {
+        border: var(--bd);
+        padding: 9px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .reportTable th { background: #f0f3f8; }
+      .reportTable th.num,
+      .reportTable td.num { text-align: right; white-space: nowrap; }
+      .reportEmpty { color: #555; line-height: 1.5; }
       .status {
         font-family: var(--mono);
         white-space: pre-wrap;
@@ -343,7 +368,10 @@
         <div class="taWrap"><textarea id="output" spellcheck="false" readonly></textarea></div>
         <div class="buttonRow"><button id="copyButton" disabled>Copy Results</button><button id="saveButton" disabled>Save ABC File</button><button id="sendButton" disabled>Send to ABC Transcription Tools</button></div>
       </section>
-      <section class="card"><h2>Status</h2><div id="status" class="status">Enter or open ABC notation.</div></section>
+      <section class="card">
+        <div class="statusHeader"><h2>Status</h2><button id="detailsButton" disabled>Show Processing Details Report</button></div>
+        <div id="status" class="status">Enter or open ABC notation.</div>
+      </section>
     </div>
   </div>
 </div>
@@ -356,13 +384,19 @@
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Convert percussion voices for General MIDI playback</b> detects voices declared with <b>perc</b> or <b>clef=perc</b>, interprets their percussion note mappings using the tune's key signature, and rewrites them as ordinary treble-clef voices using <b>%%MIDI program 128</b>.</li>
     <li>If a percussion voice contains any <b>I:percmap</b> directives, those mappings are used and <b>%%MIDI drummap</b> directives are treated only as fallback data. If the same source note has conflicting mappings, the <b>I:percmap</b> mapping takes priority and the conflict is reported.</li>
-    <li>Only General MIDI percussion numbers 35 through 81 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
+    <li>General MIDI Level 2 percussion numbers 27 through 87 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
     <li>Converted percussion notes are written two octaves higher with <b>transpose=-24</b> to keep the notes near the staff while preserving their General MIDI drum pitches.</li>
     <li>For converted percussion voices, <b>K:none</b>, MIDI channel 10, old program and percussion-map directives, and <b>stafflines=1</b> are removed. A voice name containing the complete word <b>automobile</b> is changed to <b>nm="GM Drums"</b>, and any existing short voice name is changed to <b>snm="GM Drums"</b>. The converted voice inherits the tune's existing key signature.</li>
     <li>When both options are selected, long-note shortening is performed before percussion remapping.</li>
+    <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
     <li>Use the output buttons to copy, save, or send the processed ABC directly to the ABC Transcription Tools.</li>
   </ul>
   <button id="closeModal">Close</button>
+</div></div>
+<div id="reportModal" class="modal"><div class="modalBox">
+  <h2>Processing Details Report</h2>
+  <div id="reportContent" class="reportEmpty">Process ABC notation to generate a tune-by-tune report.</div>
+  <button id="closeReportModal">Close</button>
 </div></div>
 <script>
 'use strict';
@@ -471,6 +505,12 @@ function splitTunesForLimiter(text) {
         }
         return out.join("");
       }
+      function tuneTitle(tune, fallbackIndex) {
+        const m = String(tune || '').match(/^T:\s*(.*)$/m);
+        const title = m ? m[1].trim() : '';
+        return title || `Tune ${fallbackIndex}`;
+      }
+
       function scanTune(tune, baseOffset, maxSec) {
         let headerMeter = 4 / 4,
           headerL = 1 / 8,
@@ -777,10 +817,16 @@ function splitTunesForLimiter(text) {
           chains = 0,
           voices = 0,
           skipped = 0;
+        const tuneSummaries = [];
         for (const p of parts) {
           if (p.preamble) continue;
           tunes++;
           const r = scanTune(p.text, p.start, maxSec);
+          tuneSummaries.push({
+            index: tunes,
+            title: tuneTitle(p.text, tunes),
+            splitLongNotes: r.removals.length
+          });
           rem.push(...r.removals);
           insertions.push(...r.insertions);
           chains += r.chains;
@@ -797,7 +843,7 @@ function splitTunesForLimiter(text) {
           .forEach(edit => {
             out = out.slice(0, edit.index) + edit.text + out.slice(edit.index + edit.removeLength);
           });
-        return { out, removed: rem.length, accidentalsAdded: insertions.length, tunes, voices, chains, skipped };
+        return { out, removed: rem.length, accidentalsAdded: insertions.length, tunes, voices, chains, skipped, tuneSummaries };
       }
       
 const GM_NAMES = {
@@ -925,8 +971,12 @@ function splitTunesForPercussion(text) {
   const lines = text.replace(/\r\n?/g,'\n').split('\n');
   const chunks = [];
   let current = [];
+  let currentHasTune = false;
   for (const line of lines) {
-    if (/^X:/.test(line) && current.length) { chunks.push(current); current=[]; }
+    if (/^X:/.test(line)) {
+      if (currentHasTune) { chunks.push(current); current = []; }
+      currentHasTune = true;
+    }
     current.push(line);
   }
   if (current.length) chunks.push(current);
@@ -1000,6 +1050,10 @@ function convertMusicLine(line, state, stats) {
 }
 
 function convertTune(lines, tuneIndex, overall) {
+  const titleLine = lines.find(line => /^T:/.test(line));
+  const title = titleLine ? titleLine.replace(/^T:\s*/, '').trim() : `Tune ${tuneIndex}`;
+  const tuneSummary = {index:tuneIndex, title:title || `Tune ${tuneIndex}`, unmappedPercussionNotes:0, outOfRangeMappedNotes:0};
+  overall.tuneSummaries.push(tuneSummary);
   const tuneKeyLine = lines.find(line => /^K:/.test(line) && !/^K:\s*none\b/i.test(line));
   const targetKey = tuneKeyLine ? keyValueFromLine(tuneKeyLine) : 'C';
   const perc = new Map();
@@ -1061,7 +1115,7 @@ function convertTune(lines, tuneIndex, overall) {
         continue;
       }
 
-      const valid = entry.midi >= 35 && entry.midi <= 81;
+      const valid = entry.midi >= 27 && entry.midi <= 87;
       if (!prior) mapBySourceMidi.set(entry.sourceMidi,{midi:entry.midi,valid,kind:selectedKind,source:entry.source});
       if (!valid) outOfRangeMappings.push({source:entry.source,midi:entry.midi,kind:selectedKind});
     }
@@ -1134,8 +1188,14 @@ function convertTune(lines, tuneIndex, overall) {
     overall.notes += s.notesConverted;
     overall.rested += s.notesRested;
     for (const midi of s.usedMidi) overall.usedMidi.add(midi);
-    if (s.unmapped.size) overall.unmapped.push({tune:tuneIndex,voice:id,items:[...s.unmapped]});
-    if (s.outOfRangeNotes.size) overall.outOfRangeNotes.push({tune:tuneIndex,voice:id,items:[...s.outOfRangeNotes]});
+    if (s.unmapped.size) {
+      overall.unmapped.push({tune:tuneIndex,voice:id,items:[...s.unmapped]});
+      tuneSummary.unmappedPercussionNotes += [...s.unmapped.values()].reduce((n,count)=>n+count,0);
+    }
+    if (s.outOfRangeNotes.size) {
+      overall.outOfRangeNotes.push({tune:tuneIndex,voice:id,items:[...s.outOfRangeNotes]});
+      tuneSummary.outOfRangeMappedNotes += [...s.outOfRangeNotes.values()].reduce((n,count)=>n+count,0);
+    }
     if (s.outOfRangeMappings.length) overall.outOfRangeMappings.push({tune:tuneIndex,voice:id,items:s.outOfRangeMappings});
     if (s.conflicts.length) overall.conflicts.push({tune:tuneIndex,voice:id,items:s.conflicts});
     overall.voiceSummaries.push({
@@ -1163,7 +1223,8 @@ function convertABC(text) {
     outOfRangeNotes:[],
     outOfRangeMappings:[],
     conflicts:[],
-    voiceSummaries:[]
+    voiceSummaries:[],
+    tuneSummaries:[]
   };
   const chunks = splitTunesForPercussion(text);
   const converted = chunks.map((lines,i)=>convertTune(lines,i+1,overall)).flat().join('\n');
@@ -1180,6 +1241,7 @@ const statusEl = document.getElementById('status');
 const $ = id => document.getElementById(id);
 let saveFilename = 'musicxml_to_abc_optimized.abc';
 let shareURL = '';
+let processingReport = [];
 
 function setOutput(text) {
   outputEl.value = text;
@@ -1198,30 +1260,49 @@ function updateOptionState() {
 }
 function changed(message) {
   setOutput('');
+  processingReport = [];
+  $('detailsButton').disabled = true;
+  $('reportContent').textContent = 'Process ABC notation to generate a tune-by-tune report.';
   updateOptionState();
   statusEl.textContent = message || (inputEl.value.trim() ? 'Input or settings changed. Click Process ABC.' : 'Enter or open ABC notation.');
 }
-function percussionSummary(stats) {
-  let msg = `Remapped ${stats.voices} percussion voice${stats.voices===1?'':'s'} in ${stats.tunesWithPerc} tune${stats.tunesWithPerc===1?'':'s'} and rewrote ${stats.notes} note${stats.notes===1?'':'s'}.`;
-  if (!stats.voices) return 'No percussion voices were found.';
-
-  const detail = [];
-  const unmappedCount = stats.unmapped.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0);
-  const outOfRangeNoteCount = stats.outOfRangeNotes.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0);
-  const conflictCount = stats.conflicts.reduce((n,v)=>n+v.items.length,0);
-  const outOfRangeMappingCount = stats.outOfRangeMappings.reduce((n,v)=>n+v.items.length,0);
-  const fallbackIgnored = stats.voiceSummaries.reduce((n,v)=>n+v.ignoredFallbackCount,0);
-
-  if (stats.rested) msg += ` Replaced ${stats.rested} unsafe percussion note occurrence${stats.rested===1?'':'s'} with rest${stats.rested===1?'':'s'}.`;
-  if (fallbackIgnored) detail.push(`${fallbackIgnored} %%MIDI drummap directive${fallbackIgnored===1?' was':'s were'} ignored because I:percmap was available`);
-  if (conflictCount) detail.push(`${conflictCount} conflicting mapping${conflictCount===1?' was':'s were'} found; I:percmap took priority where applicable`);
-  if (outOfRangeMappingCount) detail.push(`${outOfRangeMappingCount} selected mapping${outOfRangeMappingCount===1?' was':'s were'} outside GM range 35–81`);
-  if (outOfRangeNoteCount) detail.push(`${outOfRangeNoteCount} note occurrence${outOfRangeNoteCount===1?' used an':'s used'} out-of-range mapping and ${outOfRangeNoteCount===1?'was':'were'} replaced with ${outOfRangeNoteCount===1?'a rest':'rests'}`);
-  if (unmappedCount) detail.push(`${unmappedCount} unmapped note occurrence${unmappedCount===1?' was':'s were'} replaced with ${unmappedCount===1?'a rest':'rests'}`);
-
-  if (detail.length) msg += ' Warning: ' + detail.join('; ') + '.';
-  return msg;
+function percussionAggregate(stats) {
+  return {
+    unmapped: stats.unmapped.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0),
+    outOfRangeMapped: stats.outOfRangeNotes.reduce((n,v)=>n+v.items.reduce((m,x)=>m+x[1],0),0)
+  };
 }
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function buildProcessingReport(rows) {
+  if (!rows.length) {
+    $('reportContent').innerHTML = '<div class="reportEmpty">No tunes were found in the processed ABC.</div>';
+    return;
+  }
+  const body = rows.map(row => `
+    <tr>
+      <td class="num">${row.index}</td>
+      <td>${escapeHTML(row.title)}</td>
+      <td class="num">${row.splitLongNotes}</td>
+      <td class="num">${row.unmappedPercussionNotes}</td>
+      <td class="num">${row.outOfRangeMappedNotes}</td>
+    </tr>`).join('');
+  $('reportContent').innerHTML = `
+    <table class="reportTable">
+      <thead><tr>
+        <th class="num">Tune</th>
+        <th>Title</th>
+        <th class="num">Long-note splits</th>
+        <th class="num">Unmapped<br>to rests</th>
+        <th class="num">Out of range<br>to rests</th>
+      </tr></thead>
+      <tbody>${body}</tbody>
+    </table>`;
+}
+
 
 $('processButton').onclick = () => {
   const original = inputEl.value;
@@ -1230,24 +1311,65 @@ $('processButton').onclick = () => {
   const doPercussion = $('percussionOption').checked;
   if (!doShorten && !doPercussion) return;
   let text = original;
-  const messages = [];
+  let splitTotal = 0;
+  let unmappedTotal = 0;
+  let outOfRangeMappedTotal = 0;
+  let longSummaries = [];
+  let percussionSummaries = [];
   try {
     if (doShorten) {
       const max = Number($('maxSeconds').value);
       if (!(max > 0)) { statusEl.textContent = 'Maximum sustained duration must be greater than zero.'; return; }
       const r = shortenLongNotes(text, max);
       text = r.out;
-      messages.push(`Long-note shortening: processed ${r.tunes} tune${r.tunes===1?'':'s'} across ${r.voices} voice${r.voices===1?'':'s'}; removed ${r.removed} measure-crossing tie${r.removed===1?'':'s'} from ${r.chains} examined tied-note chain${r.chains===1?'':'s'}${r.accidentalsAdded ? ` and added ${r.accidentalsAdded} explicit accidental${r.accidentalsAdded===1?'':'s'} to preserve re-attacked pitches` : ''}.${r.skipped ? ` Warning: ${r.skipped} tune${r.skipped===1?' had':'s had'} notes without a usable tempo; affected chains were left unchanged.` : ''}`);
+      splitTotal = r.removed;
+      longSummaries = r.tuneSummaries;
     }
     if (doPercussion) {
       const r = convertABC(text);
       text = r.text;
-      messages.push('Percussion remapping: ' + percussionSummary(r.stats));
+      const totals = percussionAggregate(r.stats);
+      unmappedTotal = totals.unmapped;
+      outOfRangeMappedTotal = totals.outOfRangeMapped;
+      percussionSummaries = r.stats.tuneSummaries;
     }
+
+    const baseTunes = doShorten ? longSummaries : percussionSummaries;
+    const byIndex = new Map();
+    for (const tune of baseTunes) {
+      byIndex.set(tune.index, {
+        index:tune.index,
+        title:tune.title || `Tune ${tune.index}`,
+        splitLongNotes:0,
+        unmappedPercussionNotes:0,
+        outOfRangeMappedNotes:0
+      });
+    }
+    for (const tune of longSummaries) {
+      const row = byIndex.get(tune.index);
+      if (row) { row.title = tune.title || row.title; row.splitLongNotes = tune.splitLongNotes; }
+    }
+    for (const tune of percussionSummaries) {
+      if (!byIndex.has(tune.index)) byIndex.set(tune.index, {index:tune.index,title:tune.title || `Tune ${tune.index}`,splitLongNotes:0,unmappedPercussionNotes:0,outOfRangeMappedNotes:0});
+      const row = byIndex.get(tune.index);
+      row.title = tune.title || row.title;
+      row.unmappedPercussionNotes = tune.unmappedPercussionNotes;
+      row.outOfRangeMappedNotes = tune.outOfRangeMappedNotes;
+    }
+    processingReport = [...byIndex.values()].sort((a,b)=>a.index-b.index);
+    buildProcessingReport(processingReport);
+    $('detailsButton').disabled = false;
+
     setOutput(text);
-    statusEl.textContent = messages.join('\n');
+    statusEl.textContent = [
+      `Split long notes: ${splitTotal}.`,
+      `Unmapped percussion notes replaced by rests: ${unmappedTotal}.`,
+      `Out-of-range mapped notes replaced by rests: ${outOfRangeMappedTotal}.`
+    ].join('\n');
   } catch (e) {
     console.error(e);
+    processingReport = [];
+    $('detailsButton').disabled = true;
     statusEl.textContent = 'Could not process the ABC: ' + e.message;
   }
 };
@@ -1329,8 +1451,11 @@ $('sendButton').onclick = async () => {
 };
 $('openToolsButton').onclick=()=>window.open('https://michaeleskin.com/abctools/abctools.html','_blank','noopener');
 $('instructionsButton').onclick=()=>($('modal').style.display='block');
+$('detailsButton').onclick=()=>($('reportModal').style.display='block');
 $('closeModal').onclick=()=>($('modal').style.display='none');
+$('closeReportModal').onclick=()=>($('reportModal').style.display='none');
 $('modal').onclick=e=>{if(e.target===$('modal')) $('modal').style.display='none';};
+$('reportModal').onclick=e=>{if(e.target===$('reportModal')) $('reportModal').style.display='none';};
 updateOptionState();
 </script>
 </body>
