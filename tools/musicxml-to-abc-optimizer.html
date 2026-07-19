@@ -366,6 +366,8 @@
 </div></div>
 <script>
 'use strict';
+// Long-note accidental preservation release: tied pitches are resolved across bar lines,
+// and explicit accidentals are restored when a removed tie creates a re-attack.
 function splitTunesForLimiter(text) {
         const re = /^X\s*:/gm,
           m = [];
