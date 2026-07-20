@@ -840,7 +840,7 @@
     <li>If a percussion voice contains any <b>I:percmap</b> directives, those mappings are used and <b>%%MIDI drummap</b> directives are treated only as fallback data. If the same source note has conflicting mappings, the <b>I:percmap</b> mapping takes priority and the conflict is reported.</li>
     <li>General MIDI Level 2 percussion numbers 27 through 87 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
     <li>Converted percussion notes are written two octaves higher with <b>transpose=-24</b> to keep the notes near the staff while preserving their General MIDI drum pitches.</li>
-    <li>For converted percussion voices, <b>K:none</b>, MIDI channel 10, old program and percussion-map directives, and <b>stafflines=1</b> are removed. A voice name containing the complete word <b>automobile</b> is changed to <b>nm="GM Drums"</b>, and any existing short voice name is changed to <b>snm="GM Drums"</b>. The converted voice inherits the tune's existing key signature.</li>
+    <li>For converted percussion voices, <b>K:none</b>, MIDI channel 10, old program and percussion-map directives, and <b>stafflines=1</b> are removed. Existing <b>nm=</b> and <b>snm=</b> values are always removed from each percussion voice declaration. If that declaration originally had an <b>nm=</b> value, it receives <b>nm="Drums"</b>. In that case, it also receives <b>snm="Drums"</b> when another non-percussion voice in the same tune uses an <b>snm=</b> value. No name is added to a percussion declaration that did not originally contain <b>nm=</b>. The converted voice inherits the tune's existing key signature.</li>
     <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
     <li><b>Inject a soundfont command into each tune</b> removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and inserts the selected <b>%soundfont &lt;id&gt;</b> command immediately after the first <b>K:</b> field.</li>
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, and soundfont injection.</li>
@@ -1406,22 +1406,27 @@ function isPercDeclaration(line) {
   return /^V:\s*\S+/.test(line) && (/(?:^|\s)perc(?:\s|$)/i.test(line) || /\bclef\s*=\s*perc\b/i.test(line));
 }
 
-function normalizePercDeclaration(line) {
+function normalizePercDeclaration(line, addShortName) {
+  const hadLongName = /(?:^|\s)nm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/i.test(line);
+
   let out = line.replace(/\bclef\s*=\s*perc\b/ig,'clef=treble');
   out = out.replace(/(^V:\s*\S+\s+)perc(?=\s|$)/i,'$1treble');
   out = out.replace(/\s+stafflines\s*=\s*1(?=\s|$)/ig,'');
   out = out.replace(/\s+transpose\s*=\s*[^\s]+/ig,'');
 
-  // MusicXML transcoders sometimes label percussion voices as automobile
-  // parts. Replace those long names, and any existing short name, with a
-  // clear General MIDI drum label.
-  out = out.replace(/(^|\s)nm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/ig, (match, prefix, value) => {
-    const unquoted = value.replace(/^["']|["']$/g, '');
-    return /\bautomobile\b/i.test(unquoted) ? prefix + 'nm="GM Drums"' : match;
-  });
-  out = out.replace(/(^|\s)snm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/ig, '$1snm="GM Drums"');
+  // Always remove imported long and short voice names from percussion
+  // declarations. Restore a standard long name only when the original
+  // percussion declaration had nm=. Add a matching short name only when
+  // another, non-percussion voice in the tune uses snm=.
+  out = out.replace(/\s+(?:nm|snm)\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/ig,'');
 
-  return out.replace(/\s+$/,'') + ' transpose=-24';
+  out = out.replace(/\s+$/,'');
+  if (hadLongName) {
+    out += ' nm="Drums"';
+    if (addShortName) out += ' snm="Drums"';
+  }
+
+  return out + ' transpose=-24';
 }
 
 function splitTunesForPercussion(text) {
@@ -1514,6 +1519,11 @@ function convertTune(lines, tuneIndex, overall) {
   const tuneKeyLine = lines.find(line => /^K:/.test(line) && !/^K:\s*none\b/i.test(line));
   const targetKey = tuneKeyLine ? keyValueFromLine(tuneKeyLine) : 'C';
   const perc = new Map();
+  const otherVoiceUsesShortNames = lines.some(line =>
+    /^V:\s*\S+/.test(line) &&
+    !isPercDeclaration(line) &&
+    /(?:^|\s)snm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/i.test(line)
+  );
 
   for (let i=0;i<lines.length;i++) {
     if (!isPercDeclaration(lines[i])) continue;
@@ -1618,7 +1628,7 @@ function convertTune(lines, tuneIndex, overall) {
     if (declByIndex.has(i)) {
       const info = declByIndex.get(i);
       activeVoice = info.id;
-      out.push(normalizePercDeclaration(line));
+      out.push(normalizePercDeclaration(line, otherVoiceUsesShortNames));
       out.push('%%MIDI program 128');
       continue;
     }
