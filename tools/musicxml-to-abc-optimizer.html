@@ -9,7 +9,7 @@
   <meta property="og:description" content="MusicXML to ABC Optimizer" />
   <meta property="og:site_name" content="MusicXML to ABC Optimizer" />
   <meta property="og:url" content="https://michaeleskin.com/tools/musicxml-to-abc-optimizer.html" />
-  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/musicxml-to-abc-optimizer-og-1.jpg" />
   <meta name="msapplication-TileColor" content="#ffffff" />
   <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png" />
   <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png" />
@@ -294,6 +294,24 @@
       }
 
       #closeReportModal {
+        flex: 0 0 auto;
+        margin-top: 14px;
+      }
+
+      #modal .modalBox {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      #instructionsContent {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      #closeModal {
         flex: 0 0 auto;
         margin-top: 14px;
       }
@@ -812,8 +830,9 @@
 </div>
 <div class="footer"><button id="instructionsButton">Instructions</button><button id="openToolsButton">Open ABC Transcription Tools</button></div>
 <div id="modal" class="modal"><div class="modalBox">
-  <h2>MusicXML to ABC Optimizer</h2>
-  <ul>
+  <div id="instructionsContent">
+    <h2 style="text-align: center;">MusicXML to ABC Optimizer</h2>
+    <ul>
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
     <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
@@ -827,7 +846,8 @@
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, and soundfont injection.</li>
     <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
     <li>Use the output buttons to copy, save, or send the processed ABC directly to the ABC Transcription Tools.</li>
-  </ul>
+    </ul>
+  </div>
   <button id="closeModal">Close</button>
 </div></div>
 <div id="reportModal" class="modal"><div class="modalBox">
@@ -1668,8 +1688,6 @@ function convertABC(text) {
   return {text:converted,stats:overall};
 }
 
-
-
 const SOUNDFONT_OPTIONS = [
   {id:"fluid",name:"Fluid"},{id:"musyng",name:"Musyng Kite"},
   {id:"fatboy",name:"FatBoy"},{id:"canvas",name:"Canvas"},
@@ -1832,9 +1850,6 @@ function reformatABCMeasures(text, measuresPerStaff) {
   });
   return {text:output.join(''),tunesReformatted};
 }
-
-
-
 
 const inputEl = document.getElementById('input');
 const outputEl = document.getElementById('output');
