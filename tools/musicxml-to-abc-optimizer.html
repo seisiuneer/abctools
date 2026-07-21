@@ -753,6 +753,7 @@
       }
       .styledSelect::-ms-expand { display:none; }
       .styledSelect:disabled { cursor:default; }
+      #percussionMethod { font-size: 1.08em; }
 </style>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
 </head>
@@ -781,7 +782,14 @@
           <div class="optionLine">
             <input id="percussionOption" type="checkbox" checked />
             <div class="optionText">
-              <label for="percussionOption">Convert percussion voices for General MIDI playback</label>
+              <label for="percussionOption">Consolidate percussion voices for General MIDI playback and drum noteheads</label>
+              <div class="optionControlRow" id="percussionMethodRow">
+                <label for="percussionMethod">Conversion method:</label>
+                <select id="percussionMethod" class="styledSelect">
+                  <option value="percmap" selected>Perc voice with percmap/drummap</option>
+                  <option value="treble">Treble voice with transpose=-24 (legacy)</option>
+                </select>
+              </div>
             </div>
           </div>
           <div class="optionLine">
@@ -836,11 +844,13 @@
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
     <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
-    <li><b>Convert percussion voices for General MIDI playback</b> detects voices declared with <b>perc</b> or <b>clef=perc</b>, interprets their percussion note mappings using the tune's key signature, and rewrites them as ordinary treble-clef voices using <b>%%MIDI program 128</b>.</li>
-    <li>If a percussion voice contains any <b>I:percmap</b> directives, those mappings are used and <b>%%MIDI drummap</b> directives are treated only as fallback data. If the same source note has conflicting mappings, the <b>I:percmap</b> mapping takes priority and the conflict is reported.</li>
+    <li><b>Consolidate percussion voices for General MIDI playback and drum noteheads</b> detects voices declared with <b>perc</b> or <b>clef=perc</b> and converts them using the selected method. The method selector is available only while this option is enabled.</li>
+    <li><b>Perc voice with percmap/drummap</b> is the default method. It keeps converted voices as percussion voices, assigns every General MIDI drum instrument used in the tune one shared notation pitch, and generates matching tune-level <b>%%percmap</b> and <b>%%MIDI drummap</b> tables. Supported notehead values are retained in the <b>%%percmap</b> entries, and explicit accidentals prevent the tune key from changing the drum mapping.</li>
+    <li><b>Treble voice with transpose=-24 (legacy)</b> reproduces the optimizer's original conversion method. It changes percussion voices to treble voices, writes their mapped General MIDI pitches two octaves higher on the staff, and adds <b>transpose=-24</b> so playback returns to the intended drum numbers. This method does not generate consolidated <b>%%percmap</b> or <b>%%MIDI drummap</b> tables and does not preserve imported drum noteheads.</li>
+    <li>For either method, if a percussion voice contains any usable <b>I:percmap</b> directives, those mappings take priority and <b>%%MIDI drummap</b> directives are fallback data. Both <b>I:percmap &lt;source-note&gt; &lt;GM-number&gt; [notehead]</b> and MusicXML-converter mappings such as <b>I:percmap ^g g 42 x</b> are recognized. The percmap/drummap method also retains the final supported notehead value. Mapping conflicts are reported.</li>
     <li>General MIDI Level 2 percussion numbers 27 through 87 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
-    <li>Converted percussion notes are written two octaves higher with <b>transpose=-24</b> to keep the notes near the staff while preserving their General MIDI drum pitches.</li>
-    <li>For converted percussion voices, <b>K:none</b>, MIDI channel 10, old program and percussion-map directives, and <b>stafflines=1</b> are removed. Existing <b>nm=</b> and <b>snm=</b> values are always removed from each percussion voice declaration. If that declaration originally had an <b>nm=</b> value, it receives <b>nm="Drums"</b>. In that case, it also receives <b>snm="Drums"</b> when another non-percussion voice in the same tune uses an <b>snm=</b> value. No name is added to a percussion declaration that did not originally contain <b>nm=</b>. The converted voice inherits the tune's existing key signature.</li>
+    <li>Both methods remove MIDI channel 10, old program and percussion-map directives, <b>stafflines=1</b>, and old transpose values before creating their replacement output. <b>%%MIDI program 128</b> is added for General MIDI drum playback.</li>
+    <li>Existing <b>nm=</b> and <b>snm=</b> values are always removed from each percussion voice declaration. If that declaration originally had an <b>nm=</b> value, it receives <b>nm="Drums"</b>. In that case, it also receives <b>snm="Drums"</b> when another non-percussion voice in the same tune uses an <b>snm=</b> value. No name is added to a percussion declaration that did not originally contain <b>nm=</b>.</li>
     <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
     <li><b>Inject a soundfont command into each tune</b> removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and inserts the selected <b>%soundfont &lt;id&gt;</b> command immediately after the first <b>K:</b> field.</li>
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, and soundfont injection.</li>
@@ -1406,7 +1416,8 @@ function isPercDeclaration(line) {
   return /^V:\s*\S+/.test(line) && (/(?:^|\s)perc(?:\s|$)/i.test(line) || /\bclef\s*=\s*perc\b/i.test(line));
 }
 
-function normalizePercDeclaration(line, addShortName) {
+// Legacy treble-voice percussion consolidation method.
+function normalizePercDeclarationTreble(line, addShortName) {
   const hadLongName = /(?:^|\s)nm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/i.test(line);
 
   let out = line.replace(/\bclef\s*=\s*perc\b/ig,'clef=treble');
@@ -1429,35 +1440,21 @@ function normalizePercDeclaration(line, addShortName) {
   return out + ' transpose=-24';
 }
 
-function splitTunesForPercussion(text) {
-  const lines = text.replace(/\r\n?/g,'\n').split('\n');
-  const chunks = [];
-  let current = [];
-  let currentHasTune = false;
-  for (const line of lines) {
-    if (/^X:/.test(line)) {
-      if (currentHasTune) { chunks.push(current); current = []; }
-      currentHasTune = true;
-    }
-    current.push(line);
-  }
-  if (current.length) chunks.push(current);
-  return chunks;
-}
-
-function parseMapLine(line) {
+function parseMapLineTreble(line) {
   let m = line.match(/^%%MIDI\s+drummap\s+(\S+)\s+(-?\d+)\b/i);
   if (m) return {source:m[1], midi:Number(m[2]), kind:'drummap'};
+
+  // Accept both common I:percmap forms:
+  //   I:percmap <source-note> <GM-number> [notehead]
+  //   I:percmap <source-note> <display-note> <GM-number> [notehead]
+  m = line.match(/^I:percmap\s+(\S+)\s+(-?\d+)\b/i);
+  if (m) return {source:m[1], midi:Number(m[2]), kind:'percmap'};
   m = line.match(/^I:percmap\s+(\S+)\s+\S+\s+(-?\d+)\b/i);
   if (m) return {source:m[1], midi:Number(m[2]), kind:'percmap'};
   return null;
 }
 
-function addCount(map, key) {
-  map.set(key, (map.get(key) || 0) + 1);
-}
-
-function convertMusicLine(line, state, stats) {
+function convertMusicLineTreble(line, state, stats) {
   let out = '', i = 0;
   while (i < line.length) {
     const ch = line[i];
@@ -1511,7 +1508,7 @@ function convertMusicLine(line, state, stats) {
   return out;
 }
 
-function convertTune(lines, tuneIndex, overall) {
+function convertTuneTreble(lines, tuneIndex, overall) {
   const titleLine = lines.find(line => /^T:/.test(line));
   const title = titleLine ? titleLine.replace(/^T:\s*/, '').trim() : `Tune ${tuneIndex}`;
   const tuneSummary = {index:tuneIndex, title:title || `Tune ${tuneIndex}`, unmappedPercussionNotes:0, outOfRangeMappedNotes:0};
@@ -1519,6 +1516,20 @@ function convertTune(lines, tuneIndex, overall) {
   const tuneKeyLine = lines.find(line => /^K:/.test(line) && !/^K:\s*none\b/i.test(line));
   const targetKey = tuneKeyLine ? keyValueFromLine(tuneKeyLine) : 'C';
   const perc = new Map();
+
+  // Collect tune-level percussion maps before removing them. This lets legacy
+  // mode consume ABC previously produced by the percmap/drummap method while
+  // ensuring that no old percussion-map directives survive in the output.
+  const tuneLevelMaps = [];
+  const tuneLevelMapIndexes = new Set();
+  for (let i=0;i<lines.length;i++) {
+    if (/^%%percmap\b/i.test(lines[i]) || /^%%MIDI\s+drummap\b/i.test(lines[i])) {
+      tuneLevelMapIndexes.add(i);
+      const map = parseMapLineTreble(lines[i]);
+      if (map) tuneLevelMaps.push(map);
+    }
+  }
+
   const otherVoiceUsesShortNames = lines.some(line =>
     /^V:\s*\S+/.test(line) &&
     !isPercDeclaration(line) &&
@@ -1529,13 +1540,13 @@ function convertTune(lines, tuneIndex, overall) {
     if (!isPercDeclaration(lines[i])) continue;
     const id = voiceId(lines[i]);
     if (!id) continue;
-    const info = {id, declIndex:i, configEnd:lines.length, sourceKeyValue:'none', maps:[], remove:new Set()};
+    const info = {id, declIndex:i, configEnd:lines.length, sourceKeyValue:'none', maps:[...tuneLevelMaps], remove:new Set()};
     for (let j=i+1;j<lines.length;j++) {
       if (/^V:/.test(lines[j])) { info.configEnd=j; break; }
       const kv = keyValueFromLine(lines[j]);
       if (kv !== null) { info.sourceKeyValue=kv; info.remove.add(j); continue; }
       if (/^%%MIDI\s+channel\s+10\b/i.test(lines[j]) || /^%%MIDI\s+program\b/i.test(lines[j])) { info.remove.add(j); continue; }
-      const map = parseMapLine(lines[j]);
+      const map = parseMapLineTreble(lines[j]);
       if (map) { info.maps.push(map); info.remove.add(j); }
     }
     perc.set(id,info);
@@ -1620,7 +1631,10 @@ function convertTune(lines, tuneIndex, overall) {
     });
   }
 
-  const removedIndexes = new Set([...perc.values()].flatMap(x=>[...x.remove]));
+  const removedIndexes = new Set([
+    ...tuneLevelMapIndexes,
+    ...[...perc.values()].flatMap(x=>[...x.remove])
+  ]);
   const declByIndex = new Map([...perc.values()].map(x=>[x.declIndex,x]));
 
   for (let i=0;i<lines.length;i++) {
@@ -1628,7 +1642,7 @@ function convertTune(lines, tuneIndex, overall) {
     if (declByIndex.has(i)) {
       const info = declByIndex.get(i);
       activeVoice = info.id;
-      out.push(normalizePercDeclaration(line, otherVoiceUsesShortNames));
+      out.push(normalizePercDeclarationTreble(line, otherVoiceUsesShortNames));
       out.push('%%MIDI program 128');
       continue;
     }
@@ -1641,10 +1655,10 @@ function convertTune(lines, tuneIndex, overall) {
         // preceding tune/voice key signature.
         states.get(activeVoice).sourceKey = keySignature(targetKey);
         states.get(activeVoice).measureAccidentals.clear();
-      } else if (/^(?:%%MIDI\s+(?:channel|program|drummap)\b|I:percmap\b)/i.test(line)) {
+      } else if (/^(?:%%MIDI\s+(?:channel|program|drummap)\b|I:percmap\b|%%percmap\b)/i.test(line)) {
         // Remove any late percussion-only directives as well.
       } else {
-        out.push(convertMusicLine(line,states.get(activeVoice),statsByVoice.get(activeVoice)));
+        out.push(convertMusicLineTreble(line,states.get(activeVoice),statsByVoice.get(activeVoice)));
       }
     } else out.push(line);
   }
@@ -1678,7 +1692,469 @@ function convertTune(lines, tuneIndex, overall) {
   return out;
 }
 
-function convertABC(text) {
+function convertABCTreble(text) {
+  if (!text.trim()) throw new Error('Paste or open an ABC file first.');
+  const overall = {
+    tunesWithPerc:0,
+    voices:0,
+    notes:0,
+    rested:0,
+    usedMidi:new Set(),
+    unmapped:[],
+    outOfRangeNotes:[],
+    outOfRangeMappings:[],
+    conflicts:[],
+    voiceSummaries:[],
+    tuneSummaries:[]
+  };
+  const chunks = splitTunesForPercussion(text);
+  const converted = chunks.map((lines,i)=>convertTuneTreble(lines,i+1,overall)).flat().join('\n');
+  return {text:converted,stats:overall};
+}
+
+
+function normalizePercDeclaration(line, addShortName) {
+  const hadLongName = /(?:^|\s)nm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/i.test(line);
+
+  let out = line;
+
+  // Keep the voice as a percussion voice so abcjs can apply tune-level
+  // %%percmap noteheads and General MIDI drum sounds.
+  if (!/\bclef\s*=\s*perc\b/i.test(out) &&
+      !/(^V:\s*\S+\s+)perc(?=\s|$)/i.test(out)) {
+    out += ' clef=perc';
+  }
+
+  out = out.replace(/\s+stafflines\s*=\s*1(?=\s|$)/ig,'');
+  out = out.replace(/\s+transpose\s*=\s*[^\s]+/ig,'');
+
+  // Always remove imported long and short voice names from percussion
+  // declarations. Restore a standard long name only when the original
+  // percussion declaration had nm=. Add a matching short name only when
+  // another, non-percussion voice in the tune uses snm=.
+  out = out.replace(/\s+(?:nm|snm)\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/ig,'');
+
+  out = out.replace(/\s+$/,'');
+  if (hadLongName) {
+    out += ' nm="Drums"';
+    if (addShortName) out += ' snm="Drums"';
+  }
+
+  return out;
+}
+
+function splitTunesForPercussion(text) {
+  const lines = text.replace(/\r\n?/g,'\n').split('\n');
+  const chunks = [];
+  let current = [];
+  let currentHasTune = false;
+  for (const line of lines) {
+    if (/^X:/.test(line)) {
+      if (currentHasTune) { chunks.push(current); current = []; }
+      currentHasTune = true;
+    }
+    current.push(line);
+  }
+  if (current.length) chunks.push(current);
+  return chunks;
+}
+
+function parseMapLine(line) {
+  let m = line.match(/^%%MIDI\s+drummap\s+(\S+)\s+(-?\d+)\b/i);
+  if (m) return {source:m[1], midi:Number(m[2]), kind:'drummap', noteHead:null};
+
+  // Standard abcjs syntax:
+  // I:percmap <source-note> <gm-drum-number> [notehead]
+  m = line.match(/^I:percmap\s+(\S+)\s+(-?\d+)(?:\s+(\S+))?\s*$/i);
+  if (m) return {source:m[1], midi:Number(m[2]), kind:'percmap', noteHead:m[3] || null};
+
+  // MusicXML converter syntax:
+  // I:percmap <source-note> <display-note> <gm-drum-number> [notehead]
+  //
+  // The display-note is no longer needed after tune-wide consolidation,
+  // but the final notehead value must be retained.
+  m = line.match(/^I:percmap\s+(\S+)\s+(\S+)\s+(-?\d+)(?:\s+(\S+))?\s*$/i);
+  if (m) return {
+    source:m[1],
+    midi:Number(m[3]),
+    kind:'percmap',
+    noteHead:m[4] || null
+  };
+
+  // Existing tune-level percmap directives are also recognized so they can
+  // be replaced by one consolidated tune-level map.
+  m = line.match(/^%%percmap\s+(\S+)\s+(-?\d+)(?:\s+(\S+))?\s*$/i);
+  if (m) return {source:m[1], midi:Number(m[2]), kind:'percmap', noteHead:m[3] || null};
+
+  return null;
+}
+
+function addCount(map, key) {
+  map.set(key, (map.get(key) || 0) + 1);
+}
+
+// abcjs provides 17 distinct percussion staff positions. Every consolidated
+// pitch is written with an explicit accidental so the tune key signature and
+// measure accidental state cannot change the pitch used by %%MIDI drummap.
+// Four accidental spellings provide 68 unique tune-level map keys, enough for
+// the supported GM Level 2 range 27 through 87.
+const CONSOLIDATED_PERC_PITCHES = (() => {
+  const positions = ['C','D','E','F','G','A','B','c','d','e','f','g','a','b',"c'","d'","e'"];
+  const out = [];
+  for (const prefix of ['=','^','_','^^']) {
+    for (const pitch of positions) out.push(prefix + pitch);
+  }
+  return out;
+})();
+
+function convertMusicLine(line, state, stats) {
+  let out = '', i = 0;
+  while (i < line.length) {
+    const ch = line[i];
+    if (ch === '%') { out += line.slice(i); break; }
+    if (ch === '"') {
+      const end = line.indexOf('"', i + 1);
+      if (end < 0) { out += line.slice(i); break; }
+      out += line.slice(i, end + 1); i = end + 1; continue;
+    }
+    if (ch === '!') {
+      const end = line.indexOf('!', i + 1);
+      if (end < 0) { out += line.slice(i); break; }
+      out += line.slice(i, end + 1); i = end + 1; continue;
+    }
+    if (ch === '[') {
+      const k = inlineKeyValueAt(line, i);
+      if (k) {
+        // Percussion voices use the tune key, never K:none or a hard-coded
+        // K:C. Remove imported inline percussion keys and reset parsing state.
+        state.sourceKey = keySignature(state.targetKey);
+        state.measureAccidentals.clear();
+        i += k.length; continue;
+      }
+    }
+    if (ch === '|') { state.measureAccidentals.clear(); out += ch; i++; continue; }
+
+    const m = line.slice(i).match(/^([\^_=]*[A-Ga-g][,']*)/);
+    if (m) {
+      const token = m[1];
+      const parsed = parseABCPitch(token, state.sourceKey, state.measureAccidentals);
+      const mapping = parsed ? state.mapBySourceMidi.get(parsed.midi) : undefined;
+      if (mapping && mapping.valid && mapping.outputPitch) {
+        out += mapping.outputPitch;
+        stats.notesConverted++;
+        stats.usedMidi.add(mapping.midi);
+      } else {
+        // Preserve the original duration suffix, which is parsed separately,
+        // by replacing only the pitch token with a rest.
+        out += 'z';
+        if (mapping && !mapping.valid) addCount(stats.outOfRangeNotes, token);
+        else addCount(stats.unmapped, token);
+        stats.notesRested++;
+      }
+      i += token.length;
+      continue;
+    }
+
+    out += ch;
+    i++;
+  }
+  return out;
+}
+
+function convertTune(lines, tuneIndex, overall) {
+  const titleLine = lines.find(line => /^T:/.test(line));
+  const title = titleLine ? titleLine.replace(/^T:\s*/, '').trim() : `Tune ${tuneIndex}`;
+  const tuneSummary = {
+    index:tuneIndex,
+    title:title || `Tune ${tuneIndex}`,
+    unmappedPercussionNotes:0,
+    outOfRangeMappedNotes:0
+  };
+  overall.tuneSummaries.push(tuneSummary);
+
+  const tuneKeyIndex = lines.findIndex(line => /^K:/.test(line) && !/^K:\s*none\b/i.test(line));
+  const tuneKeyLine = tuneKeyIndex >= 0 ? lines[tuneKeyIndex] : null;
+  const targetKey = tuneKeyLine ? keyValueFromLine(tuneKeyLine) : 'C';
+  const perc = new Map();
+
+  const otherVoiceUsesShortNames = lines.some(line =>
+    /^V:\s*\S+/.test(line) &&
+    !isPercDeclaration(line) &&
+    /(?:^|\s)snm\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/i.test(line)
+  );
+
+  for (let i=0;i<lines.length;i++) {
+    if (!isPercDeclaration(lines[i])) continue;
+    const id = voiceId(lines[i]);
+    if (!id) continue;
+
+    const info = {
+      id,
+      declIndex:i,
+      configEnd:lines.length,
+      sourceKeyValue:'none',
+      maps:[],
+      remove:new Set()
+    };
+
+    for (let j=i+1;j<lines.length;j++) {
+      if (/^V:/.test(lines[j])) {
+        info.configEnd=j;
+        break;
+      }
+
+      const kv = keyValueFromLine(lines[j]);
+      if (kv !== null) {
+        info.sourceKeyValue=kv;
+        info.remove.add(j);
+        continue;
+      }
+
+      if (/^%%MIDI\s+(?:channel\s+10|program)\b/i.test(lines[j])) {
+        info.remove.add(j);
+        continue;
+      }
+
+      const map = parseMapLine(lines[j]);
+      if (map) {
+        info.maps.push(map);
+        info.remove.add(j);
+      }
+    }
+
+    perc.set(id,info);
+  }
+
+  if (!perc.size) return lines;
+
+  // Remove old tune-level notation and MIDI drum maps. The generated tables
+  // are global for the tune, so every percussion voice shares one allocation.
+  const oldTunePercmapIndexes = new Set();
+  for (let i=0;i<lines.length;i++) {
+    if (/^(?:%%percmap\b|%%MIDI\s+drummap\b)/i.test(lines[i])) oldTunePercmapIndexes.add(i);
+  }
+
+  const states = new Map();
+  const statsByVoice = new Map();
+  const allValidMidi = new Set();
+  const preferredNoteHeadByMidi = new Map();
+
+  for (const info of perc.values()) {
+    // Interpret imported source spellings in the tune's real key signature.
+    // Imported K:none and K:C percussion keys are deliberately ignored.
+    const sourceKey = keySignature(targetKey);
+    const parsedEntries = [];
+    const dummyAcc = new Map();
+
+    for (const entry of info.maps) {
+      const p = parseABCPitch(entry.source, sourceKey, dummyAcc);
+      dummyAcc.clear();
+      if (p) parsedEntries.push({...entry, sourceMidi:p.midi});
+    }
+
+    // I:percmap is authoritative whenever at least one usable I:percmap line
+    // exists in this voice. %%MIDI drummap is a fallback only.
+    const hasPercmap = parsedEntries.some(entry => entry.kind === 'percmap');
+    const selectedKind = hasPercmap ? 'percmap' : 'drummap';
+    const selectedEntries = parsedEntries.filter(entry => entry.kind === selectedKind);
+    const mapBySourceMidi = new Map();
+    const conflicts = [];
+    const outOfRangeMappings = [];
+
+    for (const entry of selectedEntries) {
+      const prior = mapBySourceMidi.get(entry.sourceMidi);
+      if (prior && prior.midi !== entry.midi) {
+        conflicts.push({
+          source:entry.source,
+          sourceMidi:entry.sourceMidi,
+          kept:prior.midi,
+          rejected:entry.midi,
+          kind:selectedKind
+        });
+        continue;
+      }
+
+      const valid = entry.midi >= 27 && entry.midi <= 87;
+      if (!prior) {
+        mapBySourceMidi.set(entry.sourceMidi,{
+          midi:entry.midi,
+          valid,
+          kind:selectedKind,
+          source:entry.source,
+          noteHead:entry.noteHead || null,
+          outputPitch:null
+        });
+      }
+
+      if (valid) {
+        allValidMidi.add(entry.midi);
+        if (entry.noteHead && !preferredNoteHeadByMidi.has(entry.midi)) {
+          preferredNoteHeadByMidi.set(entry.midi, entry.noteHead);
+        }
+      } else {
+        outOfRangeMappings.push({source:entry.source,midi:entry.midi,kind:selectedKind});
+      }
+    }
+
+    if (hasPercmap) {
+      const chosenBySource = new Map(selectedEntries.map(entry => [entry.sourceMidi,entry]));
+      for (const entry of parsedEntries) {
+        if (entry.kind !== 'drummap') continue;
+        const chosen = chosenBySource.get(entry.sourceMidi);
+        if (chosen && chosen.midi !== entry.midi) {
+          conflicts.push({
+            source:chosen.source,
+            sourceMidi:entry.sourceMidi,
+            kept:chosen.midi,
+            rejected:entry.midi,
+            kind:'percmap-over-drummap'
+          });
+        }
+      }
+    }
+
+    states.set(info.id,{
+      sourceKey:keySignature(targetKey),
+      targetKey,
+      measureAccidentals:new Map(),
+      mapBySourceMidi
+    });
+
+    statsByVoice.set(info.id,{
+      notesConverted:0,
+      notesRested:0,
+      unmapped:new Map(),
+      outOfRangeNotes:new Map(),
+      usedMidi:new Set(),
+      mapCount:mapBySourceMidi.size,
+      selectedKind,
+      ignoredFallbackCount:hasPercmap
+        ? parsedEntries.filter(entry => entry.kind === 'drummap').length
+        : 0,
+      conflicts,
+      outOfRangeMappings
+    });
+  }
+
+  const orderedMidi = [...allValidMidi].sort((a,b)=>a-b);
+  const outputPitchByMidi = new Map();
+  orderedMidi.forEach((midi,index)=>{
+    outputPitchByMidi.set(midi, CONSOLIDATED_PERC_PITCHES[index]);
+  });
+
+  for (const state of states.values()) {
+    for (const mapping of state.mapBySourceMidi.values()) {
+      if (mapping.valid) mapping.outputPitch = outputPitchByMidi.get(mapping.midi) || null;
+    }
+  }
+
+  const generatedPercmap = [];
+  for (const midi of orderedMidi) {
+    const pitch = outputPitchByMidi.get(midi);
+    const noteHead = preferredNoteHeadByMidi.get(midi);
+    generatedPercmap.push(`%%percmap ${pitch} ${midi}${noteHead ? ' ' + noteHead : ''}`);
+    generatedPercmap.push(`%%MIDI drummap ${pitch} ${midi}`);
+  }
+
+  const removedIndexes = new Set([
+    ...[...perc.values()].flatMap(info=>[...info.remove]),
+    ...oldTunePercmapIndexes
+  ]);
+  const declByIndex = new Map([...perc.values()].map(info=>[info.declIndex,info]));
+  const out = [];
+  let activeVoice = null;
+  let insertedPercmap = false;
+
+  for (let i=0;i<lines.length;i++) {
+    const line = lines[i];
+
+    if (removedIndexes.has(i)) continue;
+
+    if (declByIndex.has(i)) {
+      const info = declByIndex.get(i);
+      activeVoice = info.id;
+      out.push(normalizePercDeclaration(line, otherVoiceUsesShortNames));
+      out.push(`K:${targetKey}`);
+      out.push('%%MIDI program 128');
+      continue;
+    }
+
+    if (!insertedPercmap && i === tuneKeyIndex) {
+      out.push(line);
+      out.push(...generatedPercmap);
+      insertedPercmap = true;
+      continue;
+    }
+
+    if (/^V:/.test(line)) activeVoice = voiceId(line);
+
+    if (activeVoice && perc.has(activeVoice) && !/^V:/.test(line)) {
+      const kv = keyValueFromLine(line);
+      if (kv !== null) {
+        // Replace every percussion-track key with the tune key. Do not keep
+        // K:none or a converter-supplied K:C.
+        states.get(activeVoice).sourceKey = keySignature(targetKey);
+        states.get(activeVoice).measureAccidentals.clear();
+      } else if (/^(?:%%MIDI\s+(?:channel|program|drummap)\b|I:percmap\b|%%percmap\b)/i.test(line)) {
+        // Remove late percussion-only mapping/program directives.
+      } else {
+        out.push(convertMusicLine(line,states.get(activeVoice),statsByVoice.get(activeVoice)));
+      }
+    } else {
+      out.push(line);
+    }
+  }
+
+  // Defensive fallback for malformed tunes without a usable header K:.
+  if (!insertedPercmap && generatedPercmap.length) {
+    const firstTuneLine = out.findIndex(line => /^X:/.test(line));
+    out.splice(firstTuneLine >= 0 ? firstTuneLine + 1 : 0, 0, ...generatedPercmap);
+  }
+
+  overall.tunesWithPerc++;
+
+  for (const [id,s] of statsByVoice) {
+    overall.voices++;
+    overall.notes += s.notesConverted;
+    overall.rested += s.notesRested;
+    for (const midi of s.usedMidi) overall.usedMidi.add(midi);
+
+    if (s.unmapped.size) {
+      overall.unmapped.push({tune:tuneIndex,voice:id,items:[...s.unmapped]});
+      tuneSummary.unmappedPercussionNotes +=
+        [...s.unmapped.values()].reduce((n,count)=>n+count,0);
+    }
+
+    if (s.outOfRangeNotes.size) {
+      overall.outOfRangeNotes.push({tune:tuneIndex,voice:id,items:[...s.outOfRangeNotes]});
+      tuneSummary.outOfRangeMappedNotes +=
+        [...s.outOfRangeNotes.values()].reduce((n,count)=>n+count,0);
+    }
+
+    if (s.outOfRangeMappings.length) {
+      overall.outOfRangeMappings.push({tune:tuneIndex,voice:id,items:s.outOfRangeMappings});
+    }
+
+    if (s.conflicts.length) {
+      overall.conflicts.push({tune:tuneIndex,voice:id,items:s.conflicts});
+    }
+
+    overall.voiceSummaries.push({
+      tune:tuneIndex,
+      voice:id,
+      mapCount:s.mapCount,
+      notes:s.notesConverted,
+      rested:s.notesRested,
+      selectedKind:s.selectedKind,
+      ignoredFallbackCount:s.ignoredFallbackCount
+    });
+  }
+
+  return out;
+}
+
+
+function convertABCPercmap(text) {
   if (!text.trim()) throw new Error('Paste or open an ABC file first.');
   const overall = {
     tunesWithPerc:0,
@@ -1893,6 +2369,8 @@ function updateOptionState() {
   const hasTune=hasABCTune(inputEl.value);
   $('processButton').disabled=!(hasTune && (shorten || percussion || reformat || soundfont));
   $('maxSeconds').disabled=!shorten;
+  $('percussionMethod').disabled=!percussion;
+  $('percussionMethodRow').classList.toggle('disabled',!percussion);
   $('durationRow').classList.toggle('disabled',!shorten);
   $('measuresPerStaff').disabled=!reformat;
   $('measuresRow').classList.toggle('disabled',!reformat);
@@ -1969,7 +2447,8 @@ $('processButton').onclick = () => {
       longSummaries = r.tuneSummaries;
     }
     if (doPercussion) {
-      const r=convertABC(text);
+      const percussionMethod=$('percussionMethod').value;
+      const r=percussionMethod === 'treble' ? convertABCTreble(text) : convertABCPercmap(text);
       text=r.text;
       const totals=percussionAggregate(r.stats);
       unmappedTotal=totals.unmapped;
@@ -2031,6 +2510,7 @@ $('processButton').onclick = () => {
       `Unmapped percussion notes replaced by rests: ${unmappedTotal}.`,
       `Out-of-range mapped notes replaced by rests: ${outOfRangeMappedTotal}.`
     ];
+    if (doPercussion) statusLines.push(`Percussion conversion method: ${$('percussionMethod').value === 'treble' ? 'Treble voice with transpose=-24 (legacy)' : 'Perc voice with percmap/drummap'}.`);
     if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}.`);
     if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}.`);
     statusEl.textContent=statusLines.join('\n');
@@ -2051,6 +2531,7 @@ $('clearButton').onclick = () => {
 inputEl.addEventListener('input', () => changed());
 $('shortenOption').addEventListener('change',()=>changed());
 $('percussionOption').addEventListener('change',()=>changed());
+$('percussionMethod').addEventListener('change',()=>changed());
 $('reformatOption').addEventListener('change',()=>changed());
 $('soundfontOption').addEventListener('change',()=>changed());
 $('maxSeconds').addEventListener('input',()=>changed());
