@@ -778,7 +778,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.2</div>
+    <div class="versionNumber">Version 1.2.4</div>
     <h1>MusicXML to ABC Optimizer</h1>
     <p>Optimizes ABC produced by MusicXML transcoders by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
@@ -872,7 +872,9 @@
     <li>Existing <b>nm=</b> and <b>snm=</b> values are always removed from each percussion voice declaration. If that declaration originally had an <b>nm=</b> value, it receives <b>nm="Drums"</b>. In that case, it also receives <b>snm="Drums"</b> when another non-percussion voice in the same tune uses an <b>snm=</b> value. No name is added to a percussion declaration that did not originally contain <b>nm=</b>.</li>
     <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
     <li><b>Inject a soundfont command into each tune</b> removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and inserts the selected <b>%soundfont &lt;id&gt;</b> command immediately after the first <b>K:</b> field.</li>
-    <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, and soundfont injection.</li>
+    <li>Every processed tune receives <b>%%staffwidth 1200</b> immediately after its first header <b>K:</b> field unless a <b>%%staffwidth</b> directive is already present in that tune.</li>
+    <li>When percussion consolidation is enabled, the processed tune also receives an <b>%abcjs_render_params</b> percussion-release setting before its voice declarations so hi-hats and selected cymbals ring for appropriate lengths.</li>
+    <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, soundfont injection, and final tune-level rendering directives.</li>
     <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
     <li>Use the output buttons to copy, save, or send the processed ABC directly to the ABC Transcription Tools.</li>
     </ul>
@@ -2231,6 +2233,47 @@ function injectSoundfontCommands(text, soundfontId) {
   return {text:output.join(''),changedTunes};
 }
 
+const PERCUSSION_RELEASE_PARAMS_LINE = '%abcjs_render_params {"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600,"52":3000,"55":1800,"57":3000,"59":2600}}';
+
+function addFinalTuneDirectives(text, includePercussionRelease) {
+  const parts = splitTunesForLimiter(String(text || ''));
+  let staffwidthAdded = 0;
+  let percussionReleaseAdded = 0;
+
+  const output = parts.map(part => {
+    if (part.preamble) return part.text;
+    const lines = part.text.replace(/\r\n?/g, '\n').split('\n');
+
+    if (!lines.some(line => /^\s*%%staffwidth(?:\s|$)/i.test(line))) {
+      const keyIndex = lines.findIndex(line => /^\s*K\s*:/.test(line));
+      if (keyIndex >= 0) {
+        lines.splice(keyIndex + 1, 0,
+          '% Set the staff width wider',
+          '%%staffwidth 1200'
+        );
+        staffwidthAdded++;
+      }
+    }
+
+    if (includePercussionRelease &&
+        !lines.some(line => /^\s*%abcjs_render_params\s+.*"percussionRelease"\s*:/.test(line))) {
+      const voiceIndex = lines.findIndex(line => /^\s*V\s*:/.test(line));
+      const insertIndex = voiceIndex >= 0 ? voiceIndex : Math.max(0, lines.findIndex(line => /^\s*K\s*:/.test(line)));
+      lines.splice(insertIndex, 0,
+        '%',
+        '% Set release times for the Closed Hi-Hat (42),  Pedal Hi-Hat (44),  Open Hi-Hat (46), Crash Cymbal 1 (49), Ride Cymbal 1 (51), Chinese Cymbal (52), Splash Cymbal (55), Crash Cymbal 2 (57), and Ride Cymbal 2 (59):',
+        PERCUSSION_RELEASE_PARAMS_LINE,
+        '%'
+      );
+      percussionReleaseAdded++;
+    }
+
+    return lines.join('\n');
+  });
+
+  return {text:output.join(''), staffwidthAdded, percussionReleaseAdded};
+}
+
 function stripTrailingMeasureNumber(line) {
   return String(line || '').replace(/\s+%\s*\d+\s*$/,'').replace(/\s+$/,'');
 }
@@ -2468,6 +2511,7 @@ $('processButton').onclick = () => {
   let text=original;
   let splitTotal=0, unmappedTotal=0, outOfRangeMappedTotal=0;
   let tunesReformatted=0, soundfontTunes=0;
+  let staffwidthTunes=0, percussionReleaseTunes=0;
   let longSummaries = [];
   let percussionSummaries = [];
   try {
@@ -2505,6 +2549,13 @@ $('processButton').onclick = () => {
       }
       const r=injectSoundfontCommands(text,soundfontId);
       text=r.text; soundfontTunes=r.changedTunes;
+    }
+
+    {
+      const r=addFinalTuneDirectives(text,doPercussion);
+      text=r.text;
+      staffwidthTunes=r.staffwidthAdded;
+      percussionReleaseTunes=r.percussionReleaseAdded;
     }
 
     let baseTunes=doShorten ? longSummaries : percussionSummaries;
@@ -2546,6 +2597,8 @@ $('processButton').onclick = () => {
     if (doPercussion) statusLines.push(`Percussion conversion method: ${$('percussionMethod').value === 'treble' ? 'Treble voice with transpose=-24 (legacy)' : 'Perc voice with percmap/drummap'}.`);
     if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}.`);
     if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}.`);
+    statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}.`);
+    if (doPercussion) statusLines.push(`Tunes given percussion release settings: ${percussionReleaseTunes}.`);
     statusEl.textContent=statusLines.join('\n');
   } catch (e) {
     console.error(e);
