@@ -2590,15 +2590,15 @@ $('processButton').onclick = () => {
 
     setOutput(text);
     const statusLines=[
-      `Split long notes: ${splitTotal}.`,
-      `Unmapped percussion notes replaced by rests: ${unmappedTotal}.`,
-      `Out-of-range mapped notes replaced by rests: ${outOfRangeMappedTotal}.`
+      `Split long notes: ${splitTotal}`,
+      `Unmapped percussion notes replaced by rests: ${unmappedTotal}`,
+      `Out-of-range mapped notes replaced by rests: ${outOfRangeMappedTotal}`
     ];
-    if (doPercussion) statusLines.push(`Percussion conversion method: ${$('percussionMethod').value === 'treble' ? 'Treble voice with transpose=-24 (legacy)' : 'Perc voice with percmap/drummap'}.`);
-    if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}.`);
-    if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}.`);
-    statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}.`);
-    if (doPercussion) statusLines.push(`Tunes given percussion release settings: ${percussionReleaseTunes}.`);
+    if (doPercussion) statusLines.push(`Percussion conversion method: ${$('percussionMethod').value === 'treble' ? 'Treble voice with transpose=-24 (legacy)' : 'Perc voice with percmap/drummap'}`);
+    if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}`);
+    if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}`);
+    statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}`);
+    if (doPercussion) statusLines.push(`Tunes given percussion release settings: ${percussionReleaseTunes}`);
     statusEl.textContent=statusLines.join('\n');
   } catch (e) {
     console.error(e);
