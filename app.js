@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3301_071926_1230";
+var gVersionNumber = "3302_072226_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_15jul2026;
+        var updatePresented = localStorage.sawUpdate_22jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_15jul2026 = true;
+          localStorage.sawUpdate_22jul2026 = true;
 
         }
 
@@ -57193,7 +57193,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 15 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 22 July 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New: Per-instrument percussion instrument release time overrides</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">You can now set the release time for each of the sounds in the percussion instrument (%%MIDI program 128). This can be useful for more realistic cymbal crashes. See the <strong>User Guide</strong> section on <strong>Extending Percussion (%%MIDI program 128) Instrument Release Times</strong> for details.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -57201,13 +57208,6 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Added direct links to the Facebook and Freeforums.net discussion groups</strong></p>';
   modal_msg += '<p style="font-size:12pt;">Click the <strong>Facebook</strong> or <strong>Forum</strong> links at the top of the tool to visit the dedicated discussion groups for the ABC Transcription Tools and related utilities.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New: Interactive Guided Tours</strong> (desktop browsers only)</p>';
-  modal_msg += '<p style="font-size:12pt;">Click the <strong>✦ Guided Tours ✦</strong> button on the launch screen to explore eight step-by-step guided tours that walk you through the ABC Transcription Tools’ most popular features and workflows.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63887,13 +63887,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_15jul2026;
+    var updatePresented = localStorage.sawUpdate_22jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_15jul2026 = true;
+      localStorage.sawUpdate_22jul2026 = true;
 
     }
 
