@@ -19197,14 +19197,14 @@ function CreateSynth(theABC) {
         var releaseMs = Number(params.percussionRelease[pitch]);
 
         // Restrict the map to real General MIDI Level 2 percussion pitches and finite release
-        // values. Three seconds is the maximum supported percussion release. Clamp larger
+        // values. Five seconds is the maximum supported percussion release. Clamp larger
         // values so malformed or excessive tune settings cannot allocate an
         // unnecessarily large audio buffer.
         if (isFinite(midiPitch) && midiPitch % 1 === 0 &&
             midiPitch >= 27 && midiPitch <= 87 &&
             isFinite(releaseMs) &&
             releaseMs >= 0) {
-          self.percussionRelease[midiPitch] = Math.min(releaseMs, 3000);
+          self.percussionRelease[midiPitch] = Math.min(releaseMs, 5000);
         }
       });
     }

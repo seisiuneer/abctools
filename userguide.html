@@ -4025,7 +4025,7 @@
                 <p>The %abcjs_render_params percussionRelease parameter allows you to override the release (decay) time for individual General MIDI percussion instruments when using MIDI Program 128 (Percussion).</p>
                 <p>This is particularly useful for extending the natural ring of cymbals, hi-hats, gongs, and other percussion sounds regardless of the actual note length in the ABC.</p>
                 <p>Specify the parameter as an object whose keys are General MIDI Level 2 percussion note numbers (27–87) and whose values are release times in milliseconds.</p>
-                <p>Release times may range from 0 to 3000 milliseconds; any larger values are automatically limited to 3000 milliseconds.</p>
+                <p>Release times may range from 0 to 5000 milliseconds; any larger values are automatically limited to 5000 milliseconds.</p>
                 <p>The setting applies only to the tune containing the %abcjs_render_params directive and does not affect any other tunes or any non-percussion instruments.</p>
                 <p>This example sets short release times for the Closed Hi-Hat (42) and Pedal Hi-Hat (44), longer release times for the Open Hi-Hat (46), Crash Cymbal 1 (49), Ride Cymbal 1 (51), Chinese Cymbal (52), Splash Cymbal (55), Crash Cymbal 2 (57), and Ride Cymbal 2 (59):</p>
                 <p class="code">%abcjs_render_params {"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600, "52":3000,"55":1800,"57":3000,"59":2600}}</p>
