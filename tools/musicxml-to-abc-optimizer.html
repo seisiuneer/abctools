@@ -754,12 +754,31 @@
       .styledSelect::-ms-expand { display:none; }
       .styledSelect:disabled { cursor:default; }
       #percussionMethod { font-size: 1.08em; }
+
+      .versionNumber {
+        position: absolute;
+        top: calc(10px + env(safe-area-inset-top));
+        right: calc(14px + env(safe-area-inset-right));
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 1rem;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 720px) {
+        .versionNumber {
+          top: calc(7px + env(safe-area-inset-top));
+          right: calc(9px + env(safe-area-inset-right));
+          font-size: 0.64rem;
+        }
+      }
 </style>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
 </head>
 <body>
 <div class="app">
   <section class="hero">
+    <div class="versionNumber">Version 1.2.2</div>
     <h1>MusicXML to ABC Optimizer</h1>
     <p>Optimizes ABC produced by MusicXML transcoders by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
