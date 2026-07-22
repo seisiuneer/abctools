@@ -845,7 +845,7 @@
     <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Consolidate percussion voices for General MIDI playback and drum noteheads</b> detects voices declared with <b>perc</b> or <b>clef=perc</b> and converts them using the selected method. The method selector is available only while this option is enabled.</li>
-    <li><b>Perc voice with percmap/drummap</b> is the default method. It keeps converted voices as percussion voices, assigns every General MIDI drum instrument used in the tune one shared notation pitch, and generates matching tune-level <b>%%percmap</b> and <b>%%MIDI drummap</b> tables. Supported notehead values are retained in the <b>%%percmap</b> entries, and explicit accidentals prevent the tune key from changing the drum mapping.</li>
+    <li><b>Perc voice with percmap/drummap</b> is the default method. It keeps converted voices as percussion voices, assigns every mapped General MIDI drum instrument in the tune one shared notation pitch, and generates matching tune-level <b>%%percmap</b> and <b>%%MIDI drummap</b> tables. Supported notehead values are retained in the <b>%%percmap</b> entries, and explicit accidentals prevent the tune key from changing the drum mapping. Previously optimized percussion tunes can be processed again without changing their drum mappings.</li>
     <li><b>Treble voice with transpose=-24 (legacy)</b> reproduces the optimizer's original conversion method. It changes percussion voices to treble voices, writes their mapped General MIDI pitches two octaves higher on the staff, and adds <b>transpose=-24</b> so playback returns to the intended drum numbers. This method does not generate consolidated <b>%%percmap</b> or <b>%%MIDI drummap</b> tables and does not preserve imported drum noteheads.</li>
     <li>For either method, if a percussion voice contains any usable <b>I:percmap</b> directives, those mappings take priority and <b>%%MIDI drummap</b> directives are fallback data. Both <b>I:percmap &lt;source-note&gt; &lt;GM-number&gt; [notehead]</b> and MusicXML-converter mappings such as <b>I:percmap ^g g 42 x</b> are recognized. The percmap/drummap method also retains the final supported notehead value. Mapping conflicts are reported.</li>
     <li>General MIDI Level 2 percussion numbers 27 through 87 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
@@ -1877,6 +1877,20 @@ function convertTune(lines, tuneIndex, overall) {
   const targetKey = tuneKeyLine ? keyValueFromLine(tuneKeyLine) : 'C';
   const perc = new Map();
 
+  // Recover previously generated tune-level percussion mappings before they
+  // are removed and regenerated. These mappings are used to seed percussion
+  // voices that no longer contain their original voice-local map directives,
+  // making the percmap conversion safe to run repeatedly on its own output.
+  const oldTunePercmapIndexes = new Set();
+  const recoveredTuneMaps = [];
+  for (let i=0;i<lines.length;i++) {
+    if (/^(?:%%percmap\b|%%MIDI\s+drummap\b)/i.test(lines[i])) {
+      oldTunePercmapIndexes.add(i);
+      const map = parseMapLine(lines[i]);
+      if (map) recoveredTuneMaps.push(map);
+    }
+  }
+
   const otherVoiceUsesShortNames = lines.some(line =>
     /^V:\s*\S+/.test(line) &&
     !isPercDeclaration(line) &&
@@ -1922,17 +1936,17 @@ function convertTune(lines, tuneIndex, overall) {
       }
     }
 
+    // A previously processed tune stores the consolidated maps at tune level
+    // rather than inside each voice. Reuse those mappings only when this voice
+    // has no local mappings of its own, preserving normal per-voice precedence.
+    if (!info.maps.length && recoveredTuneMaps.length) {
+      info.maps.push(...recoveredTuneMaps.map(map => ({...map})));
+    }
+
     perc.set(id,info);
   }
 
   if (!perc.size) return lines;
-
-  // Remove old tune-level notation and MIDI drum maps. The generated tables
-  // are global for the tune, so every percussion voice shares one allocation.
-  const oldTunePercmapIndexes = new Set();
-  for (let i=0;i<lines.length;i++) {
-    if (/^(?:%%percmap\b|%%MIDI\s+drummap\b)/i.test(lines[i])) oldTunePercmapIndexes.add(i);
-  }
 
   const states = new Map();
   const statsByVoice = new Map();
