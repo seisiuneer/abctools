@@ -57199,7 +57199,7 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New: Per-instrument percussion instrument release time and volume scale overrides</strong></p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New: Percussion instrument volume scale and release time overrides</strong></p>';
   modal_msg += '<p style="font-size:12pt;">You can now set the volume scale and release times for each of the sounds in the percussion instrument (%%MIDI program 128). This can be useful for forcing louder drum parts and more realistic cymbal crashes. See the <strong>User Guide</strong> section on <strong>Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</strong> for details.</p>';
   modal_msg += '</div>';
 
