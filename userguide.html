@@ -703,7 +703,7 @@
             <a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback</a>
             <a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a>
             <a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a>
-            <a style="text-decoration:none;" href="#extending_percussion_release">Extending Percussion (%%MIDI program 128) Instrument Release Times</a>
+            <a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a>
             </details>
 
             <details>
@@ -1265,7 +1265,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#extending_percussion_release">Extending Percussion (%%MIDI program 128) Instrument Release Times</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a></p>
 
                     </div>
 
@@ -4017,11 +4017,16 @@
                 <p class="code">%force_power_chords</p>
                 <p>This can be particularly useful for simulating diatonic button accordion basses for traditional Irish music where the thirds are taped off.</p>
                 <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
-                <hr class="hidden-print" id="extending_percussion_release">
-                <h1 class="page_break_always">Extending Percussion (%%MIDI program 128) Instrument Release Times</h1>
+                <hr class="hidden-print" id="custom_percussion_volume_and_release">
+                <h1 class="page_break_always">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
+                <p>The %abcjs_render_params percussionVolumeScale is used to set the playback volume multiplier for all notes using MIDI program 128 percussion.</p>
+                <p>The default value is 2.5. Higher values make the percussion louder, lower values make it quieter, and 0 silences it.</p>
+                <p>Example:</p>
+                <p class="code">%abcjs_render_params {"percussionVolumeScale":3.5}</p>
+                <hr>
                 <p>The %abcjs_render_params percussionRelease parameter allows you to override the release (decay) time for individual General MIDI percussion instruments when using MIDI Program 128 (Percussion).</p>
                 <p>This is particularly useful for extending the natural ring of cymbals, hi-hats, gongs, and other percussion sounds regardless of the actual note length in the ABC.</p>
                 <p>Specify the parameter as an object whose keys are General MIDI Level 2 percussion note numbers (27–87) and whose values are release times in milliseconds.</p>
@@ -4029,6 +4034,9 @@
                 <p>The setting applies only to the tune containing the %abcjs_render_params directive and does not affect any other tunes or any non-percussion instruments.</p>
                 <p>This example sets short release times for the Closed Hi-Hat (42) and Pedal Hi-Hat (44), longer release times for the Open Hi-Hat (46), Crash Cymbal 1 (49), Ride Cymbal 1 (51), Chinese Cymbal (52), Splash Cymbal (55), Crash Cymbal 2 (57), and Ride Cymbal 2 (59):</p>
                 <p class="code">%abcjs_render_params {"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600, "52":3000,"55":1800,"57":3000,"59":2600}}</p>
+                <hr>
+                <p>percussionVolumeScale and  percussionRelease may also be combined:</p>
+                <p class="code">%abcjs_render_params {"percussionVolumeScale":3.5,"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600, "52":3000,"55":1800,"57":3000,"59":2600}}</p>
                 <hr class="hidden-print" id="export_audio_image">
                 <h1 class="page_break_always">Exporting Tune Audio, Image, or PDF Files from the Player</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -7824,9 +7832,12 @@
                 <p class="code">%abcjs_render_params {“tablature”: [{“instrument”: “fivestring”,“label”: “Open G - DGDGB”,“tuning”: [“D,”, “G,”, “D”, “G”, “B”],“highestNote”: “f’”,“capo”: 0}]}</p>
                 <p>Example #7: Generating custom Open-G (D-G-D-G-B-D) 6-string Guitar tablature:</p>
                 <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
-                <p>Example #8: Lengthening the release time on percussion (%%MIDI program 128) instruments:</p>
+                <p>Example #8: Lengthen the release time on percussion (%%MIDI program 128) instruments:</p>
                 <p>This example sets short release times for the Closed Hi-Hat (42) and Pedal Hi-Hat (44), longer release times for the Open Hi-Hat (46), Crash Cymbal 1 (49), Ride Cymbal 1 (51), Chinese Cymbal (52), Splash Cymbal (55), Crash Cymbal 2 (57), and Ride Cymbal 2 (59).</p>
                 <p class="code">%abcjs_render_params {"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600,"52":3000,"55":1800,"57":3000,"59":2600}}</p>
+                <p>Example #9: Make the percussion louder and lengthen the release time on percussion (%%MIDI program 128) instruments:</p>
+                <p>This example sets short release times for the Closed Hi-Hat (42) and Pedal Hi-Hat (44), longer release times for the Open Hi-Hat (46), Crash Cymbal 1 (49), Ride Cymbal 1 (51), Chinese Cymbal (52), Splash Cymbal (55), Crash Cymbal 2 (57), and Ride Cymbal 2 (59).</p>
+                <p class="code">%abcjs_render_params {"percussionVolumeScale":3.5,"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600,"52":3000,"55":1800,"57":3000,"59":2600}}</p>
                 <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
                 <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
@@ -8728,6 +8739,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_customcssgenerator">Custom CSS Generator</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_builder">Custom Instrument Builder</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#custom_ornament_timing">Custom Timing and Offsets for Trills, Mordents, Turns, and Tremolo</a></p>
 
                 <h1 class="page_break_never" id="index_D" style="text-align:left;margin-bottom:12px;">D</h1>
@@ -8766,7 +8778,6 @@
                 <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Full-Featured Website Developer Customization</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#extending_percussion_release">Extending Percussion (%%MIDI program 128) Instrument Release Times</a></p>
 
                 <h1 class="page_break_never" id="index_F" style="text-align:left;margin-bottom:12px;">F</h1>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_find">Find and Replace</a></p>
