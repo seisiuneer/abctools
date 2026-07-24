@@ -8508,6 +8508,12 @@
                 <p>For those coming from other ABC tools, this tool may or may not meet your needs.</p>
                 <p>Here are some differences between this tool and others:</p>
                 <hr>
+                <p><strong>!ff! style dynamics may leak between voices in a multi-voice tune.</strong></p>
+                <p>This is a quirk of abcjs that could easily be fixed, but fixing it would break many existing ABC arrangements with dynamics that depend on the legacy behavior.</p> 
+                <p>In a multi-voice tune if a voice has a !ff! style dynamic, it will leak into the start of the next voice if that voice doesn't have a dynamic mark at the beginning.</p>
+                <p>If you are using dynamic marks, it is best to put a default dynamic mark at the start of each voice, after any embedded commands like [K:C] and before the first ABC note or rest.</p>
+                <p>!f! is the closest to the default abcjs dynamic level if none is specified.</p>
+                <hr>
                 <p><strong>When changing values in the ABC file header above the tunes, to see the result of your changes on all the tunes, you'll need to manually force a full redraw of the tunes.</strong></p>
                 <p>Redrawing all the tunes automatically on each change of text in the ABC file header is not done.</p>
                 <p>The simplest way to force a redraw of all the tunes is to click any of the display format options buttons below the ABC editor, for example <strong>Notation</strong>.</p>
