@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MusicXML to ABC Optimizer</title>
+  <title>MuseScore MusicXML to ABC Optimizer</title>
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="MusicXML to ABC Optimizer" />
-  <meta property="og:description" content="MusicXML to ABC Optimizer" />
-  <meta property="og:site_name" content="MusicXML to ABC Optimizer" />
+  <meta property="og:title" content="MuseScore MusicXML to ABC Optimizer" />
+  <meta property="og:description" content="MuseScore MusicXML to ABC Optimizer" />
+  <meta property="og:site_name" content="MuseScore MusicXML to ABC Optimizer" />
   <meta property="og:url" content="https://michaeleskin.com/tools/musicxml-to-abc-optimizer.html" />
   <meta property="og:image" content="https://michaeleskin.com/tools/img/musicxml-to-abc-optimizer-og-1.jpg" />
   <meta name="msapplication-TileColor" content="#ffffff" />
@@ -26,761 +26,761 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png" />
   <style>
-      :root {
-        color-scheme: light;
-        --bd: 1px solid rgba(127, 127, 127, 0.35);
-        --mono:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
+    :root {
+      color-scheme: light;
+      --bd: 1px solid rgba(127, 127, 127, 0.35);
+      --mono:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family:
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+      color: #000;
+      background: #fff;
+    }
+    body {
+      padding: 18px 32px 150px;
+    }
+    .app {
+      max-width: 1500px;
+      margin: auto;
+    }
+    .hero {
+      border: 1px solid rgba(127, 127, 127, 0.22);
+      border-radius: 18px;
+      padding: 18px 20px 16px;
+      background: linear-gradient(
+        180deg,
+        rgba(244, 248, 255, 0.95),
+        rgba(252, 252, 252, 0.98)
+      );
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(24px, 2vw + 16px, 34px);
+    }
+    .hero p {
+      margin: 10px 0 0;
+      line-height: 1.5;
+      color: #333;
+    }
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+    .card {
+      border: var(--bd);
+      border-radius: 12px;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+    .inputHeader {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .inputHeader h2 {
+      margin: 0;
+    }
+    .fileWrap {
+      flex: 1;
+      min-width: 260px;
+    }
+    input,
+    button,
+    textarea {
+      font: inherit;
+    }
+    input[type="file"] {
+      width: 100%;
+    }
+    input[type="file"]::file-selector-button,
+    button {
+      border: 1px solid #d3dbe7;
+      background: #f0f3f8;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    input[type="file"]::file-selector-button {
+      margin-right: 12px;
+      background: #eef7f1;
+      border-color: #c9ded1;
+    }
+    button.primary {
+      background: #e8f1ff;
+      border-color: #9dbaf2;
+    }
+    button:disabled {
+      opacity: 0.42;
+      cursor: default;
+    }
+    .taWrap {
+      border: var(--bd);
+      border-radius: 10px;
+      height: 52vh;
+      min-height: 360px;
+      display: flex;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .taWrap textarea {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      resize: none;
+      padding: 12px;
+      font-family: var(--mono);
+      line-height: 1.35;
+      overflow: auto;
+    }
+    .buttonRow {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .buttonRow button {
+      flex: 1 1 180px;
+    }
+    .settings {
+      background: linear-gradient(
+        180deg,
+        rgba(244, 248, 255, 0.82),
+        rgba(252, 252, 252, 0.96)
+      );
+      border-radius: 18px;
+    }
+    .settingLine {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .settingLine label {
+      font-weight: 650;
+    }
+    .settingLine input {
+      width: 90px;
+      border: var(--bd);
+      border-radius: 10px;
+      padding: 9px 10px;
+    }
+    .note {
+      font-size: 0.95em;
+      color: #444;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+    .statusHeader {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .statusHeader h2 { margin: 0; }
+    .statusHeader button { padding: 7px 11px; }
+    .reportTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    .reportTable th,
+    .reportTable td {
+      border: var(--bd);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .reportTable th { background: #f0f3f8; }
+    .reportTable th.num,
+    .reportTable td.num { text-align: right; white-space: nowrap; }
+    .reportEmpty { color: #555; line-height: 1.5; }
+    .status {
+      font-family: var(--mono);
+      white-space: pre-wrap;
+      border: var(--bd);
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 48px;
+      line-height: 1.45;
+    }
+    .footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      border-top: var(--bd);
+      padding: 12px 32px calc(12px + env(safe-area-inset-bottom));
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+    .footer button {
+      flex: 1;
+    }
+    .drag {
+      outline: 3px solid rgba(157, 186, 242, 0.4);
+      background: #f7faff;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 100;
+    }
+    .modalBox {
+      background: #fff;
+      max-width: 760px;
+      max-height: 80vh;
+      overflow: auto;
+      margin: 8vh auto;
+      padding: 24px;
+      border-radius: 12px;
+    }
+    .modalBox h2 {
+      margin-top: 0;
+    }
+    .modalBox li {
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+    .modalBox button {
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    #reportModal .modalBox {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #reportContent {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    #closeReportModal {
+      flex: 0 0 auto;
+      margin-top: 14px;
+    }
+
+    #modal .modalBox {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #instructionsContent {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    #closeModal {
+      flex: 0 0 auto;
+      margin-top: 14px;
+    }
+    @media (max-width: 980px) {
       body {
-        margin: 0;
-        min-height: 100%;
-        font-family:
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Helvetica,
-          Arial,
-          sans-serif;
-        color: #000;
-        background: #fff;
-      }
-      body {
-        padding: 18px 32px 150px;
-      }
-      .app {
-        max-width: 1500px;
-        margin: auto;
-      }
-      .hero {
-        border: 1px solid rgba(127, 127, 127, 0.22);
-        border-radius: 18px;
-        padding: 18px 20px 16px;
-        background: linear-gradient(
-          180deg,
-          rgba(244, 248, 255, 0.95),
-          rgba(252, 252, 252, 0.98)
-        );
-        margin-bottom: 14px;
-      }
-      .hero h1 {
-        margin: 0;
-        font-size: clamp(24px, 2vw + 16px, 34px);
-      }
-      .hero p {
-        margin: 10px 0 0;
-        line-height: 1.5;
-        color: #333;
+        padding: 16px 16px 150px;
       }
       .main {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-      .column {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        min-width: 0;
-      }
-      .card {
-        border: var(--bd);
-        border-radius: 12px;
-        padding: 14px;
-        min-width: 0;
-      }
-      .card h2 {
-        margin: 0 0 12px;
-        font-size: 20px;
-      }
-      .inputHeader {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-      .inputHeader h2 {
-        margin: 0;
-      }
-      .fileWrap {
-        flex: 1;
-        min-width: 260px;
-      }
-      input,
-      button,
-      textarea {
-        font: inherit;
-      }
-      input[type="file"] {
-        width: 100%;
-      }
-      input[type="file"]::file-selector-button,
-      button {
-        border: 1px solid #d3dbe7;
-        background: #f0f3f8;
-        border-radius: 12px;
-        padding: 10px 14px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      input[type="file"]::file-selector-button {
-        margin-right: 12px;
-        background: #eef7f1;
-        border-color: #c9ded1;
-      }
-      button.primary {
-        background: #e8f1ff;
-        border-color: #9dbaf2;
-      }
-      button:disabled {
-        opacity: 0.42;
-        cursor: default;
+        grid-template-columns: 1fr;
       }
       .taWrap {
-        border: var(--bd);
-        border-radius: 10px;
-        height: 52vh;
-        min-height: 360px;
-        display: flex;
-        overflow: hidden;
-        margin-top: 12px;
-      }
-      .taWrap textarea {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        resize: none;
-        padding: 12px;
-        font-family: var(--mono);
-        line-height: 1.35;
-        overflow: auto;
-      }
-      .buttonRow {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 12px;
-      }
-      .buttonRow button {
-        flex: 1 1 180px;
-      }
-      .settings {
-        background: linear-gradient(
-          180deg,
-          rgba(244, 248, 255, 0.82),
-          rgba(252, 252, 252, 0.96)
-        );
-        border-radius: 18px;
-      }
-      .settingLine {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        flex-wrap: wrap;
-      }
-      .settingLine label {
-        font-weight: 650;
-      }
-      .settingLine input {
-        width: 90px;
-        border: var(--bd);
-        border-radius: 10px;
-        padding: 9px 10px;
-      }
-      .note {
-        font-size: 0.95em;
-        color: #444;
-        line-height: 1.5;
-        margin-top: 10px;
-      }
-      .statusHeader {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
-      }
-      .statusHeader h2 { margin: 0; }
-      .statusHeader button { padding: 7px 11px; }
-      .reportTable {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 12px;
-      }
-      .reportTable th,
-      .reportTable td {
-        border: var(--bd);
-        padding: 9px 10px;
-        text-align: left;
-        vertical-align: top;
-      }
-      .reportTable th { background: #f0f3f8; }
-      .reportTable th.num,
-      .reportTable td.num { text-align: right; white-space: nowrap; }
-      .reportEmpty { color: #555; line-height: 1.5; }
-      .status {
-        font-family: var(--mono);
-        white-space: pre-wrap;
-        border: var(--bd);
-        border-radius: 10px;
-        padding: 10px;
-        min-height: 48px;
-        line-height: 1.45;
+        height: 42vh;
+        min-height: 300px;
       }
       .footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #fff;
-        border-top: var(--bd);
-        padding: 12px 32px calc(12px + env(safe-area-inset-bottom));
-        display: flex;
-        gap: 10px;
-        z-index: 10;
+        padding-left: 16px;
+        padding-right: 16px;
+        flex-direction: column;
       }
-      .footer button {
-        flex: 1;
+    }
+    @media (max-width: 600px) {
+      .buttonRow {
+        flex-direction: column;
       }
-      .drag {
-        outline: 3px solid rgba(157, 186, 242, 0.4);
-        background: #f7faff;
+      .buttonRow button {
+        width: 100%;
       }
-      .modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 100;
+      .fileWrap {
+        min-width: 0;
       }
       .modalBox {
-        background: #fff;
-        max-width: 760px;
-        max-height: 80vh;
-        overflow: auto;
-        margin: 8vh auto;
-        padding: 24px;
-        border-radius: 12px;
+        margin: 12px;
+        max-height: calc(100vh - 24px);
       }
-      .modalBox h2 {
-        margin-top: 0;
-      }
-      .modalBox li {
-        margin-bottom: 8px;
-        line-height: 1.45;
-      }
-      .modalBox button {
-        width: 100%;
-        margin-top: 14px;
-      }
+    }
+  
+    .optionList { display: grid; gap: 12px; }
+    .optionLine { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+    .optionLine input[type="checkbox"] { width: 20px; height: 20px; margin: 1px 0 0; flex: 0 0 auto; }
+    .optionText { flex: 1; }
+    .optionText label { font-weight: 650; cursor: pointer; }
+    .durationRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 0 30px; }
+    .durationRow input { width: 90px; border: var(--bd); border-radius: 10px; padding: 9px 10px; }
+    .durationRow.disabled { opacity: 0.5; }
 
-      #reportModal .modalBox {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+    /* Chord Chart Generator-inspired page styling */
+    :root {
+      --page-pad: 32px;
+      --gap: 14px;
+      --helpbar-height: 68px;
+      --purple: #4b1f68;
+      --purple-dark: #321247;
+      --purple-mid: #633184;
+      --accent: #d8ad45;
+      --green: #176b43;
+      --green-dark: #0d4c2f;
+      --blue: #174a8b;
+      --blue-dark: #0f3566;
+      --teal: #087f8c;
+      --teal-dark: #066873;
+      --red: #8f2f2f;
+      --red-dark: #742424;
+    }
 
-      #reportContent {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow: auto;
-        padding-right: 4px;
-      }
+    html,
+    body {
+      height: 100%;
+    }
 
-      #closeReportModal {
-        flex: 0 0 auto;
-        margin-top: 14px;
-      }
+    body {
+      padding: 0;
+      overflow: hidden;
+      font-size: clamp(15px, 1.05vw + 12px, 17px);
+      line-height: 1.35;
+    }
 
-      #modal .modalBox {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+    .app {
+      max-width: none;
+      height: 100vh;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+      overflow: hidden;
+      padding-bottom: calc(var(--helpbar-height) + env(safe-area-inset-bottom));
+    }
 
-      #instructionsContent {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow: auto;
-        padding-right: 4px;
+    @supports (height: 100dvh) {
+      .app {
+        height: 100dvh;
       }
+    }
 
-      #closeModal {
-        flex: 0 0 auto;
-        margin-top: 14px;
-      }
-      @media (max-width: 980px) {
-        body {
-          padding: 16px 16px 150px;
-        }
-        .main {
-          grid-template-columns: 1fr;
-        }
-        .taWrap {
-          height: 42vh;
-          min-height: 300px;
-        }
-        .footer {
-          padding-left: 16px;
-          padding-right: 16px;
-          flex-direction: column;
-        }
-      }
-      @media (max-width: 600px) {
-        .buttonRow {
-          flex-direction: column;
-        }
-        .buttonRow button {
-          width: 100%;
-        }
-        .fileWrap {
-          min-width: 0;
-        }
-        .modalBox {
-          margin: 12px;
-          max-height: calc(100vh - 24px);
-        }
-      }
-    
-      .optionList { display: grid; gap: 12px; }
-      .optionLine { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
-      .optionLine input[type="checkbox"] { width: 20px; height: 20px; margin: 1px 0 0; flex: 0 0 auto; }
-      .optionText { flex: 1; }
-      .optionText label { font-weight: 650; cursor: pointer; }
-      .durationRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 0 30px; }
-      .durationRow input { width: 90px; border: var(--bd); border-radius: 10px; padding: 9px 10px; }
-      .durationRow.disabled { opacity: 0.5; }
+    .hero {
+      flex: 0 0 auto;
+      width: 100%;
+      margin: 0;
+      border: 0;
+      border-bottom: 5px solid var(--accent);
+      border-radius: 0;
+      padding:
+        calc(16px + env(safe-area-inset-top))
+        calc(20px + env(safe-area-inset-right))
+        14px
+        calc(20px + env(safe-area-inset-left));
+      background:
+        linear-gradient(135deg, rgba(50, 18, 71, 0.98), rgba(99, 49, 132, 0.97)),
+        repeating-linear-gradient(
+          45deg,
+          transparent 0 12px,
+          rgba(255, 255, 255, 0.025) 12px 24px
+        );
+      overflow: hidden;
+      text-align: center;
+    }
 
-      /* Chord Chart Generator-inspired page styling */
-      :root {
-        --page-pad: 32px;
-        --gap: 14px;
-        --helpbar-height: 68px;
-        --purple: #4b1f68;
-        --purple-dark: #321247;
-        --purple-mid: #633184;
-        --accent: #d8ad45;
-        --green: #176b43;
-        --green-dark: #0d4c2f;
-        --blue: #174a8b;
-        --blue-dark: #0f3566;
-        --teal: #087f8c;
-        --teal-dark: #066873;
-        --red: #8f2f2f;
-        --red-dark: #742424;
-      }
+    .hero h1 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(1.95rem, 4vw, 2.3rem);
+      line-height: 1.1;
+    }
 
-      html,
+    .hero p {
+      max-width: 850px;
+      margin: 12px auto 0;
+      color: #eee3f4;
+      line-height: 1.5;
+      font-size: 16px;
+    }
+
+    .main {
+      flex: 1 1 auto;
+      min-height: 0;
+      min-width: 0;
+      display: flex;
+      grid-template-columns: none;
+      gap: var(--gap);
+      overflow: hidden;
+      margin:
+        0
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        0
+        calc(var(--page-pad) + env(safe-area-inset-left));
+    }
+
+    .column {
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+      overflow: hidden;
+    }
+
+    .column:first-child {
+      flex: 1 1 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .column:last-child {
+      flex: 1 1 0;
+    }
+
+    .card {
+      border: var(--bd);
+      border-radius: 12px;
+      padding: 14px;
+      min-width: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(19px, 1.1vw + 15px, 23px);
+    }
+
+    #inputCard,
+    .column:last-child > .card:first-child {
+      flex: 1 1 auto;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #inputCard .taWrap,
+    .column:last-child > .card:first-child .taWrap {
+      flex: 1 1 auto;
+      min-height: 160px;
+    }
+
+    .settings {
+      flex: 0 0 auto;
+      border-radius: 12px;
+      background: #faf7fc;
+    }
+
+    .taWrap {
+      height: auto;
+      min-height: 0;
+      flex: 1 1 auto;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    button,
+    input[type="file"]::file-selector-button {
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-weight: 600;
+    }
+
+    button {
+      border: 1px solid var(--green-dark);
+      background: var(--green);
+      color: #fff;
+    }
+
+    button:hover {
+      background: var(--green-dark);
+    }
+
+    button.primary,
+    #processButton {
+      background: var(--teal);
+      border-color: var(--teal-dark);
+    }
+
+    button.primary:hover,
+    #processButton:hover {
+      background: var(--teal-dark);
+    }
+
+    #clearButton {
+      background: var(--red);
+      border-color: var(--red-dark);
+    }
+
+    #clearButton:hover {
+      background: var(--red-dark);
+    }
+
+    #saveButton {
+      background: var(--blue);
+      border-color: var(--blue-dark);
+    }
+
+    #saveButton:hover {
+      background: var(--blue-dark);
+    }
+
+    #copyButton,
+    #detailsButton {
+      background: #eee7f3;
+      border-color: #cbb8d8;
+      color: var(--purple-dark);
+    }
+
+    #copyButton:hover,
+    #detailsButton:hover {
+      background: #e3d7eb;
+    }
+
+    #sendButton {
+      background: var(--purple-mid);
+      border-color: var(--purple-dark);
+    }
+
+    #sendButton:hover {
+      background: var(--purple-dark);
+    }
+
+    input[type="file"]::file-selector-button {
+      background: var(--green);
+      border-color: var(--green-dark);
+      color: #fff;
+    }
+
+    .status {
+      max-height: 220px;
+      overflow: auto;
+      background: #fff;
+    }
+
+    .footer {
+      min-height: var(--helpbar-height);
+      background: #fff;
+      padding:
+        12px
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(12px + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+    }
+
+    .footer button {
+      border-radius: 6px;
+    }
+
+    .modalBox {
+      border: 1px solid #333;
+      box-shadow: 0 0 15px -2px rgba(0, 0, 0, 0.75);
+    }
+
+    @media (max-width: 980px) {
       body {
-        height: 100%;
-      }
-
-      body {
-        padding: 0;
-        overflow: hidden;
-        font-size: clamp(15px, 1.05vw + 12px, 17px);
-        line-height: 1.35;
+        overflow: auto;
+        padding: 0 0 calc(var(--helpbar-height) + env(safe-area-inset-bottom));
       }
 
       .app {
-        max-width: none;
-        height: 100vh;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--gap);
-        overflow: hidden;
-        padding-bottom: calc(var(--helpbar-height) + env(safe-area-inset-bottom));
-      }
-
-      @supports (height: 100dvh) {
-        .app {
-          height: 100dvh;
-        }
-      }
-
-      .hero {
-        flex: 0 0 auto;
-        width: 100%;
-        margin: 0;
-        border: 0;
-        border-bottom: 5px solid var(--accent);
-        border-radius: 0;
-        padding:
-          calc(16px + env(safe-area-inset-top))
-          calc(20px + env(safe-area-inset-right))
-          14px
-          calc(20px + env(safe-area-inset-left));
-        background:
-          linear-gradient(135deg, rgba(50, 18, 71, 0.98), rgba(99, 49, 132, 0.97)),
-          repeating-linear-gradient(
-            45deg,
-            transparent 0 12px,
-            rgba(255, 255, 255, 0.025) 12px 24px
-          );
-        overflow: hidden;
-        text-align: center;
-      }
-
-      .hero h1 {
-        margin: 0;
-        color: #fff;
-        font-size: clamp(1.95rem, 4vw, 2.3rem);
-        line-height: 1.1;
-      }
-
-      .hero p {
-        max-width: 850px;
-        margin: 12px auto 0;
-        color: #eee3f4;
-        line-height: 1.5;
-        font-size: 16px;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
       }
 
       .main {
-        flex: 1 1 auto;
-        min-height: 0;
-        min-width: 0;
-        display: flex;
-        grid-template-columns: none;
-        gap: var(--gap);
-        overflow: hidden;
+        flex-direction: column;
+        overflow: visible;
         margin:
           0
-          calc(var(--page-pad) + env(safe-area-inset-right))
+          calc(14px + env(safe-area-inset-right))
           0
-          calc(var(--page-pad) + env(safe-area-inset-left));
+          calc(14px + env(safe-area-inset-left));
       }
 
-      .column {
-        flex: 1 1 0;
-        min-width: 0;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--gap);
-        overflow: hidden;
-      }
-
-      .column:first-child {
-        flex: 1 1 0;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
+      .column,
+      .column:first-child,
       .column:last-child {
-        flex: 1 1 0;
-      }
-
-      .card {
-        border: var(--bd);
-        border-radius: 12px;
-        padding: 14px;
-        min-width: 0;
-        overflow: hidden;
-        background: transparent;
-      }
-
-      .card h2 {
-        margin: 0 0 12px;
-        font-size: clamp(19px, 1.1vw + 15px, 23px);
+        overflow: visible;
+        min-height: auto;
       }
 
       #inputCard,
       .column:last-child > .card:first-child {
-        flex: 1 1 auto;
-        min-height: 260px;
-        display: flex;
-        flex-direction: column;
+        flex: 0 0 auto;
+        min-height: auto;
       }
 
+      .taWrap,
       #inputCard .taWrap,
       .column:last-child > .card:first-child .taWrap {
-        flex: 1 1 auto;
-        min-height: 160px;
-      }
-
-      .settings {
-        flex: 0 0 auto;
-        border-radius: 12px;
-        background: #faf7fc;
-      }
-
-      .taWrap {
-        height: auto;
-        min-height: 0;
-        flex: 1 1 auto;
-        border-radius: 10px;
-        background: #fff;
-      }
-
-      button,
-      input[type="file"]::file-selector-button {
-        border-radius: 6px;
-        padding: 10px 14px;
-        font-weight: 600;
-      }
-
-      button {
-        border: 1px solid var(--green-dark);
-        background: var(--green);
-        color: #fff;
-      }
-
-      button:hover {
-        background: var(--green-dark);
-      }
-
-      button.primary,
-      #processButton {
-        background: var(--teal);
-        border-color: var(--teal-dark);
-      }
-
-      button.primary:hover,
-      #processButton:hover {
-        background: var(--teal-dark);
-      }
-
-      #clearButton {
-        background: var(--red);
-        border-color: var(--red-dark);
-      }
-
-      #clearButton:hover {
-        background: var(--red-dark);
-      }
-
-      #saveButton {
-        background: var(--blue);
-        border-color: var(--blue-dark);
-      }
-
-      #saveButton:hover {
-        background: var(--blue-dark);
-      }
-
-      #copyButton,
-      #detailsButton {
-        background: #eee7f3;
-        border-color: #cbb8d8;
-        color: var(--purple-dark);
-      }
-
-      #copyButton:hover,
-      #detailsButton:hover {
-        background: #e3d7eb;
-      }
-
-      #sendButton {
-        background: var(--purple-mid);
-        border-color: var(--purple-dark);
-      }
-
-      #sendButton:hover {
-        background: var(--purple-dark);
-      }
-
-      input[type="file"]::file-selector-button {
-        background: var(--green);
-        border-color: var(--green-dark);
-        color: #fff;
-      }
-
-      .status {
-        max-height: 220px;
-        overflow: auto;
-        background: #fff;
+        height: 48vh;
+        min-height: 320px;
       }
 
       .footer {
-        min-height: var(--helpbar-height);
-        background: #fff;
+        padding-left: calc(14px + env(safe-area-inset-left));
+        padding-right: calc(14px + env(safe-area-inset-right));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero {
         padding:
+          calc(13px + env(safe-area-inset-top))
+          calc(18px + env(safe-area-inset-right))
           12px
-          calc(var(--page-pad) + env(safe-area-inset-right))
-          calc(12px + env(safe-area-inset-bottom))
-          calc(var(--page-pad) + env(safe-area-inset-left));
+          calc(18px + env(safe-area-inset-left));
       }
 
-      .footer button {
-        border-radius: 6px;
-      }
-
-      .modalBox {
-        border: 1px solid #333;
-        box-shadow: 0 0 15px -2px rgba(0, 0, 0, 0.75);
-      }
-
-      @media (max-width: 980px) {
-        body {
-          overflow: auto;
-          padding: 0 0 calc(var(--helpbar-height) + env(safe-area-inset-bottom));
-        }
-
-        .app {
-          height: auto;
-          min-height: 100vh;
-          overflow: visible;
-        }
-
-        .main {
-          flex-direction: column;
-          overflow: visible;
-          margin:
-            0
-            calc(14px + env(safe-area-inset-right))
-            0
-            calc(14px + env(safe-area-inset-left));
-        }
-
-        .column,
-        .column:first-child,
-        .column:last-child {
-          overflow: visible;
-          min-height: auto;
-        }
-
-        #inputCard,
-        .column:last-child > .card:first-child {
-          flex: 0 0 auto;
-          min-height: auto;
-        }
-
-        .taWrap,
-        #inputCard .taWrap,
-        .column:last-child > .card:first-child .taWrap {
-          height: 48vh;
-          min-height: 320px;
-        }
-
-        .footer {
-          padding-left: calc(14px + env(safe-area-inset-left));
-          padding-right: calc(14px + env(safe-area-inset-right));
-        }
-      }
-
-      @media (max-width: 720px) {
-        .hero {
-          padding:
-            calc(13px + env(safe-area-inset-top))
-            calc(18px + env(safe-area-inset-right))
-            12px
-            calc(18px + env(safe-area-inset-left));
-        }
-
-        .hero h1 {
-          font-size: clamp(1.12rem, 5.2vw, 1.42rem);
-          line-height: 1.03;
-          white-space: nowrap;
-        }
-
-        .hero p {
-          max-width: 34em;
-          margin-top: 6px;
-          font-size: 0.92rem;
-          line-height: 1.28;
-        }
-      }
-
-
-      #instructionsButton,
-      #openToolsButton {
-        background: #4f565b;
-        border-color: #3d4449;
-        color: #fff;
-      }
-
-      #instructionsButton:hover,
-      #openToolsButton:hover {
-        background: #3d4449;
-      }
-
-
-      /* Vertically center the section labels with their adjacent controls. */
-      .inputHeader,
-      .statusHeader {
-        align-items: center;
-      }
-
-      .inputHeader h2,
-      .statusHeader h2 {
-        display: flex;
-        align-items: center;
-        min-height: 46px;
-        margin: 0;
-        line-height: 1.1;
-      }
-
-      .fileWrap {
-        display: flex;
-        align-items: center;
-        min-height: 46px;
-      }
-
-      .fileWrap input[type="file"] {
-        display: block;
-        margin: 0;
-        line-height: 1.15;
-      }
-
-      .statusHeader button {
-        min-height: 46px;
-        margin: 0;
-        padding: 10px 14px;
-        line-height: 1.15;
-      }
-
-
-      .optionControlRow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:8px 0 0 30px; }
-      .optionControlRow.disabled { opacity:.5; }
-      .optionControlRow input[type="number"] { width:90px; border:var(--bd); border-radius:10px; padding:9px 10px; background:#fff; color:#000; }
-      .styledSelect {
-        -webkit-appearance:none; -moz-appearance:none; appearance:none;
-        min-width:190px; border:var(--bd); border-radius:10px;
-        padding:9px 44px 9px 12px; color:#17241c; -webkit-text-fill-color:#17241c;
-        background-color:#fff;
-        background-image:linear-gradient(45deg,transparent 50%,#17241c 50%),linear-gradient(135deg,#17241c 50%,transparent 50%);
-        background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
-        background-size:5px 5px,5px 5px; background-repeat:no-repeat;
-        box-shadow:none; cursor:pointer;
-      }
-      .styledSelect::-ms-expand { display:none; }
-      .styledSelect:disabled { cursor:default; }
-      #percussionMethod { font-size: 1.08em; }
-
-      .versionNumber {
-        position: absolute;
-        top: calc(10px + env(safe-area-inset-top));
-        right: calc(14px + env(safe-area-inset-right));
-        color: rgba(255, 255, 255, 0.82);
-        font-size: 1rem;
-        line-height: 1;
+      .hero h1 {
+        font-size: clamp(1.12rem, 5.2vw, 1.42rem);
+        line-height: 1.03;
         white-space: nowrap;
       }
 
-      @media (max-width: 720px) {
-        .versionNumber {
-          top: calc(7px + env(safe-area-inset-top));
-          right: calc(9px + env(safe-area-inset-right));
-          font-size: 0.64rem;
-        }
+      .hero p {
+        max-width: 34em;
+        margin-top: 6px;
+        font-size: 0.92rem;
+        line-height: 1.28;
       }
-</style>
+    }
+
+
+    #instructionsButton,
+    #openToolsButton {
+      background: #4f565b;
+      border-color: #3d4449;
+      color: #fff;
+    }
+
+    #instructionsButton:hover,
+    #openToolsButton:hover {
+      background: #3d4449;
+    }
+
+
+    /* Vertically center the section labels with their adjacent controls. */
+    .inputHeader,
+    .statusHeader {
+      align-items: center;
+    }
+
+    .inputHeader h2,
+    .statusHeader h2 {
+      display: flex;
+      align-items: center;
+      min-height: 46px;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .fileWrap {
+      display: flex;
+      align-items: center;
+      min-height: 46px;
+    }
+
+    .fileWrap input[type="file"] {
+      display: block;
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    .statusHeader button {
+      min-height: 46px;
+      margin: 0;
+      padding: 10px 14px;
+      line-height: 1.15;
+    }
+
+
+    .optionControlRow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:8px 0 0 30px; }
+    .optionControlRow.disabled { opacity:.5; }
+    .optionControlRow input[type="number"] { width:90px; border:var(--bd); border-radius:10px; padding:9px 10px; background:#fff; color:#000; }
+    .styledSelect {
+      -webkit-appearance:none; -moz-appearance:none; appearance:none;
+      min-width:190px; border:var(--bd); border-radius:10px;
+      padding:9px 44px 9px 12px; color:#17241c; -webkit-text-fill-color:#17241c;
+      background-color:#fff;
+      background-image:linear-gradient(45deg,transparent 50%,#17241c 50%),linear-gradient(135deg,#17241c 50%,transparent 50%);
+      background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+      background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+      box-shadow:none; cursor:pointer;
+    }
+    .styledSelect::-ms-expand { display:none; }
+    .styledSelect:disabled { cursor:default; }
+    #percussionMethod { font-size: 1.08em; }
+
+    .versionNumber {
+      position: absolute;
+      top: calc(10px + env(safe-area-inset-top));
+      right: calc(14px + env(safe-area-inset-right));
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 1rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 720px) {
+      .versionNumber {
+        top: calc(7px + env(safe-area-inset-top));
+        right: calc(9px + env(safe-area-inset-right));
+        font-size: 0.64rem;
+      }
+    }
+  </style>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
 </head>
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.18</div>
-    <h1>MusicXML to ABC Optimizer</h1>
-    <p>Optimizes ABC produced by MusicXML transcoders by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
+    <div class="versionNumber">Version 1.2.21</div>
+    <h1>MuseScore MusicXML to ABC Optimizer</h1>
+    <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
   <div class="main">
     <div class="column">
@@ -858,7 +858,7 @@
 <div class="footer"><button id="instructionsButton">Instructions</button><button id="openToolsButton">Open ABC Transcription Tools</button></div>
 <div id="modal" class="modal"><div class="modalBox">
   <div id="instructionsContent">
-    <h2 style="text-align: center;">MusicXML to ABC Optimizer</h2>
+    <h2 style="text-align: center;">MuseScore MusicXML to ABC Optimizer</h2>
     <ul>
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
     <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
@@ -872,7 +872,8 @@
     <li>Existing <b>nm=</b> and <b>snm=</b> values are always removed from each percussion voice declaration. If that declaration originally had an <b>nm=</b> value, it receives <b>nm="Drums"</b>. In that case, it also receives <b>snm="Drums"</b> when another non-percussion voice in the same tune uses an <b>snm=</b> value. No name is added to a percussion declaration that did not originally contain <b>nm=</b>.</li>
     <li><b>Inject a soundfont command into each tune</b> is enabled by default with <b>MScore</b> selected. It removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and adds the selected <b>%soundfont &lt;id&gt;</b> command near the beginning of the tune, after the generated staff-width and reverb directives when those directives are present.</li>
     <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
-    <li>Every processed tune receives <b>%%staffwidth 1200</b> immediately after its first header <b>K:</b> field unless a <b>%%staffwidth</b> directive is already present in that tune. If the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting, a commented chamber reverb setting is added immediately after the <b>%%staffwidth</b> directive.</li>
+    <li>Every processed tune receives <b>%%staffwidth 1200</b> immediately after its first header <b>K:</b> field unless a <b>%%staffwidth</b> directive is already present in that tune. A <b>%hide_dynamics</b> block is added after the staff-width setting when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
+    <li>At the beginning of each voice's music, <b>!f!</b> preceded and followed by a space is added after any initial inline ABC fields such as <b>[K:C]</b> and before the first note or rest, unless the voice already begins with a standard dynamic mark from <b>!ppppp!</b> through <b>!ffff!</b>, including <b>!p!</b>, <b>!pp!</b>, <b>!mp!</b>, <b>!mf!</b>, <b>!f!</b>, and <b>!ff!</b>. These additions and the <b>%hide_dynamics</b> block are safe when tunes are processed again.</li>
     <li>When percussion consolidation is enabled, the processed tune also receives an <b>%abcjs_render_params</b> percussion volume scale and percussion-release setting before its voice declarations so volume can be adjusted and hi-hats and selected cymbals ring for appropriate lengths.</li>
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, soundfont injection, and final tune-level rendering directives.</li>
     <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
@@ -2362,10 +2363,83 @@ function injectSoundfontCommands(text, soundfontId) {
 
 const PERCUSSION_RELEASE_PARAMS_LINE = '%abcjs_render_params {"percussionVolumeScale":2.5,"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600,"52":3000,"55":1800,"57":3000,"59":2600}}';
 
+function addInitialVoiceDynamics(lines) {
+  const acceptedDynamics = new Set([
+    'p','pp','f','ff','mf','mp','ppp','pppp','fff','ffff','ppppp'
+  ]);
+  const voicesStarted = new Set();
+  let inBody = false;
+  let currentVoice = 'default';
+  let added = 0;
+
+  function splitInitialVoicePrefix(line) {
+    const indent = (String(line || '').match(/^\s*/) || [''])[0];
+    let rest = String(line || '').slice(indent.length);
+    let prefix = '';
+
+    // Keep leading bar/repeat markers and inline ABC fields ahead of the dynamic.
+    while (true) {
+      const token = rest.match(/^(?:(?:\|\]|\[\||\|:|:\||::|\|\||\|)|\[[A-Za-z]:[^\]\r\n]*\])\s*/);
+      if (!token) break;
+      prefix += token[0];
+      rest = rest.slice(token[0].length);
+    }
+    return {indent, prefix, rest};
+  }
+
+  function acceptedDynamicAtStart(text) {
+    const dynamic = String(text || '').match(/^!([^!]+)!/);
+    return dynamic && acceptedDynamics.has(dynamic[1].toLowerCase()) ? dynamic[0] : '';
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const field = line.match(/^\s*([A-Za-z]):\s*(.*)$/);
+    if (field) {
+      const tag = field[1].toUpperCase();
+      if (!inBody && tag === 'K') {
+        inBody = true;
+        continue;
+      }
+      if (inBody && tag === 'V') {
+        currentVoice = field[2].trim().split(/\s+/)[0] || 'default';
+      }
+      continue;
+    }
+    if (!inBody || voicesStarted.has(currentVoice)) continue;
+    if (!line.trim() || /^\s*%/.test(line) || /^\s*I:/.test(line)) continue;
+
+    const originalIndent = (line.match(/^\s*/) || [''])[0];
+    let content = line.slice(originalIndent.length);
+
+    // Normalize output from Versions 1.2.19/1.2.20, where an injected !f!
+    // may precede initial inline fields, by moving it behind those fields.
+    const oldInjected = content.match(/^!f!\s+((?:(?:\[[A-Za-z]:[^\]\r\n]*\])\s*)+)([\s\S]*)$/i);
+    if (oldInjected) {
+      const prefix = oldInjected[1].replace(/\s+$/, '');
+      lines[i] = originalIndent + prefix + ' !f! ' + oldInjected[2].replace(/^\s*/, '');
+      voicesStarted.add(currentVoice);
+      continue;
+    }
+
+    const parts = splitInitialVoicePrefix(line);
+    if (!acceptedDynamicAtStart(parts.rest)) {
+      const prefix = parts.prefix.replace(/\s+$/, '');
+      const beforeDynamic = prefix ? prefix + ' ' : '';
+      lines[i] = parts.indent + beforeDynamic + '!f! ' + parts.rest.replace(/^\s*/, '');
+      added++;
+    }
+    voicesStarted.add(currentVoice);
+  }
+  return added;
+}
+
 function addFinalTuneDirectives(text, includePercussionRelease) {
   const parts = splitTunesForLimiter(String(text || ''));
   let staffwidthAdded = 0;
   let percussionReleaseAdded = 0;
+  let hideDynamicsAdded = 0;
+  let voiceDynamicsAdded = 0;
 
   const output = parts.map(part => {
     if (part.preamble) return part.text;
@@ -2394,6 +2468,27 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
       }
     }
 
+    if (!lines.some(line => /^\s*%hide_dynamics(?:\s|$)/i.test(line))) {
+      const staffwidthIndex = lines.findIndex(line => /^\s*%%staffwidth(?:\s|$)/i.test(line));
+      if (staffwidthIndex >= 0) {
+        if (lines[staffwidthIndex + 1] && lines[staffwidthIndex + 1].trim() === '%') {
+          lines.splice(staffwidthIndex + 2, 0,
+            '% Hide dynamic marks',
+            '%hide_dynamics',
+            '%'
+          );
+        } else {
+          lines.splice(staffwidthIndex + 1, 0,
+            '%',
+            '% Hide dynamic marks',
+            '%hide_dynamics',
+            '%'
+          );
+        }
+        hideDynamicsAdded++;
+      }
+    }
+
     if (includePercussionRelease) {
       const renderParamsIndex = lines.findIndex(line =>
         /^\s*%abcjs_render_params(?:\s|$)/i.test(line)
@@ -2405,8 +2500,6 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
           ? voiceIndex
           : Math.max(0, lines.findIndex(line => /^\s*K\s*:/.test(line)));
 
-        // A preceding generated block may already end with the one separator
-        // required before this heading. Add one only when it is absent.
         const block = [];
         if (insertIndex === 0 || lines[insertIndex - 1].trim() !== '%') {
           block.push('%');
@@ -2424,8 +2517,6 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
             ? renderParamsIndex - 1
             : renderParamsIndex;
 
-        // Collapse all adjacent standalone separators before the heading to
-        // exactly one.
         let separatorStart = headingIndex;
         while (separatorStart > 0 && lines[separatorStart - 1].trim() === '%') {
           separatorStart--;
@@ -2437,8 +2528,6 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
           lines.splice(separatorStart, separatorCount - 1);
         }
 
-        // Re-find the render line after any splice above, then collapse the
-        // standalone separators following it to exactly one.
         const currentRenderIndex = lines.findIndex(line =>
           /^\s*%abcjs_render_params(?:\s|$)/i.test(line)
         );
@@ -2456,10 +2545,17 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
       }
     }
 
+    voiceDynamicsAdded += addInitialVoiceDynamics(lines);
     return lines.join('\n');
   });
 
-  return {text:output.join(''), staffwidthAdded, percussionReleaseAdded};
+  return {
+    text:output.join(''),
+    staffwidthAdded,
+    percussionReleaseAdded,
+    hideDynamicsAdded,
+    voiceDynamicsAdded
+  };
 }
 
 function stripTrailingMeasureNumber(line) {
@@ -2699,7 +2795,7 @@ $('processButton').onclick = () => {
   let text=original;
   let splitTotal=0, unmappedTotal=0, outOfRangeMappedTotal=0;
   let tunesReformatted=0, soundfontTunes=0;
-  let staffwidthTunes=0, percussionReleaseTunes=0;
+  let staffwidthTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0;
   let longSummaries = [];
   let percussionSummaries = [];
   try {
@@ -2744,6 +2840,8 @@ $('processButton').onclick = () => {
       text=r.text;
       staffwidthTunes=r.staffwidthAdded;
       percussionReleaseTunes=r.percussionReleaseAdded;
+      hideDynamicsTunes=r.hideDynamicsAdded;
+      voiceDynamicsAdded=r.voiceDynamicsAdded;
     }
 
     let baseTunes=doShorten ? longSummaries : percussionSummaries;
@@ -2786,6 +2884,8 @@ $('processButton').onclick = () => {
     if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}`);
     if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}`);
     statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}`);
+    statusLines.push(`Tunes given %hide_dynamics: ${hideDynamicsTunes}`);
+    statusLines.push(`Voices given an initial !f!: ${voiceDynamicsAdded}`);
     if (doPercussion) statusLines.push(`Tunes given percussion release settings: ${percussionReleaseTunes}`);
     statusEl.textContent=statusLines.join('\n');
   } catch (e) {
@@ -2852,7 +2952,7 @@ $('saveButton').onclick = async () => {
   const file=new File([blob],saveFilename,{type:'text/plain;charset=utf-8'});
   try {
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})) {
-      await navigator.share({files:[file],title:'MusicXML to ABC Optimizer'});
+      await navigator.share({files:[file],title:'MuseScore MusicXML to ABC Optimizer'});
       statusEl.textContent='Shared '+saveFilename+'.'; return;
     }
   } catch(e) { if(e.name==='AbortError') return; }
