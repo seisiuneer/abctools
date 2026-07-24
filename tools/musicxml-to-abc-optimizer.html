@@ -778,7 +778,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.21</div>
+    <div class="versionNumber">Version 1.2.22</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
@@ -872,7 +872,7 @@
     <li>Existing <b>nm=</b> and <b>snm=</b> values are always removed from each percussion voice declaration. If that declaration originally had an <b>nm=</b> value, it receives <b>nm="Drums"</b>. In that case, it also receives <b>snm="Drums"</b> when another non-percussion voice in the same tune uses an <b>snm=</b> value. No name is added to a percussion declaration that did not originally contain <b>nm=</b>.</li>
     <li><b>Inject a soundfont command into each tune</b> is enabled by default with <b>MScore</b> selected. It removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and adds the selected <b>%soundfont &lt;id&gt;</b> command near the beginning of the tune, after the generated staff-width and reverb directives when those directives are present.</li>
     <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
-    <li>Every processed tune receives <b>%%staffwidth 1200</b> immediately after its first header <b>K:</b> field unless a <b>%%staffwidth</b> directive is already present in that tune. A <b>%hide_dynamics</b> block is added after the staff-width setting when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
+    <li>Every processed tune receives <b>%%staffwidth 1200</b> and <b>%%staffsep 70</b> immediately after its first header <b>K:</b> field unless those directives are already present in that tune. If only one is present, the missing directive is added without duplicating the existing one. A <b>%hide_dynamics</b> block is added after the staff-width and staff-separation settings when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
     <li>At the beginning of each voice's music, <b>!f!</b> preceded and followed by a space is added after any initial inline ABC fields such as <b>[K:C]</b> and before the first note or rest, unless the voice already begins with a standard dynamic mark from <b>!ppppp!</b> through <b>!ffff!</b>, including <b>!p!</b>, <b>!pp!</b>, <b>!mp!</b>, <b>!mf!</b>, <b>!f!</b>, and <b>!ff!</b>. These additions and the <b>%hide_dynamics</b> block are safe when tunes are processed again.</li>
     <li>When percussion consolidation is enabled, the processed tune also receives an <b>%abcjs_render_params</b> percussion volume scale and percussion-release setting before its voice declarations so volume can be adjusted and hi-hats and selected cymbals ring for appropriate lengths.</li>
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, soundfont injection, and final tune-level rendering directives.</li>
@@ -2437,6 +2437,7 @@ function addInitialVoiceDynamics(lines) {
 function addFinalTuneDirectives(text, includePercussionRelease) {
   const parts = splitTunesForLimiter(String(text || ''));
   let staffwidthAdded = 0;
+  let staffsepAdded = 0;
   let percussionReleaseAdded = 0;
   let hideDynamicsAdded = 0;
   let voiceDynamicsAdded = 0;
@@ -2445,22 +2446,55 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
     if (part.preamble) return part.text;
     const lines = part.text.replace(/\r\n?/g, '\n').split('\n');
 
-    if (!lines.some(line => /^\s*%%staffwidth(?:\s|$)/i.test(line))) {
+    let staffwidthIndex = lines.findIndex(line => /^\s*%%staffwidth(?:\s|$)/i.test(line));
+    let staffsepIndex = lines.findIndex(line => /^\s*%%staffsep(?:\s|$)/i.test(line));
+
+    if (staffwidthIndex < 0 && staffsepIndex < 0) {
       const keyIndex = lines.findIndex(line => /^\s*K\s*:/.test(line));
       if (keyIndex >= 0) {
         lines.splice(keyIndex + 1, 0,
           '%',
-          '% Set the staff width',
-          '%%staffwidth 1200'
+          '% Set the staff width and staff separation',
+          '%%staffwidth 1200',
+          '%%staffsep 70'
         );
         staffwidthAdded++;
+        staffsepAdded++;
+        staffwidthIndex = keyIndex + 3;
+        staffsepIndex = keyIndex + 4;
+      }
+    } else if (staffwidthIndex < 0) {
+      const insertIndex = staffsepIndex;
+      const hasGeneratedComment = insertIndex > 0 &&
+        lines[insertIndex - 1].trim() === '% Set the staff width and staff separation';
+      const block = hasGeneratedComment
+        ? ['%%staffwidth 1200']
+        : ['%', '% Set the staff width and staff separation', '%%staffwidth 1200'];
+      lines.splice(insertIndex, 0, ...block);
+      staffwidthAdded++;
+      staffwidthIndex = insertIndex + block.length - 1;
+      staffsepIndex += block.length;
+    } else {
+      if (staffwidthIndex > 0 && lines[staffwidthIndex - 1].trim() === '% Set the staff width') {
+        lines[staffwidthIndex - 1] = '% Set the staff width and staff separation';
+      }
+      if (staffsepIndex < 0) {
+        lines.splice(staffwidthIndex + 1, 0, '%%staffsep 70');
+        staffsepAdded++;
+        staffsepIndex = staffwidthIndex + 1;
       }
     }
 
+    const staffLayoutIndex = () => {
+      const widthIndex = lines.findIndex(line => /^\s*%%staffwidth(?:\s|$)/i.test(line));
+      const sepIndex = lines.findIndex(line => /^\s*%%staffsep(?:\s|$)/i.test(line));
+      return Math.max(widthIndex, sepIndex);
+    };
+
     if (!lines.some(line => /^\s*%\s*reverb(?:\s|$)/i.test(line))) {
-      const staffwidthIndex = lines.findIndex(line => /^\s*%%staffwidth(?:\s|$)/i.test(line));
-      if (staffwidthIndex >= 0) {
-        lines.splice(staffwidthIndex + 1, 0,
+      const layoutIndex = staffLayoutIndex();
+      if (layoutIndex >= 0) {
+        lines.splice(layoutIndex + 1, 0,
           '%',
           '% Set the reverb',
           '%reverb chamber 0.9 0.1',
@@ -2469,16 +2503,16 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
     }
 
     if (!lines.some(line => /^\s*%hide_dynamics(?:\s|$)/i.test(line))) {
-      const staffwidthIndex = lines.findIndex(line => /^\s*%%staffwidth(?:\s|$)/i.test(line));
-      if (staffwidthIndex >= 0) {
-        if (lines[staffwidthIndex + 1] && lines[staffwidthIndex + 1].trim() === '%') {
-          lines.splice(staffwidthIndex + 2, 0,
+      const layoutIndex = staffLayoutIndex();
+      if (layoutIndex >= 0) {
+        if (lines[layoutIndex + 1] && lines[layoutIndex + 1].trim() === '%') {
+          lines.splice(layoutIndex + 2, 0,
             '% Hide dynamic marks',
             '%hide_dynamics',
             '%'
           );
         } else {
-          lines.splice(staffwidthIndex + 1, 0,
+          lines.splice(layoutIndex + 1, 0,
             '%',
             '% Hide dynamic marks',
             '%hide_dynamics',
@@ -2552,6 +2586,7 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
   return {
     text:output.join(''),
     staffwidthAdded,
+    staffsepAdded,
     percussionReleaseAdded,
     hideDynamicsAdded,
     voiceDynamicsAdded
@@ -2795,7 +2830,7 @@ $('processButton').onclick = () => {
   let text=original;
   let splitTotal=0, unmappedTotal=0, outOfRangeMappedTotal=0;
   let tunesReformatted=0, soundfontTunes=0;
-  let staffwidthTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0;
+  let staffwidthTunes=0, staffsepTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0;
   let longSummaries = [];
   let percussionSummaries = [];
   try {
@@ -2839,6 +2874,7 @@ $('processButton').onclick = () => {
       const r=addFinalTuneDirectives(text,doPercussion);
       text=r.text;
       staffwidthTunes=r.staffwidthAdded;
+      staffsepTunes=r.staffsepAdded;
       percussionReleaseTunes=r.percussionReleaseAdded;
       hideDynamicsTunes=r.hideDynamicsAdded;
       voiceDynamicsAdded=r.voiceDynamicsAdded;
@@ -2884,6 +2920,7 @@ $('processButton').onclick = () => {
     if (doReformat) statusLines.push(`Tunes reformatted: ${tunesReformatted}`);
     if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}`);
     statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}`);
+    statusLines.push(`Tunes given %%staffsep 70: ${staffsepTunes}`);
     statusLines.push(`Tunes given %hide_dynamics: ${hideDynamicsTunes}`);
     statusLines.push(`Voices given an initial !f!: ${voiceDynamicsAdded}`);
     if (doPercussion) statusLines.push(`Tunes given percussion release settings: ${percussionReleaseTunes}`);
