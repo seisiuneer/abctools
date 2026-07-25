@@ -245,9 +245,9 @@
       align-items:start;
     }
 
-    /* NEW: temperament row uses 2 equal columns */
+    /* Temperament row uses 3 equal columns */
     .row-intonation{
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
     }
 
     label{
@@ -570,7 +570,7 @@
         break-inside: avoid;
       }
       .row-intonation{
-        grid-template-columns: 1fr 1fr !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
       }
 
       label{
@@ -993,16 +993,17 @@
               2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean, or a Fiddle Sweetened preset.<br/>
               3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
               Root note is not used for Equal Temperament or the Fiddle Sweetened presets.<br/>
-              4) Click <b>START</b> and allow microphone access when prompted.<br/>
-              5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected temperament.<br/>
-              6) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
-              7) Click <b>PAUSE</b> to pause the pitch detection. Click <b>RESUME</b> to resume.<br/>
-              8) Click the <b>JPEG</b> button at the bottom right of the graph area to save a JPEG image file of the graph.<br/>
+              4) Optionally select a <b>Displayed note transpose</b> value. This changes displayed note names only; it does not change the detected pitch, cents measurement, or temperament root.<br/>
+              5) Click <b>START</b> and allow microphone access when prompted.<br/>
+              6) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected temperament.<br/>
+              7) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
+              8) Click <b>PAUSE</b> to pause the pitch detection. Click <b>RESUME</b> to resume.<br/>
+              9) Click the <b>JPEG</b> button at the bottom right of the graph area to save a JPEG image file of the graph.<br/>
               The JPEG image file will be saved to your browser's default Downloads directory.<br/>
               On mobile devices, rotate your device to Landscape orientation before doing the export to get the best JPEG image results.<br/>
-              9) Click the <b>CSV</b> button at the bottom right of the graph area to save the graph values as a CSV file with the median cents offset value for each note.<br/>
+              10) Click the <b>CSV</b> button at the bottom right of the graph area to save the graph values as a CSV file with the median cents offset value for each note.<br/>
               The exported files will be saved to your browser's default Downloads directory.<br/>
-              10) Click <b>RESET</b> to clear the graph and start over.
+              11) Click <b>RESET</b> to clear the graph and start over.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -1201,7 +1202,7 @@
       </div>
     </div>
 
-    <!-- Second line of dropdowns (full width, 2 columns) -->
+    <!-- Second line of dropdowns (full width, 3 columns) -->
     <div class="row row-intonation">
 
       <div>
@@ -1233,6 +1234,39 @@
             <option value="9">A</option>
             <option value="10">A#</option>
             <option value="11">B</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="displaytranspose">&nbsp;&nbsp;Displayed note transpose</label>
+        <div class="select-wrap">
+          <select id="displaytranspose">
+            <option value="-12">-12 semitones</option>
+            <option value="-11">-11 semitones</option>
+            <option value="-10">-10 semitones</option>
+            <option value="-9">-9 semitones</option>
+            <option value="-8">-8 semitones</option>
+            <option value="-7">-7 semitones</option>
+            <option value="-6">-6 semitones</option>
+            <option value="-5">-5 semitones</option>
+            <option value="-4">-4 semitones</option>
+            <option value="-3">-3 semitones</option>
+            <option value="-2">-2 semitones</option>
+            <option value="-1">-1 semitone</option>
+            <option value="0" selected>None</option>
+            <option value="1">+1 semitone</option>
+            <option value="2">+2 semitones</option>
+            <option value="3">+3 semitones</option>
+            <option value="4">+4 semitones</option>
+            <option value="5">+5 semitones</option>
+            <option value="6">+6 semitones</option>
+            <option value="7">+7 semitones</option>
+            <option value="8">+8 semitones</option>
+            <option value="9">+9 semitones</option>
+            <option value="10">+10 semitones</option>
+            <option value="11">+11 semitones</option>
+            <option value="12">+12 semitones</option>
           </select>
         </div>
       </div>
@@ -1300,6 +1334,7 @@
 
   const LS_KEY_INTONATION = "abctools_rt_tuning_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_rt_tuning_rootnote_v1";
+  const LS_KEY_DISPLAY_TRANSPOSE = "abctools_rt_tuning_display_transpose_v1";
   const LS_KEY_INSTRUCTIONS_SHOWN = "abctools_rt_instructions_shown_v1";
   const LS_KEY_WALKTHROUGH_SHOWN = "rtta_walkthrough_shown_v1";
 
@@ -1366,6 +1401,11 @@
     const pc = ((midi % 12) + 12) % 12;
     const octave = Math.floor(midi / 12) - 1;
     return NOTES[pc] + octave;
+  }
+
+  let gDisplayTranspose = 0;
+  function midiToDisplayedNoteName(midi){
+    return midiToNoteName(midi + gDisplayTranspose);
   }
   function fmtCentsSigned(c){
     if (c == null || !isFinite(c)) return "--";
@@ -2031,6 +2071,8 @@
     pitchHistory = [];
     silentFrames = 0;
     lastDetectedMidi = null;
+    lastLiveMidi = null;
+    lastLiveCents = null;
     resetAdaptiveGate();
     levelMeterSmoothed = 0;
     setLevelMeter01(0);
@@ -2243,7 +2285,7 @@
       const st = statsForSamples(samples);
       const cx = plotX0 + slot * (i + 0.5);
 
-      const lbl = midiToNoteName(midi);
+      const lbl = midiToDisplayedNoteName(midi);
       ctx.save();
       const labelY = plotY0 + plotH + 12;
       if (n > 11){
@@ -2352,6 +2394,7 @@
 
       const intonation = localStorage.getItem(LS_KEY_INTONATION);
       const rootnote = localStorage.getItem(LS_KEY_ROOTNOTE);
+      const displayTranspose = localStorage.getItem(LS_KEY_DISPLAY_TRANSPOSE);
 
       const a4Sel = document.getElementById("a4ref");
       if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) {
@@ -2374,6 +2417,10 @@
       if (rootSel && rootnote && rootSel.querySelector(`option[value="${CSS.escape(rootnote)}"]`)) {
         rootSel.value = rootnote;
       }
+      const displayTransposeSel = document.getElementById("displaytranspose");
+      if (displayTransposeSel && displayTranspose !== null && displayTransposeSel.querySelector(`option[value="${CSS.escape(displayTranspose)}"]`)) {
+        displayTransposeSel.value = displayTranspose;
+      }
 
     } catch(e){}
   }
@@ -2391,6 +2438,8 @@
       const rootSel = document.getElementById("rootnote");
       if (intSel) localStorage.setItem(LS_KEY_INTONATION, String(intSel.value));
       if (rootSel) localStorage.setItem(LS_KEY_ROOTNOTE, String(rootSel.value));
+      const displayTransposeSel = document.getElementById("displaytranspose");
+      if (displayTransposeSel) localStorage.setItem(LS_KEY_DISPLAY_TRANSPOSE, String(displayTransposeSel.value));
     } catch(e){}
   }
 
@@ -2574,7 +2623,7 @@
       const st = statsForSamples(samples);
       const med = (st && isFinite(st.med)) ? st.med : median(samples);
 
-      rows.push([midiToNoteName(midi), formatMedianCentsForCSV(med)]);
+      rows.push([midiToDisplayedNoteName(midi), formatMedianCentsForCSV(med)]);
     }
 
     const csvText = rows.map(r => r.map(csvEscape).join(",")).join("\r\n") + "\r\n";
@@ -2610,6 +2659,8 @@
 
   // Sampling + analysis
   let analysisStarted = false;
+  let lastLiveMidi = null;
+  let lastLiveCents = null;
 
   function updateLiveReadout(noteName, cents){
     liveNoteEl.textContent = noteName || "--";
@@ -2681,6 +2732,8 @@
         pitchHistory = [];
         lastDetectedMidi = null;
         if (!IS_IOS) resetAdaptiveGate();
+        lastLiveMidi = null;
+        lastLiveCents = null;
         updateLiveReadout("--", null);
       }
 
@@ -2712,7 +2765,7 @@
         if (f0 && isFinite(f0) && f0 > 0){
           const midiFloat = freqToMidi(f0);
           const midi = Math.round(midiFloat);
-          const note = midiToNoteName(midi);
+          const note = midiToDisplayedNoteName(midi);
 
           const ideal = temperamentIdealFreqForMidi(midi);
 
@@ -2720,6 +2773,8 @@
           let cents = centsBetween(f0, ideal);
           if (isFinite(cents) && Math.abs(cents) <= 1.0) cents = 0.0;
 
+          lastLiveMidi = midi;
+          lastLiveCents = cents;
           updateLiveReadout(note, cents);
           pushSample(midi, cents);
         }
@@ -2852,31 +2907,37 @@
                <p>It is not used for Equal Temperament or the Fiddle Sweetened presets, so the control is disabled in those modes.</p>`
       },
       {
-        title: "Step 8: Live Note Readout",
+        title: "Step 8: Displayed Note Transpose",
+        selector: "#displaytranspose",
+        body: `<p>Optionally transpose the <strong>displayed note names</strong> by a selected number of semitones.</p>
+               <p>This does not change the detected pitch, cents values, or the root tone of the selected temperament.</p>`
+      },
+      {
+        title: "Step 9: Live Note Readout",
         selector: "#live-pair",
         body: `<p>This shows the currently detected note and its <strong>cents offset</strong>.</p>
                <p>When the reading is near 0.0 cents, the note is close to the selected tuning reference.</p>`
       },
       {
-        title: "Step 9: Start Analysis",
+        title: "Step 10: Start Analysis",
         selector: "#start-btn",
         body: `<p>Click <strong>START</strong> and play your instrument to begin live pitch analysis.</p>
                <p>Your browser may ask for permission to use the microphone. You must allow microphone access for the tool to work.</p>`
       },
       {
-        title: "Step 10: Pitch Distribution Graph",
+        title: "Step 11: Pitch Distribution Graph",
         selector: "#plot-wrap",
         body: `<p>This graph builds a <strong>pitch distribution</strong> for each note you play.</p>
                <p>Each yellow box plot shows the spread of measurements for that note, making it easier to see your typical tuning tendency.</p>`
       },
       {
-        title: "Step 11: Export JPEG",
+        title: "Step 12: Export JPEG",
         selector: "#export-plot-btn",
         body: `<p>Click <strong>JPEG</strong> to export the graph as an image file.</p>
                <p>On phones and tablets, landscape orientation usually gives the best result.</p>`
       },
       {
-        title: "Step 12: Export CSV",
+        title: "Step 13: Export CSV",
         selector: "#export-csv-btn",
         body: `<p>Click <strong>CSV</strong> to export the median cents values for the notes in the graph.</p>
                <p>This is useful if you want to save or compare measurements outside the tool.</p>`
@@ -3060,6 +3121,20 @@
     });
   }
 
+  const displayTransposeSelect = document.getElementById("displaytranspose");
+  if (displayTransposeSelect) {
+    gDisplayTranspose = parseInt(displayTransposeSelect.value, 10) || 0;
+    displayTransposeSelect.addEventListener("change", () => {
+      gDisplayTranspose = parseInt(displayTransposeSelect.value, 10) || 0;
+      saveSettingsToLocalStorage();
+      if (lastLiveMidi !== null) {
+        updateLiveReadout(midiToDisplayedNoteName(lastLiveMidi), lastLiveCents);
+      }
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+  }
+
   const intonationSelect = document.getElementById("intonation");
   if (intonationSelect) {
     intonationSelect.addEventListener("change", () => {
@@ -3102,6 +3177,7 @@
   restoreSettingsFromLocalStorage();
   if (a4RefSelect) gA4RefHz = parseFloat(a4RefSelect.value) || 440;
   if (yRangeSelect) gYRange = parseInt(yRangeSelect.value, 10) || 50;
+  if (displayTransposeSelect) gDisplayTranspose = parseInt(displayTransposeSelect.value, 10) || 0;
   setUserBoostGainFromUI();
   applyIntonationFromUI();
 
