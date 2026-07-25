@@ -351,6 +351,8 @@
     .optionList { display: grid; gap: 12px; }
     .optionLine { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
     .optionLine input[type="checkbox"] { width: 20px; height: 20px; margin: 1px 0 0; flex: 0 0 auto; }
+    .optionLine.unavailable { opacity: 0.5; }
+    .optionAvailabilityNote { margin-top: 4px; color: #555; font-size: 0.92em; }
     .optionText { flex: 1; }
     .optionText label { font-weight: 650; cursor: pointer; }
     .durationRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 0 30px; }
@@ -778,7 +780,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.23</div>
+    <div class="versionNumber">Version 1.2.24</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
@@ -831,10 +833,11 @@
               </div>
             </div>
           </div>
-          <div class="optionLine">
+          <div class="optionLine" id="autoProcessTransferLine">
             <input id="autoProcessTransferOption" type="checkbox" />
             <div class="optionText">
               <label for="autoProcessTransferOption">Automatically process and transfer back to the ABC Transcription Tools</label>
+              <div id="autoProcessTransferAvailabilityNote" class="optionAvailabilityNote" hidden>This feature is unavailable in Safari.</div>
             </div>
           </div>
         </div>
@@ -867,7 +870,7 @@
     <h2 style="text-align: center;">MuseScore MusicXML to ABC Optimizer</h2>
     <ul>
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
-    <li><b>Automatically process and transfer back to the ABC Transcription Tools</b> is disabled by default. When enabled, ABC received directly from the ABC Transcription Tools is immediately processed using the saved optimization settings and sent back in the same way as the <b>Send to ABC Transcription Tools</b> button. If the resulting share link is too large, no automatic transfer occurs and the processed ABC remains available in this tool.</li>
+    <li><b>Automatically process and transfer back to the ABC Transcription Tools</b> is disabled by default and is unavailable in Safari on macOS, iPhone, and iPad. In supported browsers, when enabled, ABC received directly from the ABC Transcription Tools is immediately processed using the saved optimization settings and sent back in the same way as the <b>Send to ABC Transcription Tools</b> button. If the resulting share link is too large, no automatic transfer occurs and the processed ABC remains available in this tool.</li>
     <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Consolidate percussion voices for General MIDI playback and drum noteheads</b> detects voices declared with <b>perc</b> or <b>clef=perc</b> and converts them using the selected method. The method selector is available only while this option is enabled.</li>
@@ -2790,6 +2793,23 @@ function loadSettingsFromLocalStorage() {
   if (typeof saved.autoProcessTransfer === 'boolean') $('autoProcessTransferOption').checked = saved.autoProcessTransfer;
 }
 
+function isSafariBrowser() {
+  const userAgent = navigator.userAgent || '';
+  const vendor = navigator.vendor || '';
+  const hasSafariToken = /Safari/i.test(userAgent);
+  const isOtherBrowser = /Chrome|Chromium|CriOS|FxiOS|Edg|EdgiOS|OPR|OPiOS|Android/i.test(userAgent);
+  return /Apple Computer/i.test(vendor) && hasSafariToken && !isOtherBrowser;
+}
+
+function applyAutomaticTransferBrowserAvailability() {
+  const option = $('autoProcessTransferOption');
+  const unavailable = isSafariBrowser();
+  option.disabled = unavailable;
+  if (unavailable) option.checked = false;
+  $('autoProcessTransferLine').classList.toggle('unavailable', unavailable);
+  $('autoProcessTransferAvailabilityNote').hidden = !unavailable;
+}
+
 function setOutput(text) {
   outputEl.value = text;
   const yes = !!text;
@@ -3191,7 +3211,7 @@ function loadABCFromABCTranscriptionTools(data, event) {
 
     acknowledgeABCTranscriptionToolsLoad(event, data.messageId || '', tuneCount);
 
-    if (tuneCount > 0 && $('autoProcessTransferOption').checked) {
+    if (tuneCount > 0 && !$('autoProcessTransferOption').disabled && $('autoProcessTransferOption').checked) {
       const processed = processABC();
       if (processed) automaticallyTransferProcessedABC();
     }
@@ -3240,6 +3260,7 @@ $('soundfontSelect').innerHTML=SOUNDFONT_OPTIONS
   .map(option=>`<option value="${option.id}">${option.name}</option>`).join('');
 $('soundfontSelect').value='mscore';
 loadSettingsFromLocalStorage();
+applyAutomaticTransferBrowserAvailability();
 updateOptionState();
 startABCTranscriptionToolsHandshake();
 </script>
