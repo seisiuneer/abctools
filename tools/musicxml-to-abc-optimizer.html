@@ -778,7 +778,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.22</div>
+    <div class="versionNumber">Version 1.2.23</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
@@ -831,6 +831,12 @@
               </div>
             </div>
           </div>
+          <div class="optionLine">
+            <input id="autoProcessTransferOption" type="checkbox" />
+            <div class="optionText">
+              <label for="autoProcessTransferOption">Automatically process and transfer back to the ABC Transcription Tools</label>
+            </div>
+          </div>
         </div>
       </section>
       <section class="card" id="inputCard">
@@ -861,6 +867,7 @@
     <h2 style="text-align: center;">MuseScore MusicXML to ABC Optimizer</h2>
     <ul>
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
+    <li><b>Automatically process and transfer back to the ABC Transcription Tools</b> is disabled by default. When enabled, ABC received directly from the ABC Transcription Tools is immediately processed using the saved optimization settings and sent back in the same way as the <b>Send to ABC Transcription Tools</b> button. If the resulting share link is too large, no automatic transfer occurs and the processed ABC remains available in this tool.</li>
     <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Consolidate percussion voices for General MIDI playback and drum noteheads</b> detects voices declared with <b>perc</b> or <b>clef=perc</b> and converts them using the selected method. The method selector is available only while this option is enabled.</li>
@@ -2740,6 +2747,48 @@ let saveFilename = 'musicxml_to_abc_optimized.abc';
 let shareURL = '';
 let shareLinkCheckId = 0;
 let processingReport = [];
+const SETTINGS_STORAGE_KEY = 'musicxmlToABCOptimizerSettingsV1';
+
+function currentSettings() {
+  return {
+    shorten: $('shortenOption').checked,
+    maxSeconds: $('maxSeconds').value,
+    percussion: $('percussionOption').checked,
+    percussionMethod: $('percussionMethod').value,
+    soundfont: $('soundfontOption').checked,
+    soundfontId: $('soundfontSelect').value,
+    reformat: $('reformatOption').checked,
+    measuresPerStaff: $('measuresPerStaff').value,
+    autoProcessTransfer: $('autoProcessTransferOption').checked
+  };
+}
+
+function saveSettingsToLocalStorage() {
+  try {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(currentSettings()));
+  } catch (error) {
+    console.warn('Unable to save optimizer settings.', error);
+  }
+}
+
+function loadSettingsFromLocalStorage() {
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || 'null');
+  } catch (error) {
+    console.warn('Unable to load optimizer settings.', error);
+  }
+  if (!saved || typeof saved !== 'object') return;
+  if (typeof saved.shorten === 'boolean') $('shortenOption').checked = saved.shorten;
+  if (saved.maxSeconds != null) $('maxSeconds').value = saved.maxSeconds;
+  if (typeof saved.percussion === 'boolean') $('percussionOption').checked = saved.percussion;
+  if (['percmap','treble'].includes(saved.percussionMethod)) $('percussionMethod').value = saved.percussionMethod;
+  if (typeof saved.soundfont === 'boolean') $('soundfontOption').checked = saved.soundfont;
+  if (SOUNDFONT_OPTIONS.some(option => option.id === saved.soundfontId)) $('soundfontSelect').value = saved.soundfontId;
+  if (typeof saved.reformat === 'boolean') $('reformatOption').checked = saved.reformat;
+  if (saved.measuresPerStaff != null) $('measuresPerStaff').value = saved.measuresPerStaff;
+  if (typeof saved.autoProcessTransfer === 'boolean') $('autoProcessTransferOption').checked = saved.autoProcessTransfer;
+}
 
 function setOutput(text) {
   outputEl.value = text;
@@ -2818,7 +2867,7 @@ function buildProcessingReport(rows) {
 }
 
 
-$('processButton').onclick = () => {
+function processABC() {
   const original = inputEl.value;
   if (!original.trim()) { statusEl.textContent = 'Paste or open an ABC file first.'; return; }
   if (!hasABCTune(original)) { statusEl.textContent = 'No ABC tune was found. A tune must include an X: tag.'; return; }
@@ -2930,8 +2979,12 @@ $('processButton').onclick = () => {
     processingReport = [];
     $('detailsButton').disabled = true;
     statusEl.textContent = 'Could not process the ABC: ' + e.message;
+    return false;
   }
-};
+  return true;
+}
+
+$('processButton').onclick = () => processABC();
 
 $('clearButton').onclick = () => {
   inputEl.value = '';
@@ -2940,14 +2993,19 @@ $('clearButton').onclick = () => {
   changed();
 };
 inputEl.addEventListener('input', () => changed());
-$('shortenOption').addEventListener('change',()=>changed());
-$('percussionOption').addEventListener('change',()=>changed());
-$('percussionMethod').addEventListener('change',()=>changed());
-$('reformatOption').addEventListener('change',()=>changed());
-$('soundfontOption').addEventListener('change',()=>changed());
-$('maxSeconds').addEventListener('input',()=>changed());
-$('measuresPerStaff').addEventListener('input',()=>changed());
-$('soundfontSelect').addEventListener('change',()=>changed());
+function settingChanged() {
+  saveSettingsToLocalStorage();
+  changed();
+}
+$('shortenOption').addEventListener('change',settingChanged);
+$('percussionOption').addEventListener('change',settingChanged);
+$('percussionMethod').addEventListener('change',settingChanged);
+$('reformatOption').addEventListener('change',settingChanged);
+$('soundfontOption').addEventListener('change',settingChanged);
+$('autoProcessTransferOption').addEventListener('change',settingChanged);
+$('maxSeconds').addEventListener('input',settingChanged);
+$('measuresPerStaff').addEventListener('input',settingChanged);
+$('soundfontSelect').addEventListener('change',settingChanged);
 
 async function loadFiles(files) {
   const good = [...files].filter(f => /\.(abc|txt)$/i.test(f.name));
@@ -3024,10 +3082,36 @@ async function updateSendButtonAvailability(text, checkId) {
     $('sendButton').disabled = true;
   }
 }
+function openProcessedABCInTranscriptionTools(url) {
+  if (!url || url.length > 8100) return false;
+  window.open(url,'_blank','noopener');
+  statusEl.textContent += (statusEl.textContent ? '\n' : '') + 'Opened the processed ABC in the ABC Transcription Tools.';
+  return true;
+}
+
+async function automaticallyTransferProcessedABC() {
+  const text = outputEl.value;
+  if (!text) return;
+  try {
+    const candidate = await buildABCTranscriptionToolsShareURL(text);
+    if (candidate.length > 8100) {
+      shareURL = '';
+      $('sendButton').disabled = true;
+      statusEl.textContent += (statusEl.textContent ? '\n' : '') + 'Automatic transfer stopped because the optimized share link is too large.';
+      return;
+    }
+    shareURL = candidate;
+    $('sendButton').disabled = false;
+    openProcessedABCInTranscriptionTools(candidate);
+  } catch (error) {
+    console.error(error);
+    statusEl.textContent += (statusEl.textContent ? '\n' : '') + 'Automatic transfer could not create the share link.';
+  }
+}
+
 $('sendButton').onclick = () => {
   if (!shareURL || shareURL.length > 8100) return;
-  window.open(shareURL,'_blank','noopener');
-  statusEl.textContent='Opened the processed ABC in the ABC Transcription Tools.';
+  openProcessedABCInTranscriptionTools(shareURL);
 };
 $('openToolsButton').onclick=()=>window.open('https://michaeleskin.com/abctools/abctools.html','_blank','noopener');
 $('instructionsButton').onclick=()=>($('modal').style.display='block');
@@ -3106,6 +3190,11 @@ function loadABCFromABCTranscriptionTools(data, event) {
     }
 
     acknowledgeABCTranscriptionToolsLoad(event, data.messageId || '', tuneCount);
+
+    if (tuneCount > 0 && $('autoProcessTransferOption').checked) {
+      const processed = processABC();
+      if (processed) automaticallyTransferProcessedABC();
+    }
   } catch (error) {
     console.error(error);
     statusEl.textContent = error && error.message ? error.message : String(error);
@@ -3150,6 +3239,7 @@ function startABCTranscriptionToolsHandshake() {
 $('soundfontSelect').innerHTML=SOUNDFONT_OPTIONS
   .map(option=>`<option value="${option.id}">${option.name}</option>`).join('');
 $('soundfontSelect').value='mscore';
+loadSettingsFromLocalStorage();
 updateOptionState();
 startABCTranscriptionToolsHandshake();
 </script>
