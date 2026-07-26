@@ -713,7 +713,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websiteabcjseskin,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#injectmidigchord{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websiteabcjseskin,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#injectmidigchord,#musescorexml{
 height:42px;
 padding:12px;
 }
@@ -6240,6 +6240,11 @@ body.dp-tabs-building .modal_flat_main {
 .btn-injectmidigchord{
   --color: black;
   --background-color: #f0fff0;	
+}
+
+.btn-musescorexml{
+  --color: black;
+  --background-color: #f0fff0;  
 }
 
 @media (hover: hover) {

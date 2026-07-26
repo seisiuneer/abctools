@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3303_072326_1000";
+var gVersionNumber = "3304_072626_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51243,6 +51243,9 @@ function AdvancedControlsDialog() {
   modal_msg += '<input id="reformatusingmusicxml" class="advancedcontrols  btn btn-reformatusingmusicxml" onclick="BatchMusicXMLRoundTrip()" type="button" value="Reformat Using MusicXML">';
   modal_msg += '<input id="injectmidigchord" class="advancedcontrols btn btn-injectmidigchord" onclick="InjectMIDIGChordTemplates()" type="button" value="Inject MIDI gchord Templates">';
   modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="musescorexml" class="advancedcontrols btn btn-musescorexml" onclick="launchMusicXMLToABCOptimizer()" type="button" value="Launch MuseScore MusicXML to ABC Optimizer">';
+  modal_msg += '</p>';
   modal_msg += '</div>';
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
@@ -57193,7 +57196,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 23 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 July 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
@@ -65779,201 +65782,203 @@ function launchAbcChordChartGenerator(){
 //
 var gMusicXMLToABCOptimizerURL = "https://michaeleskin.com/tools/musicxml-to-abc-optimizer.html";
 
-function launchMusicXMLToABCOptimizer(abcText){
+function launchMusicXMLToABCOptimizer(){
 
-    if (!gAllowWebExport){
-        return;
-    }
+  var abcText = getABCEditorText();
 
-    if (!abcText || !/^\s*X\s*:/m.test(abcText)){
-        showAbcChordChartGeneratorMessage(
-            "There are no ABC tunes to send to the MusicXML to ABC Optimizer.",
-            520
-        );
-        return;
-    }
+  if (!gAllowWebExport){
+      return;
+  }
 
-    if (!isRunningFromOfficialMichaeleskinDomain()){
-        showAbcChordChartGeneratorMessage(
-            "Direct ABC transfer to the MusicXML to ABC Optimizer is only available from the official online version at https://michaeleskin.com.",
-            560
-        );
-        return;
-    }
+  if (!abcText || !/^\s*X\s*:/m.test(abcText)){
+      showAbcChordChartGeneratorMessage(
+          "There are no ABC tunes to send to the MusicXML to ABC Optimizer.",
+          520
+      );
+      return;
+  }
 
-    if (!navigator.onLine){
-        showAbcChordChartGeneratorMessage(
-            "The MusicXML to ABC Optimizer is not available while offline. Please reconnect to the internet and try again.",
-            560
-        );
-        return;
-    }
+  if (!isRunningFromOfficialMichaeleskinDomain()){
+      showAbcChordChartGeneratorMessage(
+          "Direct ABC transfer to the MusicXML to ABC Optimizer is only available from the official online version at https://michaeleskin.com.",
+          560
+      );
+      return;
+  }
 
-    sendGoogleAnalytics("action","OpenInMusicXMLToABCOptimizer");
+  if (!navigator.onLine){
+      showAbcChordChartGeneratorMessage(
+          "The MusicXML to ABC Optimizer is not available while offline. Please reconnect to the internet and try again.",
+          560
+      );
+      return;
+  }
 
-    var optimizerURL = gMusicXMLToABCOptimizerURL;
-    var targetOrigin = getAbcChordChartGeneratorTargetOrigin(optimizerURL);
-    var separator = (optimizerURL.indexOf("?") === -1) ? "?" : "&";
-    var launchURL = optimizerURL + separator + "cb=" + encodeURIComponent(String(Date.now()));
-    var messageId = "abctools-musicxml-abc-optimizer-" + Date.now() + "-" + Math.random().toString(36).slice(2);
-    var optimizerWindow = null;
-    var optimizerReadyReceived = false;
-    var loadMessageAttempted = false;
-    var loadMessageAcknowledged = false;
-    var failureMessageShown = false;
-    var cleanupTimer = null;
-    var closedCheckTimer = null;
-    var fallbackTimers = [];
+  sendGoogleAnalytics("action","OpenInMusicXMLToABCOptimizer");
 
-    var sourceName = "ABC Transcription Tools";
-    if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
-        sourceName += " - " + gDisplayedName.trim();
-    }
+  var optimizerURL = gMusicXMLToABCOptimizerURL;
+  var targetOrigin = getAbcChordChartGeneratorTargetOrigin(optimizerURL);
+  var separator = (optimizerURL.indexOf("?") === -1) ? "?" : "&";
+  var launchURL = optimizerURL + separator + "cb=" + encodeURIComponent(String(Date.now()));
+  var messageId = "abctools-musicxml-abc-optimizer-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+  var optimizerWindow = null;
+  var optimizerReadyReceived = false;
+  var loadMessageAttempted = false;
+  var loadMessageAcknowledged = false;
+  var failureMessageShown = false;
+  var cleanupTimer = null;
+  var closedCheckTimer = null;
+  var fallbackTimers = [];
 
-    var loadMessage = {
-        type: "abcjsEskinWebsiteBuilderLoadABC",
-        messageId: messageId,
-        abc: abcText,
-        sourceName: sourceName,
-        replaceExisting: true
-    };
+  var sourceName = "ABC Transcription Tools";
+  if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
+      sourceName += " - " + gDisplayedName.trim();
+  }
 
-    function cleanupOptimizerLaunchHandlers(){
-        window.removeEventListener("message", handleOptimizerLaunchMessage);
+  var loadMessage = {
+      type: "abcjsEskinWebsiteBuilderLoadABC",
+      messageId: messageId,
+      abc: abcText,
+      sourceName: sourceName,
+      replaceExisting: true
+  };
 
-        if (cleanupTimer){
-            clearTimeout(cleanupTimer);
-            cleanupTimer = null;
-        }
+  function cleanupOptimizerLaunchHandlers(){
+      window.removeEventListener("message", handleOptimizerLaunchMessage);
 
-        if (closedCheckTimer){
-            clearInterval(closedCheckTimer);
-            closedCheckTimer = null;
-        }
+      if (cleanupTimer){
+          clearTimeout(cleanupTimer);
+          cleanupTimer = null;
+      }
 
-        fallbackTimers.forEach(function(timer){
-            clearTimeout(timer);
-        });
-        fallbackTimers = [];
-    }
+      if (closedCheckTimer){
+          clearInterval(closedCheckTimer);
+          closedCheckTimer = null;
+      }
 
-    function showOptimizerLaunchFailure(message, width){
-        if (loadMessageAcknowledged || failureMessageShown){
-            cleanupOptimizerLaunchHandlers();
-            return;
-        }
+      fallbackTimers.forEach(function(timer){
+          clearTimeout(timer);
+      });
+      fallbackTimers = [];
+  }
 
-        failureMessageShown = true;
-        cleanupOptimizerLaunchHandlers();
-        showAbcChordChartGeneratorMessage(message, width || 620);
-    }
+  function showOptimizerLaunchFailure(message, width){
+      if (loadMessageAcknowledged || failureMessageShown){
+          cleanupOptimizerLaunchHandlers();
+          return;
+      }
 
-    function postABCToOptimizer(){
-        if (!optimizerWindow || optimizerWindow.closed){
-            showOptimizerLaunchFailure(
-                "The MusicXML to ABC Optimizer window was closed before the tunes could be transferred.",
-                600
-            );
-            return;
-        }
+      failureMessageShown = true;
+      cleanupOptimizerLaunchHandlers();
+      showAbcChordChartGeneratorMessage(message, width || 620);
+  }
 
-        if (loadMessageAcknowledged || failureMessageShown){
-            return;
-        }
+  function postABCToOptimizer(){
+      if (!optimizerWindow || optimizerWindow.closed){
+          showOptimizerLaunchFailure(
+              "The MusicXML to ABC Optimizer window was closed before the tunes could be transferred.",
+              600
+          );
+          return;
+      }
 
-        try {
-            loadMessageAttempted = true;
-            optimizerWindow.postMessage(loadMessage, targetOrigin);
-        }
-        catch (error) {
-            console.error("Unable to send ABC to the MusicXML to ABC Optimizer:", error);
-            showOptimizerLaunchFailure(
-                "ABC Transcription Tools could not send the tunes to the MusicXML to ABC Optimizer. Browser security settings may have blocked the transfer.",
-                650
-            );
-        }
-    }
+      if (loadMessageAcknowledged || failureMessageShown){
+          return;
+      }
 
-    function handleOptimizerLaunchMessage(event){
-        if (!optimizerWindow || event.source !== optimizerWindow){
-            return;
-        }
+      try {
+          loadMessageAttempted = true;
+          optimizerWindow.postMessage(loadMessage, targetOrigin);
+      }
+      catch (error) {
+          console.error("Unable to send ABC to the MusicXML to ABC Optimizer:", error);
+          showOptimizerLaunchFailure(
+              "ABC Transcription Tools could not send the tunes to the MusicXML to ABC Optimizer. Browser security settings may have blocked the transfer.",
+              650
+          );
+      }
+  }
 
-        if (targetOrigin !== "*" && event.origin !== targetOrigin){
-            return;
-        }
+  function handleOptimizerLaunchMessage(event){
+      if (!optimizerWindow || event.source !== optimizerWindow){
+          return;
+      }
 
-        var data = event.data || {};
+      if (targetOrigin !== "*" && event.origin !== targetOrigin){
+          return;
+      }
 
-        if (data.type === "abcjsEskinWebsiteBuilderReady"){
-            optimizerReadyReceived = true;
-            postABCToOptimizer();
-            return;
-        }
+      var data = event.data || {};
 
-        if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
-            loadMessageAcknowledged = true;
-            cleanupOptimizerLaunchHandlers();
-        }
-    }
+      if (data.type === "abcjsEskinWebsiteBuilderReady"){
+          optimizerReadyReceived = true;
+          postABCToOptimizer();
+          return;
+      }
 
-    window.addEventListener("message", handleOptimizerLaunchMessage);
+      if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
+          loadMessageAcknowledged = true;
+          cleanupOptimizerLaunchHandlers();
+      }
+  }
 
-    optimizerWindow = window.open(launchURL, "_blank");
+  window.addEventListener("message", handleOptimizerLaunchMessage);
 
-    if (!optimizerWindow){
-        cleanupOptimizerLaunchHandlers();
-        showAbcChordChartGeneratorMessage(
-            "The MusicXML to ABC Optimizer window was blocked by the browser. Please allow popups for this site and try again.",
-            560
-        );
-        return;
-    }
+  optimizerWindow = window.open(launchURL, "_blank");
 
-    closedCheckTimer = setInterval(function(){
-        if (optimizerWindow && optimizerWindow.closed && !loadMessageAcknowledged){
-            showOptimizerLaunchFailure(
-                "The MusicXML to ABC Optimizer window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
-                650
-            );
-        }
-    }, 1000);
+  if (!optimizerWindow){
+      cleanupOptimizerLaunchHandlers();
+      showAbcChordChartGeneratorMessage(
+          "The MusicXML to ABC Optimizer window was blocked by the browser. Please allow popups for this site and try again.",
+          560
+      );
+      return;
+  }
 
-    [1200, 2400, 4200].forEach(function(delay){
-        fallbackTimers.push(setTimeout(function(){
-            if (!loadMessageAcknowledged && !failureMessageShown){
-                postABCToOptimizer();
-            }
-        }, delay));
-    });
+  closedCheckTimer = setInterval(function(){
+      if (optimizerWindow && optimizerWindow.closed && !loadMessageAcknowledged){
+          showOptimizerLaunchFailure(
+              "The MusicXML to ABC Optimizer window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+              650
+          );
+      }
+  }, 1000);
 
-    cleanupTimer = setTimeout(function(){
-        if (loadMessageAcknowledged){
-            cleanupOptimizerLaunchHandlers();
-            return;
-        }
+  [1200, 2400, 4200].forEach(function(delay){
+      fallbackTimers.push(setTimeout(function(){
+          if (!loadMessageAcknowledged && !failureMessageShown){
+              postABCToOptimizer();
+          }
+      }, delay));
+  });
 
-        if (!optimizerReadyReceived){
-            showOptimizerLaunchFailure(
-                "The MusicXML to ABC Optimizer opened, but ABC Transcription Tools did not receive a ready message from it.",
-                680
-            );
-            return;
-        }
+  cleanupTimer = setTimeout(function(){
+      if (loadMessageAcknowledged){
+          cleanupOptimizerLaunchHandlers();
+          return;
+      }
 
-        if (loadMessageAttempted){
-            showOptimizerLaunchFailure(
-                "ABC Transcription Tools sent the tunes to the MusicXML to ABC Optimizer, but did not receive confirmation that they loaded.",
-                700
-            );
-            return;
-        }
+      if (!optimizerReadyReceived){
+          showOptimizerLaunchFailure(
+              "The MusicXML to ABC Optimizer opened, but ABC Transcription Tools did not receive a ready message from it.",
+              680
+          );
+          return;
+      }
 
-        showOptimizerLaunchFailure(
-            "ABC Transcription Tools could not complete the transfer to the MusicXML to ABC Optimizer.",
-            700
-        );
-    }, 15000);
+      if (loadMessageAttempted){
+          showOptimizerLaunchFailure(
+              "ABC Transcription Tools sent the tunes to the MusicXML to ABC Optimizer, but did not receive confirmation that they loaded.",
+              700
+          );
+          return;
+      }
+
+      showOptimizerLaunchFailure(
+          "ABC Transcription Tools could not complete the transfer to the MusicXML to ABC Optimizer.",
+          700
+      );
+  }, 15000);
 }
 
 function OpenInABCJSEskinWebsiteBuilder(abcText,isFromPlayer){
@@ -66088,11 +66093,6 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_chord_chart");
   if (elem) elem.onclick = function(event){
-    if (event && event.altKey){
-      launchMusicXMLToABCOptimizer(theABC);
-      return;
-    }
-
     OpenInABCChordChartGenerator(theABC,isFromPlayer);
   };
 

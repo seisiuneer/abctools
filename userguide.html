@@ -880,13 +880,14 @@
             </details>
 
             <details>
-            <summary><h3>Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, Normalize Voice Keys, Reformat Using MusicXML, and Inject MIDI gchord Templates</h3></summary>
+            <summary><h3>Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, Normalize Voice Keys, Reformat Using MusicXML, Inject MIDI gchord Templates, and Launch MuseScore MusicXML to ABC Optimizer</h3></summary>
             <a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a>
             <a style="text-decoration:none;" href="#reformat_using_musicxml">Reformat Using MusicXML</a>
             <a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a>
+            <a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a>
             </details>
             
             <details>
@@ -1443,7 +1444,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     </div>
 
-                    <button class="accordion" title="Click to expand/collapse this section">Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, Normalize Voice Keys, Reformat Using MusicXML, and Inject MIDI gchord Templates</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, Normalize Voice Keys, Reformat Using MusicXML, Inject MIDI gchord Templates, and Launch MuseScore MusicXML to ABC Optimizer</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a></p>
@@ -1451,6 +1452,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#reformat_using_musicxml">Reformat Using MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a></p>
+
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
@@ -6665,7 +6668,7 @@
                 <p>When reformatting large ABC collections, since MusicXML-based reformatting doesn't require rendering the tunes, I suggest using the "Quick Editor" which only renders the currently selected in the collection.</p>
                 <p>This can be particularly helpful if the initial rendering of the collection is slow in the standard editor because of "one measure per ABC line" formatting of the ABC.</p>
                 <p>From the "Quick Editor" you can then run "Reformat Using MusicXML", save the resulting ABC, then open the reformatted ABC in the standard editor.</p>            
-                 <hr class="hidden-print" id="inject_midigchord">
+                <hr class="hidden-print" id="inject_midigchord">
                 <h1 class="page_break_always">Inject MIDI gchord Templates</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
@@ -6683,7 +6686,14 @@
                 <p>If you specify a vector for gchordstress and/or gchordduration that has fewer entries than the gchord control string length, it will be expanded via replication to the length of the gchord control string.</p>
                 <p>You can edit the vectors after per-measure injection to have control over the stress or duration of each element in the gchord control string.</p>
                 <p>Full details below on the use of %%MIDI gchordstress and %%MIDI gchordduration for gchord dynamics and duration scaling:</p>
-                <p style="text-align: center"><a style="text-decoration:none;" href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>                <hr class="hidden-print" id="sharing_controls">
+                <p style="text-align: center"><a style="text-decoration:none;" href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>
+                <hr class="hidden-print" id="musescorexml">
+                <h1 class="page_break_always">Launch MuseScore MusicXML to ABC Optimizer </h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>Launches the ABC into a standalone utility that optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
+                <hr class="hidden-print" id="sharing_controls">
                 <h1 class="page_break_always">Sharing Tunes with Share URLs and QR Codes</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
@@ -8847,6 +8857,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a></p>
 
                 <h1 class="page_break_never" id="index_L" style="text-align:left;margin-bottom:12px;">L</h1>
+                <p class="toc"><a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#custom_reverb">Load Custom Reverb Impulse</a></p>
