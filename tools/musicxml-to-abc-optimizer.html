@@ -764,7 +764,8 @@
     }
     .styledSelect::-ms-expand { display:none; }
     .styledSelect:disabled { cursor:default; }
-    #percussionMethod { font-size: 1.08em; }
+    #percussionMethod,
+    #soundfontSelect { font-size: 1.0em; }
 
     .versionNumber {
       position: absolute;
@@ -789,7 +790,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.24</div>
+    <div class="versionNumber">Version 1.2.27</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
@@ -896,7 +897,7 @@
     <li>When percussion consolidation is enabled, the processed tune also receives an <b>%abcjs_render_params</b> percussion volume scale and percussion-release setting before its voice declarations so volume can be adjusted and hi-hats and selected cymbals ring for appropriate lengths.</li>
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, soundfont injection, and final tune-level rendering directives.</li>
     <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
-    <li>Use the output buttons to copy, save, or send the processed ABC directly to the ABC Transcription Tools.</li>
+    <li>Use the output buttons to copy, save, or send the processed ABC directly to the ABC Transcription Tools. The share-link name is based on the first available <b>T:</b> title; when multiple tunes are present, the number of additional tunes is appended to that name.</li>
     </ul>
   </div>
   <button id="closeModal">Close</button>
@@ -3088,12 +3089,35 @@ async function deflateText(text) {
   const stream=new Blob([new TextEncoder().encode(text)]).stream().pipeThrough(new CompressionStream('deflate'));
   return bytesToB64Url(new Uint8Array(await new Response(stream).arrayBuffer()));
 }
+function buildABCTranscriptionToolsShareName(text) {
+  const abcText = String(text || '');
+  const titleMatch = abcText.match(/^T:\s*(.+?)\s*$/m);
+  const tuneCount = (abcText.match(/^X\s*:/gm) || []).length;
+
+  let name = titleMatch && titleMatch[1].trim()
+    ? titleMatch[1].trim()
+    : 'MusicXML_to_ABC_Optimizer';
+
+  name = name
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u2018\u2019\u02BC]/g, "'")
+    .replace(/[^A-Za-z0-9._'-]+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^[_\-.]+|[_\-.]+$/g, '');
+
+  if (!name) name = 'MusicXML_to_ABC_Optimizer';
+  if (tuneCount > 1) name += `_and_${tuneCount - 1}_more_tunes`;
+
+  return name;
+}
+
 async function buildABCTranscriptionToolsShareURL(text) {
   const def = await deflateText(text);
   const u = new URL('https://michaeleskin.com/abctools/abctools.html');
   u.searchParams.set('def', def);
   u.searchParams.set('format', 'noten');
-  u.searchParams.set('name', 'MusicXML_to_ABC_Optimizer');
+  u.searchParams.set('name', buildABCTranscriptionToolsShareName(text));
   u.searchParams.set('editor', '1');
   return u.href;
 }
