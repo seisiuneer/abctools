@@ -838,7 +838,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.38</div>
+    <div class="versionNumber">Version 1.2.41</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools</p>
   </section>
@@ -902,7 +902,7 @@
           <div class="optionLine">
             <input id="voiceStemsOption" type="checkbox" checked />
             <div class="optionText">
-              <label for="voiceStemsOption">Add stems=auto to all voices</label>
+              <label for="voiceStemsOption">Add stems=auto to pitched voices</label>
             </div>
           </div>
           <div class="optionLine">
@@ -950,7 +950,7 @@
       <li>Both methods remove MIDI channel 10, old program and percussion-map directives, <b>stafflines=1</b>, and old transpose values before creating their replacement output. <b>%%MIDI program 128</b> is added for General MIDI drum playback.</li>
       <li><b>Inject a soundfont command into each tune</b> is enabled by default with <b>MScore</b> selected. It removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and adds the selected <b>%soundfont &lt;id&gt;</b> command near the beginning of the tune, after the generated staff-width and reverb directives when those directives are present.</li>
       <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
-      <li><b>Add stems=auto to all voices</b> is enabled by default. When enabled, <b>stems=auto</b> is added to a voice when none of that voice's declarations already contains a <b>stems=</b> setting. Existing stem directions are preserved.</li>
+      <li><b>Add stems=auto to pitched voices</b> is enabled by default. When enabled, <b>stems=auto</b> is added to a pitched voice when none of that voice's declarations already contains a <b>stems=</b> setting. Existing stem directions are preserved. Voices declared with <b>perc</b> or <b>clef=perc</b>, and legacy converted percussion voices identified by <b>%%MIDI program 128</b>, are excluded.</li>
       <li><b>Inject initial voice starting key signatures</b> is enabled by default. When enabled, every pitched voice establishes an explicit key before its first musical event. An existing initial inline <b>[K:...]</b> field is preserved; otherwise, the tune header key signature is inserted. Only the key-signature portion is copied, so clef, transposition, staff, and other voice parameters from the header <b>K:</b> field are not copied. Percussion voices are excluded so their existing conversion-specific key handling is unchanged. This prevents a key change near the end of one pitched voice from leaking into the beginning of the next pitched voice.</li>
       <li><b>Automatically process and transfer back to the ABC Transcription Tools</b> is disabled by default and is unavailable in Safari on macOS, iPhone, and iPad. In supported browsers, when enabled, ABC received directly from the ABC Transcription Tools is immediately processed using the saved optimization settings and sent back in the same way as the <b>Send to ABC Transcription Tools</b> button. If the resulting share link is too large, no automatic transfer occurs and the processed ABC remains available in this tool.</li>
       <li>Every processed tune receives <b>%%staffwidth 1200</b> and <b>%%staffsep 70</b> immediately after its first header <b>K:</b> field unless those directives are already present in that tune. If only one is present, the missing directive is added without duplicating the existing one. A <b>%use_custom_gm_sounds false</b> directive is placed immediately after the staff-width and staff-separation block to disable custom General MIDI sounds for the tune. A <b>%hide_dynamics</b> block is added after these settings when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
@@ -2467,20 +2467,78 @@ function extractHeaderKeySignature(value) {
 
 function addMissingVoiceStems(lines) {
   const declarationsByVoice = new Map();
+  const declarationIndexes = [];
+
+  function voiceParametersOnly(tail) {
+    let out = '';
+    let quote = '';
+    for (let i = 0; i < tail.length; i++) {
+      const ch = tail[i];
+      if ((ch === '"' || ch === "'") && (!quote || quote === ch)) {
+        quote = quote ? '' : ch;
+        out += ' ';
+      } else if (ch === '%' && !quote) {
+        break;
+      } else {
+        out += quote ? ' ' : ch;
+      }
+    }
+    return out;
+  }
 
   // Collect all line-level V: declarations first so an explicit stems= setting
-  // on any declaration for a voice wins, even when it is not on the first one.
+  // or percussion designation on any declaration for a voice applies to the
+  // whole voice, even when it is not on the first declaration.
   for (let i = 0; i < lines.length; i++) {
     const match = String(lines[i] || '').match(/^(\s*V:\s*)(\S+)(.*)$/);
     if (!match) continue;
     const id = match[2];
+    declarationIndexes.push(i);
     if (!declarationsByVoice.has(id)) declarationsByVoice.set(id, []);
-    declarationsByVoice.get(id).push({index:i, match});
+    declarationsByVoice.get(id).push({
+      index:i,
+      match,
+      parameters:voiceParametersOnly(match[3] || ''),
+      midiDrumProgram:false
+    });
+  }
+
+  // Legacy percussion conversion changes the descriptor to treble, so retain
+  // its percussion identity by detecting %%MIDI program 128 within the voice
+  // section that begins at each V: declaration.
+  for (let d = 0; d < declarationIndexes.length; d++) {
+    const start = declarationIndexes[d];
+    const end = d + 1 < declarationIndexes.length ? declarationIndexes[d + 1] : lines.length;
+    let midiDrumProgram = false;
+    for (let i = start + 1; i < end; i++) {
+      if (/^\s*%%MIDI\s+program\s+128(?:\s|$)/i.test(String(lines[i] || ''))) {
+        midiDrumProgram = true;
+        break;
+      }
+    }
+    if (!midiDrumProgram) continue;
+    for (const declarations of declarationsByVoice.values()) {
+      const declaration = declarations.find(item => item.index === start);
+      if (declaration) {
+        declaration.midiDrumProgram = true;
+        break;
+      }
+    }
   }
 
   let stemsAdded = 0;
   for (const declarations of declarationsByVoice.values()) {
-    if (declarations.some(({match}) => /(?:^|\s)stems\s*=/i.test(match[3] || ''))) continue;
+    if (declarations.some(({parameters}) => /(?:^|\s)stems\s*=/i.test(parameters))) continue;
+
+    // Do not add stems=auto to percussion voice descriptors or legacy
+    // converted percussion voices. Only actual voice parameters are inspected;
+    // quoted names and comments are ignored.
+    const isPercussionVoice = declarations.some(({parameters, midiDrumProgram}) =>
+      midiDrumProgram ||
+      /(?:^|\s)perc(?=\s|$)/i.test(parameters) ||
+      /(?:^|\s)clef\s*=\s*perc(?=\s|$)/i.test(parameters)
+    );
+    if (isPercussionVoice) continue;
 
     const {index, match} = declarations[0];
     const tail = match[3] || '';
