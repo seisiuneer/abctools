@@ -790,7 +790,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.27</div>
+    <div class="versionNumber">Version 1.2.29</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools by shortening excessively long tied notes and converting percussion voices for more reliable playback and improved notation.</p>
   </section>
@@ -843,6 +843,12 @@
               </div>
             </div>
           </div>
+          <div class="optionLine">
+            <input id="initialVoiceKeyOption" type="checkbox" checked />
+            <div class="optionText">
+              <label for="initialVoiceKeyOption">Inject initial voice starting key signatures</label>
+            </div>
+          </div>
           <div class="optionLine" id="autoProcessTransferLine">
             <input id="autoProcessTransferOption" type="checkbox" />
             <div class="optionText">
@@ -881,7 +887,7 @@
     <ul>
     <li>Paste ABC notation into the input area, open one or more <b>.abc</b> or <b>.txt</b> files, or send tunes directly from the <b>ABC Transcription Tools</b>.</li>
     <li><b>Automatically process and transfer back to the ABC Transcription Tools</b> is disabled by default and is unavailable in Safari on macOS, iPhone, and iPad. In supported browsers, when enabled, ABC received directly from the ABC Transcription Tools is immediately processed using the saved optimization settings and sent back in the same way as the <b>Send to ABC Transcription Tools</b> button. If the resulting share link is too large, no automatic transfer occurs and the processed ABC remains available in this tool.</li>
-    <li>Select any of the four optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
+    <li>Select any of the five optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
     <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
     <li><b>Consolidate percussion voices for General MIDI playback and drum noteheads</b> detects voices declared with <b>perc</b> or <b>clef=perc</b> and converts them using the selected method. The method selector is available only while this option is enabled.</li>
     <li><b>Perc voice with percmap/drummap</b> is the default method. It keeps converted voices as percussion voices, assigns every mapped General MIDI drum instrument in the tune one shared notation pitch, and generates matching tune-level <b>%%percmap</b> and <b>%%MIDI drummap</b> tables before all <b>V:</b> voice declarations, preceded by an <b>% Injected percmap and drummap</b> comment. Supported notehead values are retained in the <b>%%percmap</b> entries, and explicit accidentals prevent the tune key from changing the drum mapping. Previously optimized percussion tunes can be processed again without changing their drum mappings.</li>
@@ -893,7 +899,8 @@
     <li><b>Inject a soundfont command into each tune</b> is enabled by default with <b>MScore</b> selected. It removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and adds the selected <b>%soundfont &lt;id&gt;</b> command near the beginning of the tune, after the generated staff-width and reverb directives when those directives are present.</li>
     <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
     <li>Every processed tune receives <b>%%staffwidth 1200</b> and <b>%%staffsep 70</b> immediately after its first header <b>K:</b> field unless those directives are already present in that tune. If only one is present, the missing directive is added without duplicating the existing one. A <b>%hide_dynamics</b> block is added after the staff-width and staff-separation settings when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
-    <li>At the beginning of each voice's music, <b>!f!</b> preceded and followed by a space is added after any initial inline ABC fields such as <b>[K:C]</b> and before the first note or rest, unless the voice already begins with a standard dynamic mark from <b>!ppppp!</b> through <b>!ffff!</b>, including <b>!p!</b>, <b>!pp!</b>, <b>!mp!</b>, <b>!mf!</b>, <b>!f!</b>, and <b>!ff!</b>. These additions and the <b>%hide_dynamics</b> block are safe when tunes are processed again.</li>
+    <li><b>Inject initial voice starting key signatures</b> is enabled by default. When enabled, every pitched voice establishes an explicit key before its first musical event. An existing initial inline <b>[K:...]</b> field is preserved; otherwise, the tune header key signature is inserted. Only the key-signature portion is copied, so clef, transposition, staff, and other voice parameters from the header <b>K:</b> field are not copied. Percussion voices are excluded so their existing conversion-specific key handling is unchanged. This prevents a key change near the end of one pitched voice from leaking into the beginning of the next pitched voice.</li>
+    <li>At the beginning of each voice's music, <b>!f!</b> preceded and followed by a space is added after any initial inline ABC fields and before the first note or rest, unless the voice already begins with a standard dynamic mark from <b>!ppppp!</b> through <b>!ffff!</b>, including <b>!p!</b>, <b>!pp!</b>, <b>!mp!</b>, <b>!mf!</b>, <b>!f!</b>, and <b>!ff!</b>. When initial voice key injection is enabled, a newly inserted key is placed immediately before the dynamic. These additions and the <b>%hide_dynamics</b> block are safe when tunes are processed again.</li>
     <li>When percussion consolidation is enabled, the processed tune also receives an <b>%abcjs_render_params</b> percussion volume scale and percussion-release setting before its voice declarations so volume can be adjusted and hi-hats and selected cymbals ring for appropriate lengths.</li>
     <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, soundfont injection, and final tune-level rendering directives.</li>
     <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
@@ -2383,28 +2390,74 @@ function injectSoundfontCommands(text, soundfontId) {
 
 const PERCUSSION_RELEASE_PARAMS_LINE = '%abcjs_render_params {"percussionVolumeScale":2.5,"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600,"52":3000,"55":1800,"57":3000,"59":2600}}';
 
-function addInitialVoiceDynamics(lines) {
+function extractHeaderKeySignature(value) {
+  const tokens = String(value || '').trim().split(/\s+/).filter(Boolean);
+  if (!tokens.length) return '';
+
+  const result = [tokens[0]];
+  let i = 1;
+  const modes = new Set([
+    'maj','major','min','minor','m','ion','ionian','dor','dorian','phr','phrygian',
+    'lyd','lydian','mix','mixolydian','aeo','aeolian','loc','locrian'
+  ]);
+
+  if (i < tokens.length && modes.has(tokens[i].toLowerCase())) result.push(tokens[i++]);
+  if (i < tokens.length && tokens[i].toLowerCase() === 'exp') result.push(tokens[i++]);
+  while (i < tokens.length && /^(?:\^\^|__|\^|_|=)[A-Ga-g]$/.test(tokens[i])) {
+    result.push(tokens[i++]);
+  }
+  return result.join(' ');
+}
+
+function addInitialVoiceDynamics(lines, injectInitialKeys) {
   const acceptedDynamics = new Set([
     'p','pp','f','ff','mf','mp','ppp','pppp','fff','ffff','ppppp'
   ]);
   const voicesStarted = new Set();
+  const initialKeySeen = new Set();
+  const percussionVoices = new Set();
+
+  // Initial key injection applies only to pitched voices. Percussion conversion
+  // owns its key handling and must not be altered by this option. Recognize both
+  // retained perc declarations and legacy converted voices marked by MIDI program 128.
+  for (let i = 0; i < lines.length; i++) {
+    const declaration = lines[i].match(/^\s*V:\s*([^\s]+)(.*)$/);
+    if (!declaration) continue;
+    const id = declaration[1];
+    const tail = declaration[2] || '';
+    if (/(?:^|\s)perc(?:\s|$)/i.test(tail) || /\bclef\s*=\s*perc\b/i.test(tail)) {
+      percussionVoices.add(id);
+      continue;
+    }
+    for (let j = i + 1; j < lines.length && !/^\s*V\s*:/.test(lines[j]); j++) {
+      if (/^\s*%%MIDI\s+program\s+128(?:\s|$)/i.test(lines[j])) {
+        percussionVoices.add(id);
+        break;
+      }
+      if (/^\s*(?:[A-Ga-gzZxX]|\[(?![A-Za-z]:))/.test(lines[j])) break;
+    }
+  }
   let inBody = false;
   let currentVoice = 'default';
-  let added = 0;
+  let headerKeySignature = '';
+  let dynamicsAdded = 0;
+  let keysAdded = 0;
 
   function splitInitialVoicePrefix(line) {
     const indent = (String(line || '').match(/^\s*/) || [''])[0];
     let rest = String(line || '').slice(indent.length);
     let prefix = '';
+    let hasKey = false;
 
     // Keep leading bar/repeat markers and inline ABC fields ahead of the dynamic.
     while (true) {
       const token = rest.match(/^(?:(?:\|\]|\[\||\|:|:\||::|\|\||\|)|\[[A-Za-z]:[^\]\r\n]*\])\s*/);
       if (!token) break;
+      if (/^\[K:/i.test(token[0])) hasKey = true;
       prefix += token[0];
       rest = rest.slice(token[0].length);
     }
-    return {indent, prefix, rest};
+    return {indent, prefix, rest, hasKey};
   }
 
   function acceptedDynamicAtStart(text) {
@@ -2418,6 +2471,7 @@ function addInitialVoiceDynamics(lines) {
     if (field) {
       const tag = field[1].toUpperCase();
       if (!inBody && tag === 'K') {
+        headerKeySignature = extractHeaderKeySignature(field[2]);
         inBody = true;
         continue;
       }
@@ -2432,35 +2486,46 @@ function addInitialVoiceDynamics(lines) {
     const originalIndent = (line.match(/^\s*/) || [''])[0];
     let content = line.slice(originalIndent.length);
 
-    // Normalize output from Versions 1.2.19/1.2.20, where an injected !f!
-    // may precede initial inline fields, by moving it behind those fields.
+    // Normalize older output where an injected !f! preceded initial inline fields.
     const oldInjected = content.match(/^!f!\s+((?:(?:\[[A-Za-z]:[^\]\r\n]*\])\s*)+)([\s\S]*)$/i);
     if (oldInjected) {
-      const prefix = oldInjected[1].replace(/\s+$/, '');
-      lines[i] = originalIndent + prefix + ' !f! ' + oldInjected[2].replace(/^\s*/, '');
-      voicesStarted.add(currentVoice);
-      continue;
+      content = oldInjected[1].replace(/\s+$/, '') + ' !f! ' + oldInjected[2].replace(/^\s*/, '');
+      lines[i] = originalIndent + content;
     }
 
-    const parts = splitInitialVoicePrefix(line);
+    const parts = splitInitialVoicePrefix(lines[i]);
+    if (parts.hasKey) initialKeySeen.add(currentVoice);
+
+    // An inline-field-only line is part of the voice's initial prefix, not its first musical event.
+    if (!parts.rest.trim()) continue;
+
+    let prefix = parts.prefix.replace(/\s+$/, '');
+    if (injectInitialKeys && !percussionVoices.has(currentVoice) && !initialKeySeen.has(currentVoice) && headerKeySignature) {
+      prefix = prefix ? prefix + ' [K:' + headerKeySignature + ']' : '[K:' + headerKeySignature + ']';
+      initialKeySeen.add(currentVoice);
+      keysAdded++;
+    }
+
+    const beforeDynamic = prefix ? prefix + ' ' : '';
     if (!acceptedDynamicAtStart(parts.rest)) {
-      const prefix = parts.prefix.replace(/\s+$/, '');
-      const beforeDynamic = prefix ? prefix + ' ' : '';
       lines[i] = parts.indent + beforeDynamic + '!f! ' + parts.rest.replace(/^\s*/, '');
-      added++;
+      dynamicsAdded++;
+    } else if (beforeDynamic !== parts.prefix) {
+      lines[i] = parts.indent + beforeDynamic + parts.rest.replace(/^\s*/, '');
     }
     voicesStarted.add(currentVoice);
   }
-  return added;
+  return {dynamicsAdded, keysAdded};
 }
 
-function addFinalTuneDirectives(text, includePercussionRelease) {
+function addFinalTuneDirectives(text, includePercussionRelease, injectInitialKeys) {
   const parts = splitTunesForLimiter(String(text || ''));
   let staffwidthAdded = 0;
   let staffsepAdded = 0;
   let percussionReleaseAdded = 0;
   let hideDynamicsAdded = 0;
   let voiceDynamicsAdded = 0;
+  let voiceKeysAdded = 0;
 
   const output = parts.map(part => {
     if (part.preamble) return part.text;
@@ -2599,7 +2664,9 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
       }
     }
 
-    voiceDynamicsAdded += addInitialVoiceDynamics(lines);
+    const voiceStartResult = addInitialVoiceDynamics(lines, injectInitialKeys);
+    voiceDynamicsAdded += voiceStartResult.dynamicsAdded;
+    voiceKeysAdded += voiceStartResult.keysAdded;
     return lines.join('\n');
   });
 
@@ -2609,7 +2676,8 @@ function addFinalTuneDirectives(text, includePercussionRelease) {
     staffsepAdded,
     percussionReleaseAdded,
     hideDynamicsAdded,
-    voiceDynamicsAdded
+    voiceDynamicsAdded,
+    voiceKeysAdded
   };
 }
 
@@ -2772,6 +2840,7 @@ function currentSettings() {
     soundfontId: $('soundfontSelect').value,
     reformat: $('reformatOption').checked,
     measuresPerStaff: $('measuresPerStaff').value,
+    initialVoiceKey: $('initialVoiceKeyOption').checked,
     autoProcessTransfer: $('autoProcessTransferOption').checked
   };
 }
@@ -2800,6 +2869,7 @@ function loadSettingsFromLocalStorage() {
   if (SOUNDFONT_OPTIONS.some(option => option.id === saved.soundfontId)) $('soundfontSelect').value = saved.soundfontId;
   if (typeof saved.reformat === 'boolean') $('reformatOption').checked = saved.reformat;
   if (saved.measuresPerStaff != null) $('measuresPerStaff').value = saved.measuresPerStaff;
+  if (typeof saved.initialVoiceKey === 'boolean') $('initialVoiceKeyOption').checked = saved.initialVoiceKey;
   if (typeof saved.autoProcessTransfer === 'boolean') $('autoProcessTransferOption').checked = saved.autoProcessTransfer;
 }
 
@@ -2840,8 +2910,9 @@ function updateOptionState() {
   const percussion=$('percussionOption').checked;
   const reformat=$('reformatOption').checked;
   const soundfont=$('soundfontOption').checked;
+  const initialVoiceKey=$('initialVoiceKeyOption').checked;
   const hasTune=hasABCTune(inputEl.value);
-  $('processButton').disabled=!(hasTune && (shorten || percussion || reformat || soundfont));
+  $('processButton').disabled=!(hasTune && (shorten || percussion || reformat || soundfont || initialVoiceKey));
   $('maxSeconds').disabled=!shorten;
   $('percussionMethod').disabled=!percussion;
   $('percussionMethodRow').classList.toggle('disabled',!percussion);
@@ -2905,11 +2976,12 @@ function processABC() {
   const doPercussion=$('percussionOption').checked;
   const doReformat=$('reformatOption').checked;
   const doSoundfont=$('soundfontOption').checked;
-  if (!doShorten && !doPercussion && !doReformat && !doSoundfont) return;
+  const doInitialVoiceKey=$('initialVoiceKeyOption').checked;
+  if (!doShorten && !doPercussion && !doReformat && !doSoundfont && !doInitialVoiceKey) return;
   let text=original;
   let splitTotal=0, unmappedTotal=0, outOfRangeMappedTotal=0;
   let tunesReformatted=0, soundfontTunes=0;
-  let staffwidthTunes=0, staffsepTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0;
+  let staffwidthTunes=0, staffsepTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0, voiceKeysAdded=0;
   let longSummaries = [];
   let percussionSummaries = [];
   try {
@@ -2950,13 +3022,14 @@ function processABC() {
     }
 
     {
-      const r=addFinalTuneDirectives(text,doPercussion);
+      const r=addFinalTuneDirectives(text,doPercussion,doInitialVoiceKey);
       text=r.text;
       staffwidthTunes=r.staffwidthAdded;
       staffsepTunes=r.staffsepAdded;
       percussionReleaseTunes=r.percussionReleaseAdded;
       hideDynamicsTunes=r.hideDynamicsAdded;
       voiceDynamicsAdded=r.voiceDynamicsAdded;
+      voiceKeysAdded=r.voiceKeysAdded;
     }
 
     let baseTunes=doShorten ? longSummaries : percussionSummaries;
@@ -3001,6 +3074,7 @@ function processABC() {
     statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}`);
     statusLines.push(`Tunes given %%staffsep 70: ${staffsepTunes}`);
     statusLines.push(`Tunes given %hide_dynamics: ${hideDynamicsTunes}`);
+    if (doInitialVoiceKey) statusLines.push(`Voices given an initial key signature: ${voiceKeysAdded}`);
     statusLines.push(`Voices given an initial !f!: ${voiceDynamicsAdded}`);
     if (doPercussion) statusLines.push(`Tunes given percussion release settings: ${percussionReleaseTunes}`);
     statusEl.textContent=statusLines.join('\n');
@@ -3032,6 +3106,7 @@ $('percussionOption').addEventListener('change',settingChanged);
 $('percussionMethod').addEventListener('change',settingChanged);
 $('reformatOption').addEventListener('change',settingChanged);
 $('soundfontOption').addEventListener('change',settingChanged);
+$('initialVoiceKeyOption').addEventListener('change',settingChanged);
 $('autoProcessTransferOption').addEventListener('change',settingChanged);
 $('maxSeconds').addEventListener('input',settingChanged);
 $('measuresPerStaff').addEventListener('input',settingChanged);
