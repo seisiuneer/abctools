@@ -122,10 +122,31 @@
   }
 
   .logo-wrap {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 180px) auto minmax(0, 180px);
     justify-content: center;
     align-items: center;
+    gap: clamp(10px, 2.5vw, 30px);
     margin-bottom: 10px;
+  }
+
+  .title-mascot {
+    display: block;
+    width: clamp(92px, 13vw, 165px);
+    height: clamp(110px, 16vw, 195px);
+    object-fit: contain;
+    justify-self: center;
+    filter: drop-shadow(0 9px 12px rgba(0,0,0,.32));
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .title-mascot.left {
+    transform: scaleX(-1) rotate(-2deg);
+  }
+
+  .title-mascot.right {
+    transform: rotate(-2deg);
   }
 
   h1 {
@@ -338,6 +359,16 @@
       font-size: clamp(3.8rem, 12vw, 7rem);
     }
 
+    .logo-wrap {
+      grid-template-columns: minmax(0, 135px) auto minmax(0, 135px);
+      gap: clamp(6px, 2vw, 18px);
+    }
+
+    .title-mascot {
+      width: clamp(78px, 12vw, 125px);
+      height: clamp(94px, 15vw, 150px);
+    }
+
     .panel {
       margin-inline: clamp(10px, 3vw, 28px);
     }
@@ -385,6 +416,24 @@
 
     h1 {
       font-size: clamp(3.25rem, 18vw, 5.5rem);
+    }
+
+    .logo-wrap {
+      grid-template-columns: minmax(54px, 78px) minmax(0, auto) minmax(54px, 78px);
+      gap: 4px;
+    }
+
+    .title-mascot {
+      width: clamp(54px, 17vw, 78px);
+      height: clamp(68px, 21vw, 96px);
+    }
+
+    .title-mascot.left {
+      transform: scaleX(-1) rotate(-1.5deg);
+    }
+
+    .title-mascot.right {
+      transform: rotate(-1.5deg);
     }
 
     .tagline {
@@ -521,7 +570,11 @@
 <main class="page">
   <section class="celtic-frame">
     <header>
-      <div class="logo-wrap"><h1>Craicy</h1></div>
+      <div class="logo-wrap">
+        <img class="title-mascot left" alt="" aria-hidden="true">
+        <h1>Craicy</h1>
+        <img class="title-mascot right" alt="" aria-hidden="true">
+      </div>
       <p class="tagline">
         Click <strong>Start Listening</strong> and Craicy will automatically analyze your traditional Irish session,
         judge everyone in it, and provide loudly confident suggestions nobody requested.
@@ -1171,6 +1224,15 @@
     if (event.key === "Escape") hideAdvice();
   });
 })();
+</script>
+<script>
+  (() => {
+    const mascotSource = document.getElementById('adviceIcon')?.src;
+    if (!mascotSource) return;
+    document.querySelectorAll('.title-mascot').forEach((image) => {
+      image.src = mascotSource;
+    });
+  })();
 </script>
 </body>
 </html>
