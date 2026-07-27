@@ -838,7 +838,7 @@
 <body>
 <div class="app">
   <section class="hero">
-    <div class="versionNumber">Version 1.2.37</div>
+    <div class="versionNumber">Version 1.2.38</div>
     <h1>MuseScore MusicXML to ABC Optimizer</h1>
     <p>Optimizes MuseScore exported MusicXML transcoded to ABC by the ABC Transcription Tools</p>
   </section>
@@ -943,18 +943,18 @@
       <li>Select any of the six optimization options. The <b>Process ABC</b> button is available only when the input contains an <b>X:</b> tune and at least one option is selected.</li>
       <li><b>Shorten excessively long sustained notes</b> removes only ties crossing measure lines when retaining the next tied segment would exceed the selected duration. Each tune uses its own <b>Q:</b>, <b>M:</b>, and <b>L:</b> values. When a tie is removed, any accidental required to preserve the sustained pitch is written explicitly on the newly re-attacked note.</li>
       <li><b>Consolidate percussion voices for General MIDI playback and drum noteheads</b> detects voices declared with <b>perc</b> or <b>clef=perc</b> and converts them using the selected method. The method selector is available only while this option is enabled.</li>
-      <li><b>Perc voice with percmap/drummap</b> is the default method. It keeps converted voices as percussion voices, assigns every mapped General MIDI drum instrument in the tune one shared notation pitch, and generates matching tune-level <b>%%percmap</b> and <b>%%MIDI drummap</b> tables before all <b>V:</b> voice declarations, preceded by an <b>% Injected percmap and drummap</b> comment. Supported notehead values are retained in the <b>%%percmap</b> entries, and explicit accidentals prevent the tune key from changing the drum mapping. Previously optimized percussion tunes can be processed again without changing their drum mappings.</li>
+      <li><b>Perc voice with percmap/drummap</b> is the default method. It keeps converted voices as percussion voices, assigns every mapped General MIDI drum instrument in the tune one shared notation pitch, and generates matching tune-level <b>%%percmap</b> and <b>%%MIDI drummap</b> tables before all <b>V:</b> voice declarations, preceded by an <b>% Injected percmap and drummap</b> comment. Supported notehead values are retained in the <b>%%percmap</b> entries, and explicit accidentals prevent the tune key from changing the drum mapping.</li>
       <li><b>Treble voice with transpose=-24 (legacy)</b> reproduces the optimizer's original conversion method. It changes percussion voices to treble voices, writes their mapped General MIDI pitches two octaves higher on the staff, and adds <b>transpose=-24</b> so playback returns to the intended drum numbers. This method does not generate consolidated <b>%%percmap</b> or <b>%%MIDI drummap</b> tables and does not preserve imported drum noteheads.</li>
       <li>For either method, if a percussion voice contains any usable <b>I:percmap</b> directives, those mappings take priority and <b>%%MIDI drummap</b> directives are fallback data. Both <b>I:percmap &lt;source-note&gt; &lt;GM-number&gt; [notehead]</b> and MusicXML-converter mappings such as <b>I:percmap ^g g 42 x</b> are recognized. The percmap/drummap method also retains the final supported notehead value.</li>
       <li>General MIDI Level 2 percussion numbers 27 through 87 are accepted. Notes whose selected mapping is outside that range, and percussion notes with no selected mapping, are replaced with rests of the same duration and reported in the status area.</li>
       <li>Both methods remove MIDI channel 10, old program and percussion-map directives, <b>stafflines=1</b>, and old transpose values before creating their replacement output. <b>%%MIDI program 128</b> is added for General MIDI drum playback.</li>
       <li><b>Inject a soundfont command into each tune</b> is enabled by default with <b>MScore</b> selected. It removes any existing <b>%soundfont</b> or <b>%abcjs_soundfont</b> command in the tune and adds the selected <b>%soundfont &lt;id&gt;</b> command near the beginning of the tune, after the generated staff-width and reverb directives when those directives are present.</li>
       <li><b>Reformat music to a fixed number of measures per staff</b> runs after the note and percussion operations. Choose from 1 through 8 measures per staff. Existing numeric end-of-line comments such as <b>% 4</b> are removed, and each newly formatted voice line receives a comment showing its last measure number. Measure numbering starts at 1 independently for each voice.</li>
-      <li><b>Add stems=auto to all voices</b> is enabled by default. When enabled, <b>stems=auto</b> is added to a voice when none of that voice's declarations already contains a <b>stems=</b> setting. Existing stem directions are preserved. This applies to pitched and percussion voices and is safe when the result is processed again.</li>
+      <li><b>Add stems=auto to all voices</b> is enabled by default. When enabled, <b>stems=auto</b> is added to a voice when none of that voice's declarations already contains a <b>stems=</b> setting. Existing stem directions are preserved.</li>
       <li><b>Inject initial voice starting key signatures</b> is enabled by default. When enabled, every pitched voice establishes an explicit key before its first musical event. An existing initial inline <b>[K:...]</b> field is preserved; otherwise, the tune header key signature is inserted. Only the key-signature portion is copied, so clef, transposition, staff, and other voice parameters from the header <b>K:</b> field are not copied. Percussion voices are excluded so their existing conversion-specific key handling is unchanged. This prevents a key change near the end of one pitched voice from leaking into the beginning of the next pitched voice.</li>
       <li><b>Automatically process and transfer back to the ABC Transcription Tools</b> is disabled by default and is unavailable in Safari on macOS, iPhone, and iPad. In supported browsers, when enabled, ABC received directly from the ABC Transcription Tools is immediately processed using the saved optimization settings and sent back in the same way as the <b>Send to ABC Transcription Tools</b> button. If the resulting share link is too large, no automatic transfer occurs and the processed ABC remains available in this tool.</li>
-      <li>Every processed tune receives <b>%%staffwidth 1200</b> and <b>%%staffsep 70</b> immediately after its first header <b>K:</b> field unless those directives are already present in that tune. If only one is present, the missing directive is added without duplicating the existing one. A <b>%hide_dynamics</b> block is added after the staff-width and staff-separation settings when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
-      <li>At the beginning of each voice's music, <b>!f!</b> preceded and followed by a space is added after any initial inline ABC fields and before the first note or rest, unless the voice already begins with a standard dynamic mark from <b>!ppppp!</b> through <b>!ffff!</b>, including <b>!p!</b>, <b>!pp!</b>, <b>!mp!</b>, <b>!mf!</b>, <b>!f!</b>, and <b>!ff!</b>. When initial voice key injection is enabled, a newly inserted key is placed immediately before the dynamic. These additions and the <b>%hide_dynamics</b> block are safe when tunes are processed again.</li>
+      <li>Every processed tune receives <b>%%staffwidth 1200</b> and <b>%%staffsep 70</b> immediately after its first header <b>K:</b> field unless those directives are already present in that tune. If only one is present, the missing directive is added without duplicating the existing one. A <b>%use_custom_gm_sounds false</b> directive is placed immediately after the staff-width and staff-separation block to disable custom General MIDI sounds for the tune. A <b>%hide_dynamics</b> block is added after these settings when it is not already present, and a commented chamber reverb setting is also added when the tune has no existing <b>%reverb</b> line or previously injected commented reverb setting.</li>
+      <li>At the beginning of each voice's music, <b>!f!</b> preceded and followed by a space is added after any initial inline ABC fields and before the first note or rest, unless the voice already begins with a standard dynamic mark from <b>!ppppp!</b> through <b>!ffff!</b>, including <b>!p!</b>, <b>!pp!</b>, <b>!mp!</b>, <b>!mf!</b>, <b>!f!</b>, and <b>!ff!</b>. When initial voice key injection is enabled, a newly inserted key is placed immediately before the dynamic.</li>
       <li>When percussion consolidation is enabled, the processed tune also receives an <b>%abcjs_render_params</b> percussion volume scale and percussion-release setting before its voice declarations so volume can be adjusted and hi-hats and selected cymbals ring for appropriate lengths.</li>
       <li>Operations run in this order: long-note shortening, percussion remapping, measure reformatting, soundfont injection, and final tune-level rendering directives, including optional voice stem and initial key additions.</li>
       <li>After processing, the status area shows aggregate counts. Use <b>Show Processing Details Report</b> to see the tune index, title, and tune-by-tune counts.</li>
@@ -2620,6 +2620,7 @@ function addFinalTuneDirectives(text, includePercussionRelease, injectInitialKey
   const parts = splitTunesForLimiter(String(text || ''));
   let staffwidthAdded = 0;
   let staffsepAdded = 0;
+  let customGMSoundsAdded = 0;
   let percussionReleaseAdded = 0;
   let hideDynamicsAdded = 0;
   let voiceDynamicsAdded = 0;
@@ -2675,10 +2676,63 @@ function addFinalTuneDirectives(text, includePercussionRelease, injectInitialKey
       return Math.max(widthIndex, sepIndex);
     };
 
-    if (!lines.some(line => /^\s*%\s*reverb(?:\s|$)/i.test(line))) {
+    /*
+      Canonicalize the custom General MIDI sounds directive immediately after
+      the staff layout block. This upgrades previously processed tunes, changes
+      an existing true value to false, removes duplicates, and is idempotent.
+    */
+    {
       const layoutIndex = staffLayoutIndex();
       if (layoutIndex >= 0) {
-        lines.splice(layoutIndex + 1, 0,
+        const heading = '% Disable use of custom General MIDI sounds';
+        const directive = '%use_custom_gm_sounds false';
+        const wasCanonical =
+          lines[layoutIndex + 1]?.trim() === '%' &&
+          lines[layoutIndex + 2]?.trim() === heading &&
+          lines[layoutIndex + 3]?.trim().toLowerCase() === directive;
+
+        for (let i = lines.length - 1; i >= 0; i--) {
+          if (lines[i].trim() === heading) {
+            let start = i;
+            let count = 1;
+            if (i > 0 && lines[i - 1].trim() === '%') {
+              start = i - 1;
+              count++;
+            }
+            if (i + 1 < lines.length &&
+                /^\s*%use_custom_gm_sounds(?:\s|$)/i.test(lines[i + 1])) {
+              count++;
+            }
+            lines.splice(start, count);
+          }
+        }
+        for (let i = lines.length - 1; i >= 0; i--) {
+          if (/^\s*%use_custom_gm_sounds(?:\s|$)/i.test(lines[i])) {
+            lines.splice(i, 1);
+          }
+        }
+
+        const currentLayoutIndex = staffLayoutIndex();
+        lines.splice(currentLayoutIndex + 1, 0,
+          '%',
+          heading,
+          directive
+        );
+        if (!wasCanonical) customGMSoundsAdded++;
+      }
+    }
+
+    const staffSettingsEndIndex = () => {
+      const customIndex = lines.findIndex(line =>
+        /^\s*%use_custom_gm_sounds(?:\s|$)/i.test(line)
+      );
+      return customIndex >= 0 ? customIndex : staffLayoutIndex();
+    };
+
+    if (!lines.some(line => /^\s*%\s*reverb(?:\s|$)/i.test(line))) {
+      const settingsIndex = staffSettingsEndIndex();
+      if (settingsIndex >= 0) {
+        lines.splice(settingsIndex + 1, 0,
           '%',
           '% Set the reverb',
           '%reverb chamber 0.9 0.1',
@@ -2687,16 +2741,16 @@ function addFinalTuneDirectives(text, includePercussionRelease, injectInitialKey
     }
 
     if (!lines.some(line => /^\s*%hide_dynamics(?:\s|$)/i.test(line))) {
-      const layoutIndex = staffLayoutIndex();
-      if (layoutIndex >= 0) {
-        if (lines[layoutIndex + 1] && lines[layoutIndex + 1].trim() === '%') {
-          lines.splice(layoutIndex + 2, 0,
+      const settingsIndex = staffSettingsEndIndex();
+      if (settingsIndex >= 0) {
+        if (lines[settingsIndex + 1] && lines[settingsIndex + 1].trim() === '%') {
+          lines.splice(settingsIndex + 2, 0,
             '% Hide dynamic marks',
             '%hide_dynamics',
             '%'
           );
         } else {
-          lines.splice(layoutIndex + 1, 0,
+          lines.splice(settingsIndex + 1, 0,
             '%',
             '% Hide dynamic marks',
             '%hide_dynamics',
@@ -2774,6 +2828,7 @@ function addFinalTuneDirectives(text, includePercussionRelease, injectInitialKey
     text:output.join(''),
     staffwidthAdded,
     staffsepAdded,
+    customGMSoundsAdded,
     percussionReleaseAdded,
     hideDynamicsAdded,
     voiceDynamicsAdded,
@@ -3086,7 +3141,7 @@ function processABC() {
   let text=original;
   let splitTotal=0, unmappedTotal=0, outOfRangeMappedTotal=0;
   let tunesReformatted=0, soundfontTunes=0;
-  let staffwidthTunes=0, staffsepTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0, voiceKeysAdded=0, voiceStemsAdded=0;
+  let staffwidthTunes=0, staffsepTunes=0, customGMSoundsTunes=0, percussionReleaseTunes=0, hideDynamicsTunes=0, voiceDynamicsAdded=0, voiceKeysAdded=0, voiceStemsAdded=0;
   let longSummaries = [];
   let percussionSummaries = [];
   try {
@@ -3131,6 +3186,7 @@ function processABC() {
       text=r.text;
       staffwidthTunes=r.staffwidthAdded;
       staffsepTunes=r.staffsepAdded;
+      customGMSoundsTunes=r.customGMSoundsAdded;
       percussionReleaseTunes=r.percussionReleaseAdded;
       hideDynamicsTunes=r.hideDynamicsAdded;
       voiceDynamicsAdded=r.voiceDynamicsAdded;
@@ -3179,6 +3235,7 @@ function processABC() {
     if (doSoundfont) statusLines.push(`Tunes updated with %soundfont ${$('soundfontSelect').value}: ${soundfontTunes}`);
     statusLines.push(`Tunes given %%staffwidth 1200: ${staffwidthTunes}`);
     statusLines.push(`Tunes given %%staffsep 70: ${staffsepTunes}`);
+    statusLines.push(`Tunes given %use_custom_gm_sounds false: ${customGMSoundsTunes}`);
     statusLines.push(`Tunes given %hide_dynamics: ${hideDynamicsTunes}`);
     if (doVoiceStems) statusLines.push(`Voices given stems=auto: ${voiceStemsAdded}`);
     if (doInitialVoiceKey) statusLines.push(`Voices given an initial key signature: ${voiceKeysAdded}`);
