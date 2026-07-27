@@ -252,16 +252,16 @@
     color: var(--ink);
     text-align: center;
     border: 8px double var(--green-800);
-    border-radius: 42px 42px 42px 10px;
+    border-radius: 42px;
     background:
       linear-gradient(rgba(255,255,255,.88), rgba(255,249,223,.96)),
       repeating-linear-gradient(0deg, transparent 0 30px, rgba(8,100,54,.06) 30px 31px);
     box-shadow: 0 30px 100px rgba(0,0,0,.65), inset 0 0 0 10px rgba(242,201,76,.32);
-    transform: translateY(24px) scale(.95) rotate(-.6deg);
+    transform: translateY(24px) scale(.95);
     transition: transform .35s cubic-bezier(.2,.9,.25,1.25);
   }
 
-  .advice.show .speech { transform: translateY(0) scale(1) rotate(-.6deg); }
+  .advice.show .speech { transform: translateY(0) scale(1); }
 
   .speech::before {
     content: "☘ CRAICY HAS DETECTED A PROBLEM ☘";
@@ -435,7 +435,7 @@
       max-height: calc(100dvh - 20px);
       padding: 58px 20px 28px;
       border-width: 5px;
-      border-radius: 26px 26px 26px 9px;
+      border-radius: 26px;
       overflow-y: auto;
     }
 
