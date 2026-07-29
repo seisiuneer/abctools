@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3304_072626_1030";
+var gVersionNumber = "3305_072926_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_23jul2026;
+        var updatePresented = localStorage.sawUpdate_29jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_23jul2026 = true;
+          localStorage.sawUpdate_29jul2026 = true;
 
         }
 
@@ -51239,11 +51239,11 @@ function AdvancedControlsDialog() {
   modal_msg += '<input id="normalizetitles" class="advancedcontrols btn btn-normalizetitles" onclick="NormalizeTitles()" type="button" value="Normalize Title Postfixes">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="normalizevoicekeysignatures" class="advancedcontrols btn btn-normalizevoicekeysignatures" onclick="NormalizeVoiceKeySignatures()" type="button" value="Normalize Voice Keys">';
-  modal_msg += '<input id="reformatusingmusicxml" class="advancedcontrols  btn btn-reformatusingmusicxml" onclick="BatchMusicXMLRoundTrip()" type="button" value="Reformat Using MusicXML">';
   modal_msg += '<input id="injectmidigchord" class="advancedcontrols btn btn-injectmidigchord" onclick="InjectMIDIGChordTemplates()" type="button" value="Inject MIDI gchord Templates">';
+  modal_msg += '<input id="reformatusingmusicxml" class="advancedcontrols  btn btn-reformatusingmusicxml" onclick="BatchMusicXMLRoundTrip()" type="button" value="Reformat Using MusicXML">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="normalizevoicekeysignatures" class="advancedcontrols btn btn-normalizevoicekeysignatures" onclick="NormalizeVoiceKeySignaturesAndDynamics()" type="button" value="Normalize Voice Keys/Dynamics">';
   modal_msg += '<input id="musescorexml" class="advancedcontrols btn btn-musescorexml" onclick="launchMusicXMLToABCOptimizer()" type="button" value="Launch MuseScore MusicXML to ABC Optimizer">';
   modal_msg += '</p>';
   modal_msg += '</div>';
@@ -57202,15 +57202,18 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New: Percussion instrument volume scale and release time overrides</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now set the volume scale and release times for each of the sounds in the percussion instrument (%%MIDI program 128). This can be useful for forcing louder drum parts and more realistic cymbal crashes. See the <strong>User Guide</strong> section on <strong>Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</strong> for details.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Normalize Voice Keys/Dynamics</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Click the <strong>Normalize Voice Keys/Dynamics</strong> button on the <strong>Other Tools</strong> tab of the <strong>More ABC Tools</strong> dialog to normalize the keys and dynamics across all voices in a multi-voice tune.</p>';
+  modal_msg += '<p style="font-size:12pt;">This is useful when transcoding a MusicXML file to ABC to work around an abcjs quirk where voice keys and dynamics can leak between voices.</p>'; 
+  modal_msg += '<p style="font-size:12pt;">This code was brought over from the <strong>MuseScore MusicXML to ABC Optimizer</strong>.</p>'; 
+
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>Added direct links to the Facebook and Freeforums.net discussion groups</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Click the <strong>Facebook</strong> or <strong>Forum</strong> links at the top of the tool to visit the dedicated discussion groups for the ABC Transcription Tools and related utilities.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Percussion instrument volume scale and release time overrides</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">You can now set the volume scale and release times for each of the sounds in the percussion instrument (%%MIDI program 128). This can be useful for forcing louder drum parts and more realistic cymbal crashes. See the <strong>User Guide</strong> section on <strong>Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</strong> for details.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -61070,105 +61073,281 @@ function SplitVoices() {
 
 }
 
-// Normalize the voice keys
+// Normalize the voice keys and dynamics
 // This makes sure that each voice starts with an inline key signature that matches the header
-function NormalizeVoiceKeySignatures(){
+// Also normalizes the dynamics
+function NormalizeVoiceKeySignaturesAndDynamics(){
   
-  //console.log("NormalizeVoiceKeySignatures")
+  //console.log("NormalizeVoiceKeySignaturesAndDynamics")
 
-  function injectInlineKeys(abc) {
-    const lines = abc.split(/\r?\n/);
+  /**
+   * Normalize the initial key signature and dynamic for every voice in one ABC tune.
+   *
+   * Behavior matches the MuseScore MusicXML to ABC Optimizer:
+   * - Preserves an initial inline [K:...] field.
+   * - Otherwise inserts the header key signature before the first musical event
+   *   of each pitched voice.
+   * - Does not inject keys into percussion voices declared with perc/clef=perc,
+   *   or legacy converted percussion voices marked by %%MIDI program 128.
+   * - Preserves accepted initial dynamics; otherwise inserts !f!.
+   * - Dynamics are normalized for pitched and percussion voices.
+   * - Adds one %hide_dynamics block before the first V: declaration when absent.
+   * - Idempotent.
+   *
+   * @param {string} abc ABC notation containing a single tune.
+   * @returns {string} Normalized ABC.
+   */
+  function normalizeInitialVoiceKeysAndDynamics(abc) {
+    const source = String(abc ?? "");
+    const newline = source.includes("\r\n") ? "\r\n" : "\n";
+    const hadFinalNewline = /\r?\n$/.test(source);
+    const lines = source.replace(/\r\n?/g, "\n").split("\n");
 
-    // ---- 1) Get the main key from the header ----
-    const kIndex = lines.findIndex(l => /^\s*K\s*:/.test(l));
-    if (kIndex === -1) return abc;
-    const kMatch = lines[kIndex].match(/^\s*K\s*:\s*(\S.*)$/i);
-    if (!kMatch) return abc;
-    const mainKey = kMatch[1].trim();
+    const acceptedDynamics = new Set([
+      "p", "pp", "f", "ff", "mf", "mp",
+      "ppp", "pppp", "fff", "ffff", "ppppp"
+    ]);
 
-    // ---- State ----
-    const injected = new Set();   // voices already injected
-    let pendingVoice = null;      // voice waiting for first notes
+    const voicesStarted = new Set();
+    const initialKeySeen = new Set();
+    const percussionVoices = new Set();
 
-    // Normalize a voice id string
-    const normId = (s) => (s || "").trim();
+    function voiceParametersOnly(tail) {
+      let output = "";
+      let quote = "";
 
-    // Match a "V:" block declaration
-    const matchVBlock = (line) => {
-      const m = line.match(/^\s*V\s*:\s*([^\s\]]+)/i);
-      return m ? normId(m[1]) : null;
-    };
+      for (let i = 0; i < tail.length; i++) {
+        const ch = tail[i];
 
-    // Match an inline [V:...] at line start
-    const matchInlineV = (line) => {
-      const m = line.match(/^(\s*)(\[(?:V|v)\s*:\s*([^\]\s]+)[^\]]*\])(.*)$/);
-      return m
-        ? { leading: m[1], tag: m[2], voiceId: normId(m[3]), rest: m[4] }
-        : null;
-    };
-
-    // Identify if a line is "non-note" (metadata, directives, etc.)
-    const isMetaLine = (line) =>
-      /^\s*(%|I\s*:|K\s*:|%%)/i.test(line) || line.trim() === "";
-
-    const out = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i];
-
-      // ---- Case A: block V: declaration ----
-      const vIdBlock = matchVBlock(line);
-      if (vIdBlock) {
-        pendingVoice = vIdBlock;   // wait for first note line
-        out.push(line);
-        continue;
-      }
-
-      // ---- Case B: [V:...] inline ----
-      const inline = matchInlineV(line);
-      if (inline) {
-        const { leading, tag, voiceId, rest } = inline;
-
-        if (rest.trim() === "") {
-          // bracket-only voice declaration (no notes yet)
-          pendingVoice = voiceId;
-          out.push(line);
+        if ((ch === '"' || ch === "'") && (!quote || quote === ch)) {
+          quote = quote ? "" : ch;
+          output += " ";
+        } else if (ch === "%" && !quote) {
+          break;
         } else {
-          // voice + notes on same line
-          if (!injected.has(voiceId)) {
-            injected.add(voiceId);
-            out.push(`${leading}${tag}[K:${mainKey}] ${rest}`);
-          } else {
-            out.push(line);
-          }
-        }
-        continue;
-      }
-
-      // ---- Case C: inside a pending voice ----
-      if (pendingVoice) {
-        if (isMetaLine(line)) {
-          // skip injection on meta lines (K:, I:, %%, comments, blanks)
-          out.push(line);
-          continue;
-        } else {
-          // First real note line for this voice → inject
-          const vId = pendingVoice;
-          pendingVoice = null;
-          if (!injected.has(vId)) {
-            injected.add(vId);
-            const leadingWS = (line.match(/^\s*/)||[""])[0];
-            line = `${leadingWS}[K:${mainKey}] ${line.slice(leadingWS.length)}`;
-          }
+          output += quote ? " " : ch;
         }
       }
 
-      out.push(line);
+      return output;
     }
 
-    return out.join("\n");
-  }
+    function extractHeaderKeySignature(value) {
+      const tokens = String(value ?? "")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
 
+      if (!tokens.length) return "";
+
+      const result = [tokens[0]];
+      let index = 1;
+
+      const modes = new Set([
+        "maj", "major", "min", "minor", "m",
+        "ion", "ionian", "dor", "dorian",
+        "phr", "phrygian", "lyd", "lydian",
+        "mix", "mixolydian", "aeo", "aeolian",
+        "loc", "locrian"
+      ]);
+
+      if (
+        index < tokens.length &&
+        modes.has(tokens[index].toLowerCase())
+      ) {
+        result.push(tokens[index++]);
+      }
+
+      if (
+        index < tokens.length &&
+        tokens[index].toLowerCase() === "exp"
+      ) {
+        result.push(tokens[index++]);
+      }
+
+      while (
+        index < tokens.length &&
+        /^(?:\^\^|__|\^|_|=)[A-Ga-g]$/.test(tokens[index])
+      ) {
+        result.push(tokens[index++]);
+      }
+
+      return result.join(" ");
+    }
+
+    function splitInitialVoicePrefix(line) {
+      const indent = (String(line ?? "").match(/^\s*/) || [""])[0];
+      let rest = String(line ?? "").slice(indent.length);
+      let prefix = "";
+      let hasKey = false;
+
+      // Keep leading bar/repeat markers and inline ABC fields before the dynamic.
+      while (true) {
+        const token = rest.match(
+          /^(?:(?:\|\]|\[\||\|:|:\||::|\|\||\|)|\[[A-Za-z]:[^\]\r\n]*\])\s*/
+        );
+        if (!token) break;
+
+        if (/^\[K:/i.test(token[0])) hasKey = true;
+        prefix += token[0];
+        rest = rest.slice(token[0].length);
+      }
+
+      return { indent, prefix, rest, hasKey };
+    }
+
+    function acceptedDynamicAtStart(value) {
+      const dynamic = String(value ?? "").match(/^!([^!]+)!/);
+      return dynamic && acceptedDynamics.has(dynamic[1].toLowerCase())
+        ? dynamic[0]
+        : "";
+    }
+
+    // Identify retained percussion voices and legacy converted percussion voices.
+    const declarations = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const declaration = lines[i].match(/^\s*V:\s*([^\s]+)(.*)$/);
+      if (!declaration) continue;
+
+      const id = declaration[1];
+      const parameters = voiceParametersOnly(declaration[2] || "");
+
+      declarations.push({ id, index: i });
+
+      if (
+        /(?:^|\s)perc(?=\s|$)/i.test(parameters) ||
+        /(?:^|\s)clef\s*=\s*perc(?=\s|$)/i.test(parameters)
+      ) {
+        percussionVoices.add(id);
+      }
+    }
+
+    for (let d = 0; d < declarations.length; d++) {
+      const declaration = declarations[d];
+      const end =
+        d + 1 < declarations.length
+          ? declarations[d + 1].index
+          : lines.length;
+
+      for (let i = declaration.index + 1; i < end; i++) {
+        if (/^\s*%%MIDI\s+program\s+128(?:\s|$)/i.test(lines[i])) {
+          percussionVoices.add(declaration.id);
+          break;
+        }
+      }
+    }
+
+    let inBody = false;
+    let currentVoice = "default";
+    let headerKeySignature = "";
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const field = line.match(/^\s*([A-Za-z]):\s*(.*)$/);
+
+      if (field) {
+        const tag = field[1].toUpperCase();
+
+        if (!inBody && tag === "K") {
+          headerKeySignature = extractHeaderKeySignature(field[2]);
+          inBody = true;
+          continue;
+        }
+
+        if (inBody && tag === "V") {
+          currentVoice = field[2].trim().split(/\s+/)[0] || "default";
+        }
+
+        continue;
+      }
+
+      if (!inBody || voicesStarted.has(currentVoice)) continue;
+      if (!line.trim() || /^\s*%/.test(line) || /^\s*I:/.test(line)) continue;
+
+      const originalIndent = (line.match(/^\s*/) || [""])[0];
+      let content = line.slice(originalIndent.length);
+
+      // Normalize older output where injected !f! came before inline fields.
+      const oldInjected = content.match(
+        /^!f!\s+((?:(?:\[[A-Za-z]:[^\]\r\n]*\])\s*)+)([\s\S]*)$/i
+      );
+
+      if (oldInjected) {
+        content =
+          oldInjected[1].replace(/\s+$/, "") +
+          " !f! " +
+          oldInjected[2].replace(/^\s*/, "");
+        lines[i] = originalIndent + content;
+      }
+
+      const parts = splitInitialVoicePrefix(lines[i]);
+
+      if (parts.hasKey) {
+        initialKeySeen.add(currentVoice);
+      }
+
+      // An inline-field-only line remains part of the initial voice prefix.
+      if (!parts.rest.trim()) continue;
+
+      let prefix = parts.prefix.replace(/\s+$/, "");
+
+      if (
+        !percussionVoices.has(currentVoice) &&
+        !initialKeySeen.has(currentVoice) &&
+        headerKeySignature
+      ) {
+        prefix = prefix
+          ? `${prefix} [K:${headerKeySignature}]`
+          : `[K:${headerKeySignature}]`;
+
+        initialKeySeen.add(currentVoice);
+      }
+
+      const beforeDynamic = prefix ? `${prefix} ` : "";
+
+      if (!acceptedDynamicAtStart(parts.rest)) {
+        lines[i] =
+          parts.indent +
+          beforeDynamic +
+          "!f! " +
+          parts.rest.replace(/^\s*/, "");
+      } else if (beforeDynamic !== parts.prefix) {
+        lines[i] =
+          parts.indent +
+          beforeDynamic +
+          parts.rest.replace(/^\s*/, "");
+      }
+
+      voicesStarted.add(currentVoice);
+    }
+
+    // Add one hide-dynamics block immediately before the first V: declaration.
+    // Preserve an existing %hide_dynamics directive wherever it already appears.
+    if (!lines.some(line => /^\s*%hide_dynamics(?:\s|$)/i.test(line))) {
+      const firstVoiceIndex = lines.findIndex(line => /^\s*V\s*:/i.test(line));
+
+      if (firstVoiceIndex !== -1) {
+        lines.splice(
+          firstVoiceIndex,
+          0,
+          "%",
+          "% Hide dynamic marks",
+          "%hide_dynamics",
+          "%"
+        );
+      }
+    }
+
+    let result = lines.join(newline);
+
+    // split() creates one trailing empty element when the input ends in a newline.
+    if (!hadFinalNewline && result.endsWith(newline)) {
+      result = result.slice(0, -newline.length);
+    }
+
+    return result;
+  }
 
   var tuneCount = CountTunes();
 
@@ -61190,11 +61369,9 @@ function NormalizeVoiceKeySignatures(){
   }
 
   // Keep track of actions
-  sendGoogleAnalytics("action", "NormalizeVoiceKeySignatures");
+  sendGoogleAnalytics("action", "NormalizeVoiceKeySignaturesAndDynamics");
 
   var theNotes = getABCEditorText();
-
-  var tuneCount = CountTunes();
 
   // Find the tunes
   var theTunes = theNotes.split(/^X:/gm);
@@ -61205,7 +61382,7 @@ function NormalizeVoiceKeySignatures(){
 
     var thisTune = "X:" + theTunes[i];
 
-    thisTune = injectInlineKeys(thisTune);
+    thisTune = normalizeInitialVoiceKeysAndDynamics(thisTune);
 
     output += thisTune;
 
@@ -61217,7 +61394,7 @@ function NormalizeVoiceKeySignatures(){
   // Set dirty
   gIsDirty = true;
 
-  var thePrompt = "Voice key signatures normalized!";
+  var thePrompt = "Voice key signatures and dynamics normalized!";
 
   // Center the string in the prompt
   thePrompt = makeCenteredPromptString(thePrompt);
@@ -61251,7 +61428,6 @@ function NormalizeVoiceKeySignatures(){
     });
 
   });
-
 
 }
 
@@ -63890,13 +64066,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_23jul2026;
+    var updatePresented = localStorage.sawUpdate_29jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_23jul2026 = true;
+      localStorage.sawUpdate_29jul2026 = true;
 
     }
 
@@ -65792,7 +65968,7 @@ function launchMusicXMLToABCOptimizer(){
 
   if (!abcText || !/^\s*X\s*:/m.test(abcText)){
       showAbcChordChartGeneratorMessage(
-          "There are no ABC tunes to send to the MusicXML to ABC Optimizer.",
+          "There are no ABC tunes to send to the MuseScore MusicXML to ABC Optimizer.",
           520
       );
       return;
@@ -65800,7 +65976,7 @@ function launchMusicXMLToABCOptimizer(){
 
   if (!isRunningFromOfficialMichaeleskinDomain()){
       showAbcChordChartGeneratorMessage(
-          "Direct ABC transfer to the MusicXML to ABC Optimizer is only available from the official online version at https://michaeleskin.com.",
+          "Direct ABC transfer to the MuseScore MusicXML to ABC Optimizer is only available from the official online version at https://michaeleskin.com.",
           560
       );
       return;
@@ -65808,7 +65984,7 @@ function launchMusicXMLToABCOptimizer(){
 
   if (!navigator.onLine){
       showAbcChordChartGeneratorMessage(
-          "The MusicXML to ABC Optimizer is not available while offline. Please reconnect to the internet and try again.",
+          "The MuseScore MusicXML to ABC Optimizer is not available while offline. Please reconnect to the internet and try again.",
           560
       );
       return;
@@ -65876,7 +66052,7 @@ function launchMusicXMLToABCOptimizer(){
   function postABCToOptimizer(){
       if (!optimizerWindow || optimizerWindow.closed){
           showOptimizerLaunchFailure(
-              "The MusicXML to ABC Optimizer window was closed before the tunes could be transferred.",
+              "The MuseScore MusicXML to ABC Optimizer window was closed before the tunes could be transferred.",
               600
           );
           return;
@@ -65891,9 +66067,9 @@ function launchMusicXMLToABCOptimizer(){
           optimizerWindow.postMessage(loadMessage, targetOrigin);
       }
       catch (error) {
-          console.error("Unable to send ABC to the MusicXML to ABC Optimizer:", error);
+          console.error("Unable to send ABC to the MuseScore MusicXML to ABC Optimizer:", error);
           showOptimizerLaunchFailure(
-              "ABC Transcription Tools could not send the tunes to the MusicXML to ABC Optimizer. Browser security settings may have blocked the transfer.",
+              "ABC Transcription Tools could not send the tunes to the MuseScore MusicXML to ABC Optimizer. Browser security settings may have blocked the transfer.",
               650
           );
       }
@@ -65929,7 +66105,7 @@ function launchMusicXMLToABCOptimizer(){
   if (!optimizerWindow){
       cleanupOptimizerLaunchHandlers();
       showAbcChordChartGeneratorMessage(
-          "The MusicXML to ABC Optimizer window was blocked by the browser. Please allow popups for this site and try again.",
+          "The MuseScore MusicXML to ABC Optimizer window was blocked by the browser. Please allow popups for this site and try again.",
           560
       );
       return;
@@ -65938,7 +66114,7 @@ function launchMusicXMLToABCOptimizer(){
   closedCheckTimer = setInterval(function(){
       if (optimizerWindow && optimizerWindow.closed && !loadMessageAcknowledged){
           showOptimizerLaunchFailure(
-              "The MusicXML to ABC Optimizer window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+              "The MuseScore MusicXML to ABC Optimizer window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
               650
           );
       }
@@ -65960,7 +66136,7 @@ function launchMusicXMLToABCOptimizer(){
 
       if (!optimizerReadyReceived){
           showOptimizerLaunchFailure(
-              "The MusicXML to ABC Optimizer opened, but ABC Transcription Tools did not receive a ready message from it.",
+              "The MuseScore MusicXML to ABC Optimizer opened, but ABC Transcription Tools did not receive a ready message from it.",
               680
           );
           return;
@@ -65968,14 +66144,14 @@ function launchMusicXMLToABCOptimizer(){
 
       if (loadMessageAttempted){
           showOptimizerLaunchFailure(
-              "ABC Transcription Tools sent the tunes to the MusicXML to ABC Optimizer, but did not receive confirmation that they loaded.",
+              "ABC Transcription Tools sent the tunes to the MuseScore MusicXML to ABC Optimizer, but did not receive confirmation that they loaded.",
               700
           );
           return;
       }
 
       showOptimizerLaunchFailure(
-          "ABC Transcription Tools could not complete the transfer to the MusicXML to ABC Optimizer.",
+          "ABC Transcription Tools could not complete the transfer to the MuseScore MusicXML to ABC Optimizer.",
           700
       );
   }, 15000);

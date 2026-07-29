@@ -880,17 +880,17 @@
             </details>
 
             <details>
-            <summary><h3>Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, and Normalize Voice Keys</h3></summary>
+            <summary><h3>Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, and Inject MIDI gchord Templates</h3></summary>
             <a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a>
-            <a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a>
+            <a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a>
             </details>
 
             <details>
-            <summary><h3>Reformat Using MusicXML, Inject MIDI gchord Templates, and Launch MuseScore MusicXML to ABC Optimizer</h3></summary>
+            <summary><h3>Reformat Using MusicXML, Normalize Voice Keys/Dynamics, and Launch MuseScore MusicXML to ABC Optimizer</h3></summary>
             <a style="text-decoration:none;" href="#reformat_using_musicxml">Reformat Using MusicXML</a>
-            <a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a>
+            <a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys/Dynamics</a>
             <a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a>
             </details>
             
@@ -1448,18 +1448,18 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     </div>
 
-                    <button class="accordion" title="Click to expand/collapse this section">Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, and Normalize Voice Keys</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Split Long Tags and Text, Normalize Diacriticals, Normalize Title Postfixes, and Inject MIDI gchord Templates</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a></p>
                     </div>
 
-                    <button class="accordion" title="Click to expand/collapse this section">Reformat Using MusicXML, Inject MIDI gchord Templates, and Launch MuseScore MusicXML to ABC Optimizer</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Reformat Using MusicXML,  Normalize Voice Keys/Dynamics, and Launch MuseScore MusicXML to ABC Optimizer</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#reformat_using_musicxml">Reformat Using MusicXML</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys/Dynamics</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a></p>
                     </div>
                     
@@ -6649,32 +6649,6 @@
                 <p class="code">% Disable title article reverser<br/><br/>%no_title_reverser</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the title article reverser disabled.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
-                <hr class="hidden-print" id="hamburger_normalize_voice_keys">
-                <h1 class="page_break_always">Normalize Voice Keys</h1>
-                <a href="#table_of_contents" class="index-pill hidden-print">
-                  Table of Contents
-                </a>
-                <p>This attempts to work around an issue with abcjs and multi-voice tunes where an inline [K:] tag in a voice messes up the starting key signature for subsequent voices.</p>
-                <p>This feature attempts to fix this issue by finding the key of the tune in the tune header, and injecting a matching inline [K:] tag at the start of the first line of notes for each voice.</p>
-                <p>Example - Before:</p>
-                <p class="code">X: 1<br/> T: Normalizing Voice Keys Before<br/> K: D<br/> V:1<br/>C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]<br/> V:2<br/>% This line will show key signature of C instead of D:<br/>C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]</p>
-                <p>After:</p>
-                <p class="code">X: 1<br/> T: Normalizing Voice Keys After<br/> K: D<br/> V:1<br/> [K:D]C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]<br/> V:2<br/> [K:D]C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]</p>
-                <p>There are some cases that it may not provide a 100% correct solution, but it should work or at least improve things for most cases.</p>
-                <hr class="hidden-print" id="reformat_using_musicxml">
-                <h1 class="page_break_always">Reformat Using MusicXML</h1>
-                <a href="#table_of_contents" class="index-pill hidden-print">
-                  Table of Contents
-                </a>
-                <p>Round-trips either the current tune or all the tunes in the ABC through MusicXML export and import back to ABC.</p>
-                <p>This can be useful for cleaning up some ABC files that have odd formatting or use & measure note overlays which sometimes cause rendering and playback issues:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YwpecZmHvMs" title="Reformat Using MusicXML" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>It can also be used to quickly reformat the number of bars-per-staff on an existing ABC tune:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/m9ynCua8zWA" title="Reformat Using MusicXML to Change Bars-per-Staff" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>MusicXML import formatting is done using the values set in <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a>.</p>
-                <p>When reformatting large ABC collections, since MusicXML-based reformatting doesn't require rendering the tunes, I suggest using the "Quick Editor" which only renders the currently selected in the collection.</p>
-                <p>This can be particularly helpful if the initial rendering of the collection is slow in the standard editor because of "one measure per ABC line" formatting of the ABC.</p>
-                <p>From the "Quick Editor" you can then run "Reformat Using MusicXML", save the resulting ABC, then open the reformatted ABC in the standard editor.</p>            
                 <hr class="hidden-print" id="inject_midigchord">
                 <h1 class="page_break_always">Inject MIDI gchord Templates</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -6694,6 +6668,35 @@
                 <p>You can edit the vectors after per-measure injection to have control over the stress or duration of each element in the gchord control string.</p>
                 <p>Full details below on the use of %%MIDI gchordstress and %%MIDI gchordduration for gchord dynamics and duration scaling:</p>
                 <p style="text-align: center"><a style="text-decoration:none;" href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>
+                <hr class="hidden-print" id="reformat_using_musicxml">
+                <h1 class="page_break_always">Reformat Using MusicXML</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>Round-trips either the current tune or all the tunes in the ABC through MusicXML export and import back to ABC.</p>
+                <p>This can be useful for cleaning up some ABC files that have odd formatting or use & measure note overlays which sometimes cause rendering and playback issues:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YwpecZmHvMs" title="Reformat Using MusicXML" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>It can also be used to quickly reformat the number of bars-per-staff on an existing ABC tune:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/m9ynCua8zWA" title="Reformat Using MusicXML to Change Bars-per-Staff" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>MusicXML import formatting is done using the values set in <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a>.</p>
+                <p>When reformatting large ABC collections, since MusicXML-based reformatting doesn't require rendering the tunes, I suggest using the "Quick Editor" which only renders the currently selected in the collection.</p>
+                <p>This can be particularly helpful if the initial rendering of the collection is slow in the standard editor because of "one measure per ABC line" formatting of the ABC.</p>
+                <p>From the "Quick Editor" you can then run "Reformat Using MusicXML", save the resulting ABC, then open the reformatted ABC in the standard editor.</p>            
+
+                <hr class="hidden-print" id="hamburger_normalize_voice_keys">
+                <h1 class="page_break_always">Normalize Voice Keys/Dynamics</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>This attempts to work around an quirk with abcjs and multi-voice tunes where an inline [K:] tag in a voice leaks into the starting key signature for subsequent voices.</p>
+                <p>This feature attempts to fix this issue by finding the key of the tune in the tune header, and injecting a matching inline [K:] tag at the start of the first line of notes for each voice.</p>
+                <p>Example - Before:</p>
+                <p class="code">X: 1<br/> T: Normalizing Voice Keys Before<br/> K: D<br/> V:1<br/>C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]<br/> V:2<br/>% This line will show key signature of C instead of D:<br/>C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]</p>
+                <p>After:</p>
+                <p class="code">X: 1<br/> T: Normalizing Voice Keys After<br/> K: D<br/> V:1<br/> [K:D]C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]<br/> V:2<br/> [K:D]C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]</p>
+                <p>Similarly, this feature adds a !f! dynamic at the start of each voice to normalize the dynamics and avoid dynamics leakage from previous voices.</p> 
+                <p>It also adds a %hide_dynamics annotation to avoid repeated dynamics marks in grouped multi-voice scores. Remove it if not required.</p>
+                <p>There are some cases that it may not provide a 100% correct solution, but it should work or at least improve things for most cases.</p>
                 <hr class="hidden-print" id="musescorexml">
                 <h1 class="page_break_always">Launch MuseScore MusicXML to ABC Optimizer </h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -8883,7 +8886,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys/Dynamics</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#highlighting">Notation and ABC Highlighting</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_notationspacingexplorer">Notation Spacing Explorer</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#incipits_builder_pdf">Notes Incipits Builder</a></p>
