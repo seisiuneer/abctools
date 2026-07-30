@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3305_072926_1100";
+var gVersionNumber = "3306_073026_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28513,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_29jul2026;
+        var updatePresented = localStorage.sawUpdate_30jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_29jul2026 = true;
+          localStorage.sawUpdate_30jul2026 = true;
 
         }
 
@@ -57199,6 +57199,14 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 July 2026</div>';
   modal_msg += '</div>';
 
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Bypassing the unsaved work warning when clicking Open</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">If you wish to bypass the warning about unsaved work when opening an ABC file after editing some ABC, hold down the <strong>Shift</strong> key when clicking the <strong>Open</strong> button.</p>';
+  modal_msg += '</div>';
+
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
@@ -57207,13 +57215,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">This is useful when transcoding a MusicXML file to ABC to work around an abcjs quirk where voice keys and dynamics can leak between voices.</p>'; 
   modal_msg += '<p style="font-size:12pt;">This code was brought over from the <strong>MuseScore MusicXML to ABC Optimizer</strong>.</p>'; 
 
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Percussion instrument volume scale and release time overrides</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now set the volume scale and release times for each of the sounds in the percussion instrument (%%MIDI program 128). This can be useful for forcing louder drum parts and more realistic cymbal crashes. See the <strong>User Guide</strong> section on <strong>Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</strong> for details.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -57828,7 +57829,9 @@ function fileOpenIntercept(e) {
 
   var elem = document.getElementById("selectabcfile");
 
-  if (gIsDirty) {
+  var isShiftKey = e.shiftKey;
+
+  if ((!isShiftKey) && gIsDirty) {
 
     var thePrompt = '<p style="font-size:18pt;line-height:20pt;text-align:center;">You Have Unsaved Changes</p><p style="font-size:13pt;line-height:16pt;text-align:center;margin-top:30px;">Click "OK" to abandon your work and open a new file.<br/><br/>Click "Cancel" to go back.</p>';
 
@@ -64066,13 +64069,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_29jul2026;
+    var updatePresented = localStorage.sawUpdate_30jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_29jul2026 = true;
+      localStorage.sawUpdate_30jul2026 = true;
 
     }
 
