@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3306_073026_0900";
+var gVersionNumber = "3307_073126_1030";
 
 var gMIDIInitStillWaiting = false;
 

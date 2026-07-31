@@ -22,7 +22,7 @@
         <meta name="theme-color" content="#ffffff">
         <meta name="apple-mobile-web-app-title" content="ABC Tools User Guide">
         <meta name="application-name" content="ABC Tools User Guide">
-        <meta name="viewport" content="width=860">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="format-detection" content="telephone=no">
         <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
@@ -470,7 +470,7 @@
           margin-bottom:22px !important;
         }
 
-        @media (pointer: coarse) {
+        @media (pointer: coarse), (max-width: 800px) {
 
             h1 {
                 margin-bottom: 20px !important;
@@ -481,7 +481,48 @@
             }
 
             #maindiv {
+                position: relative;
+                left: auto;
+                transform: none;
+                width: 100%;
+                max-width: none;
                 margin-left: 0 !important;
+                margin-right: 0;
+                box-sizing: border-box;
+            }
+
+            #table_of_contents {
+                width: 100%;
+                box-sizing: border-box;
+                padding-left: 24px !important;
+                padding-right: 24px !important;
+            }
+
+            #maindiv img {
+                max-width: 100% !important;
+                height: auto !important;
+                box-sizing: border-box;
+            }
+
+            #maindiv iframe {
+                width: 100% !important;
+                max-width: 620px;
+                height: auto;
+                aspect-ratio: 620 / 338;
+                box-sizing: border-box;
+            }
+
+            .code {
+                max-width: 100%;
+                box-sizing: border-box;
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .accordion {
+                width: 100% !important;
+                box-sizing: border-box;
             }
 
             .index-pill {
@@ -2128,7 +2169,6 @@
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <hr id="add_choose">
                 <p>Browse your system for ABC, MusicXML, BWW, or MIDI files with one or more tunes to add to the end of the current tunes.</p>
                 <hr class="hidden-print" id="add_restore">
                 <h1 class="page_break_always">Restore from Snapshot</h1>
@@ -7938,7 +7978,7 @@
                 <p class="code">% Hide composer tag display<br/><br/>%hide_composer_tag</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the composer text in the C: tag hidden.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
-                <hr class="hidden-print" id="hide_parts_tag">
+                <hr class="hidden-print" id="hide_part_tags">
                 <h1 class="page_break_always">Hiding Part Tags Display</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
@@ -8707,7 +8747,6 @@
                 <p class="toc"><a style="text-decoration:none;" href="#abc_transcription_tools_ecosystem">ABC Transcription Tools Ecosystem</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#facebook_group">ABC Transcription Tools Group on Facebook and Freeforums.net</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#abcjs_eskin_website_builder">abcjs-eskin Website Builder</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_injectionfeatures">ABC Utility Injection Features</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#generate_website_abcjs_eskin">abcjs-eskin Website Builder</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_add">Add</a></p>
@@ -8830,7 +8869,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#hide_parts_tag">Hiding Part Tags Display</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#hide_part_tags">Hiding Part Tags Display</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a></p>
@@ -8985,8 +9024,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
 
                 <h1 class="page_break_never" id="index_U" style="text-align:left;margin-bottom:12px;">U</h1>
-                <p class="toc"><a style="text-decoration:none;" href="#uninstall">Uninstalling the Tool</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#update_settings_tab">Update to the Latest Version</a></p>
+                 <p class="toc"><a style="text-decoration:none;" href="#update_settings_tab">Update to the Latest Version</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#updatingthetool">Updating the Tool</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#presentation_mode">Using &quot;Presentation Mode&quot; for Tune Demo Videos</a></p>
