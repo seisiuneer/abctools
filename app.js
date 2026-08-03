@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3307_073126_1030";
+var gVersionNumber = "3308_080326_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18610,7 +18610,7 @@ function AddFromSearch(e, callback) {
 
   modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">The Session Collection (54,000+ Tune Settings)</option></select></p>';
 
-  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
+  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<span style="position:relative;display:block;"><input style="box-sizing:border-box;width:100%;font-size:12pt;line-height:18px;padding:6px 34px 6px 6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/><button id="clearTuneSearch" type="button" title="Clear search" aria-label="Clear search" style="display:none;position:absolute;right:5px;top:50%;transform:translateY(-50%);width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></span></p>';
 
   modal_msg += '<p class="tunesearchoptions">Only return first variation found?&nbsp;<input id="only_first_variation" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" checked/>&nbsp;&nbsp;&nbsp;Match start of title?&nbsp;<input id="match_title_start" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;&nbsp;&nbsp;Only return tunes with chords?&nbsp;<input id="chords_only" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/></p>';
 
@@ -18668,7 +18668,29 @@ function AddFromSearch(e, callback) {
 
   document.getElementById("add-search-results").disabled = true;
 
-  document.getElementById("tuneNameToSearch").addEventListener("keydown", function(event) {
+  var tuneSearchInput = document.getElementById("tuneNameToSearch");
+  var clearTuneSearchButton = document.getElementById("clearTuneSearch");
+
+  function updateClearTuneSearchButton() {
+    clearTuneSearchButton.style.display = tuneSearchInput.value.length ? "block" : "none";
+  }
+
+  function clearTuneSearch() {
+    tuneSearchInput.value = "";
+    gLastTuneSearchValue = "";
+    updateClearTuneSearchButton();
+    tuneSearchInput.focus({ preventScroll: true });
+  }
+
+  tuneSearchInput.addEventListener("input", updateClearTuneSearchButton);
+
+  clearTuneSearchButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    clearTuneSearch();
+  });
+
+  tuneSearchInput.addEventListener("keydown", function(event) {
 
     // Check if the pressed key is Enter 
     if (event.key === "Enter") {
@@ -18757,6 +18779,7 @@ function AddFromSearch(e, callback) {
 
   // Set the last tune search value
   document.getElementById("tuneNameToSearch").value = gLastTuneSearchValue;
+  updateClearTuneSearchButton();
 
   SwitchTuneDatabase();
 
