@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3308_080326_1230";
+var gVersionNumber = "3309_080326_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20130,7 +20130,7 @@ function filterTuneSetList() {
 
 var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
-var BuildTuneSetRepeatCount = 1
+var BuildTuneSetRepeatCount = 1;
 var BuildTuneSetVerbose = true;
 
 function BuildTuneSet() {
@@ -20170,7 +20170,7 @@ function BuildTuneSet() {
   // MAE 14 Jul 2024 - Make the div fill the screen
   var theHeight = window.innerHeight - 670;
 
-  var theSearchBar = '<div style="margin-bottom:10px;text-align:center;position:relative;width:90%;margin-left:auto;margin-right:auto;"> <input id="tuneset-search" type="text" placeholder="Filter by text..." style="width:100%;padding:6px 28px 6px 6px;font-size:12pt;"> <span id="tuneset-search-clear" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14pt;color:#888;display:none;" title="Clear filter and show all tunes"> ❌ </span> </div>';
+  var theSearchBar = '<div style="margin-bottom:10px;text-align:center;position:relative;width:90%;margin-left:auto;margin-right:auto;"><input id="tuneset-search" type="text" title="Enter filter text here" autocomplete="off" autocorrect="off" placeholder="Filter by text..." style="box-sizing:border-box;width:100%;font-size:12pt;line-height:18px;padding:6px 34px 6px 6px;"><button id="tuneset-search-clear" type="button" title="Clear filter and show all tunes" aria-label="Clear filter and show all tunes" style="display:none;position:absolute;right:5px;top:50%;transform:translateY(-50%);width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></div>';
 
   var theTuneSetDiv = theSearchBar +
     '<div id="tuneset-tune-list" style="overflow:auto;height:' + theHeight + 'px;margin-top:12px;margin-bottom:18px;">';
@@ -20211,22 +20211,36 @@ function BuildTuneSet() {
     }
   ];
 
-  setTimeout(() => {
-    const searchInput = document.getElementById("tuneset-search");
-    const clearBtn = document.getElementById("tuneset-search-clear");
+  // Add an in-field clear button to the Build Tune Set filter box.
+  setTimeout(function() {
 
-    if (searchInput) {
-      searchInput.addEventListener("input", filterTuneSetList);
-      searchInput.focus(); // auto-focus when dialog opens
+    var searchInput = document.getElementById("tuneset-search");
+    var clearButton = document.getElementById("tuneset-search-clear");
+
+    if (!searchInput || !clearButton) return;
+
+    function updateClearButton() {
+      clearButton.style.display = searchInput.value.length ? "block" : "none";
     }
 
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => {
-        searchInput.value = "";
-        filterTuneSetList();
-        searchInput.focus();
-      });
-    }
+    searchInput.addEventListener("input", function() {
+      filterTuneSetList();
+      updateClearButton();
+    });
+
+    clearButton.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      searchInput.value = "";
+      filterTuneSetList();
+      updateClearButton();
+      searchInput.focus({ preventScroll: true });
+    });
+
+    updateClearButton();
+    searchInput.focus(); // auto-focus when dialog opens
+
   }, 200);
 
   const modal = DayPilot.Modal.form(form, theData, {
