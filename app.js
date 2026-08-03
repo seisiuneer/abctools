@@ -59306,7 +59306,7 @@ function JumpToTune() {
     {
       html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Jump to Tune&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_jump_to_tune" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
     }, {
-      html: '<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;margin-left:5px;" id="jumpToSearchValue" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here" oninput="JumpToSearch();"/>'
+      html: '<span style="position:relative;display:block;margin-left:5px;"><input style="box-sizing:border-box;width:100%;font-size:12pt;line-height:18px;padding:6px 34px 6px 6px;" id="jumpToSearchValue" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here" oninput="JumpToSearch();"/><button id="clearJumpToSearch" type="button" title="Clear search" aria-label="Clear search" style="display:none;position:absolute;right:5px;top:50%;transform:translateY(-50%);width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></span>'
     }, {
       html: theJumpDiv
     },
@@ -59328,6 +59328,34 @@ function JumpToTune() {
     }
 
   });
+
+  // Add an in-field clear button to the Jump to Tune search box.
+  setTimeout(function() {
+
+    var jumpToSearchInput = document.getElementById("jumpToSearchValue");
+    var clearJumpToSearchButton = document.getElementById("clearJumpToSearch");
+
+    if (!jumpToSearchInput || !clearJumpToSearchButton) return;
+
+    function updateClearJumpToSearchButton() {
+      clearJumpToSearchButton.style.display = jumpToSearchInput.value.length ? "block" : "none";
+    }
+
+    jumpToSearchInput.addEventListener("input", updateClearJumpToSearchButton);
+
+    clearJumpToSearchButton.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      jumpToSearchInput.value = "";
+      JumpToSearch();
+      updateClearJumpToSearchButton();
+      jumpToSearchInput.focus({ preventScroll: true });
+    });
+
+    updateClearJumpToSearchButton();
+
+  }, 0);
 
   if (gJumpToTuneAutoscroll){
     // After modal is created, wait for DOM then scroll
