@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3309_080326_1500";
+var gVersionNumber = "3310_080426_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -57233,7 +57233,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 30 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 4 August 2026</div>';
   modal_msg += '</div>';
 
 
@@ -59969,8 +59969,20 @@ function SR_LoadFindAndReplace(file) {
 
       gSR_regex.checked = theParsedSettings.isRegex;
 
+      // Update the Find and Replace clear button visibility after loading.
+      var clearSearchTextButton = document.getElementById("clearSearchText");
+      var clearReplacementTextButton = document.getElementById("clearReplacementText");
+
+      if (clearSearchTextButton) {
+        clearSearchTextButton.style.display = gSR_searchInput.value.length ? "block" : "none";
+      }
+
+      if (clearReplacementTextButton) {
+        clearReplacementTextButton.style.display = gSR_replaceInput.value.length ? "block" : "none";
+      }
+
       // Trigger a new match check
-      gSR_lastSearch = gSR_searchInput.value;;
+      gSR_lastSearch = gSR_searchInput.value;
       gSR_lastReplace = gSR_replaceInput.value;
 
       SR_findMatches();
@@ -60075,19 +60087,19 @@ function FindAndReplace() {
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
   if (isPureDesktopBrowser()){
-    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><span style="position:relative;display:inline-block;line-height:normal;"><textarea style="box-sizing:border-box;width:625px;padding:6px 34px 6px 6px;display:block;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea><button id="clearSearchText" type="button" title="Clear find text" aria-label="Clear find text" style="display:none;position:absolute;right:5px;top:5px;width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-family:Arial,Helvetica,sans-serif;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></span></p>';
   }
   else{
-    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="4"></textarea></p>';    
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><span style="position:relative;display:inline-block;line-height:normal;"><textarea style="box-sizing:border-box;width:625px;padding:6px 34px 6px 6px;display:block;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="4"></textarea><button id="clearSearchText" type="button" title="Clear find text" aria-label="Clear find text" style="display:none;position:absolute;right:5px;top:5px;width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-family:Arial,Helvetica,sans-serif;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></span></p>';    
   }
 
   modal_msg += '<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();gSR_startOffset=SR_getEditorSelectionStart();gSR_currentIndex=-1;" checked/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match using regular expression?&nbsp;<input id="searchRegex" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();gSR_startOffset=SR_getEditorSelectionStart();gSR_currentIndex=-1;"/></p>';
 
   if (isPureDesktopBrowser()){
-    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><span style="position:relative;display:inline-block;line-height:normal;"><textarea style="box-sizing:border-box;width:625px;padding:6px 34px 6px 6px;display:block;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea><button id="clearReplacementText" type="button" title="Clear replacement text" aria-label="Clear replacement text" style="display:none;position:absolute;right:5px;top:5px;width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-family:Arial,Helvetica,sans-serif;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></span></p>';
   }
   else{
-    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="5"></textarea></p>';
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><span style="position:relative;display:inline-block;line-height:normal;"><textarea style="box-sizing:border-box;width:625px;padding:6px 34px 6px 6px;display:block;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="5"></textarea><button id="clearReplacementText" type="button" title="Clear replacement text" aria-label="Clear replacement text" style="display:none;position:absolute;right:5px;top:5px;width:26px;height:26px;padding:0;border:0;background:transparent;color:#666;font-family:Arial,Helvetica,sans-serif;font-size:18px;line-height:26px;cursor:pointer;">&#10005;</button></span></p>';
   }
 
   modal_msg += '<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/><input type="file" id="load_find_replace_fs" accept=".txt,.TXT" hidden/><input class="btn btn-search-load search-load" id="search-load" onclick="SR_TriggerLoad();" type="button" value="Load" title="Load Find and Replace settings"/><input class="btn btn-search-save search-save" id="search-save" onclick="SR_save();" type="button" value="Save" title="Save Find and Replace settings"/></p>';
@@ -60151,6 +60163,8 @@ function FindAndReplace() {
     gSR_searchInput = document.getElementById("searchText");
 
     gSR_replaceInput = document.getElementById("replacementText");
+    var clearSearchTextButton = document.getElementById("clearSearchText");
+    var clearReplacementTextButton = document.getElementById("clearReplacementText");
     gSR_caseSensitive = document.getElementById("searchCaseSensitive");
     gSR_regex = document.getElementById("searchRegex");
 
@@ -60158,6 +60172,36 @@ function FindAndReplace() {
     gSR_replaceInput.value = gSR_lastReplace;
     gSR_caseSensitive.checked = gSR_lastCaseSensitive;
     gSR_regex.checked = gSR_lastRegex;
+
+    function updateFindAndReplaceClearButtons() {
+      clearSearchTextButton.style.display = gSR_searchInput.value.length ? "block" : "none";
+      clearReplacementTextButton.style.display = gSR_replaceInput.value.length ? "block" : "none";
+    }
+
+    clearSearchTextButton.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      gSR_searchInput.value = "";
+      gSR_lastSearch = "";
+      SR_findMatches();
+      gSR_startOffset = SR_getEditorSelectionStart();
+      gSR_currentIndex = -1;
+      updateFindAndReplaceClearButtons();
+      gSR_searchInput.focus({ preventScroll: true });
+    });
+
+    clearReplacementTextButton.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      gSR_replaceInput.value = "";
+      gSR_lastReplace = "";
+      updateFindAndReplaceClearButtons();
+      gSR_replaceInput.focus({ preventScroll: true });
+    });
+
+    updateFindAndReplaceClearButtons();
 
     if (gSR_lastSearch != "") {
       SR_findMatches();
@@ -60176,10 +60220,12 @@ function FindAndReplace() {
       // a previous Find Next / Find Previous.
       gSR_startOffset = SR_getEditorSelectionStart();
       gSR_currentIndex = -1;
+      updateFindAndReplaceClearButtons();
     });
 
     gSR_replaceInput.addEventListener("input", function(event) {
       gSR_lastReplace = gSR_replaceInput.value;
+      updateFindAndReplaceClearButtons();
     });
 
     gSR_searchInput.focus();
