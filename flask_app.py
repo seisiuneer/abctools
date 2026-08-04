@@ -4,7 +4,7 @@
 from flask import Flask, request, Response
 from flask_cors import CORS, cross_origin
 from music21 import converter
-import subprocess, tempfile
+import subprocess, tempfile, os
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ def abc2xml():
 
     abcFile = write_to_temp_text_file(theABC)
 
-    result = run_command("python mysite/abc2xml.py "+abcFile)
+    result = run_command(["python", "mysite/abc2xml.py", abcFile])
 
     cleanup_temp_file(abcFile)
 
@@ -63,7 +63,7 @@ def midi2xml():
 def run_command(command):
     try:
         # Run the command and capture its output
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        result = subprocess.run(command, shell=False, capture_output=True, text=True)
         # Check if the command was successful
         if result.returncode == 0:
             return result.stdout
