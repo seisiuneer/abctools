@@ -8595,6 +8595,13 @@
                 <hr>
                 <p><strong>If you are using a lot of abc2svg/abcm2ps-specific extensions or more exotic abc2midi MIDI playback commands not supported by abcjs, this tool will not meet your needs.</strong></p>
                 <p>abc2svg has many custom ABC directives that are outside the ABC 2.1 spec and will not work in this tool.</p>
+                <hr>
+                <p><strong>I:linebreak $ does nothing</strong></p>
+                <p>In abcjs</p>
+                <p class="code">I:linebreak $</p>
+                <p>and subsequent use of $ in the ABC does nothing.</p>
+                <p>If you want to include a linebreak in the middle of a line of ABC, you can use:</p>
+                <p class="code">% This ABC has a linebreak after the first measure<br/>CDEF GABc|!cBAG FEDC|</p>
                 <hr class="hidden-print" id="demovideos">
                 <h1 class="page_break_always">Demo Videos and Tutorials</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
