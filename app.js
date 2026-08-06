@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3310_080426_1030";
+var gVersionNumber = "3311_080626_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -324,6 +324,14 @@ var gOnlyHighlightV1 = false;
 
 // Disable highlighting on playback
 var gDisablePlayHighlight = false;
+
+// In Highlighting mode, shade measures whose duration does not match the meter.
+// This is enabled by default. The settings dialog can set this boolean later.
+var gHighlightIncompleteMeasures = true;
+
+// Session-only override set by Shift-clicking the Highlighting button.
+// Never saved; always false when the tool starts or Highlighting is exited.
+var gTemporarilyDisableMeasureHighlighting = false;
 
 // Tuning array
 var gVoiceTuning = null;
@@ -2074,8 +2082,9 @@ function GetAllTuneTitles() {
 //
 function SetupRawModeUI() {
 
-  // Clear raw mode
+  // Clear raw mode and its session-only measure-highlight override.
   gRawMode = false;
+  gTemporarilyDisableMeasureHighlighting = false;
 
   // Clear last highlight tracker
   gRawLastIndex = -1;
@@ -2138,13 +2147,14 @@ function ShowHighlightingExplanation() {
   sendGoogleAnalytics("dialog", "ShowHighlightingExplanation");
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">About Highlighting</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Since this is your first time using Highlighting, here is some important information:</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">When Highlighting is turned on:</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Select ABC text to highlight the corresponding notes in red in the notation.</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Click any element in the notation to select the corresponding ABC text in the editor.</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">Highlighting requires redrawing all tunes on each change to the ABC.</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">This may be slow on large numbers of tunes.</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:22pt;font-family:helvetica">All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Since this is your first time using Highlighting, here is some important information:</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">When Highlighting is turned on:</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Select ABC text to highlight the corresponding notes in red in the notation.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Click any element in the notation to select the corresponding ABC text in the editor.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Measures with too few or too many beats as determined by the meter are highlighted in yellow, including correctly constructed partial pickup measures and associated partial measure repeat endings.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Highlighting requires redrawing all tunes on each change to the ABC.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This may be slow on large numbers of tunes.</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
@@ -2157,7 +2167,7 @@ function ShowHighlightingExplanation() {
 //
 // Toggle raw mode
 //
-function ToggleRawMode() {
+function ToggleRawMode(event) {
 
   //console.log("ToggleRawMode");
 
@@ -2194,7 +2204,31 @@ function ToggleRawMode() {
     return;
   }
 
+  // Shift-click is a session-only way to suppress incomplete-measure shading.
+  // When Highlighting is already active, leave Highlighting on and redraw.
+  // When it is off, enter Highlighting with measure shading suppressed.
+  if (event && event.shiftKey) {
+    gTemporarilyDisableMeasureHighlighting = true;
+
+    if (gRawMode) {
+      gRawLastIndex = -1;
+
+      if (gIsQuickEditor) {
+        Render(true, null);
+      } else {
+        RenderAsync(true, null);
+      }
+
+      return;
+    }
+  }
+
   gRawMode = !gRawMode;
+
+  // A normal entry starts with the temporary override cleared. Any exit clears it.
+  if (!gRawMode || !(event && event.shiftKey)) {
+    gTemporarilyDisableMeasureHighlighting = false;
+  }
 
   var elem = document.getElementById("rawmodebutton");
 
@@ -4377,6 +4411,7 @@ function Clear() {
 
     // Turn off raw mode
     gRawMode = false;
+    gTemporarilyDisableMeasureHighlighting = false;
 
     // Clear last tune highlight tracker
     gRawLastIndex = -1;
@@ -12614,6 +12649,7 @@ function ExportNotationPDF(title) {
         // Save off the raw mode
         var oldRawMode = gRawMode;
         gRawMode = false;
+        gTemporarilyDisableMeasureHighlighting = false;
 
         // Force a full render 
         Render(true, null);
@@ -12655,6 +12691,7 @@ function ExportNotationPDF(title) {
 
       // Clear raw mode
       gRawMode = false;
+      gTemporarilyDisableMeasureHighlighting = false;
 
       // Force a full render 
       Render(true, null);
@@ -14025,8 +14062,9 @@ function GetABCJSParams(instrument) {
     }
   }
 
-  // Adding classes for V1 highlighting filter?
-  if (gOnlyHighlightV1) {
+  // Adding classes for V1 highlighting filter or incomplete-measure shading?
+  // Measure shading needs abcjs line/measure classes to locate each rendered bar.
+  if (gOnlyHighlightV1 || (gRawMode && gHighlightIncompleteMeasures)) {
     //console.log("Adding classes");
     params.add_classes = true;
   }
@@ -14283,6 +14321,605 @@ function fireSelectionChanged() {
 }
 
 //
+// Highlighting-mode incomplete measure analysis
+//
+
+function GetMeterLengthForIncompleteMeasureHighlight(meter, fallbackLength) {
+
+  if (!meter) return fallbackLength;
+
+  // abcjs stores common time and cut time as named meter types.
+  if (meter.type === "common_time") return 1;
+  if (meter.type === "cut_time") return 1;
+
+  if (meter.value && meter.value.length) {
+    var total = 0;
+
+    for (var i = 0; i < meter.value.length; ++i) {
+      var numerator = parseFloat(meter.value[i].num);
+      var denominator = parseFloat(meter.value[i].den);
+
+      if (isFinite(numerator) && isFinite(denominator) && denominator > 0) {
+        total += numerator / denominator;
+      }
+    }
+
+    if (total > 0) return total;
+  }
+
+  return fallbackLength;
+}
+
+function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
+
+  var incompleteMap = new Map();
+  var renderedVoiceIDs = new Set();
+
+  if (!visual || !visual.lines) return [];
+
+  var defaultExpectedLength = (typeof visual.getBarLength === "function")
+    ? visual.getBarLength()
+    : 1;
+
+  var tolerance = 0.000001;
+
+  // Keep the active meter for each rendered staff across line breaks. This is
+  // important for multi-staff tunes and for %%score layouts that place several
+  // voices on the same staff.
+  var expectedLengthByStaff = [];
+
+  function GetVoiceIDAtOffset(offset) {
+    if (!tuneABC || typeof offset !== "number" || offset < 0) return null;
+
+    var before = tuneABC.substring(0, Math.min(offset + 1, tuneABC.length));
+    var voiceID = null;
+    var match;
+
+    // Match both normal V: fields and inline [V:id] fields. The last match
+    // before the rendered element identifies the voice that owns it.
+    var voicePattern = /(?:^|\n)\s*V:\s*([^\s\]]+)|\[V:\s*([^\s\]]+)[^\]]*\]/gm;
+
+    while ((match = voicePattern.exec(before)) !== null) {
+      voiceID = match[1] || match[2] || voiceID;
+    }
+
+    return voiceID;
+  }
+
+  function GetRenderedVoiceID(voice, staffIndex, voiceIndex) {
+    if (voice && voice.length) {
+      for (var elementIndex = 0; elementIndex < voice.length; ++elementIndex) {
+        var element = voice[elementIndex];
+
+        if (element && typeof element.startChar === "number" && element.startChar >= 0) {
+          var voiceID = GetVoiceIDAtOffset(element.startChar);
+          if (voiceID) return voiceID;
+        }
+      }
+    }
+
+    // This fallback should only be needed for unusual abcjs structures where
+    // no rendered element exposes a source character offset.
+    return String(voiceIndex + 1);
+  }
+
+  function markIncomplete(
+    lineIndex,
+    renderedMeasureNumber,
+    tuneMeasureNumber,
+    voiceID,
+    measuredElements
+  ) {
+    var key = lineIndex + ":" + renderedMeasureNumber;
+
+    if (!incompleteMap.has(key)) {
+      incompleteMap.set(key, {
+        line: lineIndex,
+        measure: renderedMeasureNumber,
+        tuneMeasure: tuneMeasureNumber,
+        triggeringVoiceIDs: [],
+        measuredElements: []
+      });
+    }
+
+    var entry = incompleteMap.get(key);
+
+    if (entry.triggeringVoiceIDs.indexOf(voiceID) === -1) {
+      entry.triggeringVoiceIDs.push(voiceID);
+    }
+
+    if (measuredElements && measuredElements.length) {
+      measuredElements.forEach(function(measuredElement) {
+        if (entry.measuredElements.indexOf(measuredElement) === -1) {
+          entry.measuredElements.push(measuredElement);
+        }
+      });
+    }
+
+    renderedVoiceIDs.add(voiceID);
+  }
+
+  function analyzeVoice(
+    voice,
+    lineIndex,
+    staffIndex,
+    voiceIndex,
+    initialExpectedLength,
+    lineMeasureOffset
+  ) {
+
+    var voiceID = GetRenderedVoiceID(voice, staffIndex, voiceIndex);
+    renderedVoiceIDs.add(voiceID);
+
+    if (!voice || !voice.length) {
+      return {
+        expectedLength: initialExpectedLength,
+        measureCount: 0
+      };
+    }
+
+    var expectedLength = initialExpectedLength;
+    var measureNumber = 0;
+    var duration = 0;
+    var hasTimedElement = false;
+    var hasStartedMusic = false;
+    var tupletMultiplier = 1;
+    var measuredElements = [];
+
+    for (var elementIndex = 0; elementIndex < voice.length; ++elementIndex) {
+      var element = voice[elementIndex];
+
+      if (!element) continue;
+
+      if (element.el_type === "meter") {
+        expectedLength = GetMeterLengthForIncompleteMeasureHighlight(element, expectedLength);
+        continue;
+      }
+
+      if (element.el_type === "bar") {
+        // Ignore a bar line before this voice has begun. Once the voice is
+        // active, each bar closes the current rendered measure. Empty interior
+        // measures are also treated as incomplete rather than silently skipped.
+        if (hasTimedElement) {
+          if (Math.abs(duration - expectedLength) > tolerance) {
+            markIncomplete(
+              lineIndex,
+              measureNumber,
+              lineMeasureOffset + measureNumber + 1,
+              voiceID,
+              measuredElements
+            );
+          }
+
+          hasStartedMusic = true;
+          measureNumber++;
+        }
+        else if (hasStartedMusic) {
+          markIncomplete(
+            lineIndex,
+            measureNumber,
+            lineMeasureOffset + measureNumber + 1,
+            voiceID,
+            measuredElements
+          );
+          measureNumber++;
+        }
+
+        duration = 0;
+        hasTimedElement = false;
+        tupletMultiplier = 1;
+        measuredElements = [];
+        continue;
+      }
+
+      // abcjs keeps a tuplet note's written duration in element.duration and
+      // supplies the performed-duration adjustment separately.
+      if (element.startTriplet &&
+          typeof element.tripletMultiplier === "number" &&
+          element.tripletMultiplier > 0) {
+        tupletMultiplier = element.tripletMultiplier;
+      }
+
+      // Ignore grace-only spacer elements created for {abc} immediately before
+      // a bar line. Grace ornaments do not consume measure time.
+      var isGraceOnlySpacer = !!(
+        element.gracenotes &&
+        element.rest &&
+        element.rest.type === "spacer"
+      );
+
+      if (!isGraceOnlySpacer &&
+          typeof element.duration === "number" && element.duration > 0) {
+        duration += element.duration * tupletMultiplier;
+        hasTimedElement = true;
+        hasStartedMusic = true;
+        measuredElements.push(element);
+      }
+
+      if (element.endTriplet) {
+        tupletMultiplier = 1;
+      }
+    }
+
+    // A final measure is not required to have a closing bar line.
+    if (hasTimedElement && Math.abs(duration - expectedLength) > tolerance) {
+      markIncomplete(
+        lineIndex,
+        measureNumber,
+        lineMeasureOffset + measureNumber + 1,
+        voiceID,
+        measuredElements
+      );
+    }
+
+    return {
+      expectedLength: expectedLength,
+      measureCount: measureNumber + (hasTimedElement ? 1 : 0)
+    };
+  }
+
+  var lineMeasureOffset = 0;
+
+  for (var lineIndex = 0; lineIndex < visual.lines.length; ++lineIndex) {
+
+    var line = visual.lines[lineIndex];
+
+    if (!line || !line.staff || !line.staff.length) continue;
+
+    var lineMeasureCount = 0;
+
+    for (var staffIndex = 0; staffIndex < line.staff.length; ++staffIndex) {
+      var staff = line.staff[staffIndex];
+
+      if (!staff) continue;
+
+      var staffExpectedLength = expectedLengthByStaff[staffIndex] || defaultExpectedLength;
+
+      if (staff.meter) {
+        staffExpectedLength = GetMeterLengthForIncompleteMeasureHighlight(
+          staff.meter,
+          staffExpectedLength
+        );
+      }
+
+      if (staff.voices && staff.voices.length) {
+        // Analyze every voice separately. This supports voices on separate
+        // staves as well as multiple voices merged onto one staff by %%score.
+        for (var voiceIndex = 0; voiceIndex < staff.voices.length; ++voiceIndex) {
+          var voiceResult = analyzeVoice(
+            staff.voices[voiceIndex],
+            lineIndex,
+            staffIndex,
+            voiceIndex,
+            staffExpectedLength,
+            lineMeasureOffset
+          );
+
+          staffExpectedLength = voiceResult.expectedLength;
+          lineMeasureCount = Math.max(lineMeasureCount, voiceResult.measureCount);
+        }
+      }
+
+      expectedLengthByStaff[staffIndex] = staffExpectedLength;
+    }
+
+    lineMeasureOffset += lineMeasureCount;
+  }
+
+  var isMultiVoice = renderedVoiceIDs.size > 1;
+  var results = Array.from(incompleteMap.values());
+
+  results.forEach(function(entry) {
+    entry.isMultiVoice = isMultiVoice;
+    entry.triggeringVoiceIDs.sort(function(a, b) {
+      return String(a).localeCompare(String(b), undefined, {
+        numeric: true,
+        sensitivity: "base"
+      });
+    });
+  });
+
+  return results;
+}
+function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, renderedABC) {
+
+  var svgNS = "http://www.w3.org/2000/svg";
+  var renderCount = Math.max(
+    renderDivs ? renderDivs.length : 0,
+    visualObj ? visualObj.length : 0
+  );
+
+  // Always remove stale backgrounds, tooltip elements, and event handlers
+  // before deciding whether new measure highlights should be added.
+  for (var cleanupIndex = 0; cleanupIndex < renderCount; ++cleanupIndex) {
+    var cleanupRenderDivID =
+      (renderDivs && renderDivs[cleanupIndex]) ||
+      ("notation" + (startTune + cleanupIndex));
+    var cleanupRenderDiv = document.getElementById(cleanupRenderDivID);
+
+    if (!cleanupRenderDiv) continue;
+
+    cleanupRenderDiv
+      .querySelectorAll(".abcjs-incomplete-measure-background")
+      .forEach(function(elem) {
+        elem.remove();
+      });
+
+    if (cleanupRenderDiv._incompleteMeasureMouseMoveHandler) {
+      cleanupRenderDiv.removeEventListener(
+        "mousemove",
+        cleanupRenderDiv._incompleteMeasureMouseMoveHandler
+      );
+      cleanupRenderDiv.removeEventListener(
+        "mouseleave",
+        cleanupRenderDiv._incompleteMeasureMouseLeaveHandler
+      );
+      cleanupRenderDiv._incompleteMeasureMouseMoveHandler = null;
+      cleanupRenderDiv._incompleteMeasureMouseLeaveHandler = null;
+    }
+
+    var oldTooltip = document.getElementById(
+      cleanupRenderDivID + "-incomplete-measure-tooltip"
+    );
+    if (oldTooltip) oldTooltip.remove();
+  }
+
+  if (!gRawMode ||
+      !gHighlightIncompleteMeasures ||
+      gTemporarilyDisableMeasureHighlighting ||
+      !visualObj) {
+    return;
+  }
+
+  function GetRenderedNodesForMeasuredElements(measuredElements) {
+    var nodes = [];
+
+    if (!measuredElements) return nodes;
+
+    measuredElements.forEach(function(measuredElement) {
+      if (!measuredElement) return;
+
+      // abcjs stores the rendered AbsoluteElement on the parsed ABC element.
+      // Its elemset contains the actual SVG group nodes for this exact written
+      // occurrence of the note. Looking for measuredElement.elemset directly
+      // always failed and caused the alternate-ending filter to fall back to
+      // the shared line/measure CSS classes.
+      var absoluteElement = measuredElement.abselem;
+      var elemset = absoluteElement && absoluteElement.elemset;
+
+      if (elemset && elemset.length) {
+        for (var elemIndex = 0; elemIndex < elemset.length; ++elemIndex) {
+          var node = elemset[elemIndex];
+
+          if (node && node.ownerSVGElement && nodes.indexOf(node) === -1) {
+            nodes.push(node);
+          }
+        }
+      }
+    });
+
+    return nodes;
+  }
+
+  function FilterToMeasuredOccurrence(elements, measuredElements) {
+    var anchorNodes = GetRenderedNodesForMeasuredElements(measuredElements);
+
+    // Older or unusual abcjs structures may not expose elemset. In that case,
+    // preserve the original class-based behavior.
+    if (!anchorNodes.length) return Array.from(elements);
+
+    var anchorRangesBySVG = new Map();
+
+    anchorNodes.forEach(function(anchorNode) {
+      try {
+        var anchorSVG = anchorNode.ownerSVGElement;
+        var anchorBox = anchorNode.getBBox();
+
+        if (!anchorSVG || !anchorBox) return;
+
+        if (!anchorRangesBySVG.has(anchorSVG)) {
+          anchorRangesBySVG.set(anchorSVG, {
+            left: Infinity,
+            right: -Infinity
+          });
+        }
+
+        var range = anchorRangesBySVG.get(anchorSVG);
+        range.left = Math.min(range.left, anchorBox.x);
+        range.right = Math.max(range.right, anchorBox.x + anchorBox.width);
+      }
+      catch (err) {
+        // Ignore temporarily unavailable SVG geometry.
+      }
+    });
+
+    if (!anchorRangesBySVG.size) return Array.from(elements);
+
+    var filtered = [];
+
+    elements.forEach(function(element) {
+      try {
+        var svg = element.ownerSVGElement;
+        var range = anchorRangesBySVG.get(svg);
+
+        if (!range || typeof element.getBBox !== "function") return;
+
+        var box = element.getBBox();
+        if (!box) return;
+
+        var centerX = box.x + box.width / 2;
+
+        // Keep only objects belonging to the horizontal occurrence containing
+        // the notes that were actually measured. A small margin includes bar
+        // lines, ending marks, chords, and annotations belonging to that same
+        // occurrence without pulling in a different alternate ending that
+        // shares the same abcjs measure class.
+        if (centerX >= range.left - 12 && centerX <= range.right + 12) {
+          filtered.push(element);
+        }
+      }
+      catch (err) {
+        // Ignore temporarily unavailable SVG geometry.
+      }
+    });
+
+    return filtered.length ? filtered : Array.from(elements);
+  }
+
+  for (let visualIndex = 0; visualIndex < visualObj.length; ++visualIndex) {
+
+    let visual = visualObj[visualIndex];
+    let renderDivID = renderDivs[visualIndex] || ("notation" + (startTune + visualIndex));
+    let renderDiv = document.getElementById(renderDivID);
+
+    if (!visual || !renderDiv) continue;
+
+    let tooltipRegions = [];
+
+    // Use the exact ABC source string supplied to ABCJS.renderAbc(). abcjs
+    // startChar values are offsets into this string, including when several
+    // tunes are rendered together.
+    let incomplete = FindIncompleteMeasuresForHighlight(visual, renderedABC);
+
+    for (var i = 0; i < incomplete.length; ++i) {
+      var selector = ".abcjs-l" + incomplete[i].line + ".abcjs-m" + incomplete[i].measure;
+      var selectedElements = renderDiv.querySelectorAll(selector);
+
+      if (!selectedElements.length) continue;
+
+      // First and second endings can share the same abcjs line/measure classes.
+      // Restrict the selected objects to the rendered occurrence containing the
+      // exact notes whose duration was evaluated as incomplete.
+      var elements = FilterToMeasuredOccurrence(
+        selectedElements,
+        incomplete[i].measuredElements
+      );
+
+      if (!elements.length) continue;
+
+      // oneSvgPerLine can produce several SVG elements. Group the measure's
+      // rendered objects by SVG before calculating and inserting backgrounds.
+      var groups = new Map();
+
+      elements.forEach(function(element) {
+        var svg = element.ownerSVGElement;
+        if (!svg || typeof element.getBBox !== "function") return;
+
+        if (!groups.has(svg)) groups.set(svg, []);
+        groups.get(svg).push(element);
+      });
+
+      groups.forEach(function(groupElements, svg) {
+        var left = Infinity;
+        var top = Infinity;
+        var right = -Infinity;
+        var bottom = -Infinity;
+
+        groupElements.forEach(function(element) {
+          try {
+            var box = element.getBBox();
+            if (!box || (!box.width && !box.height)) return;
+
+            left = Math.min(left, box.x);
+            top = Math.min(top, box.y);
+            right = Math.max(right, box.x + box.width);
+            bottom = Math.max(bottom, box.y + box.height);
+          }
+          catch (err) {
+            // Some browsers can reject getBBox() for temporarily hidden SVG nodes.
+          }
+        });
+
+        if (!isFinite(left) || !isFinite(top) || !isFinite(right) || !isFinite(bottom)) return;
+
+        // Add modest padding so the tint reads as a measure background rather
+        // than a tight box around the noteheads.
+        var horizontalPadding = 3;
+        var verticalPadding = 5;
+        var rect = document.createElementNS(svgNS, "rect");
+
+        rect.setAttribute("class", "abcjs-incomplete-measure-background");
+        rect.setAttribute("x", String(left - horizontalPadding));
+        rect.setAttribute("y", String(top - verticalPadding));
+        rect.setAttribute("width", String((right - left) + horizontalPadding * 2));
+        rect.setAttribute("height", String((bottom - top) + verticalPadding * 2));
+        rect.setAttribute("fill", "#FFF4CC");
+        rect.setAttribute("fill-opacity", "0.55");
+        rect.setAttribute("stroke", "none");
+        rect.setAttribute("pointer-events", "none");
+
+        var tooltipText = "Measure " + incomplete[i].tuneMeasure;
+
+        if (incomplete[i].isMultiVoice && incomplete[i].triggeringVoiceIDs.length) {
+          tooltipText += "\n" +
+            incomplete[i].triggeringVoiceIDs.map(function(voiceID) {
+              return "V:" + voiceID;
+            }).join(", ");
+        }
+
+        tooltipRegions.push({
+          rect: rect,
+          text: tooltipText
+        });
+
+        svg.insertBefore(rect, svg.firstChild);
+      });
+    }
+    if (tooltipRegions.length) {
+      let tooltip = document.createElement("div");
+      tooltip.id = renderDivID + "-incomplete-measure-tooltip";
+      tooltip.style.position = "fixed";
+      tooltip.style.display = "none";
+      tooltip.style.zIndex = "2147483647";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.whiteSpace = "pre-line";
+      tooltip.style.padding = "6px 8px";
+      tooltip.style.border = "1px solid #777";
+      tooltip.style.borderRadius = "4px";
+      tooltip.style.background = "#ffffe0";
+      tooltip.style.color = "#000";
+      tooltip.style.fontFamily = "Arial, sans-serif";
+      tooltip.style.fontSize = "12px";
+      tooltip.style.lineHeight = "16px";
+      tooltip.style.boxShadow = "0 2px 6px rgba(0,0,0,0.25)";
+      document.body.appendChild(tooltip);
+
+      renderDiv._incompleteMeasureMouseMoveHandler = function(event) {
+        var matchedRegion = null;
+
+        for (var regionIndex = 0; regionIndex < tooltipRegions.length; ++regionIndex) {
+          var bounds = tooltipRegions[regionIndex].rect.getBoundingClientRect();
+
+          if (event.clientX >= bounds.left && event.clientX <= bounds.right &&
+              event.clientY >= bounds.top && event.clientY <= bounds.bottom) {
+            matchedRegion = tooltipRegions[regionIndex];
+            break;
+          }
+        }
+
+        if (!matchedRegion) {
+          tooltip.style.display = "none";
+          return;
+        }
+
+        tooltip.textContent = matchedRegion.text;
+        tooltip.style.left = (event.clientX + 12) + "px";
+        tooltip.style.top = (event.clientY + 12) + "px";
+        tooltip.style.display = "block";
+      };
+
+      renderDiv._incompleteMeasureMouseLeaveHandler = function() {
+        tooltip.style.display = "none";
+      };
+
+      renderDiv.addEventListener("mousemove", renderDiv._incompleteMeasureMouseMoveHandler);
+      renderDiv.addEventListener("mouseleave", renderDiv._incompleteMeasureMouseLeaveHandler);
+    }
+
+  }
+}
+
+//
 // Main routine for rendering the notation
 //
 function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
@@ -14460,6 +15097,10 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
     }
 
+
+  // Shade incomplete measures after abcjs has created the SVG and its
+  // line/measure classes, but before the visual is released.
+  AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, tune);
 
   // Save off the visual for selection handling
   if (gRawMode) {
@@ -15547,6 +16188,7 @@ function Render(renderAll, tuneNumber) {
       if (nTunes > 1) {
 
         gRawMode = false;
+        gTemporarilyDisableMeasureHighlighting = false;
 
         document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
         document.getElementById("rawmodebutton").classList.add("rawmodebuttondisabled");
@@ -15567,6 +16209,7 @@ function Render(renderAll, tuneNumber) {
 
         // Turn off raw mode
         gRawMode = false;
+        gTemporarilyDisableMeasureHighlighting = false;
 
         // Clear last tune highlight tracker
         gRawLastIndex = -1;
@@ -15663,6 +16306,7 @@ function Render(renderAll, tuneNumber) {
 
     // Turn off raw mode
     gRawMode = false;
+    gTemporarilyDisableMeasureHighlighting = false;
 
     // Clear last tune highlight tracker
     gRawLastIndex = -1;
@@ -28550,13 +29194,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_30jul2026;
+        var updatePresented = localStorage.sawUpdate_6aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_30jul2026 = true;
+          localStorage.sawUpdate_6aug2026 = true;
 
         }
 
@@ -47903,6 +48547,14 @@ function GetInitialConfigurationSettings() {
     gEnableSyntax = (val == "true");
   }
 
+  // Globally enable incomplete-measure shading while Highlighting is active.
+  // Default to enabled when the setting has not previously been saved.
+  gHighlightIncompleteMeasures = true;
+  val = localStorage.HighlightIncompleteMeasures;
+  if (val) {
+    gHighlightIncompleteMeasures = (val == "true");
+  }
+
   gSyntaxDarkMode = false;
   val = localStorage.SyntaxDarkMode
   if (val) {
@@ -48274,6 +48926,7 @@ function SaveConfigurationSettings() {
 
     // Syntax highlighting
     localStorage.EnableSyntax4 = gEnableSyntax;
+    localStorage.HighlightIncompleteMeasures = gHighlightIncompleteMeasures;
     localStorage.SyntaxDarkMode = gSyntaxDarkMode;
 
     // Always flatten parts
@@ -52313,6 +52966,7 @@ function AdvancedSettings() {
         }
 
         gRawMode = false;
+        gTemporarilyDisableMeasureHighlighting = false;
       }
 
       gShowABCJSRenderProgress = args.result.configure_show_render_progress;
@@ -53124,6 +53778,7 @@ function ConfigureToolSettings() {
   var oldTabSelected = GetRadioValue("notenodertab");
   var oldRecorderFingeringGerman = gRecorderFingeringGerman;
   var oldEnableSyntax = gEnableSyntax;
+  var oldHighlightIncompleteMeasures = gHighlightIncompleteMeasures;
   var oldSyntaxDarkMode = gSyntaxDarkMode;
 
   // Setup initial values
@@ -53150,6 +53805,7 @@ function ConfigureToolSettings() {
     configure_ipad_two_column: giPadTwoColumn,
     configure_player_scaling: gPlayerScaling,
     configure_syntax_highlighting: gEnableSyntax,
+    configure_highlight_incomplete_measures: gHighlightIncompleteMeasures,
     configure_syntax_highlighting_dark: gSyntaxDarkMode,
     configure_flat_buttons: gUseFlatButtons
   };
@@ -53243,6 +53899,13 @@ function ConfigureToolSettings() {
       cssClass: "configure_settings_form_text_checkbox"
     });
   }
+
+  form.push({
+    name: "          Highlight measures with an incorrect number of beats when Highlighting is enabled",
+    id: "configure_highlight_incomplete_measures",
+    type: "checkbox",
+    cssClass: "configure_settings_form_text_checkbox"
+  });
 
   form.push({
     name: "          Use Flat Buttons? (Glossy if unchecked)",
@@ -53498,6 +54161,7 @@ function ConfigureToolSettings() {
 
       // Syntax highlighting
       gEnableSyntax = args.result.configure_syntax_highlighting;
+      gHighlightIncompleteMeasures = args.result.configure_highlight_incomplete_measures;
       gSyntaxDarkMode = args.result.configure_syntax_highlighting_dark;
 
       // Flat buttons?
@@ -53855,7 +54519,7 @@ function ConfigureToolSettings() {
       var radiovalue = GetRadioValue("notenodertab");
 
       // Do we need to re-render?
-      if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (oldRecorderFingeringGerman != gRecorderFingeringGerman) || bTabForceRedraw ||
+      if ((testStaffSpacing != theOldStaffSpacing) || (theOldShowTabNames != gShowTabNames) || (oldHighlightIncompleteMeasures != gHighlightIncompleteMeasures) || (gAllowShowTabNames && (gCapo != theOldCapo)) || (oldCGDA != gShowCGDATab) || (oldDGDAE != gShowDGDAETab) || (oldRecorderTab != gShowRecorderTab) || (oldRecorderFingeringGerman != gRecorderFingeringGerman) || bTabForceRedraw ||
         ((radiovalue == "notenames") && ((gUseComhaltasABC != theOldComhaltas) || (theOldForceComhaltas && (!gUseComhaltasABC))))) {
 
         RenderAsync(true, null, function() {
@@ -53956,6 +54620,7 @@ function MoveConfigureSettingsFieldsToTabs() {
   moveByName("configure_flat_buttons","tab_editor_fields");
   if (isDesktopBrowser()) moveByName("configure_editor_fontsize", "tab_editor_fields");
   moveByName("configure_syntax_highlighting", "tab_editor_fields");
+  moveByName("configure_highlight_incomplete_measures", "tab_editor_fields");
   moveByName("configure_syntax_highlighting_dark", "tab_editor_fields");
   if (isPureDesktopBrowser()) moveByName("configure_save_exit_snapshot", "tab_editor_fields");
 
@@ -57233,25 +57898,25 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 4 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 6 August 2026</div>';
   modal_msg += '</div>';
 
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Measure length validation in Highlighting mode (Desktop browsers only)</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Measures with an incorrect number of beats, either too many or too few, are now highlighted in yellow.</p>';
+  modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number. For multi-voice tunes, the tooltip also shows the V: voice tag or tags that triggered the highlight.</p>';
+  modal_msg += '<p style="font-size:12pt;">You can disable this feature from a new setting on the <strong>Editor</strong> tab on the <strong>Settings</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">You can also temporarily disable the measure highlighting by shift-clicking the <strong>Highlighting</strong> button.</p>';
+  modal_msg += '<p style="font-size:12pt;">This evaluates <strong>all</strong> measures in the tune, so pickup notes and partial measures related to pickup notes may be correct, but still flagged as partial measures.</p>';
+  modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Bypassing the unsaved work warning when clicking Open</strong></p>';
   modal_msg += '<p style="font-size:12pt;">If you wish to bypass the warning about unsaved work when opening an ABC file after editing some ABC, hold down the <strong>Shift</strong> key when clicking the <strong>Open</strong> button.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Normalize Voice Keys/Dynamics</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Click the <strong>Normalize Voice Keys/Dynamics</strong> button on the <strong>Other Tools</strong> tab of the <strong>More ABC Tools</strong> dialog to normalize the keys and dynamics across all voices in a multi-voice tune.</p>';
-  modal_msg += '<p style="font-size:12pt;">This is useful when transcoding a MusicXML file to ABC to work around an abcjs quirk where voice keys and dynamics can leak between voices.</p>'; 
-  modal_msg += '<p style="font-size:12pt;">This code was brought over from the <strong>MuseScore MusicXML to ABC Optimizer</strong>.</p>'; 
-
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -64180,13 +64845,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_30jul2026;
+    var updatePresented = localStorage.sawUpdate_6aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_30jul2026 = true;
+      localStorage.sawUpdate_6aug2026 = true;
 
     }
 
