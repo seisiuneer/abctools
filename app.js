@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3312_080626_2100";
+var gVersionNumber = "3313_080726_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14460,14 +14460,31 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
   var tuneSourceStart = tuneSourceRange.start;
   var tuneSourceText = tuneSourceRange.text;
 
-  function ParseMeterTextForHighlight(meterText, fallbackLength) {
+  function ParseMeterInfoForHighlight(meterText, fallbackInfo) {
 
-    if (!meterText) return fallbackLength;
+    var fallback = fallbackInfo || {
+      length: defaultExpectedLength,
+      denominator: 4
+    };
+
+    if (!meterText) return fallback;
 
     var text = String(meterText).trim();
 
-    if (/^C\|$/i.test(text)) return 1;
-    if (/^C$/i.test(text)) return 1;
+    // Common time is 4/4 and cut time is 2/2.
+    if (/^C\|$/i.test(text)) {
+      return {
+        length: 1,
+        denominator: 2
+      };
+    }
+
+    if (/^C$/i.test(text)) {
+      return {
+        length: 1,
+        denominator: 4
+      };
+    }
 
     var slash = text.indexOf("/");
 
@@ -14494,12 +14511,15 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
         }
 
         if (gotNumerator && numeratorTotal > 0) {
-          return numeratorTotal / denominator;
+          return {
+            length: numeratorTotal / denominator,
+            denominator: denominator
+          };
         }
       }
     }
 
-    return fallbackLength;
+    return fallback;
   }
 
   //
@@ -14508,10 +14528,13 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
   // Header M: is global. Body M: or [M:...] is associated with the currently
   // active V: voice. A tune with no V: fields uses the default voice timeline.
   //
-  var initialMeterLength = defaultExpectedLength;
+  var initialMeterInfo = {
+    length: defaultExpectedLength,
+    denominator: 4
+  };
   var meterEventsByVoice = new Map();
 
-  function AddMeterEvent(voiceID, sourceOffset, meterLength) {
+  function AddMeterEvent(voiceID, sourceOffset, meterInfo) {
 
     var key = voiceID || DEFAULT_VOICE_KEY;
 
@@ -14521,7 +14544,8 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
     meterEventsByVoice.get(key).push({
       offset: sourceOffset,
-      length: meterLength
+      length: meterInfo.length,
+      denominator: meterInfo.denominator
     });
   }
 
@@ -14565,17 +14589,17 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
         if (field === "M") {
 
-          var meterLength =
-            ParseMeterTextForHighlight(value, initialMeterLength);
+          var meterInfo =
+            ParseMeterInfoForHighlight(value, initialMeterInfo);
 
           if (!headerEnded) {
-            initialMeterLength = meterLength;
+            initialMeterInfo = meterInfo;
           }
           else {
             AddMeterEvent(
               currentVoice || DEFAULT_VOICE_KEY,
               sourceOffset,
-              meterLength
+              meterInfo
             );
           }
 
@@ -14590,13 +14614,13 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
       if (match[5]) {
 
-        var inlineMeterLength =
-          ParseMeterTextForHighlight(match[5], initialMeterLength);
+        var inlineMeterInfo =
+          ParseMeterInfoForHighlight(match[5], initialMeterInfo);
 
         AddMeterEvent(
           currentVoice || DEFAULT_VOICE_KEY,
           sourceOffset,
-          inlineMeterLength
+          inlineMeterInfo
         );
       }
     }
@@ -14610,12 +14634,15 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
   BuildTuneMeterTimeline();
 
-  function GetMeterLengthAtOffset(offset, voiceID, fallbackLength) {
+  function GetMeterInfoAtOffset(offset, voiceID, fallbackInfo) {
 
-    var activeLength = initialMeterLength || fallbackLength;
+    var activeInfo = {
+      length: initialMeterInfo.length,
+      denominator: initialMeterInfo.denominator
+    };
 
     if (typeof offset !== "number" || offset < 0) {
-      return activeLength;
+      return activeInfo;
     }
 
     var key = voiceID || DEFAULT_VOICE_KEY;
@@ -14633,14 +14660,15 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
       for (var eventIndex = 0; eventIndex < eventList.length; ++eventIndex) {
         if (eventList[eventIndex].offset > offset) break;
-        activeLength = eventList[eventIndex].length;
+        activeInfo.length = eventList[eventIndex].length;
+        activeInfo.denominator = eventList[eventIndex].denominator;
       }
     }
 
     ApplyEvents(defaultEvents);
     ApplyEvents(events);
 
-    return activeLength;
+    return activeInfo;
   }
 
   function GetVoiceIDAtOffset(offset) {
@@ -14695,7 +14723,10 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     renderedMeasureNumber,
     tuneMeasureNumber,
     voiceID,
-    measuredElements
+    measuredElements,
+    expectedLength,
+    measuredLength,
+    meterDenominator
   ) {
 
     var key = lineIndex + ":" + renderedMeasureNumber;
@@ -14706,7 +14737,8 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
         measure: renderedMeasureNumber,
         tuneMeasure: tuneMeasureNumber,
         triggeringVoiceIDs: [],
-        measuredElements: []
+        measuredElements: [],
+        voiceMeasurements: {}
       });
     }
 
@@ -14715,6 +14747,16 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     if (entry.triggeringVoiceIDs.indexOf(voiceID) === -1) {
       entry.triggeringVoiceIDs.push(voiceID);
     }
+
+    var denominator =
+      (isFinite(meterDenominator) && meterDenominator > 0)
+        ? meterDenominator
+        : 4;
+
+    entry.voiceMeasurements[voiceID] = {
+      expectedBeats: expectedLength * denominator,
+      measuredBeats: measuredLength * denominator
+    };
 
     if (measuredElements && measuredElements.length) {
       measuredElements.forEach(function(measuredElement) {
@@ -14744,7 +14786,12 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
       };
     }
 
-    var expectedLength = initialMeterLength;
+    var meterInfo = {
+      length: initialMeterInfo.length,
+      denominator: initialMeterInfo.denominator
+    };
+    var expectedLength = meterInfo.length;
+    var meterDenominator = meterInfo.denominator;
     var measureNumber = 0;
     var duration = 0;
     var hasTimedElement = false;
@@ -14761,11 +14808,13 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
       // Inline/header meter information is taken from the source timeline,
       // keyed by the exact source location of the rendered element.
       if (typeof element.startChar === "number" && element.startChar >= 0) {
-        expectedLength = GetMeterLengthAtOffset(
+        meterInfo = GetMeterInfoAtOffset(
           element.startChar,
           voiceID,
-          expectedLength
+          meterInfo
         );
+        expectedLength = meterInfo.length;
+        meterDenominator = meterInfo.denominator;
       }
 
       // Meter elements themselves consume no duration. Their source positions
@@ -14790,7 +14839,10 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
               measureNumber,
               lineMeasureOffset + measureNumber + 1,
               voiceID,
-              measuredElements
+              measuredElements,
+              expectedLength,
+              duration,
+              meterDenominator
             );
           }
 
@@ -14804,7 +14856,10 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
             measureNumber,
             lineMeasureOffset + measureNumber + 1,
             voiceID,
-            measuredElements
+            measuredElements,
+            expectedLength,
+            0,
+            meterDenominator
           );
 
           measureNumber++;
@@ -14852,7 +14907,10 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
         measureNumber,
         lineMeasureOffset + measureNumber + 1,
         voiceID,
-        measuredElements
+        measuredElements,
+        expectedLength,
+        duration,
+        meterDenominator
       );
     }
 
@@ -14920,6 +14978,44 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, renderedABC) {
 
   var svgNS = "http://www.w3.org/2000/svg";
+
+  // Remove every previously created incomplete-measure tooltip from the page.
+  // Tooltips are appended directly to document.body, so one belonging to a
+  // render div that disappeared when the number of rendered tunes decreased
+  // would otherwise fall outside the per-render-div cleanup loop below.
+  document
+    .querySelectorAll('[id$="-incomplete-measure-tooltip"]')
+    .forEach(function(elem) {
+      elem.remove();
+    });
+
+  // Also remove tooltip mouse handlers from every render div on which this
+  // feature previously installed them. This catches old render divs that are
+  // no longer represented in the current visualObj/renderDivs arrays.
+  document
+    .querySelectorAll('[data-incomplete-measure-tooltip-handlers="true"]')
+    .forEach(function(oldRenderDiv) {
+      if (oldRenderDiv._incompleteMeasureMouseMoveHandler) {
+        oldRenderDiv.removeEventListener(
+          "mousemove",
+          oldRenderDiv._incompleteMeasureMouseMoveHandler
+        );
+      }
+
+      if (oldRenderDiv._incompleteMeasureMouseLeaveHandler) {
+        oldRenderDiv.removeEventListener(
+          "mouseleave",
+          oldRenderDiv._incompleteMeasureMouseLeaveHandler
+        );
+      }
+
+      oldRenderDiv._incompleteMeasureMouseMoveHandler = null;
+      oldRenderDiv._incompleteMeasureMouseLeaveHandler = null;
+      oldRenderDiv.removeAttribute(
+        "data-incomplete-measure-tooltip-handlers"
+      );
+    });
+
   var renderCount = Math.max(
     renderDivs ? renderDivs.length : 0,
     visualObj ? visualObj.length : 0
@@ -14952,6 +15048,9 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
       );
       cleanupRenderDiv._incompleteMeasureMouseMoveHandler = null;
       cleanupRenderDiv._incompleteMeasureMouseLeaveHandler = null;
+      cleanupRenderDiv.removeAttribute(
+        "data-incomplete-measure-tooltip-handlers"
+      );
     }
 
     var oldTooltip = document.getElementById(
@@ -15144,13 +15243,74 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
         rect.setAttribute("stroke", "none");
         rect.setAttribute("pointer-events", "none");
 
+        function FormatMeasureBeatCount(value) {
+          if (!isFinite(value)) return "?";
+          return Number(Number(value).toFixed(4)).toString();
+        }
+
         var tooltipText = "Measure " + incomplete[i].tuneMeasure;
 
         if (incomplete[i].isMultiVoice && incomplete[i].triggeringVoiceIDs.length) {
+          var voiceGroups = [];
+          var currentGroup = null;
+
+          incomplete[i].triggeringVoiceIDs.forEach(function(voiceID) {
+            var measurement = incomplete[i].voiceMeasurements[voiceID];
+            var expectedText =
+              FormatMeasureBeatCount(measurement.expectedBeats);
+            var measuredText =
+              FormatMeasureBeatCount(measurement.measuredBeats);
+
+            // Group only consecutive voices in the existing sorted voice order
+            // when both the expected and measured beat counts match.
+            if (currentGroup &&
+                currentGroup.expectedText === expectedText &&
+                currentGroup.measuredText === measuredText) {
+              currentGroup.voiceIDs.push(voiceID);
+            }
+            else {
+              currentGroup = {
+                voiceIDs: [voiceID],
+                expectedText: expectedText,
+                measuredText: measuredText
+              };
+              voiceGroups.push(currentGroup);
+            }
+          });
+
           tooltipText += "\n" +
-            incomplete[i].triggeringVoiceIDs.map(function(voiceID) {
-              return "V:" + voiceID;
-            }).join(", ");
+            voiceGroups.map(function(group) {
+              var voiceLines = [];
+
+              // Put up to five grouped voice IDs on each line. Only the first
+              // ID on a line gets the V: prefix, for example:
+              // V:1, 2, 3, 4, 5
+              for (var voiceStart = 0;
+                   voiceStart < group.voiceIDs.length;
+                   voiceStart += 5) {
+
+                var voiceChunk =
+                  group.voiceIDs.slice(voiceStart, voiceStart + 5);
+
+                voiceLines.push(
+                  "V:" + voiceChunk.join(", ")
+                );
+              }
+
+              return voiceLines.join("\n") + "\n" +
+                "Beats expected: " + group.expectedText + "\n" +
+                "Beats measured: " + group.measuredText;
+            }).join("\n");
+        }
+        else if (incomplete[i].triggeringVoiceIDs.length) {
+          var singleVoiceMeasurement =
+            incomplete[i].voiceMeasurements[incomplete[i].triggeringVoiceIDs[0]];
+
+          tooltipText += "\n" +
+            "Beats expected: " +
+            FormatMeasureBeatCount(singleVoiceMeasurement.expectedBeats) + "\n" +
+            "Beats measured: " +
+            FormatMeasureBeatCount(singleVoiceMeasurement.measuredBeats);
         }
 
         tooltipRegions.push({
@@ -15174,9 +15334,9 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
       tooltip.style.borderRadius = "4px";
       tooltip.style.background = "#ffffe0";
       tooltip.style.color = "#000";
-      tooltip.style.fontFamily = "Arial, sans-serif";
-      tooltip.style.fontSize = "12px";
-      tooltip.style.lineHeight = "16px";
+      tooltip.style.fontFamily = 'Monaco, "Courier New", Courier, monospace';
+      tooltip.style.fontSize = "13px";
+      tooltip.style.lineHeight = "17px";
       tooltip.style.boxShadow = "0 2px 6px rgba(0,0,0,0.25)";
       document.body.appendChild(tooltip);
 
@@ -15199,9 +15359,49 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
         }
 
         tooltip.textContent = matchedRegion.text;
-        tooltip.style.left = (event.clientX + 12) + "px";
-        tooltip.style.top = (event.clientY + 12) + "px";
+
+        // Show it first so its actual dimensions are available for viewport
+        // clamping. Keep a small margin from each browser edge.
         tooltip.style.display = "block";
+
+        var tooltipOffset = 12;
+        var viewportMargin = 8;
+        var tooltipWidth = tooltip.offsetWidth;
+        var tooltipHeight = tooltip.offsetHeight;
+        var viewportWidth =
+          window.innerWidth || document.documentElement.clientWidth;
+        var viewportHeight =
+          window.innerHeight || document.documentElement.clientHeight;
+
+        var tooltipLeft = event.clientX + tooltipOffset;
+        var tooltipTop = event.clientY + tooltipOffset;
+
+        if (tooltipLeft + tooltipWidth + viewportMargin > viewportWidth) {
+          tooltipLeft = event.clientX - tooltipWidth - tooltipOffset;
+        }
+
+        if (tooltipTop + tooltipHeight + viewportMargin > viewportHeight) {
+          tooltipTop = event.clientY - tooltipHeight - tooltipOffset;
+        }
+
+        tooltipLeft = Math.max(
+          viewportMargin,
+          Math.min(
+            tooltipLeft,
+            viewportWidth - tooltipWidth - viewportMargin
+          )
+        );
+
+        tooltipTop = Math.max(
+          viewportMargin,
+          Math.min(
+            tooltipTop,
+            viewportHeight - tooltipHeight - viewportMargin
+          )
+        );
+
+        tooltip.style.left = tooltipLeft + "px";
+        tooltip.style.top = tooltipTop + "px";
       };
 
       renderDiv._incompleteMeasureMouseLeaveHandler = function() {
@@ -15210,6 +15410,10 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
 
       renderDiv.addEventListener("mousemove", renderDiv._incompleteMeasureMouseMoveHandler);
       renderDiv.addEventListener("mouseleave", renderDiv._incompleteMeasureMouseLeaveHandler);
+      renderDiv.setAttribute(
+        "data-incomplete-measure-tooltip-handlers",
+        "true"
+      );
     }
 
   }
