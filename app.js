@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3311_080626_1300";
+var gVersionNumber = "3312_080626_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14362,22 +14362,307 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     : 1;
 
   var tolerance = 0.000001;
+  var DEFAULT_VOICE_KEY = "__default__";
 
-  // Keep the active meter for each rendered staff across line breaks. This is
-  // important for multi-staff tunes and for %%score layouts that place several
-  // voices on the same staff.
-  var expectedLengthByStaff = [];
+  //
+  // Find the exact source range for this rendered tune.
+  //
+  // When several tunes are rendered together, abcjs startChar values are
+  // offsets into the complete rendered ABC string. Do not allow M: or V:
+  // fields from another tune to affect this tune's measure analysis.
+  //
+  function GetFirstSourceOffset() {
+    var firstOffset = Infinity;
+
+    for (var lineIndex = 0; lineIndex < visual.lines.length; ++lineIndex) {
+      var line = visual.lines[lineIndex];
+      if (!line || !line.staff) continue;
+
+      for (var staffIndex = 0; staffIndex < line.staff.length; ++staffIndex) {
+        var staff = line.staff[staffIndex];
+        if (!staff || !staff.voices) continue;
+
+        for (var voiceIndex = 0; voiceIndex < staff.voices.length; ++voiceIndex) {
+          var voice = staff.voices[voiceIndex];
+          if (!voice) continue;
+
+          for (var elementIndex = 0; elementIndex < voice.length; ++elementIndex) {
+            var element = voice[elementIndex];
+
+            if (element &&
+                typeof element.startChar === "number" &&
+                element.startChar >= 0) {
+              firstOffset = Math.min(firstOffset, element.startChar);
+            }
+          }
+        }
+      }
+    }
+
+    return isFinite(firstOffset) ? firstOffset : 0;
+  }
+
+  function GetTuneSourceRange() {
+
+    if (!tuneABC || !tuneABC.length) {
+      return {
+        start: 0,
+        end: 0,
+        text: ""
+      };
+    }
+
+    var firstOffset = GetFirstSourceOffset();
+    var tuneStarts = [];
+    var xPattern = /^X:[^\r\n]*(?:\r?\n|$)/gm;
+    var match;
+
+    while ((match = xPattern.exec(tuneABC)) !== null) {
+      tuneStarts.push(match.index);
+    }
+
+    if (!tuneStarts.length) {
+      return {
+        start: 0,
+        end: tuneABC.length,
+        text: tuneABC
+      };
+    }
+
+    var tuneStart = tuneStarts[0];
+
+    for (var i = 0; i < tuneStarts.length; ++i) {
+      if (tuneStarts[i] <= firstOffset) {
+        tuneStart = tuneStarts[i];
+      }
+      else {
+        break;
+      }
+    }
+
+    var tuneEnd = tuneABC.length;
+
+    for (var j = 0; j < tuneStarts.length; ++j) {
+      if (tuneStarts[j] > tuneStart) {
+        tuneEnd = tuneStarts[j];
+        break;
+      }
+    }
+
+    return {
+      start: tuneStart,
+      end: tuneEnd,
+      text: tuneABC.substring(tuneStart, tuneEnd)
+    };
+  }
+
+  var tuneSourceRange = GetTuneSourceRange();
+  var tuneSourceStart = tuneSourceRange.start;
+  var tuneSourceText = tuneSourceRange.text;
+
+  function ParseMeterTextForHighlight(meterText, fallbackLength) {
+
+    if (!meterText) return fallbackLength;
+
+    var text = String(meterText).trim();
+
+    if (/^C\|$/i.test(text)) return 1;
+    if (/^C$/i.test(text)) return 1;
+
+    var slash = text.indexOf("/");
+
+    if (slash !== -1) {
+      var numeratorText = text.substring(0, slash).trim();
+      var denominatorText = text.substring(slash + 1).trim();
+      var denominator = parseFloat(denominatorText);
+
+      if (isFinite(denominator) && denominator > 0) {
+        var numeratorParts = numeratorText.split("+");
+        var numeratorTotal = 0;
+        var gotNumerator = false;
+
+        for (var numeratorIndex = 0;
+             numeratorIndex < numeratorParts.length;
+             ++numeratorIndex) {
+
+          var numerator = parseFloat(numeratorParts[numeratorIndex]);
+
+          if (isFinite(numerator)) {
+            numeratorTotal += numerator;
+            gotNumerator = true;
+          }
+        }
+
+        if (gotNumerator && numeratorTotal > 0) {
+          return numeratorTotal / denominator;
+        }
+      }
+    }
+
+    return fallbackLength;
+  }
+
+  //
+  // Build meter timelines only from this tune.
+  //
+  // Header M: is global. Body M: or [M:...] is associated with the currently
+  // active V: voice. A tune with no V: fields uses the default voice timeline.
+  //
+  var initialMeterLength = defaultExpectedLength;
+  var meterEventsByVoice = new Map();
+
+  function AddMeterEvent(voiceID, sourceOffset, meterLength) {
+
+    var key = voiceID || DEFAULT_VOICE_KEY;
+
+    if (!meterEventsByVoice.has(key)) {
+      meterEventsByVoice.set(key, []);
+    }
+
+    meterEventsByVoice.get(key).push({
+      offset: sourceOffset,
+      length: meterLength
+    });
+  }
+
+  function BuildTuneMeterTimeline() {
+
+    if (!tuneSourceText) return;
+
+    var currentVoice = null;
+    var headerEnded = false;
+
+    // Include X: so state is unambiguously reset at the start of this tune.
+    var tokenPattern =
+      /(^|\n)\s*([XKVM]):\s*([^\r\n]*)|\[V:\s*([^\s\]]+)[^\]]*\]|\[M:\s*([^\]]+)\]/gm;
+
+    var match;
+
+    while ((match = tokenPattern.exec(tuneSourceText)) !== null) {
+
+      var sourceOffset = tuneSourceStart + match.index;
+
+      if (match[2]) {
+
+        var field = match[2].toUpperCase();
+        var value = (match[3] || "").trim();
+
+        if (field === "X") {
+          currentVoice = null;
+          headerEnded = false;
+          continue;
+        }
+
+        if (field === "K") {
+          headerEnded = true;
+          continue;
+        }
+
+        if (field === "V") {
+          currentVoice = value.split(/\s+/)[0] || null;
+          continue;
+        }
+
+        if (field === "M") {
+
+          var meterLength =
+            ParseMeterTextForHighlight(value, initialMeterLength);
+
+          if (!headerEnded) {
+            initialMeterLength = meterLength;
+          }
+          else {
+            AddMeterEvent(
+              currentVoice || DEFAULT_VOICE_KEY,
+              sourceOffset,
+              meterLength
+            );
+          }
+
+          continue;
+        }
+      }
+
+      if (match[4]) {
+        currentVoice = match[4];
+        continue;
+      }
+
+      if (match[5]) {
+
+        var inlineMeterLength =
+          ParseMeterTextForHighlight(match[5], initialMeterLength);
+
+        AddMeterEvent(
+          currentVoice || DEFAULT_VOICE_KEY,
+          sourceOffset,
+          inlineMeterLength
+        );
+      }
+    }
+
+    meterEventsByVoice.forEach(function(events) {
+      events.sort(function(a, b) {
+        return a.offset - b.offset;
+      });
+    });
+  }
+
+  BuildTuneMeterTimeline();
+
+  function GetMeterLengthAtOffset(offset, voiceID, fallbackLength) {
+
+    var activeLength = initialMeterLength || fallbackLength;
+
+    if (typeof offset !== "number" || offset < 0) {
+      return activeLength;
+    }
+
+    var key = voiceID || DEFAULT_VOICE_KEY;
+    var events = meterEventsByVoice.get(key);
+
+    // If a named voice has no voice-specific changes, also allow global/default
+    // body changes. This supports ABC that changes meter outside a V: block.
+    var defaultEvents =
+      key !== DEFAULT_VOICE_KEY
+        ? meterEventsByVoice.get(DEFAULT_VOICE_KEY)
+        : null;
+
+    function ApplyEvents(eventList) {
+      if (!eventList) return;
+
+      for (var eventIndex = 0; eventIndex < eventList.length; ++eventIndex) {
+        if (eventList[eventIndex].offset > offset) break;
+        activeLength = eventList[eventIndex].length;
+      }
+    }
+
+    ApplyEvents(defaultEvents);
+    ApplyEvents(events);
+
+    return activeLength;
+  }
 
   function GetVoiceIDAtOffset(offset) {
-    if (!tuneABC || typeof offset !== "number" || offset < 0) return null;
 
-    var before = tuneABC.substring(0, Math.min(offset + 1, tuneABC.length));
+    if (!tuneSourceText ||
+        typeof offset !== "number" ||
+        offset < tuneSourceStart) {
+      return null;
+    }
+
+    var localOffset =
+      Math.min(
+        Math.max(0, offset - tuneSourceStart + 1),
+        tuneSourceText.length
+      );
+
+    var before = tuneSourceText.substring(0, localOffset);
     var voiceID = null;
     var match;
 
-    // Match both normal V: fields and inline [V:id] fields. The last match
-    // before the rendered element identifies the voice that owns it.
-    var voicePattern = /(?:^|\n)\s*V:\s*([^\s\]]+)|\[V:\s*([^\s\]]+)[^\]]*\]/gm;
+    var voicePattern =
+      /(?:^|\n)\s*V:\s*([^\s\]]+)|\[V:\s*([^\s\]]+)[^\]]*\]/gm;
 
     while ((match = voicePattern.exec(before)) !== null) {
       voiceID = match[1] || match[2] || voiceID;
@@ -14387,19 +14672,21 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
   }
 
   function GetRenderedVoiceID(voice, staffIndex, voiceIndex) {
+
     if (voice && voice.length) {
       for (var elementIndex = 0; elementIndex < voice.length; ++elementIndex) {
         var element = voice[elementIndex];
 
-        if (element && typeof element.startChar === "number" && element.startChar >= 0) {
+        if (element &&
+            typeof element.startChar === "number" &&
+            element.startChar >= 0) {
+
           var voiceID = GetVoiceIDAtOffset(element.startChar);
           if (voiceID) return voiceID;
         }
       }
     }
 
-    // This fallback should only be needed for unusual abcjs structures where
-    // no rendered element exposes a source character offset.
     return String(voiceIndex + 1);
   }
 
@@ -14410,6 +14697,7 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     voiceID,
     measuredElements
   ) {
+
     var key = lineIndex + ":" + renderedMeasureNumber;
 
     if (!incompleteMap.has(key)) {
@@ -14444,7 +14732,6 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     lineIndex,
     staffIndex,
     voiceIndex,
-    initialExpectedLength,
     lineMeasureOffset
   ) {
 
@@ -14453,12 +14740,11 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
     if (!voice || !voice.length) {
       return {
-        expectedLength: initialExpectedLength,
         measureCount: 0
       };
     }
 
-    var expectedLength = initialExpectedLength;
+    var expectedLength = initialMeterLength;
     var measureNumber = 0;
     var duration = 0;
     var hasTimedElement = false;
@@ -14467,20 +14753,37 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     var measuredElements = [];
 
     for (var elementIndex = 0; elementIndex < voice.length; ++elementIndex) {
+
       var element = voice[elementIndex];
 
       if (!element) continue;
 
+      // Inline/header meter information is taken from the source timeline,
+      // keyed by the exact source location of the rendered element.
+      if (typeof element.startChar === "number" && element.startChar >= 0) {
+        expectedLength = GetMeterLengthAtOffset(
+          element.startChar,
+          voiceID,
+          expectedLength
+        );
+      }
+
+      // Meter elements themselves consume no duration. Their source positions
+      // are already represented in the source meter timeline.
       if (element.el_type === "meter") {
-        expectedLength = GetMeterLengthForIncompleteMeasureHighlight(element, expectedLength);
         continue;
       }
 
       if (element.el_type === "bar") {
-        // Ignore a bar line before this voice has begun. Once the voice is
-        // active, each bar closes the current rendered measure. Empty interior
-        // measures are also treated as incomplete rather than silently skipped.
+
+        // abcjs may insert invisible synchronization bars around inline meter
+        // changes. They are layout artifacts, not written musical bar lines.
+        if (element.type === "bar_invisible") {
+          continue;
+        }
+
         if (hasTimedElement) {
+
           if (Math.abs(duration - expectedLength) > tolerance) {
             markIncomplete(
               lineIndex,
@@ -14495,6 +14798,7 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
           measureNumber++;
         }
         else if (hasStartedMusic) {
+
           markIncomplete(
             lineIndex,
             measureNumber,
@@ -14502,6 +14806,7 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
             voiceID,
             measuredElements
           );
+
           measureNumber++;
         }
 
@@ -14512,16 +14817,12 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
         continue;
       }
 
-      // abcjs keeps a tuplet note's written duration in element.duration and
-      // supplies the performed-duration adjustment separately.
       if (element.startTriplet &&
           typeof element.tripletMultiplier === "number" &&
           element.tripletMultiplier > 0) {
         tupletMultiplier = element.tripletMultiplier;
       }
 
-      // Ignore grace-only spacer elements created for {abc} immediately before
-      // a bar line. Grace ornaments do not consume measure time.
       var isGraceOnlySpacer = !!(
         element.gracenotes &&
         element.rest &&
@@ -14529,7 +14830,9 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
       );
 
       if (!isGraceOnlySpacer &&
-          typeof element.duration === "number" && element.duration > 0) {
+          typeof element.duration === "number" &&
+          element.duration > 0) {
+
         duration += element.duration * tupletMultiplier;
         hasTimedElement = true;
         hasStartedMusic = true;
@@ -14541,8 +14844,9 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
       }
     }
 
-    // A final measure is not required to have a closing bar line.
-    if (hasTimedElement && Math.abs(duration - expectedLength) > tolerance) {
+    if (hasTimedElement &&
+        Math.abs(duration - expectedLength) > tolerance) {
+
       markIncomplete(
         lineIndex,
         measureNumber,
@@ -14553,7 +14857,6 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     }
 
     return {
-      expectedLength: expectedLength,
       measureCount: measureNumber + (hasTimedElement ? 1 : 0)
     };
   }
@@ -14569,38 +14872,26 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     var lineMeasureCount = 0;
 
     for (var staffIndex = 0; staffIndex < line.staff.length; ++staffIndex) {
+
       var staff = line.staff[staffIndex];
 
-      if (!staff) continue;
+      if (!staff || !staff.voices || !staff.voices.length) continue;
 
-      var staffExpectedLength = expectedLengthByStaff[staffIndex] || defaultExpectedLength;
+      for (var voiceIndex = 0;
+           voiceIndex < staff.voices.length;
+           ++voiceIndex) {
 
-      if (staff.meter) {
-        staffExpectedLength = GetMeterLengthForIncompleteMeasureHighlight(
-          staff.meter,
-          staffExpectedLength
+        var voiceResult = analyzeVoice(
+          staff.voices[voiceIndex],
+          lineIndex,
+          staffIndex,
+          voiceIndex,
+          lineMeasureOffset
         );
+
+        lineMeasureCount =
+          Math.max(lineMeasureCount, voiceResult.measureCount);
       }
-
-      if (staff.voices && staff.voices.length) {
-        // Analyze every voice separately. This supports voices on separate
-        // staves as well as multiple voices merged onto one staff by %%score.
-        for (var voiceIndex = 0; voiceIndex < staff.voices.length; ++voiceIndex) {
-          var voiceResult = analyzeVoice(
-            staff.voices[voiceIndex],
-            lineIndex,
-            staffIndex,
-            voiceIndex,
-            staffExpectedLength,
-            lineMeasureOffset
-          );
-
-          staffExpectedLength = voiceResult.expectedLength;
-          lineMeasureCount = Math.max(lineMeasureCount, voiceResult.measureCount);
-        }
-      }
-
-      expectedLengthByStaff[staffIndex] = staffExpectedLength;
     }
 
     lineMeasureOffset += lineMeasureCount;
@@ -14611,11 +14902,16 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
   results.forEach(function(entry) {
     entry.isMultiVoice = isMultiVoice;
+
     entry.triggeringVoiceIDs.sort(function(a, b) {
-      return String(a).localeCompare(String(b), undefined, {
-        numeric: true,
-        sensitivity: "base"
-      });
+      return String(a).localeCompare(
+        String(b),
+        undefined,
+        {
+          numeric: true,
+          sensitivity: "base"
+        }
+      );
     });
   });
 
