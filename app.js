@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3313_080726_0830";
+var gVersionNumber = "3314_080726_2130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14738,7 +14738,8 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
         tuneMeasure: tuneMeasureNumber,
         triggeringVoiceIDs: [],
         measuredElements: [],
-        voiceMeasurements: {}
+        voiceMeasurements: {},
+        voiceSourceRanges: {}
       });
     }
 
@@ -14759,11 +14760,33 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
     };
 
     if (measuredElements && measuredElements.length) {
+      var sourceStart = Infinity;
+      var sourceEnd = -Infinity;
+
       measuredElements.forEach(function(measuredElement) {
         if (entry.measuredElements.indexOf(measuredElement) === -1) {
           entry.measuredElements.push(measuredElement);
         }
+
+        if (typeof measuredElement.startChar === "number" &&
+            measuredElement.startChar >= 0) {
+          sourceStart = Math.min(sourceStart, measuredElement.startChar);
+        }
+
+        if (typeof measuredElement.endChar === "number" &&
+            measuredElement.endChar >= 0) {
+          sourceEnd = Math.max(sourceEnd, measuredElement.endChar);
+        }
       });
+
+      if (isFinite(sourceStart) &&
+          isFinite(sourceEnd) &&
+          sourceEnd > sourceStart) {
+        entry.voiceSourceRanges[voiceID] = {
+          start: sourceStart,
+          end: sourceEnd
+        };
+      }
     }
 
     renderedVoiceIDs.add(voiceID);
@@ -14978,6 +15001,140 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, renderedABC) {
 
   var svgNS = "http://www.w3.org/2000/svg";
+
+  // The editor-side hover highlight is CodeMirror-only. Keep its markers on
+  // the CodeMirror instance so they can be cleared across re-renders.
+  function ClearIncompleteMeasureEditorHoverMarks() {
+    if (typeof gTheCM === "undefined" || !gTheCM) return;
+
+    var marks = gTheCM._incompleteMeasureHoverMarks;
+
+    if (marks && marks.length) {
+      marks.forEach(function(mark) {
+        try {
+          if (mark && typeof mark.clear === "function") mark.clear();
+        }
+        catch (err) {
+          // Ignore a marker that CodeMirror has already discarded.
+        }
+      });
+    }
+
+    gTheCM._incompleteMeasureHoverMarks = [];
+    gTheCM._incompleteMeasureHoverRegionKey = null;
+  }
+
+  function EnsureIncompleteMeasureEditorHoverStyle() {
+    if (document.getElementById("abc-incomplete-measure-editor-hover-style")) {
+      return;
+    }
+
+    var style = document.createElement("style");
+    style.id = "abc-incomplete-measure-editor-hover-style";
+    style.textContent =
+      ".abc-incomplete-measure-editor-hover {" +
+      "background-color:#FFF4CC !important;" +
+      "}";
+    document.head.appendChild(style);
+  }
+
+  // Convert an abcjs source offset from the exact string supplied to
+  // ABCJS.renderAbc() back to an absolute offset in the ABC editor.
+  //
+  // When all tunes are rendered in Highlighting mode, renderedABC is normally
+  // the editor text itself. When one tune is rendered, the renderer may have
+  // prepended the file header to that tune, so account for that prefix.
+  function RenderedOffsetToEditorOffset(renderedOffset) {
+    if (typeof renderedOffset !== "number" || renderedOffset < 0) {
+      return null;
+    }
+
+    if (!gEnableSyntax ||
+        typeof gTheCM === "undefined" ||
+        !gTheCM ||
+        typeof gTheCM.getValue !== "function") {
+      return null;
+    }
+
+    var editorText = gTheCM.getValue();
+
+    if (renderedABC === editorText) {
+      return Math.min(renderedOffset, editorText.length);
+    }
+
+    var fileHeader = GetABCFileHeader() || "";
+    var tuneEditorOffset = findTuneOffsetByIndex(startTune);
+
+    if (fileHeader &&
+        renderedABC &&
+        renderedABC.indexOf(fileHeader) === 0) {
+      if (renderedOffset < fileHeader.length) {
+        return Math.min(renderedOffset, editorText.length);
+      }
+
+      return Math.min(
+        tuneEditorOffset + (renderedOffset - fileHeader.length),
+        editorText.length
+      );
+    }
+
+    // Fallback for a rendered single tune with no file-header prefix.
+    return Math.min(
+      tuneEditorOffset + renderedOffset,
+      editorText.length
+    );
+  }
+
+  function HighlightIncompleteMeasureInCodeMirror(sourceRanges, regionKey) {
+    if (!gEnableSyntax ||
+        typeof gTheCM === "undefined" ||
+        !gTheCM ||
+        typeof gTheCM.markText !== "function" ||
+        typeof gTheCM.posFromIndex !== "function") {
+      return;
+    }
+
+    if (gTheCM._incompleteMeasureHoverRegionKey === regionKey) {
+      return;
+    }
+
+    ClearIncompleteMeasureEditorHoverMarks();
+
+    if (!sourceRanges || !sourceRanges.length) return;
+
+    EnsureIncompleteMeasureEditorHoverStyle();
+
+    var marks = [];
+
+    sourceRanges.forEach(function(range) {
+      if (!range) return;
+
+      var editorStart = RenderedOffsetToEditorOffset(range.start);
+      var editorEnd = RenderedOffsetToEditorOffset(range.end);
+
+      if (editorStart === null ||
+          editorEnd === null ||
+          editorEnd <= editorStart) {
+        return;
+      }
+
+      var mark = gTheCM.markText(
+        gTheCM.posFromIndex(editorStart),
+        gTheCM.posFromIndex(editorEnd),
+        {
+          className: "abc-incomplete-measure-editor-hover"
+        }
+      );
+
+      if (mark) marks.push(mark);
+    });
+
+    gTheCM._incompleteMeasureHoverMarks = marks;
+    gTheCM._incompleteMeasureHoverRegionKey =
+      marks.length ? regionKey : null;
+  }
+
+  ClearIncompleteMeasureEditorHoverMarks();
 
   // Remove every previously created incomplete-measure tooltip from the page.
   // Tooltips are appended directly to document.body, so one belonging to a
@@ -15313,9 +15470,27 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
             FormatMeasureBeatCount(singleVoiceMeasurement.measuredBeats);
         }
 
+        var editorSourceRanges = [];
+
+        incomplete[i].triggeringVoiceIDs.forEach(function(voiceID) {
+          var sourceRange = incomplete[i].voiceSourceRanges[voiceID];
+
+          if (sourceRange) {
+            editorSourceRanges.push({
+              start: sourceRange.start,
+              end: sourceRange.end
+            });
+          }
+        });
+
         tooltipRegions.push({
           rect: rect,
-          text: tooltipText
+          text: tooltipText,
+          editorSourceRanges: editorSourceRanges,
+          regionKey:
+            visualIndex + ":" +
+            incomplete[i].line + ":" +
+            incomplete[i].measure
         });
 
         svg.insertBefore(rect, svg.firstChild);
@@ -15355,8 +15530,14 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
 
         if (!matchedRegion) {
           tooltip.style.display = "none";
+          ClearIncompleteMeasureEditorHoverMarks();
           return;
         }
+
+        HighlightIncompleteMeasureInCodeMirror(
+          matchedRegion.editorSourceRanges,
+          matchedRegion.regionKey
+        );
 
         tooltip.textContent = matchedRegion.text;
 
@@ -15406,6 +15587,7 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
 
       renderDiv._incompleteMeasureMouseLeaveHandler = function() {
         tooltip.style.display = "none";
+        ClearIncompleteMeasureEditorHoverMarks();
       };
 
       renderDiv.addEventListener("mousemove", renderDiv._incompleteMeasureMouseMoveHandler);
@@ -29694,13 +29876,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_6aug2026;
+        var updatePresented = localStorage.sawUpdate_7aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_6aug2026 = true;
+          localStorage.sawUpdate_7aug2026 = true;
 
         }
 
@@ -58404,19 +58586,13 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Measure length validation in Highlighting mode (Desktop browsers only)</strong></p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Measure length validation in Highlighting mode</strong></p>';
   modal_msg += '<p style="font-size:12pt;">Measures with an incorrect number of beats, either too many or too few, are now highlighted in yellow.</p>';
-  modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number. For multi-voice tunes, the tooltip also shows the V: voice tag or tags that triggered the highlight.</p>';
+  modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number as well as the expected and measured number of beats in the measure. For multi-voice tunes, the tooltip also shows the V: voice tag or tags that triggered the highlight.</p>';
+  modal_msg += '<p style="font-size:12pt;">Also on hover, if ABC syntax highlighting is enabled, the ABC text for the measure is also highlighted in yellow.</p>';
   modal_msg += '<p style="font-size:12pt;">You can disable this feature from a new setting on the <strong>Editor</strong> tab on the <strong>Settings</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">You can also temporarily disable the measure highlighting by shift-clicking the <strong>Highlighting</strong> button.</p>';
   modal_msg += '<p style="font-size:12pt;">This evaluates <strong>all</strong> measures in the tune, so pickup notes and partial measures related to pickup notes may be correct, but still flagged as partial measures.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Bypassing the unsaved work warning when clicking Open</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">If you wish to bypass the warning about unsaved work when opening an ABC file after editing some ABC, hold down the <strong>Shift</strong> key when clicking the <strong>Open</strong> button.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -65345,13 +65521,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_6aug2026;
+    var updatePresented = localStorage.sawUpdate_7aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_6aug2026 = true;
+      localStorage.sawUpdate_7aug2026 = true;
 
     }
 
