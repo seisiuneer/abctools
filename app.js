@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3314_080726_2130";
+var gVersionNumber = "3315_080826_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14901,13 +14901,15 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
         tupletMultiplier = element.tripletMultiplier;
       }
 
-      var isGraceOnlySpacer = !!(
-        element.gracenotes &&
+      // ABC spacing elements such as y/yy are layout-only and must not
+      // contribute any musical duration to the measure. Grace-note spacer
+      // elements use the same abcjs rest.type and are excluded here as well.
+      var isSpacer = !!(
         element.rest &&
         element.rest.type === "spacer"
       );
 
-      if (!isGraceOnlySpacer &&
+      if (!isSpacer &&
           typeof element.duration === "number" &&
           element.duration > 0) {
 
@@ -58580,7 +58582,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 7 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 8 August 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
@@ -58590,9 +58592,9 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">Measures with an incorrect number of beats, either too many or too few, are now highlighted in yellow.</p>';
   modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number as well as the expected and measured number of beats in the measure. For multi-voice tunes, the tooltip also shows the V: voice tag or tags that triggered the highlight.</p>';
   modal_msg += '<p style="font-size:12pt;">Also on hover, if ABC syntax highlighting is enabled, the ABC text for the measure is also highlighted in yellow.</p>';
+  modal_msg += '<p style="font-size:12pt;">This evaluates <strong>all</strong> measures in the tune, so pickup measures and partial measures associated with repeat endings may be musically correct but still highlighted. The measure highlighting is informational and does not necessarily indicate an error in the ABC.</p>';
   modal_msg += '<p style="font-size:12pt;">You can disable this feature from a new setting on the <strong>Editor</strong> tab on the <strong>Settings</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">You can also temporarily disable the measure highlighting by shift-clicking the <strong>Highlighting</strong> button.</p>';
-  modal_msg += '<p style="font-size:12pt;">This evaluates <strong>all</strong> measures in the tune, so pickup notes and partial measures related to pickup notes may be correct, but still flagged as partial measures.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
