@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3315_080826_1030";
+var gVersionNumber = "3316_080826_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14634,6 +14634,276 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 
   BuildTuneMeterTimeline();
 
+  //
+  // Build default note-length (L:) timelines for the same reason as the meter
+  // timelines above. This is used only to recognize abcjs's special
+  // full-measure-rest form from the source ABC. Ordinary note/rest timing still
+  // comes from abcjs element.duration.
+  //
+  // abcjs treats an ordinary z rest whose written duration is exactly one whole
+  // note as a full-measure rest when the meter length is no more than one whole
+  // note. Around a voice-specific inline meter change, abcjs can attach the
+  // preceding meter's duration to that rest. Knowing the active L: lets us
+  // recognize that narrow source form without trusting rest.type === "whole",
+  // which can also be assigned later during engraving to shorter rests.
+  //
+  var initialDefaultNoteLength =
+    initialMeterInfo.length < 0.75 ? (1 / 16) : (1 / 8);
+  var defaultLengthEventsByVoice = new Map();
+
+  function ParseDefaultNoteLengthForHighlight(lengthText, fallbackLength) {
+
+    if (!lengthText) return fallbackLength;
+
+    var text = String(lengthText).trim();
+    var slash = text.indexOf("/");
+
+    if (slash !== -1) {
+      var numerator = parseFloat(text.substring(0, slash).trim());
+      var denominator = parseFloat(text.substring(slash + 1).trim());
+
+      if (isFinite(numerator) &&
+          numerator > 0 &&
+          isFinite(denominator) &&
+          denominator > 0) {
+        return numerator / denominator;
+      }
+    }
+
+    return fallbackLength;
+  }
+
+  function AddDefaultLengthEvent(voiceID, sourceOffset, noteLength) {
+
+    var key = voiceID || DEFAULT_VOICE_KEY;
+
+    if (!defaultLengthEventsByVoice.has(key)) {
+      defaultLengthEventsByVoice.set(key, []);
+    }
+
+    defaultLengthEventsByVoice.get(key).push({
+      offset: sourceOffset,
+      length: noteLength
+    });
+  }
+
+  function BuildTuneDefaultLengthTimeline() {
+
+    if (!tuneSourceText) return;
+
+    var currentVoice = null;
+    var headerEnded = false;
+
+    var tokenPattern =
+      /(^|\n)\s*([XKVL]):\s*([^\r\n]*)|\[V:\s*([^\s\]]+)[^\]]*\]|\[L:\s*([^\]]+)\]/gm;
+
+    var match;
+
+    while ((match = tokenPattern.exec(tuneSourceText)) !== null) {
+
+      var sourceOffset = tuneSourceStart + match.index;
+
+      if (match[2]) {
+
+        var field = match[2].toUpperCase();
+        var value = (match[3] || "").trim();
+
+        if (field === "X") {
+          currentVoice = null;
+          headerEnded = false;
+          continue;
+        }
+
+        if (field === "K") {
+          headerEnded = true;
+          continue;
+        }
+
+        if (field === "V") {
+          currentVoice = value.split(/\s+/)[0] || null;
+          continue;
+        }
+
+        if (field === "L") {
+
+          var noteLength =
+            ParseDefaultNoteLengthForHighlight(
+              value,
+              initialDefaultNoteLength
+            );
+
+          if (!headerEnded) {
+            initialDefaultNoteLength = noteLength;
+          }
+          else {
+            AddDefaultLengthEvent(
+              currentVoice || DEFAULT_VOICE_KEY,
+              sourceOffset,
+              noteLength
+            );
+          }
+
+          continue;
+        }
+      }
+
+      if (match[4]) {
+        currentVoice = match[4];
+        continue;
+      }
+
+      if (match[5]) {
+
+        var inlineNoteLength =
+          ParseDefaultNoteLengthForHighlight(
+            match[5],
+            initialDefaultNoteLength
+          );
+
+        AddDefaultLengthEvent(
+          currentVoice || DEFAULT_VOICE_KEY,
+          sourceOffset,
+          inlineNoteLength
+        );
+      }
+    }
+
+    defaultLengthEventsByVoice.forEach(function(events) {
+      events.sort(function(a, b) {
+        return a.offset - b.offset;
+      });
+    });
+  }
+
+  BuildTuneDefaultLengthTimeline();
+
+  function GetDefaultNoteLengthAtOffset(offset, voiceID) {
+
+    var activeLength = initialDefaultNoteLength;
+
+    if (typeof offset !== "number" || offset < 0) {
+      return activeLength;
+    }
+
+    var key = voiceID || DEFAULT_VOICE_KEY;
+    var events = defaultLengthEventsByVoice.get(key);
+
+    var defaultEvents =
+      key !== DEFAULT_VOICE_KEY
+        ? defaultLengthEventsByVoice.get(DEFAULT_VOICE_KEY)
+        : null;
+
+    function ApplyEvents(eventList) {
+      if (!eventList) return;
+
+      for (var eventIndex = 0; eventIndex < eventList.length; ++eventIndex) {
+        if (eventList[eventIndex].offset > offset) break;
+        activeLength = eventList[eventIndex].length;
+      }
+    }
+
+    ApplyEvents(defaultEvents);
+    ApplyEvents(events);
+
+    return activeLength;
+  }
+
+  function GetWrittenRestDurationForHighlight(element, voiceID) {
+
+    if (!element ||
+        !element.rest ||
+        typeof element.startChar !== "number" ||
+        element.startChar < 0 ||
+        typeof element.endChar !== "number" ||
+        element.endChar <= element.startChar ||
+        !tuneABC) {
+      return null;
+    }
+
+    var sourceText =
+      tuneABC.substring(element.startChar, element.endChar);
+
+    // Only inspect the actual z token belonging to this abcjs rest element.
+    // abcjs startChar/endChar can include quoted annotations and decorations
+    // that precede the rest, and those strings can themselves contain a "z".
+    // Ignore those regions so a label such as "zoo" or !zzz! cannot be
+    // mistaken for the rest token.
+    var restMatch = null;
+    var inQuote = false;
+    var decorationEnd = null;
+
+    for (var sourceIndex = 0;
+         sourceIndex < sourceText.length;
+         ++sourceIndex) {
+
+      var sourceChar = sourceText[sourceIndex];
+
+      if (inQuote) {
+        if (sourceChar === '"' &&
+            (sourceIndex === 0 || sourceText[sourceIndex - 1] !== "\\")) {
+          inQuote = false;
+        }
+        continue;
+      }
+
+      if (decorationEnd) {
+        if (sourceChar === decorationEnd) {
+          decorationEnd = null;
+        }
+        continue;
+      }
+
+      if (sourceChar === '"') {
+        inQuote = true;
+        continue;
+      }
+
+      if (sourceChar === "!" || sourceChar === "+") {
+        decorationEnd = sourceChar;
+        continue;
+      }
+
+      if (sourceChar === "z") {
+        restMatch =
+          sourceText.substring(sourceIndex).match(
+            /^z(\d+)?(\/+)?(\d+)?/
+          );
+        break;
+      }
+    }
+
+    if (!restMatch) return null;
+
+    var multiplier = 1;
+    var numeratorText = restMatch[1];
+    var slashText = restMatch[2] || "";
+    var denominatorText = restMatch[3];
+
+    if (numeratorText) {
+      multiplier = parseFloat(numeratorText);
+    }
+
+    if (slashText.length) {
+      if (denominatorText) {
+        multiplier /= parseFloat(denominatorText);
+      }
+      else {
+        multiplier /= Math.pow(2, slashText.length);
+      }
+    }
+
+    if (!isFinite(multiplier) || multiplier <= 0) return null;
+
+    var defaultNoteLength =
+      GetDefaultNoteLengthAtOffset(element.startChar, voiceID);
+
+    if (!isFinite(defaultNoteLength) || defaultNoteLength <= 0) {
+      return null;
+    }
+
+    return defaultNoteLength * multiplier;
+  }
+
   function GetMeterInfoAtOffset(offset, voiceID, fallbackInfo) {
 
     var activeInfo = {
@@ -14913,7 +15183,34 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
           typeof element.duration === "number" &&
           element.duration > 0) {
 
-        duration += element.duration * tupletMultiplier;
+        var measuredElementDuration = element.duration;
+
+        // Do NOT use rest.type === "whole" by itself to determine duration.
+        // abcjs can assign that type later during engraving to any rest that
+        // fills the measure, including an ordinary z4 in a 4/4 measure. Its
+        // numeric element.duration is still the correct duration in that case.
+        //
+        // There is one narrow abcjs parser edge case to repair: an ordinary z
+        // rest whose WRITTEN duration is exactly one whole note is treated by
+        // abcjs as a full-measure rest when the meter length is <= 1. Around an
+        // inline meter change, the parsed numeric duration can retain the
+        // preceding meter's measure length. Recompute only that source form
+        // using the current voice-specific meter.
+        if (element.rest &&
+            element.rest.type !== "invisible") {
+
+          var writtenRestDuration =
+            GetWrittenRestDurationForHighlight(element, voiceID);
+
+          if (isFinite(writtenRestDuration) &&
+              Math.abs(writtenRestDuration - 1) <= tolerance &&
+              expectedLength <= 1 + tolerance &&
+              Math.abs(element.duration - expectedLength) > tolerance) {
+            measuredElementDuration = expectedLength;
+          }
+        }
+
+        duration += measuredElementDuration * tupletMultiplier;
         hasTimedElement = true;
         hasStartedMusic = true;
         measuredElements.push(element);
