@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3316_080826_1500";
+var gVersionNumber = "3317_081226_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -30175,13 +30175,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_7aug2026;
+        var updatePresented = localStorage.sawUpdate_12aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_7aug2026 = true;
+          localStorage.sawUpdate_12aug2026 = true;
 
         }
 
@@ -58885,11 +58885,16 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Open Current Tune in New Tab</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Selects all of the current tune and then opens it along with any required ABC file header annotations in a new browser tab.</p>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Measure length validation in Highlighting mode</strong></p>';
   modal_msg += '<p style="font-size:12pt;">Measures with an incorrect number of beats, either too many or too few, are now highlighted in yellow.</p>';
-  modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number as well as the expected and measured number of beats in the measure. For multi-voice tunes, the tooltip also shows the V: voice tag or tags that triggered the highlight.</p>';
-  modal_msg += '<p style="font-size:12pt;">Also on hover, if ABC syntax highlighting is enabled, the ABC text for the measure is also highlighted in yellow.</p>';
-  modal_msg += '<p style="font-size:12pt;">This evaluates <strong>all</strong> measures in the tune, so pickup measures and partial measures associated with repeat endings may be musically correct but still highlighted. The measure highlighting is informational and does not necessarily indicate an error in the ABC.</p>';
+  modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number as well as the expected and measured number of beats in the measure. If ABC syntax highlighting is enabled, the ABC text for the measure is also highlighted in yellow.</p>';
   modal_msg += '<p style="font-size:12pt;">You can disable this feature from a new setting on the <strong>Editor</strong> tab on the <strong>Settings</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">You can also temporarily disable the measure highlighting by shift-clicking the <strong>Highlighting</strong> button.</p>';
   modal_msg += '</div>';
@@ -63339,11 +63344,17 @@ function SetupContextMenu(showUpdateItem) {
       if (isPureDesktopBrowser()) {
 
         items = [{}, {
+          name: 'Open Current Tune in New Tab',
+          fn: function(target) {
+            OpenCurrentTuneInNewTab();
+          }
+        }, 
+        {
           name: 'Copy All Tunes',
           fn: function(target) {
             CopyABC();
           }
-        }, {}, {
+        },{}, {
           name: 'Reorder Tunes',
           fn: function(target) {
             ChangeTuneOrder();
@@ -63413,11 +63424,6 @@ function SetupContextMenu(showUpdateItem) {
               AdvancedSettings();
             }
           }, {}, {
-            name: 'Tuning Tools',
-            fn: function(target) {
-              TuningTools();
-            }
-          }, {
             name: 'Other ABC Tools',
             fn: function(target) {
               OtherABCTools();
@@ -63533,7 +63539,12 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             BuildTuneSet();
           }
-        }, {}, 
+        }, {}, {
+          name: 'Open Current Tune in New Tab',
+          fn: function(target) {
+            OpenCurrentTuneInNewTab();
+          }
+        }, 
         {
           name: 'Copy All Tunes',
           fn: function(target) {
@@ -63595,11 +63606,6 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
-          name: 'Tuning Tools',
-          fn: function(target) {
-            TuningTools();
-          }
-        }, {
           name: 'Other ABC Tools',
           fn: function(target) {
             OtherABCTools();
@@ -63640,7 +63646,12 @@ function SetupContextMenu(showUpdateItem) {
 
       if (isPureDesktopBrowser()) {
 
-        items = [{},{
+        items = [{}, {
+          name: 'Open Current Tune in New Tab',
+          fn: function(target) {
+            OpenCurrentTuneInNewTab();
+          }
+        },{
           name: 'Copy All Tunes',
           fn: function(target) {
             CopyABC();
@@ -63715,11 +63726,6 @@ function SetupContextMenu(showUpdateItem) {
               AdvancedSettings();
             }
           }, {}, {
-            name: 'Tuning Tools',
-            fn: function(target) {
-              TuningTools();
-            }
-          }, {
             name: 'Other ABC Tools',
             fn: function(target) {
               OtherABCTools();
@@ -63820,22 +63826,27 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             FindAndReplace();
           }
-        },{},{
+        },{}, {
           name: 'Jump to Tune',
           fn: function(target) {
             JumpToTune();
           }
-        }, {}, {
+        },{}, {
           name: 'Create Tune Set',
           fn: function(target) {
             BuildTuneSet();
           }
         }, {}, {
+          name: 'Open Current Tune in New Tab',
+          fn: function(target) {
+            OpenCurrentTuneInNewTab();
+          }
+        }, {
           name: 'Copy All Tunes',
           fn: function(target) {
             CopyABC();
           }
-        }, {},{
+        }, {}, {
           name: 'Reorder Tunes',
           fn: function(target) {
             ChangeTuneOrderMobile();
@@ -63891,11 +63902,6 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
-          name: 'Tuning Tools',
-          fn: function(target) {
-            TuningTools();
-          }
-        }, {
           name: 'Other ABC Tools',
           fn: function(target) {
             OtherABCTools();
@@ -63937,7 +63943,7 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             FindAndReplace();
           }
-        },{},{
+        },{}, {
         name: 'Jump to Tune',
         fn: function(target) {
           JumpToTune();
@@ -63948,6 +63954,11 @@ function SetupContextMenu(showUpdateItem) {
           BuildTuneSet();
         }
       }, {}, {
+          name: 'Open Current Tune in New Tab',
+          fn: function(target) {
+            OpenCurrentTuneInNewTab();
+          }
+      },{
         name: 'Copy All Tunes',
         fn: function(target) {
           CopyABC();
@@ -64003,11 +64014,6 @@ function SetupContextMenu(showUpdateItem) {
           AdvancedSettings();
         }
       }, {}, {
-        name: 'Tuning Tools',
-        fn: function(target) {
-          TuningTools();
-        }
-      }, {
         name: 'Other ABC Tools',
         fn: function(target) {
           OtherABCTools();
@@ -64063,6 +64069,12 @@ function SetupContextMenu(showUpdateItem) {
           BuildTuneSet();
         }
       }, {}, {
+          name: 'Open Current Tune in New Tab',
+          fn: function(target) {
+            OpenCurrentTuneInNewTab();
+          }
+        },
+      {
         name: 'Copy All Tunes',
         fn: function(target) {
           CopyABC();
@@ -64118,11 +64130,6 @@ function SetupContextMenu(showUpdateItem) {
           AdvancedSettings();
         }
       },  {}, {
-        name: 'Tuning Tools',
-        fn: function(target) {
-            TuningTools();
-          }
-        }, {
         name: 'Other ABC Tools',
         fn: function(target) {
           OtherABCTools();
@@ -65820,13 +65827,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_7aug2026;
+    var updatePresented = localStorage.sawUpdate_12aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_7aug2026 = true;
+      localStorage.sawUpdate_12aug2026 = true;
 
     }
 
@@ -68038,92 +68045,224 @@ function openInExternalTool(theABC, isFromPlayer){
 
 }
 
-function TuningTools(){
+//
+// Select the complete tune containing the current ABC cursor/selection
+// and open it in a new browser tab.
+//
+// Includes:
+//   - Any ABC file header before the first X:
+//   - The complete current tune
+//   - The current notation/tablature setting
+//   - &editor=1
+//
+function OpenCurrentTuneInNewTab() {
 
-  // Keep track of dialogs
-  sendGoogleAnalytics("dialog", "TuningTools");
+  //
+  // Show an error if there is no tune available to open.
+  //
+  function noTuneToOpen() {
 
-  var modal_msg =
-    '<div id="tuningtoolsanchor">'
-  + '  <p style="text-align:center;margin-bottom:18px;font-size:16pt;font-family:helvetica;"> Tuning Tools&nbsp;&nbsp;' 
-  + '    <span style="font-size:24pt;" title="View documentation in new tab">'
-  + '    <a href="https://michaeleskin.com/abctools/userguide.html#hamburger_tuning_tools" target="_blank" ' 
-  + '    style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' 
-  + '    </span>' 
-  + '  </p>'
-  + '  <p style="text-align:center;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
-  + 'These are several useful web-based tools I\'ve built to help tune<br/>and characterize the overall tuning of instruments.' 
-  + '  </p>'
+    DayPilot.Modal.alert(
+      '<p style="text-align:center;font-family:helvetica;font-size:12pt;">There is no tune to open.</p>',
+      {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      }
+    );
+  }
 
-  // Outer layout: two explicit rows
-  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:22px; padding:0 15px 0px 15px;">'
+  var text = getABCEditorText();
 
-  // Row 1 (3 items)
-  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+  //
+  // Nothing in the editor.
+  //
+  if (!text || text.length === 0) {
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_tuner" src="img/tool_tuner_2.jpg" title="Simple chromatic instrument tuner. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Chromatic Tuner</div>'
-  + '      </div>'
+    noTuneToOpen();
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_rtta" src="img/tool_rtta_2.jpg" title="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning Analysis (RTTA)"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Real Time Tuning Analysis (RTTA)</div>'
-  + '      </div>'
+    return;
+  }
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_rttva" src="img/tool_rttva_2.jpg" title="Real-time tuning and volume analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning / Volume Analysis (RTTVA)"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Real Time Tuning / Volume Analysis (RTTVA)</div>'
-  + '      </div>'
+  //
+  // Get the current cursor/selection position.
+  //
+  var cursorOffset;
 
-  + '    </div>'
+  if (gEnableSyntax && (typeof gTheCM !== "undefined")) {
 
-  // Row 2 (2 items)
-  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+    cursorOffset =
+      gTheCM.indexFromPos(
+        gTheCM.getCursor("from")
+      );
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_tonegen" src="img/tool_tonegen_2.jpg" title="Simple chromatic instrument tuner with tone generator. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner / Tone Generator"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Chromatic Tuner /<br/>Tone Generator</div>'
-  + '      </div>'
+  }
+  else {
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_tester" src="img/tool_audiotester_2.jpg" title="3-step audio input tester for the Chromatic Tuner and RTTA utilities: background noise, level range, and continuous tone test." alt="Audio Input Tester"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Audio Input Tester</div>'
-  + '      </div>'
+    cursorOffset = gTheABC.selectionStart;
+  }
 
-  + '    </div>'
+  //
+  // Handle the cursor being exactly at the end of the ABC.
+  //
+  if (cursorOffset >= text.length) {
 
-  + '  </div>'
+    cursorOffset = text.length - 1;
+  }
 
-  + '</div>';
+  //
+  // Find the X: line that starts the current tune.
+  //
+  var start =
+    text.lastIndexOf("\nX:", cursorOffset);
 
-  DayPilot.Modal.alert(modal_msg, {
-    theme: "modal_flat",
-    top: 25,
-    width: 700,
-    scrollWithPage: (AllowDialogsToScroll())
-  });
+  if (start === -1) {
 
-  var elem = document.getElementById("tuning_tools_tuner");
-  if (elem) elem.onclick = function(){ LaunchChromaticTuner(); };
+    start = text.search(/^X:/m);
 
-  elem = document.getElementById("tuning_tools_rtta");
-  if (elem) elem.onclick = function(){ LaunchRTTA(); };
+  }
+  else {
 
-  elem = document.getElementById("tuning_tools_rttva");
-  if (elem) elem.onclick = function(){ LaunchRTTVA(); };
+    // Skip the newline before X:
+    start++;
+  }
 
-  elem = document.getElementById("tuning_tools_tonegen");
-  if (elem) elem.onclick = function(){ LaunchToneGen(); };
+  //
+  // No X: tune was found.
+  //
+  if (start === -1) {
 
-  elem = document.getElementById("tuning_tools_tester");
-  if (elem) elem.onclick = function(){ LaunchAudioTester(); };
+    noTuneToOpen();
 
+    return;
+  }
+
+  //
+  // Find the next X: line.
+  //
+  var nextXRegex = /^X:/gm;
+
+  nextXRegex.lastIndex = start + 2;
+
+  var nextXMatch =
+    nextXRegex.exec(text);
+
+  var endNextX =
+    nextXMatch ? nextXMatch.index : -1;
+
+  //
+  // Also stop at a blank line, matching the tool's normal
+  // tune extraction behavior.
+  //
+  var endBlank =
+    text.indexOf("\n\n", cursorOffset);
+
+  var end;
+
+  if ((endBlank === -1) &&
+      (endNextX === -1)) {
+
+    end = text.length;
+
+  }
+  else if (endBlank === -1) {
+
+    end = endNextX;
+
+  }
+  else if (endNextX === -1) {
+
+    end = endBlank;
+
+  }
+  else {
+
+    end = Math.min(
+      endBlank,
+      endNextX
+    );
+  }
+
+  //
+  // Invalid or empty tune range.
+  //
+  if (end <= start) {
+
+    noTuneToOpen();
+
+    return;
+  }
+
+  //
+  // Select the complete tune in the editor.
+  //
+  if (gEnableSyntax &&
+      (typeof gTheCM !== "undefined")) {
+
+    gTheCM.setSelection(
+      gTheCM.posFromIndex(start),
+      gTheCM.posFromIndex(end)
+    );
+
+    gTheCM.focus();
+
+  }
+  else {
+
+    gTheABC.setSelectionRange(
+      start,
+      end
+    );
+
+    gTheABC.focus();
+  }
+
+  //
+  // Extract the selected tune.
+  //
+  var selectedTuneABC =
+    text.substring(
+      start,
+      end
+    );
+
+  //
+  // Include any ABC file header before the first tune.
+  //
+  var fileHeader =
+    GetABCFileHeader() || "";
+
+  var abcToShare =
+    fileHeader +
+    selectedTuneABC;
+
+  //
+  // Generate the share URL.
+  //
+  // Passing null for the format causes
+  // FillUrlBoxWithAbcInLZWOrDef()
+  // to use the current notation/tablature setting.
+  //
+  var theURL =
+    FillUrlBoxWithAbcInLZWOrDef(
+      abcToShare,
+      false,
+      null,
+      true
+    );
+
+  //
+  // Open directly in the ABC editor.
+  //
+  theURL += "&editor=1";
+
+  //
+  // Open in a new browser tab.
+  //
+  window.open(
+    theURL,
+    "_blank"
+  );
 }
 
 function OtherABCTools(){

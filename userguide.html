@@ -630,6 +630,7 @@
             <a style="text-decoration:none;" href="#hamburger_find">Find and Replace</a>
             <a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a>
             <a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a>
+            <a style="text-decoration:none;" href="#hamburger_open_current_tune">Open Current Tune in New Tab</a>
             <a style="text-decoration:none;" href="#hamburger_copy_all">Copy All Tunes</a>
             <a style="text-decoration:none;" href="#hamburger_reorder">Reorder Tunes</a>
             <a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a>
@@ -642,7 +643,6 @@
             <a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a>
             <a style="text-decoration:none;" href="#hamburger_settings">Settings</a>
             <a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a>
-            <a style="text-decoration:none;" href="#hamburger_tuning_tools">Tuning Tools</a>
             <a style="text-decoration:none;" href="#hamburger_other_abc_tools">Other ABC Tools</a>
             <a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a>
             <a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a>
@@ -1197,6 +1197,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_find">Find and Replace</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_open_current_tune">Open Current Tune in New Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_copy_all">Copy All Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reorder">Reorder Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a></p>
@@ -1209,7 +1210,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_settings">Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_tuning_tools">Tuning Tools</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_other_abc_tools">Other ABC Tools</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a></p>
@@ -1853,7 +1853,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_36.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_37.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong></p>
@@ -1948,6 +1948,12 @@
                 <p>If you try to create a set with different numbers of voices in the tunes, you will be presented with an alert and the set will not be created.</p>
                 <p>If you need to mix single voice and multi-voice tunes in a set, either delete the additional voices in the tunes before creating the set reducing them to a single voice or manually delete the extra voices (V:2, V:3, etc.) after set creation.</p>
                 <p>Additionally, tunes with existing P: part tags will not work correctly with the tune set creator.</p>
+                <hr id="hamburger_open_current_tune">
+                <p><strong>Open Current Tune in New Tab</strong></p>
+                <p>Selects all of the current tune and then opens it along with any required ABC file header annotations in a new browser tab.</p>
+                <p>This makes it simple to isolate a specific tune for editing.</p>
+                <p>It is particularly useful when using Highlighting mode with large tunebooks to allow editing a tune without lengthy redraws.</p>
+                <p>When you return to the original tool tab, the tune will already be selected to allow for easy replacement by pasting over the original tune.</p>
                 <hr id="hamburger_copy_all">
                 <p><strong>Copy All Tunes</strong></p>
                 <p>Copies all the ABC text to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
@@ -2023,10 +2029,6 @@
                 <p><strong>Advanced Settings</strong></p>
                 <p>Brings up a dialog where you can configure low level tool features and settings.</p>
                 <p>Full details below in the <a style="text-decoration:none;" href="#advanced_settings">ABC Transcription Tools Advanced Settings</a> section.</p>
-                <hr id="hamburger_tuning_tools">
-                <p><strong>Tuning Tools</strong></p>
-                <p>Brings up a dialog with several useful standalone web-based tools I've developed to help tune and characterize the overall tuning of instruments.</p>
-                <p>After launching a tool from this dialog, you may want to create a bookmark for it in your browser so you can easily open it later.</p>
                 <hr>
                 <p><strong>Chromatic Tuner</strong> - Simple chromatic instrument tuner. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost.</p>
                 <hr>
@@ -8955,6 +8957,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_open">Open</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open ABC, MusicXML, BWW, or MIDI Files</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#hamburger_open_current_tune">Open Current Tune in New Tab</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_other_abc_tools">Other ABC Tools</a></p>
 
                 <h1 class="page_break_never" id="index_P" style="text-align:left;margin-bottom:12px;">P</h1>
@@ -9039,8 +9042,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#tune_trainer">Tune Trainer</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#hamburger_tuning_tools">Tuning Tools</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
+                 <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
 
                 <h1 class="page_break_never" id="index_U" style="text-align:left;margin-bottom:12px;">U</h1>
                  <p class="toc"><a style="text-decoration:none;" href="#update_settings_tab">Update to the Latest Version</a></p>
