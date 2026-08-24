@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3317_081226_0800";
+var gVersionNumber = "3318_082426_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2152,8 +2152,14 @@ function ShowHighlightingExplanation() {
   modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Select ABC text to highlight the corresponding notes in red in the notation.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Click any element in the notation to select the corresponding ABC text in the editor.</p>';
   modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Measures with too few or too many beats as determined by the meter are highlighted in yellow, including correctly constructed partial pickup measures and associated partial measure repeat endings.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Highlighting requires redrawing all tunes on each change to the ABC.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This may be slow on large numbers of tunes.</p>';
+
+  if (gIsQuickEditor) {
+    modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the Quick Editor, Highlighting works one tune at a time. Click in the ABC for another tune to make it the current tune and redraw its notation with Highlighting.</p>';
+  } else {
+    modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Highlighting requires redrawing all tunes on each change to the ABC.</p>';
+    modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">This may be slow on large numbers of tunes.</p>';
+  }
+
   modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">All pre-processing of the ABC at notation drawing time is turned off. Any hiding of Annotations/Text/Chords selected in the Advanced dialog as well as automatic injection of staff separation space will be disabled. Your settings will be restored when you turn highlighting off.</p>';
 
   DayPilot.Modal.alert(modal_msg, {
@@ -14238,15 +14244,63 @@ function RestoreSVGDivsAfterRasterization() {
 }
 
 //
+// Convert between the ABC string rendered by the Quick Editor and absolute
+// offsets in the complete ABC editor.
+//
+// The Quick Editor renders the ABC file header plus the current tune while the
+// editor continues to contain the complete tunebook.
+//
+function QuickEditorRenderedOffsetToEditorOffset(renderedOffset) {
+
+  if (!gIsQuickEditor ||
+      typeof renderedOffset !== "number" ||
+      renderedOffset < 0 ||
+      gCurrentTune < 0) {
+    return renderedOffset;
+  }
+
+  var fileHeader = GetABCFileHeader() || "";
+  var tuneEditorOffset = findTuneOffsetByIndex(gCurrentTune);
+
+  if (renderedOffset < fileHeader.length) {
+    return renderedOffset;
+  }
+
+  return tuneEditorOffset + (renderedOffset - fileHeader.length);
+}
+
+function QuickEditorEditorRangeToRenderedRange(editorStart, editorEnd) {
+
+  if (!gIsQuickEditor ||
+      gCurrentTune < 0 ||
+      typeof editorStart !== "number" ||
+      typeof editorEnd !== "number") {
+    return null;
+  }
+
+  var fileHeader = GetABCFileHeader() || "";
+  var tuneEditorOffset = findTuneOffsetByIndex(gCurrentTune);
+  var currentTuneABC = getTuneByIndex(gCurrentTune) || "";
+  var tuneEditorEnd = tuneEditorOffset + currentTuneABC.length;
+
+  var clippedStart = Math.max(editorStart, tuneEditorOffset);
+  var clippedEnd = Math.min(editorEnd, tuneEditorEnd);
+
+  if (clippedEnd < clippedStart) {
+    return null;
+  }
+
+  return {
+    start: fileHeader.length + (clippedStart - tuneEditorOffset),
+    end: fileHeader.length + (clippedEnd - tuneEditorOffset)
+  };
+}
+
+//
 // Callback for when notes are clicked when Raw Mode is enabled
 //
 function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEvent) {
 
-  // Initially, this feature only works if there is a single tune in the ABC
-
-  // The renderer only adds this callback for the single tune case
-
-  // Problem is that progressive tune div updates mess up the ABC offset relative to the full tune ABC
   var scrollPos = window.scrollY;
 
   setTimeout(function() {
@@ -14261,8 +14315,12 @@ function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEv
     }
 
     var theStart = abcelem.startChar;
-
     var theEnd = abcelem.endChar;
+
+    if (gIsQuickEditor) {
+      theStart = QuickEditorRenderedOffsetToEditorOffset(theStart);
+      theEnd = QuickEditorRenderedOffsetToEditorOffset(theEnd);
+    }
 
     if (gEnableSyntax){
       ScrollABCTextIntoView(gTheCM, theStart, theEnd, 2);
@@ -14286,6 +14344,44 @@ function fireSelectionChanged() {
     if (CountTunes() > 0) {
 
       if (gRawVisual) {
+
+        if (gIsQuickEditor) {
+
+          var quickVisual = gRawVisual[0];
+
+          if (!quickVisual || !quickVisual.engraver) {
+            return;
+          }
+
+          var editorStart;
+          var editorEnd;
+
+          if (gEnableSyntax) {
+            editorStart = gTheCM.selectionStart;
+            editorEnd = gTheCM.selectionEnd;
+          }
+          else {
+            editorStart = gTheABC.selectionStart;
+            editorEnd = gTheABC.selectionEnd;
+          }
+
+          var renderedRange =
+            QuickEditorEditorRangeToRenderedRange(editorStart, editorEnd);
+
+          if (!renderedRange) {
+            quickVisual.engraver.rangeHighlight(0, 0);
+            return;
+          }
+
+          quickVisual.engraver.rangeHighlight(
+            renderedRange.start,
+            renderedRange.end
+          );
+
+          gRawLastIndex = gCurrentTune;
+
+          return;
+        }
 
         // If not the current tune, clear the last notation highlight
         if (gCurrentTune != gRawLastIndex) {
@@ -15907,6 +16003,10 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
   //console.log("RenderTheNotes renderAll: "+renderAll+" tuneNumber: "+tuneNumber);
 
+  // Quick Editor always renders physically into notation0. Keep the logical
+  // tunebook index for source-offset translation.
+  var sourceTuneNumber = tuneNumber;
+
   if (gIsQuickEditor) {
 
     // MAE 15 July 2024
@@ -16081,7 +16181,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
   // Shade incomplete measures after abcjs has created the SVG and its
   // line/measure classes, but before the visual is released.
-  AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, tune);
+  AddIncompleteMeasureBackgrounds(
+    visualObj,
+    gIsQuickEditor ? sourceTuneNumber : startTune,
+    renderDivs,
+    tune
+  );
 
   // Save off the visual for selection handling
   if (gRawMode) {
@@ -17131,13 +17236,10 @@ function Render(renderAll, tuneNumber) {
         //console.log("Quick editor renderAll true");
         GenerateRenderingDivs(1);
 
-        if (!gRawMode) {
-          // Just get the ABC for the current tune
-          theNotes = theFileHeader + getTuneByIndex(tuneNumber);
-        } else {
-          // Need the entire ABC for highlighting
-          theNotes = getABCEditorText();
-        }
+        // Quick Editor always renders just the current tune. Highlighting uses
+        // explicit local-to-editor source offset translation.
+        theNotes = theFileHeader + getTuneByIndex(gCurrentTune);
+
       } else {
         GenerateRenderingDivs(nTunes);
         theNotes = getABCEditorText();
@@ -17148,52 +17250,14 @@ function Render(renderAll, tuneNumber) {
         //console.log("Quick editor renderAll false");
         GenerateRenderingDivs(1);
 
-        if (!gRawMode) {
-          // Just get the ABC for the current tune
-          theNotes = theFileHeader + getTuneByIndex(gCurrentTune);
-        } else {
-          // Need the entire ABC for highlighting
-          theNotes = getABCEditorText();
-        }
+        // Quick Editor always renders just the current tune. Highlighting uses
+        // explicit local-to-editor source offset translation.
+        theNotes = theFileHeader + getTuneByIndex(gCurrentTune);
 
       } else {
 
         // Just get the ABC for the current tune
         theNotes = theFileHeader + getTuneByIndex(tuneNumber);
-
-      }
-    }
-
-    if (gIsQuickEditor) {
-
-      if (nTunes > 1) {
-
-        gRawMode = false;
-        gTemporarilyDisableMeasureHighlighting = false;
-
-        document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
-        document.getElementById("rawmodebutton").classList.add("rawmodebuttondisabled");
-
-        document.getElementById("rawmodebutton").classList.add("btn-rawmode-off");
-        document.getElementById("rawmodebutton").classList.remove("btn-rawmode-on");
-
-        document.getElementById("rawmodebutton").value = "Highlighting";
-
-        if (gEnableSyntax){
-          setCMDarkMode(gDarkModeColor,gLightModeColor);
-
-          gTheCM.refresh();
-        }
-        else{
-          gTheABC.style.backgroundColor = gLightModeColor;
-        }
-
-        // Turn off raw mode
-        gRawMode = false;
-        gTemporarilyDisableMeasureHighlighting = false;
-
-        // Clear last tune highlight tracker
-        gRawLastIndex = -1;
 
       }
     }
@@ -17217,7 +17281,7 @@ function Render(renderAll, tuneNumber) {
 
     // Render the notes
     if (gIsQuickEditor) {
-      RenderTheNotes(theNotes, radiovalue, false, 0);
+      RenderTheNotes(theNotes, radiovalue, false, gCurrentTune);
     } else {
       RenderTheNotes(theNotes, radiovalue, renderAll, tuneNumber);
     }
@@ -30175,13 +30239,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_12aug2026;
+        var updatePresented = localStorage.sawUpdate_24aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_12aug2026 = true;
+          localStorage.sawUpdate_24aug2026 = true;
 
         }
 
@@ -30327,13 +30391,15 @@ function MakeTuneVisible(forceUpdate) {
 
       if (tuneIndex != gCurrentTune) {
 
-        if (!gDisableNotationRendering) {
-          Render(false, tuneIndex);
-        }
-
+        // Save the newly selected tune before rendering. Quick Editor Render()
+        // uses gCurrentTune to choose the one tune displayed in notation0.
         //console.log("MakeTuneVisible - gCurrentTune before = "+gCurrentTune);
         gCurrentTune = tuneIndex;
         //console.log("MakeTuneVisible - gCurrentTune after = "+gCurrentTune);
+
+        if (!gDisableNotationRendering) {
+          Render(false, tuneIndex);
+        }
 
         setTimeout(function() {
           // Force scroll to the top
@@ -58879,7 +58945,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 8 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 August 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Highlighting now available if there are multiple tunes in the Quick Editor</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Formerly, the Highlighting feature was only available if there was a single tune in the Quick Editor.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -58887,16 +58960,6 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Open Current Tune in New Tab</strong></p>';
   modal_msg += '<p style="font-size:12pt;">Selects all of the current tune and then opens it along with any required ABC file header annotations in a new browser tab.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Measure length validation in Highlighting mode</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Measures with an incorrect number of beats, either too many or too few, are now highlighted in yellow.</p>';
-  modal_msg += '<p style="font-size:12pt;">Hovering the mouse over a highlighted measure shows its measure number as well as the expected and measured number of beats in the measure. If ABC syntax highlighting is enabled, the ABC text for the measure is also highlighted in yellow.</p>';
-  modal_msg += '<p style="font-size:12pt;">You can disable this feature from a new setting on the <strong>Editor</strong> tab on the <strong>Settings</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">You can also temporarily disable the measure highlighting by shift-clicking the <strong>Highlighting</strong> button.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -65827,13 +65890,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_12aug2026;
+    var updatePresented = localStorage.sawUpdate_24aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_12aug2026 = true;
+      localStorage.sawUpdate_24aug2026 = true;
 
     }
 
