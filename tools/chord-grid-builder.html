@@ -3,7 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>ABC Custom Chord Grid Builder</title>
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ABC Custom Chord Grid Builder" />
+<meta property="og:description" content="Create custom chord grid definitions for 3, 4, 5, or 6 string instruments for use with ABC Transcription Tools." />
+<meta property="og:site_name" content="ABC Custom Chord Grid Builder" />
+<meta property="og:url" content="https://michaeleskin.com/tools/chord-grid-builder.html" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/chord-grid-builder-og-1.jpg" />
+
+<meta name="msapplication-TileColor" content="#ffffff" />
+<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png" />
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png" />
+<link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png" />
+<link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png" />
+<link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png" />
+
+<link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png" />
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 <script>
@@ -144,6 +170,7 @@ h2{margin:0;font-size:1.3rem}
     <button id="newBtn" class="button" type="button">New</button>
     <label class="button secondary" for="loadFile">Load Definitions</label>
     <input id="loadFile" type="file" accept=".abc,.txt,text/plain">
+    <button id="pasteBtn" class="button secondary" type="button">Paste Definitions</button>
     <button id="saveBtn" class="button blue" type="button">Save Definitions</button>
     <button id="copyBtn" class="button" type="button">Copy to Clipboard</button>
     <button id="instructionsBtn" class="button secondary" type="button">Instructions</button>
@@ -197,7 +224,7 @@ h2{margin:0;font-size:1.3rem}
             <div class="field"><label for="barreFrom">From string</label><input id="barreFrom" type="number" min="1" value="1"></div>
             <div class="field"><label for="barreTo">To string</label><input id="barreTo" type="number" min="1" value="6"></div>
           </div>
-          <p class="field-help">String numbers run from left to right in the displayed chord grid. Barre finger numbers are not generated separately; use the per-string finger fields when desired.</p>
+          <p class="field-help">For barre and fingering labels, conventional string numbering is used: string 1 is the highest-pitched string, at the right side of the displayed grid. The highest numbered string is the lowest-pitched string, at the left. Barre finger numbers are not generated separately; use the per-string finger fields when desired.</p>
         </div>
       </div>
     </div>
@@ -231,24 +258,51 @@ function blankChord(name="C", strings=6) {
 function normalizeName(s){ return String(s||"").trim(); }
 function chordNameKey(s){ return normalizeName(s).toLocaleLowerCase(); }
 function escapeJsonString(s){ return JSON.stringify(String(s)); }
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[ch]);
+}
 
 function validChord(c) {
   if (!c || !normalizeName(c.name)) return "Every chord must have a label.";
   if (!Number.isInteger(c.strings) || c.strings < 3 || c.strings > 6) return `${c.name}: strings must be 3–6.`;
   if (!Number.isInteger(c.baseFret) || c.baseFret < 1) return `${c.name}: baseFret must be at least 1.`;
   if (!Array.isArray(c.frets) || c.frets.length !== c.strings) return `${c.name}: frets must contain one value per string.`;
-  for (const f of c.frets) {
-    if (f === "x") continue;
+
+  const maxVisibleFret = c.baseFret + MAX_VISIBLE_FRETS - 1;
+
+  for (let i = 0; i < c.frets.length; i++) {
+    const f = c.frets[i];
+    if (f === "x" || f === 0) continue;
     if (!Number.isInteger(f) || f < 0) return `${c.name}: invalid fret value.`;
+    if (f < c.baseFret || f > maxVisibleFret) {
+      const stringNumber = c.strings - i;
+      return `${c.name}: fret ${f} on string ${stringNumber} is outside the displayed fret range (${c.baseFret}–${maxVisibleFret}).`;
+    }
   }
+
   if (c.fingers !== null) {
     if (!Array.isArray(c.fingers) || c.fingers.length !== c.strings) return `${c.name}: fingers must contain one value per string.`;
     for (const f of c.fingers) if (f !== null && (!Number.isInteger(f) || f < 1 || f > 4)) return `${c.name}: finger numbers must be 1–4.`;
   }
+
   if (c.barre !== null) {
     const b=c.barre;
     if (!Number.isInteger(b.fret)||b.fret<1||!Number.isInteger(b.fromString)||b.fromString<1||b.fromString>c.strings||
         !Number.isInteger(b.toString)||b.toString<1||b.toString>c.strings) return `${c.name}: invalid barre.`;
+
+    if (b.fret < c.baseFret || b.fret > maxVisibleFret) {
+      return `${c.name}: barre fret ${b.fret} is outside the displayed fret range (${c.baseFret}–${maxVisibleFret}).`;
+    }
+
+    if (b.fromString === b.toString) {
+      return `${c.name}: a barre must span at least two strings.`;
+    }
   }
   return "";
 }
@@ -354,6 +408,10 @@ function renderChordPreview(c) {
   for(let s=0;s<strings;s++){
     const x=left+s*stringGap;
     const f=c.frets[s];
+
+    // Strings covered by a barre don't display open/mute indicators.
+    if(isDisplayStringCoveredByBarre(c,s)) continue;
+
     if(f==="x"){
       const t=svgEl("text",{x,y:33,"text-anchor":"middle","font-family":"Arial, Helvetica, sans-serif","font-size":"12",fill:"#111"});
       t.textContent="×";svg.appendChild(t);
@@ -387,10 +445,16 @@ function renderChordPreview(c) {
   if(c.barre){
     const rel=c.barre.fret-c.baseFret;
     if(rel>=0 && rel<shownFrets){
-      const from=Math.max(1,Math.min(strings,c.barre.fromString))-1;
-      const to=Math.max(1,Math.min(strings,c.barre.toString))-1;
-      const x1=left+Math.min(from,to)*stringGap;
-      const x2=left+Math.max(from,to)*stringGap;
+      // Barre string numbers follow the conventional convention:
+      // string 1 is the highest-pitched/rightmost string. The internal fret
+      // array is displayed lowest-to-highest from left to right, so reverse
+      // the conventional string number when mapping it to an x-position.
+      const fromNumber=Math.max(1,Math.min(strings,c.barre.fromString));
+      const toNumber=Math.max(1,Math.min(strings,c.barre.toString));
+      const fromDisplayIndex=strings-fromNumber;
+      const toDisplayIndex=strings-toNumber;
+      const x1=left+Math.min(fromDisplayIndex,toDisplayIndex)*stringGap;
+      const x2=left+Math.max(fromDisplayIndex,toDisplayIndex)*stringGap;
       const y=top+(rel+.5)*fretGap;
       svg.appendChild(svgEl("line",{x1,y1:y,x2,y2:y,stroke:"#111","stroke-width":"9","stroke-linecap":"round"}));
     }
@@ -420,6 +484,15 @@ function renderChordPreview(c) {
   host.appendChild(svg);
 }
 
+
+function isDisplayStringCoveredByBarre(c, displayIndex) {
+  if (!c || !c.barre) return false;
+  const conventionalStringNumber = c.strings - displayIndex;
+  const low = Math.min(c.barre.fromString, c.barre.toString);
+  const high = Math.max(c.barre.fromString, c.barre.toString);
+  return conventionalStringNumber >= low && conventionalStringNumber <= high;
+}
+
 function renderFretboard(c) {
   const host=$("fretboard"); host.innerHTML="";
   host.style.gridTemplateColumns="1fr";
@@ -427,14 +500,23 @@ function renderFretboard(c) {
   c.frets.forEach((f,si)=>{
     const cell=document.createElement("div");cell.className="marker";
     const b=document.createElement("button");b.type="button";
-    b.textContent=f==="x"?"X":(f===0?"O":"•");
-    b.title=f==="x"?"Muted string":f===0?"Open string":"Fretted string";
-    b.addEventListener("click",()=>{
-      if(c.frets[si]==="x") c.frets[si]=0;
-      else if(c.frets[si]===0) c.frets[si]="x";
-      else c.frets[si]=0;
-      render();
-    });
+    const coveredByBarre=isDisplayStringCoveredByBarre(c,si);
+
+    if(coveredByBarre){
+      b.textContent="•";
+      b.title="String covered by barre";
+      b.disabled=true;
+    } else {
+      b.textContent=f==="x"?"X":(f===0?"O":"•");
+      b.title=f==="x"?"Muted string":f===0?"Open string":"Fretted string";
+      b.addEventListener("click",()=>{
+        if(c.frets[si]==="x") c.frets[si]=0;
+        else if(c.frets[si]===0) c.frets[si]="x";
+        else c.frets[si]=0;
+        render();
+      });
+    }
+
     cell.appendChild(b);markers.appendChild(cell);
   }); host.appendChild(markers);
 
@@ -444,7 +526,7 @@ function renderFretboard(c) {
     const rr=document.createElement("div");rr.className="fret-row";rr.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
     const num=document.createElement("span");num.className="fret-number";num.textContent=fretNo;rr.appendChild(num);
     for(let si=0;si<c.strings;si++){
-      const cell=document.createElement("div");cell.className="fret-cell";cell.title=`String ${si+1}, fret ${fretNo}`;
+      const cell=document.createElement("div");cell.className="fret-cell";cell.title=`String ${c.strings-si}, fret ${fretNo}`;
       if(c.frets[si]===fretNo){const dot=document.createElement("span");dot.className="dot";cell.appendChild(dot);}
       cell.addEventListener("click",()=>{c.frets[si]=(c.frets[si]===fretNo?0:fretNo);render();});
       rr.appendChild(cell);
@@ -458,7 +540,8 @@ function renderFretboard(c) {
     const cell=document.createElement("div");cell.className="finger-cell";
     const inp=document.createElement("input");inp.type="number";inp.min="1";inp.max="4";inp.inputMode="numeric";
     inp.placeholder="–";inp.value=c.fingers && c.fingers[si]!=null ? c.fingers[si] : "";
-    inp.setAttribute("aria-label",`Finger number for string ${si+1}`);
+    const conventionalStringNumber=c.strings-si;
+    inp.setAttribute("aria-label",`Finger number for string ${conventionalStringNumber}`);
     inp.addEventListener("input",()=>{
       const v=inp.value.trim();
       if(!c.fingers)c.fingers=Array(c.strings).fill(null);
@@ -467,7 +550,9 @@ function renderFretboard(c) {
       renderChordPreview(c);
       updateOutput();
     });
-    const lab=document.createElement("div");lab.className="finger-label";lab.textContent=`String ${si+1}`;
+    const lab=document.createElement("div");
+    lab.className="finger-label";
+    lab.textContent=`String ${conventionalStringNumber}`;
     cell.append(inp,lab);fingers.appendChild(cell);
   }
   const fingerHeader=document.createElement("div");
@@ -486,7 +571,7 @@ function renderEditor() {
   $("gridTitle").textContent=c.name || "Chord";
   $("barreEnabled").checked=!!c.barre;
   $("barreFret").disabled=!c.barre;$("barreFrom").disabled=!c.barre;$("barreTo").disabled=!c.barre;
-  $("barreFret").value=c.barre?c.barre.fret:1;$("barreFrom").value=c.barre?c.barre.fromString:1;$("barreTo").value=c.barre?c.barre.toString:c.strings;
+  $("barreFret").value=c.barre?c.barre.fret:c.baseFret;$("barreFrom").value=c.barre?c.barre.fromString:c.strings;$("barreTo").value=c.barre?c.barre.toString:1;
   $("barreFrom").max=c.strings;$("barreTo").max=c.strings;
   renderFretboard(c);
 }
@@ -515,7 +600,7 @@ function requireDayPilot() {
 async function showAlert(message, title="Custom Chord Grid Builder") {
   if (!requireDayPilot()) return;
   await DayPilot.Modal.alert(
-    `<div style="text-align:center;line-height:1.45;max-width:680px;margin:0 auto;">${message}</div>`,
+    `<div style="text-align:center;line-height:1.45;max-width:680px;margin:0 auto;">${escapeHtml(message)}</div>`,
     { title, okText:"OK", top:150 }
   );
 }
@@ -552,27 +637,131 @@ async function promptSaveFilename() {
 
 async function showInstructions() {
   if (!requireDayPilot()) return;
+
+  const instructionModalStyle=document.createElement("style");
+  instructionModalStyle.textContent=`
+    .modal_default_buttons {
+      text-align:center !important;
+    }
+    .modal_default_buttons button,
+    .modal_default_buttons input {
+      float:none !important;
+      margin-left:auto !important;
+      margin-right:auto !important;
+    }
+  `;
+  document.head.appendChild(instructionModalStyle);
+
   const html = `
-    <div style="text-align:left;line-height:1.48;max-width:720px;margin:0 auto;">
+    <div style="text-align:left;line-height:1.48;max-width:720px;margin:0 auto;max-height:60vh;overflow-y:auto;padding:0 12px 4px 0;">
       <p>This standalone utility creates the custom chord-grid definition blocks used by ABC Transcription Tools.</p>
       <h3 style="color:#176b43;margin:18px 0 6px;">Creating chords</h3>
       <ol>
         <li>Choose <b>Add</b>, enter a chord label, and select 3, 4, 5, or 6 strings.</li>
+        <li>Use <b>Base fret</b> for chord shapes higher up the neck. The editor displays five consecutive frets beginning with the selected base fret.</li>
         <li>Click fret positions to place dots. Use the O/X buttons above the strings for open or muted strings.</li>
-        <li>Optionally enter finger numbers 1–4 below the strings and define a barre.</li>
+        <li>The displayed grid runs from the lowest-pitched string on the left to the highest-pitched string on the right. The generated <b>frets</b> and <b>fingers</b> arrays use that same lowest-to-highest order.</li>
+        <li>String-number labels use conventional numbering: <b>string 1 is the highest-pitched string on the right</b>, and the highest numbered string is the lowest-pitched string on the left.</li>
+        <li>Optionally enter finger numbers 1–4 below the strings. The labels below the finger fields use this conventional high-to-low string numbering. For a barre, enter the barre finger number (normally 1) only on strings whose sounding note is produced by the barre; if a string is fretted above the barre by another finger, enter that finger number instead. Leave a finger field blank if no finger number should be displayed.</li>
+        <li>To create a barre, enable <b>Barre</b>, choose its fret, and set the conventional first and last string numbers it spans. A barre must span at least two strings and must lie within the five displayed frets. Strings covered by the barre do not show O or X indicators above the grid.</li>
         <li>Add as many chord definitions as required. Select a chord in the list to edit it.</li>
       </ol>
       <h3 style="color:#176b43;margin:18px 0 6px;">Loading and saving</h3>
-      <p><b>Save Definitions</b> prompts for a filename and saves a complete annotation block as an <code>.abc</code> file. <b>Load Definitions</b> reads a previously saved block.</p>
+      <p><b>Load Definitions</b> reads a previously saved chord-grid definition block from an <code>.abc</code> or text file.</p>
+      <p><b>Paste Definitions</b> lets you paste a complete <code>%%begin_chord_grid_definitions</code> / <code>%%end_chord_grid_definitions</code> block copied from an ABC file.</p>
+      <p><b>Save Definitions</b> prompts for a filename and saves the complete annotation block as an <code>.abc</code> file.</p>
       <h3 style="color:#176b43;margin:18px 0 6px;">Using the result</h3>
-      <p>Use <b>Copy to Clipboard</b> and paste the complete generated block into your ABC. The output is updated immediately as you edit.</p>
+      <p>Use <b>Copy to Clipboard</b> to copy the complete generated block, then paste it into the ABC file header or an individual tune in ABC Transcription Tools. The generated output updates immediately as you edit.</p>
     </div>`;
-  await DayPilot.Modal.alert(html, {
-    title:"Custom Chord Grid Builder Instructions",
-    okText:"Close",
-    top:150,
-    width:780
-  });
+  try {
+    await DayPilot.Modal.alert(html, {
+      title:"Custom Chord Grid Builder Instructions",
+      okText:"Close",
+      top:Math.max(20, Math.round(window.innerHeight * 0.05)),
+      width:780
+    });
+  } finally {
+    instructionModalStyle.remove();
+  }
+}
+
+
+async function promptPasteDefinitions() {
+  if (!requireDayPilot()) return null;
+
+  const result = await DayPilot.Modal.form(
+    [
+      {
+        html:
+          '<div style="margin:0 0 12px;line-height:1.45;">' +
+          'Paste the complete <code>%%begin_chord_grid_definitions</code> / ' +
+          '<code>%%end_chord_grid_definitions</code> block copied from an ABC file:' +
+          '</div>'
+      },
+      {
+        name:"",
+        id:"definitions",
+        type:"textarea",
+        height:360
+      }
+    ],
+    { definitions:"" },
+    { top:80 },
+    {
+      title:"Paste Chord Grid Definitions",
+      width:760,
+      okText:"Load Definitions",
+      cancelText:"Cancel"
+    }
+  );
+
+  if (result.canceled) return null;
+  return String(result.result.definitions || "");
+}
+
+async function pasteDefinitions() {
+  const pasted = await promptPasteDefinitions();
+  if (pasted === null) return;
+
+  if (!pasted.trim()) {
+    await showAlert(
+      "No chord grid definitions were pasted.",
+      "Paste Chord Grid Definitions"
+    );
+    return;
+  }
+
+  let parsed;
+
+  try {
+    parsed = parseDefinitions(pasted);
+  }
+  catch (err) {
+    const msg = err && err.message ? err.message : String(err);
+    setStatus(msg, true);
+    await showAlert(msg, "Unable to Paste Definitions");
+    return;
+  }
+
+  if (state.chords.length) {
+    const replace = await showConfirm(
+      `Replace the current <b>${state.chords.length}</b> chord definition(s) with the <b>${parsed.length}</b> pasted definition(s)?`,
+      "Replace Existing Chord Definitions",
+      "Replace"
+    );
+
+    if (!replace) {
+      setStatus("Paste canceled.");
+      return;
+    }
+  }
+
+  state.chords = parsed;
+  state.selected = parsed.length ? 0 : -1;
+  render();
+  setStatus(
+    `Loaded ${parsed.length} pasted chord definition${parsed.length === 1 ? "" : "s"}.`
+  );
 }
 
 function addChord(){
@@ -583,7 +772,7 @@ function addChord(){
 async function deleteChord(){
   if(state.selected<0)return;
   const c=state.chords[state.selected];
-  if(!await showConfirm(`Delete the chord definition <b>${c.name}</b>?`, "Delete Chord", "Delete"))return;
+  if(!await showConfirm(`Delete the chord definition <b>${escapeHtml(c.name)}</b>?`, "Delete Chord", "Delete"))return;
   state.chords.splice(state.selected,1);state.selected=Math.min(state.selected,state.chords.length-1);render();
 }
 async function newProject(){
@@ -682,13 +871,14 @@ async function saveOutput(){
   if(!ensureValid())return;
   const filename=await promptSaveFilename();
   if(!filename){setStatus("Save canceled.");return;}
-  const blob=new Blob([outputText()+"\\n"],{type:"text/plain;charset=utf-8"});
+  const blob=new Blob([outputText()+"\n"],{type:"text/plain;charset=utf-8"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   setStatus(`Saved ${filename}.`);
 }
 
 $("addBtn").addEventListener("click",addChord);$("deleteBtn").addEventListener("click",deleteChord);$("newBtn").addEventListener("click",newProject);
+$("pasteBtn").addEventListener("click",pasteDefinitions);
 $("copyBtn").addEventListener("click",copyOutput);$("copyBtn2").addEventListener("click",copyOutput);
 $("saveBtn").addEventListener("click",saveOutput);$("saveBtn2").addEventListener("click",saveOutput);
 $("loadFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;try{await loadFile(f);}catch(err){const msg=err.message||String(err);setStatus(msg,true);await showAlert(msg,"Unable to Load Definitions");}});
@@ -696,7 +886,7 @@ $("chordName").addEventListener("input",e=>{const c=state.chords[state.selected]
 $("chordName").addEventListener("blur",e=>{const c=state.chords[state.selected];if(!c)return;c.name=normalizeName(e.target.value);e.target.value=c.name;renderList();$("gridTitle").textContent=c.name||"Chord";renderChordPreview(c);updateOutput();});
 $("strings").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;setStringCount(c,Number(e.target.value));render();});
 $("baseFret").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;c.baseFret=Math.max(1,Math.min(24,Number(e.target.value)||1));render();});
-$("barreEnabled").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;c.barre=e.target.checked?{fret:c.baseFret,fromString:1,toString:c.strings}:null;render();});
+$("barreEnabled").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;c.barre=e.target.checked?{fret:c.baseFret,fromString:c.strings,toString:1}:null;render();});
 for(const [id,key] of [["barreFret","fret"],["barreFrom","fromString"],["barreTo","toString"]]){
   $(id).addEventListener("change",e=>{const c=state.chords[state.selected];if(!c||!c.barre)return;c.barre[key]=Number(e.target.value);render();});
 }
