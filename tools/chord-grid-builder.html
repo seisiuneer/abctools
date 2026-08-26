@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABC Custom Chord Grid Builder</title>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+<script src="daypilot-modal.min-3.10.1.js"></script>
+<style>
+:root{
+  --bg:#eef2ee;--panel:#fff;--ink:#17241c;--muted:#607066;--green:#176b43;
+  --green-dark:#0d4c2f;--line:#c9d5cc;--accent:#e2ad3b;--blue:#174a8b;
+  --danger:#8f2f2f;--shadow:0 12px 30px rgba(18,43,28,.12);
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;color:var(--ink);
+  background:radial-gradient(circle at top left,rgba(23,107,67,.10),transparent 32rem),
+             linear-gradient(180deg,#f5f7f5,var(--bg));
+  font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app-header{
+  color:#fff;
+  background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96)),
+             repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.025) 12px 24px);
+  border-bottom:5px solid var(--accent);padding:16px 20px 14px;text-align:center;
+}
+.app-header h1{margin:0;font-size:clamp(1.65rem,4vw,2.3rem);line-height:1.1}
+.app-header p{max-width:820px;margin:9px auto 0;color:#dcebe2}
+.app{width:min(1180px,calc(100% - 28px));margin:24px auto 50px}
+.toolbar,.panel{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:14px;border-radius:10px;align-items:center}
+.button{
+  appearance:none;border:0;border-radius:6px;padding:10px 15px;color:#fff;background:var(--green);
+  font-weight:750;text-align:center;box-shadow:0 2px 0 rgba(0,0,0,.14)
+}
+.button:hover,.button:focus-visible{background:var(--green-dark);outline:2px solid rgba(23,107,67,.25);outline-offset:2px}
+.button.secondary{color:var(--green-dark);background:#e4efe8;border:1px solid #a9c2b1}
+.button.blue{background:var(--blue)}
+.button.blue:hover,.button.blue:focus-visible{background:#0f3566}
+.button.danger{background:var(--danger)}
+.button.danger:hover,.button.danger:focus-visible{background:#742424}
+.button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+input[type=file]{display:none}
+.panel{margin-top:18px;padding:18px;border-radius:10px}
+.workspace{display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px}
+.sidebar{border-right:1px solid var(--line);padding-right:18px;min-width:0}
+.sidebar-head{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+h2{margin:0;font-size:1.3rem}
+.chord-list{list-style:none;padding:0;margin:0;display:grid;gap:7px;max-height:610px;overflow:auto}
+.chord-list button{
+  width:100%;padding:9px 10px;text-align:left;color:var(--ink);background:#f7faf8;
+  border:1px solid #d8e2da;border-radius:6px;font-weight:700
+}
+.chord-list button:hover,.chord-list button:focus-visible{background:#edf5ef;outline:2px solid rgba(23,107,67,.22)}
+.chord-list button.active{color:#fff;background:var(--green);border-color:var(--green)}
+.empty{padding:24px 12px;color:var(--muted);border:2px dashed #cdd8d0;border-radius:8px;text-align:center;background:#fafcfb}
+.editor{min-width:0}
+.editor-top{display:grid;grid-template-columns:minmax(150px,1fr) 140px 140px auto;gap:12px;align-items:end}
+.field label{display:block;margin:0 0 4px;color:#294534;font-weight:750}
+.field input,.field select{
+  width:100%;min-height:40px;padding:7px 9px;color:var(--ink);background:#fff;
+  border:1px solid #b6c5ba;border-radius:5px
+}
+.field-help{margin:4px 0 0;color:var(--muted);font-size:.83rem}
+.grid-card{margin-top:16px;padding:16px;border:1px solid #d8e2da;border-radius:9px;background:#f8faf8}
+.grid-card h3{margin:0 0 4px;color:var(--green-dark)}
+.grid-help{margin:0 0 12px;color:var(--muted);font-size:.9rem}
+.grid-workspace{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:22px;align-items:start}
+.grid-editor-pane{min-width:0}
+.grid-preview-pane{min-width:0;padding:14px;border:1px solid #d8e2da;border-radius:8px;background:#fff}
+.grid-preview-pane h4{margin:0 0 8px;color:var(--green-dark);font-size:1rem}
+.preview-help{margin:0 0 10px;color:var(--muted);font-size:.82rem}
+.fretboard-wrap{overflow-x:auto;padding:8px 2px 4px}
+.fretboard{display:grid;gap:0;margin:0;min-width:310px;max-width:610px;user-select:none}
+.preview-holder{display:flex;justify-content:center;align-items:flex-start;min-height:190px;padding-top:4px}
+.preview-holder svg{max-width:100%;height:auto}
+.string-markers,.finger-row{display:grid;gap:0}
+.marker,.finger-cell{text-align:center}
+.marker button{
+  width:34px;height:30px;padding:0;border:1px solid #b6c5ba;border-radius:5px;background:#fff;font-weight:800
+}
+.marker button:hover,.marker button:focus-visible{background:#e4efe8;outline:2px solid rgba(23,107,67,.2)}
+.neck{position:relative;margin-top:5px;border-top:5px solid #333}
+.fret-row{display:grid;height:52px;position:relative}
+.fret-cell{
+  position:relative;border-bottom:2px solid #777;cursor:pointer;background:rgba(255,255,255,.45)
+}
+.fret-cell:not(:last-child){border-right:1px solid #555}
+.fret-cell:first-child{border-left:1px solid #555}
+.fret-cell:hover{background:#e8f2eb}
+.dot{
+  position:absolute;width:20px;height:20px;border-radius:50%;background:#222;left:50%;top:50%;
+  transform:translate(-50%,-50%);pointer-events:none
+}
+.fret-number{position:absolute;left:-40px;top:50%;transform:translateY(-50%);width:34px;text-align:right;color:var(--muted);font-size:.8rem}
+.finger-row{margin-top:8px}
+.finger-cell input{width:38px;height:32px;text-align:center;border:1px solid #b6c5ba;border-radius:5px}
+.finger-label{text-align:center;color:var(--muted);font-size:.76rem;margin-top:3px;line-height:1.15}
+.finger-header{margin-top:10px;margin-bottom:3px;color:#294534;font-size:.84rem;font-weight:750;text-align:center}
+.barre-box{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #d8e2da}
+.checkline{display:flex;align-items:center;gap:8px;font-weight:700;color:#294534}
+.output-panel textarea{
+  width:100%;min-height:310px;padding:13px;border:1px solid #b6c5ba;border-radius:7px;background:#fbfcfb;
+  color:#17241c;font:14px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical
+}
+.output-head{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-bottom:10px}
+.output-actions{display:flex;gap:8px;flex-wrap:wrap}
+.status{min-height:1.5em;margin:10px 0 0;color:var(--muted)}
+.status.error{color:#9d1c1c;font-weight:700}
+.note{margin-top:12px;padding:10px 12px;background:#edf5ef;border-left:4px solid var(--green);border-radius:4px}
+[hidden]{display:none!important}
+@media(max-width:760px){
+  .app-header{padding:13px 16px 12px}.app-header h1{font-size:clamp(1.2rem,5.4vw,1.55rem)}
+  .app{width:min(100% - 18px,1180px);margin-top:14px}.toolbar{display:grid;grid-template-columns:1fr 1fr}
+  .toolbar .button{width:100%}.workspace{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line);padding:0 0 15px}
+  .chord-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:180px}.editor-top{grid-template-columns:1fr 1fr}
+  .editor-top .delete-wrap{grid-column:1/-1}.editor-top .delete-wrap .button{width:100%}
+  .grid-workspace{grid-template-columns:1fr}.grid-preview-pane{order:2}.fretboard{margin:0 auto}
+  .barre-box{grid-template-columns:1fr 1fr}.output-head{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:460px){.toolbar{grid-template-columns:1fr}.chord-list{grid-template-columns:1fr}.editor-top,.barre-box{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <h1>ABC Custom Chord Grid Builder</h1>
+  <p>Create custom chord-grid definition blocks for 3, 4, 5, or 6 string instruments<br/>and paste them directly into ABC Transcription Tools.</p>
+</header>
+
+<main class="app">
+  <div class="toolbar">
+    <button id="newBtn" class="button" type="button">New</button>
+    <label class="button secondary" for="loadFile">Load Definitions</label>
+    <input id="loadFile" type="file" accept=".abc,.txt,text/plain">
+    <button id="saveBtn" class="button blue" type="button">Save Definitions</button>
+    <button id="copyBtn" class="button" type="button">Copy to Clipboard</button>
+    <button id="instructionsBtn" class="button secondary" type="button">Instructions</button>
+  </div>
+
+  <section class="panel">
+    <div class="workspace">
+      <aside class="sidebar">
+        <div class="sidebar-head"><h2>Chords</h2><button id="addBtn" class="button" type="button">+ Add</button></div>
+        <div id="emptyList" class="empty">No chords yet.<br>Add a chord to begin.</div>
+        <ul id="chordList" class="chord-list"></ul>
+      </aside>
+
+      <div class="editor">
+        <div id="emptyEditor" class="empty">Add a chord or load a definition file to begin editing.</div>
+        <div id="editorBody" hidden>
+          <div class="editor-top">
+            <div class="field">
+              <label for="chordName">Chord label</label>
+              <input id="chordName" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Am">
+            </div>
+            <div class="field">
+              <label for="strings">Strings</label>
+              <select id="strings"><option>3</option><option>4</option><option>5</option><option selected>6</option></select>
+            </div>
+            <div class="field">
+              <label for="baseFret">Base fret</label>
+              <input id="baseFret" type="number" min="1" max="24" value="1">
+            </div>
+            <div class="delete-wrap"><button id="deleteBtn" class="button danger" type="button">Delete Chord</button></div>
+          </div>
+
+          <div class="grid-card">
+            <h3 id="gridTitle">Chord</h3>
+            <p class="grid-help">Click a fret position to place a dot. Click the marker above a string to cycle between open (O) and muted (X). Finger numbers are optional.</p>
+            <div class="grid-workspace">
+              <div class="grid-editor-pane">
+                <div class="fretboard-wrap"><div id="fretboard" class="fretboard"></div></div>
+              </div>
+              <aside class="grid-preview-pane">
+                <h4>ABC Transcription Tools Preview</h4>
+                <p class="preview-help">Approximate appearance of this custom chord grid when rendered in ABC Transcription Tools.</p>
+                <div id="gridPreview" class="preview-holder"></div>
+              </aside>
+            </div>
+          </div>
+
+          <div class="barre-box">
+            <label class="checkline"><input id="barreEnabled" type="checkbox"> Barre</label>
+            <div class="field"><label for="barreFret">Fret</label><input id="barreFret" type="number" min="1" value="1"></div>
+            <div class="field"><label for="barreFrom">From string</label><input id="barreFrom" type="number" min="1" value="1"></div>
+            <div class="field"><label for="barreTo">To string</label><input id="barreTo" type="number" min="1" value="6"></div>
+          </div>
+          <p class="field-help">String numbers run from left to right in the displayed chord grid. Barre finger numbers are not generated separately; use the per-string finger fields when desired.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel output-panel">
+    <div class="output-head">
+      <h2>ABC Custom Chord Grid Definitions</h2>
+      <div class="output-actions">
+        <button id="copyBtn2" class="button" type="button">Copy to Clipboard</button>
+        <button id="saveBtn2" class="button blue" type="button">Save Definitions</button>
+      </div>
+    </div>
+    <textarea id="output" readonly spellcheck="false"></textarea>
+    <div class="note">The saved/copied text includes <code>%%begin_chord_grid_definitions</code> and <code>%%end_chord_grid_definitions</code>.<br/>Paste the complete block into the ABC file header or a tune.</div>
+    <p id="status" class="status" aria-live="polite"></p>
+  </section>
+</main>
+
+<script>
+(() => {
+"use strict";
+
+const $ = id => document.getElementById(id);
+const state = { chords: [], selected: -1 };
+const MAX_VISIBLE_FRETS = 5;
+
+function blankChord(name="C", strings=6) {
+  return { name, strings, baseFret:1, frets:Array(strings).fill(0), fingers:null, barre:null };
+}
+function normalizeName(s){ return String(s||"").trim(); }
+function chordNameKey(s){ return normalizeName(s).toLocaleLowerCase(); }
+function escapeJsonString(s){ return JSON.stringify(String(s)); }
+
+function validChord(c) {
+  if (!c || !normalizeName(c.name)) return "Every chord must have a label.";
+  if (!Number.isInteger(c.strings) || c.strings < 3 || c.strings > 6) return `${c.name}: strings must be 3–6.`;
+  if (!Number.isInteger(c.baseFret) || c.baseFret < 1) return `${c.name}: baseFret must be at least 1.`;
+  if (!Array.isArray(c.frets) || c.frets.length !== c.strings) return `${c.name}: frets must contain one value per string.`;
+  for (const f of c.frets) {
+    if (f === "x") continue;
+    if (!Number.isInteger(f) || f < 0) return `${c.name}: invalid fret value.`;
+  }
+  if (c.fingers !== null) {
+    if (!Array.isArray(c.fingers) || c.fingers.length !== c.strings) return `${c.name}: fingers must contain one value per string.`;
+    for (const f of c.fingers) if (f !== null && (!Number.isInteger(f) || f < 1 || f > 4)) return `${c.name}: finger numbers must be 1–4.`;
+  }
+  if (c.barre !== null) {
+    const b=c.barre;
+    if (!Number.isInteger(b.fret)||b.fret<1||!Number.isInteger(b.fromString)||b.fromString<1||b.fromString>c.strings||
+        !Number.isInteger(b.toString)||b.toString<1||b.toString>c.strings) return `${c.name}: invalid barre.`;
+  }
+  return "";
+}
+
+function formattedDefinition(c, isLast) {
+  const fingers = c.fingers === null ? "null" : `[${c.fingers.map(v=>v===null?"null":v).join(", ")}]`;
+  const frets = `[${c.frets.map(v=>v==="x" ? '"x"' : v).join(", ")}]`;
+  const barre = c.barre === null ? "null" :
+    `{"fret": ${c.barre.fret}, "fromString": ${c.barre.fromString}, "toString": ${c.barre.toString}}`;
+  return [
+    `${escapeJsonString(c.name)}: {`,
+    `  "strings": ${c.strings},`,
+    `  "baseFret": ${c.baseFret},`,
+    `  "frets": ${frets},`,
+    `  "fingers": ${fingers},`,
+    `  "barre": ${barre}`,
+    `}${isLast ? "" : ","}`
+  ].join("\n");
+}
+
+function outputText() {
+  const body = state.chords.map((c,i)=>formattedDefinition(c,i===state.chords.length-1)).join("\n");
+  return `%%begin_chord_grid_definitions\n${body}${body ? "\n" : ""}%%end_chord_grid_definitions`;
+}
+function findDuplicateChordName() {
+  const seen = new Map();
+
+  for (const c of state.chords) {
+    const key = chordNameKey(c.name);
+    if (!key) continue;
+
+    if (seen.has(key)) {
+      return normalizeName(c.name);
+    }
+
+    seen.set(key, c);
+  }
+
+  return "";
+}
+
+function updateOutput() {
+  $("output").value = outputText();
+
+  const errs = state.chords.map(validChord).filter(Boolean);
+  const duplicateName = findDuplicateChordName();
+
+  if (!errs.length && duplicateName) {
+    errs.push(`Duplicate chord label: ${duplicateName}`);
+  }
+
+  $("status").textContent = errs.length ? errs[0] : `${state.chords.length} chord definition${state.chords.length===1?"":"s"}.`;
+  $("status").className = "status" + (errs.length ? " error" : "");
+}
+
+function renderList() {
+  $("chordList").innerHTML="";
+  $("emptyList").hidden = state.chords.length>0;
+  state.chords.forEach((c,i)=>{
+    const li=document.createElement("li"), b=document.createElement("button");
+    b.type="button"; b.textContent=c.name || "(unnamed chord)";
+    if(i===state.selected)b.classList.add("active");
+    b.addEventListener("click",()=>{state.selected=i;render();});
+    li.appendChild(b);$("chordList").appendChild(li);
+  });
+}
+
+function setStringCount(c,n) {
+  n=Math.max(3,Math.min(6,n));
+  while(c.frets.length<n)c.frets.push(0);
+  c.frets=c.frets.slice(0,n);
+  if(c.fingers){while(c.fingers.length<n)c.fingers.push(null);c.fingers=c.fingers.slice(0,n);}
+  c.strings=n;
+  if(c.barre){c.barre.fromString=Math.min(c.barre.fromString,n);c.barre.toString=Math.min(c.barre.toString,n);}
+}
+
+
+function svgEl(tag, attrs={}) {
+  const el=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,String(v));
+  return el;
+}
+
+function renderChordPreview(c) {
+  const host=$("gridPreview");
+  host.innerHTML="";
+  if(!c)return;
+
+  const strings=c.strings;
+  const width=150;
+  const height=c.fingers ? 185 : 165;
+  const left=28, right=122, top=38, bottom=132;
+  const stringGap=(right-left)/(strings-1);
+  const shownFrets=5;
+  const fretGap=(bottom-top)/shownFrets;
+
+  const svg=svgEl("svg",{viewBox:`0 0 ${width} ${height}`,width:150,height});
+  const title=svgEl("text",{x:width/2,y:19,"text-anchor":"middle","font-family":"Arial, Helvetica, sans-serif",
+    "font-size":"16","font-weight":"500",fill:"#111"});
+  title.textContent=c.name||"Chord";svg.appendChild(title);
+
+  // Open/mute markers.
+  for(let s=0;s<strings;s++){
+    const x=left+s*stringGap;
+    const f=c.frets[s];
+    if(f==="x"){
+      const t=svgEl("text",{x,y:33,"text-anchor":"middle","font-family":"Arial, Helvetica, sans-serif","font-size":"12",fill:"#111"});
+      t.textContent="×";svg.appendChild(t);
+    } else if(f===0){
+      svg.appendChild(svgEl("circle",{cx:x,cy:29,r:4.2,fill:"none",stroke:"#111","stroke-width":"1.2"}));
+    }
+  }
+
+  // Nut or top line.
+  svg.appendChild(svgEl("line",{x1:left,y1:top,x2:right,y2:top,stroke:"#111","stroke-width":c.baseFret===1?3:1.4}));
+
+  // Frets.
+  for(let r=1;r<=shownFrets;r++){
+    const y=top+r*fretGap;
+    svg.appendChild(svgEl("line",{x1:left,y1:y,x2:right,y2:y,stroke:"#666","stroke-width":"1"}));
+  }
+
+  // Strings.
+  for(let s=0;s<strings;s++){
+    const x=left+s*stringGap;
+    svg.appendChild(svgEl("line",{x1:x,y1:top,x2:x,y2:bottom,stroke:"#444","stroke-width":"1"}));
+  }
+
+  // Base fret label for positions above first.
+  if(c.baseFret>1){
+    const t=svgEl("text",{x:17,y:top+fretGap*.65,"text-anchor":"middle","font-family":"Arial, Helvetica, sans-serif","font-size":"10",fill:"#333"});
+    t.textContent=String(c.baseFret);svg.appendChild(t);
+  }
+
+  // Barre.
+  if(c.barre){
+    const rel=c.barre.fret-c.baseFret;
+    if(rel>=0 && rel<shownFrets){
+      const from=Math.max(1,Math.min(strings,c.barre.fromString))-1;
+      const to=Math.max(1,Math.min(strings,c.barre.toString))-1;
+      const x1=left+Math.min(from,to)*stringGap;
+      const x2=left+Math.max(from,to)*stringGap;
+      const y=top+(rel+.5)*fretGap;
+      svg.appendChild(svgEl("line",{x1,y1:y,x2,y2:y,stroke:"#111","stroke-width":"9","stroke-linecap":"round"}));
+    }
+  }
+
+  // Fret dots.
+  c.frets.forEach((f,s)=>{
+    if(typeof f!=="number" || f<=0)return;
+    const rel=f-c.baseFret;
+    if(rel<0 || rel>=shownFrets)return;
+    const x=left+s*stringGap;
+    const y=top+(rel+.5)*fretGap;
+    svg.appendChild(svgEl("circle",{cx:x,cy:y,r:5.3,fill:"#111"}));
+  });
+
+  // Finger numbers below strings, matching current tool behavior.
+  if(c.fingers){
+    c.fingers.forEach((f,s)=>{
+      if(f==null)return;
+      const x=left+s*stringGap;
+      const t=svgEl("text",{x,y:151,"text-anchor":"middle","font-family":"Arial, Helvetica, sans-serif",
+        "font-size":"11","font-weight":"300",fill:"#111"});
+      t.textContent=String(f);svg.appendChild(t);
+    });
+  }
+
+  host.appendChild(svg);
+}
+
+function renderFretboard(c) {
+  const host=$("fretboard"); host.innerHTML="";
+  host.style.gridTemplateColumns="1fr";
+  const markers=document.createElement("div");markers.className="string-markers";markers.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
+  c.frets.forEach((f,si)=>{
+    const cell=document.createElement("div");cell.className="marker";
+    const b=document.createElement("button");b.type="button";
+    b.textContent=f==="x"?"X":(f===0?"O":"•");
+    b.title=f==="x"?"Muted string":f===0?"Open string":"Fretted string";
+    b.addEventListener("click",()=>{
+      if(c.frets[si]==="x") c.frets[si]=0;
+      else if(c.frets[si]===0) c.frets[si]="x";
+      else c.frets[si]=0;
+      render();
+    });
+    cell.appendChild(b);markers.appendChild(cell);
+  }); host.appendChild(markers);
+
+  const neck=document.createElement("div");neck.className="neck";
+  for(let row=0;row<MAX_VISIBLE_FRETS;row++){
+    const fretNo=c.baseFret+row;
+    const rr=document.createElement("div");rr.className="fret-row";rr.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
+    const num=document.createElement("span");num.className="fret-number";num.textContent=fretNo;rr.appendChild(num);
+    for(let si=0;si<c.strings;si++){
+      const cell=document.createElement("div");cell.className="fret-cell";cell.title=`String ${si+1}, fret ${fretNo}`;
+      if(c.frets[si]===fretNo){const dot=document.createElement("span");dot.className="dot";cell.appendChild(dot);}
+      cell.addEventListener("click",()=>{c.frets[si]=(c.frets[si]===fretNo?0:fretNo);render();});
+      rr.appendChild(cell);
+    }
+    neck.appendChild(rr);
+  }
+  host.appendChild(neck);
+
+  const fingers=document.createElement("div");fingers.className="finger-row";fingers.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
+  for(let si=0;si<c.strings;si++){
+    const cell=document.createElement("div");cell.className="finger-cell";
+    const inp=document.createElement("input");inp.type="number";inp.min="1";inp.max="4";inp.inputMode="numeric";
+    inp.placeholder="–";inp.value=c.fingers && c.fingers[si]!=null ? c.fingers[si] : "";
+    inp.setAttribute("aria-label",`Finger number for string ${si+1}`);
+    inp.addEventListener("input",()=>{
+      const v=inp.value.trim();
+      if(!c.fingers)c.fingers=Array(c.strings).fill(null);
+      c.fingers[si]=v===""?null:Number(v);
+      if(c.fingers.every(x=>x===null))c.fingers=null;
+      renderChordPreview(c);
+      updateOutput();
+    });
+    const lab=document.createElement("div");lab.className="finger-label";lab.textContent=`String ${si+1}`;
+    cell.append(inp,lab);fingers.appendChild(cell);
+  }
+  const fingerHeader=document.createElement("div");
+  fingerHeader.className="finger-header";
+  fingerHeader.textContent="Optional finger number for each string";
+  host.appendChild(fingerHeader);
+  host.appendChild(fingers);
+  renderChordPreview(c);
+}
+
+function renderEditor() {
+  const c=state.chords[state.selected];
+  $("emptyEditor").hidden=!!c;$("editorBody").hidden=!c;
+  if(!c)return;
+  $("chordName").value=c.name;$("strings").value=String(c.strings);$("baseFret").value=String(c.baseFret);
+  $("gridTitle").textContent=c.name || "Chord";
+  $("barreEnabled").checked=!!c.barre;
+  $("barreFret").disabled=!c.barre;$("barreFrom").disabled=!c.barre;$("barreTo").disabled=!c.barre;
+  $("barreFret").value=c.barre?c.barre.fret:1;$("barreFrom").value=c.barre?c.barre.fromString:1;$("barreTo").value=c.barre?c.barre.toString:c.strings;
+  $("barreFrom").max=c.strings;$("barreTo").max=c.strings;
+  renderFretboard(c);
+}
+function render(){renderList();renderEditor();updateOutput();}
+
+function uniqueDefaultName() {
+  const used = new Set(state.chords.map(c => chordNameKey(c.name)).filter(Boolean));
+
+  for (const base of ["C","G","D","A","E","Am","Em","Dm","F","Bb"]) {
+    if (!used.has(chordNameKey(base))) return base;
+  }
+
+  let n = 1;
+  while (used.has(chordNameKey("Chord " + n))) n++;
+  return "Chord " + n;
+}
+
+function requireDayPilot() {
+  if (!window.DayPilot || !DayPilot.Modal) {
+    setStatus("DayPilot.Modal could not be loaded.", true);
+    return false;
+  }
+  return true;
+}
+
+async function showAlert(message, title="Custom Chord Grid Builder") {
+  if (!requireDayPilot()) return;
+  await DayPilot.Modal.alert(
+    `<div style="text-align:center;line-height:1.45;max-width:680px;margin:0 auto;">${message}</div>`,
+    { title, okText:"OK", top:150 }
+  );
+}
+
+async function showConfirm(message, title, okText="OK") {
+  if (!requireDayPilot()) return false;
+  const result = await DayPilot.Modal.confirm(message, {
+    title, okText, cancelText:"Cancel", top:150
+  });
+  return !result.canceled;
+}
+
+function ensureAbcExtension(filename) {
+  let safe = String(filename || "").trim() || "custom-chord-grids.abc";
+  safe = safe.replace(/[\/:*?"<>|]+/g, "-");
+  if (!/\.abc$/i.test(safe)) safe = safe.replace(/\.[^.\/]*$/, "") + ".abc";
+  return safe;
+}
+
+async function promptSaveFilename() {
+  if (!requireDayPilot()) return null;
+  const result = await DayPilot.Modal.form(
+    [
+      { html:'<div style="margin:0 0 12px;line-height:1.35;">Chord grid definition filename:</div>' },
+      { name:"", id:"filename", type:"text" }
+    ],
+    { filename:"custom-chord-grids.abc" },
+    { top:150 },
+    { title:"Save Chord Grid Definitions", width:500, okText:"Save", cancelText:"Cancel" }
+  );
+  if (result.canceled) return null;
+  return ensureAbcExtension(result.result.filename);
+}
+
+async function showInstructions() {
+  if (!requireDayPilot()) return;
+  const html = `
+    <div style="text-align:left;line-height:1.48;max-width:720px;margin:0 auto;">
+      <p>This standalone utility creates the custom chord-grid definition blocks used by ABC Transcription Tools.</p>
+      <h3 style="color:#176b43;margin:18px 0 6px;">Creating chords</h3>
+      <ol>
+        <li>Choose <b>Add</b>, enter a chord label, and select 3, 4, 5, or 6 strings.</li>
+        <li>Click fret positions to place dots. Use the O/X buttons above the strings for open or muted strings.</li>
+        <li>Optionally enter finger numbers 1–4 below the strings and define a barre.</li>
+        <li>Add as many chord definitions as required. Select a chord in the list to edit it.</li>
+      </ol>
+      <h3 style="color:#176b43;margin:18px 0 6px;">Loading and saving</h3>
+      <p><b>Save Definitions</b> prompts for a filename and saves a complete annotation block as an <code>.abc</code> file. <b>Load Definitions</b> reads a previously saved block.</p>
+      <h3 style="color:#176b43;margin:18px 0 6px;">Using the result</h3>
+      <p>Use <b>Copy to Clipboard</b> and paste the complete generated block into your ABC. The output is updated immediately as you edit.</p>
+    </div>`;
+  await DayPilot.Modal.alert(html, {
+    title:"Custom Chord Grid Builder Instructions",
+    okText:"Close",
+    top:150,
+    width:780
+  });
+}
+
+function addChord(){
+  const strings=state.selected>=0 ? state.chords[state.selected].strings : 6;
+  state.chords.push(blankChord(uniqueDefaultName(),strings));state.selected=state.chords.length-1;render();
+  $("chordName").focus();$("chordName").select();
+}
+async function deleteChord(){
+  if(state.selected<0)return;
+  const c=state.chords[state.selected];
+  if(!await showConfirm(`Delete the chord definition <b>${c.name}</b>?`, "Delete Chord", "Delete"))return;
+  state.chords.splice(state.selected,1);state.selected=Math.min(state.selected,state.chords.length-1);render();
+}
+async function newProject(){
+  if(state.chords.length && !await showConfirm("Clear all current chord definitions? This cannot be undone.", "New Chord Grid File", "Clear"))return;
+  state.chords=[];state.selected=-1;render();
+}
+
+function parseDefinitions(text){
+  text=String(text||"").replace(/\r\n?/g,"\n");
+  const m=text.match(/%%begin_chord_grid_definitions\s*\n([\s\S]*?)\n\s*%%end_chord_grid_definitions?/i);
+  if(!m)throw new Error("No %%begin_chord_grid_definitions / %%end_chord_grid_definitions block was found.");
+  let body=m[1].trim();
+  if(!body)return [];
+  let obj;
+  try{obj=JSON.parse("{"+body+"}");}catch(e){throw new Error("The chord definition block is not valid JSON-style chord-grid data.");}
+  const chords=[];
+  const loadedNames=new Set();
+
+  for(const [name,d] of Object.entries(obj)){
+    const strings=Number(d.strings), baseFret=Number(d.baseFret);
+    const c={name:normalizeName(name),strings,baseFret,frets:Array.isArray(d.frets)?d.frets.map(v=>typeof v==="string"&&v.toLowerCase()==="x"?"x":Number(v)):[],
+      fingers:d.fingers==null?null:(Array.isArray(d.fingers)?d.fingers.map(v=>v==null||v===""?null:Number(v)):d.fingers),
+      barre:d.barre==null?null:{fret:Number(d.barre.fret),fromString:Number(d.barre.fromString),toString:Number(d.barre.toString)}};
+
+    const err=validChord(c);
+    if(err)throw new Error(err);
+
+    const key=chordNameKey(c.name);
+    if(loadedNames.has(key)){
+      throw new Error(`Duplicate chord label in loaded definitions: ${c.name}`);
+    }
+
+    loadedNames.add(key);
+    chords.push(c);
+  }
+
+  return chords;
+}
+async function loadFile(file){
+  const text=await file.text(), parsed=parseDefinitions(text);
+  if(state.chords.length && !await showConfirm(`Replace the current <b>${state.chords.length}</b> chord definition(s) with the loaded file?`, "Load Chord Grid Definitions", "Replace"))return;
+  state.chords=parsed;state.selected=parsed.length?0:-1;render();setStatus(`Loaded ${parsed.length} chord definition${parsed.length===1?"":"s"} from ${file.name}.`);
+}
+function setStatus(msg,error=false){$("status").textContent=msg;$("status").className="status"+(error?" error":"");}
+function ensureValid(){
+  const names=new Set();
+
+  for(const c of state.chords){
+    const err=validChord(c);
+    if(err){
+      setStatus(err,true);
+      return false;
+    }
+
+    const key=chordNameKey(c.name);
+
+    if(names.has(key)){
+      setStatus(`Duplicate chord label: ${normalizeName(c.name)}`,true);
+      return false;
+    }
+
+    names.add(key);
+  }
+
+  return true;
+}
+async function copyOutput(event){
+  if(!ensureValid())return;
+
+  const button = event && event.currentTarget ? event.currentTarget : null;
+  const originalText = button ? button.textContent : "";
+  const showButtonFeedback = (message, delay=1400) => {
+    if (!button) return;
+    button.textContent = message;
+    button.disabled = true;
+    window.setTimeout(() => {
+      button.textContent = originalText;
+      button.disabled = false;
+    }, delay);
+  };
+
+  const text=outputText();
+  try{
+    await navigator.clipboard.writeText(text);
+    setStatus("Custom chord grid definitions copied to the clipboard.");
+    showButtonFeedback("Copied!");
+  }
+  catch(e){
+    $("output").focus();$("output").select();
+    const ok=document.execCommand("copy");
+    setStatus(ok?"Custom chord grid definitions copied to the clipboard.":"Unable to copy automatically. The text has been selected.",!ok);
+    showButtonFeedback(ok ? "Copied!" : "Copy Failed", ok ? 1400 : 2000);
+  }
+}
+async function saveOutput(){
+  if(!ensureValid())return;
+  const filename=await promptSaveFilename();
+  if(!filename){setStatus("Save canceled.");return;}
+  const blob=new Blob([outputText()+"\\n"],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  setStatus(`Saved ${filename}.`);
+}
+
+$("addBtn").addEventListener("click",addChord);$("deleteBtn").addEventListener("click",deleteChord);$("newBtn").addEventListener("click",newProject);
+$("copyBtn").addEventListener("click",copyOutput);$("copyBtn2").addEventListener("click",copyOutput);
+$("saveBtn").addEventListener("click",saveOutput);$("saveBtn2").addEventListener("click",saveOutput);
+$("loadFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;try{await loadFile(f);}catch(err){const msg=err.message||String(err);setStatus(msg,true);await showAlert(msg,"Unable to Load Definitions");}});
+$("chordName").addEventListener("input",e=>{const c=state.chords[state.selected];if(!c)return;c.name=e.target.value;renderList();$("gridTitle").textContent=c.name||"Chord";renderChordPreview(c);updateOutput();});
+$("chordName").addEventListener("blur",e=>{const c=state.chords[state.selected];if(!c)return;c.name=normalizeName(e.target.value);e.target.value=c.name;renderList();$("gridTitle").textContent=c.name||"Chord";renderChordPreview(c);updateOutput();});
+$("strings").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;setStringCount(c,Number(e.target.value));render();});
+$("baseFret").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;c.baseFret=Math.max(1,Math.min(24,Number(e.target.value)||1));render();});
+$("barreEnabled").addEventListener("change",e=>{const c=state.chords[state.selected];if(!c)return;c.barre=e.target.checked?{fret:c.baseFret,fromString:1,toString:c.strings}:null;render();});
+for(const [id,key] of [["barreFret","fret"],["barreFrom","fromString"],["barreTo","toString"]]){
+  $(id).addEventListener("change",e=>{const c=state.chords[state.selected];if(!c||!c.barre)return;c.barre[key]=Number(e.target.value);render();});
+}
+$("instructionsBtn").addEventListener("click",showInstructions);
+
+render();
+})();
+</script>
+</body>
+</html>
