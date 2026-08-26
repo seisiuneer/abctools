@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3319_082526_0900";
+var gVersionNumber = "3320_082626_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1643,6 +1643,7 @@ function removeABCTuneHeaders(abcTune) {
 
   var insideTextBlock = false;
   var insideCSSBlock = false;
+  var insideChordGridDefinitionBlock = false;
   var keepTesting = true;
 
   for (var j = 0; j < theLines.length; ++j) {
@@ -1685,6 +1686,20 @@ function removeABCTuneHeaders(abcTune) {
 
       if (insideCSSBlock) {
         continue; // Skip all lines within css block
+      }
+
+      if (/^%%begin_chord_grid_definitions$/i.test(line)) {
+        insideChordGridDefinitionBlock = true;
+        continue;
+      }
+
+      if (/^%%end_chord_grid_definitions?$/i.test(line)) {
+        insideChordGridDefinitionBlock = false;
+        continue;
+      }
+
+      if (insideChordGridDefinitionBlock) {
+        continue;
       }
 
       // Skip comment lines
@@ -1836,11 +1851,31 @@ function getTuneByIndex(tuneNumber) {
 
   const lines = theTune.split('\n');
   let result = [];
+  let inChordGridDefinitionBlock = false;
 
   for (let line of lines) {
-    if (line.trim() === "") {
-      break; // Stop at the first blank line
+    var trimmedTuneLine = line.trim();
+
+    if (trimmedTuneLine === "%%begin_chord_grid_definitions") {
+      inChordGridDefinitionBlock = true;
+      result.push(line);
+      continue;
     }
+
+    if (inChordGridDefinitionBlock) {
+      result.push(line);
+
+      if (/^%%end_chord_grid_definitions?$/i.test(trimmedTuneLine)) {
+        inChordGridDefinitionBlock = false;
+      }
+
+      continue;
+    }
+
+    if (trimmedTuneLine === "") {
+      break; // Stop at the first blank line outside a chord-grid definition block
+    }
+
     result.push(line);
   }
 
@@ -6920,7 +6955,7 @@ function GetAllTuneHyperlinks(theLinks) {
 
       }
 
-      tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
+      tuneWithPatch = AggregateABCFileHeaderForShare(tuneWithPatch);
 
       // Create a share URL for this tune
       // 2 Feb 2026 - Switch to Deflate
@@ -7103,7 +7138,7 @@ function GetAllTuneHyperlinks(theLinks) {
         tuneWithPatch = "X:1\n%abcjs_soundfont " + theSoundFont + "\n" + "%%MIDI program " + theMelodyPatch + "\n" + "%%MIDI bassprog " + theBassPatch + "\n" + "%%MIDI chordprog " + theChordPatch + "\n" + tuneWithPatch;
       }
 
-      tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
+      tuneWithPatch = AggregateABCFileHeaderForShare(tuneWithPatch);
 
       // Create a share URL for this tune
       var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false, null, true);
@@ -7808,7 +7843,7 @@ function AppendPDFTuneQRCode(thePDF, paperStyle, theABC, theTitle, callback) {
 
   var theURL;
 
-  theABC = GetABCFileHeader() + theABC;
+  theABC = AggregateABCFileHeaderForShare(theABC);
 
   // Can we make a QR code from the current share link URL?
   theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false, null, true);
@@ -15996,6 +16031,977 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
   }
 }
 
+
+//
+// Tool-specific chord-grid support
+//
+
+function StripChordGridDefinitionBlocks(source) {
+  return (source || "").replace(
+    /^[ \t]*%%begin_chord_grid_definitions[ \t]*\r?\n[\s\S]*?^[ \t]*%%end_chord_grid_definitions?[ \t]*(?:\r?\n|$)/gmi,
+    ""
+  );
+}
+
+function ParseChordGridDefinitions(source) {
+  var definitions = Object.create(null);
+  var blockRe =
+    /^[ \t]*%%begin_chord_grid_definitions[ \t]*\r?\n([\s\S]*?)^[ \t]*%%end_chord_grid_definitions?[ \t]*(?:\r?\n|$)/gmi;
+  var match;
+
+  while ((match = blockRe.exec(source || "")) !== null) {
+    var body = match[1].trim();
+
+    if (!body) {
+      continue;
+    }
+
+    // The block syntax contains object members without the outer braces.
+    // Permit a trailing comma before the end marker for convenient editing.
+    body = body.replace(/,\s*$/, "");
+
+    var parsed;
+    try {
+      parsed = JSON.parse("{" + body + "}");
+    }
+    catch (err) {
+      console.warn("Invalid chord-grid definition block:", err);
+      continue;
+    }
+
+    Object.keys(parsed).forEach(function(chordName) {
+      var validated = ValidateChordGridDefinition(parsed[chordName]);
+
+      if (validated) {
+        definitions[chordName] = validated;
+      }
+      else {
+        console.warn("Ignoring invalid chord-grid definition for " + chordName);
+      }
+    });
+  }
+
+  return definitions;
+}
+
+function ValidateChordGridDefinition(definition) {
+  if (!definition || typeof definition !== "object") {
+    return null;
+  }
+
+  var strings = Number(definition.strings);
+
+  if (!Number.isInteger(strings) || strings < 3 || strings > 6) {
+    return null;
+  }
+
+  if (!Array.isArray(definition.frets) ||
+      definition.frets.length !== strings) {
+    return null;
+  }
+
+  var baseFret = Number(definition.baseFret);
+
+  if (!Number.isInteger(baseFret) || baseFret < 1) {
+    return null;
+  }
+
+  var frets = definition.frets.map(function(value) {
+    if (value === "x" || value === "X") return "x";
+
+    var numeric = Number(value);
+    if (!Number.isInteger(numeric) || numeric < 0) return null;
+
+    return numeric;
+  });
+
+  if (frets.some(function(value) { return value === null; })) {
+    return null;
+  }
+
+  // Optional finger-number data. null or omitted means that the rendered
+  // chord grid contains no finger numbers.
+  var fingers = null;
+
+  if (definition.fingers !== null &&
+      definition.fingers !== undefined) {
+
+    if (!Array.isArray(definition.fingers) ||
+        definition.fingers.length !== strings) {
+      return null;
+    }
+
+    fingers = definition.fingers.map(function(value) {
+      if (value === null || value === undefined || value === "") return null;
+
+      var numeric = Number(value);
+      if (!Number.isInteger(numeric) || numeric < 1 || numeric > 4) return null;
+
+      return numeric;
+    });
+
+    for (var fi = 0; fi < definition.fingers.length; ++fi) {
+      if (definition.fingers[fi] !== null &&
+          definition.fingers[fi] !== undefined &&
+          definition.fingers[fi] !== "" &&
+          fingers[fi] === null) {
+        return null;
+      }
+    }
+  }
+
+  var barre = null;
+
+  if (definition.barre !== null && definition.barre !== undefined) {
+    if (typeof definition.barre !== "object") {
+      return null;
+    }
+
+    var barreFret = Number(definition.barre.fret);
+    var fromString = Number(definition.barre.fromString);
+    var toString = Number(definition.barre.toString);
+
+    if (!Number.isInteger(barreFret) || barreFret < 1 ||
+        !Number.isInteger(fromString) || fromString < 1 || fromString > strings ||
+        !Number.isInteger(toString) || toString < 1 || toString > strings) {
+      return null;
+    }
+
+    var barreFinger = null;
+
+    if (fingers !== null) {
+      barreFinger = definition.barre.finger == null
+        ? 1
+        : Number(definition.barre.finger);
+
+      if (!Number.isInteger(barreFinger) ||
+          barreFinger < 1 ||
+          barreFinger > 4) {
+        return null;
+      }
+    }
+
+    barre = {
+      fret: barreFret,
+      fromString: fromString,
+      toString: toString,
+      finger: barreFinger
+    };
+  }
+
+  return {
+    strings: strings,
+    baseFret: baseFret,
+    frets: frets,
+    fingers: fingers,
+    barre: barre
+  };
+}
+
+function ParseShowChordGridsDirective(line) {
+  var match = (line || "").match(
+    /^[ \t]*%%show_chord_grids(?:[ \t]+(guitar|mandolin))?[ \t]*$/i
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    instrument: match[1] ? match[1].toLowerCase() : "guitar"
+  };
+}
+
+function GetChordGridDisplaySettings(fileHeader, tuneABC) {
+  function scan(source) {
+    var result = null;
+    var lines = (source || "").split(/\r?\n/);
+
+    for (var i = 0; i < lines.length; ++i) {
+      var parsed = ParseShowChordGridsDirective(lines[i]);
+
+      if (parsed) {
+        result = parsed;
+      }
+    }
+
+    return result;
+  }
+
+  // A tune-level directive overrides a file-header directive.
+  // Guitar is the default instrument; chord grids are always shown above.
+  return scan(tuneABC) || scan(fileHeader) || null;
+}
+
+//
+// Return only file-header information needed to render chord grids.
+// No unrelated header directives are injected into player/dialog renderings.
+//
+function GetChordGridFileHeaderForRendering() {
+  var fileHeader = FindPreTuneHeader(getABCEditorText()) || "";
+
+  if (!fileHeader) {
+    return "";
+  }
+
+  var output = [];
+  var inDefinitionBlock = false;
+  var lines = fileHeader.replace(/\r\n?/g, "\n").split("\n");
+
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i];
+    var trimmed = line.trim();
+
+    if (/^%%begin_chord_grid_definitions$/i.test(trimmed)) {
+      inDefinitionBlock = true;
+    }
+
+    if (inDefinitionBlock) {
+      output.push(line);
+
+      if (/^%%end_chord_grid_definitions?$/i.test(trimmed)) {
+        inDefinitionBlock = false;
+      }
+
+      continue;
+    }
+
+    if (ParseShowChordGridsDirective(line)) {
+      output.push(line);
+    }
+  }
+
+  if (!output.length) {
+    return "";
+  }
+
+  return output.join("\n").replace(/\s+$/, "") + "\n";
+}
+
+function AggregateChordGridFileHeaderForRendering(theABC) {
+  if (!theABC) {
+    return theABC;
+  }
+
+  var chordGridHeader = GetChordGridFileHeaderForRendering();
+
+  if (!chordGridHeader) {
+    return theABC;
+  }
+
+  var existingHeader = FindPreTuneHeader(theABC) || "";
+
+  function normalizedLines(value) {
+    return (value || "")
+      .replace(/\r\n?/g, "\n")
+      .split("\n")
+      .map(function(line) { return line.trim(); })
+      .filter(function(line) { return line.length > 0; });
+  }
+
+  var requiredLines = normalizedLines(chordGridHeader);
+  var existingLines = normalizedLines(existingHeader);
+
+  var alreadyPresent =
+    requiredLines.length > 0 &&
+    requiredLines.every(function(line) {
+      return existingLines.indexOf(line) !== -1;
+    });
+
+  return alreadyPresent
+    ? theABC
+    : chordGridHeader + theABC;
+}
+
+function NormalizeChordGridName(chordName) {
+  var name = (chordName || "").trim();
+
+  while (name.length >= 2 && name[0] === "(" && name[name.length - 1] === ")") {
+    name = name.substring(1, name.length - 1).trim();
+  }
+
+  return name;
+}
+
+function IsChordGridSymbol(chordName) {
+  var name = NormalizeChordGridName(chordName);
+
+  if (!name || /^[\^_<>@]/.test(name)) {
+    return false;
+  }
+
+  return /^[A-G](?:#|b)?(?:maj|min|dim|aug|sus|add|m|no|M|°|ø|o|\+|-|[0-9]|[#b]|\(|\))*?(?:\/[A-G](?:#|b)?)?$/.test(name);
+}
+
+function GetChordGridNamesFromTune(theTune) {
+  var source = StripChordGridDefinitionBlocks(theTune || "");
+  var found = [];
+  var seen = Object.create(null);
+  var quotedTextRe = /"((?:\\.|[^"\\])*)"/g;
+  var match;
+
+  while ((match = quotedTextRe.exec(source)) !== null) {
+    var name = NormalizeChordGridName(match[1]);
+
+    if (!IsChordGridSymbol(name)) {
+      continue;
+    }
+
+    var key = name.toLowerCase();
+
+    if (!seen[key]) {
+      seen[key] = true;
+      found.push(name);
+    }
+  }
+
+  found.sort(function(a, b) {
+    return a.localeCompare(b, undefined, {
+      sensitivity: "base",
+      numeric: true
+    });
+  });
+
+  return found;
+}
+
+function ResolveChordGridDefinition(
+  chordName,
+  fileDefinitions,
+  tuneDefinitions,
+  instrument
+) {
+  // Custom tune definitions have highest priority for every instrument.
+  if (tuneDefinitions &&
+      Object.prototype.hasOwnProperty.call(tuneDefinitions, chordName)) {
+    return tuneDefinitions[chordName];
+  }
+
+  // File-header definitions are the next level of override for every instrument.
+  if (fileDefinitions &&
+      Object.prototype.hasOwnProperty.call(fileDefinitions, chordName)) {
+    return fileDefinitions[chordName];
+  }
+
+  if ((instrument || "guitar").toLowerCase() === "mandolin") {
+    if (typeof getMandolinChordDiagram === "function") {
+      return getMandolinChordDiagram(chordName);
+    }
+
+    // Also support a simple MANDOLIN_CHORDS object if the supplied
+    // mandolin-chords.js doesn't expose a resolver function.
+    if (typeof MANDOLIN_CHORDS !== "undefined" &&
+        MANDOLIN_CHORDS &&
+        Object.prototype.hasOwnProperty.call(MANDOLIN_CHORDS, chordName)) {
+      return MANDOLIN_CHORDS[chordName];
+    }
+
+    if (typeof MANDOLIN_CHORD_ALIASES !== "undefined" &&
+        MANDOLIN_CHORD_ALIASES &&
+        typeof MANDOLIN_CHORDS !== "undefined" &&
+        MANDOLIN_CHORDS) {
+      var mandolinAlias = MANDOLIN_CHORD_ALIASES[chordName];
+
+      if (mandolinAlias &&
+          Object.prototype.hasOwnProperty.call(MANDOLIN_CHORDS, mandolinAlias)) {
+        return MANDOLIN_CHORDS[mandolinAlias];
+      }
+    }
+
+    return null;
+  }
+
+  if (typeof getGuitarChordDiagram === "function") {
+    return getGuitarChordDiagram(chordName);
+  }
+
+  return null;
+}
+
+function CreateChordGridSVGElement(tagName, attrs) {
+  var elem = document.createElementNS("http://www.w3.org/2000/svg", tagName);
+
+  if (attrs) {
+    Object.keys(attrs).forEach(function(key) {
+      elem.setAttribute(key, attrs[key]);
+    });
+  }
+
+  return elem;
+}
+
+function AddChordGridText(parent, text, x, y, fontSize, options) {
+  options = options || {};
+
+  var elem = CreateChordGridSVGElement("text", {
+    x: x,
+    y: y,
+    "font-family": options.fontFamily || "Arial, Helvetica, sans-serif",
+    "font-size": fontSize,
+    "text-anchor": options.anchor || "middle",
+    fill: options.fill || "currentColor"
+  });
+
+  if (options.weight) {
+    elem.setAttribute("font-weight", options.weight);
+  }
+
+  if (options.letterSpacing != null) {
+    elem.setAttribute("letter-spacing", options.letterSpacing);
+  }
+
+  elem.textContent = text;
+  parent.appendChild(elem);
+  return elem;
+}
+
+function DrawOneChordGrid(parent, chordName, diagram, originX, cellWidth) {
+  var strings = diagram && Number.isInteger(Number(diagram.strings))
+    ? Number(diagram.strings)
+    : 6;
+
+  strings = Math.max(3, Math.min(6, strings));
+
+  var gridWidth = Math.min(56, 10 * (strings - 1));
+  var stringGap = strings > 1 ? gridWidth / (strings - 1) : gridWidth;
+  var gridLeft = originX + (cellWidth - gridWidth) / 2;
+  var gridTop = 31;
+  var fretGap = 10.5;
+  var gridHeight = fretGap * 5;
+
+  AddChordGridText(parent, chordName, originX + cellWidth / 2, 12, 11, {
+    weight: "300",
+    fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+    letterSpacing: "0.35px"
+  });
+
+  if (!diagram) {
+    parent.appendChild(
+      CreateChordGridSVGElement("rect", {
+        x: gridLeft,
+        y: gridTop,
+        width: gridWidth,
+        height: gridHeight,
+        rx: 3,
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": 0.8,
+        "stroke-dasharray": "3 3",
+        opacity: 0.55
+      })
+    );
+
+    AddChordGridText(
+      parent,
+      "No grid",
+      originX + cellWidth / 2,
+      gridTop + gridHeight / 2 + 4,
+      9
+    );
+    return;
+  }
+
+  var baseFret =
+    typeof diagram.baseFret === "number" && isFinite(diagram.baseFret)
+      ? diagram.baseFret
+      : 1;
+
+  var showFingerNumbers = Array.isArray(diagram.fingers);
+
+  for (var stringIndex = 0; stringIndex < strings; ++stringIndex) {
+    var x = gridLeft + stringIndex * stringGap;
+    var fretValue = diagram.frets[stringIndex];
+
+    if (fretValue === "x") {
+      AddChordGridText(parent, "×", x, gridTop - 7, 11);
+    }
+    else if (fretValue === 0) {
+      parent.appendChild(
+        CreateChordGridSVGElement("circle", {
+          cx: x,
+          cy: gridTop - 10,
+          r: 2.5,
+          fill: "none",
+          stroke: "currentColor",
+          "stroke-width": 0.9
+        })
+      );
+    }
+  }
+
+  for (var s = 0; s < strings; ++s) {
+    var sx = gridLeft + s * stringGap;
+
+    parent.appendChild(
+      CreateChordGridSVGElement("line", {
+        x1: sx,
+        y1: gridTop,
+        x2: sx,
+        y2: gridTop + gridHeight,
+        stroke: "currentColor",
+        "stroke-width": 0.8
+      })
+    );
+  }
+
+  for (var f = 0; f <= 5; ++f) {
+    var fy = gridTop + f * fretGap;
+
+    parent.appendChild(
+      CreateChordGridSVGElement("line", {
+        x1: gridLeft,
+        y1: fy,
+        x2: gridLeft + gridWidth,
+        y2: fy,
+        stroke: "currentColor",
+        "stroke-width": (f === 0 && baseFret === 1) ? 2 : 0.8
+      })
+    );
+  }
+
+  if (baseFret > 1) {
+    AddChordGridText(
+      parent,
+      String(baseFret),
+      gridLeft - 6,
+      gridTop + fretGap * 0.72,
+      8,
+      { anchor: "end" }
+    );
+  }
+
+  var barre = diagram.barre || null;
+
+  if (barre &&
+      typeof barre.fret === "number" &&
+      typeof barre.fromString === "number" &&
+      typeof barre.toString === "number") {
+
+    var barreRelativeFret = barre.fret - baseFret;
+
+    if (barreRelativeFret >= 0 && barreRelativeFret < 5) {
+      var sourceMin = Math.min(barre.fromString, barre.toString);
+      var sourceMax = Math.max(barre.fromString, barre.toString);
+
+      // Source numbering remains 1 = highest string, N = lowest string.
+      // frets[]/fingers[] are ordered lowest string through highest string.
+      var lowArrayIndex = strings - sourceMax;
+      var highArrayIndex = strings - sourceMin;
+      var barreX1 = gridLeft + lowArrayIndex * stringGap;
+      var barreX2 = gridLeft + highArrayIndex * stringGap;
+      var barreY = gridTop + (barreRelativeFret + 0.5) * fretGap;
+
+      parent.appendChild(
+        CreateChordGridSVGElement("line", {
+          x1: barreX1,
+          y1: barreY,
+          x2: barreX2,
+          y2: barreY,
+          stroke: "currentColor",
+          "stroke-width": 6,
+          "stroke-linecap": "round"
+        })
+      );
+
+    }
+  }
+
+  for (var i = 0; i < strings; ++i) {
+    var fret = diagram.frets[i];
+
+    if (typeof fret !== "number" || fret <= 0) {
+      continue;
+    }
+
+    var relFret = fret - baseFret;
+
+    if (relFret < 0 || relFret >= 5) {
+      continue;
+    }
+
+    var sourceStringNumber = strings - i;
+    var coveredByBarre =
+      barre &&
+      fret === barre.fret &&
+      sourceStringNumber >= Math.min(barre.fromString, barre.toString) &&
+      sourceStringNumber <= Math.max(barre.fromString, barre.toString);
+
+    if (coveredByBarre) {
+      continue;
+    }
+
+    var dotX = gridLeft + i * stringGap;
+    var dotY = gridTop + (relFret + 0.5) * fretGap;
+
+    parent.appendChild(
+      CreateChordGridSVGElement("circle", {
+        cx: dotX,
+        cy: dotY,
+        r: 3.4,
+        fill: "currentColor"
+      })
+    );
+
+  }
+
+  // Custom definitions with a fingers array display the finger numbers
+  // immediately below their associated strings, never inside the fret dots.
+  if (showFingerNumbers) {
+    var fingerLabelY = gridTop + gridHeight + 10;
+
+    for (var fingerIndex = 0; fingerIndex < strings; ++fingerIndex) {
+      var fingerNumber =
+        diagram.fingers.length > fingerIndex
+          ? diagram.fingers[fingerIndex]
+          : null;
+
+      if (!fingerNumber) {
+        continue;
+      }
+
+      AddChordGridText(
+        parent,
+        String(fingerNumber),
+        gridLeft + fingerIndex * stringGap,
+        fingerLabelY,
+        7,
+        {
+          fill: "currentColor",
+          weight: "300"
+        }
+      );
+    }
+  }
+}
+
+function BuildChordGridSVG(
+  chordNames,
+  fileDefinitions,
+  tuneDefinitions,
+  instrument,
+  availableWidth,
+  forcedColumns
+) {
+  var cellWidth = 76;
+  var horizontalPadding = 8;
+  var chordGridScale = 0.96;
+
+  var showAnyFingerNumbers = chordNames.some(function(chordName) {
+    var diagram = ResolveChordGridDefinition(
+      chordName,
+      fileDefinitions,
+      tuneDefinitions,
+      instrument
+    );
+
+    return diagram && Array.isArray(diagram.fingers);
+  });
+
+  var rowHeight = showAnyFingerNumbers ? 100 : 86;
+
+  // Work in the unscaled chord-grid coordinate system. Choose as many fixed
+  // width cells as will fit in the available notation width, then wrap the
+  // remaining diagrams onto additional rows.
+  var usableUnscaledWidth =
+    typeof availableWidth === "number" && isFinite(availableWidth) && availableWidth > 0
+      ? availableWidth / chordGridScale
+      : horizontalPadding * 2 + chordNames.length * cellWidth;
+
+  var columns =
+    Number.isInteger(Number(forcedColumns)) && Number(forcedColumns) > 0
+      ? Number(forcedColumns)
+      : Math.floor(
+          (
+            usableUnscaledWidth -
+            horizontalPadding * 2 +
+            0.001
+          ) /
+          cellWidth
+        );
+
+  columns = Math.max(1, Math.min(chordNames.length, columns));
+
+  var rows = Math.max(1, Math.ceil(chordNames.length / columns));
+  var contentWidth = horizontalPadding * 2 + columns * cellWidth;
+  var contentHeight = rows * rowHeight;
+
+  var svg = CreateChordGridSVGElement("svg", {
+    viewBox: "0 0 " + contentWidth + " " + contentHeight,
+    width: contentWidth,
+    height: contentHeight,
+    preserveAspectRatio: "xMinYMin meet",
+    role: "img",
+    "aria-label": "Chord diagrams: " + chordNames.join(", ")
+  });
+
+  chordNames.forEach(function(chordName, index) {
+    var row = Math.floor(index / columns);
+    var column = index % columns;
+
+    var rowGroup = CreateChordGridSVGElement("g", {
+      transform: "translate(0 " + (row * rowHeight) + ")"
+    });
+
+    DrawOneChordGrid(
+      rowGroup,
+      chordName,
+      ResolveChordGridDefinition(
+        chordName,
+        fileDefinitions,
+        tuneDefinitions,
+        instrument
+      ),
+      horizontalPadding + column * cellWidth,
+      cellWidth
+    );
+
+    svg.appendChild(rowGroup);
+  });
+
+  return {
+    svg: svg,
+    width: contentWidth,
+    height: contentHeight,
+    columns: columns,
+    rows: rows,
+    rowHeight: rowHeight,
+    scale: chordGridScale
+  };
+}
+
+function FillChordGridPlaceholder(
+  renderDiv,
+  chordNames,
+  fileDefinitions,
+  tuneDefinitions,
+  instrument
+) {
+  if (!renderDiv) {
+    return;
+  }
+
+  var placeholder =
+    renderDiv.querySelector(".abcjs-chord-grid-placeholder-above");
+
+  if (!placeholder) {
+    return;
+  }
+
+  // Find the stable abcjs placeholder rectangle before clearing the group.
+  var placeholderBox = null;
+  try {
+    placeholderBox = placeholder.getBBox();
+  }
+  catch (err) {
+    placeholderBox = null;
+  }
+
+  var leftX =
+    placeholderBox && isFinite(placeholderBox.x)
+      ? placeholderBox.x
+      : 0;
+
+  var topY =
+    placeholderBox && isFinite(placeholderBox.y)
+      ? placeholderBox.y
+      : 0;
+
+  var rootSVG = renderDiv.querySelector("svg");
+  var rootViewBoxWidth = 0;
+
+  if (rootSVG && rootSVG.viewBox && rootSVG.viewBox.baseVal) {
+    rootViewBoxWidth = Number(rootSVG.viewBox.baseVal.width) || 0;
+  }
+
+  if (!rootViewBoxWidth && rootSVG) {
+    rootViewBoxWidth = Number(rootSVG.getAttribute("width")) || 0;
+  }
+
+  var availableWidth =
+    rootViewBoxWidth > leftX
+      ? Math.max(76, rootViewBoxWidth - leftX - 8)
+      : null;
+
+  // abcjs calculates the authoritative column count while it still knows
+  // the exact engraving width. Current abcjs Svg.openGroup() does not forward
+  // arbitrary data-* attributes, so the metadata is also stored on the
+  // invisible placeholder rectangle, whose rect() writer preserves them.
+  var placeholderGeometry =
+    placeholder.querySelector('[data-name="chord-grid-placeholder-box"]');
+
+  var forcedColumns = Number(
+    placeholder.getAttribute("data-chord-grid-columns") ||
+    (placeholderGeometry &&
+      placeholderGeometry.getAttribute("data-chord-grid-columns"))
+  );
+
+  if (!Number.isInteger(forcedColumns) || forcedColumns < 1) {
+    forcedColumns = null;
+  }
+
+  var reservedRows = Number(
+    placeholder.getAttribute("data-chord-grid-rows") ||
+    (placeholderGeometry &&
+      placeholderGeometry.getAttribute("data-chord-grid-rows"))
+  );
+
+  if (!Number.isInteger(reservedRows) || reservedRows < 1) {
+    reservedRows = null;
+  }
+
+  var built = BuildChordGridSVG(
+    chordNames,
+    fileDefinitions,
+    tuneDefinitions,
+    instrument,
+    availableWidth,
+    forcedColumns
+  );
+
+  // When abcjs supplied metadata, the renderer must produce the same row count.
+  // This should now always agree, including exact-fit width boundaries.
+  if (reservedRows && built.rows !== reservedRows &&
+      typeof console !== "undefined" && console.warn) {
+    console.warn(
+      "Chord-grid row-count mismatch:",
+      "reserved=" + reservedRows,
+      "rendered=" + built.rows
+    );
+  }
+
+  // Remove the transparent abcjs geometry and replace it with the real grid.
+  while (placeholder.firstChild) {
+    placeholder.removeChild(placeholder.firstChild);
+  }
+
+  placeholder.setAttribute(
+    "class",
+    "abcjs-chord-grid-placeholder " +
+    "abcjs-chord-grid-placeholder-above " +
+    "abc-chord-grid-strip"
+  );
+
+  // Use the same fixed-size, left-justified grid renderer in every surface.
+  // The compact scale keeps the diagrams visually light and readable.
+  var chordGridScale = built.scale || 0.96;
+
+  // abcjs now reserves the exact scaled chord-grid height. Anchor the content
+  // at the top of that lane so no accumulated multi-row slack appears above
+  // the first row. The deliberate tempo gap is handled separately by abcjs.
+  var content = CreateChordGridSVGElement("g", {
+    transform:
+      "translate(" + leftX + " " + topY + ") " +
+      "scale(" + chordGridScale + ")"
+  });
+
+  while (built.svg.firstChild) {
+    content.appendChild(built.svg.firstChild);
+  }
+
+  placeholder.appendChild(content);
+}
+
+function RenderChordGridsForRenderedABC(renderDivID, renderedABC) {
+  var renderDiv = document.getElementById(renderDivID);
+
+  if (!renderDiv || !renderedABC) {
+    return;
+  }
+
+  var fileHeader = FindPreTuneHeader(renderedABC) || "";
+  var chordGridSettings =
+    GetChordGridDisplaySettings(fileHeader, renderedABC);
+
+  if (!chordGridSettings) {
+    return;
+  }
+
+  var chordNames = GetChordGridNamesFromTune(renderedABC);
+
+  if (!chordNames.length) {
+    var emptyPlaceholder =
+      renderDiv.querySelector(".abcjs-chord-grid-placeholder-above");
+
+    if (emptyPlaceholder) {
+      emptyPlaceholder.remove();
+    }
+
+    return;
+  }
+
+  var fileDefinitions = ParseChordGridDefinitions(fileHeader);
+
+  // Parsing the whole rendered ABC here is intentional. For a single-tune
+  // player dialog this includes any tune-specific definition block, while
+  // tune definitions still override identical file-header definitions.
+  var tuneDefinitions = ParseChordGridDefinitions(renderedABC);
+
+  FillChordGridPlaceholder(
+    renderDiv,
+    chordNames,
+    fileDefinitions,
+    tuneDefinitions,
+    chordGridSettings.instrument
+  );
+}
+
+function RenderRequestedChordGrids(startTune, endTune, renderDivs) {
+  var fileHeader = FindPreTuneHeader(getABCEditorText()) || "";
+  var fileDefinitions = ParseChordGridDefinitions(fileHeader);
+
+  for (var tuneIndex = startTune; tuneIndex < endTune; ++tuneIndex) {
+    var renderDivOffset = tuneIndex - startTune;
+    var renderDivID =
+      (renderDivs && renderDivs[renderDivOffset]) ||
+      ("notation" + tuneIndex);
+
+    var renderDiv = document.getElementById(renderDivID);
+
+    if (!renderDiv) {
+      continue;
+    }
+
+    var sourceIndex = gIsQuickEditor ? gCurrentTune : tuneIndex;
+    var sourceTune = getTuneByIndex(sourceIndex) || "";
+    var chordGridSettings =
+      GetChordGridDisplaySettings(fileHeader, sourceTune);
+
+    if (!chordGridSettings) {
+      continue;
+    }
+
+    var chordGridInstrument = chordGridSettings.instrument;
+
+    var chordNames = GetChordGridNamesFromTune(sourceTune);
+
+    if (!chordNames.length) {
+      // abcjs reserves a real placeholder group whenever %%show_chord_grids
+      // is present. If the tune contains no chord symbols, remove that
+      // placeholder geometry so its 1-pixel marker cannot appear as a
+      // vertical bar at the left side of the notation.
+      var emptyPlaceholder =
+        renderDiv.querySelector(".abcjs-chord-grid-placeholder-above");
+
+      if (emptyPlaceholder) {
+        emptyPlaceholder.remove();
+      }
+
+      continue;
+    }
+
+    var tuneDefinitions = ParseChordGridDefinitions(sourceTune);
+
+    FillChordGridPlaceholder(
+      renderDiv,
+      chordNames,
+      fileDefinitions,
+      tuneDefinitions,
+      chordGridInstrument
+    );
+  }
+}
+
+
 //
 // Main routine for rendering the notation
 //
@@ -16126,6 +17132,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
   // Wrap this in a try/catch to see if we can avoid crashing the app on a bad tune
   try {
     var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
+
+    // Draw tool-specific chord grids after abcjs has created the tune SVG(s).
+    RenderRequestedChordGrids(startTune, endTune, renderDivs);
   } catch (err) {
 
     var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Tune Rendering Issue</p>';
@@ -25460,6 +26469,7 @@ function InjectStringBelowTuneHeader(theTune, theString) {
   var bGotNotes = false;
   var insideTextBlock = false;
   var insideCSSBlock = false;
+  var insideChordGridDefinitionBlock = false;
 
   for (var i = 0; i < nLines; ++i) {
 
@@ -25482,12 +26492,27 @@ function InjectStringBelowTuneHeader(theTune, theString) {
       continue;
     }
 
-    if (firstLine.startsWith("%%endtext")) {
+    if (firstLine.startsWith("%%endcss")) {
       insideCSSBlock = false;
       continue;
     }
 
-    if (insideTextBlock || insideCSSBlock || firstLine.startsWith("%") || firstLine === "" || firstLine.startsWith("X:")) {
+    if (/^%%begin_chord_grid_definitions$/i.test(firstLine)) {
+      insideChordGridDefinitionBlock = true;
+      continue;
+    }
+
+    if (/^%%end_chord_grid_definitions?$/i.test(firstLine)) {
+      insideChordGridDefinitionBlock = false;
+      continue;
+    }
+
+    if (insideTextBlock ||
+        insideCSSBlock ||
+        insideChordGridDefinitionBlock ||
+        firstLine.startsWith("%") ||
+        firstLine === "" ||
+        firstLine.startsWith("X:")) {
       continue;
     }
 
@@ -25709,7 +26734,8 @@ function GetABCFileHeader() {
     /^%%titlecaps.*$/,
     /^%%visualtranspose.*$/,
     /^%%maxstaves.*$/,
-    /^%%partsbox.*$/, 
+    /^%%partsbox.*$/,
+    /^%%show_chord_grids(?:\s+(?:guitar|mandolin))?\s*$/i,
     /^%hide_first_title_on_play.*$/,
     /^%hide_vskip_on_play.*$/,
     /^%left_justify_titles.*$/,
@@ -25756,8 +26782,23 @@ function GetABCFileHeader() {
   ];
 
   let inCSSBlock = false;
+  let inChordGridDefinitionBlock = false;
 
   arrDir.forEach(function(line) {
+
+    var trimmedHeaderLine = line.trim();
+
+    if (/^%%begin_chord_grid_definitions$/i.test(trimmedHeaderLine)) {
+      inChordGridDefinitionBlock = true;
+    }
+
+    if (inChordGridDefinitionBlock) {
+      directives += line + '\n';
+      if (/^%%end_chord_grid_definitions?$/i.test(trimmedHeaderLine)) {
+        inChordGridDefinitionBlock = false;
+      }
+      return;
+    }
 
     if (line.trim() === "%%begincss") {
       inCSSBlock = true;
@@ -25786,6 +26827,55 @@ function GetABCFileHeader() {
   }
 
   return directives;
+}
+
+//
+// Aggregate all supported ABC file-header directives into ABC that is about
+// to be encoded in an individual-tune share link.
+//
+// This deliberately uses GetABCFileHeader(), so chord-grid directives and the
+// complete %%begin_chord_grid_definitions / %%end_chord_grid_definitions block
+// are handled exactly like the other supported file-header values.
+//
+function AggregateABCFileHeaderForShare(theABC) {
+
+  if (!theABC) {
+    return theABC;
+  }
+
+  var theFileHeader = GetABCFileHeader();
+
+  if (!theFileHeader) {
+    return theABC;
+  }
+
+  // Avoid duplicating the header when the caller has already aggregated it.
+  // Compare non-empty normalized lines so this also works when the passed ABC
+  // contains the original, unfiltered file header.
+  var existingHeader = FindPreTuneHeader(theABC) || "";
+
+  function normalizedHeaderLines(value) {
+    return (value || "")
+      .replace(/\r\n?/g, "\n")
+      .split("\n")
+      .map(function(line) { return line.trim(); })
+      .filter(function(line) { return line.length > 0; });
+  }
+
+  var requiredLines = normalizedHeaderLines(theFileHeader);
+  var existingLines = normalizedHeaderLines(existingHeader);
+
+  var alreadyAggregated =
+    requiredLines.length > 0 &&
+    requiredLines.every(function(line) {
+      return existingLines.indexOf(line) !== -1;
+    });
+
+  if (alreadyAggregated) {
+    return theABC;
+  }
+
+  return theFileHeader + theABC;
 }
 
 function IdleFileHeaderInject() {
@@ -27467,6 +28557,11 @@ function NotationSpacingExplorer() {
     // Post process whistle or note name tab
     postProcessTab([visualObj], "notationspacingexplorer-paper", instrument, true);
 
+    RenderChordGridsForRenderedABC(
+      "notationspacingexplorer-paper",
+      theABC
+    );
+
     // Put a light reference border around the notation
     var theSVG = document.querySelectorAll('div[id="notationspacingexplorer-paper"] > svg');
     theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
@@ -27478,6 +28573,11 @@ function NotationSpacingExplorer() {
 
   var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
   postProcessTab([visualObj], "notationspacingexplorer-paper", instrument, true);
+
+  RenderChordGridsForRenderedABC(
+    "notationspacingexplorer-paper",
+    theABC
+  );
 
   var theSVG = document.querySelectorAll('div[id="notationspacingexplorer-paper"] > svg');
   theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
@@ -30239,13 +31339,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24aug2026;
+        var updatePresented = localStorage.sawUpdate_26aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24aug2026 = true;
+          localStorage.sawUpdate_26aug2026 = true;
 
         }
 
@@ -36319,12 +37419,19 @@ function ExportImageDialog(theABC, callback, val, metronome_state) {
     }
 
     // Add the file header
-    theABC = GetABCFileHeader() + theABC;
+    theABC = AggregateABCFileHeaderForShare(theABC);
 
     var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      theABC
+    );
 
     // Do the next tune
     if (callback) {
@@ -37057,7 +38164,7 @@ function BatchJSONExport() {
       title = title.substring(1);
     }
 
-    thisTune = GetABCFileHeader() + thisTune;
+    thisTune = AggregateABCFileHeaderForShare(thisTune);
 
     var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
@@ -37128,7 +38235,7 @@ function BatchCSVExport() {
       title = title.substring(1);
     }
 
-    thisTune = GetABCFileHeader() + thisTune;
+    thisTune = AggregateABCFileHeaderForShare(thisTune);
 
     var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
@@ -39984,10 +41091,24 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
     synthControl.disable(true);
 
-    var visualObj = ABCJS.renderAbc("playback-paper", theABC, abcOptions)[0];
+    var chordGridRenderABC =
+      AggregateChordGridFileHeaderForRendering(theABC);
+
+    var visualObj = ABCJS.renderAbc(
+      "playback-paper",
+      chordGridRenderABC,
+      abcOptions
+    )[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      chordGridRenderABC
+    );
 
     var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
 
@@ -42365,10 +43486,24 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
     synthControl.disable(true);
 
-    var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+    var chordGridRenderABC =
+      AggregateChordGridFileHeaderForRendering(theProcessedABC);
+
+    var visualObj = ABCJS.renderAbc(
+      "playback-paper",
+      chordGridRenderABC,
+      abcOptions
+    )[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      chordGridRenderABC
+    );
 
     var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
@@ -43070,9 +44205,9 @@ function ReverbExplorerDialogInjectThisTune(theTune) {
 
   theTune = InjectStringBelowTuneHeader(theTune, theInjectString);
 
-  // Seeing extra linefeeds after the inject
-  theTune = theTune.replace("\n\n", "");
-
+  // Preserve the valid blank-line boundary between an aggregated ABC file
+  // header and X:. Removing it can concatenate a chord-grid definition end
+  // marker with X: and corrupt the ABC.
   return (theTune);
 
 }
@@ -43211,10 +44346,39 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
     synthControl.disable(true);
 
-    var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+    var chordGridRenderABC = theProcessedABC;
+
+    var chordGridFileHeader =
+      GetChordGridFileHeaderForRendering();
+
+    var chordGridSettings =
+      GetChordGridDisplaySettings(
+        chordGridFileHeader,
+        theProcessedABC
+      );
+
+    if (chordGridSettings) {
+      chordGridRenderABC =
+        AggregateChordGridFileHeaderForRendering(
+          theProcessedABC
+        );
+    }
+
+    var visualObj = ABCJS.renderAbc(
+      "playback-paper",
+      chordGridRenderABC,
+      abcOptions
+    )[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      chordGridRenderABC
+    );
 
     var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
@@ -44657,6 +45821,13 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
 
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      strippedABC
+    );
+
     var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
     gMIDIbuffer = midiBuffer;
@@ -45389,10 +46560,24 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
     synthControl.disable(true);
 
-    var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+    var chordGridRenderABC =
+      AggregateChordGridFileHeaderForRendering(theProcessedABC);
+
+    var visualObj = ABCJS.renderAbc(
+      "playback-paper",
+      chordGridRenderABC,
+      abcOptions
+    )[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      chordGridRenderABC
+    );
 
     var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
@@ -46284,10 +47469,24 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
     synthControl.disable(true);
 
-    var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+    var chordGridRenderABC =
+      AggregateChordGridFileHeaderForRendering(theProcessedABC);
+
+    var visualObj = ABCJS.renderAbc(
+      "playback-paper",
+      chordGridRenderABC,
+      abcOptions
+    )[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      chordGridRenderABC
+    );
 
     var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
@@ -47124,10 +48323,24 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
     synthControl.disable(true);
 
-    var visualObj = ABCJS.renderAbc("playback-paper", theProcessedABC, abcOptions)[0];
+    var chordGridRenderABC =
+      AggregateChordGridFileHeaderForRendering(theProcessedABC);
+
+    var visualObj = ABCJS.renderAbc(
+      "playback-paper",
+      chordGridRenderABC,
+      abcOptions
+    )[0];
 
     // Post process whistle or note name tab
     postProcessTab([visualObj], "playback-paper", instrument, true);
+
+    // Player dialogs render notation independently of the main notation area.
+    // Populate the chord-grid placeholder from the exact ABC rendered here.
+    RenderChordGridsForRenderedABC(
+      "playback-paper",
+      chordGridRenderABC
+    );
 
     var midiBuffer = new ABCJS.synth.CreateSynth(theProcessedABC);
 
@@ -52583,7 +53796,7 @@ function Do_Browser_PDF_Export() {
           // Inject the playback instruments
           thisTune = BrowserPDFInjectInstruments(thisTune);
 
-          thisTune = GetABCFileHeader() + thisTune;
+          thisTune = AggregateABCFileHeaderForShare(thisTune);
 
           var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
@@ -58945,21 +60158,21 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 25 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 August 2026</div>';
   modal_msg += '</div>';
 
-  // Feature card
+    // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Highlighting now available if there are multiple tunes in the Quick Editor</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Formerly, the Highlighting feature was only available if there was a single tune in the Quick Editor.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Open Current Tune in New Tab</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Selects all of the current tune and then opens it along with any required ABC file header annotations in a new browser tab.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Optional Guitar or Mandolin chord fingering grid display</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">You can now show chord fingering grids above the tunes for each of the chords found in a tune by adding either:</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids</strong> (shows guitar grids by default)<br/><strong>%%show_chord_grids guitar</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">or</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids mandolin</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">to the ABC of any tune or the ABC file header before all tunes to have it apply to all of the tunes (requires full redraw).</p>';
+  modal_msg += '<p style="font-size:12pt;">Chord grids for most common guitar and mandolin chords are provided.</p>';
+  modal_msg += '<p style="font-size:12pt;">For any chords not provided, creating custom chord grids for 3, 4, 5, or 6 string instruments, including showing finger numbers is possible.</p>';
+  modal_msg += '<p style="font-size:12pt;">Check out the <strong>Displaying Chord Grid Diagrams</strong> section of the <strong>User Guide</strong> for full details.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -59899,10 +61112,32 @@ function inlinePlayback() {
         theRenderDivID = "offscreenrenderquickedit";
       }
 
-      var visualObj = ABCJS.renderAbc(theRenderDivID, theABC, abcOptions)[0];
+      var chordGridRenderABC =
+        AggregateChordGridFileHeaderForRendering(theABC);
+
+      var visualObj = ABCJS.renderAbc(
+        theRenderDivID,
+        chordGridRenderABC,
+        abcOptions
+      )[0];
 
       //Post process whistle or note name tab
       postProcessTab([visualObj], theRenderDivID, instrument, true);
+
+      // Quick Editor's inline player performs a second abcjs render into
+      // notation0 after the normal notation render. That second render
+      // recreates the chord-grid placeholder, so populate it again here.
+      //
+      // Do not do this for Highlighting/Raw mode because that render is
+      // intentionally offscreen and should remain free of normal post-render
+      // presentation processing.
+      if (gIsQuickEditor && !gRawMode) {
+        RenderRequestedChordGrids(
+          0,
+          1,
+          [theRenderDivID]
+        );
+      }
 
       var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
 
@@ -65890,13 +67125,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24aug2026;
+    var updatePresented = localStorage.sawUpdate_26aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24aug2026 = true;
+      localStorage.sawUpdate_26aug2026 = true;
 
     }
 
@@ -67499,6 +68734,8 @@ function OpenInABCChordChartGenerator(abcText,isFromPlayer){
   sendGoogleAnalytics("action", "OpenInABCChordChartGenerator");
 
   if (isFromPlayer){
+    abcText = AggregateABCFileHeaderForShare(abcText);
+
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
     var deflated = pako.deflate(utf8Bytes, { level: 6 });
@@ -67986,6 +69223,11 @@ function OpenInABCJSEskinWebsiteBuilder(abcText,isFromPlayer){
   sendGoogleAnalytics("action", "OpenInABCJSEskinWebsiteBuilder");
 
   if (isFromPlayer){
+    // A Player receives only the individual tune. Re-attach all supported
+    // ABC file-header values before sending it to the Website Builder so
+    // header-level chord-grid settings and custom definitions are preserved.
+    abcText = AggregateABCFileHeaderForShare(abcText);
+
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
     var deflated = pako.deflate(utf8Bytes, { level: 6 });
@@ -68292,12 +69534,10 @@ function OpenCurrentTuneInNewTab() {
   //
   // Include any ABC file header before the first tune.
   //
-  var fileHeader =
-    GetABCFileHeader() || "";
-
   var abcToShare =
-    fileHeader +
-    selectedTuneABC;
+    AggregateABCFileHeaderForShare(
+      selectedTuneABC
+    );
 
   //
   // Generate the share URL.

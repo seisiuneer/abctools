@@ -1012,6 +1012,7 @@
             <a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a>
             <a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a>
             <a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a>
+            <a style="text-decoration:none;" href="#chord_grid_diagrams">Displaying Chord Grid Diagrams</a>
             </details>
             
             <details>
@@ -1581,6 +1582,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#chord_grid_diagrams">Displaying Chord Grid Diagrams</a></p>
 
                     </div>
                     
@@ -5354,7 +5356,9 @@
                     %custom_instrument_6_fade<br/>
                     %custom_instrument_7_fade<br/>
                     %custom_instrument_8_fade<br/>
-                    %abcjs_render_params {custom rendering parameters JSON}</p>
+                    %abcjs_render_params {custom rendering parameters JSON}<br/>
+                    %%show_chord_grids guitar<br/>
+                    %%begin_chord_grid_definitions / %%end_chord_grid_definitions</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -8145,6 +8149,96 @@
                 <p class="code">% This has a slur mark for the graces<br/>{AB}A<br/><br/>% This does not have a slur mark for the graces:<br/>{AB}YA</p>
                 <p>You can disable all grace slur marks by adding the following annotation to a tune:</p>
                 <p class="code">%%graceslurs 0</p>
+                <hr class="hidden-print" id="chord_grid_diagrams">
+                <h1 class="page_break_always">Displaying Chord Grid Diagrams</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ggjsdoVE9T4" title="Guitar/Mandolin Chord Grid Display" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The ABC Transcription Tools can automatically display chord grid diagrams for the chord symbols used in a tune. The chord grids are displayed left-justified above the first stave and wrap onto additional rows when needed. They appear after the tune title, rhythm, composer, and other header information. If a tempo mark is displayed, the tempo appears immediately below the chord grids; first/second ending markings and ordinary ABC chord symbols appear below the tempo and above the notation.</p>
+                <p>To display chord grids using the default guitar chord definitions, add the following tool-specific abcjs annotation to the tune:</p>
+                <p class="code">%%show_chord_grids</p>
+                <p>You can also specify which built-in set of chord definitions should be used:</p>
+                <p class="code">%%show_chord_grids guitar<br/>%%show_chord_grids mandolin</p>
+                <p>The instrument name is case-insensitive. If no instrument is specified, <strong>guitar</strong> is used.</p>
+                <p>The <strong>%%show_chord_grids</strong> annotation may be placed either in an individual tune or in the ABC file header. When placed in the ABC file header, it applies to all tunes in the file unless a tune contains its own <strong>%%show_chord_grids</strong> annotation. A tune-level annotation takes precedence over the file-header annotation, including the choice of guitar or mandolin.</p>
+                <p>If you add, edit, or remove <strong>%%show_chord_grids</strong> in the ABC file header, you'll need to force a full redraw of the tunes. The easiest way to do this is to click the <strong>Notation</strong> button.</p>
+                <p>Only chord symbols that actually occur in the tune are included. Each chord is displayed once and the chord grids are sorted alphabetically.</p>
+                <p>If <strong>%%show_chord_grids</strong> is present but the tune contains no chord symbols, no chord grids and no extra chord-grid spacing are added.</p>
+                <p>If a chord symbol is found but there is no matching custom or built-in chord definition, a placeholder grid labeled <strong>No grid</strong> is displayed for that chord.</p>
+                <p><strong>Custom chord grid definitions</strong></p>
+                <p>You can define your own chord grids using a <strong>%%begin_chord_grid_definitions</strong> / <strong>%%end_chord_grid_definitions</strong> block. Custom definition blocks may be placed in an individual tune or in the ABC file header.</p>
+                <p>Custom chord definitions are applied using the following override precedence:</p>
+                <p><strong>1. Tune-level custom chord definition</strong> - highest priority.<br/>
+                <strong>2. ABC file-header custom chord definition</strong>.<br/>
+                <strong>3. Built-in guitar or mandolin chord definition</strong> - used only when no custom definition for that chord is present.</p>
+                <p>This precedence applies regardless of whether the selected built-in instrument is guitar or mandolin. For example, a custom <strong>"G"</strong> definition in a tune overrides both a file-header <strong>"G"</strong> definition and the built-in guitar or mandolin <strong>G</strong> definition.</p>
+                <p>The contents of a custom definition block use JSON-style object members without the outermost pair of braces. Chord names and property names are quoted, separate chord definitions with commas, and use one definition object for each chord name.</p>
+                <p>Each chord definition supports the following values:</p>
+                <p><strong>strings</strong> - The number of strings in the diagram. Values from 3 through 6 are supported.</p>
+                <p><strong>baseFret</strong> - The first fret represented by the diagram. Use 1 for chord shapes shown at the nut or first position. Use a higher value for shapes farther up the neck.</p>
+                <p><strong>frets</strong> - One value for each string. The array must contain exactly the same number of entries as the <strong>strings</strong> value. Entries are ordered from the instrument's <strong>lowest-pitched string to its highest-pitched string</strong>. Use <strong>0</strong> for an open string, <strong>"x"</strong> for a string that should not be played, or a positive fret number for a fretted note.</p>
+                <p><strong>barre</strong> - Use <strong>null</strong> if there is no barre. To draw a barre, specify <strong>fret</strong>, <strong>fromString</strong>, and <strong>toString</strong>. For barre definitions, strings are numbered in the conventional direction: <strong>string 1 is the highest-pitched string</strong> and the highest numbered string is the lowest-pitched string. For example, on a six-string guitar, a barre from string 1 through string 5 extends from the high E string through the A string.</p>
+                <p>Custom chord-grid definitions may optionally include a <strong>fingers</strong> array to display left-hand finger numbers. Finger numbers are drawn immediately below their associated strings, not inside the fret-position dots. The <strong>fingers</strong> array is ordered from the lowest-pitched string to the highest-pitched string, just like the <strong>frets</strong> array. Use the finger numbers 1 through 4, where 1 is the index finger and 4 is the little finger. Use <strong>null</strong> for strings that do not need a finger number, such as open or muted strings.</p>
+                <p>The built-in guitar and mandolin chord definitions do not include fingerings, so finger numbers are not displayed for built-in chord grids. If any custom chord grid definition includes a <strong>fingers</strong> array, those fingerings are displayed on that custom chord grid.</p>
+                <p>Only custom definitions for chords that are actually used by the tune affect finger-number display and chord-grid spacing. An unused custom chord definition that contains a <strong>fingers</strong> array does not add extra vertical space.</p>
+                <p>The <strong>fingers</strong> value itself may also be set to <strong>null</strong>, or omitted entirely, if you do not want any finger numbers displayed on the chord grid.</p>
+                <p>Visible finger numbers are taken only from the <strong>fingers</strong> array and are shown below the strings. The optional <strong>finger</strong> value inside a <strong>barre</strong> object is accepted by the custom-definition format for compatibility, but it is not currently drawn on the barre itself.</p>
+                <p>For example, the following definitions provide basic A, Am, Bm, C, D, Em, and G chord grids for a six-string guitar in Drop-D tuning. From the lowest-pitched string to the highest-pitched string, the tuning is D, A, D, G, B, E' using ABC note naming:</p>
+                <p class="code">%%begin_chord_grid_definitions<br/>
+                "A": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 1,<br/>
+                &nbsp;&nbsp;"frets": ["x", 0, 2, 2, 2, 0],<br/>
+                &nbsp;&nbsp;"fingers": [null, null, 1, 2, 3, null],<br/>
+                &nbsp;&nbsp;"barre": null<br/>
+                },<br/>
+                "Am": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 1,<br/>
+                &nbsp;&nbsp;"frets": ["x", 0, 2, 2, 1, 0],<br/>
+                &nbsp;&nbsp;"fingers": [null, null, 2, 3, 1, null],<br/>
+                &nbsp;&nbsp;"barre": null<br/>
+                },<br/>
+                "Bm": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 2,<br/>
+                &nbsp;&nbsp;"frets": ["x", 2, 4, 4, 3, 2],<br/>
+                &nbsp;&nbsp;"fingers": [null, 1, 3, 4, 2, 1],<br/>
+                &nbsp;&nbsp;"barre": { "fret": 2, "fromString": 1, "toString": 5 }<br/>
+                },<br/>
+                "C": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 1,<br/>
+                &nbsp;&nbsp;"frets": ["x", 3, 2, 0, 1, 0],<br/>
+                &nbsp;&nbsp;"fingers": [null, 3, 2, null, 1, null],<br/>
+                &nbsp;&nbsp;"barre": null<br/>
+                },<br/>
+                "D": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 1,<br/>
+                &nbsp;&nbsp;"frets": [0, 0, 0, 2, 3, 2],<br/>
+                &nbsp;&nbsp;"fingers": [null, null, null, 1, 3, 2],<br/>
+                &nbsp;&nbsp;"barre": null<br/>
+                },<br/>
+                "Em": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 1,<br/>
+                &nbsp;&nbsp;"frets": [2, 2, 2, 0, 0, 0],<br/>
+                &nbsp;&nbsp;"fingers": [1, 1, 1, null, null, null],<br/>
+                &nbsp;&nbsp;"barre": { "fret": 2, "fromString": 4, "toString": 6 }<br/>
+                },<br/>
+                "G": {<br/>
+                &nbsp;&nbsp;"strings": 6,<br/>
+                &nbsp;&nbsp;"baseFret": 1,<br/>
+                &nbsp;&nbsp;"frets": [5, 5, 0, 0, 0, 3],<br/>
+                &nbsp;&nbsp;"fingers": [3, 4, null, null, null, 1],<br/>
+                &nbsp;&nbsp;"barre": null<br/>
+                }<br/>
+                %%end_chord_grid_definitions</p>
+                <p>The same custom-definition mechanism can be used for instruments with 3, 4, 5, or 6 strings. This makes it possible to create chord grids for instruments such as dulcimer, mandolin, tenor guitar, guitar in alternate tunings, and other custom stringed instruments.</p>
+                <p>If you add, edit, or remove a <strong>%%begin_chord_grid_definitions / %%end_chord_grid_definitions</strong> block in the ABC file header, you'll need to force a full redraw of the tunes. The easiest way to do this is to click the <strong>Notation</strong> button.</p>
+                <p>Chord grids are supported throughout the tool wherever the tune notation is rendered, including the standard editor, Quick Editor, Player, Tune Trainer, player-based explorer dialogs, PDF notation export, and supported website rendering/export workflows.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always">Transposing Notation Independent of Tablature</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -8803,6 +8897,7 @@
 
                 <h1 class="page_break_never" id="index_C" style="text-align:left;margin-bottom:12px;">C</h1>
                 <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#chord_grid_diagrams">Chord Grid Diagrams</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#customtoolcss">Changing the Look of the Tool Using Custom CSS</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#selecting_the_volumes_for_bass_and_chords">Changing the Playback Volume of the Bass and Chords</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#selecting_the_volumes_for_melody">Changing the Playback Volume of the Melody</a></p>
@@ -8823,6 +8918,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_creative">Creative Uses for Custom Instruments</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#customcssexamples">Custom abcjs CSS Examples</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#chord_grid_diagrams">Custom Chord Grid Definitions</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_customcssgenerator">Custom CSS Generator</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_builder">Custom Instrument Builder</a></p>

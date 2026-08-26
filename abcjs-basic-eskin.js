@@ -4569,7 +4569,194 @@ var Parse = function Parse() {
       }
     });
   };
+  // MAE: Tool-specific chord-grid definition blocks are JSON-like data for
+  // ABC Transcription Tools, not ABC music. Skip the complete block here.
+  var inChordGridDefinitions = false;
+  var chordGridDefinitionLines = [];
+
+
+  // Return true/false for a valid custom definition depending on whether it
+  // contains finger-number data. Return null for an invalid definition.
+  //
+  // Keep these rules synchronized with app.js ValidateChordGridDefinition().
+  // An invalid tune-level definition is ignored by app.js, so it must also be
+  // ignored here rather than overriding a valid file-header definition's
+  // fingering status.
+  function chordGridDefinitionHasValidFingers(definition) {
+    if (!definition || typeof definition !== "object") {
+      return null;
+    }
+
+    var strings = Number(definition.strings);
+
+    if (!Number.isInteger(strings) || strings < 3 || strings > 6) {
+      return null;
+    }
+
+    if (!Array.isArray(definition.frets) ||
+        definition.frets.length !== strings) {
+      return null;
+    }
+
+    var baseFret = Number(definition.baseFret);
+
+    if (!Number.isInteger(baseFret) || baseFret < 1) {
+      return null;
+    }
+
+    for (var fretIndex = 0; fretIndex < definition.frets.length; ++fretIndex) {
+      var fretValue = definition.frets[fretIndex];
+
+      if (fretValue === "x" || fretValue === "X") {
+        continue;
+      }
+
+      var numericFret = Number(fretValue);
+
+      if (!Number.isInteger(numericFret) || numericFret < 0) {
+        return null;
+      }
+    }
+
+    var hasFingers = false;
+
+    if (definition.fingers !== null &&
+        definition.fingers !== undefined) {
+
+      if (!Array.isArray(definition.fingers) ||
+          definition.fingers.length !== strings) {
+        return null;
+      }
+
+      for (var fingerIndex = 0;
+           fingerIndex < definition.fingers.length;
+           ++fingerIndex) {
+
+        var fingerValue = definition.fingers[fingerIndex];
+
+        if (fingerValue === null ||
+            fingerValue === undefined ||
+            fingerValue === "") {
+          continue;
+        }
+
+        var numericFinger = Number(fingerValue);
+
+        if (!Number.isInteger(numericFinger) ||
+            numericFinger < 1 ||
+            numericFinger > 4) {
+          return null;
+        }
+      }
+
+      hasFingers = true;
+    }
+
+    if (definition.barre !== null && definition.barre !== undefined) {
+      if (typeof definition.barre !== "object") {
+        return null;
+      }
+
+      var barreFret = Number(definition.barre.fret);
+      var fromString = Number(definition.barre.fromString);
+      var toString = Number(definition.barre.toString);
+
+      if (!Number.isInteger(barreFret) || barreFret < 1 ||
+          !Number.isInteger(fromString) ||
+          fromString < 1 ||
+          fromString > strings ||
+          !Number.isInteger(toString) ||
+          toString < 1 ||
+          toString > strings) {
+        return null;
+      }
+
+      // app.js only validates barre.finger when the definition contains a
+      // fingers array. Omitted barre.finger defaults to finger 1 there.
+      if (hasFingers && definition.barre.finger != null) {
+        var barreFinger = Number(definition.barre.finger);
+
+        if (!Number.isInteger(barreFinger) ||
+            barreFinger < 1 ||
+            barreFinger > 4) {
+          return null;
+        }
+      }
+    }
+
+    return hasFingers;
+  }
+
+  function rememberChordGridDefinitionFingerFlags() {
+    if (!chordGridDefinitionLines.length) return;
+
+    var body = chordGridDefinitionLines.join("\n").trim();
+    if (!body) return;
+
+    // Match app.js: definition blocks contain object members without the
+    // outermost braces, and a trailing comma before the end marker is allowed.
+    body = body.replace(/,\s*$/, "");
+
+    var parsed;
+    try {
+      parsed = JSON.parse("{" + body + "}");
+    } catch (err) {
+      // app.js ignores an invalid block, so do the same here. In particular,
+      // don't let malformed or unused finger data change engraving height.
+      return;
+    }
+
+    if (!tune.formatting.chordGridDefinitionFingerFlags) {
+      tune.formatting.chordGridDefinitionFingerFlags = Object.create(null);
+    }
+
+    Object.keys(parsed).forEach(function(chordName) {
+      var definition = parsed[chordName];
+      var normalizedName = String(chordName || "")
+        .trim()
+        .replace(/♭/g, "b")
+        .replace(/♯/g, "#")
+        .toLowerCase();
+
+      if (!normalizedName || !definition || typeof definition !== "object") {
+        return;
+      }
+
+      var hasValidFingers =
+        chordGridDefinitionHasValidFingers(definition);
+
+      // Invalid definitions are ignored by app.js. Do not let one override a
+      // valid earlier definition's fingering status here either.
+      if (hasValidFingers === null) {
+        return;
+      }
+
+      // Later VALID definitions replace earlier valid definitions for the same
+      // chord, matching tune-level-over-file-header override precedence.
+      tune.formatting.chordGridDefinitionFingerFlags[normalizedName] =
+        hasValidFingers;
+    });
+  }
+
   var parseLine = function parseLine(line) {
+    var chordGridTrimmedLine = line.trim();
+
+    if (inChordGridDefinitions) {
+      if (/^%%end_chord_grid_definitions?\s*$/i.test(chordGridTrimmedLine)) {
+        rememberChordGridDefinitionFingerFlags();
+        chordGridDefinitionLines = [];
+        inChordGridDefinitions = false;
+      } else {
+        chordGridDefinitionLines.push(line);
+      }
+      return;
+    }
+
+    if (/^%%begin_chord_grid_definitions\s*$/i.test(chordGridTrimmedLine)) {
+      chordGridDefinitionLines = [];
+      inChordGridDefinitions = true;
+      return;
+    }
     if (parseCommon.startsWith(line, '%%')) {
       var err = parseDirective.addDirective(line.substring(2));
       if (err) warn(err, line, 2);
@@ -4691,6 +4878,10 @@ var Parse = function Parse() {
     if (!startPos) startPos = 0;
     tune.reset();
 
+    // Tool-specific chord-grid parser state must never leak between parses.
+    inChordGridDefinitions = false;
+    chordGridDefinitionLines = [];
+
     // Take care of whatever line endings come our way
     // Tack on newline temporarily to make the last line continuation work
     strTune = strTune.replace(/\r\n?/g, '\n') + '\n';
@@ -4744,7 +4935,11 @@ var Parse = function Parse() {
         parseDirective.globalFormatting(switches.format);
       }
       var line = tokenizer.nextLine();
-      while (line) {
+      while (line !== null) {
+        // Preserve abcjs's historical empty-line tune termination everywhere
+        // except inside a chord-grid definition block.
+        if (line === "" && !inChordGridDefinitions) break;
+
         if (switches.header_only && multilineVars.is_in_header === false) throw "normal_abort";
         if (switches.stop_on_warning && multilineVars.warnings) throw "normal_abort";
         var wasInHeader = multilineVars.is_in_header;
@@ -4861,7 +5056,8 @@ var bookParser = function bookParser(book) {
       /^%%titlecaps.*$/,      
       /^%%visualtranspose.*$/,      
       /^%%maxstaves.*$/, 
-      /^%%partsbox.*$/, 
+      /^%%partsbox.*$/,
+      /^%%show_chord_grids(?:\s+(?:guitar|mandolin))?\s*$/i,
       /^%hide_first_title_on_play.*$/,  
       /^%hide_vskip_on_play.*$/,  
       /^%left_justify_titles.*$/,
@@ -4908,8 +5104,23 @@ var bookParser = function bookParser(book) {
     ];
 
     let inCSSBlock = false;
+    let inChordGridDefinitionBlock = false;
 
     arrDir.forEach(function (line) {
+
+        var trimmedHeaderLine = line.trim();
+
+        if (trimmedHeaderLine === "%%begin_chord_grid_definitions") {
+            inChordGridDefinitionBlock = true;
+        }
+
+        if (inChordGridDefinitionBlock) {
+            directives += line + '\n';
+            if (/^%%end_chord_grid_definitions?$/i.test(trimmedHeaderLine)) {
+                inChordGridDefinitionBlock = false;
+            }
+            return;
+        }
 
         if (line.trim() === "%%begincss") {
             inCSSBlock = true;
@@ -4936,10 +5147,45 @@ var bookParser = function bookParser(book) {
   
   var header = directives;
 
-  // Now, the tune ends at a blank line, so truncate it if needed. There may be "intertune" stuff.
+  // Now, the tune ends at a blank line, so truncate it if needed. There may be
+  // "intertune" stuff. Blank lines inside a tool-specific chord-grid definition
+  // block are data and must not terminate the tune.
   tunes.forEach(function (tune) {
-    var end = tune.abc.indexOf('\n\n');
-    if (end > 0) tune.abc = tune.abc.substring(0, end);
+    var tuneLinesForTruncation = tune.abc.split('\n');
+    var keptTuneLines = [];
+    var inChordGridDefinitionBlock = false;
+
+    for (var truncateLineIndex = 0;
+         truncateLineIndex < tuneLinesForTruncation.length;
+         ++truncateLineIndex) {
+
+      var truncateLine = tuneLinesForTruncation[truncateLineIndex];
+      var truncateTrimmed = truncateLine.trim();
+
+      if (truncateTrimmed === "%%begin_chord_grid_definitions") {
+        inChordGridDefinitionBlock = true;
+        keptTuneLines.push(truncateLine);
+        continue;
+      }
+
+      if (inChordGridDefinitionBlock) {
+        keptTuneLines.push(truncateLine);
+
+        if (/^%%end_chord_grid_definitions?$/i.test(truncateTrimmed)) {
+          inChordGridDefinitionBlock = false;
+        }
+
+        continue;
+      }
+
+      if (truncateTrimmed === "" && keptTuneLines.length) {
+        break;
+      }
+
+      keptTuneLines.push(truncateLine);
+    }
+
+    tune.abc = keptTuneLines.join('\n');
     tune.pure = tune.abc;
     tune.abc = directives + tune.abc;
 
@@ -6133,6 +6379,27 @@ var parseDirective = {};
   };
   var positionChoices = ['auto', 'above', 'below', 'hidden'];
   parseDirective.addDirective = function (str) {
+    // Tool-specific chord-grid directive. Handle this before tokenization
+    // because the normal directive tokenizer treats underscores as separators.
+    var chordGridDirective = str.match(
+      /^\s*show_chord_grids(?:\s+(guitar|mandolin))?\s*$/i
+    );
+
+    if (chordGridDirective) {
+      tune.formatting.showChordGrids = "above";
+      tune.formatting.showChordGridInstrument =
+        chordGridDirective[1]
+          ? chordGridDirective[1].toLowerCase()
+          : "guitar";
+      return null;
+    }
+
+    // Definition block markers are consumed by parseLine(). If one reaches
+    // this layer (for example through a file-wide preprocessing path), ignore it.
+    if (/^\s*(?:begin|end)_chord_grid_definitions?\s*$/i.test(str)) {
+      return null;
+    }
+
     var tokens = tokenizer.tokenize(str, 0, str.length); // 3 or more % in a row, or just spaces after %% is just a comment
     if (tokens.length === 0 || tokens[0].type !== 'alpha') return null;
     var restOfString = str.substring(str.indexOf(tokens[0].token) + tokens[0].token.length);
@@ -30094,6 +30361,9 @@ function draw(renderer, classes, abcTune, width, maxWidth, responsive, scale, se
     }
   }
   classes.reset();
+
+
+
   if (abcTune.bottomText && abcTune.bottomText.rows && abcTune.bottomText.rows.length > 0) {
     renderer.paper.openGroup();
     renderer.moveY(24); // TODO-PER: Empirically discovered. What variable should this be?
@@ -30419,6 +30689,39 @@ function nonMusic(renderer, obj, selectables) {
       }
     } else if (row.separator) {
       drawSeparator(renderer, row.separator);
+    } else if (row.chordGridPlaceholder) {
+      // End the current top-text section (normally the title), create a
+      // dedicated chord-grid section with real geometry, then begin a new
+      // top-text section for composer/rhythm/tempo/etc.
+      renderer.paper.closeGroup();
+
+      var chordGridHeight =
+        typeof row.height === "number" && row.height > 0 ? row.height : 86;
+
+      renderer.paper.openGroup({
+        klass:
+          "abcjs-chord-grid-placeholder " +
+          "abcjs-chord-grid-placeholder-" + row.chordGridPlaceholder,
+        "data-name": "chord-grid-placeholder"
+      });
+
+      // The transparent rectangle gives the placeholder a stable bounding box.
+      // The application replaces its contents after abcjs rendering.
+      renderer.paper.rect({
+        x: renderer.padding.left,
+        y: renderer.y,
+        width: 1,
+        height: chordGridHeight,
+        fill: "none",
+        stroke: "none",
+        "data-name": "chord-grid-placeholder-box"
+      });
+
+      renderer.moveY(chordGridHeight);
+      renderer.paper.closeGroup();
+
+      // Continue the remainder of the top matter in a fresh top-level group.
+      renderer.paper.openGroup();
     } else if (row.startGroup) {
       renderer.paper.openGroup({
         klass: row.klass,
@@ -31144,6 +31447,57 @@ function drawStaffGroup(renderer, params, selectables, lineNumber) {
       }
     }
   }
+  // Tool-specific chord-grid placeholder inside the first staff SVG. Because
+  // this lane is part of the staff group's calculated height, it sits after
+  // tempo/header material and directly above the notation, and it is included
+  // automatically in PDF rasterization of the abcjs-rendered staff div.
+  if (params.staffs && params.staffs.length) {
+    var chordGridPlaceholderStaff = params.staffs[0];
+
+    if (chordGridPlaceholderStaff &&
+        typeof chordGridPlaceholderStaff.chordGridTopPitch === "number" &&
+        typeof chordGridPlaceholderStaff.chordGridBottomPitch === "number") {
+
+      var chordGridTopY =
+        chordGridPlaceholderStaff.absoluteY -
+        chordGridPlaceholderStaff.chordGridTopPitch * spacing.STEP;
+
+      var chordGridBottomY =
+        chordGridPlaceholderStaff.absoluteY -
+        chordGridPlaceholderStaff.chordGridBottomPitch * spacing.STEP;
+
+      var chordGridPlaceholderHeight =
+        Math.max(1, chordGridBottomY - chordGridTopY);
+
+      renderer.paper.openGroup({
+        klass:
+          "abcjs-chord-grid-placeholder " +
+          "abcjs-chord-grid-placeholder-above",
+        "data-name": "chord-grid-placeholder",
+        "data-chord-grid-columns":
+          chordGridPlaceholderStaff.chordGridColumns || 1,
+        "data-chord-grid-rows":
+          chordGridPlaceholderStaff.chordGridRows || 1
+      });
+
+      renderer.paper.rect({
+        x: renderer.padding.left,
+        y: chordGridTopY,
+        width: 1,
+        height: chordGridPlaceholderHeight,
+        fill: "none",
+        stroke: "none",
+        "data-name": "chord-grid-placeholder-box",
+        "data-chord-grid-columns":
+          chordGridPlaceholderStaff.chordGridColumns || 1,
+        "data-chord-grid-rows":
+          chordGridPlaceholderStaff.chordGridRows || 1
+      });
+
+      renderer.paper.closeGroup();
+    }
+  }
+
   var topLine; // these are to connect multiple staves. We need to remember where they are.
   var bottomLine;
   var linePitch = 2;
@@ -32059,11 +32413,111 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
   var abcLine;
   var hasPrintedTempo = false;
   var hasSeenNonSubtitle = false;
+
+  // Tool-specific chord-grid state. Do not reserve any grid space until all
+  // staff lines have been created and we know the tune actually contains
+  // chord elements.
+  var firstChordGridStaff = null;
+  var hasChordGridChordElements = false;
+
+  // Count unique printable chord symbols so the reserved chord-grid lane can
+  // grow to multiple rows when the diagrams would exceed the notation width.
+  // Keep this dormant unless %%show_chord_grids is active.
+  var chordGridUniqueNames = Object.create(null);
+  var chordGridUniqueCount = 0;
+
+  function chordGridRememberName(name, position) {
+    if (!abcTune.formatting.showChordGrids || position !== "default") return;
+
+    var normalized = String(name || "").trim();
+    while (normalized.length >= 2 &&
+           normalized[0] === "(" &&
+           normalized[normalized.length - 1] === ")") {
+      normalized = normalized.substring(1, normalized.length - 1).trim();
+    }
+
+    // abcjs normalizes accidentals in parsed chord names to Unicode glyphs
+    // (for example Ebmaj7 becomes E♭maj7). Convert those back to the ASCII
+    // spelling used by the source-level chord-grid scanner before validating
+    // and counting unique names, otherwise flat/sharp chords are omitted from
+    // the row count and multi-row grids can overlap the first stave.
+    normalized = normalized
+      .replace(/♭/g, "b")
+      .replace(/♯/g, "#");
+
+    if (!normalized || /^[\^_<>@]/.test(normalized)) return;
+    if (!/^[A-G](?:#|b)?(?:maj|min|dim|aug|sus|add|m|no|M|°|ø|o|\+|-|[0-9]|[#b]|\(|\))*?(?:\/[A-G](?:#|b)?)?$/.test(normalized)) return;
+
+    var key = normalized.toLowerCase();
+    if (!chordGridUniqueNames[key]) {
+      chordGridUniqueNames[key] = true;
+      chordGridUniqueCount += 1;
+    }
+  }
+
+  if (abcTune.formatting.showChordGrids) {
+    for (var chordGridLineIndex = 0;
+         chordGridLineIndex < abcTune.lines.length;
+         ++chordGridLineIndex) {
+      var chordGridRawLine = abcTune.lines[chordGridLineIndex];
+      if (!chordGridRawLine || !chordGridRawLine.staff) continue;
+
+      for (var chordGridRawStaffIndex = 0;
+           chordGridRawStaffIndex < chordGridRawLine.staff.length;
+           ++chordGridRawStaffIndex) {
+        var chordGridRawStaff = chordGridRawLine.staff[chordGridRawStaffIndex];
+        if (!chordGridRawStaff || !chordGridRawStaff.voices) continue;
+
+        for (var chordGridVoiceIndex = 0;
+             chordGridVoiceIndex < chordGridRawStaff.voices.length;
+             ++chordGridVoiceIndex) {
+          var chordGridVoice = chordGridRawStaff.voices[chordGridVoiceIndex] || [];
+
+          for (var chordGridElementIndex = 0;
+               chordGridElementIndex < chordGridVoice.length;
+               ++chordGridElementIndex) {
+            var chordGridElement = chordGridVoice[chordGridElementIndex];
+            if (!chordGridElement || !chordGridElement.chord) continue;
+
+            for (var chordGridChordIndex = 0;
+                 chordGridChordIndex < chordGridElement.chord.length;
+                 ++chordGridChordIndex) {
+              var chordGridChord = chordGridElement.chord[chordGridChordIndex];
+              if (chordGridChord) {
+                chordGridRememberName(chordGridChord.name, chordGridChord.position);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   for (i = 0; i < abcTune.lines.length; i++) {
     abcLine = abcTune.lines[i];
     if (abcLine.staff) {
       hasSeenNonSubtitle = true;
-      abcLine.staffGroup = this.engraver.createABCLine(abcLine.staff, !hasPrintedTempo ? abcTune.metaText.tempo : null, i);
+      var isFirstRenderedStaff = !hasPrintedTempo;
+      abcLine.staffGroup = this.engraver.createABCLine(
+        abcLine.staff,
+        isFirstRenderedStaff ? abcTune.metaText.tempo : null,
+        i
+      );
+
+      // Remember the first staff for a possible "above" chord-grid lane.
+      // Do NOT infer chord-grid presence from chordHeightAbove/chordHeightBelow:
+      // abcjs uses those same lanes for quoted text annotations such as
+      // "^Slovenly!" and "_A". The validated default-position chord scan above
+      // is the authoritative source for whether actual chord grids exist.
+      if (abcLine.staffGroup &&
+          abcLine.staffGroup.staffs &&
+          abcLine.staffGroup.staffs.length) {
+
+        if (!firstChordGridStaff) {
+          firstChordGridStaff = abcLine.staffGroup.staffs[0];
+        }
+      }
+
       hasPrintedTempo = true;
     } else if (abcLine.subtitle) {
       // If the subtitle is at the top, then it was already accounted for. So skip all subtitles until the first non-subtitle line.
@@ -32079,6 +32533,84 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
       abcLine.nonMusic = new Separator(abcLine.separator.spaceAbove, abcLine.separator.lineLength, abcLine.separator.spaceBelow);
     }
   }
+
+  // The validated unique default-position chord scan is authoritative.
+  // Text annotations occupy abcjs chord lanes too, but must not create a
+  // chord-grid row or any chord-grid spacing.
+  hasChordGridChordElements = chordGridUniqueCount > 0;
+
+  // Save the completed tune-wide chord-presence decision for the renderer.
+  abcTune.hasChordGridChordElements = hasChordGridChordElements;
+
+  // Only reserve the first-staff "above" lane when there are actual chord
+  // elements somewhere in the tune. A chordless tune therefore has exactly
+  // the same vertical spacing as it would without %%show_chord_grids.
+  if (hasChordGridChordElements &&
+      abcTune.formatting.showChordGrids &&
+      firstChordGridStaff &&
+      firstChordGridStaff.specialY) {
+    var chordGridCellWidth = 76;
+    var chordGridHorizontalPadding = 8;
+    var chordGridScale = 0.96;
+
+    // Reserve the taller row only if a chord that is actually displayed uses
+    // a resolved custom definition containing a fingers array. Unused custom
+    // fingerings must not add vertical whitespace.
+    var chordGridShowAnyFingerNumbers = false;
+    var chordGridFingerFlags =
+      abcTune.formatting.chordGridDefinitionFingerFlags || null;
+
+    if (chordGridFingerFlags) {
+      Object.keys(chordGridUniqueNames).some(function(chordKey) {
+        if (chordGridFingerFlags[chordKey] === true) {
+          chordGridShowAnyFingerNumbers = true;
+          return true;
+        }
+        return false;
+      });
+    }
+
+    var chordGridRowHeight =
+      chordGridShowAnyFingerNumbers ? 100 : 86;
+
+    // Match app.js's effective horizontal space: the notation/staff width plus
+    // the available right margin, less the same 8px safety inset. Using only
+    // this.width here made abcjs wrap one row earlier at exact-fit boundaries.
+    var chordGridAvailableWidth =
+      this.width + this.renderer.padding.right - 8;
+
+    var chordGridUsableUnscaledWidth =
+      chordGridAvailableWidth / chordGridScale;
+
+    // Tiny tolerance avoids a floating-point value such as 10.999999999
+    // turning an exact fit into an unnecessary extra row.
+    var chordGridColumns = Math.floor(
+      (
+        chordGridUsableUnscaledWidth -
+        chordGridHorizontalPadding * 2 +
+        0.001
+      ) /
+      chordGridCellWidth
+    );
+
+    chordGridColumns = Math.max(1, chordGridColumns);
+
+    var chordGridRows = Math.max(
+      1,
+      Math.ceil(Math.max(1, chordGridUniqueCount) / chordGridColumns)
+    );
+
+    firstChordGridStaff.chordGridColumns = chordGridColumns;
+    firstChordGridStaff.chordGridRows = chordGridRows;
+    firstChordGridStaff.chordGridRowHeight = chordGridRowHeight;
+
+    // app.js draws the chord-grid block at chordGridScale. Reserve the actual
+    // scaled height here so unused per-row slack doesn't accumulate above or
+    // below multi-row grids.
+    firstChordGridStaff.specialY.chordGridHeightAbove =
+      (chordGridRows * chordGridRowHeight * chordGridScale) / spacing.STEP;
+  }
+
   abcTune.bottomText = new BottomText(abcTune.metaText, this.width, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
 };
 EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOffset) {
@@ -33813,6 +34345,7 @@ var setUpperAndLowerElements = function setUpperAndLowerElements(renderer, staff
     // the vertical order of elements that are above is: tempo, part, volume/dynamic, ending/chord, lyric
     // the vertical order of elements that are below is: lyric, chord, volume/dynamic
     var positionY = {
+      chordGridHeightAbove: 0,
       tempoHeightAbove: 0,
       partHeightAbove: 0,
       volumeHeightAbove: 0,
@@ -33831,11 +34364,38 @@ var setUpperAndLowerElements = function setUpperAndLowerElements(renderer, staff
     }
 
     incTop(staff, positionY, 'lyricHeightAbove');
+
+    // Normal ABC chord symbols sit closest to the notation.
     incTop(staff, positionY, 'chordHeightAbove', staff.specialY.chordLines.above);
+
+    // First/second endings sit above ordinary ABC chord symbols but below the
+    // generated chord-grid row.
     if (staff.specialY.endingHeightAbove) {
       if (staff.specialY.chordHeightAbove) staff.top += 2;else staff.top += staff.specialY.endingHeightAbove + margin;
       positionY.endingHeightAbove = staff.top;
     }
+
+    // When chord grids are present, put the tempo immediately below them.
+    // The bottom-up order is therefore:
+    // notation -> chord symbols -> endings -> tempo -> chord grids.
+    //
+    // Without chord grids, preserve the original abcjs ordering so ordinary
+    // tunes are unaffected.
+    if (staff.specialY.chordGridHeightAbove) {
+      incTop(staff, positionY, 'tempoHeightAbove');
+
+      // Keep a small, intentional visual gap between the bottom chord-grid row
+      // and the tempo. This gap is outside the chord-grid placeholder itself,
+      // so it doesn't create extra whitespace above multi-row grid blocks.
+      if (staff.specialY.tempoHeightAbove) {
+        staff.top += 6 / spacing.STEP;
+      }
+
+      staff.chordGridBottomPitch = staff.top;
+      incTop(staff, positionY, 'chordGridHeightAbove');
+      staff.chordGridTopPitch = staff.top;
+    }
+
     if (staff.specialY.dynamicHeightAbove && staff.specialY.volumeHeightAbove) {
       staff.top += Math.max(staff.specialY.dynamicHeightAbove, staff.specialY.volumeHeightAbove) + margin;
       positionY.dynamicHeightAbove = staff.top;
@@ -33844,8 +34404,12 @@ var setUpperAndLowerElements = function setUpperAndLowerElements(renderer, staff
       incTop(staff, positionY, 'dynamicHeightAbove');
       incTop(staff, positionY, 'volumeHeightAbove');
     }
+
     incTop(staff, positionY, 'partHeightAbove');
-    incTop(staff, positionY, 'tempoHeightAbove');
+
+    if (!staff.specialY.chordGridHeightAbove) {
+      incTop(staff, positionY, 'tempoHeightAbove');
+    }
     if (staff.specialY.lyricHeightBelow) {
       staff.specialY.lyricHeightBelow += renderer.spacing.vocal / spacing.STEP;
       positionY.lyricHeightBelow = staff.bottom;
@@ -34984,6 +35548,24 @@ Svg.prototype.openGroup = function (options) {
   if (options.fill) el.setAttribute("fill", options.fill);
   if (options.stroke) el.setAttribute("stroke", options.stroke);
   if (options['data-name']) el.setAttribute("data-name", options['data-name']);
+
+  // Preserve the tool-specific chord-grid layout metadata. app.js uses the
+  // authoritative abcjs column count so the post-render SVG cannot disagree
+  // with the vertical space reserved during engraving at exact-fit widths.
+  if (options['data-chord-grid-columns'] !== undefined) {
+    el.setAttribute(
+      "data-chord-grid-columns",
+      options['data-chord-grid-columns']
+    );
+  }
+
+  if (options['data-chord-grid-rows'] !== undefined) {
+    el.setAttribute(
+      "data-chord-grid-rows",
+      options['data-chord-grid-rows']
+    );
+  }
+
   if (options.prepend) this.prepend(el);else this.append(el);
   this.currentGroup.unshift(el);
   return el;
