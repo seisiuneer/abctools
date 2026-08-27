@@ -116,8 +116,10 @@ h2{margin:0;font-size:1.3rem}
 .preview-help{margin:0 0 10px;color:var(--muted);font-size:.82rem}
 .fretboard-wrap{overflow-x:auto;padding:8px 2px 4px}
 .fretboard{display:grid;gap:0;margin:0;min-width:310px;max-width:610px;user-select:none}
-.preview-holder{display:flex;justify-content:center;align-items:flex-start;min-height:190px;padding-top:4px}
+.preview-holder{display:flex;justify-content:center;align-items:flex-start;min-height:190px;padding-top:4px;cursor:pointer}
 .preview-holder svg{max-width:100%;height:auto}
+.preview-download-wrap{text-align:center;margin-top:10px}
+.preview-download-button{padding:7px 12px;font-size:.82rem}
 .string-markers,.finger-row{display:grid;gap:0}
 .marker,.finger-cell{text-align:center}
 .marker button{
@@ -241,7 +243,8 @@ h2{margin:0;font-size:1.3rem}
               <aside class="grid-preview-pane">
                 <h4>ABC Transcription Tools Preview</h4>
                 <p class="preview-help">Approximate appearance of this custom chord grid when rendered in ABC Transcription Tools.</p>
-                <div id="gridPreview" class="preview-holder"></div>
+                <div id="gridPreview" class="preview-holder" title="Click to download this chord-grid image"></div>
+<div class="preview-download-wrap"><button id="downloadPreviewBtn" class="button secondary preview-download-button" type="button">Download Image</button></div>
               </aside>
             </div>
           </div>
@@ -279,6 +282,10 @@ h2{margin:0;font-size:1.3rem}
 const $ = id => document.getElementById(id);
 const state = { chords: [], selected: -1 };
 const MAX_VISIBLE_FRETS = 5;
+const PREVIEW_IMAGE_WIDTH_KEY="chordGridBuilderPreviewImageWidth";
+const PREVIEW_IMAGE_MIN_WIDTH=128;
+const PREVIEW_IMAGE_MAX_WIDTH=2048;
+const PREVIEW_IMAGE_DEFAULT_WIDTH=256;
 const DEFAULT_STRING_PITCHES = {
   3:["D", "A", "d"],
   4:["G,", "D", "A", "e"],
@@ -919,6 +926,140 @@ function uniqueDefaultName() {
   return "";
 }
 
+
+function clampPreviewImageWidth(v){
+  let n=parseInt(v,10);
+  if(!Number.isFinite(n))n=PREVIEW_IMAGE_DEFAULT_WIDTH;
+  return Math.max(PREVIEW_IMAGE_MIN_WIDTH,Math.min(PREVIEW_IMAGE_MAX_WIDTH,n));
+}
+function loadPreviewImageWidth(){
+  try{return clampPreviewImageWidth(localStorage.getItem(PREVIEW_IMAGE_WIDTH_KEY));}
+  catch(_){return PREVIEW_IMAGE_DEFAULT_WIDTH;}
+}
+function savePreviewImageWidth(v){
+  const n=clampPreviewImageWidth(v);
+  try{localStorage.setItem(PREVIEW_IMAGE_WIDTH_KEY,String(n));}catch(_){}
+  return n;
+}
+function safeImageBaseName(name){
+  let s=normalizeName(name)||"chord-grid";
+  s=s.replace(/[\/\\:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
+  return s||"chord-grid";
+}
+function ensureImageExtension(filename,format){
+  const ext=format==="jpeg"?".jpg":`.${format}`;
+  let s=String(filename||"").trim()||safeImageBaseName(state.chords[state.selected]?.name)+ext;
+  s=s.replace(/[\/\\:*?"<>|]+/g,"-").replace(/\.(svg|png|jpe?g)$/i,"");
+  return s+ext;
+}
+function getPreviewSvg(){return $("gridPreview")?.querySelector("svg")||null;}
+function serializePreviewSvg(){
+  const svg=getPreviewSvg(); if(!svg)return null;
+  const c=svg.cloneNode(true), vb=(c.getAttribute("viewBox")||"").trim().split(/\s+/).map(Number);
+  if(vb.length===4&&vb.every(Number.isFinite)){c.setAttribute("width",vb[2]);c.setAttribute("height",vb[3]);}
+  c.setAttribute("xmlns","http://www.w3.org/2000/svg");
+  return new XMLSerializer().serializeToString(c);
+}
+function triggerBlobDownload(blob,filename){
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function promptPreviewImageFilename(format){
+  if(!requireDayPilot())return null;
+  const c=state.chords[state.selected]; if(!c)return null;
+  const ext=format==="jpeg"?".jpg":`.${format}`;
+  const result=await DayPilot.Modal.form(
+    [{html:'<div style="margin:0 0 12px;line-height:1.35;">Image filename:</div>'},
+     {name:"",id:"filename",type:"text"}],
+    {filename:safeImageBaseName(c.name)+ext},
+    {top:150},
+    {title:`Save ${format==="jpeg"?"JPEG":format.toUpperCase()} Chord Grid Image`,width:500,okText:"Save",cancelText:"Cancel"}
+  );
+  if(result.canceled)return null;
+  return ensureImageExtension(result.result.filename,format);
+}
+async function downloadPreviewSvg(){
+  const data=serializePreviewSvg(); if(!data){await showAlert("There is no chord-grid preview to save.");return;}
+  const filename=await promptPreviewImageFilename("svg"); if(!filename)return;
+  triggerBlobDownload(new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n',data],{type:"image/svg+xml;charset=utf-8"}),filename);
+}
+async function downloadPreviewRaster(format,requestedWidth){
+  const data=serializePreviewSvg(),svg=getPreviewSvg();
+  if(!data||!svg){await showAlert("There is no chord-grid preview to save.");return;}
+  const filename=await promptPreviewImageFilename(format); if(!filename)return;
+  const width=savePreviewImageWidth(requestedWidth);
+  const vb=(svg.getAttribute("viewBox")||"").trim().split(/\s+/).map(Number);
+  let sw=Number(svg.getAttribute("width"))||150,sh=Number(svg.getAttribute("height"))||165;
+  if(vb.length===4&&vb.every(Number.isFinite)&&vb[2]>0&&vb[3]>0){sw=vb[2];sh=vb[3];}
+  const height=Math.max(1,Math.round(width*(sh/sw)));
+  const url=URL.createObjectURL(new Blob([data],{type:"image/svg+xml;charset=utf-8"}));
+  try{
+    const img=new Image();
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error("Unable to render the chord-grid preview image."));img.src=url;});
+    const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
+    const ctx=canvas.getContext("2d");
+    if(format==="jpeg"){ctx.fillStyle="#fff";ctx.fillRect(0,0,width,height);}
+    ctx.drawImage(img,0,0,width,height);
+    const mime=format==="jpeg"?"image/jpeg":"image/png";
+    const blob=await new Promise((res,rej)=>canvas.toBlob(b=>b?res(b):rej(new Error("Unable to create the image file.")),mime,format==="jpeg"?0.92:undefined));
+    triggerBlobDownload(blob,filename);
+  }catch(e){await showAlert(e?.message||"Unable to create the image file.");}
+  finally{URL.revokeObjectURL(url);}
+}
+async function showPreviewImageDownloadDialog(){
+  if(!requireDayPilot())return;
+  const c=state.chords[state.selected];
+  if(!c||!getPreviewSvg()){await showAlert("There is no chord-grid preview to save.");return;}
+  let width=loadPreviewImageWidth(),bound=false;
+  const html=`<div style="text-align:center;line-height:1.45;max-width:560px;margin:0 auto;">
+    <p style="margin-top:0;">Download the current <b>${escapeHtml(c.name||"Chord")}</b> chord-grid preview.</p>
+    <label style="display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0;">
+      <span style="font-weight:700;">JPEG width:</span>
+      <input id="previewImageWidth" type="number" min="128" max="2048" step="1" value="${width}" style="width:110px;padding:7px 8px;border:1px solid #b6c5ba;border-radius:5px;">
+      <span>pixels</span>
+    </label>
+    <div style="color:#607066;font-size:.86rem;margin:-6px 0 16px;">128–2048 pixels. Height is calculated automatically.</div>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+      <button id="downloadPreviewSvgChoice" class="button" type="button">SVG</button>
+      <button id="downloadPreviewJpegChoice" class="button blue" type="button">JPEG</button>
+    </div></div>`;
+  const bind=()=>{
+    if(bound)return;
+    const w=document.getElementById("previewImageWidth"),s=document.getElementById("downloadPreviewSvgChoice"),
+          j=document.getElementById("downloadPreviewJpegChoice");
+    if(!w||!s||!j)return;
+    bound=true;
+    const pin=()=>{width=savePreviewImageWidth(w.value);w.value=width;return width;};
+    w.addEventListener("change",pin);w.addEventListener("blur",pin);
+    s.addEventListener("click",downloadPreviewSvg);
+    j.addEventListener("click",()=>downloadPreviewRaster("jpeg",pin()));
+  };
+  const modalStyle=document.createElement("style");
+  modalStyle.textContent=`
+    body.preview-image-dialog-open .modal_default_buttons {
+      text-align:center !important;
+    }
+    body.preview-image-dialog-open .modal_default_buttons button,
+    body.preview-image-dialog-open .modal_default_buttons input {
+      float:none !important;
+      margin-left:auto !important;
+      margin-right:auto !important;
+    }
+  `;
+  document.head.appendChild(modalStyle);
+  document.body.classList.add("preview-image-dialog-open");
+
+  const timer=setInterval(bind,25);
+  try{
+    await DayPilot.Modal.alert(html,{title:"Download Chord Grid Image",okText:"Close",top:80,width:620});
+  } finally {
+    clearInterval(timer);
+    document.body.classList.remove("preview-image-dialog-open");
+    modalStyle.remove();
+  }
+}
+
 function requireDayPilot() {
   if (!window.DayPilot || !DayPilot.Modal) {
     setStatus("DayPilot.Modal could not be loaded.", true);
@@ -993,7 +1134,7 @@ async function showInstructions() {
         <li>Use <b>Base fret</b> for shapes higher up the neck. The editor always displays five consecutive frets beginning with the selected base fret.</li>
         <li>The displayed grid runs from the lowest-pitched string on the left to the highest-pitched string on the right. Click a fret position to place or remove a dot. Click the marker above a string to cycle between open (O) and muted (X).</li>
         <li>String-number labels use conventional numbering: <b>string 1 is the highest-pitched string on the right</b>; the highest numbered string is the lowest-pitched string on the left. The generated <code>frets</code> and <code>fingers</code> arrays remain in displayed left-to-right, lowest-to-highest string order.</li>
-        <li>The <b>ABC Transcription Tools Preview</b> at the right gives an approximate preview of the custom grid as it will be rendered in ABC Transcription Tools.</li>
+        <li>The <b>ABC Transcription Tools Preview</b> at the right gives an approximate preview of the custom grid as it will be rendered in ABC Transcription Tools. Click the preview or <b>Download Image</b> to save it as SVG or JPEG. JPEG width can be set from 128 to 2048 pixels; height is calculated proportionally.</li>
       </ol>
 
       <h3 style="color:#176b43;margin:18px 0 6px;">Finger numbers and barres</h3>
@@ -1261,6 +1402,8 @@ for(const [id,key] of [["barreFret","fret"],["barreFrom","fromString"],["barreTo
   $(id).addEventListener("change",e=>{const c=state.chords[state.selected];if(!c||!c.barre)return;c.barre[key]=Number(e.target.value);render();});
 }
 $("instructionsBtn").addEventListener("click",showInstructions);
+$("downloadPreviewBtn").addEventListener("click",showPreviewImageDownloadDialog);
+$("gridPreview").addEventListener("click",showPreviewImageDownloadDialog);
 
 window.addEventListener("resize",syncChordListHeight);
 if(window.ResizeObserver){
