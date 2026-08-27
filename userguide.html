@@ -8191,53 +8191,73 @@
                 &nbsp;&nbsp;"baseFret": 1,<br/>
                 &nbsp;&nbsp;"frets": ["x", 0, 2, 2, 2, 0],<br/>
                 &nbsp;&nbsp;"fingers": [null, null, 1, 2, 3, null],<br/>
-                &nbsp;&nbsp;"barre": null<br/>
+                &nbsp;&nbsp;"barre": null,<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 },<br/>
                 "Am": {<br/>
                 &nbsp;&nbsp;"strings": 6,<br/>
                 &nbsp;&nbsp;"baseFret": 1,<br/>
                 &nbsp;&nbsp;"frets": ["x", 0, 2, 2, 1, 0],<br/>
                 &nbsp;&nbsp;"fingers": [null, null, 2, 3, 1, null],<br/>
-                &nbsp;&nbsp;"barre": null<br/>
+                &nbsp;&nbsp;"barre": null,<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 },<br/>
                 "Bm": {<br/>
                 &nbsp;&nbsp;"strings": 6,<br/>
                 &nbsp;&nbsp;"baseFret": 2,<br/>
                 &nbsp;&nbsp;"frets": ["x", 2, 4, 4, 3, 2],<br/>
                 &nbsp;&nbsp;"fingers": [null, 1, 3, 4, 2, 1],<br/>
-                &nbsp;&nbsp;"barre": { "fret": 2, "fromString": 1, "toString": 5 }<br/>
+                &nbsp;&nbsp;"barre": {"fret": 2, "fromString": 1, "toString": 5},<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 },<br/>
                 "C": {<br/>
                 &nbsp;&nbsp;"strings": 6,<br/>
                 &nbsp;&nbsp;"baseFret": 1,<br/>
                 &nbsp;&nbsp;"frets": ["x", 3, 2, 0, 1, 0],<br/>
                 &nbsp;&nbsp;"fingers": [null, 3, 2, null, 1, null],<br/>
-                &nbsp;&nbsp;"barre": null<br/>
+                &nbsp;&nbsp;"barre": null,<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 },<br/>
                 "D": {<br/>
                 &nbsp;&nbsp;"strings": 6,<br/>
                 &nbsp;&nbsp;"baseFret": 1,<br/>
                 &nbsp;&nbsp;"frets": [0, 0, 0, 2, 3, 2],<br/>
                 &nbsp;&nbsp;"fingers": [null, null, null, 1, 3, 2],<br/>
-                &nbsp;&nbsp;"barre": null<br/>
+                &nbsp;&nbsp;"barre": null,<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 },<br/>
                 "Em": {<br/>
                 &nbsp;&nbsp;"strings": 6,<br/>
                 &nbsp;&nbsp;"baseFret": 1,<br/>
                 &nbsp;&nbsp;"frets": [2, 2, 2, 0, 0, 0],<br/>
                 &nbsp;&nbsp;"fingers": [1, 1, 1, null, null, null],<br/>
-                &nbsp;&nbsp;"barre": { "fret": 2, "fromString": 4, "toString": 6 }<br/>
+                &nbsp;&nbsp;"barre": {"fret": 2, "fromString": 4, "toString": 6},<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 },<br/>
                 "G": {<br/>
                 &nbsp;&nbsp;"strings": 6,<br/>
                 &nbsp;&nbsp;"baseFret": 1,<br/>
                 &nbsp;&nbsp;"frets": [5, 5, 0, 0, 0, 3],<br/>
                 &nbsp;&nbsp;"fingers": [3, 4, null, null, null, 1],<br/>
-                &nbsp;&nbsp;"barre": null<br/>
+                &nbsp;&nbsp;"barre": null,<br/>
+                &nbsp;&nbsp;"builderStringPitches": ["D,", "A,", "D", "G", "B", "e"],<br/>
+                &nbsp;&nbsp;"builderPreferFlats": false<br/>
                 }<br/>
                 %%end_chord_grid_definitions</p>
+                <p>To make creating and editing custom chord-grid definitions easier, use the:</p>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/chord-grid-builder.html" target="_blank">ABC Custom Chord Grid Builder</a></p> 
+                <p>The builder provides a visual fretboard editor and generates the complete<br/><strong>%%begin_chord_grid_definitions / %%end_chord_grid_definitions</strong> block for you to copy into your ABC.</p>
+                <p>The Chord Grid Builder also saves two <strong>builder-only</strong> values in each definition. These values are retained so that definitions can be loaded back into the builder with the same pitch-calculation settings. They do not affect how the chord grid is rendered in ABC Transcription Tools.</p>
+                <p><strong>builderStringPitches</strong> - Stores the open-string pitches used by the builder for its optional string-pitch display and chromatic pitch calculations. The entries are ordered from the lowest-pitched string to the highest-pitched string, just like the <strong>frets</strong> array, and use ABC pitch naming. For example, <strong>["D,", "A,", "D", "G", "B", "e"]</strong> represents six-string Drop-D tuning. A value of <strong>null</strong> indicates that string-pitch display is disabled in the builder.</p>
+                <p><strong>builderPreferFlats</strong> - Stores the builder's <strong>Prefer flats</strong> setting for calculated effective pitches. Use <strong>true</strong> to prefer flat spellings or <strong>false</strong> to prefer sharp spellings. This setting is only used by the builder when string-pitch display is enabled and does not change the entered ABC open-string pitches.</p>
                 <p>The same custom-definition mechanism can be used for instruments with 3, 4, 5, or 6 strings. This makes it possible to create chord grids for instruments such as dulcimer, mandolin, tenor guitar, guitar in alternate tunings, and other custom stringed instruments.</p>
-                <p>If you add, edit, or remove a <strong>%%begin_chord_grid_definitions / %%end_chord_grid_definitions</strong> block in the ABC file header, you'll need to force a full redraw of the tunes. The easiest way to do this is to click the <strong>Notation</strong> button.</p>
+                <p>If you add, edit, or remove a <strong>%%begin_chord_grid_definitions /<br/>%%end_chord_grid_definitions</strong> block in the ABC file header, you'll need to force a full redraw of the tunes. The easiest way to do this is to click the <strong>Notation</strong> button.</p>
                 <p>Chord grids are supported throughout the tool wherever the tune notation is rendered, including the standard editor, Quick Editor, Player, Tune Trainer, player-based explorer dialogs, PDF notation export, and supported website rendering/export workflows.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always">Transposing Notation Independent of Tablature</h1>
