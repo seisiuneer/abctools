@@ -73,6 +73,12 @@ button{cursor:pointer}
 }
 .button:hover,.button:focus-visible{background:var(--green-dark);outline:2px solid rgba(23,107,67,.25);outline-offset:2px}
 .button.secondary{color:var(--green-dark);background:#e4efe8;border:1px solid #a9c2b1}
+.button.toolbar-instructions{
+  margin-left:auto;color:#111;background:#eeeeee;border:1px solid #bfc4c0;
+}
+.button.toolbar-instructions:hover,.button.toolbar-instructions:focus-visible{
+  color:#111;background:#dedede;outline:2px solid rgba(0,0,0,.14);outline-offset:2px;
+}
 .button.blue{background:var(--blue)}
 .button.blue:hover,.button.blue:focus-visible{background:#0f3566}
 .button.danger{background:var(--danger)}
@@ -80,11 +86,11 @@ button{cursor:pointer}
 .button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 input[type=file]{display:none}
 .panel{margin-top:18px;padding:18px;border-radius:10px}
-.workspace{display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px}
+.workspace{display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px;align-items:start}
 .sidebar{border-right:1px solid var(--line);padding-right:18px;min-width:0}
 .sidebar-head{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
 h2{margin:0;font-size:1.3rem}
-.chord-list{list-style:none;padding:0;margin:0;display:grid;gap:7px;max-height:610px;overflow:auto}
+.chord-list{list-style:none;padding:0;margin:0;display:grid;gap:7px;overflow-y:auto;overflow-x:hidden;align-content:start;scrollbar-gutter:stable}
 .chord-list button{
   width:100%;padding:9px 10px;text-align:left;color:var(--ink);background:#f7faf8;
   border:1px solid #d8e2da;border-radius:6px;font-weight:700
@@ -103,7 +109,7 @@ h2{margin:0;font-size:1.3rem}
 .grid-card{margin-top:16px;padding:16px;border:1px solid #d8e2da;border-radius:9px;background:#f8faf8}
 .grid-card h3{margin:0 0 4px;color:var(--green-dark)}
 .grid-help{margin:0 0 12px;color:var(--muted);font-size:.9rem}
-.grid-workspace{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:22px;align-items:start}
+.grid-workspace{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(210px,.45fr);gap:18px;align-items:start}
 .grid-editor-pane{min-width:0}
 .grid-preview-pane{min-width:0;padding:14px;border:1px solid #d8e2da;border-radius:8px;background:#fff}
 .grid-preview-pane h4{margin:0 0 8px;color:var(--green-dark);font-size:1rem}
@@ -135,6 +141,28 @@ h2{margin:0;font-size:1.3rem}
 .finger-cell input{width:38px;height:32px;text-align:center;border:1px solid #b6c5ba;border-radius:5px}
 .finger-label{text-align:center;color:var(--muted);font-size:.76rem;margin-top:3px;line-height:1.15}
 .finger-header{margin-top:10px;margin-bottom:3px;color:#294534;font-size:.84rem;font-weight:750;text-align:center}
+.pitch-section{margin-top:14px;padding-top:12px;border-top:1px solid #d8e2da}
+.pitch-toggle{margin:0}
+.pitch-options{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:nowrap;margin:0 0 10px;min-width:0}
+.pitch-options .checkline{flex:0 0 auto}
+.pitch-options .pitch-copy-button{max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.pitch-options .checkline{white-space:nowrap}
+.pitch-options .pitch-copy-button{flex:0 0 auto}
+@media(max-width:760px){
+  .pitch-options{gap:10px}
+  .pitch-options .checkline{font-size:.9rem}
+  .pitch-options .pitch-copy-button{padding:5px 8px;font-size:.76rem}
+}
+.pitch-entry-wrap{display:block}
+.pitch-row,.effective-pitch-row{display:grid;gap:0}
+.pitch-cell,.effective-pitch-cell{text-align:center;min-width:0}
+.pitch-copy-button{white-space:nowrap;padding:6px 10px;font-size:.82rem}
+.pitch-cell input{width:52px;height:32px;text-align:center;border:1px solid #b6c5ba;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.pitch-label,.effective-pitch-label{text-align:center;color:var(--muted);font-size:.76rem;margin-top:3px;line-height:1.15}
+.effective-pitch-slot{margin-top:8px}
+.effective-pitch-header{margin:0 0 3px;color:#294534;font-size:.84rem;font-weight:750;text-align:center}
+.effective-pitch-value{min-height:24px;font:700 14px/24px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--green-dark)}
+.pitch-help{text-align:center;color:var(--muted);font-size:.8rem;margin:6px 0 0}
 .barre-box{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #d8e2da}
 .checkline{display:flex;align-items:center;gap:8px;font-weight:700;color:#294534}
 .output-panel textarea{
@@ -150,8 +178,8 @@ h2{margin:0;font-size:1.3rem}
 @media(max-width:760px){
   .app-header{padding:13px 16px 12px}.app-header h1{font-size:clamp(1.2rem,5.4vw,1.55rem)}
   .app{width:min(100% - 18px,1180px);margin-top:14px}.toolbar{display:grid;grid-template-columns:1fr 1fr}
-  .toolbar .button{width:100%}.workspace{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line);padding:0 0 15px}
-  .chord-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:180px}.editor-top{grid-template-columns:1fr 1fr}
+  .toolbar .button{width:100%}.toolbar .toolbar-instructions{margin-left:0}.workspace{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line);padding:0 0 15px}
+  .chord-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:180px!important}.editor-top{grid-template-columns:1fr 1fr}
   .editor-top .delete-wrap{grid-column:1/-1}.editor-top .delete-wrap .button{width:100%}
   .grid-workspace{grid-template-columns:1fr}.grid-preview-pane{order:2}.fretboard{margin:0 auto}
   .barre-box{grid-template-columns:1fr 1fr}.output-head{align-items:flex-start;flex-direction:column}
@@ -173,7 +201,7 @@ h2{margin:0;font-size:1.3rem}
     <button id="pasteBtn" class="button secondary" type="button">Paste Definitions</button>
     <button id="saveBtn" class="button blue" type="button">Save Definitions</button>
     <button id="copyBtn" class="button" type="button">Copy to Clipboard</button>
-    <button id="instructionsBtn" class="button secondary" type="button">Instructions</button>
+    <button id="instructionsBtn" class="button toolbar-instructions" type="button">Instructions</button>
   </div>
 
   <section class="panel">
@@ -205,7 +233,7 @@ h2{margin:0;font-size:1.3rem}
 
           <div class="grid-card">
             <h3 id="gridTitle">Chord</h3>
-            <p class="grid-help">Click a fret position to place a dot. Click the marker above a string to cycle between open (O) and muted (X). Finger numbers are optional.</p>
+            <p class="grid-help">Click a fret position to place a dot. Click the marker above a string to cycle between open (O) and muted (X). Finger numbers and chromatic pitch calculation are optional.</p>
             <div class="grid-workspace">
               <div class="grid-editor-pane">
                 <div class="fretboard-wrap"><div id="fretboard" class="fretboard"></div></div>
@@ -251,9 +279,37 @@ h2{margin:0;font-size:1.3rem}
 const $ = id => document.getElementById(id);
 const state = { chords: [], selected: -1 };
 const MAX_VISIBLE_FRETS = 5;
+const DEFAULT_STRING_PITCHES = {
+  3:["D", "A", "d"],
+  4:["G,", "D", "A", "e"],
+  5:["D,", "G,", "D", "A", "e"],
+  6:["E,", "A,", "D", "G", "B", "e"]
+};
 
-function blankChord(name="C", strings=6) {
-  return { name, strings, baseFret:1, frets:Array(strings).fill(0), fingers:null, barre:null };
+function defaultStringPitches(strings) {
+  const pitches=DEFAULT_STRING_PITCHES[strings];
+  return pitches ? pitches.slice() : null;
+}
+
+function blankChord(name="C", strings=6, builderStringPitches=undefined, builderPreferFlats=false) {
+  let initialPitches=null;
+
+  if(Array.isArray(builderStringPitches)){
+    initialPitches=builderStringPitches.slice(0,strings);
+  } else if(builderStringPitches === undefined){
+    initialPitches=defaultStringPitches(strings);
+  }
+
+  return {
+    name,
+    strings,
+    baseFret:1,
+    frets:Array(strings).fill(0),
+    fingers:null,
+    barre:null,
+    builderStringPitches:initialPitches,
+    builderPreferFlats:!!builderPreferFlats
+  };
 }
 function normalizeName(s){ return String(s||"").trim(); }
 function chordNameKey(s){ return normalizeName(s).toLocaleLowerCase(); }
@@ -266,6 +322,65 @@ function escapeHtml(s){
     '"':"&quot;",
     "'":"&#39;"
   })[ch]);
+}
+
+
+function parseAbcPitch(value) {
+  const s=String(value ?? "").trim();
+  const m=s.match(/^(\^{1,2}|_{1,2}|=)?([A-Ga-g])([,']*)$/);
+  if(!m)return null;
+
+  const accidental=m[1]||"";
+  const note=m[2];
+  const marks=m[3]||"";
+  const upper=note.toUpperCase();
+  const pc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[upper];
+
+  let octave=(note===note.toLowerCase()) ? 5 : 4;
+  for(const ch of marks)octave += ch==="'" ? 1 : -1;
+
+  let accidentalOffset=0;
+  if(accidental==="^")accidentalOffset=1;
+  else if(accidental==="^^")accidentalOffset=2;
+  else if(accidental==="_")accidentalOffset=-1;
+  else if(accidental==="__")accidentalOffset=-2;
+
+  return {
+    midi:(octave+1)*12+pc+accidentalOffset,
+    preferFlats:accidental.startsWith("_")
+  };
+}
+
+function midiToStandardPitch(midi, preferFlats=false) {
+  const sharpNames=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const flatNames=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+  const names=preferFlats?flatNames:sharpNames;
+  const pitchClass=((midi%12)+12)%12;
+  const octave=Math.floor(midi/12)-1;
+  return `${names[pitchClass]}${octave}`;
+}
+
+function getEffectiveFret(c, displayIndex) {
+  const fret=c.frets[displayIndex];
+  const covered=isDisplayStringCoveredByBarre(c,displayIndex);
+
+  if(covered){
+    if(typeof fret==="number" && fret>c.barre.fret)return fret;
+    return c.barre.fret;
+  }
+
+  if(fret==="x")return null;
+  if(typeof fret==="number")return fret;
+  return null;
+}
+
+function getEffectivePitch(c, displayIndex) {
+  if(!Array.isArray(c.builderStringPitches))return "";
+  const openPitch=parseAbcPitch(c.builderStringPitches[displayIndex]);
+  if(!openPitch)return "";
+  const effectiveFret=getEffectiveFret(c,displayIndex);
+  if(effectiveFret===null)return "";
+  return midiToStandardPitch(openPitch.midi+effectiveFret,!!c.builderPreferFlats);
 }
 
 function validChord(c) {
@@ -291,6 +406,18 @@ function validChord(c) {
     for (const f of c.fingers) if (f !== null && (!Number.isInteger(f) || f < 1 || f > 4)) return `${c.name}: finger numbers must be 1–4.`;
   }
 
+  if (c.builderStringPitches !== null) {
+    if (!Array.isArray(c.builderStringPitches) || c.builderStringPitches.length !== c.strings) {
+      return `${c.name}: builderStringPitches must contain one ABC pitch for each string.`;
+    }
+    for (let i=0;i<c.builderStringPitches.length;i++) {
+      const p=String(c.builderStringPitches[i] ?? "").trim();
+      const stringNumber=c.strings-i;
+      if(!p)return `${c.name}: enter an open-string pitch for string ${stringNumber}, or turn off string pitch calculation.`;
+      if(!parseAbcPitch(p))return `${c.name}: "${p}" is not a valid ABC pitch for string ${stringNumber}.`;
+    }
+  }
+
   if (c.barre !== null) {
     const b=c.barre;
     if (!Number.isInteger(b.fret)||b.fret<1||!Number.isInteger(b.fromString)||b.fromString<1||b.fromString>c.strings||
@@ -312,15 +439,20 @@ function formattedDefinition(c, isLast) {
   const frets = `[${c.frets.map(v=>v==="x" ? '"x"' : v).join(", ")}]`;
   const barre = c.barre === null ? "null" :
     `{"fret": ${c.barre.fret}, "fromString": ${c.barre.fromString}, "toString": ${c.barre.toString}}`;
-  return [
+  const builderStringPitches = c.builderStringPitches === null ? "null" :
+    `[${c.builderStringPitches.map(v=>escapeJsonString(v)).join(", ")}]`;
+  const lines=[
     `${escapeJsonString(c.name)}: {`,
     `  "strings": ${c.strings},`,
     `  "baseFret": ${c.baseFret},`,
     `  "frets": ${frets},`,
     `  "fingers": ${fingers},`,
-    `  "barre": ${barre}`,
-    `}${isLast ? "" : ","}`
-  ].join("\n");
+    `  "barre": ${barre},`,
+    `  "builderStringPitches": ${builderStringPitches},`,
+    `  "builderPreferFlats": ${c.builderPreferFlats ? "true" : "false"}`
+  ];
+  lines.push(`}${isLast ? "" : ","}`);
+  return lines.join("\n");
 }
 
 function outputText() {
@@ -375,6 +507,9 @@ function setStringCount(c,n) {
   while(c.frets.length<n)c.frets.push(0);
   c.frets=c.frets.slice(0,n);
   if(c.fingers){while(c.fingers.length<n)c.fingers.push(null);c.fingers=c.fingers.slice(0,n);}
+  if(c.builderStringPitches){
+    c.builderStringPitches=defaultStringPitches(n);
+  }
   c.strings=n;
   if(c.barre){c.barre.fromString=Math.min(c.barre.fromString,n);c.barre.toString=Math.min(c.barre.toString,n);}
 }
@@ -493,6 +628,42 @@ function isDisplayStringCoveredByBarre(c, displayIndex) {
   return conventionalStringNumber >= low && conventionalStringNumber <= high;
 }
 
+
+function renderEffectivePitchRow(c, parent) {
+  const existing=parent.querySelector(".effective-pitch-container");
+  if(existing)existing.remove();
+  if(!Array.isArray(c.builderStringPitches))return;
+
+  const container=document.createElement("div");
+  container.className="effective-pitch-container";
+
+  const header=document.createElement("div");
+  header.className="effective-pitch-header";
+  header.textContent="Effective sounding pitch";
+  container.appendChild(header);
+
+  const row=document.createElement("div");
+  row.className="effective-pitch-row";
+  row.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
+
+  for(let si=0;si<c.strings;si++){
+    const conventionalStringNumber=c.strings-si;
+    const cell=document.createElement("div");
+    cell.className="effective-pitch-cell";
+    const value=document.createElement("div");
+    value.className="effective-pitch-value";
+    value.textContent=getEffectivePitch(c,si);
+    const lab=document.createElement("div");
+    lab.className="effective-pitch-label";
+    lab.textContent=`String ${conventionalStringNumber}`;
+    cell.append(value,lab);
+    row.appendChild(cell);
+  }
+
+  container.appendChild(row);
+  parent.appendChild(container);
+}
+
 function renderFretboard(c) {
   const host=$("fretboard"); host.innerHTML="";
   host.style.gridTemplateColumns="1fr";
@@ -535,6 +706,13 @@ function renderFretboard(c) {
   }
   host.appendChild(neck);
 
+  const effectivePitchSlot=document.createElement("div");
+  effectivePitchSlot.className="effective-pitch-slot";
+  host.appendChild(effectivePitchSlot);
+  if(Array.isArray(c.builderStringPitches)){
+    renderEffectivePitchRow(c,effectivePitchSlot);
+  }
+
   const fingers=document.createElement("div");fingers.className="finger-row";fingers.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
   for(let si=0;si<c.strings;si++){
     const cell=document.createElement("div");cell.className="finger-cell";
@@ -560,6 +738,125 @@ function renderFretboard(c) {
   fingerHeader.textContent="Optional finger number for each string";
   host.appendChild(fingerHeader);
   host.appendChild(fingers);
+
+  const pitchSection=document.createElement("div");
+  pitchSection.className="pitch-section";
+
+  const pitchOptions=document.createElement("div");
+  pitchOptions.className="pitch-options";
+
+  const pitchToggleLabel=document.createElement("label");
+  pitchToggleLabel.className="checkline pitch-toggle";
+  const pitchToggle=document.createElement("input");
+  pitchToggle.type="checkbox";
+  pitchToggle.checked=Array.isArray(c.builderStringPitches);
+  pitchToggleLabel.appendChild(pitchToggle);
+  pitchToggleLabel.appendChild(document.createTextNode(" Show string pitches"));
+  pitchOptions.appendChild(pitchToggleLabel);
+
+  const flatsLabel=document.createElement("label");
+  flatsLabel.className="checkline";
+  const flatsCheckbox=document.createElement("input");
+  flatsCheckbox.type="checkbox";
+  flatsCheckbox.checked=!!c.builderPreferFlats;
+  flatsCheckbox.disabled=!Array.isArray(c.builderStringPitches);
+  flatsCheckbox.setAttribute("aria-label","Display effective pitches with flats");
+  flatsLabel.appendChild(flatsCheckbox);
+  flatsLabel.appendChild(document.createTextNode(" Prefer flats"));
+  pitchOptions.appendChild(flatsLabel);
+
+  let copyPitchesBtn=null;
+  if(Array.isArray(c.builderStringPitches)){
+    copyPitchesBtn=document.createElement("button");
+    copyPitchesBtn.type="button";
+    copyPitchesBtn.className="button secondary pitch-copy-button";
+    copyPitchesBtn.textContent="Copy pitches to same-string chords";
+    copyPitchesBtn.title=`Copy these ${c.strings}-string open pitches to all other ${c.strings}-string chords`;
+    copyPitchesBtn.addEventListener("click",()=>{
+      let count=0;
+      for(const other of state.chords){
+        if(other===c || other.strings!==c.strings)continue;
+        other.builderStringPitches=c.builderStringPitches.slice();
+        count++;
+      }
+
+      const original=copyPitchesBtn.textContent;
+      copyPitchesBtn.textContent=count ? `Copied to ${count} chords` : "No matching chords";
+      copyPitchesBtn.disabled=true;
+      window.setTimeout(()=>{
+        copyPitchesBtn.textContent=original;
+        copyPitchesBtn.disabled=false;
+      },1400);
+
+      setStatus(
+        count
+          ? `Copied open-string pitches to ${count} other ${c.strings}-string chord${count===1?"":"s"}.`
+          : `No other ${c.strings}-string chords to update.`
+      );
+      renderList();
+      updateOutput();
+    });
+    pitchOptions.appendChild(copyPitchesBtn);
+  }
+
+  pitchSection.appendChild(pitchOptions);
+
+  pitchToggle.addEventListener("change",()=>{
+    if(pitchToggle.checked){
+      c.builderStringPitches=defaultStringPitches(c.strings);
+    } else {
+      c.builderStringPitches=null;
+    }
+    render();
+  });
+
+  flatsCheckbox.addEventListener("change",()=>{
+    c.builderPreferFlats=flatsCheckbox.checked;
+    renderEffectivePitchRow(c,effectivePitchSlot);
+    updateOutput();
+  });
+
+  if(Array.isArray(c.builderStringPitches)){
+
+    const pitchRow=document.createElement("div");
+    pitchRow.className="pitch-row";
+    pitchRow.style.gridTemplateColumns=`repeat(${c.strings},1fr)`;
+
+    for(let si=0;si<c.strings;si++){
+      const conventionalStringNumber=c.strings-si;
+      const cell=document.createElement("div");
+      cell.className="pitch-cell";
+      const inp=document.createElement("input");
+      inp.type="text";
+      inp.maxLength=8;
+      inp.placeholder="e.g. E,";
+      inp.value=c.builderStringPitches[si]||"";
+      inp.setAttribute("aria-label",`Open-string ABC pitch for string ${conventionalStringNumber}`);
+      inp.addEventListener("input",()=>{
+        c.builderStringPitches[si]=inp.value.trim();
+        renderEffectivePitchRow(c,effectivePitchSlot);
+        updateOutput();
+      });
+      const lab=document.createElement("div");
+      lab.className="pitch-label";
+      lab.textContent=`String ${conventionalStringNumber}`;
+      cell.append(inp,lab);
+      pitchRow.appendChild(cell);
+    }
+
+    const pitchEntryWrap=document.createElement("div");
+    pitchEntryWrap.className="pitch-entry-wrap";
+    pitchEntryWrap.appendChild(pitchRow);
+    pitchSection.appendChild(pitchEntryWrap);
+
+    const help=document.createElement("div");
+    help.className="pitch-help";
+    help.textContent="ABC pitch naming examples: C,  G,  C  e  ^F  _B  c'";
+    pitchSection.appendChild(help);
+
+  }
+
+  host.appendChild(pitchSection);
   renderChordPreview(c);
 }
 
@@ -575,7 +872,33 @@ function renderEditor() {
   $("barreFrom").max=c.strings;$("barreTo").max=c.strings;
   renderFretboard(c);
 }
-function render(){renderList();renderEditor();updateOutput();}
+
+function syncChordListHeight() {
+  const list=$("chordList");
+  const sidebarHead=document.querySelector(".sidebar-head");
+  const editor=document.querySelector(".editor");
+
+  if(!list || !sidebarHead || !editor)return;
+
+  // On the stacked/mobile layout, let the CSS mobile max-height control the list.
+  if(window.matchMedia("(max-width:760px)").matches){
+    list.style.maxHeight="";
+    return;
+  }
+
+  // Size the scrollable chord list from the intrinsic height of the editor
+  // on the right, less the Chords/+Add heading row. Keep a sensible upper
+  // limit so an unusually tall editor doesn't create an excessively tall list.
+  const editorHeight=editor.getBoundingClientRect().height;
+  const headerHeight=sidebarHead.getBoundingClientRect().height;
+  const available=Math.max(220, Math.floor(editorHeight-headerHeight-10));
+  const maxListHeight=Math.min(available,720);
+
+  list.style.maxHeight=`${maxListHeight}px`;
+}
+
+function render(){renderList();renderEditor();updateOutput();requestAnimationFrame(syncChordListHeight);}
+
 
 function uniqueDefaultName() {
   const used = new Set(state.chords.map(c => chordNameKey(c.name)).filter(Boolean));
@@ -654,24 +977,44 @@ async function showInstructions() {
 
   const html = `
     <div style="text-align:left;line-height:1.48;max-width:720px;margin:0 auto;max-height:60vh;overflow-y:auto;padding:0 12px 4px 0;">
-      <p>This standalone utility creates the custom chord-grid definition blocks used by ABC Transcription Tools.</p>
-      <h3 style="color:#176b43;margin:18px 0 6px;">Creating chords</h3>
+      <h1 style="color:#176b43;margin:0 0 6px;text-align:center;font-size:1.5em;">Instructions</h1>
+      <p>This standalone utility creates custom chord-grid definition blocks for ABC Transcription Tools. You can build and preview multiple 3-, 4-, 5-, or 6-string chord shapes, optionally add fingering and tuning information, and save, load, paste, or copy complete definition blocks.</p>
+
+      <h3 style="color:#176b43;margin:18px 0 6px;">Creating and editing chords</h3>
       <ol>
-        <li>Choose <b>Add</b>, enter a chord label, and select 3, 4, 5, or 6 strings.</li>
-        <li>Use <b>Base fret</b> for chord shapes higher up the neck. The editor displays five consecutive frets beginning with the selected base fret.</li>
-        <li>Click fret positions to place dots. Use the O/X buttons above the strings for open or muted strings.</li>
-        <li>The displayed grid runs from the lowest-pitched string on the left to the highest-pitched string on the right. The generated <b>frets</b> and <b>fingers</b> arrays use that same lowest-to-highest order.</li>
-        <li>String-number labels use conventional numbering: <b>string 1 is the highest-pitched string on the right</b>, and the highest numbered string is the lowest-pitched string on the left.</li>
-        <li>Optionally enter finger numbers 1–4 below the strings. The labels below the finger fields use this conventional high-to-low string numbering. For a barre, enter the barre finger number (normally 1) only on strings whose sounding note is produced by the barre; if a string is fretted above the barre by another finger, enter that finger number instead. Leave a finger field blank if no finger number should be displayed.</li>
-        <li>To create a barre, enable <b>Barre</b>, choose its fret, and set the conventional first and last string numbers it spans. A barre must span at least two strings and must lie within the five displayed frets. Strings covered by the barre do not show O or X indicators above the grid.</li>
-        <li>Add as many chord definitions as required. Select a chord in the list to edit it.</li>
+        <li>Choose <b>Add</b> to create a chord. Enter a unique <b>Chord label</b>, choose 3, 4, 5, or 6 <b>Strings</b>, and select the chord from the list at the left whenever you want to edit it.</li>
+        <li>Use <b>Base fret</b> for shapes higher up the neck. The editor always displays five consecutive frets beginning with the selected base fret.</li>
+        <li>The displayed grid runs from the lowest-pitched string on the left to the highest-pitched string on the right. Click a fret position to place or remove a dot. Click the marker above a string to cycle between open (O) and muted (X).</li>
+        <li>String-number labels use conventional numbering: <b>string 1 is the highest-pitched string on the right</b>; the highest numbered string is the lowest-pitched string on the left. The generated <code>frets</code> and <code>fingers</code> arrays remain in displayed left-to-right, lowest-to-highest string order.</li>
+        <li>The <b>ABC Transcription Tools Preview</b> at the right gives an approximate preview of the custom grid as it will be rendered in ABC Transcription Tools.</li>
       </ol>
-      <h3 style="color:#176b43;margin:18px 0 6px;">Loading and saving</h3>
+
+      <h3 style="color:#176b43;margin:18px 0 6px;">Finger numbers and barres</h3>
+      <p>Finger numbers are optional. Enter 1–4 below individual strings when you want fingering labels included. For a barre, enter the barre finger number (normally 1) on strings whose sounding note is produced by the barre. If a string is fretted above the barre by another finger, enter that finger instead. Leave a field blank when no finger number should be displayed.</p>
+      <p>Enable <b>Barre</b>, choose the fret, and specify the conventional <b>From string</b> and <b>To string</b> numbers. A barre must span at least two strings and must be within the five displayed frets. Strings covered by the barre do not display O or X markers. A separately fretted note above the barre takes precedence over the barre for that string.</p>
+
+      <h3 style="color:#176b43;margin:18px 0 6px;">String pitches and effective sounding pitches</h3>
+      <p><b>Show string pitches</b> enables the optional chromatic pitch calculator. Enter each open-string pitch using ABC pitch notation. Default tunings are:</p>
+      <ul>
+        <li>6 strings: <code>["E,", "A,", "D", "G", "B", "e"]</code></li>
+        <li>5 strings: <code>["D,", "G,", "D", "A", "e"]</code></li>
+        <li>4 strings: <code>["G,", "D", "A", "e"]</code></li>
+        <li>3 strings: <code>["D", "A", "d"]</code></li>
+      </ul>
+      <p>The defaults are supplied for new chords when appropriate, when pitch display is turned back on, when the string count changes while pitches are enabled, and for imported definitions that do not contain builder pitch information. Examples of accepted ABC pitch names include <code>C</code>, <code>G,</code>, <code>e</code>, <code>^F</code>, <code>_B</code>, and <code>c'</code>.</p>
+      <p>When pitch display is enabled, <b>Effective sounding pitch</b> appears directly below the fretboard. It shows the calculated standard pitch and octave for each sounding string after open strings, fretted notes, and barres are applied; muted strings have no effective pitch. A fretted note above a barre is used instead of the barre fret for that string.</p>
+      <p><b>Prefer flats</b> controls enharmonic spelling for that chord's effective-pitch display. For example, a pitch may be shown as <code>Bb3</code> rather than <code>A#3</code>. This changes only the calculated display, not the entered ABC open-string pitches.</p>
+      <p><b>Copy pitches to same-string chords</b> copies the current chord's open-string pitch values to every other chord having the same number of strings. It does not change chords with a different string count.</p>
+      <p>The pitch calculator assumes chromatic semitone frets. Turn <b>Show string pitches</b> off for instruments or fretboards where that assumption is not appropriate, such as many mountain dulcimers.</p>
+      <p>The optional builder settings are saved with each definition as <code>builderStringPitches</code> and <code>builderPreferFlats</code> so the Chord Grid Builder can restore them exactly. When string-pitch display is disabled, <code>builderStringPitches</code> is saved as <code>null</code>. Older or imported definitions that omit <code>builderStringPitches</code> receive the appropriate default tuning for their string count. These fields are builder-only information and are ignored by ABC Transcription Tools.</p>
+
+      <h3 style="color:#176b43;margin:18px 0 6px;">Loading, pasting, and saving</h3>
       <p><b>Load Definitions</b> reads a previously saved chord-grid definition block from an <code>.abc</code> or text file.</p>
-      <p><b>Paste Definitions</b> lets you paste a complete <code>%%begin_chord_grid_definitions</code> / <code>%%end_chord_grid_definitions</code> block copied from an ABC file.</p>
-      <p><b>Save Definitions</b> prompts for a filename and saves the complete annotation block as an <code>.abc</code> file.</p>
+      <p><b>Paste Definitions</b> accepts a complete block copied from an ABC file. A trailing comma before <code>%%end_chord_grid_definitions</code> is accepted. Loading or pasting definitions replaces the current set after confirmation.</p>
+      <p><b>Save Definitions</b> prompts for a filename and saves the complete block as an <code>.abc</code> file. <b>New</b> clears the current definitions after confirmation.</p>
+
       <h3 style="color:#176b43;margin:18px 0 6px;">Using the result</h3>
-      <p>Use <b>Copy to Clipboard</b> to copy the complete generated block, then paste it into the ABC file header or an individual tune in ABC Transcription Tools. The generated output updates immediately as you edit.</p>
+      <p>The generated text updates as you edit and includes the required <code>%%begin_chord_grid_definitions</code> and <code>%%end_chord_grid_definitions</code> lines. Use <b>Copy to Clipboard</b> to copy the complete block, then paste it into the ABC file header or an individual tune in ABC Transcription Tools.</p>
     </div>`;
   try {
     await DayPilot.Modal.alert(html, {
@@ -694,7 +1037,7 @@ async function promptPasteDefinitions() {
       {
         html:
           '<div style="margin:0 0 12px;line-height:1.45;">' +
-          'Paste the complete <code>%%begin_chord_grid_definitions</code> / ' +
+          'Paste the complete <code>%%begin_chord_grid_definitions</code> /<br/>' +
           '<code>%%end_chord_grid_definitions</code> block copied from an ABC file:' +
           '</div>'
       },
@@ -709,7 +1052,7 @@ async function promptPasteDefinitions() {
     { top:80 },
     {
       title:"Paste Chord Grid Definitions",
-      width:760,
+      width:780,
       okText:"Load Definitions",
       cancelText:"Cancel"
     }
@@ -765,8 +1108,19 @@ async function pasteDefinitions() {
 }
 
 function addChord(){
-  const strings=state.selected>=0 ? state.chords[state.selected].strings : 6;
-  state.chords.push(blankChord(uniqueDefaultName(),strings));state.selected=state.chords.length-1;render();
+  const selectedChord=state.selected>=0 ? state.chords[state.selected] : null;
+  const strings=selectedChord ? selectedChord.strings : 6;
+  let inheritedPitches;
+  let inheritedPreferFlats=false;
+
+  if(selectedChord){
+    inheritedPitches=Array.isArray(selectedChord.builderStringPitches)
+      ? selectedChord.builderStringPitches
+      : null;
+    inheritedPreferFlats=!!selectedChord.builderPreferFlats;
+  }
+
+  state.chords.push(blankChord(uniqueDefaultName(),strings,inheritedPitches,inheritedPreferFlats));state.selected=state.chords.length-1;render();
   $("chordName").focus();$("chordName").select();
 }
 async function deleteChord(){
@@ -786,6 +1140,7 @@ function parseDefinitions(text){
   if(!m)throw new Error("No %%begin_chord_grid_definitions / %%end_chord_grid_definitions block was found.");
   let body=m[1].trim();
   if(!body)return [];
+  body=body.replace(/,\s*$/,"");
   let obj;
   try{obj=JSON.parse("{"+body+"}");}catch(e){throw new Error("The chord definition block is not valid JSON-style chord-grid data.");}
   const chords=[];
@@ -795,7 +1150,15 @@ function parseDefinitions(text){
     const strings=Number(d.strings), baseFret=Number(d.baseFret);
     const c={name:normalizeName(name),strings,baseFret,frets:Array.isArray(d.frets)?d.frets.map(v=>typeof v==="string"&&v.toLowerCase()==="x"?"x":Number(v)):[],
       fingers:d.fingers==null?null:(Array.isArray(d.fingers)?d.fingers.map(v=>v==null||v===""?null:Number(v)):d.fingers),
-      barre:d.barre==null?null:{fret:Number(d.barre.fret),fromString:Number(d.barre.fromString),toString:Number(d.barre.toString)}};
+      barre:d.barre==null?null:{fret:Number(d.barre.fret),fromString:Number(d.barre.fromString),toString:Number(d.barre.toString)},
+      builderStringPitches:Object.prototype.hasOwnProperty.call(d,"builderStringPitches")
+        ? (d.builderStringPitches===null
+            ? null
+            : (Array.isArray(d.builderStringPitches)
+                ? d.builderStringPitches.map(v=>String(v??"").trim())
+                : d.builderStringPitches))
+        : defaultStringPitches(strings),
+      builderPreferFlats:d.builderPreferFlats===true};
 
     const err=validChord(c);
     if(err)throw new Error(err);
@@ -891,6 +1254,13 @@ for(const [id,key] of [["barreFret","fret"],["barreFrom","fromString"],["barreTo
   $(id).addEventListener("change",e=>{const c=state.chords[state.selected];if(!c||!c.barre)return;c.barre[key]=Number(e.target.value);render();});
 }
 $("instructionsBtn").addEventListener("click",showInstructions);
+
+window.addEventListener("resize",syncChordListHeight);
+if(window.ResizeObserver){
+  const chordListResizeObserver=new ResizeObserver(syncChordListHeight);
+  const observedEditor=document.querySelector(".editor");
+  if(observedEditor) chordListResizeObserver.observe(observedEditor);
+}
 
 render();
 })();
