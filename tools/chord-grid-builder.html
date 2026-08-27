@@ -899,17 +899,24 @@ function syncChordListHeight() {
 
 function render(){renderList();renderEditor();updateOutput();requestAnimationFrame(syncChordListHeight);}
 
-
 function uniqueDefaultName() {
-  const used = new Set(state.chords.map(c => chordNameKey(c.name)).filter(Boolean));
+  const used = new Set(
+    state.chords.map(c => chordNameKey(c.name)).filter(Boolean)
+  );
 
-  for (const base of ["C","G","D","A","E","Am","Em","Dm","F","Bb"]) {
-    if (!used.has(chordNameKey(base))) return base;
+  const common = [
+    "C","G","D","A","E","F","Bb","Eb",
+    "Am","Em","Dm","Bm","Gm","Cm",
+    "C7","G7","D7","A7","E7","F7","Bb7",
+    "Cmaj7","Gmaj7","Fmaj7",
+    "Am7","Em7","Dm7"
+  ];
+
+  for (const name of common) {
+    if (!used.has(chordNameKey(name))) return name;
   }
 
-  let n = 1;
-  while (used.has(chordNameKey("Chord " + n))) n++;
-  return "Chord " + n;
+  return "";
 }
 
 function requireDayPilot() {
