@@ -40,6 +40,7 @@
 </script>
 
 <script src="daypilot-modal.min-3.10.1.js"></script>
+<script src="jszip-min.js"></script>
 <style>
 :root{
   --bg:#eef2ee;--panel:#fff;--ink:#17241c;--muted:#607066;--green:#176b43;
@@ -244,7 +245,11 @@ h2{margin:0;font-size:1.3rem}
                 <h4>ABC Transcription Tools Preview</h4>
                 <p class="preview-help">Approximate appearance of this custom chord grid when rendered in ABC Transcription Tools.</p>
                 <div id="gridPreview" class="preview-holder" title="Click to download this chord-grid image"></div>
-<div class="preview-download-wrap"><button id="downloadPreviewBtn" class="button secondary preview-download-button" type="button">Download Image</button></div>
+<div class="preview-download-wrap">
+  <button id="downloadPreviewBtn" class="button secondary preview-download-button" type="button">Download Image</button>
+  <div style="height:8px"></div>
+  <button id="downloadAllPreviewsBtn" class="button secondary preview-download-button" type="button">Download All Images</button>
+</div>
               </aside>
             </div>
           </div>
@@ -528,10 +533,8 @@ function svgEl(tag, attrs={}) {
   return el;
 }
 
-function renderChordPreview(c) {
-  const host=$("gridPreview");
-  host.innerHTML="";
-  if(!c)return;
+function createChordPreviewSvg(c) {
+  if(!c)return null;
 
   const strings=c.strings;
   const width=150;
@@ -623,7 +626,14 @@ function renderChordPreview(c) {
     });
   }
 
-  host.appendChild(svg);
+  return svg;
+}
+
+function renderChordPreview(c) {
+  const host=$("gridPreview");
+  host.innerHTML="";
+  const svg=createChordPreviewSvg(c);
+  if(svg)host.appendChild(svg);
 }
 
 
@@ -953,13 +963,14 @@ function ensureImageExtension(filename,format){
   return s+ext;
 }
 function getPreviewSvg(){return $("gridPreview")?.querySelector("svg")||null;}
-function serializePreviewSvg(){
-  const svg=getPreviewSvg(); if(!svg)return null;
-  const c=svg.cloneNode(true), vb=(c.getAttribute("viewBox")||"").trim().split(/\s+/).map(Number);
+function serializeSvgElement(svg){
+  if(!svg)return null;
+  const c=svg.cloneNode(true),vb=(c.getAttribute("viewBox")||"").trim().split(/\s+/).map(Number);
   if(vb.length===4&&vb.every(Number.isFinite)){c.setAttribute("width",vb[2]);c.setAttribute("height",vb[3]);}
   c.setAttribute("xmlns","http://www.w3.org/2000/svg");
   return new XMLSerializer().serializeToString(c);
 }
+function serializePreviewSvg(){return serializeSvgElement(getPreviewSvg());}
 function triggerBlobDownload(blob,filename){
   const url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
@@ -1060,6 +1071,101 @@ async function showPreviewImageDownloadDialog(){
   }
 }
 
+
+function ensureZipExtension(filename){
+  let s=String(filename||"").trim()||"chord-grid-images.zip";
+  s=s.replace(/[\/\\:*?"<>|]+/g,"-").replace(/\.zip$/i,"");
+  return s+".zip";
+}
+async function promptPreviewZipFilename(format){
+  if(!requireDayPilot())return null;
+  const result=await DayPilot.Modal.form(
+    [{html:`<div style="margin:0 0 12px;line-height:1.35;">ZIP filename for all ${format==="jpeg"?"JPEG":"SVG"} chord-grid images:</div>`},
+     {name:"",id:"filename",type:"text"}],
+    {filename:"chord-grid-images.zip"},
+    {top:150},
+    {title:"Save Chord Grid Images ZIP",width:520,okText:"Save",cancelText:"Cancel"}
+  );
+  if(result.canceled)return null;
+  return ensureZipExtension(result.result.filename);
+}
+function makeUniqueZipImageName(name,format,used){
+  const ext=format==="jpeg"?".jpg":".svg";
+  const base=safeImageBaseName(name);
+  let candidate=base+ext,n=2;
+  while(used.has(candidate.toLocaleLowerCase()))candidate=`${base}-${n++}${ext}`;
+  used.add(candidate.toLocaleLowerCase());
+  return candidate;
+}
+async function chordSvgToJpegBlob(svg,width){
+  const data=serializeSvgElement(svg);
+  const vb=(svg.getAttribute("viewBox")||"").trim().split(/\s+/).map(Number);
+  let sw=Number(svg.getAttribute("width"))||150,sh=Number(svg.getAttribute("height"))||165;
+  if(vb.length===4&&vb.every(Number.isFinite)&&vb[2]>0&&vb[3]>0){sw=vb[2];sh=vb[3];}
+  const height=Math.max(1,Math.round(width*(sh/sw)));
+  const url=URL.createObjectURL(new Blob([data],{type:"image/svg+xml;charset=utf-8"}));
+  try{
+    const img=new Image();
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error("Unable to render a chord-grid image."));img.src=url;});
+    const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
+    const ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,width,height);ctx.drawImage(img,0,0,width,height);
+    return await new Promise((res,rej)=>canvas.toBlob(b=>b?res(b):rej(new Error("Unable to create JPEG image.")),"image/jpeg",0.92));
+  }finally{URL.revokeObjectURL(url);}
+}
+async function downloadAllPreviewImages(format,width){
+  if(!window.JSZip){await showAlert("JSZip could not be loaded. Make sure jszip-min.js is available.");return;}
+  if(!state.chords.length){await showAlert("There are no chord grids to export.");return;}
+  const zipName=await promptPreviewZipFilename(format);if(!zipName)return;
+  if(format==="jpeg")width=savePreviewImageWidth(width);
+  const zip=new JSZip(),used=new Set();
+  try{
+    for(const c of state.chords){
+      const svg=createChordPreviewSvg(c);if(!svg)continue;
+      const filename=makeUniqueZipImageName(c.name,format,used);
+      if(format==="svg"){
+        zip.file(filename,'<?xml version="1.0" encoding="UTF-8"?>\n'+serializeSvgElement(svg));
+      }else{
+        zip.file(filename,await chordSvgToJpegBlob(svg,width));
+      }
+    }
+    triggerBlobDownload(await zip.generateAsync({type:"blob"}),zipName);
+  }catch(e){await showAlert(e?.message||"Unable to create the chord-grid image ZIP file.");}
+}
+async function showAllPreviewImagesDownloadDialog(){
+  if(!requireDayPilot())return;
+  if(!state.chords.length){await showAlert("There are no chord grids to export.");return;}
+  let width=loadPreviewImageWidth(),bound=false;
+  const html=`<div style="text-align:center;line-height:1.45;max-width:560px;margin:0 auto;">
+    <p style="margin-top:0;">Download images for all <b>${state.chords.length}</b> available chord grids in a ZIP file.</p>
+    <label style="display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0;">
+      <span style="font-weight:700;">JPEG width:</span>
+      <input id="allPreviewImageWidth" type="number" min="128" max="2048" step="1" value="${width}" style="width:110px;padding:7px 8px;border:1px solid #b6c5ba;border-radius:5px;">
+      <span>pixels</span>
+    </label>
+    <div style="color:#607066;font-size:.86rem;margin:-6px 0 16px;">128–2048 pixels. Height is calculated automatically for each image.</div>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+      <button id="downloadAllSvgChoice" class="button" type="button">SVG</button>
+      <button id="downloadAllJpegChoice" class="button blue" type="button">JPEG</button>
+    </div></div>`;
+  const style=document.createElement("style");
+  style.textContent=`body.preview-image-dialog-open .modal_default_buttons{text-align:center!important}
+  body.preview-image-dialog-open .modal_default_buttons button,
+  body.preview-image-dialog-open .modal_default_buttons input{float:none!important;margin-left:auto!important;margin-right:auto!important}`;
+  document.head.appendChild(style);document.body.classList.add("preview-image-dialog-open");
+  const bind=()=>{
+    if(bound)return;
+    const w=document.getElementById("allPreviewImageWidth"),s=document.getElementById("downloadAllSvgChoice"),j=document.getElementById("downloadAllJpegChoice");
+    if(!w||!s||!j)return;bound=true;
+    const pin=()=>{width=savePreviewImageWidth(w.value);w.value=width;return width;};
+    w.addEventListener("change",pin);w.addEventListener("blur",pin);
+    s.addEventListener("click",()=>downloadAllPreviewImages("svg",pin()));
+    j.addEventListener("click",()=>downloadAllPreviewImages("jpeg",pin()));
+  };
+  const timer=setInterval(bind,25);
+  try{await DayPilot.Modal.alert(html,{title:"Download All Chord Grid Images",okText:"Close",top:80,width:620});}
+  finally{clearInterval(timer);document.body.classList.remove("preview-image-dialog-open");style.remove();}
+}
+
 function requireDayPilot() {
   if (!window.DayPilot || !DayPilot.Modal) {
     setStatus("DayPilot.Modal could not be loaded.", true);
@@ -1134,7 +1240,7 @@ async function showInstructions() {
         <li>Use <b>Base fret</b> for shapes higher up the neck. The editor always displays five consecutive frets beginning with the selected base fret.</li>
         <li>The displayed grid runs from the lowest-pitched string on the left to the highest-pitched string on the right. Click a fret position to place or remove a dot. Click the marker above a string to cycle between open (O) and muted (X).</li>
         <li>String-number labels use conventional numbering: <b>string 1 is the highest-pitched string on the right</b>; the highest numbered string is the lowest-pitched string on the left. The generated <code>frets</code> and <code>fingers</code> arrays remain in displayed left-to-right, lowest-to-highest string order.</li>
-        <li>The <b>ABC Transcription Tools Preview</b> at the right gives an approximate preview of the custom grid as it will be rendered in ABC Transcription Tools. Click the preview or <b>Download Image</b> to save it as SVG or JPEG. JPEG width can be set from 128 to 2048 pixels; height is calculated proportionally.</li>
+        <li>The <b>ABC Transcription Tools Preview</b> at the right gives an approximate preview of the custom grid as it will be rendered in ABC Transcription Tools. Click the preview or <b>Download Image</b> to save it as SVG or JPEG. JPEG width can be set from 128 to 2048 pixels; height is calculated proportionally. The JPEG width defaults to 256 pixels the first time and the most recently entered width is remembered for future exports. When you choose an image format, you are prompted for a filename before the image is saved. Use <b>Download All Images</b> to generate images for every available chord and save them together in a ZIP file as either SVG or JPEG; you are prompted for the ZIP filename before it is saved.</li>
       </ol>
 
       <h3 style="color:#176b43;margin:18px 0 6px;">Finger numbers and barres</h3>
@@ -1403,6 +1509,7 @@ for(const [id,key] of [["barreFret","fret"],["barreFrom","fromString"],["barreTo
 }
 $("instructionsBtn").addEventListener("click",showInstructions);
 $("downloadPreviewBtn").addEventListener("click",showPreviewImageDownloadDialog);
+$("downloadAllPreviewsBtn").addEventListener("click",showAllPreviewImagesDownloadDialog);
 $("gridPreview").addEventListener("click",showPreviewImageDownloadDialog);
 
 window.addEventListener("resize",syncChordListHeight);
