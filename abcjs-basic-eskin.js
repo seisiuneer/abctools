@@ -5057,7 +5057,7 @@ var bookParser = function bookParser(book) {
       /^%%visualtranspose.*$/,      
       /^%%maxstaves.*$/, 
       /^%%partsbox.*$/,
-      /^%%show_chord_grids(?:\s+(?:guitar|mandolin))?\s*$/i,
+      /^%%show_chord_grids(?:\s+(?:guitar|mandolin|ukulele))?\s*$/i,
       /^%hide_first_title_on_play.*$/,  
       /^%hide_vskip_on_play.*$/,  
       /^%left_justify_titles.*$/,
@@ -6382,7 +6382,7 @@ var parseDirective = {};
     // Tool-specific chord-grid directive. Handle this before tokenization
     // because the normal directive tokenizer treats underscores as separators.
     var chordGridDirective = str.match(
-      /^\s*show_chord_grids(?:\s+(guitar|mandolin))?\s*$/i
+      /^\s*show_chord_grids(?:\s+(guitar|mandolin|ukulele))?\s*$/i
     );
 
     if (chordGridDirective) {

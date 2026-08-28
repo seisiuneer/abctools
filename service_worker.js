@@ -8,7 +8,13 @@
 //
 //
 //
-// Updated 26 Aug 2026 1730
+//
+//
+//
+// Updated 28 Aug 2026 1100
+//
+//
+//
 //
 //
 //
@@ -18,7 +24,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3322';
+const cacheName = 'abctoolscache-3323';
 
 const contentToCache = [
     'abctools.html',
@@ -71,6 +77,7 @@ const contentToCache = [
     'guided-tour.js',
     'guitar-chords.js',
     'mandolin-chords.js',
+    'ukulele-chords.js',
     'img/zoomin.png',
     'img/zoomout.png',
     'img/helpbutton.png',
