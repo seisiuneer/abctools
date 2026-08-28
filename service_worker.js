@@ -18,7 +18,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3321';
+const cacheName = 'abctoolscache-3322';
 
 const contentToCache = [
     'abctools.html',
@@ -100,6 +100,7 @@ const contentToCache = [
     'img/tool_abc_chord_solver_1.jpg',
     'img/tool_abc2csv_2.jpg',
     'img/tool_custominstrument_2.jpg',
+    'img/tool_chord_grid_1.jpg',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',

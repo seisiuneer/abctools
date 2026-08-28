@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3321_082626_1730";
+var gVersionNumber = "3322_082826_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31339,13 +31339,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_26aug2026;
+        var updatePresented = localStorage.sawUpdate_28aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_26aug2026 = true;
+          localStorage.sawUpdate_28aug2026 = true;
 
         }
 
@@ -60158,20 +60158,20 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 August 2026</div>';
   modal_msg += '</div>';
 
-    // Feature card
+  // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Optional Guitar or Mandolin chord fingering grid display</strong></p>';
   modal_msg += '<p style="font-size:12pt;">You can now show chord fingering grids above the tunes for each of the chords found in a tune by adding either:</p>';
-  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids</strong> (shows guitar grids by default)<br/><strong>%%show_chord_grids guitar</strong></p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids guitar</strong></p>';
   modal_msg += '<p style="font-size:12pt;">or</p>';
   modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids mandolin</strong></p>';
   modal_msg += '<p style="font-size:12pt;">to the ABC of any tune or the ABC file header before all tunes to have it apply to all of the tunes (requires full redraw).</p>';
   modal_msg += '<p style="font-size:12pt;">Chord grids for most common guitar and mandolin chords are provided.</p>';
-  modal_msg += '<p style="font-size:12pt;">For any chords not provided, creating custom chord grids for 3, 4, 5, or 6 string instruments, including showing finger numbers is possible.</p>';
+  modal_msg += '<p style="font-size:12pt;">For any chords not provided, creating custom chord grids for 3-, 4-, 5-, or 6-string instruments, including showing finger numbers is possible either manually or using the <strong>ABC Custom Chord Grid Builder</strong> available from the <strong>Other ABC Tools</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">Check out the <strong>Displaying Chord Grid Diagrams</strong> section of the <strong>User Guide</strong> for full details.</p>';
   modal_msg += '</div>';
 
@@ -64584,6 +64584,15 @@ function LaunchABCJSWebsiteBuilder(){
   window.open(url, '_blank');
 }
 
+// Open the chord grid builder
+function LaunchChordGridBuilder(){
+  sendGoogleAnalytics("action", "LaunchChordGridBuilder");
+
+  var url = "https://michaeleskin.com/tools/chord-grid-builder.html";
+  window.open(url, '_blank');
+
+}
+
 //
 // Check if an update is available
 // 
@@ -67125,13 +67134,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_26aug2026;
+    var updatePresented = localStorage.sawUpdate_28aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_26aug2026 = true;
+      localStorage.sawUpdate_28aug2026 = true;
 
     }
 
@@ -69588,7 +69597,7 @@ function OtherABCTools(){
   // Outer layout: two explicit rows
   + '  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:0 15px 0px 15px;">'
 
-  // Row 1 (2 items)
+  // Row 1 (3 items)
   + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
@@ -69603,16 +69612,17 @@ function OtherABCTools(){
   + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Chord Chart Generator</div>'
   + '      </div>'
 
-  + '    </div>'
-
-  // Row 2 (3 items)
-  + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
-
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_abc2csv" src="img/tool_abc2csv_2.jpg" title="ABC Tags to CSV Extractor Utilities" alt="ABC Tags to CSV Extractor Utilities"'
   + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Tags to CSV Extractor Utilities</div>'
   + '      </div>'
+
+  + '    </div>'
+
+  // Row 2 (3 items)
+  + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
+
  
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_websitebuilder" src="img/abcjs-eskin-portable-website_1.jpg" title="abcjs-eskin-portable Website Builder" alt="abcjs-eskin Website Builder"'
@@ -69624,6 +69634,12 @@ function OtherABCTools(){
   + '        <img id="other_tools_custominstrument" src="img/tool_custominstrument_2.jpg" title="Custom Instrument Builder" alt="Custom Instrument Builder"'
   + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">Custom Instrument Builder</div>'
+  + '      </div>'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_chord_grid_builder" src="img/tool_chord_grid_1.jpg" title="ABC Custom Chord Grid Builder" alt="ABC Custom Chord Grid Builder"'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Custom Chord Grid Builder</div>'
   + '      </div>'
 
   + '    </div>'
@@ -69653,6 +69669,10 @@ function OtherABCTools(){
 
   elem = document.getElementById("other_tools_custominstrument");
   if (elem) elem.onclick = function(){ launchCustomInstrumentBuilder(); };
+
+  elem = document.getElementById("other_tools_chord_grid_builder");
+  if (elem) elem.onclick = function(){ LaunchChordGridBuilder(); };
+
 
 }
 
