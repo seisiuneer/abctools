@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3323_082826_1100";
+var gVersionNumber = "3324_082926_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16200,7 +16200,7 @@ function ValidateChordGridDefinition(definition) {
 
 function ParseShowChordGridsDirective(line) {
   var match = (line || "").match(
-    /^[ \t]*%%show_chord_grids(?:[ \t]+(guitar|mandolin|ukulele))?[ \t]*$/i
+    /^[ \t]*%%show_chord_grids(?:[ \t]+(guitar|mandolin|ukulele|baritone-ukulele))?[ \t]*$/i
   );
 
   if (!match) {
@@ -16381,6 +16381,31 @@ function ResolveChordGridDefinition(
   if (fileDefinitions &&
       Object.prototype.hasOwnProperty.call(fileDefinitions, chordName)) {
     return fileDefinitions[chordName];
+  }
+
+  if ((instrument || "guitar").toLowerCase() === "baritone-ukulele") {
+    if (typeof getBaritoneUkuleleChordDiagram === "function") {
+      return getBaritoneUkuleleChordDiagram(chordName);
+    }
+
+    if (typeof BARITONE_UKULELE_CHORDS !== "undefined" &&
+        BARITONE_UKULELE_CHORDS &&
+        Object.prototype.hasOwnProperty.call(BARITONE_UKULELE_CHORDS, chordName)) {
+      return BARITONE_UKULELE_CHORDS[chordName];
+    }
+
+    if (typeof BARITONE_UKULELE_CHORD_ALIASES !== "undefined" &&
+        BARITONE_UKULELE_CHORD_ALIASES &&
+        typeof BARITONE_UKULELE_CHORDS !== "undefined" &&
+        BARITONE_UKULELE_CHORDS) {
+      var baritoneUkuleleAlias = BARITONE_UKULELE_CHORD_ALIASES[chordName];
+      if (baritoneUkuleleAlias &&
+          Object.prototype.hasOwnProperty.call(BARITONE_UKULELE_CHORDS, baritoneUkuleleAlias)) {
+        return BARITONE_UKULELE_CHORDS[baritoneUkuleleAlias];
+      }
+    }
+
+    return null;
   }
 
   if ((instrument || "guitar").toLowerCase() === "ukulele") {
@@ -26760,7 +26785,7 @@ function GetABCFileHeader() {
     /^%%visualtranspose.*$/,
     /^%%maxstaves.*$/,
     /^%%partsbox.*$/,
-    /^%%show_chord_grids(?:\s+(?:guitar|mandolin|ukulele))?\s*$/i,
+    /^%%show_chord_grids(?:\s+(?:guitar|mandolin|ukulele|baritone-ukulele))?\s*$/i,
     /^%hide_first_title_on_play.*$/,
     /^%hide_vskip_on_play.*$/,
     /^%left_justify_titles.*$/,
@@ -31364,13 +31389,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_28aug2026b;
+        var updatePresented = localStorage.sawUpdate_29aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_28aug2026b = true;
+          localStorage.sawUpdate_29aug2026 = true;
 
         }
 
@@ -60183,17 +60208,16 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 August 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Optional Guitar, Mandolin, or Ukulele chord fingering grid display</strong></p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Optional Guitar, Mandolin, Ukulele, or Baritone Ukulele chord fingering grid display</strong></p>';
   modal_msg += '<p style="font-size:12pt;">You can now show chord fingering grids above the tunes for each of the chords found in a tune by adding one of:</p>';
-  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids (defaults to guitar)<br/>%%show_chord_grids guitar<br/>%%show_chord_grids mandolin<br/>%%show_chord_grids ukulele</strong></p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids (defaults to guitar)<br/>%%show_chord_grids guitar<br/>%%show_chord_grids mandolin<br/>%%show_chord_grids ukulele<br/>%%show_chord_grids baritone-ukulele</strong></p>';
   modal_msg += '<p style="font-size:12pt;">to the ABC of any tune or the ABC file header before all tunes to have it apply to all of the tunes (requires full redraw).</p>';
-  modal_msg += '<p style="font-size:12pt;">Chord grids for most common standard tuned guitar (E-A-D-G-B-E) and mandolin (G-D-A-E) chords are provided, along with the 60 chords from the Ukulele Underground Beginner Chord Chart for re-entrant high-G ukulele tuning (G-C-E-A).</p>';
   modal_msg += '<p style="font-size:12pt;">For any chords not provided, creating custom chord grids for 3-, 4-, 5-, or 6-string instruments, including showing finger numbers is possible either manually or using the <strong>ABC Custom Chord Grid Builder</strong> available from the <strong>Other ABC Tools</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">Check out the <strong>Displaying Chord Grid Diagrams</strong> section of the <strong>User Guide</strong> for full details.</p>';
   modal_msg += '</div>';
@@ -67157,13 +67181,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_28aug2026b;
+    var updatePresented = localStorage.sawUpdate_29aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_28aug2026b = true;
+      localStorage.sawUpdate_29aug2026 = true;
 
     }
 

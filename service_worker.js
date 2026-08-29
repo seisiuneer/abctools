@@ -24,7 +24,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3323';
+const cacheName = 'abctoolscache-3324';
 
 const contentToCache = [
     'abctools.html',
@@ -78,6 +78,7 @@ const contentToCache = [
     'guitar-chords.js',
     'mandolin-chords.js',
     'ukulele-chords.js',
+    'baritone-ukulele-chords.js',
     'img/zoomin.png',
     'img/zoomout.png',
     'img/helpbutton.png',
