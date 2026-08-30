@@ -521,6 +521,13 @@
       line-height:1.5 !important;
     }
 
+    /* Give separate instruction sentences a little more breathing room. */
+    .instructions-scroll-area br{
+      display:block;
+      content:"";
+      margin-bottom:3px;
+    }
+
     .instructions-scroll-area > div > div[style*="font-weight:700"]{
       color:#176b43 !important;
       font-size:1.15rem !important;
@@ -1750,7 +1757,7 @@
 // Helper for getting elements by ID
 const $ = (id) => document.getElementById(id);
 
-const TOOL_VERSION = "1.0.14";
+const TOOL_VERSION = "1.0.15";
 
 // Are we on iOS?
 //
@@ -7050,6 +7057,7 @@ function wireUp() {
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
 
       '    <div id="instructions-setting-chord-grids" style="font-weight:700; margin-bottom:6px;">Chord grids</div>' +
+      '    <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/1e_L_tn6owE" target="_blank">Chord Grid Features Walkthrough Video on YouTube</a></p>' +
       '    Controls whether chord-grid diagrams are shown directly above and centered over chord names in the displayed and printed chord charts.<br/>' +
       '    Choose <b>No chord grids</b> (the default), <b>Guitar</b>, <b>Mandolin</b>, <b>Ukulele</b>, or <b>Baritone Ukulele</b> to use that built-in chord-grid library for every tune in the input.<br/>' +
       '    Choose <b>Use custom definition from ABC</b> to use custom chord-grid definitions found in a <code>%%begin_chord_grid_definitions</code> / <code>%%end_chord_grid_definitions</code> block in the ABC file header before the first <code>X:</code> tune. Custom definition blocks inside individual tunes are ignored by this tool.<br/>' +
