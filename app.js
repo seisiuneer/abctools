@@ -60041,7 +60041,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Change in Share URL Shortening Service Provider</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs/month) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month)</p>';
+  modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs/month) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month).</p>';
   modal_msg += '<p style="font-size:12pt;">There is no longer a need or the ability to set a private shortening service API key.</p>';
   modal_msg += '<p style="font-size:12pt;">On the very rare chance that I exceed 1000 shortened URLs in a month and a shortening session fails, you will be alerted and prompted to shorten the URL manually using your preferred URL shortening service.</p>';
 
