@@ -425,12 +425,40 @@
     });
   }
 
+  function setSelectValueAndChange(id, value) {
+    var control = document.getElementById(id);
+    if (!control) return;
+    control.value = String(value);
+    control.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  function setNumberValueAndChange(id, value) {
+    var control = document.getElementById(id);
+    if (!control) return;
+    control.value = String(value);
+    control.dispatchEvent(new Event("input", { bubbles:true }));
+    control.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  async function enableGuitarChordGridsForTour() {
+    setSelectValueAndChange("chordGridMode", "guitar");
+    await waitMs(250);
+  }
+
+  async function disableChordGridsAndResetSpacingForTour() {
+    // Selecting No chord grids intentionally leaves Extra spacing alone,
+    // so restore the normal default spacing explicitly for the tour.
+    setSelectValueAndChange("chordGridMode", "none");
+    setNumberValueAndChange("slotWidth", 1);
+    await waitMs(250);
+  }
+
   function steps() {
     return [
       {
         title:"Welcome to the Chord Chart Generator Guided Tour",
         width:780,
-        body:'<p>In a few minutes, you will create chord charts from 20 traditional Irish session tunes, try a different chart font, save the charts as a text file, and send them to the Website Builder.</p><p>The tour starts by restoring the default settings so everyone begins from the same place.</p>',
+        body:'<p>In a few minutes, you will create chord charts from 20 traditional Irish session tunes, try a different chart font, preview guitar chord grids, save the charts as a text file, and send them to the Website Builder.</p><p>The tour starts by restoring the default settings so everyone begins from the same place.</p>',
         afterNext:async function () {
           api.resetAndLoadExample(EXAMPLE_ABC);
           await waitMs(300);
@@ -465,7 +493,37 @@
         body:'<p>The tune titles and chord charts now use <strong>Courier New (Bold)</strong>.</p><p>You can try different chart fonts at any time, and the display updates automatically.</p>'
       },
       {
-        title:"5. Save or Copy the Chord Chart Text",
+        title:"5. Turn On Guitar Chord Grids",
+        selector:"#chordGridMode",
+        width:640,
+        body:'<p>The <strong>Chord grids</strong> setting can add chord diagrams directly above the chord names.</p><p>Click <strong>Next</strong> to select <strong>Guitar</strong>. The tool will display guitar chord grids and automatically change <strong>Extra spacing</strong> to <strong>3</strong> so the diagrams have room.</p>',
+        afterNext:async function () {
+          await enableGuitarChordGridsForTour();
+        }
+      },
+      {
+        title:"6. Guitar Chord Grids Are Displayed",
+        selector:"#out",
+        width:660,
+        body:'<p>Guitar chord grids are now shown above the chord names in the chord charts.</p><p>When chord grids are enabled, they are also included in the <strong>printed output</strong> and in PDFs created using your browser&apos;s Print-to-PDF feature.</p><p>Next, the tour will turn the grids back off and restore the normal Extra spacing setting.</p>'
+      },
+      {
+        title:"7. Turn Chord Grids Back Off",
+        selector:"#chordGridMode",
+        width:650,
+        body:'<p>Click <strong>Next</strong> to change <strong>Chord grids</strong> back to <strong>No chord grids</strong>.</p><p>The tour will also reset <strong>Extra spacing</strong> from <strong>3</strong> back to its default value of <strong>1</strong>, returning the chord charts to their normal layout.</p>',
+        afterNext:async function () {
+          await disableChordGridsAndResetSpacingForTour();
+        }
+      },
+      {
+        title:"8. Normal Chord Chart Layout Restored",
+        selector:"#out",
+        width:560,
+        body:'<p>The guitar chord grids are off again, and <strong>Extra spacing</strong> has been restored to <strong>1</strong>.</p><p>The rest of the tour continues with the normal chord-chart layout.</p>'
+      },
+      {
+        title:"9. Save or Copy the Chord Chart Text",
         selector:"#saveBtn",
         width:620,
         body:'<p>Click <strong>Next</strong> to open the Save dialog and save all of the chord charts in a text file.</p><p>You can also click <strong>Copy</strong> at any time to copy the chord chart text to the clipboard.</p><p>After you save the file or cancel the dialog, the tour will continue.</p>',
@@ -475,13 +533,13 @@
         }
       },
       {
-        title:"6. Print Nicely Formatted Chord Charts",
+        title:"10. Print Nicely Formatted Chord Charts",
         selector:"#printBtn",
-        width:620,
-        body:'<p>You can also print the chord charts in a clean, easy-to-read format by clicking <strong>Print</strong>.</p><p>The tour will not open the print dialog, so just click <strong>Next</strong> to continue.</p>'
+        width:640,
+        body:'<p>You can print the chord charts in a clean, easy-to-read format by clicking <strong>Print</strong>.</p><p>If chord grids are enabled when you print, the chord grids are included in the printed output.</p><p>The tour will not open the print dialog, so just click <strong>Next</strong> to continue.</p>'
       },
       {
-        title:"7. Set the Website Title Size",
+        title:"11. Set the Website Title Size",
         selector:"#websiteTitleFontSize",
         width:540,
         body:'<p>The Website Settings determine how the chord charts will look after they are sent to the Website Builder.</p><p>Click <strong>Next</strong> to change the website title font size from <strong>14</strong> to <strong>18</strong>.</p>',
@@ -491,7 +549,7 @@
         }
       },
       {
-        title:"8. Justify Website Titles to the Left",
+        title:"12. Justify Website Titles to the Left",
         selector:"#justifyTitles",
         width:590,
         body:'<p>The website title size is now set to <strong>18</strong>.</p><p>Click <strong>Next</strong> to change <strong>Justify titles</strong> from <strong>Center</strong> to <strong>Left</strong> for the website generated from these chord charts.</p>',
@@ -501,7 +559,7 @@
         }
       },
       {
-        title:"9. Open the Chord Charts in the Website Builder",
+        title:"13. Open the Chord Charts in the Website Builder",
         selector:"#generateWebsiteBtn",
         width:690,
         finalActionLabel:"Open Website Builder",

@@ -795,6 +795,62 @@
       padding-bottom:6px;
     }
 
+    /* Optional chord-grid diagrams positioned above chord names in the chart. */
+    .chart.hasChordGridDiagrams > pre{
+      display:none;
+    }
+
+    .chordGridChartDisplay{
+      margin:0;
+      font-family: var(--chart-mono, var(--mono));
+      font-weight: var(--chart-mono-weight, 400);
+      font-size:18px;
+      line-height:1.35;
+      overflow-x:auto;
+      padding-bottom:6px;
+    }
+
+    .chordGridChartLine{
+      position:relative;
+      width:max-content;
+      min-width:100%;
+      white-space:pre;
+    }
+
+    .chordGridChartTextLine{
+      white-space:pre;
+      min-height:1.35em;
+    }
+
+    .chordGridDiagramLane{
+      position:relative;
+      height:73px;
+      overflow:visible;
+      margin-bottom:0;
+    }
+
+    .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+      margin-top:11px;
+    }
+
+    .chordGridDiagramAnchor{
+      position:absolute;
+      top:0;
+      transform:translateX(-50%);
+      width:56px;
+      height:80px;
+      overflow:visible;
+      color:#000;
+      pointer-events:none;
+    }
+
+    .chordGridDiagramAnchor svg{
+      display:block;
+      width:56px;
+      height:80px;
+      overflow:visible;
+    }
+
     .status{
       white-space:pre-wrap;
       font-family: var(--mono);
@@ -1157,6 +1213,34 @@
       .chart h3{
         margin:0 0 12pt 0;
       }
+
+      .chart.hasChordGridDiagrams > pre{
+        display:none !important;
+      }
+
+      .chordGridChartDisplay{
+        overflow:visible !important;
+      }
+
+      .chordGridDiagramLane{
+        height:55pt !important;
+        margin-bottom:0 !important;
+        overflow:visible !important;
+      }
+
+      .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+        margin-top:8pt !important;
+      }
+
+      .chordGridDiagramAnchor{
+        width:42pt !important;
+        height:60pt !important;
+      }
+
+      .chordGridDiagramAnchor svg{
+        width:42pt !important;
+        height:60pt !important;
+      }
     }
 
     @media (min-width: 981px) and (max-width: 1099px){
@@ -1277,6 +1361,11 @@
 
   <style id="pageStyle">@page { size: letter portrait; margin: 0.5in; }</style>
   
+  <script src="https://michaeleskin.com/abctools/guitar-chords.js?v=3"></script>
+  <script src="https://michaeleskin.com/abctools/mandolin-chords.js?v=3"></script>
+  <script src="https://michaeleskin.com/abctools/ukulele-chords.js?v=3"></script>
+  <script src="https://michaeleskin.com/abctools/baritone-ukulele-chords.js?v=3"></script>
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -1344,6 +1433,19 @@
       <div class="card">
         
         <h3 class="card_label">Chord Chart Settings</h3>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="chordGridMode"><strong>Chord grids</strong></label>
+          <span class="setting-control-with-help"><select id="chordGridMode"
+                  title="Choose which chord-grid definitions to use above chord names in the displayed and printed chord chart">
+            <option value="none" selected>No chord grids</option>
+            <option value="guitar">Guitar</option>
+            <option value="mandolin">Mandolin</option>
+            <option value="ukulele">Ukulele</option>
+            <option value="baritone-ukulele">Baritone Ukulele</option>
+            <option value="custom">Use custom definition from ABC</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-chord-grids" aria-label="Open instructions for Chord grids" title="Open instructions for Chord grids">?</button></span>
+        </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="chartMonoFont"><strong>Chord chart font</strong></label>
@@ -1420,6 +1522,7 @@
             <option value="-">&nbsp;&nbsp;&nbsp;-</option>
           </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-empty-measure-placeholder" aria-label="Open instructions for Empty measure placeholder" title="Open instructions for Empty measure placeholder">?</button></span>
         </div>
+
 
 
 
@@ -1647,7 +1750,7 @@
 // Helper for getting elements by ID
 const $ = (id) => document.getElementById(id);
 
-const TOOL_VERSION = "1.0.8";
+const TOOL_VERSION = "1.0.14";
 
 // Are we on iOS?
 //
@@ -1928,7 +2031,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 13, // Website Settings include automatic per-tune lyric font-size optimization
+    v: 15, // Direct chord-grid source selection for displayed/printed chord charts
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -1941,6 +2044,7 @@ function getUIStateForSave_SettingsOnly() {
     suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
     pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
     chartMonoFont: $("chartMonoFont") ? $("chartMonoFont").value : "system",
+    chordGridMode: $("chordGridMode") ? $("chordGridMode").value : "none",
 
     // Website Settings
     websiteTitleFontSize: $("websiteTitleFontSize") ? $("websiteTitleFontSize").value : "14",
@@ -1980,6 +2084,18 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
   if ($("pickupMaxNotes") && st.pickupMaxNotes != null) $("pickupMaxNotes").value = String(st.pickupMaxNotes);
   if ($("chartMonoFont") && st.chartMonoFont != null) $("chartMonoFont").value = String(st.chartMonoFont);
+  if ($("chordGridMode")) {
+    const validChordGridModes = {
+      "none": true,
+      "guitar": true,
+      "mandolin": true,
+      "ukulele": true,
+      "baritone-ukulele": true,
+      "custom": true
+    };
+    $("chordGridMode").value =
+      validChordGridModes[String(st.chordGridMode || "")] ? String(st.chordGridMode) : "none";
+  }
 
   // Website Settings
   if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value =
@@ -2062,13 +2178,117 @@ function uint8ArrayToBase64Url(bytes) {
   return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-function buildAbcToolsShareLinkForTune(abcTuneBlock) {
+function getHeaderCustomChordGridDefinitionText(abcText) {
+  const header = getAbcFileHeaderBeforeFirstTune(abcText);
+  const blocks = [];
+  const blockRe =
+    /^[ \t]*%%begin_chord_grid_definitions[ \t]*\r?\n[\s\S]*?^[ \t]*%%end_chord_grid_definitions?[ \t]*(?=\r?\n|$)/gmi;
+
+  let match;
+  while ((match = blockRe.exec(String(header || ""))) !== null) {
+    // Only include blocks that contain at least one valid definition.
+    if (Object.keys(parseChordGridDefinitions(match[0])).length > 0) {
+      blocks.push(match[0].replace(/\r\n?/g, "\n").trim());
+    }
+  }
+
+  return blocks.join("\n");
+}
+
+function removeChordGridShareLinkDirectivesAndDefinitions(abcTuneBlock) {
+  let tune = String(abcTuneBlock || "").replace(/\r\n?/g, "\n");
+
+  // The share link should reflect the Chord grids control, not any
+  // %%show_chord_grids directive already present in the source tune.
+  tune = tune.replace(
+    /^[ \t]*%%show_chord_grids(?:[ \t]+(?:guitar|mandolin|ukulele|baritone-ukulele))?[ \t]*(?:\n|$)/gmi,
+    ""
+  );
+
+  // When adding selected grid information to the share link, discard any
+  // tune-local custom grid blocks so they cannot override the selected
+  // built-in library or the custom header definition.
+  tune = tune.replace(
+    /^[ \t]*%%begin_chord_grid_definitions[ \t]*\n[\s\S]*?^[ \t]*%%end_chord_grid_definitions?[ \t]*(?:\n|$)/gmi,
+    ""
+  );
+
+  return tune;
+}
+
+function addChordGridInfoToShareLinkTune(
+  abcTuneBlock,
+  chordGridMode,
+  headerCustomChordGridDefinitionText
+) {
+  const mode = String(chordGridMode || "none").toLowerCase();
+
+  // Always clean chord-grid directives/definitions from the share-link copy
+  // first. This guarantees that the Chord grids control is authoritative for
+  // generated play links while leaving the original ABC and all normal
+  // no-grid tool behavior untouched.
+  let tune = removeChordGridShareLinkDirectivesAndDefinitions(abcTuneBlock)
+    .replace(/\r\n?/g, "\n")
+    .trim();
+
+  if (!tune) return "";
+
+  // No chord grids means exactly that: do not add anything back.
+  if (mode === "none") {
+    return tune;
+  }
+
+  let directive = "";
+
+  if (mode === "guitar" ||
+      mode === "mandolin" ||
+      mode === "ukulele" ||
+      mode === "baritone-ukulele") {
+    directive = "%%show_chord_grids " + mode;
+  } else if (mode === "custom") {
+    // With no valid header custom definitions, leave the cleaned tune without
+    // any chord-grid directives or definitions.
+    if (!String(headerCustomChordGridDefinitionText || "").trim()) {
+      return tune;
+    }
+    directive = "%%show_chord_grids";
+  } else {
+    return tune;
+  }
+
+  const lines = tune.split("\n");
+  const xIndex = lines.findIndex(line => /^X:/.test(line.trim()));
+
+  if (xIndex < 0) {
+    return tune;
+  }
+
+  const insertLines = [directive];
+
+  if (mode === "custom") {
+    insertLines.push(
+      ...String(headerCustomChordGridDefinitionText || "")
+        .replace(/\r\n?/g, "\n")
+        .trim()
+        .split("\n")
+    );
+  }
+
+  lines.splice(xIndex + 1, 0, ...insertLines);
+  return lines.join("\n");
+}
+
+function buildAbcToolsShareLinkForTune(abcTuneBlock, chordGridMode, headerCustomChordGridDefinitionText) {
 
   if (!window.pako) return "";
 
   if (!window.TextEncoder) return "";
 
-  const raw = String(abcTuneBlock || "")
+  const raw = addChordGridInfoToShareLinkTune(
+    abcTuneBlock,
+    chordGridMode,
+    headerCustomChordGridDefinitionText
+  )
     .replace(/\r\n?/g, "\n")
     .trim();
 
@@ -2749,6 +2969,562 @@ function buildRawChordTextForSave() {
 }
 async function downloadTextFile(filename, text) {
   return await shareOrDownloadFile(text, filename, "text/plain;charset=utf-8");
+}
+
+
+/* ============================================================
+   Optional chord-grid diagrams in rendered/printed chord charts
+   ============================================================ */
+
+function getAbcFileHeaderBeforeFirstTune(abcText) {
+  const s = String(abcText || "").replace(/\r\n?/g, "\n");
+  const m = /^X:.*$/m.exec(s);
+  return m ? s.slice(0, m.index) : s;
+}
+
+function validateChordGridDefinition(definition) {
+  if (!definition || typeof definition !== "object") return null;
+
+  const strings = Number(definition.strings);
+  if (!Number.isInteger(strings) || strings < 3 || strings > 6) return null;
+
+  if (!Array.isArray(definition.frets) || definition.frets.length !== strings) {
+    return null;
+  }
+
+  const baseFret = Number(definition.baseFret);
+  if (!Number.isInteger(baseFret) || baseFret < 1) return null;
+
+  const frets = definition.frets.map(value => {
+    if (value === "x" || value === "X") return "x";
+    const numeric = Number(value);
+    return Number.isInteger(numeric) && numeric >= 0 ? numeric : null;
+  });
+  if (frets.some(value => value === null)) return null;
+
+  let fingers = null;
+  if (definition.fingers !== null && definition.fingers !== undefined) {
+    if (!Array.isArray(definition.fingers) ||
+        definition.fingers.length !== strings) return null;
+
+    fingers = definition.fingers.map(value => {
+      if (value === null || value === undefined || value === "") return null;
+      const numeric = Number(value);
+      return Number.isInteger(numeric) && numeric >= 1 && numeric <= 4
+        ? numeric
+        : null;
+    });
+
+    for (let i = 0; i < definition.fingers.length; ++i) {
+      if (definition.fingers[i] !== null &&
+          definition.fingers[i] !== undefined &&
+          definition.fingers[i] !== "" &&
+          fingers[i] === null) return null;
+    }
+  }
+
+  let barre = null;
+  if (definition.barre !== null && definition.barre !== undefined) {
+    if (typeof definition.barre !== "object") return null;
+
+    const fret = Number(definition.barre.fret);
+    const fromString = Number(definition.barre.fromString);
+    const toString = Number(definition.barre.toString);
+
+    if (!Number.isInteger(fret) || fret < 1 ||
+        !Number.isInteger(fromString) || fromString < 1 || fromString > strings ||
+        !Number.isInteger(toString) || toString < 1 || toString > strings) {
+      return null;
+    }
+
+    let finger = null;
+    if (fingers !== null) {
+      finger = definition.barre.finger == null ? 1 : Number(definition.barre.finger);
+      if (!Number.isInteger(finger) || finger < 1 || finger > 4) return null;
+    }
+
+    barre = { fret, fromString, toString, finger };
+  }
+
+  return { strings, baseFret, frets, fingers, barre };
+}
+
+function parseChordGridDefinitions(source) {
+  const definitions = Object.create(null);
+  const blockRe =
+    /^[ \t]*%%begin_chord_grid_definitions[ \t]*\r?\n([\s\S]*?)^[ \t]*%%end_chord_grid_definitions?[ \t]*(?:\r?\n|$)/gmi;
+  let match;
+
+  while ((match = blockRe.exec(String(source || ""))) !== null) {
+    let body = match[1].trim();
+    if (!body) continue;
+
+    body = body.replace(/,\s*$/, "");
+
+    let parsed;
+    try {
+      parsed = JSON.parse("{" + body + "}");
+    } catch (err) {
+      console.warn("Invalid chord-grid definition block:", err);
+      continue;
+    }
+
+    Object.keys(parsed).forEach(chordName => {
+      const validated = validateChordGridDefinition(parsed[chordName]);
+      if (validated) definitions[chordName] = validated;
+      else console.warn("Ignoring invalid chord-grid definition for " + chordName);
+    });
+  }
+
+  return definitions;
+}
+
+function normalizeChordGridName(chordName) {
+  let name = String(chordName || "")
+    .trim()
+    .replace(/\u266f/g, "#")
+    .replace(/\u266d/g, "b");
+
+  while (name.length >= 2 && name[0] === "(" && name[name.length - 1] === ")") {
+    name = name.substring(1, name.length - 1).trim();
+  }
+  return name;
+}
+
+function isChordGridSymbol(chordName) {
+  const name = normalizeChordGridName(chordName);
+  if (!name || /^[\^_<>@]/.test(name)) return false;
+
+  return /^[A-G](?:#|b)?(?:maj|min|dim|aug|sus|add|m|no|M|°|ø|o|\+|-|[0-9]|[#b]|\(|\))*?(?:\/[A-G](?:#|b)?)?$/.test(name);
+}
+
+function stripChordGridDefinitionBlocks(source) {
+  return String(source || "").replace(
+    /^[ \t]*%%begin_chord_grid_definitions[ \t]*\r?\n[\s\S]*?^[ \t]*%%end_chord_grid_definitions?[ \t]*(?:\r?\n|$)/gmi,
+    ""
+  );
+}
+
+function getChordGridNamesFromTune(tuneABC) {
+  const source = stripChordGridDefinitionBlocks(tuneABC);
+  const found = [];
+  const seen = Object.create(null);
+  const quotedTextRe = /"((?:\\.|[^"\\])*)"/g;
+  let match;
+
+  while ((match = quotedTextRe.exec(source)) !== null) {
+    const originalName = String(match[1] || "").trim();
+    const normalized = normalizeChordGridName(originalName);
+    if (!isChordGridSymbol(normalized)) continue;
+
+    const key = normalized.toLowerCase();
+    if (!seen[key]) {
+      seen[key] = true;
+      // Preserve the spelling used in the chart where possible.
+      found.push({
+        display: originalName,
+        normalized
+      });
+    }
+  }
+
+  return found;
+}
+
+function getInitialChordGridExtraSpacing(mode, abcText) {
+  const selectedMode = String(mode || "none").toLowerCase();
+
+  if (selectedMode === "none") {
+    return null;
+  }
+
+  if (selectedMode === "guitar") {
+    return 3; // 6 strings
+  }
+
+  if (selectedMode === "mandolin" ||
+      selectedMode === "ukulele" ||
+      selectedMode === "baritone-ukulele") {
+    return 2; // 4 strings
+  }
+
+  if (selectedMode === "custom") {
+    const header = getAbcFileHeaderBeforeFirstTune(abcText);
+    const definitions = parseChordGridDefinitions(header);
+    const stringCounts = Object.keys(definitions)
+      .map(name => Number(definitions[name] && definitions[name].strings))
+      .filter(value => Number.isInteger(value));
+
+    if (!stringCounts.length) {
+      return null;
+    }
+
+    const maxStrings = Math.max.apply(null, stringCounts);
+    return maxStrings >= 5 ? 3 : 2;
+  }
+
+  return null;
+}
+
+function applyInitialChordGridExtraSpacingFromSelection() {
+  if (!$("chordGridMode") || !$("slotWidth")) return;
+
+  const mode = $("chordGridMode").value;
+  const abcText = $("abcIn") ? ($("abcIn").value || "") : "";
+  const spacing = getInitialChordGridExtraSpacing(mode, abcText);
+
+  if (spacing !== null) {
+    $("slotWidth").value = String(spacing);
+  }
+}
+
+function resolveChordGridDefinition(chordName, fileDefinitions, mode) {
+  const originalName = String(chordName || "").trim();
+  const normalizedName = normalizeChordGridName(originalName);
+  const selectedMode = String(mode || "none").toLowerCase();
+
+  if (selectedMode === "custom") {
+    const definitions = fileDefinitions || Object.create(null);
+
+    if (Object.prototype.hasOwnProperty.call(definitions, originalName)) {
+      return definitions[originalName];
+    }
+    if (Object.prototype.hasOwnProperty.call(definitions, normalizedName)) {
+      return definitions[normalizedName];
+    }
+
+    const target = normalizedName.toLowerCase();
+    const key = Object.keys(definitions).find(
+      candidate => normalizeChordGridName(candidate).toLowerCase() === target
+    );
+    return key ? definitions[key] : null;
+  }
+
+  if (selectedMode === "baritone-ukulele" &&
+      typeof getBaritoneUkuleleChordDiagram === "function") {
+    return getBaritoneUkuleleChordDiagram(normalizedName);
+  }
+
+  if (selectedMode === "ukulele" &&
+      typeof getUkuleleChordDiagram === "function") {
+    return getUkuleleChordDiagram(normalizedName);
+  }
+
+  if (selectedMode === "mandolin" &&
+      typeof getMandolinChordDiagram === "function") {
+    return getMandolinChordDiagram(normalizedName);
+  }
+
+  if (selectedMode === "guitar" &&
+      typeof getGuitarChordDiagram === "function") {
+    return getGuitarChordDiagram(normalizedName);
+  }
+
+  return null;
+}
+
+function createChordGridSvgElement(tagName, attrs) {
+  const elem = document.createElementNS("http://www.w3.org/2000/svg", tagName);
+  Object.keys(attrs || {}).forEach(key => elem.setAttribute(key, attrs[key]));
+  return elem;
+}
+
+function addChordGridSvgText(parent, text, x, y, fontSize, options = {}) {
+  const elem = createChordGridSvgElement("text", {
+    x,
+    y,
+    "font-family": options.fontFamily || "Arial, Helvetica, sans-serif",
+    "font-size": fontSize,
+    "text-anchor": options.anchor || "middle",
+    fill: options.fill || "currentColor"
+  });
+
+  if (options.weight) elem.setAttribute("font-weight", options.weight);
+  if (options.letterSpacing != null) elem.setAttribute("letter-spacing", options.letterSpacing);
+
+  elem.textContent = text;
+  parent.appendChild(elem);
+  return elem;
+}
+
+function createOneChordGridSvg(chordName, diagram) {
+  const svg = createChordGridSvgElement("svg", {
+    viewBox: "0 0 76 96",
+    preserveAspectRatio: "xMidYMid meet",
+    "aria-hidden": "true",
+    focusable: "false"
+  });
+
+  const strings = Math.max(
+    3,
+    Math.min(6, diagram && Number.isInteger(Number(diagram.strings))
+      ? Number(diagram.strings)
+      : 6)
+  );
+
+  const gridWidth = Math.min(56, 10 * (strings - 1));
+  const stringGap = strings > 1 ? gridWidth / (strings - 1) : gridWidth;
+  const cellWidth = 76;
+  const gridLeft = (cellWidth - gridWidth) / 2;
+  const gridTop = 30;
+  const fretGap = 10.5;
+  const gridHeight = fretGap * 5;
+
+  addChordGridSvgText(svg, chordName, cellWidth / 2, 10, 10, {
+    weight: "400",
+    fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+    letterSpacing: "0.25px"
+  });
+
+  if (!diagram) {
+    svg.appendChild(createChordGridSvgElement("rect", {
+      x: gridLeft,
+      y: gridTop,
+      width: gridWidth,
+      height: gridHeight,
+      rx: 3,
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": 0.8,
+      "stroke-dasharray": "3 3",
+      opacity: 0.55
+    }));
+    addChordGridSvgText(svg, "No grid", cellWidth / 2, gridTop + gridHeight / 2 + 4, 8);
+    return svg;
+  }
+
+  const baseFret =
+    typeof diagram.baseFret === "number" && isFinite(diagram.baseFret)
+      ? diagram.baseFret
+      : 1;
+
+  const showFingerNumbers = Array.isArray(diagram.fingers);
+
+  for (let stringIndex = 0; stringIndex < strings; ++stringIndex) {
+    const x = gridLeft + stringIndex * stringGap;
+    const fretValue = diagram.frets[stringIndex];
+
+    if (fretValue === "x") {
+      addChordGridSvgText(svg, "×", x, gridTop - 7, 10);
+    } else if (fretValue === 0) {
+      svg.appendChild(createChordGridSvgElement("circle", {
+        cx: x,
+        cy: gridTop - 9,
+        r: 2.4,
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": 0.9
+      }));
+    }
+  }
+
+  for (let s = 0; s < strings; ++s) {
+    const x = gridLeft + s * stringGap;
+    svg.appendChild(createChordGridSvgElement("line", {
+      x1: x, y1: gridTop,
+      x2: x, y2: gridTop + gridHeight,
+      stroke: "currentColor",
+      "stroke-width": 0.8
+    }));
+  }
+
+  for (let f = 0; f <= 5; ++f) {
+    const y = gridTop + f * fretGap;
+    svg.appendChild(createChordGridSvgElement("line", {
+      x1: gridLeft, y1: y,
+      x2: gridLeft + gridWidth, y2: y,
+      stroke: "currentColor",
+      "stroke-width": (f === 0 && baseFret === 1) ? 2 : 0.8
+    }));
+  }
+
+  if (baseFret > 1) {
+    addChordGridSvgText(
+      svg,
+      String(baseFret),
+      gridLeft - 5,
+      gridTop + fretGap * 0.72,
+      7,
+      { anchor: "end" }
+    );
+  }
+
+  const barre = diagram.barre || null;
+
+  if (barre &&
+      typeof barre.fret === "number" &&
+      typeof barre.fromString === "number" &&
+      typeof barre.toString === "number") {
+    const relFret = barre.fret - baseFret;
+
+    if (relFret >= 0 && relFret < 5) {
+      const sourceMin = Math.min(barre.fromString, barre.toString);
+      const sourceMax = Math.max(barre.fromString, barre.toString);
+      const lowArrayIndex = strings - sourceMax;
+      const highArrayIndex = strings - sourceMin;
+      const x1 = gridLeft + lowArrayIndex * stringGap;
+      const x2 = gridLeft + highArrayIndex * stringGap;
+      const y = gridTop + (relFret + 0.5) * fretGap;
+
+      svg.appendChild(createChordGridSvgElement("line", {
+        x1, y1: y, x2, y2: y,
+        stroke: "currentColor",
+        "stroke-width": 6,
+        "stroke-linecap": "round"
+      }));
+    }
+  }
+
+  for (let i = 0; i < strings; ++i) {
+    const fret = diagram.frets[i];
+    if (typeof fret !== "number" || fret <= 0) continue;
+
+    const relFret = fret - baseFret;
+    if (relFret < 0 || relFret >= 5) continue;
+
+    const sourceStringNumber = strings - i;
+    const coveredByBarre =
+      barre &&
+      fret === barre.fret &&
+      sourceStringNumber >= Math.min(barre.fromString, barre.toString) &&
+      sourceStringNumber <= Math.max(barre.fromString, barre.toString);
+
+    if (coveredByBarre) continue;
+
+    svg.appendChild(createChordGridSvgElement("circle", {
+      cx: gridLeft + i * stringGap,
+      cy: gridTop + (relFret + 0.5) * fretGap,
+      r: 3.3,
+      fill: "currentColor"
+    }));
+  }
+
+  if (showFingerNumbers) {
+    const y = gridTop + gridHeight + 10;
+    diagram.fingers.forEach((fingerNumber, i) => {
+      if (!fingerNumber) return;
+      addChordGridSvgText(svg, String(fingerNumber), gridLeft + i * stringGap, y, 7, {
+        weight: "300"
+      });
+    });
+  }
+
+  return svg;
+}
+
+function escapeRegExpForChordGrid(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function findChordTokensInChartLine(line, chordNames) {
+  const candidates = (chordNames || [])
+    .map(item => item && item.display ? item.display : String(item || ""))
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+
+  const matches = [];
+
+  for (const chordName of candidates) {
+    const re = new RegExp(escapeRegExpForChordGrid(chordName), "g");
+    let m;
+
+    while ((m = re.exec(line)) !== null) {
+      const before = m.index > 0 ? line[m.index - 1] : "";
+      const afterIndex = m.index + chordName.length;
+      const after = afterIndex < line.length ? line[afterIndex] : "";
+
+      const nameChar = /[A-Za-z0-9#b\u266f\u266d\/()+°ø-]/;
+      if ((before && nameChar.test(before)) || (after && nameChar.test(after))) {
+        continue;
+      }
+
+      // Do not add overlapping matches (important when C and C7 are both used).
+      const end = m.index + chordName.length;
+      if (matches.some(existing => m.index < existing.end && end > existing.start)) {
+        continue;
+      }
+
+      matches.push({
+        name: chordName,
+        start: m.index,
+        end
+      });
+    }
+  }
+
+  return matches.sort((a, b) => a.start - b.start);
+}
+
+function isLikelyChordOnlyChartLine(line, matches) {
+  if (!matches || !matches.length) return false;
+
+  let remainder = String(line || "");
+  matches.slice().sort((a, b) => b.start - a.start).forEach(match => {
+    remainder = remainder.slice(0, match.start) +
+                " ".repeat(match.end - match.start) +
+                remainder.slice(match.end);
+  });
+
+  // Chord-chart rows may contain barlines/repeats, ending numbers and the
+  // configured empty-measure placeholders. Lyric/text rows retain letters.
+  remainder = remainder
+    .replace(/[\s|:\[\]{}().,;'"!?/\\%_\-=+*<>0-9]/g, "");
+
+  return remainder.length === 0;
+}
+
+function buildChordGridChartDisplay(
+  chartText,
+  tuneABC,
+  fileDefinitions,
+  mode
+) {
+  const display = document.createElement("div");
+  display.className = "chordGridChartDisplay";
+
+  const chordNames = getChordGridNamesFromTune(tuneABC);
+  const lines = String(chartText || "").split("\n");
+
+  lines.forEach(line => {
+    const row = document.createElement("div");
+    row.className = "chordGridChartLine";
+
+    const matches = findChordTokensInChartLine(line, chordNames);
+    const chordLine = isLikelyChordOnlyChartLine(line, matches);
+
+    if (chordLine) {
+      const lane = document.createElement("div");
+      lane.className = "chordGridDiagramLane";
+
+      matches.forEach(match => {
+        const definition = resolveChordGridDefinition(
+          match.name,
+          fileDefinitions,
+          mode
+        );
+
+        const anchor = document.createElement("span");
+        anchor.className = "chordGridDiagramAnchor";
+
+        // Position by monospace character columns, centered over the printed
+        // chord token rather than over the beginning of the token.
+        const centerColumns = match.start + (match.name.length / 2);
+        anchor.style.left = `calc(${centerColumns} * 1ch)`;
+        anchor.appendChild(createOneChordGridSvg(match.name, definition));
+        lane.appendChild(anchor);
+      });
+
+      row.appendChild(lane);
+    }
+
+    const textLine = document.createElement("div");
+    textLine.className = "chordGridChartTextLine";
+    textLine.textContent = line || " ";
+    row.appendChild(textLine);
+    display.appendChild(row);
+  });
+
+  return display;
 }
 
 /* ---------------------------------
@@ -4627,6 +5403,58 @@ function buildPrintHtml({
     white-space: pre;
   }
 
+  .chart.hasChordGridDiagrams > pre{
+    display:none;
+  }
+
+  .chordGridChartDisplay{
+    font-family:${printMonoStack};
+    font-weight:${printPreWeight};
+    font-size:${safePt}pt;
+    line-height:1.35;
+    overflow:visible;
+  }
+
+  .chordGridChartLine{
+    position:relative;
+    width:max-content;
+    min-width:100%;
+    white-space:pre;
+  }
+
+  .chordGridChartTextLine{
+    white-space:pre;
+    min-height:1.35em;
+  }
+
+  .chordGridDiagramLane{
+    position:relative;
+    height:55pt;
+    overflow:visible;
+    margin-bottom:0;
+  }
+
+  .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+    margin-top:8pt;
+  }
+
+  .chordGridDiagramAnchor{
+    position:absolute;
+    top:0;
+    transform:translateX(-50%);
+    width:42pt;
+    height:60pt;
+    overflow:visible;
+    color:#000;
+  }
+
+  .chordGridDiagramAnchor svg{
+    display:block;
+    width:42pt;
+    height:60pt;
+    overflow:visible;
+  }
+
   /* Print-width probe (must have non-zero size) */
   #probeWrap{
     position: relative;
@@ -4780,6 +5608,7 @@ function buildPrintHtml({
       _requestedPt = requestedPt;
       this.setDiagnostics(DIAG_DEFAULT_ON);
       document.querySelectorAll("pre").forEach(pre => pre.style.fontSize = (parseInt(_requestedPt,10)||${safePt}) + "pt");
+      document.querySelectorAll(".chordGridChartDisplay").forEach(el => el.style.fontSize = (parseInt(_requestedPt,10)||${safePt}) + "pt");
       requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
     }
   };
@@ -4965,6 +5794,19 @@ function generateCharts() {
   syncActionButtons();
 
   const tunes = splitAbcIntoTunes(abcText);
+  const chordGridMode = $("chordGridMode") ? $("chordGridMode").value : "none";
+  const chordGridFileHeader = getAbcFileHeaderBeforeFirstTune(abcText);
+  const chordGridFileDefinitions =
+    chordGridMode === "custom"
+      ? parseChordGridDefinitions(chordGridFileHeader)
+      : Object.create(null);
+  const hasHeaderCustomChordGridDefinitions =
+    chordGridMode === "custom" &&
+    Object.keys(chordGridFileDefinitions).length > 0;
+  const headerCustomChordGridDefinitionText =
+    chordGridMode === "custom" && hasHeaderCustomChordGridDefinitions
+      ? getHeaderCustomChordGridDefinitionText(abcText)
+      : "";
   if (tunes.length === 0) {
     setStatus("No tunes found.", true);
     syncActionButtons();
@@ -5052,7 +5894,11 @@ function generateCharts() {
     section.dataset.hasLyrics = tuneHasLyrics ? "1" : "0";
 
     const shareUrl = linkTitles
-      ? buildAbcToolsShareLinkForTune(block)
+      ? buildAbcToolsShareLinkForTune(
+          block,
+          chordGridMode,
+          headerCustomChordGridDefinitionText
+        )
       : "";
 
     const h3 = document.createElement("h3");
@@ -5093,6 +5939,31 @@ function generateCharts() {
     const pre = document.createElement("pre");
     pre.textContent = chartDisplayText;
     section.appendChild(pre);
+
+    // This optional visual layer is deliberately separate from <pre>.
+    // Copy/Save/Save-as-ABC/Website Builder therefore remain text-only and
+    // behave exactly as before. Only the displayed/printed chord chart changes.
+    //
+    // %%show_chord_grids directives in the ABC are intentionally ignored here.
+    // The selected tool setting alone determines the grid source.
+    const shouldRenderChordGrids =
+      chordGridMode !== "none" &&
+      (chordGridMode !== "custom" || hasHeaderCustomChordGridDefinitions);
+
+    if (shouldRenderChordGrids) {
+      const gridDisplay = buildChordGridChartDisplay(
+        chartDisplayText,
+        block,
+        chordGridFileDefinitions,
+        chordGridMode
+      );
+
+      if (gridDisplay.querySelector(".chordGridDiagramAnchor")) {
+        section.classList.add("hasChordGridDiagrams");
+        section.appendChild(gridDisplay);
+        section.dataset.chordGridMode = chordGridMode;
+      }
+    }
 
     out.appendChild(section);
     renderedCount++;
@@ -5261,6 +6132,7 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("suppressPickup")) $("suppressPickup").value = "1";
   if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
   if ($("chartMonoFont")) $("chartMonoFont").value = "system";
+  if ($("chordGridMode")) $("chordGridMode").value = "none";
 
   // Website Settings defaults
   if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
@@ -5655,6 +6527,7 @@ function wireUp() {
     if ($("appendRhythm")) $("appendRhythm").value = "1";
     if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value = "";
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
+    if ($("chordGridMode")) $("chordGridMode").value = "none";
 
     if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
     if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value = "12";
@@ -5876,6 +6749,16 @@ function wireUp() {
   // ------------------------------------------------------------
   // Live control changes
   // ------------------------------------------------------------
+
+  if ($("chordGridMode")) {
+    $("chordGridMode").addEventListener("change", function () {
+      applyInitialChordGridExtraSpacingFromSelection();
+      saveUIStateToLocalStorage_SettingsOnly();
+      if ($("out") && $("out").children.length) {
+        generateCharts();
+      }
+    });
+  }
 
   $("paperSize").addEventListener("change", applyPrintSettings);
   $("orientation").addEventListener("change", applyPrintSettings);
@@ -6166,6 +7049,16 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
 
+      '    <div id="instructions-setting-chord-grids" style="font-weight:700; margin-bottom:6px;">Chord grids</div>' +
+      '    Controls whether chord-grid diagrams are shown directly above and centered over chord names in the displayed and printed chord charts.<br/>' +
+      '    Choose <b>No chord grids</b> (the default), <b>Guitar</b>, <b>Mandolin</b>, <b>Ukulele</b>, or <b>Baritone Ukulele</b> to use that built-in chord-grid library for every tune in the input.<br/>' +
+      '    Choose <b>Use custom definition from ABC</b> to use custom chord-grid definitions found in a <code>%%begin_chord_grid_definitions</code> / <code>%%end_chord_grid_definitions</code> block in the ABC file header before the first <code>X:</code> tune. Custom definition blocks inside individual tunes are ignored by this tool.<br/>' +
+      '    If <b>Use custom definition from ABC</b> is selected and the ABC file header contains no valid custom chord-grid definitions, no chord grids are displayed.<br/>' +
+      '    Any <code>%%show_chord_grids</code> directives in the ABC are ignored by this tool; the setting here always determines whether and which chord grids are shown.<br/>' +
+      '    When you manually choose a chord-grid option, <b>Extra spacing (chars, not used for tunes with lyrics)</b> is initially set to <b>2</b> for 3- or 4-string grids and <b>3</b> for 5- or 6-string grids. For custom header definitions, the largest string count in the valid custom definitions is used. You can change the spacing manually afterward.<br/>' +
+      '    This setting changes only the displayed/printed chord chart and, when <b>Add ABC Transcription Tools play links to titles</b> is enabled, the ABC embedded in those play links. When <b>No chord grids</b> is selected, chord-grid directives and custom definitions are removed only from the temporary ABC used to build those play links; the original ABC and all other tool operations are unchanged. Copy, Save, Save Chord Chart as ABC, and Open in Website Builder remain text-only and are not changed by this option.<br/>' +
+      '    Default is: <b>No chord grids</b><br/><br/>' +
+
       '    <div id="instructions-setting-chart-font" style="font-weight:700; margin-bottom:6px;">Chord chart font</div>' +
       '    Selects the monospaced font to use for the chord charts.<br/><br/>' +
 
@@ -6203,6 +7096,7 @@ function wireUp() {
       '    Character (or none) to show in measures without chords.<br/>' +
       '    Default is: /<br/>' +
       '    This does not affect tunes that contain no chords at all (those are skipped).<br/><br/>' +
+
 
       '  </div>' +
 
@@ -6279,6 +7173,9 @@ function wireUp() {
       '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
       '    <div id="instructions-setting-link-titles" style="font-weight:700; margin-bottom:6px;">Add ABC Transcription Tools play links to titles</div>' +
       '    When enabled, adds ABC Transcription Tools play links to the title of each tune in the chord charts.<br/>' +
+      '    If chord grids are enabled, the ABC placed in each play link also includes the corresponding <code>%%show_chord_grids</code> directive immediately after the tune\'s <code>X:</code> tag, so the same built-in Guitar, Mandolin, Ukulele, or Baritone Ukulele grids are shown when the tune opens in ABC Transcription Tools.<br/>' +
+      '    When <b>Use custom definition from ABC</b> is selected and a valid custom chord-grid definition exists in the original ABC file header, each play link includes a <code>%%show_chord_grids</code> directive followed by the complete header custom chord-grid definition immediately after <code>X:</code>. Tune-local custom chord-grid definition blocks are not used for these links.<br/>' +
+      '    When <b>No chord grids</b> is selected, or when custom definitions are selected but no valid custom definition exists in the ABC file header, the temporary ABC used for the play link contains no chord-grid directive or custom chord-grid definition. This cleanup affects only the generated play link and does not modify the source ABC or normal tool output.<br/>' +
       '    If you create a PDF file from the chord charts using the browser\'s <b>Print-to-PDF</b> feature, you can click on the title of any tune to open it in the ABC Transcription Tools player.' +
 
       '  </div>' +
@@ -6503,7 +7400,7 @@ WaitForReady(wireUp);
 <script type="text/javascript" src="lz-string.min.js"></script>
 <script type="text/javascript" src="pako.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
-<script type="text/javascript" src="abc-chord-chart-guided-tour.js?v=2"></script>
+<script type="text/javascript" src="abc-chord-chart-guided-tour.js?v=3"></script>
 
 </body>
 </html>
