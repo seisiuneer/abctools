@@ -7055,13 +7055,14 @@ function wireUp() {
 
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
+      '    The following are the basic settings for how the chord charts are formatted.' +
 
-      '    <div id="instructions-setting-chord-grids" style="font-weight:700; margin-bottom:6px;">Chord grids</div>' +
+      '    <div id="instructions-setting-chord-grids" style="font-weight:700; margin-bottom:6px;margin-top:16px;">Chord grids</div>' +
       '    <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/1e_L_tn6owE" target="_blank">Chord Grid Features Walkthrough Video on YouTube</a></p>' +
       '    Controls whether chord-grid diagrams are shown directly above and centered over chord names in the displayed and printed chord charts.<br/>' +
       '    Choose <b>No chord grids</b> (the default), <b>Guitar</b>, <b>Mandolin</b>, <b>Ukulele</b>, or <b>Baritone Ukulele</b> to use that built-in chord-grid library for every tune in the input.<br/>' +
-      '    Choose <b>Use custom definition from ABC</b> to use custom chord-grid definitions found in a <code>%%begin_chord_grid_definitions</code> / <code>%%end_chord_grid_definitions</code> block in the ABC file header before the first <code>X:</code> tune. Custom definition blocks inside individual tunes are ignored by this tool.<br/>' +
-      '    <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/ytTLBHKZvJg" target="_blank">Custom Chord Grid Features Walkthrough Video on YouTube</a></p>' +
+      '    Choose <b>Use custom definition from ABC</b> to use custom chord-grid definitions found in a <code>%%begin_chord_grid_definitions</code> / <code>%%end_chord_grid_definitions</code> block in the ABC file header before the first <code>X:</code> tune. Custom definition blocks inside individual tunes are ignored by this tool.' +
+      '    <p style="text-align:center;margin-bottom:16px;margin-top:16px;"><a href="https://youtu.be/ytTLBHKZvJg" target="_blank">Custom Chord Grid Features Walkthrough Video on YouTube</a></p><br/><br/>' +
       '    If <b>Use custom definition from ABC</b> is selected and the ABC file header contains no valid custom chord-grid definitions, no chord grids are displayed.<br/>' +
       '    Any <code>%%show_chord_grids</code> directives in the ABC are ignored by this tool; the setting here always determines whether and which chord grids are shown.<br/>' +
       '    When you manually choose a chord-grid option, <b>Extra spacing (chars, not used for tunes with lyrics)</b> is initially set to <b>2</b> for 3- or 4-string grids and <b>3</b> for 5- or 6-string grids. For custom header definitions, the largest string count in the valid custom definitions is used. You can change the spacing manually afterward.<br/>' +
