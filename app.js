@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3324_082926_0900";
+var gVersionNumber = "3325_083026_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -438,11 +438,6 @@ var gShowABCJSRenderProgress = false;
 
 // Reverb string to inject
 var gReverbString = "chamber 0.95 0.05";
-
-// TinyURL API override
-var gDoTinyURLAPIKeyOverride = false;
-var gTinyURLAPIKeyOverride = "";
-var gTinyURLCount = 0;
 
 // MIDI import warning delivered
 var gMIDIImportWarned = false;
@@ -29866,235 +29861,111 @@ function CopyABC() {
 }
 
 //
-// Copy the ShareURL to the clipboard and then launch TinyURL
+// Show a URL-shortening failure message
 //
-function ShortenURLFallback() {
+function ShortenURLErrorDialog() {
 
-  if (!gAllowURLSave) {
-    return;
-  }
+  var thePrompt = '<p style="text-align:center;font-size:16pt;font-family:helvetica">URL Shortening Failed</p>';
+  thePrompt += '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">The Share URL could not be shortened using Short.io.</p>';
+  thePrompt += '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Please copy the full Share URL and use your preferred URL shortening service instead.</p>';
 
-  var theURL = document.getElementById("urltextbox");
-
-  var theData = theURL.value;
-
-  // Copy the abc to the clipboard
-  CopyToClipboard(theData);
-
-  // Give some feedback
-  document.getElementById("shortenurl").value = "Share URL Copied!";
-
-  setTimeout(function() {
-
-    document.getElementById("shortenurl").value = "Launching TinyURL";
-
-    setTimeout(function() {
-
-      var w = window.open("https://tinyurl.com");
-
-      document.getElementById("shortenurl").value = "Shorten URL";
-
-    }, 500);
-
-  }, 250);
-
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 200,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
 }
 
 //
-// Try calling the TinyURL API directly first
+// Shorten the Share URL using the Short.io public API
 //
-// If it fails, fall back to the old manual assist system
-//
-
 function ShortenURL(e) {
 
-  if (!gAllowURLSave) {
-    return;
-  }
+  if (!gAllowURLSave) return;
 
-  // Don't allow shortening while offline
   if (!navigator.onLine) {
-
-    var thePrompt = "URL shortening not available while offline.";
-
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
-
+    var thePrompt = makeCenteredPromptString("URL shortening not available while offline.");
     DayPilot.Modal.alert(thePrompt, {
       theme: "modal_flat",
       top: 200,
       scrollWithPage: (AllowDialogsToScroll())
     });
-
     return;
   }
 
-  if (!gDoTinyURLAPIKeyOverride) {
+  var autoInject = !!(e && e.shiftKey && e.altKey);
+  sendGoogleAnalytics("sharing", "shorten_share_url");
 
-    var thePrompt = '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">I get a very few number of free TinyURL shortening sessions per month that are shared across all users of the tool.</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Do you absolutely need a shortened URL?</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">If not, please consider just copy and pasting the full Share URL instead.</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">If you need to create many shortened URLs, please get your own TinyURL key and enter it in the <strong>Advanced Settings</strong> dialog to avoid this alert.</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">The process for getting your own TinyURL API key is described here:</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica"><a href="https://michaeleskin.com/abctools/userguide.html#private_tinyurl_token" target="_blank">Private TinyURL API Token</a></p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Warning: Do not post TinyURL links from this tool on Facebook!</p><p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Facebook considers shortened URLs as intellectual property theft since they strip away Facebook\'s added URL tracking parameters and have been known to temporarily suspend the accounts of those using them in posts.</p>';
+  var theURL = document.getElementById("urltextbox");
+  var theData = theURL.value;
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+  const requestData = {
+    domain: gShortIODomain,
+    originalURL: theData,
+    allowDuplicates: false
+  };
 
-    DayPilot.Modal.confirm(thePrompt, {
-      top: 100,
+  fetch("https://api.short.io/links/public", {
+    method: "POST",
+    headers: {
+      "accept": "application/json",
+      "Content-Type": "application/json",
+      "authorization": gShortIOPublicKey
+    },
+    body: JSON.stringify(requestData)
+  })
+  .then(async response => {
+    let data = null;
+    try { data = await response.json(); } catch (error) {}
+    if (!response.ok || !data || !data.shortURL) {
+      throw new Error("Short.io URL shortening failed");
+    }
+    return data;
+  })
+  .then(data => {
+    var shortURL = data.shortURL;
+    CopyToClipboard(shortURL);
+
+    var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Shortened URL Copied to the Clipboard</p>';
+    modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
+    modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="' + shortURL + '" target="_blank">' + shortURL + '</a></p>';
+
+    DayPilot.Modal.alert(modal_msg, {
       theme: "modal_flat",
-      okText: "Proceed",
+      top: 200,
       scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(args) {
-
-      if (!args.canceled) {
-
-        doShortenURL();
-      }
     });
 
-  } else {
-    doShortenURL();
-  }
+    if (autoInject) {
+      var nTunes = CountTunes();
+      var theNotes = getABCEditorText();
+      var theTunes = theNotes.split(/^X:/gm);
+      var output = FindPreTuneHeader(theNotes);
 
-  function doShortenURL() {
+      for (var i = 1; i <= nTunes; ++i) {
+        var theTune = "X:" + theTunes[i];
+        output += InjectStringBelowTuneHeader(theTune, "%hyperlink " + shortURL);
+      }
 
-    // If you hold down the Shift and Alt key when clicking the shorten button, it will inject a %hyperlink annotation into the tune
-    var autoInject = false;
+      setABCEditorText(output);
+      gIsDirty = true;
 
-    if (e && e.shiftKey && e.altKey) {
-      autoInject = true;
-    }
-
-    // Keep track of URL shortening
-    sendGoogleAnalytics("sharing", "shorten_share_url");
-
-    var theURL = document.getElementById("urltextbox");
-
-    var theData = theURL.value;
-
-    let body = {
-
-      url: theData
-
-    }
-
-    // Either use my own or the user's TinyURL key
-    var theAPIKey = gTinyURLAPIKey;
-
-    if (gDoTinyURLAPIKeyOverride) {
-
-      theAPIKey = "Bearer " + gTinyURLAPIKeyOverride;
-
-    }
-
-    fetch(`https://api.tinyurl.com/create`, {
-        method: `POST`,
-        headers: {
-          accept: `application/json`,
-          authorization: theAPIKey,
-          'content-type': `application/json`,
-        },
-        body: JSON.stringify(body)
-      })
-      .then(response => {
-
-        // If it fails, go back to the old way
-        if (response.status != 200) {
-
-          ShortenURLFallback();
-
-          return;
-
-        };
-
-        return response.json()
-
-      })
-      .then(data => {
-
-        // Copy the shortened
-        CopyToClipboard(data.data.tiny_url);
-
-        var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica">Shortened URL Copied to the Clipboard</p>';
-        modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica">Short URL:</p>';
-        modal_msg += '<p style="text-align:center;font-size:14pt;line-height:19pt;font-family:helvetica"><a href="' + data.data.tiny_url + '" target="_blank">' + data.data.tiny_url + '</a></p>';
-
-        DayPilot.Modal.alert(modal_msg, {
-          theme: "modal_flat",
-          top: 200,
-          scrollWithPage: (AllowDialogsToScroll())
-        });
-
-        // Auto-injecting the shortened URL as a hyperlink?
-        if (autoInject) {
-
-          var nTunes = CountTunes();
-
-          var theNotes = getABCEditorText();
-
-          // Find the tunes
-          var theTunes = theNotes.split(/^X:/gm);
-
-          var output = FindPreTuneHeader(theNotes);
-
-          for (var i = 1; i <= nTunes; ++i) {
-
-            var theTune = "X:" + theTunes[i];
-
-            output += InjectStringBelowTuneHeader(theTune, "%hyperlink " + data.data.tiny_url);
-
-          }
-
-          // Stuff in the output
-          setABCEditorText(output);
-
-          // Set dirty
-          gIsDirty = true;
-
-          // Force a redraw
-          RenderAsync(true, null, function() {
-
-            if (gEnableSyntax){
-              // Set the select point
-              gTheCM.selectionStart = 0;
-              gTheCM.selectionEnd = 0;
-            }
-            else{
-              // Set the select point
-              gTheABC.selectionStart = 0;
-              gTheABC.selectionEnd = 0;
-            }
-
-            // Focus after operation
-            FocusAfterOperation();
-
-          });
+      RenderAsync(true, null, function() {
+        if (gEnableSyntax) {
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
+        } else {
+          gTheABC.selectionStart = 0;
+          gTheABC.selectionEnd = 0;
         }
-
-        if (!gDoTinyURLAPIKeyOverride) {
-
-          // Keep track of default TinyURL token use
-          gTinyURLCount++;
-
-          if (gLocalStorageAvailable) {
-            localStorage.TinyURLCount = gTinyURLCount;
-          }
-
-          // Remind them on 5th use about custom TinyURL tokens
-          if ((gTinyURLCount == 5) || (gTinyURLCount == 10)) {
-
-            TinyURLReminderDialog();
-
-          }
-        }
-
-      })
-      .catch(
-        error => {
-
-          ShortenURLFallback();
-
-          return;
-
-        });
-  }
+        FocusAfterOperation();
+      });
+    }
+  })
+  .catch(error => {
+    console.error("Short.io URL shortening failed:", error);
+    ShortenURLErrorDialog();
+  });
 }
 
 //
@@ -31389,13 +31260,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_29aug2026;
+        var updatePresented = localStorage.sawUpdate_30aug2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_29aug2026 = true;
+          localStorage.sawUpdate_30aug2026 = true;
 
         }
 
@@ -50510,22 +50381,6 @@ function GetInitialConfigurationSettings() {
     gReverbString = val;
   }
 
-  // TinyURL override
-  gDoTinyURLAPIKeyOverride = false;
-  gTinyURLAPIKeyOverride = "";
-  val = localStorage.TinyURLAPIKeyOverride;
-  if (val && (val != "")) {
-    gDoTinyURLAPIKeyOverride = true;
-    gTinyURLAPIKeyOverride = val;
-  }
-
-  // TinyURL use count
-  gTinyURLCount = 0;
-  val = localStorage.TinyURLCount;
-  if (val) {
-    gTinyURLCount = val;
-  }
-
   // MIDI import warning
   gMIDIImportWarned = false;
   val = localStorage.MIDIImportWarned;
@@ -51149,12 +51004,6 @@ function SaveConfigurationSettings() {
 
     // Save default reverb string
     localStorage.ReverbString2 = gReverbString;
-
-    // Save the TinyURL API key override
-    localStorage.TinyURLAPIKeyOverride = gTinyURLAPIKeyOverride;
-
-    // Save the TinyURL use count
-    localStorage.TinyURLCount = gTinyURLCount;
 
     // Save the show DGDAE state
     localStorage.ShowDGDAETab = gShowDGDAETab;
@@ -55065,7 +54914,6 @@ function AdvancedSettings() {
     configure_disable_selected_play: gDisableSelectedPlay,
     configure_show_diagnostics: gShowDiagnostics,
     configure_reverb: gReverbString,
-    configure_tinyurl: gTinyURLAPIKeyOverride,
     configure_confirm_clear: gConfirmClear,
     configure_show_render_progress: gShowABCJSRenderProgress,
     configure_clean_smartquotes: gCleanSmartQuotes,
@@ -55146,12 +54994,6 @@ function AdvancedSettings() {
 
   // NOTE: keep your bottom buttons + version message OUTSIDE tabs (unchanged)
   form = form.concat([{
-      name: "Private TinyURL API Token:",
-      id: "configure_tinyurl",
-      type: "text",
-      cssClass: "advanced_settings2_tinyurl_text"
-    },
-    {
       html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="customthemeeditor" class="btn btn-subdialog" onclick="customThemeEditor()" type="button" value="ABC Syntax Highlighting Theme Editor" title="Opens the ABC Syntax Highlighting Theme Editor"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
     }
   ]);
@@ -55217,8 +55059,6 @@ function AdvancedSettings() {
           MoveModalFieldRowByName(modalRoot, "configure_disable_android", "adv_tab_system_fields");
         }
 
-        MoveModalFieldRowByName(modalRoot, "configure_tinyurl", "adv_tab_system_fields");
-        
       }
 
       // init tabs + remember last
@@ -55320,20 +55160,6 @@ function AdvancedSettings() {
         if ((gLooperAddMeasureCount > 0) && (gLooperAddMeasureCount <= 16)) {
           gLooperAddMeasureCount = val;
         }
-      }
-
-      var theTinyURLKey = args.result.configure_tinyurl;
-      if (theTinyURLKey) theTinyURLKey = theTinyURLKey.trim();
-
-      if (theTinyURLKey && (theTinyURLKey != "")) {
-        if (!gDoTinyURLAPIKeyOverride) {
-          sendGoogleAnalytics("sharing", "custom_tinyurl_token_entered");
-        }
-        gTinyURLAPIKeyOverride = theTinyURLKey;
-        gDoTinyURLAPIKeyOverride = true;
-      } else {
-        gTinyURLAPIKeyOverride = "";
-        gDoTinyURLAPIKeyOverride = false;
       }
 
       IdleAllowShowTabNames();
@@ -60208,18 +60034,17 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 30 August 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Feature: Optional Guitar, Mandolin, Ukulele, or Baritone Ukulele chord fingering grid display</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now show chord fingering grids above the tunes for each of the chords found in a tune by adding one of:</p>';
-  modal_msg += '<p style="font-size:12pt;"><strong>%%show_chord_grids (defaults to guitar)<br/>%%show_chord_grids guitar<br/>%%show_chord_grids mandolin<br/>%%show_chord_grids ukulele<br/>%%show_chord_grids baritone-ukulele</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">to the ABC of any tune or the ABC file header before all tunes to have it apply to all of the tunes (requires full redraw).</p>';
-  modal_msg += '<p style="font-size:12pt;">For any chords not provided, creating custom chord grids for 3-, 4-, 5-, or 6-string instruments, including showing finger numbers is possible either manually or using the <strong>ABC Custom Chord Grid Builder</strong> available from the <strong>Other ABC Tools</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">Check out the <strong>Displaying Chord Grid Diagrams</strong> section of the <strong>User Guide</strong> for full details.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>Change in Share URL Shortening Service Provider</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs/month) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month)</p>';
+  modal_msg += '<p style="font-size:12pt;">There is no longer a need or the ability to set a private shortening service API key.</p>';
+  modal_msg += '<p style="font-size:12pt;">On the very rare chance that I exceed 1000 shortened URLs in a month and a shortening session fails, you will be alerted and prompted to shorten the URL manually using your preferred URL shortening service.</p>';
+
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -60358,35 +60183,6 @@ function SyntaxHighlightInfoDialog() {
 
 }
 
-//
-// Show the TinyURL reminder
-//
-function TinyURLReminderDialog() {
-
-  // Keep track of dialogs
-  sendGoogleAnalytics("dialog", "TinyURLReminderDialog");
-
-  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">TinyURL Use Request</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;margin-top:32px;">I get a limited number of free shortened URLs from TinyURL each month.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center;">If you plan on creating many shortened URLs, please sign up<br/>for your own free or paid TinyURL account at:</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://tinyurl.com" target="_blank" title="TinyURL">TinyURL</a></strong></p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">After signing up, you can obtain a private API token from:</p>';
-
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://tinyurl.com/app/settings/api" target="_blank" title="TinyURL API">TinyURL API Settings</a></strong></p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">And then enter it on the <strong>Advanced Settings</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">More details here:</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://michaeleskin.com/abctools/userguide.html#private_tinyurl_token" target="_blank" title="Private TinyURL Token">Using a Private TinyURL API Token</a></strong></p>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
-  modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael2.jpg"/></div>';
-  modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
-
-  DayPilot.Modal.alert(modal_msg, {
-    theme: "modal_flat",
-    top: 25,
-    scrollWithPage: (AllowDialogsToScroll())
-  });
-
-}
 //
 // Show help when in fullscreen mode
 //
@@ -67181,13 +66977,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_29aug2026;
+    var updatePresented = localStorage.sawUpdate_30aug2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_29aug2026 = true;
+      localStorage.sawUpdate_30aug2026 = true;
 
     }
 

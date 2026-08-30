@@ -6781,18 +6781,16 @@
                 <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
                 <p>The saved file will be in your browser's Downloads directory.</p>
                 <p>On iOS the native iOS sharing dialog can be used to save the file to the Files area or to share it to another app.</p>
-                <p><strong>Shorten URL</strong> - Shortens the Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
+                <p><strong>Shorten URL</strong> - Shortens the Share URL using Short.io and copies the shortened URL to the clipboard.</p>
                 <p>If you hold down the Shift and Alt keys while clicking this button, a %hyperlink annotation will be added to each of the tunes with the shortened URL.</p>
                 <p>When exporting a PDF, the %hyperlink annotation on any tune, when the tune title is clicked, overrides all other injected hyperlinks requested at the PDF tunebook level, for example, play links.</p>
                 <p>If you want to have the shortened URL play when clicked using the %hyperlink injection, be sure to click <strong>Add Auto-Play</strong> in the Share dialog before shortening the URL.</p>
                 <p>This can be useful when you have ShareURLs that are longer than the Adobe Acrobat recommended limit.</p>
-                <p>I get a limited number of free TinyURL shortenings each month, so if you want to shorten a lot of share links, please consider signing up for a free or paid TinyURL account, obtaining your own TinyURL API token, and entering it on the <strong>Advanced Settings</strong> dialog.</p>
-                <p>Full details here: <a style="text-decoration:none;" href="#private_tinyurl_token">Private TinyURL API Token</a></p>
                 <p><strong>Generate QR Code</strong> - Once an Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
                 <p>The QR Code is a visual representation of an Share URL that you can scan with the Camera app on your iOS or Android device.</p>
                 <p>Clicking the button will generate a QR code in .PNG format for the Share URL and open it in a new browser tab.</p>
                 <p>Even if the button is greyed out, Shift-click of the <strong>Generate QR Code</strong> button will attempt to generate a QR code for whatever text is present in the Share URL box.</p>
-                <p>This can be useful for generating QR codes from TinyURL shortened Share URL links or for other arbitrary website URLs.</p>
+                <p>This can be useful for generating QR codes from shortened Share URL links or for other arbitrary website URLs.</p>
                 <p>If the arbitrary text in the Share URL box is too long to generate a QR code, the tool will display an alert.</p>
                 <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
                 <p><strong>Add Auto-Play</strong> - Adds &play=1 to the URL.</p>
@@ -6817,27 +6815,11 @@
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <p class="hidden-print" >Automatic URL shortening using TinyURL:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UkC9GoI9qvE" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <hr class="hidden-print">
-                <p class="hidden-print" >Assisted TinyURL URL shortening if automatic shortening fails:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MZEsEPnr7Sk" title="Share URL Shortening" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p></p>
                 <p>Share URLs can get pretty long, particularly for large sets of tunes.</p>
-                <p>A third-party service like <a href="https://tinyurl.com" target="_blank">TinyURL</a> can be used to shorten Share URLs.</p>
                 <p>To get a shortened URL for the Share URL, click <strong>Shorten URL</strong>.</p>
-                <p>The tool will attempt to call TinyURL directly first to get a shortened Share URL.</p>
-                <p>If it succeeds, it will copy the shortened Share URL to the system clipboard and also show the result in a dialog.</p>
-                <p>If it fails (most likely the tool has used up all available free URL shortening sessions for the month), the tool will help you manually get a shortened URL by automatically copying the full Share URL to the system clipboard and then launching <a href="https://tinyurl.com" target="_blank">TinyURL</a> in another browser tab.</p>
-                <p>Paste the already copied full Share URL into the <a href="https://tinyurl.com" target="_blank">TinyURL</a> "Enter long link" box and click <strong>Shorten URL</strong>.</p>
-                <p>You may have to agree to the TinyURL terms-of-service before you can shorten the URL.</p>
-                <p>Copy the shortened URL from TinyURL and paste it into emails or share it on social media.</p>
-                <p>For example, here is a set of polkas from "Sliabh Notes" as a shortened Share URL:</p>
-                <p style="text-align: center;"><a href="https://tinyurl.com/5n9293yu" target="_blank">https://tinyurl.com/5n9293yu</a></p>
-                <p><a href="https://tinyurl.com" target="_blank">TinyURL</a> also allows you to create and save a simple QR code for the shortened URL.</p>
-                <p style="text-align: center;"><strong>If you are planning on using a lot of TinyURL shortened URLs:</strong></p>
-                <p>I get a limited number of free TinyURL shortenings each month, so if you want to shorten a lot of share links, please consider signing up for a free or paid TinyURL account, obtaining your own TinyURL API token, and entering it on the <strong>Advanced Settings</strong> dialog.</p>
-                <p>Full details here: <a style="text-decoration:none;" href="#private_tinyurl_token">Private TinyURL API Token</a></p>
+                <p>The tool sends the Share URL to Short.io using its public client-side API and the <strong>abctools.s.gy</strong> short-link domain.</p>
+                <p>If shortening succeeds, the shortened Share URL is copied to the system clipboard and also shown in a dialog.</p>
+                <p>If the Short.io API call fails, the tool displays an error dialog. It does not open another shortening website automatically. You can copy the full Share URL and use your preferred URL shortening service instead.</p>
                 <hr class="hidden-print" id="shared_tunes_open_full_screen">
                 <h1 class="page_break_always">Shared Tunes Open Full Screen</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -6868,7 +6850,7 @@
                 <p>The URL field is optional.</p>
                 <p>If a URL is present, it will be used for the creation of the QR code, otherwise the computed Share URL for the PDF tunebook (as would be shown in the sharing controls) will be used by default.</p>
                 <p></p>
-                <p>One application for this would be the use of a shortened Share URL from <a href="https://tinyurl.com" target="_blank">TinyURL</a> for the QR code instead of the longer one generated by the tool itself.</p>
+                <p>One application for this would be the use of a shortened Share URL for the QR code instead of the longer one generated by the tool itself.</p>
                 <p></p>
                 <p>Note that the QR code page itself includes the PDF page header and footer but does not include a page number.</p>
                 <p></p>
@@ -7447,9 +7429,6 @@
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/adv_settings_system_tab_2.jpg"/>
-                </div>  
                 <hr id="force_android">
                 <p><strong>Force Android phone UI (If mobile browser doesn't identify as Android)</strong> (non-iOS devices only)</p>
                 <p>Some modern Android browsers are no longer identifying themselves as running on Android.</p>
@@ -7460,16 +7439,6 @@
                 <p>Even if the browser identifies itself as running on Android, checking this box will disable any Android mobile UI or programmatic adaptation.</p>
                 <p>If you change this value, the tool will restart to reflect the change.</p>
                 <p>If both "Force Android phone UI" and "Disable Android phone UI" are checked, "Disable Android phone UI" takes priority.</p>
-                <hr id="private_tinyurl_token">
-                <p><strong>Private TinyURL API Token</strong></p>
-                <p>If you have your own TinyURL API Token for shortening URLs, enter it here on the <strong>Advanced Settings</strong> dialog.</p>
-                <p>I get a limited number of free TinyURL shortenings each month, so if you want to shorten a lot of share links, please sign up for your own free (or paid tier) TinyURL account at:</p>
-                <p style="text-align: center;"><a href="https://tinyurl.com" target="_blank">https://tinyurl.com</a></p>
-                <p>and obtain your own private TinyURL API token with "Create TinyURL" permission at:</p>
-                <p style="text-align: center;"><a href="https://tinyurl.com/app/settings/api" target="_blank">https://tinyurl.com/app/settings/api</a></p>
-                <p>and paste the API token in this field.</p>
-                <p>Once entered, it will be saved and used for all future URL shortening operations.</p>
-                <p>To return to using my default API token, clear this field.</p>
                 <hr class="hidden-print" id="customthemeeditor">
                 <h1 class="page_break_always">ABC Syntax Highlighting Theme Editor</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -8811,7 +8780,7 @@
                 <p>Google Analytics are used in the tool to provide anonymized telemetry on the frequency of the use of specific features.</p>
                 <p>No personal data is sent with this telemetry, only event category and event name, for example that the import MusicXML or export MIDI features were used.</p>
                 <p>I use this data to prioritize new features and to better understand how people are using the tool.</p>
-                <p>TinyURL does allow me to see some shortened URLs as they are created using my TinyURL account API key.</p>
+                <p>Short.io may allow me to see shortened URLs created through the tool.</p>
                 <p>I will never redistribute or in any way use a shortened Share URL you create.</p>
                 <hr class="hidden-print" id="support">
                 <h1 class="page_break_always">Support</h1>
@@ -9096,7 +9065,6 @@
                 <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes Using the Browser&#x27;s Built-in Print Feature</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#privacy">Privacy</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#private_tinyurl_token">Private TinyURL API Token</a></p>
 
                 <h1 class="page_break_never" id="index_Q" style="text-align:left;margin-bottom:12px;">Q</h1>
                 <p class="toc"><a style="text-decoration:none;" href="#qr_code_example">QR Code Example</a></p>

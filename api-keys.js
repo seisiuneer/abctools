@@ -1,4 +1,4 @@
-//
-// TinyURL API key
-//
-var gTinyURLAPIKey = "Bearer <YOUR_TINYURL_API_TOKEN_HERE>";
+// Short.io URL shortening configuration
+var gShortIODomain = "abctools.s.gy";
+var gShortIOPublicKey = "pk_lhvF2gaHYiwLXj2i";
+
