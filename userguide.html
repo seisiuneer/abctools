@@ -6781,7 +6781,7 @@
                 <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
                 <p>The saved file will be in your browser's Downloads directory.</p>
                 <p>On iOS the native iOS sharing dialog can be used to save the file to the Files area or to share it to another app.</p>
-                <p><strong>Shorten URL</strong> - Shortens the Share URL using Short.io and copies the shortened URL to the clipboard. If automatic shortening fails, the full Share URL is copied to the clipboard and you can choose to open TinyURL in a new tab to shorten it manually.</p>
+                <p><strong>Shorten URL</strong> - Shortens the Share URL using Short.io and copies the shortened URL to the clipboard. The built-in Short.io domain and public API key are used by default; you can optionally supply your own Short.io domain and public API key on the <a style="text-decoration:none;" href="#system_adv_settings_tab"><strong>System</strong> tab of <strong>Advanced Settings</strong></a>. If automatic shortening fails, the full Share URL is copied to the clipboard and you can choose to open TinyURL in a new tab to shorten it manually.</p>
                 <p>If you hold down the Shift and Alt keys while clicking this button, a %hyperlink annotation will be added to each of the tunes with the shortened URL.</p>
                 <p>When exporting a PDF, the %hyperlink annotation on any tune, when the tune title is clicked, overrides all other injected hyperlinks requested at the PDF tunebook level, for example, play links.</p>
                 <p>If you want to have the shortened URL play when clicked using the %hyperlink injection, be sure to click <strong>Add Auto-Play</strong> in the Share dialog before shortening the URL.</p>
@@ -6817,7 +6817,10 @@
                 </a>
                 <p>Share URLs can get pretty long, particularly for large sets of tunes.</p>
                 <p>To get a shortened URL for the Share URL, click <strong>Shorten URL</strong>.</p>
-                <p>The tool sends the Share URL to Short.io using its public client-side API and the <strong>abctools.s.gy</strong> short-link domain.</p>
+                <p>By default, the tool sends the Share URL to Short.io using its built-in public client-side API key and the <strong>abctools.s.gy</strong> short-link domain.</p>
+                <p>If you have your own Short.io account, you may optionally enter your own <strong>Short.io domain</strong> and <strong>public API key</strong> on the <a style="text-decoration:none;" href="#system_adv_settings_tab"><strong>System</strong> tab of <strong>Advanced Settings</strong></a>. If you enter your own Short.io settings, enter both your Short.io domain and public API key. Leave both fields blank to use the built-in Short.io configuration.</p>
+                <p>The custom Short.io domain and public API key are saved in browser local storage and restored the next time you use the tool in the same browser. Only enter a Short.io <strong>public</strong> API key in this setting; do not enter a private or secret API key.</p>
+                <p>Your Short.io public API key must be authorized to create links for the Short.io domain you enter.</p>
                 <p>If shortening succeeds, the shortened Share URL is copied to the system clipboard and also shown in a dialog.</p>
                 <p>If the Short.io API call fails, the full Share URL is automatically copied to the system clipboard and a dialog explains the problem. Click <strong>Open TinyURL</strong> to open <a href="https://tinyurl.com" target="_blank">TinyURL</a> in a new browser tab, then paste the Share URL there to shorten it manually. Click <strong>Cancel</strong> if you do not want to open TinyURL.</p>
                 <hr class="hidden-print" id="shared_tunes_open_full_screen">
@@ -7429,6 +7432,14 @@
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
+                <hr id="shortio_custom_settings">
+                <p><strong>Short.io domain (blank = use default)</strong></p>
+                <p><strong>Short.io public API key (blank = use default)</strong></p>
+                <p>These optional settings let you use your own Short.io account for Share URL shortening instead of the built-in Short.io configuration.</p>
+                <p>To use your own Short.io account, enter the short-link domain configured in your Short.io account and your Short.io <strong>public API key</strong>. The values are saved in browser local storage and restored automatically on future visits using the same browser.</p>
+                <p>If you enter your own Short.io settings, enter both your Short.io domain and public API key. Leave both fields blank to use the default <strong>abctools.s.gy</strong> domain and built-in public API key.</p>
+                <p>Only use a Short.io <strong>public</strong> API key here. Never enter a private or secret API key in the browser-based tool.</p>
+                <p>The public API key must have permission to create links for the Short.io domain you enter. If Short.io rejects the request, the normal TinyURL manual-shortening fallback will be offered.</p>
                 <hr id="force_android">
                 <p><strong>Force Android phone UI (If mobile browser doesn't identify as Android)</strong> (non-iOS devices only)</p>
                 <p>Some modern Android browsers are no longer identifying themselves as running on Android.</p>

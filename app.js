@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3326_083026_1800";
+var gVersionNumber = "3327_083026_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -536,6 +536,12 @@ var gBWWUseCustomInstrument = false;
 
 // Show Full-featured website exporter on Export Website dialog
 var gShowFullFeaturedWebsiteExporter = false;
+
+// Optional user Short.io configuration.
+// Blank values use the built-in defaults from api-keys.js.
+var gUserShortIODomain = "";
+var gUserShortIOPublicKey = "";
+
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -29930,8 +29936,12 @@ function ShortenURL(e) {
   var theURL = document.getElementById("urltextbox");
   var theData = theURL.value;
 
+  // Use user-supplied Short.io settings when present; otherwise use defaults.
+  var shortIODomain = (gUserShortIODomain || "").trim() || gShortIODomain;
+  var shortIOPublicKey = (gUserShortIOPublicKey || "").trim() || gShortIOPublicKey;
+
   const requestData = {
-    domain: gShortIODomain,
+    domain: shortIODomain,
     originalURL: theData,
     allowDuplicates: false
   };
@@ -29941,7 +29951,7 @@ function ShortenURL(e) {
     headers: {
       "accept": "application/json",
       "Content-Type": "application/json",
-      "authorization": gShortIOPublicKey
+      "authorization": shortIOPublicKey
     },
     body: JSON.stringify(requestData)
   })
@@ -31291,13 +31301,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_30aug2026a;
+        var updatePresented = localStorage.sawUpdate_30aug2026b;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_30aug2026a = true;
+          localStorage.sawUpdate_30aug2026b = true;
 
         }
 
@@ -50822,6 +50832,11 @@ function GetInitialConfigurationSettings() {
     gShowFullFeaturedWebsiteExporter = (val == "true");
   }
 
+  // Optional user Short.io configuration.
+  // Blank values use the built-in defaults from api-keys.js.
+  gUserShortIODomain = localStorage.ShortIODomain || "";
+  gUserShortIOPublicKey = localStorage.ShortIOPublicKey || "";
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -50915,6 +50930,11 @@ function SaveConfigurationSettings() {
 
     // Save the ABC rendering fonts
     localStorage.RenderingFonts = JSON.stringify(gRenderingFonts);
+
+    // Save optional user Short.io configuration.
+    // Empty strings explicitly preserve the "use built-in defaults" state.
+    localStorage.ShortIODomain = gUserShortIODomain;
+    localStorage.ShortIOPublicKey = gUserShortIOPublicKey;
 
     // Save the show tab names state
     var showtabnames = gShowTabNames;
@@ -54953,7 +54973,9 @@ function AdvancedSettings() {
     configure_disable_android: gDisableAndroid,
     configure_looper_add_measure_count: gLooperAddMeasureCount,
     configure_BWWUseCustomInstrument: gBWWUseCustomInstrument,
-    configure_ShowFullFeaturedWebsiteExporter: gShowFullFeaturedWebsiteExporter
+    configure_ShowFullFeaturedWebsiteExporter: gShowFullFeaturedWebsiteExporter,
+    configure_shortio_domain: gUserShortIODomain,
+    configure_shortio_public_key: gUserShortIOPublicKey
   };
 
   var form = [{
@@ -55023,6 +55045,9 @@ function AdvancedSettings() {
     form.push({ name: "    Disable Android phone UI (If mobile browser does identify as Android)", id: "configure_disable_android", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" });
   }
 
+  form.push({ name: "Short.io domain (blank = use default):", id: "configure_shortio_domain", type: "text", cssClass: "advanced_settings2_reverb_text" });
+  form.push({ name: "Short.io public API key (blank = use default):", id: "configure_shortio_public_key", type: "text", cssClass: "advanced_settings2_reverb_text" });
+
   // NOTE: keep your bottom buttons + version message OUTSIDE tabs (unchanged)
   form = form.concat([{
       html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="customthemeeditor" class="btn btn-subdialog" onclick="customThemeEditor()" type="button" value="ABC Syntax Highlighting Theme Editor" title="Opens the ABC Syntax Highlighting Theme Editor"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
@@ -55090,6 +55115,9 @@ function AdvancedSettings() {
           MoveModalFieldRowByName(modalRoot, "configure_disable_android", "adv_tab_system_fields");
         }
 
+        MoveModalFieldRowByName(modalRoot, "configure_shortio_domain", "adv_tab_system_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_shortio_public_key", "adv_tab_system_fields");
+
       }
 
       // init tabs + remember last
@@ -55107,6 +55135,10 @@ function AdvancedSettings() {
     if (!args.canceled) {
 
       gShowFullFeaturedWebsiteExporter = args.result.configure_ShowFullFeaturedWebsiteExporter;
+
+      // Optional user Short.io configuration. Blank values use built-in defaults.
+      gUserShortIODomain = (args.result.configure_shortio_domain || "").trim();
+      gUserShortIOPublicKey = (args.result.configure_shortio_public_key || "").trim();
 
       gBWWUseCustomInstrument = args.result.configure_BWWUseCustomInstrument;
 
@@ -60073,7 +60105,8 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Change in Share URL Shortening Service Provider</strong></p>';
   modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs total) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month).</p>';
-  modal_msg += '<p style="font-size:12pt;">There is no longer a need or the ability to set a private shortening service API key.</p>';
+  modal_msg += '<p style="font-size:12pt;">The built-in Short.io domain and public API key are used by default. If you have your own Short.io domain and public API key, you can enter them on the <strong>System</strong> tab of <strong>Advanced Settings</strong>. They are saved in browser local storage and used in place of the corresponding built-in values.</p>';
+  modal_msg += '<p style="font-size:12pt;">Only a Short.io <strong>public</strong> API key should be entered here; never enter a private or secret API key.</p>';
   modal_msg += '<p style="font-size:12pt;">If automatic Short.io shortening fails, the full Share URL will be copied to the clipboard and you will be offered the option to open TinyURL in a new tab to shorten it manually.</p>';
 
   modal_msg += '</div>';
@@ -67008,13 +67041,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_30aug2026a;
+    var updatePresented = localStorage.sawUpdate_30aug2026b;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_30aug2026a = true;
+      localStorage.sawUpdate_30aug2026b = true;
 
     }
 
