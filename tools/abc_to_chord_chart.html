@@ -858,6 +858,32 @@
       overflow:visible;
     }
 
+    /* Chord-grid size presets. Normal intentionally matches the original
+       chord-grid dimensions exactly. */
+    .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramLane{
+      height:62px;
+    }
+    .chordGridChartDisplay.chordGridSizeSmall .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+      margin-top:9px;
+    }
+    .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramAnchor,
+    .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramAnchor svg{
+      width:48px;
+      height:68px;
+    }
+
+    .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramLane{
+      height:88px;
+    }
+    .chordGridChartDisplay.chordGridSizeLarge .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+      margin-top:13px;
+    }
+    .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramAnchor,
+    .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramAnchor svg{
+      width:67px;
+      height:96px;
+    }
+
     .status{
       white-space:pre-wrap;
       font-family: var(--mono);
@@ -1248,6 +1274,29 @@
         width:42pt !important;
         height:60pt !important;
       }
+      .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramLane{
+        height:47pt !important;
+      }
+      .chordGridChartDisplay.chordGridSizeSmall .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+        margin-top:7pt !important;
+      }
+      .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramAnchor,
+      .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramAnchor svg{
+        width:36pt !important;
+        height:51pt !important;
+      }
+
+      .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramLane{
+        height:66pt !important;
+      }
+      .chordGridChartDisplay.chordGridSizeLarge .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+        margin-top:10pt !important;
+      }
+      .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramAnchor,
+      .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramAnchor svg{
+        width:50pt !important;
+        height:72pt !important;
+      }
     }
 
     @media (min-width: 981px) and (max-width: 1099px){
@@ -1458,7 +1507,7 @@
 <div class="app">
 
   <div class="noprint heroCard">
-    <div class="toolVersion" title="Version 1.0.16">v1.0.16</div>
+    <div class="toolVersion" title="Version 1.0.17">v1.0.17</div>
     <div class="heroTop">
       <h2 class="heroTitle">ABC Chord Chart Generator</h2>
       <p class="heroText">
@@ -1528,6 +1577,16 @@
             <option value="baritone-ukulele">Baritone Ukulele</option>
             <option value="custom">Use custom definition from ABC</option>
           </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-chord-grids" aria-label="Open instructions for Chord grids" title="Open instructions for Chord grids">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="chordGridSize"><strong>Chord grid size</strong></label>
+          <span class="setting-control-with-help"><select id="chordGridSize"
+                  title="Choose the size of chord-grid diagrams in the displayed and printed chord charts">
+            <option value="small">Small</option>
+            <option value="normal" selected>Normal</option>
+            <option value="large">Large</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-chord-grid-size" aria-label="Open instructions for Chord grid size" title="Open instructions for Chord grid size">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
@@ -1828,7 +1887,7 @@
 // Helper for getting elements by ID
 const $ = (id) => document.getElementById(id);
 
-const TOOL_VERSION = "1.0.16";
+const TOOL_VERSION = "1.0.17";
 
 // Are we on iOS?
 //
@@ -2109,7 +2168,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 15, // Direct chord-grid source selection for displayed/printed chord charts
+    v: 16, // Adds persisted chord-grid size selection
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -2123,6 +2182,7 @@ function getUIStateForSave_SettingsOnly() {
     pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
     chartMonoFont: $("chartMonoFont") ? $("chartMonoFont").value : "system",
     chordGridMode: $("chordGridMode") ? $("chordGridMode").value : "none",
+    chordGridSize: $("chordGridSize") ? $("chordGridSize").value : "normal",
 
     // Website Settings
     websiteTitleFontSize: $("websiteTitleFontSize") ? $("websiteTitleFontSize").value : "14",
@@ -2173,6 +2233,11 @@ function applyUIStateFromObj_SettingsOnly(st) {
     };
     $("chordGridMode").value =
       validChordGridModes[String(st.chordGridMode || "")] ? String(st.chordGridMode) : "none";
+  }
+  if ($("chordGridSize")) {
+    const validChordGridSizes = { "small": true, "normal": true, "large": true };
+    $("chordGridSize").value =
+      validChordGridSizes[String(st.chordGridSize || "")] ? String(st.chordGridSize) : "normal";
   }
 
   // Website Settings
@@ -3555,10 +3620,17 @@ function buildChordGridChartDisplay(
   chartText,
   tuneABC,
   fileDefinitions,
-  mode
+  mode,
+  size = "normal"
 ) {
   const display = document.createElement("div");
-  display.className = "chordGridChartDisplay";
+  const normalizedSize =
+    (size === "small" || size === "large") ? size : "normal";
+  const sizeClass =
+    normalizedSize === "small"
+      ? "chordGridSizeSmall"
+      : (normalizedSize === "large" ? "chordGridSizeLarge" : "chordGridSizeNormal");
+  display.className = "chordGridChartDisplay " + sizeClass;
 
   const chordNames = getChordGridNamesFromTune(tuneABC);
   const lines = String(chartText || "").split("\n");
@@ -5533,6 +5605,30 @@ function buildPrintHtml({
     overflow:visible;
   }
 
+  .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramLane{
+    height:47pt;
+  }
+  .chordGridChartDisplay.chordGridSizeSmall .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+    margin-top:7pt;
+  }
+  .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramAnchor,
+  .chordGridChartDisplay.chordGridSizeSmall .chordGridDiagramAnchor svg{
+    width:36pt;
+    height:51pt;
+  }
+
+  .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramLane{
+    height:66pt;
+  }
+  .chordGridChartDisplay.chordGridSizeLarge .chordGridChartLine:not(:first-child) .chordGridDiagramLane{
+    margin-top:10pt;
+  }
+  .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramAnchor,
+  .chordGridChartDisplay.chordGridSizeLarge .chordGridDiagramAnchor svg{
+    width:50pt;
+    height:72pt;
+  }
+
   /* Print-width probe (must have non-zero size) */
   #probeWrap{
     position: relative;
@@ -5874,6 +5970,7 @@ function generateCharts() {
 
   const tunes = splitAbcIntoTunes(abcText);
   const chordGridMode = $("chordGridMode") ? $("chordGridMode").value : "none";
+  const chordGridSize = $("chordGridSize") ? $("chordGridSize").value : "normal";
   const chordGridFileHeader = getAbcFileHeaderBeforeFirstTune(abcText);
   const chordGridFileDefinitions =
     chordGridMode === "custom"
@@ -6034,7 +6131,8 @@ function generateCharts() {
         chartDisplayText,
         block,
         chordGridFileDefinitions,
-        chordGridMode
+        chordGridMode,
+        chordGridSize
       );
 
       if (gridDisplay.querySelector(".chordGridDiagramAnchor")) {
@@ -6212,6 +6310,7 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
   if ($("chartMonoFont")) $("chartMonoFont").value = "system";
   if ($("chordGridMode")) $("chordGridMode").value = "none";
+  if ($("chordGridSize")) $("chordGridSize").value = "normal";
 
   // Website Settings defaults
   if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
@@ -6607,6 +6706,7 @@ function wireUp() {
     if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value = "";
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
     if ($("chordGridMode")) $("chordGridMode").value = "none";
+    if ($("chordGridSize")) $("chordGridSize").value = "normal";
 
     if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
     if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value = "12";
@@ -6832,6 +6932,15 @@ function wireUp() {
   if ($("chordGridMode")) {
     $("chordGridMode").addEventListener("change", function () {
       applyInitialChordGridExtraSpacingFromSelection();
+      saveUIStateToLocalStorage_SettingsOnly();
+      if ($("out") && $("out").children.length) {
+        generateCharts();
+      }
+    });
+  }
+
+  if ($("chordGridSize")) {
+    $("chordGridSize").addEventListener("change", function () {
       saveUIStateToLocalStorage_SettingsOnly();
       if ($("out") && $("out").children.length) {
         generateCharts();
@@ -7140,6 +7249,12 @@ function wireUp() {
       '    When you manually choose a chord-grid option, <b>Extra spacing (chars, not used for tunes with lyrics)</b> is initially set to <b>2</b> for 3- or 4-string grids and <b>3</b> for 5- or 6-string grids. For custom header definitions, the largest string count in the valid custom definitions is used. You can change the spacing manually afterward.<br/>' +
       '    This setting changes only the displayed/printed chord chart and, when <b>Add ABC Transcription Tools play links to titles</b> is enabled, the ABC embedded in those play links. When <b>No chord grids</b> is selected, chord-grid directives and custom definitions are removed only from the temporary ABC used to build those play links; the original ABC and all other tool operations are unchanged. Copy, Save, Save Chord Chart as ABC, and Open in Website Builder remain text-only and are not changed by this option.<br/>' +
       '    Default is: <b>No chord grids</b><br/><br/>' +
+
+      '    <div id="instructions-setting-chord-grid-size" style="font-weight:700; margin-bottom:6px;">Chord grid size</div>' +
+      '    Selects the size of chord-grid diagrams in the displayed and printed chord charts.<br/>' +
+      '    <b>Small</b> displays the grids at about 85% of the normal size, <b>Normal</b> uses the standard grid size, and <b>Large</b> displays the grids at about 120% of the normal size.<br/>' +
+      '    The vertical lane reserved for the diagrams is adjusted automatically so the grids do not overlap the chord-chart text. This option does not change the text-only Copy, Save, Save Chord Chart as ABC, or Website Builder output.<br/>' +
+      '    Default is: <b>Normal</b><br/><br/>' +
 
       '    <div id="instructions-setting-chart-font" style="font-weight:700; margin-bottom:6px;">Chord chart font</div>' +
       '    Selects the monospaced font to use for the chord charts.<br/><br/>' +
