@@ -432,6 +432,16 @@
     control.dispatchEvent(new Event("change", { bubbles:true }));
   }
 
+  async function activateSettingsTabForTour(tabId) {
+    var tab = document.getElementById(tabId);
+    if (!tab) return;
+
+    if (tab.getAttribute("aria-selected") !== "true") {
+      tab.click();
+      await waitMs(100);
+    }
+  }
+
   function setNumberValueAndChange(id, value) {
     var control = document.getElementById(id);
     if (!control) return;
@@ -480,6 +490,9 @@
         title:"3. Try a Different Chord Chart Font",
         selector:"#chartMonoFont",
         width:610,
+        beforeTarget:async function () {
+          await activateSettingsTabForTour("settingsTab0");
+        },
         body:'<p>Click <strong>Next</strong> to change the chord chart font from <strong>System Mono</strong> to <strong>Courier New (Bold)</strong>.</p><p>Watch the charts update immediately.</p>',
         afterNext:async function () {
           api.setChartFont("courier-bold");
@@ -496,6 +509,9 @@
         title:"5. Turn On Guitar Chord Grids",
         selector:"#chordGridMode",
         width:640,
+        beforeTarget:async function () {
+          await activateSettingsTabForTour("settingsTab0");
+        },
         body:'<p>The <strong>Chord grids</strong> setting can add chord diagrams directly above the chord names.</p><p>Click <strong>Next</strong> to select <strong>Guitar</strong>. The tool will display guitar chord grids and automatically change <strong>Extra spacing</strong> to <strong>3</strong> so the diagrams have room.</p>',
         afterNext:async function () {
           await enableGuitarChordGridsForTour();
@@ -511,6 +527,9 @@
         title:"7. Turn Chord Grids Back Off",
         selector:"#chordGridMode",
         width:650,
+        beforeTarget:async function () {
+          await activateSettingsTabForTour("settingsTab0");
+        },
         body:'<p>Click <strong>Next</strong> to change <strong>Chord grids</strong> back to <strong>No chord grids</strong>.</p><p>The tour will also reset <strong>Extra spacing</strong> from <strong>3</strong> back to its default value of <strong>1</strong>, returning the chord charts to their normal layout.</p>',
         afterNext:async function () {
           await disableChordGridsAndResetSpacingForTour();
@@ -542,7 +561,10 @@
         title:"11. Set the Website Title Size",
         selector:"#websiteTitleFontSize",
         width:540,
-        body:'<p>The Website Settings determine how the chord charts will look after they are sent to the Website Builder.</p><p>Click <strong>Next</strong> to change the website title font size from <strong>14</strong> to <strong>18</strong>.</p>',
+        beforeTarget:async function () {
+          await activateSettingsTabForTour("settingsTab1");
+        },
+        body:'<p>The <strong>Website</strong> tab contains the settings that determine how the chord charts will look after they are sent to the Website Builder.</p><p>Click <strong>Next</strong> to change the website title font size from <strong>14</strong> to <strong>18</strong>.</p>',
         afterNext:async function () {
           api.setWebsiteTitleFontSize(18);
           await waitMs(150);
@@ -552,6 +574,9 @@
         title:"12. Justify Website Titles to the Left",
         selector:"#justifyTitles",
         width:590,
+        beforeTarget:async function () {
+          await activateSettingsTabForTour("settingsTab1");
+        },
         body:'<p>The website title size is now set to <strong>18</strong>.</p><p>Click <strong>Next</strong> to change <strong>Justify titles</strong> from <strong>Center</strong> to <strong>Left</strong> for the website generated from these chord charts.</p>',
         afterNext:async function () {
           api.setJustifyTitles("left");

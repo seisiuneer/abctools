@@ -1281,6 +1281,19 @@
       }
     }
 
+    .toolVersion{
+      position:absolute;
+      top:8px;
+      right:12px;
+      color:rgba(255,255,255,.58);
+      font-size:13px;
+      font-weight:500;
+      line-height:1;
+      letter-spacing:.02em;
+      white-space:nowrap;
+      user-select:none;
+    }
+
     .heroCard{
       position:relative;
       flex:0 0 auto;
@@ -1364,6 +1377,63 @@
       }
     }
 
+
+    /* ============================================================
+       Settings tabs
+       ============================================================ */
+    .settingsTabsCard{
+      padding:0;
+      overflow:hidden;
+    }
+
+    .settingsTabList{
+      display:flex;
+      align-items:stretch;
+      gap:0;
+      overflow-x:auto;
+      border-bottom:var(--bd);
+      background:rgba(127,127,127,.06);
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .settingsTabList button.settingsTab{
+      flex:1 0 auto;
+      min-width:max-content;
+      border:0;
+      border-right:var(--bd);
+      border-radius:0;
+      padding:11px 14px;
+      background:transparent;
+      color:var(--builder-ink);
+      font-weight:600;
+      box-shadow:none;
+      transform:none;
+    }
+
+    .settingsTabList button.settingsTab:last-child{ border-right:0; }
+    .settingsTabList button.settingsTab:hover{ background:rgba(23,107,67,.08); }
+    .settingsTabList button.settingsTab[aria-selected="true"]{
+      background:#fff;
+      color:var(--builder-green-dark);
+      box-shadow:inset 0 -3px 0 var(--builder-green);
+    }
+    .settingsTabList button.settingsTab:focus-visible{
+      outline:2px solid rgba(23,107,67,.5);
+      outline-offset:-3px;
+    }
+
+    .settingsTabPanel{
+      padding:var(--card-pad);
+    }
+    .settingsTabPanel[hidden]{ display:none !important; }
+
+    @media (max-width:720px){
+      .settingsTabList button.settingsTab{
+        flex:1 0 auto;
+        padding:10px 12px;
+      }
+    }
+
   </style>
 
   <style id="pageStyle">@page { size: letter portrait; margin: 0.5in; }</style>
@@ -1388,6 +1458,7 @@
 <div class="app">
 
   <div class="noprint heroCard">
+    <div class="toolVersion" title="Version 1.0.16">v1.0.16</div>
     <div class="heroTop">
       <h2 class="heroTitle">ABC Chord Chart Generator</h2>
       <p class="heroText">
@@ -1437,9 +1508,14 @@
         <div id="status" class="status muted" style="margin-top:8px">Ready.</div>
       </div>
 
-      <div class="card">
-        
-        <h3 class="card_label">Chord Chart Settings</h3>
+      <div class="card settingsTabsCard">
+        <div class="settingsTabList" role="tablist" aria-label="Settings groups">
+          <button id="settingsTab0" class="settingsTab" type="button" role="tab" aria-selected="true" aria-controls="chordChartSettingsPanel" tabindex="0">Chord Chart</button>
+          <button id="settingsTab1" class="settingsTab" type="button" role="tab" aria-selected="false" aria-controls="websiteSettingsPanel" tabindex="-1">Website</button>
+          <button id="settingsTab2" class="settingsTab" type="button" role="tab" aria-selected="false" aria-controls="printSettingsPanel" tabindex="-1">Print</button>
+          <button id="settingsTab3" class="settingsTab" type="button" role="tab" aria-selected="false" aria-controls="advancedSettingsPanel" tabindex="-1">Advanced</button>
+        </div>
+        <section id="chordChartSettingsPanel" class="settingsTabPanel" role="tabpanel" aria-labelledby="settingsTab0">
 
         <div class="row" style="margin-top:10px;">
           <label for="chordGridMode"><strong>Chord grids</strong></label>
@@ -1533,10 +1609,8 @@
 
 
 
-      </div>
-
-      <div class="card">
-        <h3 class="card_label">Website Settings</h3>
+        </section>
+        <section id="websiteSettingsPanel" class="settingsTabPanel" role="tabpanel" aria-labelledby="settingsTab1" hidden>
 
         <div class="row" style="margin-top:10px;">
           <label for="websiteTitleFontSize"><strong>Title font size</strong></label>
@@ -1600,12 +1674,10 @@
           </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-justify-titles" aria-label="Open instructions for Justify titles" title="Open instructions for Justify titles">?</button></span>
         </div>
 
-      </div>
+        </section>
+        <section id="printSettingsPanel" class="settingsTabPanel" role="tabpanel" aria-labelledby="settingsTab2" hidden>
 
-      <div class="card">
-        <h3 class="card_label">Print Settings</h3>
-
-        <div class="row">
+        <div class="row" style="margin-top:10px;">
           <label for="paperSize"><strong>Paper size</strong></label>
           <span class="setting-control-with-help"><select id="paperSize" title="Paper size">
             <option value="letter">Letter</option>
@@ -1679,11 +1751,9 @@
           </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-link-titles" aria-label="Open instructions for Add ABC Transcription Tools play links to titles" title="Open instructions for Add ABC Transcription Tools play links to titles">?</button></span>
         </div>
 
-      </div>
-
-      <div class="card">
-        <h3 class="card_label">Advanced Settings</h3>
-        <p class="small muted">Probably best to leave these at the default values.</p>
+        </section>
+        <section id="advancedSettingsPanel" class="settingsTabPanel" role="tabpanel" aria-labelledby="settingsTab3" hidden>
+        <p style="margin-top:10px;" class="small muted">Probably best to leave these at the default values.</p>
         <div class="row" style="margin-top:10px;">
           <label for="suppressPickup"><strong>Suppress pickups</strong></label>
           <span class="setting-control-with-help"><select id="suppressPickup" title="If enabled, suppress leading pickup notes before the first barline (when no chords are present in the pickup)">
@@ -1700,6 +1770,7 @@
             <option value="5">5</option>
           </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-max-pickup-notes" aria-label="Open instructions for Max pickup notes" title="Open instructions for Max pickup notes">?</button></span>
         </div>
+        </section>
       </div>
 
       <div class="card">
@@ -5621,6 +5692,7 @@ function buildPrintHtml({
   };
 })();
 <\/script>
+
 </body>
 </html>`;
 }
@@ -7411,6 +7483,41 @@ WaitForReady(wireUp);
 <script type="text/javascript" src="pako.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
 <script type="text/javascript" src="abc-chord-chart-guided-tour.js?v=3"></script>
+
+
+<script>
+(function(){
+  const tabs = Array.from(document.querySelectorAll('.settingsTab'));
+  if (!tabs.length) return;
+
+  function activateSettingsTab(tab, moveFocus){
+    tabs.forEach(function(item){
+      const selected = item === tab;
+      item.setAttribute('aria-selected', selected ? 'true' : 'false');
+      item.tabIndex = selected ? 0 : -1;
+      const panel = document.getElementById(item.getAttribute('aria-controls'));
+      if (panel) panel.hidden = !selected;
+    });
+    if (moveFocus) tab.focus();
+  }
+
+  tabs.forEach(function(tab, index){
+    tab.addEventListener('click', function(){
+      activateSettingsTab(tab, false);
+    });
+    tab.addEventListener('keydown', function(event){
+      let nextIndex = null;
+      if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+      else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = tabs.length - 1;
+      if (nextIndex === null) return;
+      event.preventDefault();
+      activateSettingsTab(tabs[nextIndex], true);
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
