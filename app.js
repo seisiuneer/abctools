@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3325_083026_1100";
+var gVersionNumber = "3326_083026_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29863,16 +29863,47 @@ function CopyABC() {
 //
 // Show a URL-shortening failure message
 //
-function ShortenURLErrorDialog() {
+function ShortenURLErrorDialog(theURL) {
+
+  // Preserve the full Share URL for manual shortening.
+  CopyToClipboard(theURL);
 
   var thePrompt = '<p style="text-align:center;font-size:16pt;font-family:helvetica">URL Shortening Failed</p>';
   thePrompt += '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">The Share URL could not be shortened using Short.io.</p>';
-  thePrompt += '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Please copy the full Share URL and use your preferred URL shortening service instead.</p>';
+  thePrompt += '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">The full Share URL has been copied to the clipboard.</p>';
+  thePrompt += '<p style="text-align:center;font-size:12pt;line-height:18pt;font-family:helvetica">Click <strong>Open TinyURL</strong> to open TinyURL in a new tab,<br/>then paste the Share URL there to shorten it manually.</p>';
 
-  DayPilot.Modal.alert(thePrompt, {
+  var tinyURLConfirm = DayPilot.Modal.confirm(thePrompt, {
     theme: "modal_flat",
     top: 200,
+    okText: "Open TinyURL",
+    cancelText: "Cancel",
     scrollWithPage: (AllowDialogsToScroll())
+  });
+
+  // Keep the longer TinyURL button label on one line and make both buttons
+  // the same size without affecting any other dialogs.
+  setTimeout(function() {
+    var okButtons = document.getElementsByClassName("modal_flat_ok");
+    var cancelButtons = document.getElementsByClassName("modal_flat_cancel");
+
+    if (okButtons.length) {
+      var okButton = okButtons[okButtons.length - 1];
+      okButton.style.width = "180px";
+      okButton.style.whiteSpace = "nowrap";
+    }
+
+    if (cancelButtons.length) {
+      var cancelButton = cancelButtons[cancelButtons.length - 1];
+      cancelButton.style.width = "180px";
+      cancelButton.style.whiteSpace = "nowrap";
+    }
+  }, 0);
+
+  tinyURLConfirm.then(function(args) {
+    if (!args.canceled) {
+      window.open("https://tinyurl.com", "_blank");
+    }
   });
 }
 
@@ -29964,7 +29995,7 @@ function ShortenURL(e) {
   })
   .catch(error => {
     console.error("Short.io URL shortening failed:", error);
-    ShortenURLErrorDialog();
+    ShortenURLErrorDialog(theData);
   });
 }
 
@@ -31260,13 +31291,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_30aug2026;
+        var updatePresented = localStorage.sawUpdate_30aug2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_30aug2026 = true;
+          localStorage.sawUpdate_30aug2026a = true;
 
         }
 
@@ -60041,9 +60072,9 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Change in Share URL Shortening Service Provider</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs/month) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month).</p>';
+  modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs total) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month).</p>';
   modal_msg += '<p style="font-size:12pt;">There is no longer a need or the ability to set a private shortening service API key.</p>';
-  modal_msg += '<p style="font-size:12pt;">On the very rare chance that I exceed 1000 shortened URLs in a month and a shortening session fails, you will be alerted and prompted to shorten the URL manually using your preferred URL shortening service.</p>';
+  modal_msg += '<p style="font-size:12pt;">If automatic Short.io shortening fails, the full Share URL will be copied to the clipboard and you will be offered the option to open TinyURL in a new tab to shorten it manually.</p>';
 
   modal_msg += '</div>';
 
@@ -66977,13 +67008,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_30aug2026;
+    var updatePresented = localStorage.sawUpdate_30aug2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_30aug2026 = true;
+      localStorage.sawUpdate_30aug2026a = true;
 
     }
 

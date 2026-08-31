@@ -6781,7 +6781,7 @@
                 <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
                 <p>The saved file will be in your browser's Downloads directory.</p>
                 <p>On iOS the native iOS sharing dialog can be used to save the file to the Files area or to share it to another app.</p>
-                <p><strong>Shorten URL</strong> - Shortens the Share URL using Short.io and copies the shortened URL to the clipboard.</p>
+                <p><strong>Shorten URL</strong> - Shortens the Share URL using Short.io and copies the shortened URL to the clipboard. If automatic shortening fails, the full Share URL is copied to the clipboard and you can choose to open TinyURL in a new tab to shorten it manually.</p>
                 <p>If you hold down the Shift and Alt keys while clicking this button, a %hyperlink annotation will be added to each of the tunes with the shortened URL.</p>
                 <p>When exporting a PDF, the %hyperlink annotation on any tune, when the tune title is clicked, overrides all other injected hyperlinks requested at the PDF tunebook level, for example, play links.</p>
                 <p>If you want to have the shortened URL play when clicked using the %hyperlink injection, be sure to click <strong>Add Auto-Play</strong> in the Share dialog before shortening the URL.</p>
@@ -6819,7 +6819,7 @@
                 <p>To get a shortened URL for the Share URL, click <strong>Shorten URL</strong>.</p>
                 <p>The tool sends the Share URL to Short.io using its public client-side API and the <strong>abctools.s.gy</strong> short-link domain.</p>
                 <p>If shortening succeeds, the shortened Share URL is copied to the system clipboard and also shown in a dialog.</p>
-                <p>If the Short.io API call fails, the tool displays an error dialog. It does not open another shortening website automatically. You can copy the full Share URL and use your preferred URL shortening service instead.</p>
+                <p>If the Short.io API call fails, the full Share URL is automatically copied to the system clipboard and a dialog explains the problem. Click <strong>Open TinyURL</strong> to open <a href="https://tinyurl.com" target="_blank">TinyURL</a> in a new browser tab, then paste the Share URL there to shorten it manually. Click <strong>Cancel</strong> if you do not want to open TinyURL.</p>
                 <hr class="hidden-print" id="shared_tunes_open_full_screen">
                 <h1 class="page_break_always">Shared Tunes Open Full Screen</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
