@@ -884,6 +884,17 @@
       height:96px;
     }
 
+    /* Automatic per-row collision fallback. Grids remain centered over their chords. */
+    .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramLane{ height:73px; }
+    .chordGridChartLine.chordGridRowSizeNormal:not(:first-child) .chordGridDiagramLane{ margin-top:11px; }
+    .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramAnchor,
+    .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramAnchor svg{ width:56px; height:80px; }
+
+    .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramLane{ height:62px; }
+    .chordGridChartLine.chordGridRowSizeSmall:not(:first-child) .chordGridDiagramLane{ margin-top:9px; }
+    .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramAnchor,
+    .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramAnchor svg{ width:48px; height:68px; }
+
     .status{
       white-space:pre-wrap;
       font-family: var(--mono);
@@ -1297,6 +1308,14 @@
         width:50pt !important;
         height:72pt !important;
       }
+      .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramLane{ height:55pt !important; }
+      .chordGridChartLine.chordGridRowSizeNormal:not(:first-child) .chordGridDiagramLane{ margin-top:8pt !important; }
+      .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramAnchor,
+      .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramAnchor svg{ width:42pt !important; height:60pt !important; }
+      .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramLane{ height:47pt !important; }
+      .chordGridChartLine.chordGridRowSizeSmall:not(:first-child) .chordGridDiagramLane{ margin-top:7pt !important; }
+      .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramAnchor,
+      .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramAnchor svg{ width:36pt !important; height:51pt !important; }
     }
 
     @media (min-width: 981px) and (max-width: 1099px){
@@ -1507,7 +1526,7 @@
 <div class="app">
 
   <div class="noprint heroCard">
-    <div class="toolVersion" title="Version 1.0.17">v1.0.17</div>
+    <div class="toolVersion" title="Version 1.0.19">v1.0.19</div>
     <div class="heroTop">
       <h2 class="heroTitle">ABC Chord Chart Generator</h2>
       <p class="heroText">
@@ -1887,7 +1906,7 @@
 // Helper for getting elements by ID
 const $ = (id) => document.getElementById(id);
 
-const TOOL_VERSION = "1.0.17";
+const TOOL_VERSION = "1.0.19";
 
 // Are we on iOS?
 //
@@ -3614,6 +3633,73 @@ function isLikelyChordOnlyChartLine(line, matches) {
     .replace(/[\s|:\[\]{}().,;'"!?/\\%_\-=+*<>0-9]/g, "");
 
   return remainder.length === 0;
+}
+
+function getChordGridVisibleBounds(anchor) {
+  if (!anchor) return null;
+
+  const svg = anchor.querySelector("svg");
+  if (!svg) return anchor.getBoundingClientRect();
+
+  try {
+    const svgRect = svg.getBoundingClientRect();
+    const box = svg.getBBox();
+
+    if (!svgRect.width || !box || !isFinite(box.x) || !isFinite(box.width)) {
+      return svgRect;
+    }
+
+    const viewBox = svg.viewBox && svg.viewBox.baseVal;
+    const viewBoxWidth = viewBox && viewBox.width ? viewBox.width : 76;
+    const scale = svgRect.width / viewBoxWidth;
+
+    return {
+      left: svgRect.left + box.x * scale,
+      right: svgRect.left + (box.x + box.width) * scale
+    };
+  } catch (error) {
+    return svg.getBoundingClientRect();
+  }
+}
+
+function chordGridRowHasOverlap(row) {
+  const anchors = Array.from(row.querySelectorAll(".chordGridDiagramAnchor"));
+  if (anchors.length < 2) return false;
+
+  const bounds = anchors
+    .map(getChordGridVisibleBounds)
+    .filter(Boolean)
+    .sort((a, b) => a.left - b.left);
+
+  // Compare the actual visible SVG artwork, not the SVG viewport. The viewport
+  // intentionally contains transparent side padding, which must not trigger
+  // unnecessary row downsizing.
+  for (let i = 1; i < bounds.length; i++) {
+    if (bounds[i].left < bounds[i - 1].right + 1) return true;
+  }
+  return false;
+}
+
+function adjustChordGridRowsForOverlap(root) {
+  if (!root) return;
+  root.querySelectorAll(".chordGridChartDisplay").forEach(display => {
+    const requestedSize = display.classList.contains("chordGridSizeLarge")
+      ? "large"
+      : (display.classList.contains("chordGridSizeSmall") ? "small" : "normal");
+
+    display.querySelectorAll(".chordGridChartLine").forEach(row => {
+      row.classList.remove("chordGridRowSizeNormal", "chordGridRowSizeSmall");
+      if (!chordGridRowHasOverlap(row) || requestedSize === "small") return;
+
+      if (requestedSize === "large") {
+        row.classList.add("chordGridRowSizeNormal");
+        if (!chordGridRowHasOverlap(row)) return;
+        row.classList.remove("chordGridRowSizeNormal");
+      }
+
+      row.classList.add("chordGridRowSizeSmall");
+    });
+  });
 }
 
 function buildChordGridChartDisplay(
@@ -5629,6 +5715,15 @@ function buildPrintHtml({
     height:72pt;
   }
 
+  .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramLane{ height:55pt; }
+  .chordGridChartLine.chordGridRowSizeNormal:not(:first-child) .chordGridDiagramLane{ margin-top:8pt; }
+  .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramAnchor,
+  .chordGridChartLine.chordGridRowSizeNormal .chordGridDiagramAnchor svg{ width:42pt; height:60pt; }
+  .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramLane{ height:47pt; }
+  .chordGridChartLine.chordGridRowSizeSmall:not(:first-child) .chordGridDiagramLane{ margin-top:7pt; }
+  .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramAnchor,
+  .chordGridChartLine.chordGridRowSizeSmall .chordGridDiagramAnchor svg{ width:36pt; height:51pt; }
+
   /* Print-width probe (must have non-zero size) */
   #probeWrap{
     position: relative;
@@ -5757,10 +5852,56 @@ function buildPrintHtml({
     pres.forEach(pre => setPreFontSizePt(pre, startPt));
   }
 
+  function adjustChordGridRowsForOverlapForPrint() {
+    document.querySelectorAll(".chordGridChartDisplay").forEach(display => {
+      const requestedSize = display.classList.contains("chordGridSizeLarge") ? "large" :
+        (display.classList.contains("chordGridSizeSmall") ? "small" : "normal");
+      display.querySelectorAll(".chordGridChartLine").forEach(row => {
+        const overlaps = () => {
+          const bounds = Array.from(row.querySelectorAll(".chordGridDiagramAnchor"))
+            .map(anchor => {
+              const svg = anchor.querySelector("svg");
+              if (!svg) return anchor.getBoundingClientRect();
+              try {
+                const svgRect = svg.getBoundingClientRect();
+                const box = svg.getBBox();
+                if (!svgRect.width || !box || !isFinite(box.x) || !isFinite(box.width)) {
+                  return svgRect;
+                }
+                const viewBox = svg.viewBox && svg.viewBox.baseVal;
+                const viewBoxWidth = viewBox && viewBox.width ? viewBox.width : 76;
+                const scale = svgRect.width / viewBoxWidth;
+                return {
+                  left: svgRect.left + box.x * scale,
+                  right: svgRect.left + (box.x + box.width) * scale
+                };
+              } catch (error) {
+                return svg.getBoundingClientRect();
+              }
+            })
+            .sort((a,b) => a.left - b.left);
+          for (let i = 1; i < bounds.length; i++) {
+            if (bounds[i].left < bounds[i-1].right + 1) return true;
+          }
+          return false;
+        };
+        row.classList.remove("chordGridRowSizeNormal", "chordGridRowSizeSmall");
+        if (!overlaps() || requestedSize === "small") return;
+        if (requestedSize === "large") {
+          row.classList.add("chordGridRowSizeNormal");
+          if (!overlaps()) return;
+          row.classList.remove("chordGridRowSizeNormal");
+        }
+        row.classList.add("chordGridRowSizeSmall");
+      });
+    });
+  }
+
   window.addEventListener("beforeprint", () => {
     try{
       trimAllPreTrailingSpaces();
       fitEachPreIndependently();
+      adjustChordGridRowsForOverlapForPrint();
     }catch(e){
       diag("beforeprint error: " + (e && e.message ? e.message : e));
     }
@@ -5783,7 +5924,10 @@ function buildPrintHtml({
       this.setDiagnostics(DIAG_DEFAULT_ON);
       document.querySelectorAll("pre").forEach(pre => pre.style.fontSize = (parseInt(_requestedPt,10)||${safePt}) + "pt");
       document.querySelectorAll(".chordGridChartDisplay").forEach(el => el.style.fontSize = (parseInt(_requestedPt,10)||${safePt}) + "pt");
-      requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        adjustChordGridRowsForOverlapForPrint();
+        window.print();
+      }));
     }
   };
 })();
@@ -6143,6 +6287,9 @@ function generateCharts() {
     }
 
     out.appendChild(section);
+    if (section.classList.contains("hasChordGridDiagrams")) {
+      adjustChordGridRowsForOverlap(section);
+    }
     renderedCount++;
   }
 
@@ -7253,7 +7400,9 @@ function wireUp() {
       '    <div id="instructions-setting-chord-grid-size" style="font-weight:700; margin-bottom:6px;">Chord grid size</div>' +
       '    Selects the size of chord-grid diagrams in the displayed and printed chord charts.<br/>' +
       '    <b>Small</b> displays the grids at about 85% of the normal size, <b>Normal</b> uses the standard grid size, and <b>Large</b> displays the grids at about 120% of the normal size.<br/>' +
-      '    The vertical lane reserved for the diagrams is adjusted automatically so the grids do not overlap the chord-chart text. This option does not change the text-only Copy, Save, Save Chord Chart as ABC, or Website Builder output.<br/>' +
+      '    The vertical lane reserved for the diagrams is adjusted automatically so the grids do not overlap the chord-chart text.<br/>' +
+      '    If the visible parts of adjacent chord grids would overlap on a row, only that row is automatically reduced to the next smaller grid size as needed. Large can fall back to Normal and then Small; Normal can fall back to Small. Every grid remains centered over its chord.<br/>' +
+      '    This option does not change the text-only Copy, Save, Save Chord Chart as ABC, or Website Builder output.<br/>' +
       '    Default is: <b>Normal</b><br/><br/>' +
 
       '    <div id="instructions-setting-chart-font" style="font-weight:700; margin-bottom:6px;">Chord chart font</div>' +
