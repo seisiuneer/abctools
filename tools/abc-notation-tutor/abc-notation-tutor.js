@@ -318,6 +318,701 @@ C,4 G,4 | C,4 G,4 | F,4 C4 | C,8 |]`,
 }
 ];
 
+
+var lessonQuizzes = [
+ [
+  {
+   "q": "Which ABC header field identifies the tune with a reference number?",
+   "options": [
+    "X:",
+    "T:",
+    "M:",
+    "K:"
+   ],
+   "answer": 0,
+   "explanation": "X: is the tune reference-number field."
+  },
+  {
+   "q": "Which field gives an ABC tune its title?",
+   "options": [
+    "L:",
+    "T:",
+    "Q:",
+    "C:"
+   ],
+   "answer": 1,
+   "explanation": "T: supplies the tune title."
+  },
+  {
+   "q": "What is the special role of K: in a basic ABC tune header?",
+   "options": [
+    "It sets tempo only",
+    "It identifies the composer",
+    "It ends the header and establishes the key",
+    "It starts the first measure"
+   ],
+   "answer": 2,
+   "explanation": "K: establishes the key and normally marks the end of the tune header."
+  },
+  {
+   "q": "In a normal ABC tune, where does the music body begin?",
+   "options": [
+    "Before X:",
+    "After K:",
+    "After the final bar line",
+    "Inside the T: field"
+   ],
+   "answer": 1,
+   "explanation": "The note data normally begins after the K: field."
+  }
+ ],
+ [
+  {
+   "q": "Compared with uppercase C, what does lowercase c represent?",
+   "options": [
+    "The same pitch",
+    "A pitch one octave higher",
+    "A pitch one octave lower",
+    "C sharp"
+   ],
+   "answer": 1,
+   "explanation": "Lowercase note letters are one octave higher than their uppercase counterparts."
+  },
+  {
+   "q": "What does a comma after a note letter do?",
+   "options": [
+    "Raises it by an octave",
+    "Lowers it by an octave",
+    "Makes it sharp",
+    "Halves its duration"
+   ],
+   "answer": 1,
+   "explanation": "A comma lowers the note by one octave; additional commas lower it further."
+  },
+  {
+   "q": "Which ABC notation explicitly writes F sharp?",
+   "options": [
+    "_F",
+    "=F",
+    "^F",
+    "F'"
+   ],
+   "answer": 2,
+   "explanation": "A caret before a note indicates a sharp, so ^F is F sharp."
+  },
+  {
+   "q": "What normally happens to an accidental at the next bar line?",
+   "options": [
+    "It continues for the rest of the tune",
+    "The key signature applies again",
+    "It changes into a natural",
+    "It moves to the next pitch"
+   ],
+   "answer": 1,
+   "explanation": "An accidental normally applies through the rest of its measure, then the key signature applies again in the next measure."
+  }
+ ],
+ [
+  {
+   "q": "With L:1/8, what duration does a plain note letter such as C represent?",
+   "options": [
+    "A whole note",
+    "A quarter note",
+    "An eighth note",
+    "A sixteenth note"
+   ],
+   "answer": 2,
+   "explanation": "L:1/8 makes the default note length an eighth note."
+  },
+  {
+   "q": "With L:1/8, how long is E2?",
+   "options": [
+    "One sixteenth note",
+    "One eighth note",
+    "One quarter note",
+    "One half note"
+   ],
+   "answer": 2,
+   "explanation": "The 2 doubles the default eighth-note length, producing a quarter note."
+  },
+  {
+   "q": "What does A/2 do to the default duration of A?",
+   "options": [
+    "Doubles it",
+    "Halves it",
+    "Triples it",
+    "Adds a rest"
+   ],
+   "answer": 1,
+   "explanation": "/2 divides the default duration by two; A/ is shorthand for the same thing."
+  },
+  {
+   "q": "Which letter represents a rest in ABC?",
+   "options": [
+    "r",
+    "v",
+    "z",
+    "p"
+   ],
+   "answer": 2,
+   "explanation": "The letter z represents a rest and uses the same length syntax as a note."
+  }
+ ],
+ [
+  {
+   "q": "With M:4/4 and L:1/8, how many default-length units fill a complete measure?",
+   "options": [
+    "4",
+    "6",
+    "8",
+    "16"
+   ],
+   "answer": 2,
+   "explanation": "A 4/4 measure contains four quarter notes, which equals eight eighth-note default units."
+  },
+  {
+   "q": "What does a single | normally indicate in the tune body?",
+   "options": [
+    "A bar line between measures",
+    "A repeat start",
+    "A slur",
+    "A key change"
+   ],
+   "answer": 0,
+   "explanation": "The vertical bar separates measures."
+  },
+  {
+   "q": "Which ABC symbol is a common final bar line?",
+   "options": [
+    "|]",
+    "|:",
+    ":|",
+    "||:"
+   ],
+   "answer": 0,
+   "explanation": "|] is a common ABC final bar line."
+  },
+  {
+   "q": "Why is it useful to count the durations inside each measure?",
+   "options": [
+    "To make every note the same pitch",
+    "To make the measure agree with the meter",
+    "To remove the key signature",
+    "To prevent chord symbols"
+   ],
+   "answer": 1,
+   "explanation": "The summed note and rest durations should normally agree with the meter for a complete measure."
+  }
+ ],
+ [
+  {
+   "q": "What does M: describe?",
+   "options": [
+    "The meter of each measure",
+    "The default note length",
+    "The key signature",
+    "The tune title"
+   ],
+   "answer": 0,
+   "explanation": "M: sets the meter, which describes how each measure is organized."
+  },
+  {
+   "q": "What does L: set?",
+   "options": [
+    "The playback instrument",
+    "The default note length",
+    "The number of measures",
+    "The rhythm name"
+   ],
+   "answer": 1,
+   "explanation": "L: sets the duration represented by a plain note letter with no length suffix."
+  },
+  {
+   "q": "With M:6/8 and L:1/8, how many plain eighth-note values fill a complete measure?",
+   "options": [
+    "3",
+    "4",
+    "6",
+    "8"
+   ],
+   "answer": 2,
+   "explanation": "Six eighth-note values fill one 6/8 measure."
+  },
+  {
+   "q": "In the lesson example, what does Q:3/8=96 use as the tempo beat unit?",
+   "options": [
+    "One eighth note",
+    "Two eighth notes",
+    "Three eighth notes",
+    "One whole note"
+   ],
+   "answer": 2,
+   "explanation": "3/8 specifies a beat unit made from three eighth notes."
+  }
+ ],
+ [
+  {
+   "q": "What does K:D establish?",
+   "options": [
+    "D major",
+    "D minor only",
+    "A 4/4 meter",
+    "A Dorian rhythm"
+   ],
+   "answer": 0,
+   "explanation": "K:D establishes D major unless a mode or minor qualifier says otherwise."
+  },
+  {
+   "q": "In K:D, which notes are sharp by default?",
+   "options": [
+    "F and C",
+    "B and E",
+    "G and D",
+    "A and E"
+   ],
+   "answer": 0,
+   "explanation": "D major has F sharp and C sharp in its key signature."
+  },
+  {
+   "q": "What does K:Edor mean?",
+   "options": [
+    "E major",
+    "E Dorian",
+    "E minor only",
+    "E Mixolydian"
+   ],
+   "answer": 1,
+   "explanation": "The dor suffix identifies Dorian mode, so Edor means E Dorian."
+  },
+  {
+   "q": "Why can you normally write plain F and C in K:D?",
+   "options": [
+    "ABC ignores accidentals in D",
+    "The key signature supplies their sharps",
+    "F and C become rests",
+    "K:D changes them into flats"
+   ],
+   "answer": 1,
+   "explanation": "The D-major key signature makes F and C sharp automatically unless overridden."
+  }
+ ],
+ [
+  {
+   "q": "Which ABC field specifies tempo?",
+   "options": [
+    "Q:",
+    "R:",
+    "C:",
+    "P:"
+   ],
+   "answer": 0,
+   "explanation": "Q: is the tempo field."
+  },
+  {
+   "q": "What does R: primarily describe?",
+   "options": [
+    "The tune's rhythm or type",
+    "The composer",
+    "The default note length",
+    "The number of voices"
+   ],
+   "answer": 0,
+   "explanation": "R: identifies a rhythm or tune type such as Reel, Jig, or Hornpipe."
+  },
+  {
+   "q": "What is C: commonly used for?",
+   "options": [
+    "Chord names",
+    "Composer name",
+    "Clef selection",
+    "Closing a repeat"
+   ],
+   "answer": 1,
+   "explanation": "C: commonly identifies the composer or source."
+  },
+  {
+   "q": "What may some ABC software do when it sees R:Hornpipe?",
+   "options": [
+    "Delete the key signature",
+    "Automatically apply a swung playback feel",
+    "Change every note to a triplet",
+    "Disable playback"
+   ],
+   "answer": 1,
+   "explanation": "Some software may interpret R:Hornpipe by applying a swung feel during playback; this behavior is software-dependent."
+  }
+ ],
+ [
+  {
+   "q": "What does G2-G2 represent?",
+   "options": [
+    "A slur between different pitches",
+    "Two G notes tied into one sustained sound",
+    "A repeat",
+    "A broken rhythm pair"
+   ],
+   "answer": 1,
+   "explanation": "The hyphen ties the two same-pitch G notes so their durations are sustained together."
+  },
+  {
+   "q": "Which notation creates a slur around several notes?",
+   "options": [
+    "{CDEF}",
+    "(CDEF)",
+    "[CDEF]",
+    "\"CDEF\""
+   ],
+   "answer": 1,
+   "explanation": "Parentheses around notes create a slur."
+  },
+  {
+   "q": "What is a key difference between a tie and a slur?",
+   "options": [
+    "A tie joins the durations of same-pitch notes; a slur indicates phrasing and may span different pitches",
+    "A slur can only connect rests",
+    "A tie always changes pitch",
+    "There is no difference"
+   ],
+   "answer": 0,
+   "explanation": "A tie combines same-pitch note durations, while a slur indicates phrasing or articulation and can span different pitches."
+  },
+  {
+   "q": "What can spaces in ABC influence besides readability?",
+   "options": [
+    "The key signature",
+    "Rhythmic grouping and beaming",
+    "The tune reference number",
+    "The composer field"
+   ],
+   "answer": 1,
+   "explanation": "Spaces can help shape rhythmic grouping and beaming in the rendered notation."
+  }
+ ],
+ [
+  {
+   "q": "For two equal starting note lengths, what does A>B do?",
+   "options": [
+    "Makes A shorter and B longer",
+    "Makes A longer and B shorter",
+    "Makes both notes twice as long",
+    "Turns the pair into a triplet"
+   ],
+   "answer": 1,
+   "explanation": "A single > lengthens the first note and shortens the second while preserving the pair's total duration."
+  },
+  {
+   "q": "For two equal starting durations, a single > makes the first note what fraction of its original duration?",
+   "options": [
+    "1/2",
+    "1",
+    "3/2",
+    "2"
+   ],
+   "answer": 2,
+   "explanation": "With equal starting values, the first becomes 3/2 of its original duration and the second becomes 1/2."
+  },
+  {
+   "q": "What does (3ABC introduce?",
+   "options": [
+    "A first ending",
+    "A triplet",
+    "A three-measure repeat",
+    "Three chord symbols"
+   ],
+   "answer": 1,
+   "explanation": "(3 starts a triplet grouping on the following notes."
+  },
+  {
+   "q": "What does F<G do?",
+   "options": [
+    "Makes F longer and G shorter",
+    "Makes F shorter and G longer",
+    "Makes both notes shorter",
+    "Turns F and G into a triplet"
+   ],
+   "answer": 1,
+   "explanation": "< shortens the first note and lengthens the second while preserving the pair's combined duration."
+  }
+ ],
+ [
+  {
+   "q": "Which symbol starts a repeated section?",
+   "options": [
+    "|:",
+    ":|",
+    "|1",
+    "|]"
+   ],
+   "answer": 0,
+   "explanation": "|: marks the beginning of a repeated section."
+  },
+  {
+   "q": "Which symbol ends a repeated section?",
+   "options": [
+    "|:",
+    ":|",
+    "|2",
+    "||"
+   ],
+   "answer": 1,
+   "explanation": ":| closes the repeated section and sends playback back to its start."
+  },
+  {
+   "q": "Why are repeats useful in ABC source?",
+   "options": [
+    "They avoid duplicating the same music",
+    "They automatically transpose the tune",
+    "They replace the meter field",
+    "They remove bar lines"
+   ],
+   "answer": 0,
+   "explanation": "Repeat syntax encodes the musical form without copying the repeated measures."
+  },
+  {
+   "q": "What should playback normally do with a simple |: ... :| section?",
+   "options": [
+    "Skip it",
+    "Play it twice",
+    "Play only its final measure",
+    "Mute it"
+   ],
+   "answer": 1,
+   "explanation": "Playback follows the repeat marks, so the repeated section is heard again."
+  }
+ ],
+ [
+  {
+   "q": "Which symbol begins a first ending?",
+   "options": [
+    "|1",
+    "|2",
+    "|:",
+    ":|"
+   ],
+   "answer": 0,
+   "explanation": "|1 begins the first ending."
+  },
+  {
+   "q": "Which symbol begins a second ending?",
+   "options": [
+    "|1",
+    "|2",
+    "|]",
+    "::"
+   ],
+   "answer": 1,
+   "explanation": "|2 begins the second ending."
+  },
+  {
+   "q": "On the second pass through a repeated section with alternate endings, what normally happens?",
+   "options": [
+    "Ending one is taken again",
+    "Ending one is skipped and ending two is taken",
+    "Both endings are skipped",
+    "The entire tune stops before the endings"
+   ],
+   "answer": 1,
+   "explanation": "After returning through the repeat, the performer or player skips the first ending and takes the second."
+  },
+  {
+   "q": "Can an ABC first or second ending span more than one measure?",
+   "options": [
+    "No, never",
+    "Yes",
+    "Only in 6/8",
+    "Only when there are lyrics"
+   ],
+   "answer": 1,
+   "explanation": "Alternate endings can span multiple measures."
+  }
+ ],
+ [
+  {
+   "q": "How is a chord symbol such as G normally attached in ABC?",
+   "options": [
+    "{G} before a note",
+    "\"G\" before the note where the harmony changes",
+    "^G after a bar line",
+    "P:G in the header"
+   ],
+   "answer": 1,
+   "explanation": "Chord names are placed in double quotes immediately before the note where the harmony changes."
+  },
+  {
+   "q": "Where do chord symbols normally appear in rendered notation?",
+   "options": [
+    "Below the lyrics",
+    "Above the staff near their change point",
+    "Inside the key signature",
+    "Only in the page title"
+   ],
+   "answer": 1,
+   "explanation": "Quoted chord names are rendered above the staff at the point where the harmony changes."
+  },
+  {
+   "q": "Which of these is a seventh-chord symbol in the lesson example?",
+   "options": [
+    "\"D7\"",
+    "{D7}",
+    "!D7!",
+    "P:D7"
+   ],
+   "answer": 0,
+   "explanation": "\"D7\" is a quoted D7 chord symbol."
+  },
+  {
+   "q": "Which ABC syntax correctly places a G chord symbol before a note G2?",
+   "options": [
+    "{G}G2",
+    "\"G\"G2",
+    "!G!G2",
+    "^GG2"
+   ],
+   "answer": 1,
+   "explanation": "A chord name is enclosed in double quotes immediately before the note, so \"G\"G2 places a G chord symbol at G2."
+  }
+ ],
+ [
+  {
+   "q": "How are grace notes written in ABC?",
+   "options": [
+    "Inside braces { }",
+    "Inside double quotes",
+    "After a Q: field",
+    "Between repeat signs"
+   ],
+   "answer": 0,
+   "explanation": "Grace notes are enclosed in braces, as in {A}G."
+  },
+  {
+   "q": "Which syntax writes a named accent decoration?",
+   "options": [
+    "{accent}",
+    "!accent!",
+    "\"accent\"",
+    "^accent"
+   ],
+   "answer": 1,
+   "explanation": "Named decorations can be written between exclamation marks, such as !accent!."
+  },
+  {
+   "q": "What is ~ commonly used for in ABC?",
+   "options": [
+    "A tune title",
+    "An ornament marker",
+    "A final bar line",
+    "A bass clef"
+   ],
+   "answer": 1,
+   "explanation": "The tilde is a commonly used ornament marker."
+  },
+  {
+   "q": "Can decoration rendering or playback vary between ABC implementations?",
+   "options": [
+    "No, every decoration is identical everywhere",
+    "Yes",
+    "Only for rests",
+    "Only for chord symbols"
+   ],
+   "answer": 1,
+   "explanation": "Exact decoration rendering and playback can depend on the supported ABC features and the software implementation."
+  }
+ ],
+ [
+  {
+   "q": "What does a w: line do?",
+   "options": [
+    "Attaches lyrics to the preceding music line",
+    "Changes the key",
+    "Defines a voice",
+    "Starts a repeat"
+   ],
+   "answer": 0,
+   "explanation": "A w: line supplies lyrics aligned with the preceding line of music."
+  },
+  {
+   "q": "What does P: commonly identify in this lesson?",
+   "options": [
+    "A pitch accidental",
+    "A part or section",
+    "A playback speed",
+    "A grace note"
+   ],
+   "answer": 1,
+   "explanation": "P: can identify sections or parts such as P:A and P:B."
+  },
+  {
+   "q": "What does \"^Above\"C do?",
+   "options": [
+    "Makes C sharp",
+    "Places the word Above above the staff at C",
+    "Moves C up an octave",
+    "Creates a chord named ^Above"
+   ],
+   "answer": 1,
+   "explanation": "The ^ prefix inside quoted text positions the annotation above the staff; the marker itself is not displayed."
+  },
+  {
+   "q": "What does \"_Below\"F do?",
+   "options": [
+    "Makes F flat",
+    "Places the word Below below the staff at F",
+    "Lowers F by an octave",
+    "Creates a rest"
+   ],
+   "answer": 1,
+   "explanation": "The _ prefix inside quoted text positions the annotation below the staff; the marker itself is not displayed."
+  }
+ ],
+ [
+  {
+   "q": "What does a V: line in the header do?",
+   "options": [
+    "Defines a voice and can give it attributes",
+    "Starts a repeat",
+    "Sets the tune title",
+    "Creates a chord"
+   ],
+   "answer": 0,
+   "explanation": "A header V: line defines a voice and can specify attributes such as its name and clef."
+  },
+  {
+   "q": "What does V:1 in the music body do?",
+   "options": [
+    "Defines the meter",
+    "Selects voice 1 for the following notes",
+    "Creates a first ending",
+    "Sets MIDI volume to 1"
+   ],
+   "answer": 1,
+   "explanation": "A body V: field selects which defined voice receives the following notes."
+  },
+  {
+   "q": "What is the purpose of %%score 1 2 in this lesson?",
+   "options": [
+    "It creates voices 1 and 2",
+    "It arranges already-defined voices in the displayed score",
+    "It repeats both voices twice",
+    "It changes both voices to bass clef"
+   ],
+   "answer": 1,
+   "explanation": "%%score controls how existing voices are arranged; it does not create them."
+  },
+  {
+   "q": "What does the lesson's playback do with the two voices?",
+   "options": [
+    "Plays only voice 1",
+    "Plays only voice 2",
+    "Combines both voices",
+    "Alternates voices one measure at a time"
+   ],
+   "answer": 2,
+   "explanation": "The two defined voices are rendered and played together."
+  }
+ ]
+];
+lessonQuizzes.forEach(function(quiz,i){ if(lessons[i]) lessons[i].quiz=quiz; });
+
 function loadState(){
   try{
     var raw=localStorage.getItem(STORAGE_KEY);
@@ -362,7 +1057,7 @@ function showWelcomeIfNeeded(){
   dialog.innerHTML=
     '<h2 id="welcomeTitle">Welcome to the ABC Notation Tutor</h2>'+
     '<div id="welcomeText">'+
-      '<p>The tutor contains 15 progressive lessons. Each lesson includes an ABC example, explanatory notes, rendered notation, and playback.</p>'+
+      '<p>The tutor contains 15 progressive lessons. Each lesson includes an ABC example, explanatory notes, rendered notation, playback, and a short quiz.</p>'+
       '<p><strong>Click the “Start Lesson” button at the top of each lesson for a guided tour of the lesson.</strong></p>'+
       '<p>You can also edit the ABC example at any time to see and hear how your changes affect the music.</p>'+
       '<p>Your lesson-completion progress is saved in this browser.</p>'+
@@ -378,6 +1073,107 @@ function showWelcomeIfNeeded(){
     overlay.remove();
   },{once:true});
   setTimeout(function(){button.focus();},0);
+}
+
+
+var quizOverlay=null;
+var quizKeyHandler=null;
+var quizReturnFocus=null;
+
+function closeQuiz(){
+  if(quizKeyHandler){document.removeEventListener("keydown",quizKeyHandler);quizKeyHandler=null;}
+  if(quizOverlay){quizOverlay.remove();quizOverlay=null;}
+  if(quizReturnFocus && document.contains(quizReturnFocus)){
+    try{quizReturnFocus.focus();}catch(e){}
+  }
+  quizReturnFocus=null;
+}
+
+function startQuiz(){
+  var lesson=current();
+  var quiz=lesson.quiz||[];
+  if(!quiz.length)return;
+  stopAudio();
+  closeQuiz();
+  quizReturnFocus=document.activeElement;
+
+  var index=0,score=0,answered=false;
+  quizOverlay=document.createElement("div");
+  quizOverlay.className="quizOverlay";
+  quizOverlay.setAttribute("role","presentation");
+  var dialog=document.createElement("div");
+  dialog.className="quizDialog";
+  dialog.setAttribute("role","dialog");
+  dialog.setAttribute("aria-modal","true");
+  dialog.setAttribute("aria-labelledby","quizTitle");
+  quizOverlay.appendChild(dialog);
+  document.body.appendChild(quizOverlay);
+
+  function renderQuestion(){
+    answered=false;
+    var item=quiz[index];
+    dialog.innerHTML=
+      '<div class="quizHeader"><div><div class="quizEyebrow">Lesson '+(state.currentLesson+1)+' Quiz</div><h2 id="quizTitle">'+escapeHtml(lesson.title)+'</h2></div>'+ 
+      '<button type="button" class="quizClose" aria-label="Close quiz">×</button></div>'+ 
+      '<div class="quizProgress">Question '+(index+1)+' of '+quiz.length+'</div>'+ 
+      '<div class="quizQuestion">'+escapeHtml(item.q)+'</div>'+ 
+      '<fieldset class="quizOptions"><legend class="srOnly">Choose one answer</legend>'+item.options.map(function(option,optIndex){
+        return '<label class="quizOption"><input type="radio" name="quizAnswer" value="'+optIndex+'"><span>'+escapeHtml(option)+'</span></label>';
+      }).join("")+'</fieldset>'+ 
+      '<div id="quizFeedback" class="quizFeedback" aria-live="polite"></div>'+ 
+      '<div class="quizActions"><button type="button" class="secondary" data-quiz="close">Close</button><button type="button" data-quiz="check" disabled>Check Answer</button></div>';
+
+    var check=dialog.querySelector('[data-quiz="check"]');
+    dialog.querySelectorAll('input[name="quizAnswer"]').forEach(function(input){
+      input.addEventListener("change",function(){check.disabled=false;});
+    });
+    dialog.querySelector('.quizClose').addEventListener("click",closeQuiz);
+    dialog.querySelector('[data-quiz="close"]').addEventListener("click",closeQuiz);
+    check.addEventListener("click",function(){
+      if(answered)return;
+      var selected=dialog.querySelector('input[name="quizAnswer"]:checked');
+      if(!selected)return;
+      answered=true;
+      var selectedIndex=Number(selected.value);
+      var correct=selectedIndex===item.answer;
+      if(correct)score++;
+      dialog.querySelectorAll('.quizOption').forEach(function(label,optIndex){
+        var input=label.querySelector('input');
+        input.disabled=true;
+        if(optIndex===item.answer)label.classList.add('correct');
+        if(optIndex===selectedIndex && !correct)label.classList.add('incorrect');
+      });
+      var feedback=dialog.querySelector('#quizFeedback');
+      feedback.className='quizFeedback '+(correct?'correct':'incorrect');
+      feedback.innerHTML='<strong>'+(correct?'Correct.':'Not quite.')+'</strong> '+escapeHtml(item.explanation);
+      check.textContent=index===quiz.length-1?'Finish Quiz':'Next Question';
+      check.disabled=false;
+      check.onclick=function(){
+        if(index===quiz.length-1)renderResult();
+        else{index++;renderQuestion();}
+      };
+      check.focus();
+    });
+    var first=dialog.querySelector('input[name="quizAnswer"]');
+    if(first)setTimeout(function(){first.focus();},0);
+  }
+
+  function renderResult(){
+    var percent=Math.round((score/quiz.length)*100);
+    dialog.innerHTML=
+      '<div class="quizHeader"><div><div class="quizEyebrow">Lesson '+(state.currentLesson+1)+' Quiz</div><h2 id="quizTitle">Quiz Complete</h2></div>'+ 
+      '<button type="button" class="quizClose" aria-label="Close quiz">×</button></div>'+ 
+      '<div class="quizResult"><div class="quizScore">'+score+' of '+quiz.length+'</div><p>You answered '+percent+'% correctly.</p><p class="muted">You can retry the quiz as often as you like. Quiz scores are not saved.</p></div>'+ 
+      '<div class="quizActions"><button type="button" class="secondary" data-quiz="close">Close</button><button type="button" data-quiz="retry">Retry Quiz</button></div>';
+    dialog.querySelector('.quizClose').addEventListener("click",closeQuiz);
+    dialog.querySelector('[data-quiz="close"]').addEventListener("click",closeQuiz);
+    dialog.querySelector('[data-quiz="retry"]').addEventListener("click",function(){index=0;score=0;renderQuestion();});
+    setTimeout(function(){dialog.querySelector('[data-quiz="retry"]').focus();},0);
+  }
+
+  quizKeyHandler=function(e){if(e.key==="Escape")closeQuiz();};
+  document.addEventListener("keydown",quizKeyHandler);
+  renderQuestion();
 }
 
 function lessonKey(i){ return String(i); }
@@ -539,6 +1335,7 @@ function initEvents(){
   document.getElementById("tourBtn").addEventListener("click",function(){
     if(window.ABCNotationTutorTour) window.ABCNotationTutorTour.start(state.currentLesson);
   });
+  document.getElementById("quizBtn").addEventListener("click",startQuiz);
 }
 window.ABCNotationTutorAPI={
   lessons:lessons,
