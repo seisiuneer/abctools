@@ -279,7 +279,7 @@ w: Do re mi fa | sol la sol mi | fa mi re do | sing it once more |
 P:B
 "_Below"F E D C | D E F G | A G F E | D C C2 |]
 w: Now we walk back | up the scale now | down we come a- | gain home _ |`,
- notes:`<p>A <code>w:</code> line attaches words to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p>Text annotations can also be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation. <code>P:</code> can identify sections or parts of a tune.</p>`,
+ notes:`<p>A <code>w:</code> line attaches words to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p>Text annotations can also be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation.</p><p><code>P:</code> can identify sections or parts of a tune.</p>`,
  tour:[
   ["#abcEditor","w: attaches lyrics to the previous music line","The first lyric line follows the first line of notes and aligns its words under those notes."],
   ["#paper","Lyrics are positioned under the staff","The score displays the words without changing the note pitches."],
