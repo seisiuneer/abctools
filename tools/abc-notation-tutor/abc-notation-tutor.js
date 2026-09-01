@@ -2,6 +2,7 @@
 "use strict";
 
 var STORAGE_KEY = "abcNotationTutorStateV1";
+var WELCOME_KEY = "abcNotationTutorWelcomeSeenV1";
 var FATBOY = "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var renderTimer = null;
 var synthControl = null;
@@ -337,6 +338,48 @@ function saveState(){
     }));
   }catch(e){}
 }
+
+function welcomeSeen(){
+  try{return localStorage.getItem(WELCOME_KEY)==="1";}catch(e){return false;}
+}
+function markWelcomeSeen(){
+  try{localStorage.setItem(WELCOME_KEY,"1");}catch(e){}
+}
+function showWelcomeIfNeeded(){
+  if(welcomeSeen() || document.getElementById("welcomeOverlay")) return;
+
+  var overlay=document.createElement("div");
+  overlay.id="welcomeOverlay";
+  overlay.className="welcomeOverlay";
+  overlay.setAttribute("role","presentation");
+
+  var dialog=document.createElement("div");
+  dialog.className="welcomeDialog";
+  dialog.setAttribute("role","dialog");
+  dialog.setAttribute("aria-modal","true");
+  dialog.setAttribute("aria-labelledby","welcomeTitle");
+  dialog.setAttribute("aria-describedby","welcomeText");
+  dialog.innerHTML=
+    '<h2 id="welcomeTitle">Welcome to the ABC Notation Tutor</h2>'+
+    '<div id="welcomeText">'+
+      '<p>The tutor contains 15 progressive lessons. Each lesson includes an ABC example, explanatory notes, rendered notation, and playback.</p>'+
+      '<p><strong>Click the “Start Lesson” button at the top of each lesson for a guided tour of the lesson.</strong></p>'+
+      '<p>You can also edit the ABC example at any time to see and hear how your changes affect the music.</p>'+
+      '<p>Your lesson-completion progress is saved in this browser.</p>'+
+    '</div>'+
+    '<div class="welcomeActions"><button id="welcomeStartBtn" type="button">Start Learning</button></div>';
+
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+
+  var button=document.getElementById("welcomeStartBtn");
+  button.addEventListener("click",function(){
+    markWelcomeSeen();
+    overlay.remove();
+  },{once:true});
+  setTimeout(function(){button.focus();},0);
+}
+
 function lessonKey(i){ return String(i); }
 function current(){ return lessons[state.currentLesson]; }
 function setStatus(text,isError){
@@ -514,6 +557,6 @@ window.ABCNotationTutorAPI={
 
 loadState();
 if(document.readyState==="loading"){
-  document.addEventListener("DOMContentLoaded",function(){initEvents();showLesson();},{once:true});
-}else{initEvents();showLesson();}
+  document.addEventListener("DOMContentLoaded",function(){initEvents();showLesson();showWelcomeIfNeeded();},{once:true});
+}else{initEvents();showLesson();showWelcomeIfNeeded();}
 })();

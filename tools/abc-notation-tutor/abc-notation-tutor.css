@@ -113,7 +113,7 @@ h2,h3{margin:0;color:var(--builder-ink)}
 }
 .tour-arrow-layer{position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483645;pointer-events:none;overflow:visible}
 .tour-arrow-path{stroke:#d32f2f;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
-@media(max-width:1120px){
+@media(max-width:1000px){
   .main{grid-template-columns:1fr;padding:0 16px 20px}
   .lessonsCard{position:relative;top:auto;max-height:none}
   .lessonList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -135,9 +135,9 @@ h2,h3{margin:0;color:var(--builder-ink)}
 
 
 /* Laptop-first desktop optimization.
-   Keeps the full two-column workspace on typical laptop widths above 1120px
+   Keeps the full two-column workspace on typical 1366x768 through 1440x900
    screens while reducing vertical chrome and giving notation more room. */
-@media (min-width:1121px) and (max-height:950px){
+@media (min-width:1001px) and (max-height:950px){
   :root{
     --page-pad:18px;
     --gap:10px;
@@ -238,7 +238,7 @@ h2,h3{margin:0;color:var(--builder-ink)}
 }
 
 /* Short laptop displays need one more compact step. */
-@media (min-width:1121px) and (max-height:760px){
+@media (min-width:1001px) and (max-height:760px){
   .heroCard{padding:7px 20px 8px}
   .heroTitle{font-size:1.55rem}
   .heroText{font-size:.86rem;margin-top:2px}
@@ -249,4 +249,23 @@ h2,h3{margin:0;color:var(--builder-ink)}
     min-height:340px;
   }
   #abcEditor{min-height:235px}
+}
+
+
+/* First-run introduction dialog. */
+.welcomeOverlay{
+  position:fixed;inset:0;z-index:2147483647;display:flex;align-items:flex-start;justify-content:center;
+  padding:150px 18px 18px;background:rgba(0,0,0,.34)
+}
+.welcomeDialog{
+  width:min(620px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;color:#000;
+  border:1px solid #b9c8be;border-radius:10px;box-shadow:0 14px 36px rgba(0,0,0,.28);padding:24px
+}
+.welcomeDialog h2{margin:0 0 14px;color:var(--builder-ink);font-size:1.45rem}
+.welcomeDialog p{margin:0 0 12px;line-height:1.45}
+.welcomeActions{display:flex;justify-content:center;margin-top:20px;padding-top:16px;border-top:1px solid #d9dfdb}
+.welcomeActions button{min-width:150px}
+@media(max-width:620px){
+  .welcomeOverlay{padding:50px 10px 10px}
+  .welcomeDialog{padding:18px;max-height:calc(100vh - 20px)}
 }
