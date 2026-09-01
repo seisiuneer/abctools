@@ -324,3 +324,11 @@ h2,h3{margin:0;color:var(--builder-ink)}
   .quizDialog{padding:17px;max-height:calc(100vh - 60px)}
   .quizActions button{flex:1 1 130px}
 }
+
+
+/* ABC Transcription Tools handoff button. */
+.abcToolsButton{white-space:nowrap}
+@media(max-width:620px){
+  .notationCard .sectionHeadingRow{align-items:center}
+  .abcToolsButton{white-space:normal;text-align:center}
+}

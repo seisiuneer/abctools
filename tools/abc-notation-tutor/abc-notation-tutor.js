@@ -225,7 +225,7 @@ K:D
 },
 {
  title:"Chord Symbols and Accompaniment",
- summary:"Put quoted chord names before notes and let ABC playback generate harmonic accompaniment.",
+ summary:"Put chord names inside double quotes before notes and let ABC playback generate harmonic accompaniment.",
  goals:['"G" chord symbols',"major/minor/7th chords","chord placement"],
  abc:`X:1
 T:Chord Symbols
@@ -237,10 +237,10 @@ K:G
 %%MIDI bassprog 0
 %%MIDI chordprog 0
 "G" G2 BG d2 BG | "C" E2 GE c2 GE | "G" D2 GB B2 AG | "D7" F2 AF "G" G4 |]`,
- notes:`<p>Put a chord name in double quotes immediately before the note where the harmony changes, for example <code>"G"G2</code> or <code>"D7"F2</code>.</p><p>Chord symbols appear above the staff at the point where the harmony changes. Common chord names such as major, minor, and seventh chords can be entered directly inside the quotes.</p><p>Quoted text is not always a chord symbol. As shown later in Lesson 14, prefixes such as <code>^</code> and <code>_</code> inside the quotes identify text annotations placed above or below the notes.</p>`,
+ notes:`<p>Put a chord name in double quotes immediately before the note where the harmony changes, for example <code>"G"G2</code> or <code>"D7"F2</code>.</p><p>Chord symbols appear above the staff at the point where the harmony changes. Common chord names such as major, minor, and seventh chords can be entered directly inside the double quotes.</p><p>Text in double quotes is not always a chord symbol. As shown later in Lesson 14, prefixes such as <code>^</code> and <code>_</code> at the start of the text inside the double quotes identify text annotations placed above or below the notes.</p>`,
  tour:[
-  ["#abcEditor","Quoted text before a note can be a chord","Find <code>\"G\"</code>, <code>\"C\"</code>, and <code>\"D7\"</code> in the tune body."],
-  ["#paper","Chord symbols appear above the staff","The quoted harmony names are placed where their musical changes occur. Later, Lesson 14 shows how <code>^</code> and <code>_</code> inside quoted text create annotations instead of chord symbols."],
+  ["#abcEditor","Text in double quotes before a note can be a chord","Find <code>\"G\"</code>, <code>\"C\"</code>, and <code>\"D7\"</code> in the tune body."],
+  ["#paper","Chord symbols appear above the staff","The chord names inside double quotes are placed where their musical changes occur. Later, Lesson 14 shows how <code>^</code> and <code>_</code> at the start of text in double quotes create annotations instead of chord symbols."],
   ["#audio","Hear the melody","Use Play to hear the notated melody while following the chord symbols above the staff."]
  ]
 },
@@ -264,11 +264,15 @@ K:G
  ]
 },
 {
- title:"Lyrics, Text, and Parts",
- summary:"Add lyrics with w:, label sections with P:, and place text annotations above or below the staff.",
- goals:["w: lyrics","P: parts",'"^Above" text','"_Below" text'],
+ title:"Comments,  Text, Text Annotations, Lyrics, and Parts",
+ summary:"Learn comments, standalone text, text annotations, lyrics, and part labels in ABC.",
+ goals:["% comments","%%text / %%center",'"^Above" / "_Below" annotations',"w: lyrics","P: parts"],
  abc:`X:1
-T:Words, Text Annotations, and Parts
+T:Comments,  Text, Text Annotations, Lyrics, and Parts
+%
+% This is a comment. Comments start with a single percent sign.
+%
+%%text Here is some left-justified text before the notation
 M:4/4
 L:1/4
 Q:1/4=96
@@ -278,14 +282,15 @@ P:A
 w: Do re mi fa | sol la sol mi | fa mi re do | sing it once more |
 P:B
 "_Below"F E D C | D E F G | A G F E | D C C2 |]
-w: Now we walk back | up the scale now | down we come a- | gain home _ |`,
- notes:`<p>A <code>w:</code> line attaches lyrics to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p>Text annotations can also be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation.</p><p><code>P:</code> can identify sections or parts of a tune.</p>`,
+w: Now we walk back | up the scale now | down we come a- | gain home _ |
+%%center Here is some center-justified text after the notation`,
+ notes:`<p>A single percent sign <code>%</code> starts a comment. Comments are useful for notes in the ABC source and are not rendered as part of the notation.</p><p><code>%%text</code> adds a standalone left-justified line of text, while <code>%%center</code> adds a standalone centered line. In this example they appear before and after the notation.</p><p>Text annotations can be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation.</p><p>A <code>w:</code> line attaches lyrics to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p><code>P:</code> can identify sections or parts of a tune. This example uses <code>P:A</code> and <code>P:B</code>.</p>`,
  tour:[
-  ["#abcEditor","w: attaches lyrics to the previous music line","The first lyric line follows the first line of notes and aligns its words under those notes."],
-  ["#paper","Lyrics are positioned under the staff","The score displays the words without changing the note pitches."],
-  ["#abcEditor","Text annotations can go above or below","In quoted text, the <code>^</code> prefix puts the annotation above the notes and the <code>_</code> prefix puts it below the notes. Here <code>&quot;^Above&quot;C</code> places <em>Above</em> over C, while <code>&quot;_Below&quot;F</code> places <em>Below</em> under F."],
-  ["#paper","See the annotations in the score","Compare <em>Above</em> over the first line of notes with <em>Below</em> under the second line."],
-  ["#abcEditor","P: labels formal sections","The example uses <code>P:A</code> and <code>P:B</code> to identify two parts."],
+  ["#abcEditor","Comments","Comments start with a single percent sign <code>%</code>. The comment near the top of this example is kept in the ABC source but is not rendered as part of the notation."],
+  ["#abcEditor","Text","The <code>%%text</code> command adds a standalone left-justified line of text. The <code>%%center</code> command adds a standalone centered line. This example uses <code>%%text</code> before the notation and <code>%%center</code> after it."],
+  ["#abcEditor","Text Annotations","Text annotations can be attached directly to a note. The <code>^</code> prefix places the annotation above the staff and the <code>_</code> prefix places it below. Here <code>&quot;^Above&quot;C</code> and <code>&quot;_Below&quot;F</code> demonstrate both positions."],
+  ["#abcEditor","Lyrics","A <code>w:</code> line attaches lyrics to the preceding music line. The lyric lines in this example align words and syllables beneath the notes."],
+  ["#abcEditor","Parts","The <code>P:</code> field labels sections or parts of a tune. This example uses <code>P:A</code> and <code>P:B</code> to identify its two parts."],
  ]
 },
 {
@@ -313,7 +318,7 @@ C,4 G,4 | C,4 G,4 | F,4 C4 | C,8 |]`,
   ["#abcEditor","Arrange defined voices with %%score","The score directive controls how the defined voices are arranged in the displayed score; it does not create the voices."],
   ["#abcEditor","Header V: defines; body V: selects","The header <code>V:</code> lines define the voices and their attributes. In the music body, <code>V:1</code> or <code>V:2</code> selects which voice receives the notes that follow."],
   ["#paper","Both voices render together","The notation now contains two coordinated staves instead of one melody staff."],
-  ["#audio","Both voices play at once","Playback combines the voices. This is the foundation for more elaborate ensemble and keyboard ABC."]
+  ["#openInAbcToolsBtn","Continue in ABC Transcription Tools","You now know the core ABC notation used by most tunes. Use <strong>Open in ABC Transcription Tools</strong> to continue with more advanced editing, playback, practice, sharing, and export features."]
  ]
 }
 ];
@@ -847,7 +852,7 @@ var lessonQuizzes = [
     "Only in the page title"
    ],
    "answer": 1,
-   "explanation": "Quoted chord names are rendered above the staff at the point where the harmony changes."
+   "explanation": "Chord names inside double quotes are rendered above the staff at the point where the harmony changes."
   },
   {
    "q": "Which of these is a seventh-chord symbol in the lesson example?",
@@ -858,7 +863,7 @@ var lessonQuizzes = [
     "P:D7"
    ],
    "answer": 0,
-   "explanation": "\"D7\" is a quoted D7 chord symbol."
+   "explanation": "\"D7\" is a D7 chord symbol written inside double quotes."
   },
   {
    "q": "Which ABC syntax correctly places a G chord symbol before a note G2?",
@@ -920,6 +925,50 @@ var lessonQuizzes = [
  ],
  [
   {
+   "q": "What does a single % at the beginning of an ABC line indicate?",
+   "options": [
+    "A comment",
+    "A centered text line",
+    "A part label",
+    "A lyric line"
+   ],
+   "answer": 0,
+   "explanation": "A single percent sign starts a comment. Comments remain in the ABC source but are not rendered as part of the notation."
+  },
+  {
+   "q": "What is the difference between %%text and %%center in this lesson?",
+   "options": [
+    "%%text adds left-justified standalone text; %%center adds centered standalone text",
+    "%%text adds lyrics; %%center adds a part label",
+    "%%text places an annotation above a note; %%center places it below",
+    "%%text starts a comment; %%center ends a comment"
+   ],
+   "answer": 0,
+   "explanation": "%%text adds a standalone left-justified line of text, while %%center adds a standalone centered line of text."
+  },
+  {
+   "q": "What does \"^Above\"C do?",
+   "options": [
+    "Makes C sharp",
+    "Places the word Above above the staff at C",
+    "Moves C up an octave",
+    "Creates a chord named ^Above"
+   ],
+   "answer": 1,
+   "explanation": "The ^ prefix at the start of text inside double quotes positions the annotation above the staff; the marker itself is not displayed."
+  },
+  {
+   "q": "What does \"_Below\"F do?",
+   "options": [
+    "Makes F flat",
+    "Places the word Below below the staff at F",
+    "Lowers F by an octave",
+    "Creates a rest"
+   ],
+   "answer": 1,
+   "explanation": "The _ prefix at the start of text inside double quotes positions the annotation below the staff; the marker itself is not displayed."
+  },
+  {
    "q": "What does a w: line do?",
    "options": [
     "Attaches lyrics to the preceding music line",
@@ -940,28 +989,6 @@ var lessonQuizzes = [
    ],
    "answer": 1,
    "explanation": "P: can identify sections or parts such as P:A and P:B."
-  },
-  {
-   "q": "What does \"^Above\"C do?",
-   "options": [
-    "Makes C sharp",
-    "Places the word Above above the staff at C",
-    "Moves C up an octave",
-    "Creates a chord named ^Above"
-   ],
-   "answer": 1,
-   "explanation": "The ^ prefix inside quoted text positions the annotation above the staff; the marker itself is not displayed."
-  },
-  {
-   "q": "What does \"_Below\"F do?",
-   "options": [
-    "Makes F flat",
-    "Places the word Below below the staff at F",
-    "Lowers F by an octave",
-    "Creates a rest"
-   ],
-   "answer": 1,
-   "explanation": "The _ prefix inside quoted text positions the annotation below the staff; the marker itself is not displayed."
   }
  ],
  [
@@ -1060,6 +1087,7 @@ function showWelcomeIfNeeded(){
       '<p>The tutor contains 15 progressive lessons. Each lesson includes an ABC example, explanatory notes, rendered notation, playback, and a short quiz.</p>'+
       '<p><strong>Click the “Start Lesson” button at the top of each lesson for a guided tour of the lesson.</strong></p>'+
       '<p>You can also edit the ABC example at any time to see and hear how your changes affect the music.</p>'+
+      '<p>When you are ready to explore further, use <strong>Open in ABC Transcription Tools</strong> above the notation to open the current ABC directly in the full editor for more advanced editing, playback, practice, sharing, and export features.</p>'+
       '<p>Your lesson-completion progress is saved in this browser.</p>'+
     '</div>'+
     '<div class="welcomeActions"><button id="welcomeStartBtn" type="button">Start Learning</button></div>';
@@ -1301,6 +1329,47 @@ function renderABC(){
     }
   },120);
 }
+
+function bytesToBase64URL(bytes){
+  var binary="";
+  for(var i=0;i<bytes.length;i++) binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+}
+
+function compressABCDeflate(abcText){
+  if(typeof pako==="undefined") throw new Error("pako.min.js is not loaded.");
+  if(typeof TextEncoder==="undefined") throw new Error("TextEncoder is not available in this browser.");
+  var utf8Bytes=new TextEncoder().encode(String(abcText==null?"":abcText));
+  var deflatedBytes=pako.deflate(utf8Bytes,{level:6});
+  return bytesToBase64URL(deflatedBytes);
+}
+
+function generateABCTranscriptionToolsShareLink(abcText){
+  var params=new URLSearchParams();
+  params.set("def",compressABCDeflate(abcText));
+  params.set("format","noten");
+  params.set("ssp","10");
+  params.set("name","ABC Notation Tutor - "+current().title);
+  params.set("editor","1");
+  var url="https://michaeleskin.com/abctools/abctools.html?"+params.toString();
+  return url.length>8100?null:url;
+}
+
+function openInABCTranscriptionTools(){
+  try{
+    var abc=document.getElementById("abcEditor").value;
+    var url=generateABCTranscriptionToolsShareLink(abc);
+    if(!url){
+      setStatus("The current ABC is too large to open using an ABC Transcription Tools share link.",true);
+      return;
+    }
+    window.open(url,"_blank","noopener");
+    setStatus("Current ABC opened in the ABC Transcription Tools editor.",false);
+  }catch(err){
+    setStatus("Unable to open ABC Transcription Tools: "+(err&&err.message?err.message:String(err)),true);
+  }
+}
+
 function initEvents(){
   document.getElementById("abcEditor").addEventListener("input",renderABC);
   document.getElementById("restoreExampleBtn").addEventListener("click",function(){
@@ -1336,6 +1405,7 @@ function initEvents(){
     if(window.ABCNotationTutorTour) window.ABCNotationTutorTour.start(state.currentLesson);
   });
   document.getElementById("quizBtn").addEventListener("click",startQuiz);
+  document.getElementById("openInAbcToolsBtn").addEventListener("click",openInABCTranscriptionTools);
 }
 window.ABCNotationTutorAPI={
   lessons:lessons,
