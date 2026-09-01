@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <title>ABC Notation Tutor</title>
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ABC Notation Tutor" />
+  <meta property="og:description" content="ABC Notation Tutor" />
+  <meta property="og:url" content="https://michaeleskin.com/tools/abc-notation-tutor/abc-notation-tutor.html" />
+  <meta property="og:site_name" content="ABC Notation Tutor" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/abc-notation-tutor/abc-notation-tutor-3.jpg"/>
+  <meta name="description" content="Fifteen progressive guided lessons for learning ABC music notation.">
+
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+  <link rel="stylesheet" href="abcjs-eskin-audio.css?v=20260901-0145">
+  <link rel="stylesheet" href="abc-notation-tutor.css?v=20260901-0145">
+</head>
+<body>
+<div class="app">
+  <header class="heroCard">
+    <div class="heroTop">
+      <h1 class="heroTitle">ABC Notation Tutor</h1>
+      <p class="heroText">Learn ABC notation in 15 progressive, interactive lessons.<br/>Edit the examples, see the notation update, and hear the result.</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="left">
+      <section class="card lessonsCard" id="lessonsCard">
+        <div class="sectionHeadingRow">
+          <div>
+            <h2>Lessons</h2>
+            <div id="progressText" class="muted small"></div>
+          </div>
+          <button id="resetProgressBtn" class="danger compact" type="button">Mark All Uncompleted</button>
+        </div>
+        <div id="lessonList" class="lessonList" aria-label="ABC lessons"></div>
+      </section>
+    </aside>
+
+    <section class="right">
+      <section class="card lessonHeaderCard" id="lessonHeaderCard">
+        <div class="lessonTitleRow">
+          <div>
+            <div id="lessonNumber" class="eyebrow"></div>
+            <h2 id="lessonTitle"></h2>
+          </div>
+          <div class="headerActions">
+            <button id="tourBtn" class="tourButton" type="button">Start Lesson Tour</button>
+            <button id="completeBtn" type="button">Mark Completed</button>
+          </div>
+        </div>
+        <p id="lessonSummary" class="lessonSummary"></p>
+        <div id="lessonGoals" class="goals"></div>
+      </section>
+
+      <section class="card notesCard" id="notesCard">
+        <h3>Lesson Notes</h3>
+        <div id="lessonNotes" class="lessonNotes"></div>
+        <div class="lessonNav">
+          <button id="prevLessonBtn" class="secondary" type="button">Previous Lesson</button>
+          <button id="nextLessonBtn" type="button">Next Lesson</button>
+        </div>
+      </section>
+
+      <div class="workGrid">
+        <section class="card editorCard" id="editorCard">
+          <div class="sectionHeadingRow">
+            <div>
+              <h3>ABC Editor</h3>
+              <div class="muted small">Try changing the example. Rendering updates automatically.</div>
+            </div>
+            <button id="restoreExampleBtn" class="secondary compact" type="button">Restore Example</button>
+          </div>
+          <textarea id="abcEditor" spellcheck="false" aria-label="ABC editor"></textarea>
+          <div id="status" class="status" aria-live="polite"></div>
+        </section>
+
+        <section class="card notationCard" id="notationCard">
+          <div class="sectionHeadingRow">
+            <div>
+              <h3>Notation & Playback</h3>
+            </div>
+          </div>
+          <div id="paper" class="paper"></div>
+          <div id="audio" class="audio"></div>
+        </section>
+      </div>
+
+
+    </section>
+  </main>
+</div>
+
+<script type="text/javascript" src="abcjs-eskin-portable.js?v=20260901-014111"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+<script type="text/javascript" src="abc-notation-tutor.js?v=20260901-0145"></script>
+<script type="text/javascript" src="abc-notation-tutor-guided-tour.js?v=20260901-0145"></script>
+</body>
+</html>

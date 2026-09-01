@@ -1,0 +1,252 @@
+:root{
+  color-scheme:light;
+  --fs-base:clamp(15px,1.05vw + 12px,17px);
+  --fs-small:var(--fs-base);
+  --page-pad:28px;
+  --gap:14px;
+  --bd:1px solid rgba(127,127,127,.35);
+  --builder-ink:#17241c;
+  --builder-green:#176b43;
+  --builder-green-dark:#0d4c2f;
+  --builder-line:#c9d5cc;
+  --builder-accent:#e2ad3b;
+  --soft-green:#e4efe8;
+  --blue:#174a8b;
+  --red:#8f2f2f;
+  --tour:#687178;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#fff;color:#000}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:var(--fs-base);line-height:1.35}
+button,textarea{font:inherit}
+button{
+  appearance:none;border:1px solid var(--builder-green-dark);background:var(--builder-green);color:#fff;
+  border-radius:6px;padding:10px 14px;line-height:1.15;font-weight:650;cursor:pointer;
+  transition:background .12s ease,box-shadow .12s ease,transform .08s ease
+}
+button:hover{background:var(--builder-green-dark);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+button:active{transform:translateY(1px)}
+button:disabled{opacity:.42;cursor:default;transform:none;box-shadow:none}
+button.secondary{background:var(--soft-green);border-color:#a9c2b1;color:var(--builder-green-dark)}
+button.secondary:hover{background:#d7e8dc}
+button.danger{background:var(--red);border-color:#742424}
+button.danger:hover{background:#742424}
+button.compact{padding:7px 10px;font-size:.88rem}
+.app{min-height:100vh;display:flex;flex-direction:column;gap:var(--gap)}
+.heroCard{
+  margin:0;border-radius:0 0 14px 14px;padding:17px 28px 18px;
+  background:linear-gradient(135deg,var(--builder-green-dark),var(--builder-green));
+  border-bottom:4px solid var(--builder-accent);box-shadow:0 2px 8px rgba(0,0,0,.16);color:#fff
+}
+.heroTop{text-align:center}
+.heroTitle{margin:0;color:#fff;font-size:clamp(1.8rem,4vw,2.35rem);line-height:1.08}
+.heroText{max-width:850px;margin:9px auto 0;color:#dcebe2;line-height:1.45}
+.main{
+  flex:1;display:grid;grid-template-columns:minmax(250px,330px) minmax(0,1fr);gap:var(--gap);
+  padding:0 var(--page-pad) 24px;min-width:0
+}
+.left,.right{min-width:0}
+.right{display:flex;flex-direction:column;gap:var(--gap)}
+.card{border:var(--bd);border-radius:12px;padding:14px;background:#fff;min-width:0}
+.lessonsCard{position:sticky;top:12px;max-height:calc(100vh - 36px);overflow:auto}
+h2,h3{margin:0;color:var(--builder-ink)}
+.sectionHeadingRow,.lessonTitleRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lessonTitleRow{align-items:flex-start}
+.headerActions{display:flex;gap:9px;flex-wrap:wrap}
+.tourButton{background:var(--tour);border-color:#565e64}
+.tourButton:hover{background:#565e64}
+.muted{opacity:.72}.small{font-size:.9rem}
+.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--builder-green);margin-bottom:3px}
+.lessonSummary{margin:12px 0 0;max-width:95ch}
+.goals{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.goalChip{background:#eef5f0;border:1px solid #c7d8cd;color:#234732;border-radius:999px;padding:5px 9px;font-size:.84rem}
+.lessonList{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.lessonItem{
+  width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:8px;
+  text-align:left;background:#fff;color:var(--builder-ink);border:1px solid #cfd9d2;border-radius:8px;padding:9px 10px;font-weight:600
+}
+.lessonItem:hover{background:#f1f7f3}
+.lessonItem.active{background:#e4efe8;border-color:#7eaa8d;box-shadow:inset 4px 0 0 var(--builder-green)}
+.lessonItem .num{
+  width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#eef2ef;color:#355341;font-size:.78rem
+}
+.lessonItem .done{color:var(--builder-green);font-weight:900;min-width:18px;text-align:center}
+.workGrid{display:grid;grid-template-columns:minmax(360px,.9fr) minmax(420px,1.1fr);gap:var(--gap);min-height:440px}
+.editorCard,.notationCard{min-height:440px;display:flex;flex-direction:column}
+#abcEditor{
+  width:100%;flex:1;min-height:330px;resize:vertical;margin-top:11px;border:var(--bd);border-radius:9px;
+  padding:12px;font-family:var(--mono);font-size:14px;line-height:1.45;background:#fff;color:#000;tab-size:2
+}
+#abcEditor:focus{outline:2px solid rgba(23,107,67,.35);border-color:#7aaa8b}
+.status{min-height:1.4em;margin-top:8px;font-size:.86rem;color:#4a5a50}
+.status.error{color:#8a2525}
+.paper{flex:1;overflow:auto;margin-top:8px;padding:4px;background:#fff}
+.paper svg{max-width:100%;height:auto}
+.audio{margin-top:8px;min-height:42px}
+.audio .abcjs-inline-audio{max-width:100%}
+.notesCard{padding-bottom:12px}
+.lessonNotes{margin-top:10px;max-width:100ch}
+.lessonNotes p{margin:0 0 10px}
+.lessonNotes code,.tour-card code{font-family:var(--mono);background:rgba(127,127,127,.14);padding:2px 5px;border-radius:4px}
+.lessonNotes .exampleLine{font-family:var(--mono);white-space:pre-wrap;background:#f6f8f6;border-left:4px solid #abc4b3;padding:8px 10px;margin:8px 0 12px}
+.lessonNav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #d9dfdb}
+
+/* Guided-tour UI, intentionally based on the Chord Chart Generator tour. */
+.tour-overlay{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:2500;pointer-events:auto}
+.tour-card{
+  position:fixed;z-index:2147483646;width:min(500px,calc(100vw - 24px));max-width:calc(100vw - 24px);
+  max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;background:#f5ffff;
+  border:1px solid #bfcfcf;border-radius:5px;box-shadow:0 10px 26px rgba(0,0,0,.25);padding:24px;
+  font-family:Helvetica,Arial,sans-serif
+}
+.tour-card h2{margin:0 0 10px;color:#000;font-size:1.4em;text-align:left}
+.tour-card p{margin:0 0 10px;color:#000;font-size:12pt;line-height:18pt}
+.tour-footer{margin-top:14px;padding-top:12px;border-top:1px solid #d8e3e3}
+.tour-count{text-align:center;color:#333;font-size:.92em;margin-bottom:10px}
+.tour-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.tour-buttons button{min-width:94px;padding:7px 15px;color:#000;background:#e5e5e5;border:1px solid #aaa;font:11pt Helvetica,Arial,sans-serif}
+.tour-buttons button:hover{background:#d5d5d5}
+.tour-highlight{
+  position:relative;z-index:2147483644!important;
+  box-shadow:0 0 0 4px rgba(0,90,173,.30),0 0 0 9999px rgba(255,255,255,.06)!important;border-radius:8px
+}
+.tour-arrow-layer{position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483645;pointer-events:none;overflow:visible}
+.tour-arrow-path{stroke:#d32f2f;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+@media(max-width:1120px){
+  .main{grid-template-columns:1fr;padding:0 16px 20px}
+  .lessonsCard{position:relative;top:auto;max-height:none}
+  .lessonList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .workGrid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .heroCard{padding:14px 14px 15px}
+  .heroTitle{font-size:1.45rem}
+  .heroText{font-size:.9rem}
+  .main{padding:0 10px 16px}
+  .lessonList{grid-template-columns:1fr}
+  .headerActions{width:100%}.headerActions button{flex:1}
+  .sectionHeadingRow{align-items:flex-start}
+  .workGrid{display:block}.notationCard{margin-top:var(--gap)}
+  .lessonNav button{flex:1}
+}
+
+#paper .tutor-playing{fill:#d32f2f!important;stroke:#d32f2f!important;color:#d32f2f!important}
+
+
+/* Laptop-first desktop optimization.
+   Keeps the full two-column workspace on typical laptop widths above 1120px
+   screens while reducing vertical chrome and giving notation more room. */
+@media (min-width:1121px) and (max-height:950px){
+  :root{
+    --page-pad:18px;
+    --gap:10px;
+  }
+
+  .app{gap:10px}
+
+  .heroCard{
+    padding:10px 22px 11px;
+    border-bottom-width:3px;
+    border-radius:0 0 10px 10px;
+  }
+  .heroTitle{font-size:1.72rem}
+  .heroText{
+    margin-top:4px;
+    line-height:1.25;
+    font-size:.92rem;
+  }
+
+  .main{
+    grid-template-columns:minmax(240px,285px) minmax(0,1fr);
+    gap:10px;
+    padding:0 var(--page-pad) 14px;
+  }
+
+  .right{gap:10px}
+  .card{padding:10px 12px;border-radius:9px}
+
+  .lessonsCard{
+    top:8px;
+    max-height:calc(100vh - 16px);
+  }
+  .lessonsCard .sectionHeadingRow{gap:8px}
+  .lessonList{gap:4px;margin-top:8px}
+  .lessonItem{
+    grid-template-columns:24px minmax(0,1fr) auto;
+    gap:7px;
+    padding:6px 8px;
+    border-radius:7px;
+    line-height:1.18;
+    font-size:.91rem;
+  }
+  .lessonItem .num{
+    width:22px;
+    height:22px;
+    font-size:.72rem;
+  }
+  button.compact{padding:5px 8px;font-size:.8rem}
+
+  .lessonTitleRow{gap:8px}
+  .headerActions{gap:6px}
+  .headerActions button{padding:7px 10px}
+  .eyebrow{margin-bottom:1px}
+  .lessonSummary{margin:6px 0 0;line-height:1.28}
+  .goals{gap:5px;margin-top:7px}
+  .goalChip{padding:3px 7px;font-size:.78rem}
+
+  .notesCard{padding:9px 12px}
+  .lessonNotes{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px 16px;
+    margin-top:6px;
+    max-width:none;
+    line-height:1.28;
+  }
+  .lessonNotes p{margin:0}
+  .lessonNav{
+    margin-top:8px;
+    padding-top:8px;
+  }
+  .lessonNav button{padding:7px 11px}
+
+  .workGrid{
+    grid-template-columns:minmax(350px,.88fr) minmax(460px,1.12fr);
+    gap:10px;
+    min-height:clamp(360px,calc(100vh - 365px),540px);
+  }
+  .editorCard,.notationCard{
+    min-height:clamp(360px,calc(100vh - 365px),540px);
+  }
+  #abcEditor{
+    min-height:260px;
+    margin-top:7px;
+    padding:9px 10px;
+    font-size:13px;
+    line-height:1.38;
+  }
+  .status{margin-top:5px;font-size:.8rem}
+  .paper{margin-top:4px;padding:2px}
+  .audio{margin-top:5px;min-height:38px}
+}
+
+/* Slightly wider laptops benefit from a little more notation width. */
+@media (min-width:1280px) and (max-height:950px){
+  .main{grid-template-columns:minmax(240px,270px) minmax(0,1fr)}
+  .workGrid{grid-template-columns:minmax(360px,.84fr) minmax(500px,1.16fr)}
+}
+
+/* Short laptop displays need one more compact step. */
+@media (min-width:1121px) and (max-height:760px){
+  .heroCard{padding:7px 20px 8px}
+  .heroTitle{font-size:1.55rem}
+  .heroText{font-size:.86rem;margin-top:2px}
+  .lessonSummary{font-size:.92rem}
+  .notesCard{padding-top:7px;padding-bottom:7px}
+  .lessonNotes{font-size:.9rem}
+  .workGrid,.editorCard,.notationCard{
+    min-height:340px;
+  }
+  #abcEditor{min-height:235px}
+}
