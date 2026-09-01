@@ -2,12 +2,11 @@
 "use strict";
 
 var STORAGE_KEY = "abcNotationTutorStateV1";
-var LESSON_DATA_VERSION = 3;
 var FATBOY = "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var renderTimer = null;
 var synthControl = null;
 var visualObj = null;
-var state = { currentLesson:0, completed:{}, drafts:{}, lessonDataVersion:LESSON_DATA_VERSION };
+var state = { currentLesson:0, completed:{} };
 
 var lessons = [
 {
@@ -137,12 +136,13 @@ L:1/8
 Q:1/4=108
 K:G
 G2 BG dGBG | A2 cA eAcA | G2 BG d2 Bd | cAFA G4 |]`,
- notes:`<p><code>Q:</code> specifies tempo. <code>R:</code> describes the rhythm or tune type and <code>C:</code> identifies the composer or source. These fields can be displayed in notation and can also help software organize tunes.</p><p>There are many additional ABC information fields, but the same pattern applies: a letter, a colon, then the field value.</p>`,
+ notes:`<p><code>Q:</code> specifies tempo. <code>R:</code> describes the rhythm or tune type, such as <code>R:Reel</code>, <code>R:Jig</code>, or <code>R:Hornpipe</code>, and <code>C:</code> identifies the composer or source. These fields can be displayed in notation and can also help software organize tunes.</p><p>Some ABC software also uses the contents of <code>R:</code> when interpreting playback. For example, a program may automatically apply a swung feel when <code>R:Hornpipe</code> is present. This behavior is software-dependent; the <code>R:</code> field itself primarily identifies the tune's rhythm or type.</p><p>There are many additional ABC information fields, but the same pattern applies: a letter, a colon, then the field value.</p>`,
  tour:[
   ["#abcEditor","Add descriptive metadata","This example identifies a title, composer/source, and rhythm before the musical settings."],
+  ["#abcEditor","R: identifies the rhythm or tune type","Values such as <code>R:Reel</code>, <code>R:Jig</code>, and <code>R:Hornpipe</code> describe the kind of tune."],
   ["#paper","Metadata can appear in the score","The title and selected information fields are rendered along with the notation."],
   ["#abcEditor","Q: controls playback speed","Change <code>Q:1/4=108</code> to <code>Q:1/4=72</code>."],
-  ["#audio","Re-rendered audio uses the new tempo","After editing Q:, use Play to hear the difference."]
+  ["#audio","Some software also interprets R: during playback","Playback behavior is software-dependent. For example, some programs may automatically swing a tune identified with <code>R:Hornpipe</code>."]
  ]
 },
 {
@@ -264,8 +264,8 @@ K:G
 },
 {
  title:"Lyrics, Text, and Parts",
- summary:"Add a lyric line with w:, label sections with P:, and see how text aligns with the music.",
- goals:["w: lyrics","P: parts","syllable alignment"],
+ summary:"Add lyrics with w:, label sections with P:, and place text annotations above or below the staff.",
+ goals:["w: lyrics","P: parts",'"^Above" text','"_Below" text'],
  abc:`X:1
 T:Words and Parts
 M:4/4
@@ -273,17 +273,17 @@ L:1/4
 Q:1/4=96
 K:C
 P:A
-C D E F | G A G E | F E D C | C D E C |
+"^Above"C D E F | G A G E | F E D C | C D E C |
 w: Do re mi fa | sol la sol mi | fa mi re do | sing it once more |
 P:B
-F E D C | D E F G | A G F E | D C C2 |]
+"_Below"F E D C | D E F G | A G F E | D C C2 |]
 w: Now we walk back | up the scale now | down we come a- | gain home _ |`,
- notes:`<p>A <code>w:</code> line attaches words to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p><code>P:</code> can identify sections or parts of a tune. ABC contains many text-oriented features; these two are useful examples of how notation and descriptive material can coexist.</p>`,
+ notes:`<p>A <code>w:</code> line attaches words to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p>Text annotations can also be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation. <code>P:</code> can identify sections or parts of a tune.</p>`,
  tour:[
   ["#abcEditor","w: attaches lyrics to the previous music line","The first lyric line follows the first line of notes and aligns its words under those notes."],
   ["#paper","Lyrics are positioned under the staff","The score displays the words without changing the note pitches."],
+  ["#abcEditor","Text annotations can go above or below","<code>&quot;^Above&quot;C</code> puts text above C; <code>&quot;_Below&quot;F</code> puts text below F. The ^ prefix causes the text to be rendered above the notes and the _ prefix causes the text to be rendered below the notes."],
   ["#abcEditor","P: labels formal sections","The example uses <code>P:A</code> and <code>P:B</code> to identify two parts."],
-  ["#paper","ABC can carry structure and text together","The rendered score shows that ABC is more than a stream of note letters."]
  ]
 },
 {
@@ -318,27 +318,23 @@ C,4 G,4 | C,4 G,4 | F,4 C4 | C,8 |]`,
 
 function loadState(){
   try{
-    var raw = localStorage.getItem(STORAGE_KEY);
+    var raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
-      var saved = JSON.parse(raw);
+      var saved=JSON.parse(raw);
       if(saved && typeof saved === "object"){
-        state.currentLesson = Math.max(0,Math.min(lessons.length-1,Number(saved.currentLesson)||0));
-        state.completed = saved.completed && typeof saved.completed==="object" ? saved.completed : {};
-        // Lesson examples can be corrected between releases. Preserve progress, but
-        // discard drafts created from an older lesson-data version so stale ABC
-        // cannot override the corrected built-in examples.
-        if(Number(saved.lessonDataVersion) === LESSON_DATA_VERSION){
-          state.drafts = saved.drafts && typeof saved.drafts==="object" ? saved.drafts : {};
-        }else{
-          state.drafts = {};
-        }
-        state.lessonDataVersion = LESSON_DATA_VERSION;
+        state.currentLesson=Math.max(0,Math.min(lessons.length-1,Number(saved.currentLesson)||0));
+        state.completed=saved.completed && typeof saved.completed==="object" ? saved.completed : {};
       }
     }
   }catch(e){}
 }
 function saveState(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({
+      currentLesson:state.currentLesson,
+      completed:state.completed
+    }));
+  }catch(e){}
 }
 function lessonKey(i){ return String(i); }
 function current(){ return lessons[state.currentLesson]; }
@@ -358,14 +354,13 @@ function renderLessonList(){
     var done=!!state.completed[lessonKey(i)];
     b.innerHTML='<span class="num">'+(i+1)+'</span><span>'+escapeHtml(lesson.title)+'</span><span class="done">'+(done?"✓":"")+"</span>";
     b.title=(done?"Completed: ":"Open: ")+lesson.title;
-    b.addEventListener("click",function(){ selectLesson(i,true); });
+    b.addEventListener("click",function(){ selectLesson(i); });
     list.appendChild(b);
   });
   var count=Object.keys(state.completed).filter(function(k){return state.completed[k];}).length;
   document.getElementById("progressText").textContent=count+" of "+lessons.length+" lessons completed";
 }
-function selectLesson(i,saveCurrentDraft){
-  if(saveCurrentDraft) storeDraft();
+function selectLesson(i){
   stopAudio();
   state.currentLesson=Math.max(0,Math.min(lessons.length-1,i));
   saveState();
@@ -377,20 +372,6 @@ function sanitizeEditorABC(abc){
     .replace(/^[ \t]*%%stretchlast[ \t]+true[ \t]*(?:\r?\n|$)/gmi,"");
 }
 
-function migrateLessonDraft(lessonIndex, abc){
-  var value=sanitizeEditorABC(abc);
-
-  // Lesson 15: migrate older RH/LH, parenthesized score, and inline voice forms.
-  if(Number(lessonIndex)===14){
-    var oldVoiceSyntax =
-      /%%score\s*\(\s*(?:RH\s+LH|1\s+2)\s*\)|\bV:RH\b|\bV:LH\b|\[V:1\]|\[V:2\]|\[V:RH\]|\[V:LH\]/;
-    if(oldVoiceSyntax.test(value)){
-      value=lessons[14].abc;
-    }
-  }
-
-  return value;
-}
 
 function addRenderStretchLast(abc){
   var value=String(abc == null ? "" : abc);
@@ -418,10 +399,7 @@ function showLesson(){
   document.getElementById("lessonSummary").textContent=l.summary;
   document.getElementById("lessonGoals").innerHTML=l.goals.map(function(g){return '<span class="goalChip">'+escapeHtml(g)+'</span>';}).join("");
   document.getElementById("lessonNotes").innerHTML=l.notes;
-  var displayedABC=Object.prototype.hasOwnProperty.call(state.drafts,key)?state.drafts[key]:l.abc;
-  displayedABC=migrateLessonDraft(state.currentLesson,displayedABC);
-  if(Object.prototype.hasOwnProperty.call(state.drafts,key)) state.drafts[key]=displayedABC;
-  document.getElementById("abcEditor").value=displayedABC;
+  document.getElementById("abcEditor").value=sanitizeEditorABC(l.abc);
   document.getElementById("completeBtn").textContent=state.completed[key]?"Mark Uncompleted":"Mark Completed";
   document.getElementById("completeBtn").classList.toggle("secondary",!!state.completed[key]);
   document.getElementById("prevLessonBtn").disabled=state.currentLesson===0;
@@ -429,11 +407,6 @@ function showLesson(){
   renderLessonList();
   renderABC();
   window.scrollTo({top:0,behavior:"smooth"});
-}
-function storeDraft(){
-  var editor=document.getElementById("abcEditor");
-  if(editor) state.drafts[lessonKey(state.currentLesson)]=editor.value;
-  saveState();
 }
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];});
@@ -464,8 +437,6 @@ function renderABC(){
   clearTimeout(renderTimer);
   renderTimer=setTimeout(function(){
     var abc=document.getElementById("abcEditor").value;
-    state.drafts[lessonKey(state.currentLesson)]=abc;
-    saveState();
     var renderABCText=addRenderStretchLast(abc);
     destroySynth();
     document.getElementById("paper").innerHTML="";
@@ -493,13 +464,18 @@ function renderABC(){
 function initEvents(){
   document.getElementById("abcEditor").addEventListener("input",renderABC);
   document.getElementById("restoreExampleBtn").addEventListener("click",function(){
-    state.drafts[lessonKey(state.currentLesson)]=migrateLessonDraft(state.currentLesson,current().abc); saveState(); showLesson();
+    stopAudio();
+    document.getElementById("abcEditor").value=sanitizeEditorABC(current().abc);
+    renderABC();
   });
   document.getElementById("completeBtn").addEventListener("click",function(){
     var key=lessonKey(state.currentLesson);
     state.completed[key]=!state.completed[key];
     if(!state.completed[key]) delete state.completed[key];
-    saveState(); showLesson();
+    saveState();
+    document.getElementById("completeBtn").textContent=state.completed[key]?"Mark Uncompleted":"Mark Completed";
+    document.getElementById("completeBtn").classList.toggle("secondary",!!state.completed[key]);
+    renderLessonList();
   });
   document.getElementById("resetProgressBtn").addEventListener("click",async function(){
     if(!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.confirm){
@@ -508,23 +484,29 @@ function initEvents(){
     }
     var result=await DayPilot.Modal.confirm("Mark all 15 lessons as uncompleted?");
     if(result.canceled) return;
-    state.completed={}; saveState(); showLesson();
+    state.completed={};
+    saveState();
+    document.getElementById("completeBtn").textContent="Mark Completed";
+    document.getElementById("completeBtn").classList.remove("secondary");
+    renderLessonList();
   });
-  document.getElementById("prevLessonBtn").addEventListener("click",function(){ if(state.currentLesson>0) selectLesson(state.currentLesson-1,true);});
-  document.getElementById("nextLessonBtn").addEventListener("click",function(){ if(state.currentLesson<lessons.length-1) selectLesson(state.currentLesson+1,true);});
+  document.getElementById("prevLessonBtn").addEventListener("click",function(){ if(state.currentLesson>0) selectLesson(state.currentLesson-1);});
+  document.getElementById("nextLessonBtn").addEventListener("click",function(){ if(state.currentLesson<lessons.length-1) selectLesson(state.currentLesson+1);});
   document.getElementById("tourBtn").addEventListener("click",function(){
     if(window.ABCNotationTutorTour) window.ABCNotationTutorTour.start(state.currentLesson);
   });
-  window.addEventListener("beforeunload",storeDraft);
 }
 window.ABCNotationTutorAPI={
   lessons:lessons,
   getCurrentLessonIndex:function(){return state.currentLesson;},
-  selectLesson:function(i){selectLesson(i,true);},
+  selectLesson:function(i){selectLesson(i);},
   markCurrentCompleted:function(value){
     var key=lessonKey(state.currentLesson);
     if(value===false) delete state.completed[key]; else state.completed[key]=true;
-    saveState(); showLesson();
+    saveState();
+    document.getElementById("completeBtn").textContent=state.completed[key]?"Mark Uncompleted":"Mark Completed";
+    document.getElementById("completeBtn").classList.toggle("secondary",!!state.completed[key]);
+    renderLessonList();
   },
   render:function(){renderABC();}
 };
