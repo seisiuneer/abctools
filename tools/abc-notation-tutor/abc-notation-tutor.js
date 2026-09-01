@@ -40,11 +40,11 @@ Q:1/4=90
 K:C
 C D E F | G A B c | c d e f | g a b c' |
 C, D, E, F, | G, A, B, C | ^F _B =B c | ^C _E =E G |]`,
- notes:`<p>Uppercase <code>C D E F G A B</code> are the lower written octave; lowercase <code>c d e f g a b</code> are one octave higher. Add commas to lower a note by octaves and apostrophes to raise it.</p><p>Use <code>^</code> for a sharp, <code>_</code> for a flat, and <code>=</code> for an explicit natural.</p>`,
+ notes:`<p>Uppercase <code>C D E F G A B</code> are the lower written octave; lowercase <code>c d e f g a b</code> are one octave higher. Add commas to lower a note by octaves and apostrophes to raise it.</p><p>Use <code>^</code> for a sharp, <code>_</code> for a flat, and <code>=</code> for an explicit natural. An accidental normally carries through the rest of that measure for the same pitch, then the key signature applies again in the next measure.</p>`,
  tour:[
   ["#abcEditor","Letter case changes octave","Compare uppercase <code>C</code> with lowercase <code>c</code>. Then compare <code>c</code> with <code>c'</code>."],
   ["#paper","See the octave changes","The first three measures climb through several octaves."],
-  ["#abcEditor","Accidentals go before notes","The second line demonstrates <code>^F</code>, <code>_B</code>, <code>=B</code>, and other explicit accidentals."],
+  ["#abcEditor","Accidentals go before notes","The second line demonstrates <code>^F</code>, <code>_B</code>, <code>=B</code>, and other explicit accidentals. Once introduced, an accidental normally remains in effect for that pitch through the rest of the measure."],
   ["#audio","Hear the pitch spelling","Play the example and listen to the octave jumps and accidentals."]
  ]
 },
@@ -59,9 +59,9 @@ L:1/8
 Q:1/4=90
 K:C
 C D E2 F4 | G4 z4 | A/2 B/2 c d e2 f3 | g3 a b2 z2 |]`,
- notes:`<p><code>L:1/8</code> says an undecorated note is an eighth note. A number multiplies that default: <code>E2</code> is twice as long and <code>G4</code> is four times as long.</p><p>A slash divides the duration. <code>A/2</code> can also be written <code>A/</code>. The letter <code>z</code> means a rest and takes the same length syntax as a note.</p>`,
+ notes:`<p><code>L:1/8</code> says a note letter with no length number after it is an eighth note. A number multiplies that default: <code>E2</code> is twice as long and <code>G4</code> is four times as long.</p><p>A slash divides the duration. <code>A/2</code> can also be written <code>A/</code>. The letter <code>z</code> means a rest and takes the same length syntax as a note.</p>`,
  tour:[
-  ["#abcEditor","L: establishes the unit","Here <code>L:1/8</code> makes a bare note an eighth note."],
+  ["#abcEditor","L: establishes the unit","Here <code>L:1/8</code> makes a note letter with no length number after it an eighth note."],
   ["#abcEditor","Numbers multiply duration","Look for <code>E2</code>, <code>G4</code>, and <code>g3</code>."],
   ["#abcEditor","Fractions shorten duration","The pair <code>A/2 B/2</code> uses half of the default note length for each note."],
   ["#paper","Rests occupy time too","The <code>z4</code> and <code>z2</code> entries render as rests of different lengths."]
@@ -96,10 +96,10 @@ L:1/8
 Q:3/8=96
 K:D
 d2 e fed | A2 d d2 e | fed e2 d | cBc A2 A |]`,
- notes:`<p><code>M:</code> sets the meter. Common examples are <code>M:4/4</code>, <code>M:3/4</code>, and <code>M:6/8</code>. <code>L:</code> sets the length represented by a plain note symbol.</p><p>In 6/8 with <code>L:1/8</code>, six bare eighth-note units fill each measure in this example. Every bar here is complete, so you can compare the meter directly with the note-length totals.</p>`,
+ notes:`<p><code>M:</code> sets the meter, which tells you how each measure is organized. Common examples are <code>M:4/4</code>, <code>M:3/4</code>, and <code>M:6/8</code>. <code>L:</code> sets the duration represented by a plain note symbol. In short: <code>M:</code> describes the measure, while <code>L:</code> sets the default length of a note letter with no length number after it.</p><p>In 6/8 with <code>L:1/8</code>, six eighth notes fill each measure in this example. Every bar here is complete, so you can compare the meter directly with the note-length totals.</p>`,
  tour:[
   ["#abcEditor","M:6/8 establishes compound meter","The meter is six eighth notes per full measure."],
-  ["#abcEditor","L:1/8 keeps the ABC compact","Bare notes already mean eighth notes, so most notes need no length suffix."],
+  ["#abcEditor","L:1/8 keeps the ABC compact","Note letters with no length number after them already mean eighth notes, so most notes need no length suffix."],
   ["#paper","The notation groups the pulse","Notice how each complete 6/8 measure is visually grouped into two main beats."],
   ["#audio","Tempo can use the dotted-beat grouping","Here <code>Q:3/8=96</code> defines the tempo in groups of three eighth notes."]
  ]
@@ -115,11 +115,11 @@ L:1/8
 Q:1/4=92
 K:D
 D2 EF G2 A2 | B2 cd e2 f2 | g2 fe d2 cB | A2 GF E2 D2 |]`,
- notes:`<p><code>K:</code> sets the key signature. In <code>K:D</code>, F and C are sharp by default, so you write <code>F</code> and <code>C</code> rather than adding a sharp every time.</p><p>ABC also accepts common minor and modal key spellings such as <code>K:Am</code>, <code>K:Edor</code>, and <code>K:Amix</code>.</p>`,
+ notes:`<p><code>K:</code> sets the key signature. In <code>K:D</code>, F and C are sharp by default, so you write <code>F</code> and <code>C</code> rather than adding a sharp every time.</p><p>ABC also accepts common minor and modal key spellings such as <code>K:Am</code>, <code>K:Edor</code>, and <code>K:Amix</code>. Here <code>Edor</code> means E Dorian and <code>Amix</code> means A Mixolydian: the letters after the tonic identify the mode.</p>`,
  tour:[
   ["#abcEditor","The key belongs at the end of the header","The <code>K:D</code> field both sets D major and tells the parser the music body follows."],
   ["#paper","The key signature supplies accidentals","The staff shows two sharps even though the ABC notes use plain F and C letters."],
-  ["#abcEditor","Try a different key","Change <code>K:D</code> to <code>K:G</code> and observe both the key signature and pitches."],
+  ["#abcEditor","Key names can include a mode","Spellings such as <code>K:Edor</code> and <code>K:Amix</code> mean E Dorian and A Mixolydian. The text after the tonic identifies the mode."],
   ["#audio","Playback follows the key signature","The sounding pitches reflect the active key unless you explicitly override an accidental."]
  ]
 },
@@ -136,9 +136,9 @@ L:1/8
 Q:1/4=108
 K:G
 G2 BG dGBG | A2 cA eAcA | G2 BG d2 Bd | cAFA G4 |]`,
- notes:`<p><code>Q:</code> specifies tempo. <code>R:</code> describes the rhythm or tune type, such as <code>R:Reel</code>, <code>R:Jig</code>, or <code>R:Hornpipe</code>, and <code>C:</code> identifies the composer or source. These fields can be displayed in notation and can also help software organize tunes.</p><p>Some ABC software also uses the contents of <code>R:</code> when interpreting playback. For example, a program may automatically apply a swung feel when <code>R:Hornpipe</code> is present. This behavior is software-dependent; the <code>R:</code> field itself primarily identifies the tune's rhythm or type.</p><p>There are many additional ABC information fields, but the same pattern applies: a letter, a colon, then the field value.</p>`,
+ notes:`<p><code>Q:</code> specifies tempo. <code>R:</code> describes the rhythm or tune type, such as <code>R:Reel</code>, <code>R:Jig</code>, or <code>R:Hornpipe</code>, and <code>C:</code> identifies the composer or source. These fields can be displayed in notation and can also help software organize tunes.</p><p>Some ABC software also uses the contents of <code>R:</code> when interpreting playback. For example, a program may automatically apply a swung feel when <code>R:Hornpipe</code> is present. This behavior is software-dependent; the <code>R:</code> field itself primarily identifies the tune's rhythm or type.</p><p>A tune can also contain more than one <code>T:</code> field. Additional title fields are often used for alternate titles. There are many other ABC information fields, but the same general pattern applies: a letter, a colon, then the field value.</p>`,
  tour:[
-  ["#abcEditor","Add descriptive metadata","This example identifies a title, composer/source, and rhythm before the musical settings."],
+  ["#abcEditor","Add descriptive metadata","This example identifies a title, composer/source, and rhythm before the musical settings. ABC can also use additional <code>T:</code> fields for alternate titles."],
   ["#abcEditor","R: identifies the rhythm or tune type","Values such as <code>R:Reel</code>, <code>R:Jig</code>, and <code>R:Hornpipe</code> describe the kind of tune."],
   ["#paper","Metadata can appear in the score","The title and selected information fields are rendered along with the notation."],
   ["#abcEditor","Q: controls playback speed","Change <code>Q:1/4=108</code> to <code>Q:1/4=72</code>."],
@@ -156,10 +156,10 @@ L:1/8
 Q:1/4=88
 K:C
 (CD EF) G2-G2 | G4 (AB cd) | e2 d2 c2 B2 | A4 G4 |]`,
- notes:`<p>A hyphen after a note ties it to the next note of the same pitch: <code>G2-G2</code>. Parentheses around a group, such as <code>(CD EF)</code>, create a slur.</p><p>Spaces in ABC can influence rhythmic grouping and beaming. They are useful for making the source easier to read as well as shaping notation.</p>`,
+ notes:`<p>A hyphen after a note ties it to the next note of the same pitch: <code>G2-G2</code>. A tie combines their durations into one sustained sound. Parentheses around a group, such as <code>(CD EF)</code>, create a slur. Unlike a tie, a slur can connect different pitches and indicates phrasing or articulation rather than combining note durations.</p><p>Spaces in ABC can influence rhythmic grouping and beaming. They are useful for making the source easier to read as well as shaping notation.</p>`,
  tour:[
   ["#abcEditor","A hyphen creates a tie","Find <code>G2-G2</code>. Both G notes sound as one sustained event across their written division."],
-  ["#paper","A tie joins matching pitches","The curved tie connects the two G notes."],
+  ["#paper","Ties and slurs have different jobs","A tie connects notes of the same pitch and combines their duration. A slur can span different pitches and indicates phrasing or articulation."],
   ["#abcEditor","Parentheses create slurs","The groups <code>(CD EF)</code> and <code>(AB cd)</code> are phrased with slurs."],
   ["#paper","Spacing helps communicate rhythm","Compare the visual grouping with the spaces in the ABC source."]
  ]
@@ -175,9 +175,9 @@ L:1/8
 Q:1/4=92
 K:D
 A>B AF D2 FA | (3ABA (3GFE D4 | F<G AB d2 cd | (3efg (3fed A4 |]`,
- notes:`<p><code>A&gt;B</code> lengthens the first note and shortens the second; <code>A&lt;B</code> does the reverse. Repeated symbols such as <code>&gt;&gt;</code> make the contrast stronger.</p><p><code>(3ABC</code> introduces a triplet. ABC also supports other tuplet counts, but triplets are the most common starting point.</p>`,
+ notes:`<p><code>A&gt;B</code> lengthens the first note and shortens the second; <code>A&lt;B</code> does the reverse. With two equal starting durations, a single <code>&gt;</code> makes the first note 3/2 of its original length and the second 1/2, while preserving their combined duration. Repeated symbols such as <code>&gt;&gt;</code> make the contrast stronger.</p><p><code>(3ABC</code> introduces a triplet. ABC also supports other tuplet counts, but triplets are the most common starting point.</p>`,
  tour:[
-  ["#abcEditor","Broken rhythm uses angle brackets","The first measure begins <code>A&gt;B</code>, which makes A longer and B shorter. Later <code>F&lt;G</code> makes F shorter and G longer."],
+  ["#abcEditor","Broken rhythm uses angle brackets","The first measure begins <code>A&gt;B</code>, which makes A longer and B shorter while keeping the pair's total duration unchanged. With equal starting values, the first becomes 3/2 as long and the second 1/2 as long."],
   ["#paper","See the unequal durations","The notation shows the dotted/shortened rhythmic effect without spelling out explicit fractions."],
   ["#abcEditor","(3 starts a triplet","Each <code>(3</code> applies a triplet grouping to the following notes."],
   ["#audio","Hear both rhythm devices","Playback makes the contrast between broken rhythm and evenly spaced triplets clear."]
@@ -194,12 +194,12 @@ L:1/8
 Q:1/4=96
 K:G
 |: G2 AB B2 AG | E2 EF G4 | A2 AB c2 BA | G2 GE D4 :|]`,
- notes:`<p><code>|:</code> starts a repeated section and <code>:|</code> ends it. The notation displays repeat dots, and playback follows the repeat structure.</p><p>Repeats are one of ABC's biggest space savers: you encode the musical structure rather than copying the same measures twice.</p>`,
+ notes:`<p><code>|:</code> starts a repeated section and <code>:|</code> ends it. The notation displays repeat dots, and playback follows the repeat structure.</p><p>Repeats are one of ABC's biggest space savers: you encode the musical structure rather than copying the same measures twice. The next lesson builds on this same repeat syntax by adding first and second endings.</p>`,
  tour:[
   ["#abcEditor","Start the repeated section with |:","The repeat begins immediately after the key header."],
   ["#abcEditor","Close it with :|","The final bar sends the performer or player back to the repeat start."],
   ["#paper","Repeat symbols render conventionally","The staff shows the same repeat marks used in printed music."],
-  ["#audio","Playback understands repeats","Play the example and the section will be heard twice."]
+  ["#audio","Playback understands repeats","The player follows the repeat structure, so the section is heard twice. Lesson 11 builds on the same syntax with alternate endings."]
  ]
 },
 {
@@ -214,9 +214,9 @@ Q:1/4=96
 K:D
 |: D2 FA A2 d2 | c2 BA F4 | G2 BG E2 GE | A2 FD E4 |
 |1 D2 FA D4 | A2 GF E4 :|2 D2 FA d4 | c2 A2 D4 |]`,
- notes:`<p><code>|1</code> begins the first ending. After the repeat returns, <code>|2</code> begins the second ending. This is much cleaner than duplicating the entire repeated passage.</p><p>Endings can span more than one measure; the simple example here keeps each ending short so the syntax is easy to see.</p>`,
+ notes:`<p>This lesson builds directly on the repeat syntax from Lesson 10. <code>|1</code> begins the first ending. After the repeat returns, <code>|2</code> begins the second ending. This is much cleaner than duplicating the entire repeated passage.</p><p>Endings can span more than one measure; the simple example here keeps each ending short so the syntax is easy to see.</p>`,
  tour:[
-  ["#abcEditor","The repeat body comes first","The music begins with <code>|:</code> and continues to the alternate-ending point."],
+  ["#abcEditor","This builds on Lesson 10 repeats","The music begins with the same <code>|:</code> repeat syntax from the previous lesson and continues to the alternate-ending point."],
   ["#abcEditor","|1 introduces ending one","The first pass takes the music under the first ending and reaches <code>:|</code>."],
   ["#abcEditor","|2 introduces ending two","After repeating, playback skips ending one and takes ending two instead."],
   ["#paper","The brackets show the form visually","The rendered notation labels the alternate endings above the staff."]
@@ -236,10 +236,10 @@ K:G
 %%MIDI bassprog 0
 %%MIDI chordprog 0
 "G" G2 BG d2 BG | "C" E2 GE c2 GE | "G" D2 GB B2 AG | "D7" F2 AF "G" G4 |]`,
- notes:`<p>Put a chord name in double quotes immediately before the note where the harmony changes, for example <code>"G"G2</code> or <code>"D7"F2</code>.</p><p>Chord symbols appear above the staff at the point where the harmony changes. Common chord names such as major, minor, and seventh chords can be entered directly inside the quotes.</p>`,
+ notes:`<p>Put a chord name in double quotes immediately before the note where the harmony changes, for example <code>"G"G2</code> or <code>"D7"F2</code>.</p><p>Chord symbols appear above the staff at the point where the harmony changes. Common chord names such as major, minor, and seventh chords can be entered directly inside the quotes.</p><p>Quoted text is not always a chord symbol. As shown later in Lesson 14, prefixes such as <code>^</code> and <code>_</code> inside the quotes identify text annotations placed above or below the notes.</p>`,
  tour:[
   ["#abcEditor","Quoted text before a note can be a chord","Find <code>\"G\"</code>, <code>\"C\"</code>, and <code>\"D7\"</code> in the tune body."],
-  ["#paper","Chord symbols appear above the staff","The quoted harmony names are placed where their musical changes occur."],
+  ["#paper","Chord symbols appear above the staff","The quoted harmony names are placed where their musical changes occur. Later, Lesson 14 shows how <code>^</code> and <code>_</code> inside quoted text create annotations instead of chord symbols."],
   ["#audio","Hear the melody","Use Play to hear the notated melody while following the chord symbols above the staff."]
  ]
 },
@@ -259,7 +259,7 @@ K:G
   ["#abcEditor","Grace notes live in braces","The notes inside <code>{A}</code> and <code>{Bc}</code> decorate the main note that follows."],
   ["#paper","Grace notes are drawn smaller","The renderer distinguishes them visually from the principal melody notes."],
   ["#abcEditor","Named decorations use !...!","Try moving <code>!accent!</code> or changing the decorated note."],
-  ["#audio","Some decorations affect playback","Hear how the portable library interprets the grace notes and supported ornaments."]
+  ["#audio","Some decorations affect playback","Hear how the playback interprets the grace notes and supported ornaments."]
  ]
 },
 {
@@ -282,7 +282,8 @@ w: Now we walk back | up the scale now | down we come a- | gain home _ |`,
  tour:[
   ["#abcEditor","w: attaches lyrics to the previous music line","The first lyric line follows the first line of notes and aligns its words under those notes."],
   ["#paper","Lyrics are positioned under the staff","The score displays the words without changing the note pitches."],
-  ["#abcEditor","Text annotations can go above or below","<code>&quot;^Above&quot;C</code> puts text above C; <code>&quot;_Below&quot;F</code> puts text below F. The ^ prefix causes the text to be rendered above the notes and the _ prefix causes the text to be rendered below the notes."],
+  ["#abcEditor","Text annotations can go above or below","In quoted text, the <code>^</code> prefix puts the annotation above the notes and the <code>_</code> prefix puts it below the notes. Here <code>&quot;^Above&quot;C</code> places <em>Above</em> over C, while <code>&quot;_Below&quot;F</code> places <em>Below</em> under F."],
+  ["#paper","See the annotations in the score","Compare <em>Above</em> over the first line of notes with <em>Below</em> under the second line."],
   ["#abcEditor","P: labels formal sections","The example uses <code>P:A</code> and <code>P:B</code> to identify two parts."],
  ]
 },
@@ -305,11 +306,11 @@ V:1
 C2 E2 G2 c2 | B2 G2 E2 C2 | F2 A2 c2 A2 | G8 |]
 V:2
 C,4 G,4 | C,4 G,4 | F,4 C4 | C,8 |]`,
- notes:`<p><code>V:</code> identifies voices. A voice can be defined in the header with attributes such as a display name or clef, then selected in the body with a <code>V:</code> field such as <code>V:1</code>.</p><p>The <code>%%score</code> directive tells abcjs how to arrange the voices. This example creates a treble melody and bass line and plays both using a piano sound.</p>`,
+ notes:`<p><code>V:</code> identifies voices. A <code>V:</code> line in the header can define a voice with attributes such as its display name or clef. A <code>V:</code> field in the music body then selects which defined voice the following notes belong to.</p><p>The <code>%%score</code> directive controls how those already-defined voices are arranged in the displayed score; it does not create the voices. This example arranges a treble melody and bass line and plays both using a piano sound.</p>`,
  tour:[
   ["#abcEditor","Define each voice in the header","The <code>V:1</code> and <code>V:2</code> lines name the voices and give them treble and bass clefs."],
-  ["#abcEditor","Arrange voices with %%score","The score directive groups the two voices into one multi-staff system."],
-  ["#abcEditor","Select voices in the music body","Each body section begins with <code>V:1</code> or <code>V:2</code>, so the following notes go to the correct staff."],
+  ["#abcEditor","Arrange defined voices with %%score","The score directive controls how the defined voices are arranged in the displayed score; it does not create the voices."],
+  ["#abcEditor","Header V: defines; body V: selects","The header <code>V:</code> lines define the voices and their attributes. In the music body, <code>V:1</code> or <code>V:2</code> selects which voice receives the notes that follow."],
   ["#paper","Both voices render together","The notation now contains two coordinated staves instead of one melody staff."],
   ["#audio","Both voices play at once","Playback combines the voices. This is the foundation for more elaborate ensemble and keyboard ABC."]
  ]
