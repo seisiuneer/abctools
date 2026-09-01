@@ -39,6 +39,18 @@ button.compact{padding:7px 10px;font-size:.88rem}
   background:linear-gradient(135deg,var(--builder-green-dark),var(--builder-green));
   border-bottom:4px solid var(--builder-accent);box-shadow:0 2px 8px rgba(0,0,0,.16);color:#fff
 }
+.heroCard{position:relative}
+.tipJarButton{
+  position:absolute;left:28px;top:14px;z-index:1;display:inline-block;padding:7px 11px;
+  border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;
+  color:#12382d;text-decoration:none;font-size:.84rem;font-weight:750;line-height:1.15;
+  box-shadow:0 1px 3px rgba(0,0,0,.18)
+}
+.tipJarButton:hover{background:#a7ffe2;border-color:#e2fff6}
+.toolVersion{
+  position:absolute;right:28px;top:18px;color:rgba(255,255,255,.9);
+  font-size:.82rem;font-weight:600;letter-spacing:.02em;white-space:nowrap
+}
 .heroTop{text-align:center}
 .heroTitle{margin:0;color:#fff;font-size:clamp(1.8rem,4vw,2.35rem);line-height:1.08}
 .heroText{max-width:850px;margin:9px auto 0;color:#dcebe2;line-height:1.45}
@@ -121,6 +133,9 @@ h2,h3{margin:0;color:var(--builder-ink)}
 }
 @media(max-width:620px){
   .heroCard{padding:14px 14px 15px}
+  .tipJarButton{left:10px;top:9px;padding:6px 9px;font-size:.78rem}
+  .toolVersion{right:10px;top:13px;font-size:.76rem}
+  .heroTop{padding-top:24px}
   .heroTitle{font-size:1.45rem}
   .heroText{font-size:.9rem}
   .main{padding:0 10px 16px}
@@ -150,6 +165,8 @@ h2,h3{margin:0;color:var(--builder-ink)}
     border-bottom-width:3px;
     border-radius:0 0 10px 10px;
   }
+  .tipJarButton{left:18px;top:8px;padding:6px 10px;font-size:.8rem}
+  .toolVersion{right:18px;top:12px;font-size:.78rem}
   .heroTitle{font-size:1.72rem}
   .heroText{
     margin-top:4px;
