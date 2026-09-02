@@ -6632,7 +6632,7 @@ var parseDirective = {};
         //console.log("begincss");
         var cssBlock = '';
         line = tokenizer.nextLine();
-        while (line && line.indexOf('%%endcss') !== 0) {
+        while (line !== null && line.indexOf('%%endcss') !== 0) {
           
           cssBlock += line.trim() + "\n";
 
