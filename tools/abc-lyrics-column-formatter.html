@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ABC Two-Column Lyrics Formatter</title>
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="ABC Two-Column Lyrics Formatter" />
+	<meta property="og:description" content="Formats multi-stanza ABC W: lyrics into two columns using generated custom CSS." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/abc-lyrics-column-formatter.html" />
+  <meta property="og:site_name" content="ABC Two-Column Lyrics Formatter" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/tool_lyrics_column_formatter-1.jpg"/>
+
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+  </script>
+
+<style>
+:root{color-scheme:light;--bd:1px solid rgba(127,127,127,.35);--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--page-pad:32px;--gap:14px;--helpbar-height:68px;--purple:#4b1f68;--purple-dark:#321247;--purple-mid:#633184;--accent:#d8ad45;--green:#176b43;--green-dark:#0d4c2f;--blue:#174a8b;--blue-dark:#0f3566;--teal:#087f8c;--teal-dark:#066873;--red:#8f2f2f;--red-dark:#742424}
+*{box-sizing:border-box}html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#000;background:#fff}body{padding:0;overflow:hidden;font-size:clamp(15px,1.05vw + 12px,17px);line-height:1.35}.app{max-width:none;height:100vh;min-height:0;display:flex;flex-direction:column;gap:var(--gap);overflow:hidden;padding-bottom:calc(var(--helpbar-height) + env(safe-area-inset-bottom))}@supports (height:100dvh){.app{height:100dvh}}.hero{flex:0 0 auto;width:100%;margin:0;border:0;border-bottom:5px solid var(--accent);border-radius:0;padding:calc(16px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) 14px calc(20px + env(safe-area-inset-left));background:linear-gradient(135deg,rgba(50,18,71,.98),rgba(99,49,132,.97)),repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.025) 12px 24px);overflow:hidden;text-align:center;position:relative}.hero h1{margin:0;color:#fff;font-size:clamp(1.95rem,4vw,2.3rem);line-height:1.1}.hero p{max-width:900px;margin:12px auto 0;color:#eee3f4;line-height:1.5;font-size:16px}.versionNumber{position:absolute;top:calc(10px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right));color:rgba(255,255,255,.82);font-size:1rem;line-height:1;white-space:nowrap}.main{flex:1 1 auto;min-height:0;min-width:0;display:flex;gap:var(--gap);overflow:hidden;margin:0 calc(var(--page-pad) + env(safe-area-inset-right)) var(--gap) calc(var(--page-pad) + env(safe-area-inset-left))}.column{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column;gap:var(--gap);overflow-y:auto;-webkit-overflow-scrolling:touch}.card{border:var(--bd);border-radius:12px;padding:14px;min-width:0;overflow:hidden;background:transparent}.card h2{margin:0 0 12px;font-size:clamp(19px,1.1vw + 15px,23px)}#inputCard,.column:last-child>.card:first-child{flex:1 1 auto;min-height:310px;display:flex;flex-direction:column}.inputHeader,.statusHeader{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.inputHeader h2,.statusHeader h2{display:flex;align-items:center;min-height:46px;margin:0;line-height:1.1}.fileWrap{flex:1;min-width:260px;display:flex;align-items:center;min-height:46px}.fileWrap input[type=file]{display:block;width:100%;margin:0;line-height:1.15}input,button,textarea,select{font:inherit}input[type=file]::file-selector-button,button{border-radius:6px;padding:10px 14px;font-weight:600;cursor:pointer}button{border:1px solid var(--green-dark);background:var(--green);color:#fff}button:hover{background:var(--green-dark)}button:disabled{opacity:.42;cursor:default}button.primary,#processButton{background:var(--teal);border-color:var(--teal-dark)}button.primary:hover,#processButton:hover{background:var(--teal-dark)}#clearButton{background:var(--red);border-color:var(--red-dark)}#clearButton:hover{background:var(--red-dark)}#saveButton{background:var(--blue);border-color:var(--blue-dark)}#saveButton:hover{background:var(--blue-dark)}#copyButton,#detailsButton{background:#eee7f3;border-color:#cbb8d8;color:var(--purple-dark)}#copyButton:hover,#detailsButton:hover{background:#e3d7eb}#sendButton{background:var(--purple-mid);border-color:var(--purple-dark)}#sendButton:hover{background:var(--purple-dark)}input[type=file]::file-selector-button{margin-right:12px;background:var(--green);border:1px solid var(--green-dark);color:#fff}.taWrap{border:var(--bd);border-radius:10px;flex:1 1 auto;min-height:160px;display:flex;overflow:hidden;margin-top:12px;background:#fff}.taWrap textarea{width:100%;height:100%;border:0;resize:none;padding:12px;font-family:var(--mono);line-height:1.35;overflow:auto}.buttonRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;flex:0 0 auto;min-height:42px}.buttonRow button{flex:1 1 180px}.settings{flex:0 0 auto;background:#faf7fc}.settingLine{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.settingLine label{font-weight:650}.styledSelect{-webkit-appearance:none;-moz-appearance:none;appearance:none;min-width:190px;border:var(--bd);border-radius:10px;padding:9px 44px 9px 12px;color:#17241c;-webkit-text-fill-color:#17241c;background-color:#fff;background-image:linear-gradient(45deg,transparent 50%,#17241c 50%),linear-gradient(135deg,#17241c 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;box-shadow:none;cursor:pointer}.note{font-size:.95em;color:#444;line-height:1.5;margin-top:10px}.statusHeader{margin-bottom:12px}.statusHeader button{min-height:46px;margin:0;padding:10px 14px}.status{font-family:var(--mono);white-space:pre-wrap;border:var(--bd);border-radius:10px;padding:10px;min-height:74px;max-height:220px;overflow:auto;line-height:1.45;background:#fff}.footer{position:fixed;left:0;right:0;bottom:0;min-height:var(--helpbar-height);background:#fff;border-top:var(--bd);padding:12px calc(var(--page-pad) + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(var(--page-pad) + env(safe-area-inset-left));display:flex;gap:10px;z-index:10}.footer button{flex:1;border-radius:6px;background:#4f565b;border-color:#3d4449}.footer button:hover{background:#3d4449}.drag{outline:3px solid rgba(157,186,242,.4);background:#f7faff}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100}.modalBox{background:#fff;max-width:800px;max-height:80vh;overflow:auto;margin:8vh auto;padding:24px;border-radius:12px;border:1px solid #333;box-shadow:0 0 15px -2px rgba(0,0,0,.75)}.modalBox h2{margin-top:0;text-align:center}.modalBox li{margin-bottom:8px;line-height:1.45}.modalBox>button{width:100%;margin-top:14px}.reportTable{width:100%;border-collapse:collapse;margin-top:12px}.reportTable th,.reportTable td{border:var(--bd);padding:9px 10px;text-align:left;vertical-align:top}.reportTable th{background:#f0f3f8}.reportTable .num{text-align:right;white-space:nowrap}.filenameInput{width:100%;border:var(--bd);border-radius:10px;padding:10px 12px;margin-top:10px}.filenameButtons{display:flex;gap:10px;margin-top:16px}.filenameButtons button{flex:1}.filenameButtons .cancel{background:#4f565b;border-color:#3d4449}.miniProgress{font-size:.9em;color:#555;margin-left:auto}
+@media (min-width:981px) and (max-height:980px){#inputCard{flex:0 0 310px;height:310px}#inputCard .taWrap{min-height:0}.column:last-child>.card:first-child{min-height:310px}}
+@media (max-width:980px){body{overflow:auto;padding:0 0 calc(var(--helpbar-height) + env(safe-area-inset-bottom))}.app{height:auto;min-height:100vh;overflow:visible}.main{flex-direction:column;overflow:visible;margin:0 calc(14px + env(safe-area-inset-right)) var(--gap) calc(14px + env(safe-area-inset-left))}.column{overflow:visible;min-height:auto}#inputCard,.column:last-child>.card:first-child{flex:0 0 auto;min-height:auto}.taWrap{height:48vh;min-height:320px}.footer{padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right))}}
+@media (max-width:720px){.hero{padding:calc(13px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) 12px calc(18px + env(safe-area-inset-left))}.hero h1{font-size:clamp(1.05rem,5vw,1.4rem);line-height:1.03;white-space:nowrap}.hero p{max-width:34em;margin-top:6px;font-size:.92rem;line-height:1.28}.versionNumber{top:calc(7px + env(safe-area-inset-top));right:calc(9px + env(safe-area-inset-right));font-size:.64rem}.buttonRow{flex-direction:column}.buttonRow button{width:100%}.fileWrap{min-width:0}.modalBox{margin:12px;max-height:calc(100vh - 24px)}}
+</style>
+</head>
+<body>
+<div class="app">
+<section class="hero"><div class="versionNumber">Version 1.0.20</div><h1>ABC Two-Column Lyrics Formatter</h1><p>Generates tune-specific custom CSS to arrange multi-stanza <b>W:</b> lyrics into two columns.</p></section>
+<div class="main">
+<div class="column">
+<section class="card" id="inputCard">
+<div class="inputHeader"><h2>Input ABC</h2><div class="fileWrap"><input id="fileInput" type="file" accept=".abc,.txt,.ABC,.TXT" multiple /></div></div>
+<div class="taWrap"><textarea id="input" spellcheck="false" placeholder="Paste ABC notation here, or open one or more ABC files."></textarea></div>
+<div class="buttonRow"><button id="processButton" class="primary" disabled>Format Lyrics</button><button id="clearButton">Clear</button></div>
+</section>
+<section class="card settings">
+<h2>Lyrics Layout</h2>
+<div class="note">Only tunes with multiple detected <b>W:</b> stanzas are targeted. A new stanza is detected after a blank <b>W:</b> line when another non-blank <b>W:</b> line follows, or when a non-blank <b>W:</b> line begins with a stanza number such as <b>2.</b> or <b>3)</b>.</div>
+</section>
+</div>
+<div class="column">
+<section class="card">
+<h2>Processed ABC</h2>
+<div class="taWrap"><textarea id="output" spellcheck="false" readonly></textarea></div>
+<div class="buttonRow"><button id="copyButton" disabled>Copy Results</button><button id="saveButton" disabled>Save ABC File</button><button id="sendButton" disabled>Open in ABC Transcription Tools</button></div>
+</section>
+<section class="card">
+<div class="statusHeader"><h2>Status</h2><span id="progress" class="miniProgress"></span><button id="detailsButton" disabled>Show Tune Details</button></div>
+<div id="status" class="status">Enter or open ABC notation.</div>
+</section>
+</div>
+</div>
+</div>
+<div class="footer"><button id="instructionsButton">Instructions</button><button id="openToolsButton">Open ABC Transcription Tools</button></div>
+<div id="instructionsModal" class="modal"><div class="modalBox"><h2>ABC Two-Column Lyrics Formatter</h2><ul>
+<li>Paste ABC notation into the input area, or open one or more <b>.abc</b> or <b>.txt</b> files. ABC files can also be dragged and dropped onto the Input ABC card.</li>
+<li>The utility formats multi-stanza <b>W:</b> lyrics into <b>two columns</b>.</li>
+<li>Click <b>Format Lyrics</b>. The utility examines every tune independently. Tunes with only one detected <b>W:</b> stanza are left completely untargeted.</li>
+<li>A stanza boundary is recognized when a blank <b>W:</b> tag is followed later by another non-blank <b>W:</b> tag, or when a non-blank <b>W:</b> line starts with a stanza number such as <b>2.</b>, <b>3.</b>, or <b>4)</b>. Only uppercase <b>W:</b> fields are treated as unaligned stanza lyrics; lowercase <b>w:</b> fields aligned beneath the notes are ignored. Blank <b>W:</b> tags are used as manual stanza spacers and do not count as rendered lyric lines. When consecutive numbered stanzas have no blank <b>W:</b> spacer between them, the formatter automatically adds a modest visual gap between stanzas; if a blank <b>W:</b> spacer is already present, no extra automatic gap is added.</li>
+<li>The formatter calculates the two-column layout directly from the ABC <b>W:</b> stanza structure. Stanzas are kept intact and divided into contiguous column groups. The formatter measures the widest lyric line in each column independently, chooses the largest safe common font size, and adjusts the second-column X position to make the best use of the available width. No abcjs rendering library is required by this utility.</li>
+<li>The generated CSS is inserted at the very top of the complete ABC inside a <b>%%begincss</b> / <b>%%endcss</b> block. Each tune is targeted through its normal <b>#notationN</b> container and also directly through the tune SVG. The direct SVG selector uses the tune title plus the exact number of rendered <b>W:</b> lines, and also includes a common article-reversed title variant (for example <b>Banks of the Bann, The</b> and <b>The Banks of the Bann</b>). This keeps the formatting active during ABC Transcription Tools PDF export when each SVG is copied out of its notation container before rasterization. Existing ABC content is otherwise preserved.</li>
+<li>If the ABC file header already contains one or more <b>%%begincss</b> / <b>%%endcss</b> blocks, the formatter removes those header CSS blocks completely and replaces them with the newly generated lyric-column CSS block. CSS blocks inside individual tunes are not removed.</li>
+<li><b>Copy Results</b> copies the complete processed ABC. <b>Save ABC File</b> saves it as an ABC file.</li>
+<li><b>Open in ABC Transcription Tools</b> is enabled only when the processed ABC can be compressed into an ABC Transcription Tools share link of 8100 characters or less.</li>
+<li>The formatter checks the width of every <b>W:</b> lyric line before generating the CSS. The left and right columns are measured separately. A 14px lyric size is the normal baseline, but the formatter may automatically increase it up to 17px when both columns still fit comfortably. Long lines are reduced only as much as needed, and the second-column position is shifted left or right within safe limits to maximize readable font size while preserving a center gutter and right margin. The PDF fitting model uses a conservative 800-unit working width with additional right-edge safety allowance.</li><li>The generated CSS leaves the original lyric SVG height intact and forces overflow to remain visible. The second-column transforms are also applied directly to the lyric SVG, allowing ABC Transcription Tools PDF export to rasterize the same two-column layout shown on screen.</li><li>To reduce the size of the generated header CSS, selectors that use the same lyric font declaration or the same overflow declaration are automatically combined into shared CSS rules. Tune-specific stanza transforms remain separate so their positioning is unchanged.</li>
+</ul><button id="closeInstructions">Close</button></div></div>
+<div id="detailsModal" class="modal"><div class="modalBox"><h2>Lyrics Formatting Details</h2><div id="detailsContent">Process ABC notation to generate a tune-by-tune report.</div><button id="closeDetails">Close</button></div></div>
+<div id="saveModal" class="modal"><div class="modalBox" style="max-width:520px"><h2>Save ABC File</h2><label for="filenameInput"><b>Filename:</b></label><input id="filenameInput" class="filenameInput" type="text" /><div class="filenameButtons"><button id="confirmSave">Save</button><button id="cancelSave" class="cancel">Cancel</button></div></div></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const inputEl=$('input'),outputEl=$('output'),statusEl=$('status');
+const GENERATED_MARKER='ABC Two-Column Lyrics Formatter generated CSS';
+let saveFilename='lyrics_columns.abc',shareURL='',shareCheckId=0,reportRows=[],busy=false;
+function hasABCTune(text){return /^\s*X\s*:/m.test(String(text||''));}
+function setStatus(text){statusEl.textContent=text;}
+function updateProcessButton(){ $('processButton').disabled=busy||!hasABCTune(inputEl.value); }
+function changed(message){outputEl.value='';shareURL='';reportRows=[];$('copyButton').disabled=true;$('saveButton').disabled=true;$('sendButton').disabled=true;$('detailsButton').disabled=true;$('progress').textContent='';updateProcessButton();setStatus(message||(inputEl.value.trim()?'Input or settings changed. Click Format Lyrics.':'Enter or open ABC notation.'));}
+function splitABC(text){const re=/^X\s*:/gm,starts=[];let m;while((m=re.exec(text)))starts.push(m.index);if(!starts.length)return{preamble:text,tunes:[]};const preamble=text.slice(0,starts[0]);const tunes=starts.map((s,i)=>text.slice(s,i+1<starts.length?starts[i+1]:text.length));return{preamble,tunes};}
+function tuneTitle(tune,index){const m=String(tune).match(/^T:\s*(.*)$/m);return m&&m[1].trim()?m[1].trim():`Tune ${index+1}`;}
+function stripHeaderCssBlocks(text){const src=String(text||'');const x=src.search(/^X\s*:/m);if(x<0)return src;let header=src.slice(0,x);const rest=src.slice(x);header=header.replace(/^\s*%%begincss\s*\r?\n[\s\S]*?^%%endcss\s*(?:\r?\n)?/gm,'');return (header+rest).replace(/^\s*\r?\n/,'');}
+function stripCssBlocksForMeasurement(text){return String(text||'').replace(/^\s*%%begincss\s*\r?\n[\s\S]*?^%%endcss\s*\r?\n?/gm,'');}
+function parseWStanzas(tune){
+  const lines=tune.split(/\r?\n/),w=[];
+  for(const line of lines){const m=line.match(/^W:\s?(.*)$/);if(!m)continue;const raw=m[1]||'',content=raw.trim();w.push({content,blank:content===''||content==='%'});}
+  const nonblank=w.filter(x=>!x.blank);if(!nonblank.length)return{stanzas:[],nonblankCount:0};
+  const stanzas=[];let current=null,pendingBlank=false,blankRun=0,nonblankIndex=0;
+  for(const item of w){
+    if(item.blank){if(current){pendingBlank=true;blankRun++;}continue;}
+    nonblankIndex++;
+    const numbered=/^\d+\s*[.)]\s*/.test(item.content);
+    const startsNew=!current||pendingBlank||(numbered&&current.lines.length);
+    if(startsNew){
+      if(current&&current.lines.length)stanzas.push(current);
+      current={start:nonblankIndex,end:nonblankIndex,lines:[],sourceStartsNumbered:numbered,manualSpacerBefore:pendingBlank,manualSpacerLinesBefore:pendingBlank?blankRun:0};
+    }
+    current.lines.push(item.content);current.end=nonblankIndex;pendingBlank=false;blankRun=0;
+  }
+  if(current&&current.lines.length)stanzas.push(current);
+  return{stanzas,nonblankCount:nonblank.length};
+}
+function stanzaCountPartitions(stanzas,columns){const n=stanzas.length,k=Math.min(columns,n),base=Math.floor(n/k),extra=n%k,groups=[];let start=0;for(let c=0;c<k;c++){const count=base+(c<extra?1:0);groups.push([start,start+count]);start+=count;}return groups;}
+function lastNumericDirective(text,name,def){const re=new RegExp('^\\s*%%'+name+'\\s+(-?\\d+(?:\\.\\d+)?)\\s*(?:%.*)?$','gmi');let m,value=def;while((m=re.exec(String(text||''))))value=parseFloat(m[1]);return Number.isFinite(value)?value:def;}
+function wordsFontInfo(text){const lines=String(text||'').split(/\r?\n/);let size=17,family='Palatino';for(const line of lines){if(!/^\s*%%wordsfont\b/i.test(line))continue;const rest=line.replace(/^\s*%%wordsfont\s*/i,'').replace(/\s*%.*$/,'').trim();const nums=rest.match(/\d+(?:\.\d+)?/g);if(nums&&nums.length){const v=parseFloat(nums[nums.length-1]);if(Number.isFinite(v)&&v>0)size=v;}const fm=rest.match(/^(.+?)\s+(?:normal|bold|italic|bolditalic|\d+(?:\.\d+)?)\b/i);if(fm&&fm[1].trim())family=fm[1].trim().replace(/^['"]|['"]$/g,'');}return{size,family};}
+function lyricTextWidth(text,fontSize,fontFamily){const canvas=lyricTextWidth.canvas||(lyricTextWidth.canvas=document.createElement('canvas'));const ctx=canvas.getContext('2d');ctx.font=`${fontSize}px ${fontFamily||'Palatino'}, Palatino, 'Palatino Linotype', 'Book Antiqua', serif`;return ctx.measureText(String(text||'')).width;}
+function fitLyricsColumns(parsed,groups,sourceFont,fontFamily){const source=Math.max(1,sourceFont||17);const normal=Math.min(source,14);const maximum=Math.min(source,17);const metricSafety=1.05;const pageWidth=800;const leftStart=15;const rightMargin=28;const gutter=26;const idealRightStart=395;const minRightStart=320;const maxRightStart=440;function widestForGroup(group,fontSize){const [a,b]=group;let width=0,text='';for(let s=a;s<b;s++)for(const line of parsed.stanzas[s].lines){const w=lyricTextWidth(line,fontSize,fontFamily)*metricSafety;if(w>width){width=w;text=line;}}return{width,text};}let chosen=null;for(let fs=maximum;fs>=9.5-.001;fs-=0.5){const fontSize=Math.round(fs*2)/2;const left=widestForGroup(groups[0],fontSize);const right=widestForGroup(groups[1],fontSize);const feasibleMin=Math.max(minRightStart,leftStart+left.width+gutter);const feasibleMax=Math.min(maxRightStart,pageWidth-rightMargin-right.width);if(feasibleMin<=feasibleMax){const rightStart=Math.min(feasibleMax,Math.max(feasibleMin,idealRightStart));chosen={fontSize,left,right,rightStart,dx:rightStart-leftStart};break;}}if(!chosen){const fontSize=9.5;const left=widestForGroup(groups[0],fontSize);const right=widestForGroup(groups[1],fontSize);const rightStart=Math.min(maxRightStart,Math.max(minRightStart,pageWidth-rightMargin-right.width));chosen={fontSize,left,right,rightStart,dx:rightStart-leftStart};}return{...chosen,reduced:chosen.fontSize<normal-.01,enlarged:chosen.fontSize>normal+.01,normal,maximum,pageWidth,leftStart,rightMargin,gutter};}
+function layoutMetricsFromABC(preamble,tune,parsed){const combined=String(preamble||'')+'\n'+String(tune||'');const fontInfo=wordsFontInfo(combined);const sourceFont=fontInfo.size;const fontFamily=fontInfo.family;const lineStep=sourceFont+3;const wordsspace=lastNumericDirective(combined,'wordsspace',0);const stanzaExtra=Math.max(lineStep*.925,Math.max(0,wordsspace));const starts=[];let y=0;for(let i=0;i<parsed.stanzas.length;i++){const stanza=parsed.stanzas[i];starts.push(y);y+=stanza.lines.length*lineStep;const next=parsed.stanzas[i+1];if(next&&next.manualSpacerBefore)y+=stanzaExtra;}return{sourceFont,fontFamily,lineStep,wordsspace,stanzaExtra,starts};}
+function fmt(n){return Number(n.toFixed(4)).toString();}
+function cssAttrString(value){return String(value||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/[\r\n]+/g,' ');}
+function reversedArticleTitle(title){
+  const s=String(title||'').trim();
+  const m=s.match(/^(.*),\s*(The|A|An)$/i);
+  if(!m)return '';
+  return `${m[2]} ${m[1]}`.trim();
+}
+function tuneScopes(tuneIndex,title,nonblankCount){
+  const primary=`#notation${tuneIndex}`;
+  const candidates=[];
+  const addTitle=t=>{const v=cssAttrString(t);if(v&&!candidates.includes(v))candidates.push(v);};
+  addTitle(title);
+  addTitle(reversedArticleTitle(title));
+  // ABC Transcription Tools PDF export clones svg.outerHTML into an offscreen
+  // container, so #notationN ancestry is no longer present there. Target the
+  // SVG itself as a second scope. Include both the literal ABC title and the
+  // common article-reversed display title (for example "Banks..., The" ->
+  // "The Banks..."). Exact W: line count helps with duplicate titles.
+  const svgScopes=candidates.map(t=>`svg[aria-label*="${t}"]:has(.abcjs-unaligned-words > text:nth-of-type(${nonblankCount}):last-of-type)`);
+  return{primary,svgScopes,all:[primary,...svgScopes]};
+}
+function scopedSelectors(scopes,suffix){return scopes.map(s=>s+suffix).join(',');}
+function cssForTune(tuneIndex,title,parsed,layout,columns){
+  const stanzas=parsed.stanzas;if(stanzas.length<2)return null;
+  const groups=stanzaCountPartitions(stanzas,columns);
+  const rules=[];
+  const scopeInfo=tuneScopes(tuneIndex,title,parsed.nonblankCount);
+  const scopes=scopeInfo.all;
+  const fit=fitLyricsColumns(parsed,groups,layout.sourceFont,layout.fontFamily);
+  const fontSize=fit.fontSize;
+  const autoStanzaGap=Math.max(7,layout.lineStep*.5);
+  rules.push(`${scopedSelectors(scopes,' .abcjs-unaligned-words > text')}{font-size:${fontSize.toFixed(fontSize%1?1:0)}px!important;transform-origin:0 0}`);
+  const shifts=[];let autoGapCount=0;
+  for(let col=0;col<groups.length;col++){
+    const [a,b]=groups[col];
+    const baseDx=col===0?0:fit.dx;
+    const baseDy=col===0?0:-layout.starts[a];
+    let cumulativeAutoGap=0;
+    for(let s=a;s<b;s++){
+      if(s>a&&!stanzas[s].manualSpacerBefore){cumulativeAutoGap+=autoStanzaGap;autoGapCount++;}
+      const stanza=stanzas[s],start=stanza.start,end=stanza.end;
+      const dx=baseDx,dy=baseDy+cumulativeAutoGap;
+      if(dx!==0||dy!==0){
+        const child=start===end?` .abcjs-unaligned-words > text:nth-of-type(${start})`:` .abcjs-unaligned-words > text:nth-of-type(n+${start}):nth-of-type(-n+${end})`;
+        rules.push(`${scopedSelectors(scopes,child)}{transform:translate(${fmt(dx)}px,${fmt(dy)}px)}`);
+      }
+      if(col>0||cumulativeAutoGap)shifts.push({column:col+1,startStanza:s+1,endStanza:s+1,dx,dy,autoGap:cumulativeAutoGap});
+    }
+  }
+  rules.push(`${scopeInfo.primary}{overflow:visible!important}`);
+  rules.push(`${scopeInfo.primary}>div:has(.abcjs-unaligned-words){overflow:visible!important}`);
+  rules.push(`${scopeInfo.primary} svg:has(.abcjs-unaligned-words){overflow:visible!important}`);
+  for(const svgScope of scopeInfo.svgScopes)rules.push(`${svgScope}{overflow:visible!important}`);
+  return{rules,groups,shifts,fit,pdfSvgScopes:scopeInfo.svgScopes,autoStanzaGap,autoGapCount};
+}
+function optimizeCSSRules(allRules){
+  const grouped=new Map(),passthrough=[];
+  for(const rule of allRules){
+    const m=String(rule).match(/^([\s\S]*?)\{([^{}]*)\}$/);
+    if(!m){passthrough.push(rule);continue;}
+    const selector=m[1],body=m[2];
+    const safeToGroup=/^font-size:[^;]+!important;transform-origin:0 0$/.test(body)||body==='overflow:visible!important';
+    if(!safeToGroup){passthrough.push(rule);continue;}
+    if(!grouped.has(body))grouped.set(body,[]);
+    grouped.get(body).push(selector);
+  }
+  const optimized=[];
+  for(const [body,selectors] of grouped){
+    optimized.push(`${selectors.join(',')}{${body}}`);
+  }
+  optimized.push(...passthrough);
+  return optimized;
+}
+function buildCSSBlock(allRules,columns){const optimized=optimizeCSSRules(allRules);const lines=['%%begincss',`/* ${GENERATED_MARKER}; ${columns} columns */`,...optimized,'%%endcss'];return lines.join('\n')+'\n';}
+async function processABC(){if(busy)return;let original=inputEl.value;if(!original.trim()){setStatus('Paste or open an ABC file first.');return;}if(!hasABCTune(original)){setStatus('No ABC tune was found. A tune must include an X: tag.');return;}busy=true;updateProcessButton();$('progress').textContent='Processing…';setStatus('Analyzing W: lyrics…');await new Promise(r=>setTimeout(r,0));try{original=stripHeaderCssBlocks(original);const parts=splitABC(original);const measurementPreamble=stripCssBlocksForMeasurement(parts.preamble);const columns=2;const allRules=[],rows=[];let targeted=0,single=0,noWords=0;for(let i=0;i<parts.tunes.length;i++){const tune=parts.tunes[i],parsed=parseWStanzas(tune),title=tuneTitle(tune,i);if(!parsed.nonblankCount){noWords++;rows.push({index:i+1,title,stanzas:0,targeted:false,note:'No W: lyrics'});continue;}if(parsed.stanzas.length<2){single++;rows.push({index:i+1,title,stanzas:parsed.stanzas.length,targeted:false,note:'Single stanza'});continue;}const layout=layoutMetricsFromABC(measurementPreamble,tune,parsed);const generated=cssForTune(i,title,parsed,layout,columns);if(generated){allRules.push(...generated.rules);targeted++;const shifts=generated.shifts.map(s=>`col ${s.column}: stanzas ${s.startStanza}-${s.endStanza}, ${fmt(s.dy)}px Y`).join('; ');const widthNote=generated.fit.reduced?`auto font ${fmt(generated.fit.fontSize)}px for wide lyrics`:generated.fit.enlarged?`auto enlarged font ${fmt(generated.fit.fontSize)}px`:`font ${fmt(generated.fit.fontSize)}px`;const xNote=`column 2 X ${fmt(generated.fit.rightStart)}px`;const gapNote=generated.autoGapCount?`; auto stanza spacing ${fmt(generated.autoStanzaGap)}px (${generated.autoGapCount} gap${generated.autoGapCount===1?'':'s'})`:'';rows.push({index:i+1,title,stanzas:parsed.stanzas.length,targeted:true,note:`${columns} columns; ${widthNote}; ${xNote}${gapNote}; ${shifts}`});}if(i%20===0)await new Promise(r=>setTimeout(r,0));}const css=buildCSSBlock(allRules,columns);const out=css+original.replace(/^\uFEFF/,'');outputEl.value=out;reportRows=rows;buildReport(rows);$('copyButton').disabled=false;$('saveButton').disabled=false;$('detailsButton').disabled=false;updateShareAvailability(out);setStatus([`Tunes found: ${parts.tunes.length}`,`Tunes formatted: ${targeted}`,`Tunes with one stanza left unchanged: ${single}`,`Tunes with no W: lyrics: ${noWords}`,`Columns: ${columns}`].join('\n'));}catch(e){console.error(e);setStatus('Could not format the ABC: '+e.message);outputEl.value='';$('copyButton').disabled=true;$('saveButton').disabled=true;}finally{$('progress').textContent='';busy=false;updateProcessButton();}}
+function escapeHTML(v){return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function buildReport(rows){const body=rows.map(r=>`<tr><td class="num">${r.index}</td><td>${escapeHTML(r.title)}</td><td class="num">${r.stanzas}</td><td>${r.targeted?'Yes':'No'}</td><td>${escapeHTML(r.note)}</td></tr>`).join('');$('detailsContent').innerHTML=`<table class="reportTable"><thead><tr><th class="num">Tune</th><th>Title</th><th class="num">Stanzas</th><th>CSS</th><th>Result</th></tr></thead><tbody>${body}</tbody></table>`;}
+async function loadFiles(files){const good=[...files].filter(f=>/\.(abc|txt)$/i.test(f.name));if(!good.length){setStatus('No supported .abc or .txt files were selected.');return;}const texts=await Promise.all(good.map(f=>f.text()));inputEl.value=texts.join('\n\n');saveFilename=good.length===1?good[0].name.replace(/\.(abc|txt)$/i,'')+'_lyrics_columns.abc':'lyrics_columns.abc';changed(`Loaded ${good.length} file${good.length===1?'':'s'}.`);}
+$('fileInput').onchange=e=>loadFiles(e.target.files);const card=$('inputCard');['dragenter','dragover'].forEach(n=>card.addEventListener(n,e=>{e.preventDefault();card.classList.add('drag')}));['dragleave','drop'].forEach(n=>card.addEventListener(n,e=>{e.preventDefault();card.classList.remove('drag')}));card.addEventListener('drop',e=>loadFiles(e.dataTransfer.files));
+$('processButton').onclick=processABC;$('clearButton').onclick=()=>{inputEl.value='';outputEl.value='';$('fileInput').value='';saveFilename='lyrics_columns.abc';changed()};inputEl.addEventListener('input',()=>changed());
+$('copyButton').onclick=async()=>{try{await navigator.clipboard.writeText(outputEl.value)}catch(e){outputEl.select();document.execCommand('copy')}setStatus('Processed ABC copied to the clipboard.')};
+function sanitizeABCFileName(name){name=String(name||'').trim().replace(/^.*[\\/]/,'').replace(/\.abc$/i,'');name=name.replace(/[<>:"/\\|?*\x00-\x1F]/g,'_').replace(/\s+/g,' ').replace(/[. ]+$/g,'').trim();return(name||'lyrics_columns')+'.abc';}
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+$('saveButton').onclick=()=>{$('filenameInput').value=saveFilename;$('saveModal').style.display='block';setTimeout(()=>$('filenameInput').focus(),0)};$('cancelSave').onclick=()=>{$('saveModal').style.display='none'};$('confirmSave').onclick=()=>{saveFilename=sanitizeABCFileName($('filenameInput').value);const blob=new Blob([outputEl.value],{type:'text/plain;charset=utf-8'});downloadBlob(blob,saveFilename);$('saveModal').style.display='none';setStatus('Saved '+saveFilename+'.')};
+function bytesToB64Url(bytes){let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+async function deflateText(text){if(typeof CompressionStream==='undefined')throw new Error('This browser does not support share-link compression.');const stream=new Blob([new TextEncoder().encode(text)]).stream().pipeThrough(new CompressionStream('deflate'));return bytesToB64Url(new Uint8Array(await new Response(stream).arrayBuffer()))}
+function shareName(text){const title=(text.match(/^T:\s*(.+?)\s*$/m)||[])[1]||'Lyrics_Columns';const count=(text.match(/^X\s*:/gm)||[]).length;let name=title.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019\u02BC]/g,"'").replace(/[^A-Za-z0-9._'-]+/g,'_').replace(/_+/g,'_').replace(/^[_\-.]+|[_\-.]+$/g,'')||'Lyrics_Columns';if(count>1)name+=`_and_${count-1}_more_tunes`;return name}
+async function buildShareURL(text){const def=await deflateText(text);const u=new URL('https://michaeleskin.com/abctools/abctools.html');u.searchParams.set('def',def);u.searchParams.set('format','noten');u.searchParams.set('name',shareName(text));u.searchParams.set('editor','1');return u.href}
+async function updateShareAvailability(text){shareURL='';$('sendButton').disabled=true;const id=++shareCheckId;try{const candidate=await buildShareURL(text);if(id!==shareCheckId||text!==outputEl.value)return;if(candidate.length<=8100){shareURL=candidate;$('sendButton').disabled=false}}catch(e){if(id===shareCheckId){shareURL='';$('sendButton').disabled=true}}}
+$('sendButton').onclick=()=>{if(shareURL&&shareURL.length<=8100)window.open(shareURL,'_blank','noopener')};$('openToolsButton').onclick=()=>window.open('https://michaeleskin.com/abctools/abctools.html','_blank','noopener');
+$('instructionsButton').onclick=()=>{$('instructionsModal').style.display='block'};$('closeInstructions').onclick=()=>{$('instructionsModal').style.display='none'};$('detailsButton').onclick=()=>{$('detailsModal').style.display='block'};$('closeDetails').onclick=()=>{$('detailsModal').style.display='none'};for(const id of ['instructionsModal','detailsModal','saveModal'])$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).style.display='none'});document.addEventListener('keydown',e=>{if(e.key==='Escape')for(const id of ['instructionsModal','detailsModal','saveModal'])$(id).style.display='none'});
+updateProcessButton();
+</script>
+</body>
+</html>
