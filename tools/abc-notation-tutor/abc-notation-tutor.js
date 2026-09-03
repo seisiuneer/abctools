@@ -282,7 +282,7 @@ P:A
 w: Do re mi fa | sol la sol mi | fa mi re do | sing it once more |
 P:B
 "_Below"F E D C | D E F G | A G F E | D C C2 |]
-w: Now we walk back | up the scale now | down we come a- | gain home _ |
+w: Now we walk back | up the scale now | down we come a- | gain home, done! |
 %%center Here is some center-justified text after the notation`,
  notes:`<p>A single percent sign <code>%</code> starts a comment. Comments are useful for notes in the ABC source and are not rendered as part of the notation.</p><p><code>%%text</code> adds a standalone left-justified line of text, while <code>%%center</code> adds a standalone centered line. In this example they appear before and after the notation.</p><p>Text annotations can be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation.</p><p>A <code>w:</code> line attaches lyrics to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p><code>P:</code> can identify sections or parts of a tune. This example uses <code>P:A</code> and <code>P:B</code>.</p>`,
  tour:[
