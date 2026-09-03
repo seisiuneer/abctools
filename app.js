@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3330_090326_1200";
+var gVersionNumber = "3331_090326_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37838,9 +37838,7 @@ function TwoColumnLyricsBuildCSSBlock(allRules, columns) {
   return [
     "%%begincss",
     `/* ${TWO_COLUMN_LYRICS_GENERATED_MARKER}; ${columns} columns */`,
-    "",
-    formatted.join("\n\n"),
-    "",
+    formatted.join("\n"),
     "%%endcss",
     ""
   ].join("\n");
