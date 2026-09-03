@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3329_090326_1130";
+var gVersionNumber = "3330_090326_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31301,13 +31301,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_3sep2026;
+        var updatePresented = localStorage.sawUpdate_3sep2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_3sep2026 = true;
+          localStorage.sawUpdate_3sep2026a = true;
 
         }
 
@@ -37410,7 +37410,7 @@ function ExportImageDialog(theABC, callback, val, metronome_state) {
 
 
 //
-// Make W: verses two-column using the same formatter logic as the
+// Make W: stanzas two-column using the same formatter logic as the
 // ABC Two-Column Lyrics Formatter utility (Version 1.0.23).
 //
 
@@ -37902,7 +37902,7 @@ function MakeVersesTwoColumn() {
     hideTheSpinner();
 
     var thePrompt = makeCenteredPromptString(
-      "Unable to format the verses into two columns."
+      "Unable to format the stanzas into two columns."
     );
 
     DayPilot.Modal.alert(thePrompt, {
@@ -54647,7 +54647,7 @@ function AdvancedControlsDialog() {
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="injectmidigchord" class="advancedcontrols btn btn-injectmidigchord" onclick="InjectMIDIGChordTemplates()" type="button" value="Inject MIDI gchord Templates">';
   modal_msg += '<input id="reformatusingmusicxml" class="advancedcontrols  btn btn-reformatusingmusicxml" onclick="BatchMusicXMLRoundTrip()" type="button" value="Reformat Using MusicXML">';
-  modal_msg += '<input id="makeversestwocolumn" class="advancedcontrols btn btn-makeversestwocolumn" onclick="MakeVersesTwoColumn()" type="button" value="Make Verses 2-Column">';
+  modal_msg += '<input id="makeversestwocolumn" class="advancedcontrols btn btn-makeversestwocolumn" onclick="MakeVersesTwoColumn()" type="button" value="Make Stanzas 2-Column">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="normalizevoicekeysignatures" class="advancedcontrols btn btn-normalizevoicekeysignatures" onclick="NormalizeVoiceKeySignaturesAndDynamics()" type="button" value="Normalize Voice Keys/Dynamics">';
@@ -60610,8 +60610,8 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added <strong>Make Verses 2-Column</strong> to <strong>More ABC Tools / Other ABC Tools</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">This replaces the standalone <strong>ABC Two-Column Lyrics Formatter</strong> to format W: verse lyrics in two columns using custom CSS.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Make Stanzas 2-Column</strong> to <strong>More ABC Tools / Other ABC Tools</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">This replaces the standalone <strong>ABC Two-Column Lyrics Formatter</strong> to format W: verse stanzas in two columns using custom CSS.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -67553,13 +67553,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_3sep2026;
+    var updatePresented = localStorage.sawUpdate_3sep2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_3sep2026 = true;
+      localStorage.sawUpdate_3sep2026a = true;
 
     }
 
