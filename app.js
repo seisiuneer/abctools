@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3331_090326_1230";
+var gVersionNumber = "3332_090326_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36540,6 +36540,13 @@ async function DownloadSVG(callback, val) {
 
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   var svgData = svg.outerHTML;
+
+  // SVG is XML, where the HTML named entity &nbsp; is not predefined.
+  // abcjs can emit &nbsp; inside lyric tspans, so convert those occurrences
+  // to the equivalent numeric XML character reference before export.
+  svgData = svgData.replace(/<tspan\b[^>]*>[\s\S]*?<\/tspan>/gi, function(tspan) {
+    return tspan.replace(/&nbsp;/gi, "&#160;");
+  });
 
   // MAE 5 August 2025 - Inject additional required CSS for whistle, recorder, or note names SVG
   if (gCurrentTab == 'whistle') {
