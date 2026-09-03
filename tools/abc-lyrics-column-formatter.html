@@ -40,11 +40,29 @@
 @media (min-width:981px) and (max-height:980px){#inputCard{flex:0 0 310px;height:310px}#inputCard .taWrap{min-height:0}.column:last-child>.card:first-child{min-height:310px}}
 @media (max-width:980px){body{overflow:auto;padding:0 0 calc(var(--helpbar-height) + env(safe-area-inset-bottom))}.app{height:auto;min-height:100vh;overflow:visible}.main{flex-direction:column;overflow:visible;margin:0 calc(14px + env(safe-area-inset-right)) var(--gap) calc(14px + env(safe-area-inset-left))}.column{overflow:visible;min-height:auto}#inputCard,.column:last-child>.card:first-child{flex:0 0 auto;min-height:auto}.taWrap{height:48vh;min-height:320px}.footer{padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right))}}
 @media (max-width:720px){.hero{padding:calc(13px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) 12px calc(18px + env(safe-area-inset-left))}.hero h1{font-size:clamp(1.05rem,5vw,1.4rem);line-height:1.03;white-space:nowrap}.hero p{max-width:34em;margin-top:6px;font-size:.92rem;line-height:1.28}.versionNumber{top:calc(7px + env(safe-area-inset-top));right:calc(9px + env(safe-area-inset-right));font-size:.64rem}.buttonRow{flex-direction:column}.buttonRow button{width:100%}.fileWrap{min-width:0}.modalBox{margin:12px;max-height:calc(100vh - 24px)}}
+
+#instructionsModal .modalBox{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+#instructionsModal .instructionsScroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  padding-right:6px;
+}
+#instructionsModal #closeInstructions{
+  flex:0 0 auto;
+  width:100%;
+  margin-top:14px;
+}
+
 </style>
 </head>
 <body>
 <div class="app">
-<section class="hero"><div class="versionNumber">Version 1.0.21</div><h1>ABC Two-Column Lyrics Formatter</h1><p>Generates tune-specific custom CSS to arrange multi-stanza <b>W:</b> lyrics into two columns.</p></section>
+<section class="hero"><div class="versionNumber">Version 1.0.22</div><h1>ABC Two-Column Lyrics Formatter</h1><p>Generates tune-specific custom CSS to arrange multi-stanza <b>W:</b> lyrics into two columns.</p></section>
 <div class="main">
 <div class="column">
 <section class="card" id="inputCard">
@@ -71,7 +89,7 @@
 </div>
 </div>
 <div class="footer"><button id="instructionsButton">Instructions</button><button id="openToolsButton">Open ABC Transcription Tools</button></div>
-<div id="instructionsModal" class="modal"><div class="modalBox"><h2>ABC Two-Column Lyrics Formatter</h2><ul>
+<div id="instructionsModal" class="modal"><div class="modalBox"><div class="instructionsScroll"><h2>ABC Two-Column Lyrics Formatter</h2><ul>
 <li>Paste ABC notation into the input area, or open one or more <b>.abc</b> or <b>.txt</b> files. ABC files can also be dragged and dropped onto the Input ABC card.</li>
 <li>The utility formats multi-stanza <b>W:</b> lyrics into <b>two columns</b>.</li>
 <li>Click <b>Format Lyrics</b>. The utility examines every tune independently. Tunes with only one detected <b>W:</b> stanza are left completely untargeted.</li>
@@ -81,8 +99,9 @@
 <li>If the ABC file header already contains one or more <b>%%begincss</b> / <b>%%endcss</b> blocks, the formatter removes those header CSS blocks completely and replaces them with the newly generated lyric-column CSS block. CSS blocks inside individual tunes are not removed.</li>
 <li><b>Copy Results</b> copies the complete processed ABC. <b>Save ABC File</b> saves it as an ABC file.</li>
 <li><b>Open in ABC Transcription Tools</b> is enabled only when the processed ABC can be compressed into an ABC Transcription Tools share link of 8100 characters or less.</li>
-<li>The formatter checks the width of every <b>W:</b> lyric line before generating the CSS. The left and right columns are measured separately. A 14px lyric size is the normal baseline, but the formatter may automatically increase it up to 17px when both columns still fit comfortably. Long lines are reduced only as much as needed. The 800-unit fitting model establishes a safe minimum second-column position, while the generated SVG CSS allows the second column to move farther right automatically when a tune is rendered substantially wider, making better use of the available page width without changing the vertical stanza positioning.</li><li>The generated CSS leaves the original lyric SVG height intact and forces overflow to remain visible. The second-column transforms are also applied directly to the lyric SVG, allowing ABC Transcription Tools PDF export to rasterize the same two-column layout shown on screen.</li><li>To reduce the size of the generated header CSS, selectors that use the same lyric font declaration or the same overflow declaration are automatically combined into shared CSS rules. Tune-specific stanza transforms remain separate so their positioning is unchanged.</li>
-</ul><button id="closeInstructions">Close</button></div></div>
+<li>The formatter checks the width of every <b>W:</b> lyric line before generating the CSS. The left and right columns are measured separately. A 14px lyric size is the normal baseline, but the formatter may automatically increase it up to 17px when both columns still fit comfortably. Long lines are reduced only as much as needed. The 800-unit fitting model establishes a safe minimum second-column position, while the generated SVG CSS allows the second column to move farther right automatically when a tune is rendered substantially wider, making better use of the available page width without changing the vertical stanza positioning.</li><li>The generated CSS leaves the original lyric SVG height intact and forces overflow to remain visible. The second-column transforms are also applied directly to the lyric SVG, allowing ABC Transcription Tools PDF export to rasterize the same two-column layout shown on screen.</li><li>To reduce the size of the generated header CSS, selectors that use the same lyric font declaration or the same overflow declaration are automatically combined into shared CSS rules. Tune-specific stanza transforms remain separate so their positioning is unchanged. The generated CSS is formatted with one selector per line where practical, indented declarations, and blank lines between rules so it is easier to read and edit by hand.</li>
+<li><b>Rendering large tunebooks:</b> The two-column layout can generate a substantial amount of tune-specific CSS, especially for tunebooks containing many songs with multi-stanza lyrics. As a result, opening or re-rendering a large processed tunebook in ABC Transcription Tools may take considerably longer than rendering the original ABC. This is expected; allow the rendering process time to complete.</li>
+</ul></div><button id="closeInstructions">Close</button></div></div>
 <div id="detailsModal" class="modal"><div class="modalBox"><h2>Lyrics Formatting Details</h2><div id="detailsContent">Process ABC notation to generate a tune-by-tune report.</div><button id="closeDetails">Close</button></div></div>
 <div id="saveModal" class="modal"><div class="modalBox" style="max-width:520px"><h2>Save ABC File</h2><label for="filenameInput"><b>Filename:</b></label><input id="filenameInput" class="filenameInput" type="text" /><div class="filenameButtons"><button id="confirmSave">Save</button><button id="cancelSave" class="cancel">Cancel</button></div></div></div>
 <script>
@@ -203,7 +222,67 @@ function optimizeCSSRules(allRules){
   optimized.push(...passthrough);
   return optimized;
 }
-function buildCSSBlock(allRules,columns){const optimized=optimizeCSSRules(allRules);const lines=['%%begincss',`/* ${GENERATED_MARKER}; ${columns} columns */`,...optimized,'%%endcss'];return lines.join('\n')+'\n';}
+function splitSelectorList(selectorText){
+  const parts=[];
+  let start=0,quote='',escaped=false,brackets=0,parens=0;
+  for(let i=0;i<selectorText.length;i++){
+    const ch=selectorText[i];
+    if(quote){
+      if(escaped){escaped=false;continue;}
+      if(ch==='\\'){escaped=true;continue;}
+      if(ch===quote)quote='';
+      continue;
+    }
+    if(ch==='"'||ch==="'"){quote=ch;continue;}
+    if(ch==='['){brackets++;continue;}
+    if(ch===']'){brackets=Math.max(0,brackets-1);continue;}
+    if(ch==='('){parens++;continue;}
+    if(ch===')'){parens=Math.max(0,parens-1);continue;}
+    if(ch===','&&brackets===0&&parens===0){
+      parts.push(selectorText.slice(start,i).trim());
+      start=i+1;
+    }
+  }
+  parts.push(selectorText.slice(start).trim());
+  return parts.filter(Boolean);
+}
+
+function formatCSSDeclaration(decl){
+  const i=decl.indexOf(':');
+  if(i<0)return decl.trim();
+  const property=decl.slice(0,i).trim();
+  let value=decl.slice(i+1).trim();
+  value=value.replace(/\s*!important\s*$/,' !important');
+  return `  ${property}: ${value};`;
+}
+
+function formatCSSRule(rule){
+  const m=String(rule).match(/^([\s\S]*?)\{([^{}]*)\}$/);
+  if(!m)return String(rule).trim();
+
+  const selectors=splitSelectorList(m[1]);
+  const declarations=m[2].split(';').map(s=>s.trim()).filter(Boolean);
+
+  const selectorBlock=selectors.length>1
+    ? selectors.map((s,i)=>`${s}${i<selectors.length-1?',':''}`).join('\n')
+    : selectors[0];
+
+  return `${selectorBlock} {\n${declarations.map(formatCSSDeclaration).join('\n')}\n}`;
+}
+
+function buildCSSBlock(allRules,columns){
+  const optimized=optimizeCSSRules(allRules);
+  const formatted=optimized.map(formatCSSRule);
+  return [
+    '%%begincss',
+    `/* ${GENERATED_MARKER}; ${columns} columns */`,
+    '',
+    formatted.join('\n\n'),
+    '',
+    '%%endcss',
+    ''
+  ].join('\n');
+}
 async function processABC(){if(busy)return;let original=inputEl.value;if(!original.trim()){setStatus('Paste or open an ABC file first.');return;}if(!hasABCTune(original)){setStatus('No ABC tune was found. A tune must include an X: tag.');return;}busy=true;updateProcessButton();$('progress').textContent='Processing…';setStatus('Analyzing W: lyrics…');await new Promise(r=>setTimeout(r,0));try{original=stripHeaderCssBlocks(original);const parts=splitABC(original);const measurementPreamble=stripCssBlocksForMeasurement(parts.preamble);const columns=2;const allRules=[],rows=[];let targeted=0,single=0,noWords=0;for(let i=0;i<parts.tunes.length;i++){const tune=parts.tunes[i],parsed=parseWStanzas(tune),title=tuneTitle(tune,i);if(!parsed.nonblankCount){noWords++;rows.push({index:i+1,title,stanzas:0,targeted:false,note:'No W: lyrics'});continue;}if(parsed.stanzas.length<2){single++;rows.push({index:i+1,title,stanzas:parsed.stanzas.length,targeted:false,note:'Single stanza'});continue;}const layout=layoutMetricsFromABC(measurementPreamble,tune,parsed);const generated=cssForTune(i,title,parsed,layout,columns);if(generated){allRules.push(...generated.rules);targeted++;const shifts=generated.shifts.map(s=>`col ${s.column}: stanzas ${s.startStanza}-${s.endStanza}, ${fmt(s.dy)}px Y`).join('; ');const widthNote=generated.fit.reduced?`auto font ${fmt(generated.fit.fontSize)}px for wide lyrics`:generated.fit.enlarged?`auto enlarged font ${fmt(generated.fit.fontSize)}px`:`font ${fmt(generated.fit.fontSize)}px`;const xNote=`column 2 minimum X ${fmt(generated.fit.rightStart)}px; responsive on wider SVGs`;const gapNote=generated.autoGapCount?`; auto stanza spacing ${fmt(generated.autoStanzaGap)}px (${generated.autoGapCount} gap${generated.autoGapCount===1?'':'s'})`:'';rows.push({index:i+1,title,stanzas:parsed.stanzas.length,targeted:true,note:`${columns} columns; ${widthNote}; ${xNote}${gapNote}; ${shifts}`});}if(i%20===0)await new Promise(r=>setTimeout(r,0));}const css=buildCSSBlock(allRules,columns);const out=css+original.replace(/^\uFEFF/,'');outputEl.value=out;reportRows=rows;buildReport(rows);$('copyButton').disabled=false;$('saveButton').disabled=false;$('detailsButton').disabled=false;updateShareAvailability(out);setStatus([`Tunes found: ${parts.tunes.length}`,`Tunes formatted: ${targeted}`,`Tunes with one stanza left unchanged: ${single}`,`Tunes with no W: lyrics: ${noWords}`,`Columns: ${columns}`].join('\n'));}catch(e){console.error(e);setStatus('Could not format the ABC: '+e.message);outputEl.value='';$('copyButton').disabled=true;$('saveButton').disabled=true;}finally{$('progress').textContent='';busy=false;updateProcessButton();}}
 function escapeHTML(v){return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function buildReport(rows){const body=rows.map(r=>`<tr><td class="num">${r.index}</td><td>${escapeHTML(r.title)}</td><td class="num">${r.stanzas}</td><td>${r.targeted?'Yes':'No'}</td><td>${escapeHTML(r.note)}</td></tr>`).join('');$('detailsContent').innerHTML=`<table class="reportTable"><thead><tr><th class="num">Tune</th><th>Title</th><th class="num">Stanzas</th><th>CSS</th><th>Result</th></tr></thead><tbody>${body}</tbody></table>`;}
