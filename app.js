@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3328_090226_0900";
+var gVersionNumber = "3329_090326_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31301,13 +31301,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_30aug2026b;
+        var updatePresented = localStorage.sawUpdate_3sep2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_30aug2026b = true;
+          localStorage.sawUpdate_3sep2026 = true;
 
         }
 
@@ -37407,6 +37407,512 @@ function ExportImageDialog(theABC, callback, val, metronome_state) {
   initRender();
 
 }
+
+
+//
+// Make W: verses two-column using the same formatter logic as the
+// ABC Two-Column Lyrics Formatter utility (Version 1.0.23).
+//
+
+const TWO_COLUMN_LYRICS_GENERATED_MARKER = "ABC Two-Column Lyrics Formatter generated CSS";
+
+function TwoColumnLyricsSplitABC(text) {
+  const re = /^X\s*:/gm, starts = [];
+  let m;
+  while ((m = re.exec(text))) starts.push(m.index);
+  if (!starts.length) return { preamble: text, tunes: [] };
+  const preamble = text.slice(0, starts[0]);
+  const tunes = starts.map((s, i) => text.slice(s, i + 1 < starts.length ? starts[i + 1] : text.length));
+  return { preamble, tunes };
+}
+
+function TwoColumnLyricsTuneTitle(tune, index) {
+  const m = String(tune).match(/^T:\s*(.*)$/m);
+  return m && m[1].trim() ? m[1].trim() : `Tune ${index + 1}`;
+}
+
+function TwoColumnLyricsStripHeaderCssBlocks(text) {
+  const src = String(text || "");
+  const x = src.search(/^X\s*:/m);
+  if (x < 0) return src;
+  let header = src.slice(0, x);
+  const rest = src.slice(x);
+  header = header.replace(/^\s*%%begincss\s*\r?\n[\s\S]*?^%%endcss\s*(?:\r?\n)?/gm, "");
+  return (header + rest).replace(/^\s*\r?\n/, "");
+}
+
+function TwoColumnLyricsStripCssBlocksForMeasurement(text) {
+  return String(text || "").replace(/^\s*%%begincss\s*\r?\n[\s\S]*?^%%endcss\s*\r?\n?/gm, "");
+}
+
+function TwoColumnLyricsParseWStanzas(tune) {
+  const lines = tune.split(/\r?\n/), w = [];
+  for (const line of lines) {
+    const m = line.match(/^W:\s?(.*)$/);
+    if (!m) continue;
+    const raw = m[1] || "", content = raw.trim();
+    w.push({ content, blank: content === "" || content === "%" });
+  }
+
+  const nonblank = w.filter(x => !x.blank);
+  if (!nonblank.length) return { stanzas: [], nonblankCount: 0 };
+
+  const stanzas = [];
+  let current = null, pendingBlank = false, blankRun = 0, nonblankIndex = 0;
+
+  for (const item of w) {
+    if (item.blank) {
+      if (current) {
+        pendingBlank = true;
+        blankRun++;
+      }
+      continue;
+    }
+
+    nonblankIndex++;
+    const numbered = /^\d+\s*[.)]\s*/.test(item.content);
+    const startsNew = !current || pendingBlank || (numbered && current.lines.length);
+
+    if (startsNew) {
+      if (current && current.lines.length) stanzas.push(current);
+      current = {
+        start: nonblankIndex,
+        end: nonblankIndex,
+        lines: [],
+        sourceStartsNumbered: numbered,
+        manualSpacerBefore: pendingBlank,
+        manualSpacerLinesBefore: pendingBlank ? blankRun : 0
+      };
+    }
+
+    current.lines.push(item.content);
+    current.end = nonblankIndex;
+    pendingBlank = false;
+    blankRun = 0;
+  }
+
+  if (current && current.lines.length) stanzas.push(current);
+  return { stanzas, nonblankCount: nonblank.length };
+}
+
+function TwoColumnLyricsStanzaCountPartitions(stanzas, columns) {
+  const n = stanzas.length, k = Math.min(columns, n), base = Math.floor(n / k), extra = n % k, groups = [];
+  let start = 0;
+  for (let c = 0; c < k; c++) {
+    const count = base + (c < extra ? 1 : 0);
+    groups.push([start, start + count]);
+    start += count;
+  }
+  return groups;
+}
+
+function TwoColumnLyricsLastNumericDirective(text, name, def) {
+  const re = new RegExp("^\\s*%%" + name + "\\s+(-?\\d+(?:\\.\\d+)?)\\s*(?:%.*)?$", "gmi");
+  let m, value = def;
+  while ((m = re.exec(String(text || "")))) value = parseFloat(m[1]);
+  return Number.isFinite(value) ? value : def;
+}
+
+function TwoColumnLyricsWordsFontInfo(text) {
+  const lines = String(text || "").split(/\r?\n/);
+  let size = 17, family = "Palatino";
+
+  for (const line of lines) {
+    if (!/^\s*%%wordsfont\b/i.test(line)) continue;
+    const rest = line.replace(/^\s*%%wordsfont\s*/i, "").replace(/\s*%.*$/, "").trim();
+    const nums = rest.match(/\d+(?:\.\d+)?/g);
+
+    if (nums && nums.length) {
+      const v = parseFloat(nums[nums.length - 1]);
+      if (Number.isFinite(v) && v > 0) size = v;
+    }
+
+    const fm = rest.match(/^(.+?)\s+(?:normal|bold|italic|bolditalic|\d+(?:\.\d+)?)\b/i);
+    if (fm && fm[1].trim()) family = fm[1].trim().replace(/^['"]|['"]$/g, "");
+  }
+
+  return { size, family };
+}
+
+function TwoColumnLyricsTextWidth(text, fontSize, fontFamily) {
+  const canvas = TwoColumnLyricsTextWidth.canvas ||
+    (TwoColumnLyricsTextWidth.canvas = document.createElement("canvas"));
+  const ctx = canvas.getContext("2d");
+  ctx.font = `${fontSize}px ${fontFamily || "Palatino"}, Palatino, "Palatino Linotype", "Book Antiqua", serif`;
+  return ctx.measureText(String(text || "")).width;
+}
+
+function TwoColumnLyricsFitColumns(parsed, groups, sourceFont, fontFamily) {
+  const source = Math.max(1, sourceFont || 17);
+  const normal = Math.min(source, 14);
+  const maximum = Math.min(source, 17);
+  const metricSafety = 1.05;
+  const pageWidth = 800;
+  const leftStart = 15;
+  const rightMargin = 28;
+  const gutter = 26;
+  const idealRightStart = 395;
+  const minRightStart = 320;
+  const maxRightStart = 440;
+
+  function widestForGroup(group, fontSize) {
+    const [a, b] = group;
+    let width = 0, text = "";
+    for (let s = a; s < b; s++) {
+      for (const line of parsed.stanzas[s].lines) {
+        const w = TwoColumnLyricsTextWidth(line, fontSize, fontFamily) * metricSafety;
+        if (w > width) {
+          width = w;
+          text = line;
+        }
+      }
+    }
+    return { width, text };
+  }
+
+  let chosen = null;
+
+  for (let fs = maximum; fs >= 9.5 - .001; fs -= .5) {
+    const fontSize = Math.round(fs * 2) / 2;
+    const left = widestForGroup(groups[0], fontSize);
+    const right = widestForGroup(groups[1], fontSize);
+    const feasibleMin = Math.max(minRightStart, leftStart + left.width + gutter);
+    const feasibleMax = Math.min(maxRightStart, pageWidth - rightMargin - right.width);
+
+    if (feasibleMin <= feasibleMax) {
+      const rightStart = Math.min(feasibleMax, Math.max(feasibleMin, idealRightStart));
+      chosen = { fontSize, left, right, rightStart, dx: rightStart - leftStart };
+      break;
+    }
+  }
+
+  if (!chosen) {
+    const fontSize = 9.5;
+    const left = widestForGroup(groups[0], fontSize);
+    const right = widestForGroup(groups[1], fontSize);
+    const rightStart = Math.min(maxRightStart, Math.max(minRightStart, pageWidth - rightMargin - right.width));
+    chosen = { fontSize, left, right, rightStart, dx: rightStart - leftStart };
+  }
+
+  return {
+    ...chosen,
+    reduced: chosen.fontSize < normal - .01,
+    enlarged: chosen.fontSize > normal + .01,
+    normal,
+    maximum,
+    pageWidth,
+    leftStart,
+    rightMargin,
+    gutter
+  };
+}
+
+function TwoColumnLyricsLayoutMetrics(preamble, tune, parsed) {
+  const combined = String(preamble || "") + "\n" + String(tune || "");
+  const fontInfo = TwoColumnLyricsWordsFontInfo(combined);
+  const sourceFont = fontInfo.size;
+  const fontFamily = fontInfo.family;
+  const lineStep = sourceFont + 3;
+  const wordsspace = TwoColumnLyricsLastNumericDirective(combined, "wordsspace", 0);
+  const stanzaExtra = Math.max(lineStep * .925, Math.max(0, wordsspace));
+  const starts = [];
+  let y = 0;
+
+  for (let i = 0; i < parsed.stanzas.length; i++) {
+    const stanza = parsed.stanzas[i];
+    starts.push(y);
+    y += stanza.lines.length * lineStep;
+    const next = parsed.stanzas[i + 1];
+    if (next && next.manualSpacerBefore) y += stanzaExtra;
+  }
+
+  return { sourceFont, fontFamily, lineStep, wordsspace, stanzaExtra, starts };
+}
+
+function TwoColumnLyricsFmt(n) {
+  return Number(n.toFixed(4)).toString();
+}
+
+function TwoColumnLyricsResponsiveDx(dx, pageWidth) {
+  const offset = dx - pageWidth * .5;
+  return `max(${TwoColumnLyricsFmt(dx)}px,calc(50% + ${TwoColumnLyricsFmt(offset)}px))`;
+}
+
+function TwoColumnLyricsCssAttrString(value) {
+  return String(value || "").replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/[\r\n]+/g, " ");
+}
+
+function TwoColumnLyricsReversedArticleTitle(title) {
+  const s = String(title || "").trim();
+  const m = s.match(/^(.*),\s*(The|A|An)$/i);
+  if (!m) return "";
+  return `${m[2]} ${m[1]}`.trim();
+}
+
+function TwoColumnLyricsTuneScopes(tuneIndex, title, nonblankCount) {
+  const primary = `#notation${tuneIndex}`;
+  const candidates = [];
+  const addTitle = t => {
+    const v = TwoColumnLyricsCssAttrString(t);
+    if (v && !candidates.includes(v)) candidates.push(v);
+  };
+
+  addTitle(title);
+  addTitle(TwoColumnLyricsReversedArticleTitle(title));
+
+  const svgScopes = candidates.map(
+    t => `svg[aria-label*="${t}"]:has(.abcjs-unaligned-words > text:nth-of-type(${nonblankCount}):last-of-type)`
+  );
+
+  return { primary, svgScopes, all: [primary, ...svgScopes] };
+}
+
+function TwoColumnLyricsScopedSelectors(scopes, suffix) {
+  return scopes.map(s => s + suffix).join(",");
+}
+
+function TwoColumnLyricsCssForTune(tuneIndex, title, parsed, layout, columns) {
+  const stanzas = parsed.stanzas;
+  if (stanzas.length < 2) return null;
+
+  const groups = TwoColumnLyricsStanzaCountPartitions(stanzas, columns);
+  const rules = [];
+  const scopeInfo = TwoColumnLyricsTuneScopes(tuneIndex, title, parsed.nonblankCount);
+  const scopes = scopeInfo.all;
+  const fit = TwoColumnLyricsFitColumns(parsed, groups, layout.sourceFont, layout.fontFamily);
+  const fontSize = fit.fontSize;
+  const autoStanzaGap = Math.max(7, layout.lineStep * .5);
+
+  rules.push(
+    `${TwoColumnLyricsScopedSelectors(scopes, " .abcjs-unaligned-words > text")}` +
+    `{font-size:${fontSize.toFixed(fontSize % 1 ? 1 : 0)}px!important;transform-origin:0 0;transform-box:view-box}`
+  );
+
+  for (let col = 0; col < groups.length; col++) {
+    const [a, b] = groups[col];
+    const baseDx = col === 0 ? 0 : fit.dx;
+    // Keep identical with standalone formatter 1.0.23.
+    const baseDy = col === 0 ? 0 : -layout.starts[a] - layout.lineStep;
+    let cumulativeAutoGap = 0;
+
+    for (let s = a; s < b; s++) {
+      if (s > a && !stanzas[s].manualSpacerBefore) cumulativeAutoGap += autoStanzaGap;
+
+      const stanza = stanzas[s], start = stanza.start, end = stanza.end;
+      const dx = baseDx, dy = baseDy + cumulativeAutoGap;
+
+      if (dx !== 0 || dy !== 0) {
+        const child = start === end
+          ? ` .abcjs-unaligned-words > text:nth-of-type(${start})`
+          : ` .abcjs-unaligned-words > text:nth-of-type(n+${start}):nth-of-type(-n+${end})`;
+        const xValue = col === 0 ? `${TwoColumnLyricsFmt(dx)}px` : TwoColumnLyricsResponsiveDx(dx, fit.pageWidth);
+
+        rules.push(
+          `${TwoColumnLyricsScopedSelectors(scopes, child)}` +
+          `{transform:translate(${xValue},${TwoColumnLyricsFmt(dy)}px)}`
+        );
+      }
+    }
+  }
+
+  rules.push(`${scopeInfo.primary}{overflow:visible!important}`);
+  rules.push(`${scopeInfo.primary}>div:has(.abcjs-unaligned-words){overflow:visible!important}`);
+  rules.push(`${scopeInfo.primary} svg:has(.abcjs-unaligned-words){overflow:visible!important}`);
+  for (const svgScope of scopeInfo.svgScopes) rules.push(`${svgScope}{overflow:visible!important}`);
+
+  return { rules };
+}
+
+function TwoColumnLyricsOptimizeCSSRules(allRules) {
+  const grouped = new Map(), passthrough = [];
+
+  for (const rule of allRules) {
+    const m = String(rule).match(/^([\s\S]*?)\{([^{}]*)\}$/);
+    if (!m) {
+      passthrough.push(rule);
+      continue;
+    }
+
+    const selector = m[1], body = m[2];
+    const safeToGroup =
+      /^font-size:[^;]+!important;transform-origin:0 0;transform-box:view-box$/.test(body) ||
+      body === "overflow:visible!important";
+
+    if (!safeToGroup) {
+      passthrough.push(rule);
+      continue;
+    }
+
+    if (!grouped.has(body)) grouped.set(body, []);
+    grouped.get(body).push(selector);
+  }
+
+  const optimized = [];
+  for (const [body, selectors] of grouped) {
+    optimized.push(`${selectors.join(",")}{${body}}`);
+  }
+
+  optimized.push(...passthrough);
+  return optimized;
+}
+
+function TwoColumnLyricsSplitSelectorList(selectorText) {
+  const parts = [];
+  let start = 0, quote = "", escaped = false, brackets = 0, parens = 0;
+
+  for (let i = 0; i < selectorText.length; i++) {
+    const ch = selectorText[i];
+
+    if (quote) {
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escaped = true;
+        continue;
+      }
+      if (ch === quote) quote = "";
+      continue;
+    }
+
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      continue;
+    }
+    if (ch === "[") {
+      brackets++;
+      continue;
+    }
+    if (ch === "]") {
+      brackets = Math.max(0, brackets - 1);
+      continue;
+    }
+    if (ch === "(") {
+      parens++;
+      continue;
+    }
+    if (ch === ")") {
+      parens = Math.max(0, parens - 1);
+      continue;
+    }
+
+    if (ch === "," && brackets === 0 && parens === 0) {
+      parts.push(selectorText.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+
+  parts.push(selectorText.slice(start).trim());
+  return parts.filter(Boolean);
+}
+
+function TwoColumnLyricsFormatCSSDeclaration(decl) {
+  const i = decl.indexOf(":");
+  if (i < 0) return decl.trim();
+
+  const property = decl.slice(0, i).trim();
+  let value = decl.slice(i + 1).trim();
+  value = value.replace(/\s*!important\s*$/, " !important");
+
+  return `  ${property}: ${value};`;
+}
+
+function TwoColumnLyricsFormatCSSRule(rule) {
+  const m = String(rule).match(/^([\s\S]*?)\{([^{}]*)\}$/);
+  if (!m) return String(rule).trim();
+
+  const selectors = TwoColumnLyricsSplitSelectorList(m[1]);
+  const declarations = m[2].split(";").map(s => s.trim()).filter(Boolean);
+
+  const selectorBlock = selectors.length > 1
+    ? selectors.map((s, i) => `${s}${i < selectors.length - 1 ? "," : ""}`).join("\n")
+    : selectors[0];
+
+  return `${selectorBlock} {\n${declarations.map(TwoColumnLyricsFormatCSSDeclaration).join("\n")}\n}`;
+}
+
+function TwoColumnLyricsBuildCSSBlock(allRules, columns) {
+  const optimized = TwoColumnLyricsOptimizeCSSRules(allRules);
+  const formatted = optimized.map(TwoColumnLyricsFormatCSSRule);
+
+  return [
+    "%%begincss",
+    `/* ${TWO_COLUMN_LYRICS_GENERATED_MARKER}; ${columns} columns */`,
+    "",
+    formatted.join("\n\n"),
+    "",
+    "%%endcss",
+    ""
+  ].join("\n");
+}
+
+function FormatVersesTwoColumnABC(original) {
+  original = TwoColumnLyricsStripHeaderCssBlocks(original);
+
+  const parts = TwoColumnLyricsSplitABC(original);
+  const measurementPreamble = TwoColumnLyricsStripCssBlocksForMeasurement(parts.preamble);
+  const columns = 2;
+  const allRules = [];
+
+  for (let i = 0; i < parts.tunes.length; i++) {
+    const tune = parts.tunes[i];
+    const parsed = TwoColumnLyricsParseWStanzas(tune);
+    if (parsed.stanzas.length < 2) continue;
+
+    const title = TwoColumnLyricsTuneTitle(tune, i);
+    const layout = TwoColumnLyricsLayoutMetrics(measurementPreamble, tune, parsed);
+    const generated = TwoColumnLyricsCssForTune(i, title, parsed, layout, columns);
+
+    if (generated) allRules.push(...generated.rules);
+  }
+
+  const css = TwoColumnLyricsBuildCSSBlock(allRules, columns);
+  return css + original.replace(/^\uFEFF/, "");
+}
+
+function MakeVersesTwoColumn() {
+
+  sendGoogleAnalytics("dialog", "MakeVersesTwoColumn");
+
+  if (CountTunes() == 0) {
+    var thePrompt = makeCenteredPromptString("No ABC tunes to format.");
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: AllowDialogsToScroll()
+    });
+    return;
+  }
+
+  showTheSpinner();
+
+  try {
+    const formattedABC = FormatVersesTwoColumnABC(getABCEditorText());
+    setABCEditorText(formattedABC);
+    gIsDirty = true;
+
+    RenderAsync(true, null, function() {
+      hideTheSpinner();
+      ensureMoreToolsVisible();
+    });
+
+  } catch (err) {
+    console.error(err);
+    hideTheSpinner();
+
+    var thePrompt = makeCenteredPromptString(
+      "Unable to format the verses into two columns."
+    );
+
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: AllowDialogsToScroll()
+    });
+  }
+}
+
 
 //
 // Reformat all the tunes by MusicXML Format roundtrip
@@ -54141,6 +54647,7 @@ function AdvancedControlsDialog() {
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="injectmidigchord" class="advancedcontrols btn btn-injectmidigchord" onclick="InjectMIDIGChordTemplates()" type="button" value="Inject MIDI gchord Templates">';
   modal_msg += '<input id="reformatusingmusicxml" class="advancedcontrols  btn btn-reformatusingmusicxml" onclick="BatchMusicXMLRoundTrip()" type="button" value="Reformat Using MusicXML">';
+  modal_msg += '<input id="makeversestwocolumn" class="advancedcontrols btn btn-makeversestwocolumn" onclick="MakeVersesTwoColumn()" type="button" value="Make Verses 2-Column">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="normalizevoicekeysignatures" class="advancedcontrols btn btn-normalizevoicekeysignatures" onclick="NormalizeVoiceKeySignaturesAndDynamics()" type="button" value="Normalize Voice Keys/Dynamics">';
@@ -60097,7 +60604,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 30 August 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 3 September 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Make Verses 2-Column</strong> to <strong>More ABC Tools / Other ABC Tools</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">This replaces the standalone <strong>ABC Two-Column Lyrics Formatter</strong> to format W: verse lyrics in two columns using custom CSS.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60106,9 +60620,7 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;"><strong>Change in Share URL Shortening Service Provider</strong></p>';
   modal_msg += '<p style="font-size:12pt;">In the Sharing Controls dialog, URL shortening is now done using <strong><a href="https://short.io" target="_blank">short.io</a></strong> (1000 free shortened URLs total) instead of <strong><a href="https://tinyurl.com" target="_blank">tinyurl.com</a></strong> (30 free shortened URLs/month).</p>';
   modal_msg += '<p style="font-size:12pt;">The built-in Short.io domain and public API key are used by default. If you have your own Short.io domain and public API key, you can enter them on the <strong>System</strong> tab of <strong>Advanced Settings</strong>. They are saved in browser local storage and used in place of the corresponding built-in values.</p>';
-  modal_msg += '<p style="font-size:12pt;">Only a Short.io <strong>public</strong> API key should be entered here; never enter a private or secret API key.</p>';
   modal_msg += '<p style="font-size:12pt;">If automatic Short.io shortening fails, the full Share URL will be copied to the clipboard and you will be offered the option to open TinyURL in a new tab to shorten it manually.</p>';
-
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67041,13 +67553,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_30aug2026b;
+    var updatePresented = localStorage.sawUpdate_3sep2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_30aug2026b = true;
+      localStorage.sawUpdate_3sep2026 = true;
 
     }
 
