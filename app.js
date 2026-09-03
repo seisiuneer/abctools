@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3332_090326_1300";
+var gVersionNumber = "3333_090326_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37852,6 +37852,15 @@ function TwoColumnLyricsBuildCSSBlock(allRules, columns) {
 }
 
 function FormatVersesTwoColumnABC(original) {
+  const originalParts = TwoColumnLyricsSplitABC(original);
+  const eligibleTunes = originalParts.tunes.filter(tune =>
+    TwoColumnLyricsParseWStanzas(tune).stanzas.length >= 2
+  );
+
+  // If there is nothing to process, leave the ABC completely unchanged.
+  // In particular, do not remove existing header CSS or add an empty CSS block.
+  if (eligibleTunes.length === 0) return null;
+
   original = TwoColumnLyricsStripHeaderCssBlocks(original);
 
   const parts = TwoColumnLyricsSplitABC(original);
@@ -37872,7 +37881,11 @@ function FormatVersesTwoColumnABC(original) {
   }
 
   const css = TwoColumnLyricsBuildCSSBlock(allRules, columns);
-  return css + original.replace(/^\uFEFF/, "");
+
+  return {
+    abc: css + original.replace(/^\uFEFF/, ""),
+    processedCount: eligibleTunes.length
+  };
 }
 
 function MakeVersesTwoColumn() {
@@ -37892,13 +37905,48 @@ function MakeVersesTwoColumn() {
   showTheSpinner();
 
   try {
-    const formattedABC = FormatVersesTwoColumnABC(getABCEditorText());
-    setABCEditorText(formattedABC);
-    gIsDirty = true;
+    const formattedResult = FormatVersesTwoColumnABC(getABCEditorText());
 
-    RenderAsync(true, null, function() {
+    if (formattedResult === null) {
       hideTheSpinner();
-      ensureMoreToolsVisible();
+
+      var thePrompt = makeCenteredPromptString(
+        "No songs with multiple W: stanzas were found for two-column processing."
+      );
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 200,
+        scrollWithPage: AllowDialogsToScroll()
+      });
+      return;
+    }
+
+    // The CSS has been generated, but do not change the editor or redraw until
+    // the user dismisses the processing-complete alert.
+    hideTheSpinner();
+
+    const processedCount = formattedResult.processedCount;
+    const processedMessage = processedCount === 1
+      ? "1 song was processed for two-column stanzas."
+      : `${processedCount} songs were processed for two-column stanzas.`;
+
+    var thePrompt = makeCenteredPromptString(processedMessage);
+
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: AllowDialogsToScroll()
+    }).then(function() {
+      setABCEditorText(formattedResult.abc);
+      gIsDirty = true;
+
+      showTheSpinner();
+
+      RenderAsync(true, null, function() {
+        hideTheSpinner();
+        ensureMoreToolsVisible();
+      });
     });
 
   } catch (err) {
