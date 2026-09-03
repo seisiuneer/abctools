@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ABC Two-Column Lyrics Website Fixer</title>
+
+  <!-- DayPilot Modal, matching the other ABC tools -->
+  <script src="daypilot-modal.min-3.10.1.js"></script>
+
+  <style>
+    :root{
+      --purple:#321247;
+      --purple-mid:#633184;
+      --purple-dark:#3e1755;
+      --accent:#d8b35f;
+      --green:#5e8061;
+      --green-dark:#466348;
+      --teal:#327d7e;
+      --teal-dark:#245f60;
+      --blue:#436d9d;
+      --blue-dark:#315477;
+      --red:#a34a4a;
+      --red-dark:#7b3737;
+      --bd:1px solid #aeb4ba;
+      --gap:12px;
+      --page-pad:14px;
+      --helpbar-height:68px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:#000;
+      background:#fff;
+    }
+    body{
+      padding:0;
+      overflow:hidden;
+      font-size:clamp(15px,1.05vw + 12px,17px);
+      line-height:1.35;
+    }
+    .app{
+      max-width:none;
+      height:100vh;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      gap:var(--gap);
+      overflow:hidden;
+      padding-bottom:calc(var(--helpbar-height) + env(safe-area-inset-bottom));
+    }
+    @supports (height:100dvh){.app{height:100dvh}}
+    .hero{
+      flex:0 0 auto;
+      width:100%;
+      margin:0;
+      border:0;
+      border-bottom:5px solid var(--accent);
+      border-radius:0;
+      padding:calc(16px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) 14px calc(20px + env(safe-area-inset-left));
+      background:
+        linear-gradient(135deg,rgba(50,18,71,.98),rgba(99,49,132,.97)),
+        repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.025) 12px 24px);
+      overflow:hidden;
+      text-align:center;
+      position:relative;
+    }
+    .hero h1{
+      margin:0;
+      color:#fff;
+      font-size:clamp(1.95rem,4vw,2.3rem);
+      line-height:1.1;
+    }
+    .hero p{
+      max-width:920px;
+      margin:12px auto 0;
+      color:#eee3f4;
+      line-height:1.5;
+      font-size:16px;
+    }
+    .versionNumber{
+      position:absolute;
+      top:calc(10px + env(safe-area-inset-top));
+      right:calc(14px + env(safe-area-inset-right));
+      color:rgba(255,255,255,.82);
+      font-size:1rem;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .main{
+      flex:1 1 auto;
+      min-height:0;
+      min-width:0;
+      display:flex;
+      gap:var(--gap);
+      overflow:hidden;
+      margin:0 calc(var(--page-pad) + env(safe-area-inset-right)) var(--gap) calc(var(--page-pad) + env(safe-area-inset-left));
+    }
+    .column{
+      flex:1 1 0;
+      min-width:0;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      gap:var(--gap);
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    .card{
+      border:var(--bd);
+      border-radius:12px;
+      padding:14px;
+      min-width:0;
+      overflow:hidden;
+      background:transparent;
+    }
+    .card h2{
+      margin:0 0 12px;
+      font-size:clamp(19px,1.1vw + 15px,23px);
+    }
+    #inputCard,#outputCard{
+      flex:1 1 auto;
+      min-height:300px;
+      display:flex;
+      flex-direction:column;
+    }
+    .inputHeader,.statusHeader{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .inputHeader h2,.statusHeader h2{
+      display:flex;
+      align-items:center;
+      min-height:46px;
+      margin:0;
+      line-height:1.1;
+    }
+    .fileWrap{
+      flex:1;
+      min-width:260px;
+      display:flex;
+      align-items:center;
+      min-height:46px;
+    }
+    .app input,.app button,.app textarea{font:inherit}
+    .app input[type=file]{
+      display:block;
+      width:100%;
+      margin:0;
+      line-height:1.15;
+    }
+    .app input[type=file]::file-selector-button,.app button{
+      border-radius:6px;
+      padding:10px 14px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .app button{
+      border:1px solid var(--green-dark);
+      background:var(--green);
+      color:#fff;
+    }
+    .app button:hover{background:var(--green-dark)}
+    .app button:disabled{opacity:.42;cursor:default}
+    .app button.primary,#fixButton{background:var(--teal);border-color:var(--teal-dark)}
+    .app button.primary:hover,#fixButton:hover{background:var(--teal-dark)}
+    #clearButton{background:var(--red);border-color:var(--red-dark)}
+    #clearButton:hover{background:var(--red-dark)}
+    #saveButton{background:var(--blue);border-color:var(--blue-dark)}
+    #saveButton:hover{background:var(--blue-dark)}
+    #copyButton{background:#eee7f3;border-color:#cbb8d8;color:var(--purple-dark)}
+    #copyButton:hover{background:#e3d7eb}
+    .app input[type=file]::file-selector-button{
+      margin-right:12px;
+      background:var(--green);
+      border:1px solid var(--green-dark);
+      color:#fff;
+    }
+    .taWrap{
+      border:var(--bd);
+      border-radius:10px;
+      flex:1 1 auto;
+      min-height:160px;
+      display:flex;
+      overflow:hidden;
+      margin-top:12px;
+      background:#fff;
+    }
+    .taWrap textarea{
+      width:100%;
+      height:100%;
+      border:0;
+      resize:none;
+      padding:12px;
+      font-family:var(--mono);
+      font-size:.82rem;
+      line-height:1.35;
+      overflow:auto;
+      white-space:pre;
+    }
+    .buttonRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+      flex:0 0 auto;
+      min-height:42px;
+    }
+    .buttonRow button{flex:1 1 150px}
+    .note{
+      font-size:.95em;
+      color:#444;
+      line-height:1.5;
+      margin-top:10px;
+    }
+    .statusHeader{margin-bottom:12px}
+    .status{
+      font-family:var(--mono);
+      white-space:pre-wrap;
+      border:var(--bd);
+      border-radius:10px;
+      padding:10px;
+      min-height:100px;
+      max-height:240px;
+      overflow:auto;
+      line-height:1.45;
+      background:#fff;
+    }
+    .drag{
+      outline:3px solid rgba(157,186,242,.4);
+      background:#f7faff;
+    }
+    .footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      min-height:var(--helpbar-height);
+      background:#fff;
+      border-top:var(--bd);
+      padding:12px calc(var(--page-pad) + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(var(--page-pad) + env(safe-area-inset-left));
+      display:flex;
+      gap:10px;
+      z-index:10;
+    }
+    .footer button{
+      flex:1;
+      border-radius:6px;
+      background:#4f565b;
+      border-color:#3d4449;
+    }
+    .footer button:hover{background:#3d4449}
+
+
+
+
+
+    /*
+      DayPilot 3.10.1 "modal_flat" theme, styled to match the
+      ABC Two-Column Lyrics Formatter dialogs.
+    */
+    .modal_flat_background{
+      background:#000!important;
+      opacity:.40!important;
+    }
+
+    .modal_flat_main{
+      border:1px solid #333!important;
+      border-radius:12px!important;
+      box-shadow:0 0 15px -2px rgba(0,0,0,.75)!important;
+      max-width:calc(100vw - 28px)!important;
+      overflow:hidden!important;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif!important;
+      font-size:16px!important;
+      color:#000!important;
+    }
+
+    .modal_flat_inner{
+      padding:24px!important;
+      background:#fff!important;
+      color:#000!important;
+      border-radius:12px!important;
+    }
+
+    .modal_flat_content{
+      margin:0 0 16px!important;
+      padding:0!important;
+      background:#fff!important;
+      color:#000!important;
+      font-size:16px!important;
+      line-height:1.45!important;
+    }
+
+    .modal_flat_input{
+      margin:10px 0 0!important;
+    }
+
+    .modal_flat_input input{
+      width:100%!important;
+      box-sizing:border-box!important;
+      padding:10px 12px!important;
+      border:1px solid #aeb4ba!important;
+      border-radius:10px!important;
+      background:#fff!important;
+      color:#000!important;
+      -webkit-text-fill-color:#000!important;
+      box-shadow:none!important;
+      outline:none!important;
+      font:16px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif!important;
+      line-height:1.25!important;
+    }
+
+    .modal_flat_input input:focus{
+      border-color:#1677ff!important;
+      box-shadow:0 0 0 2px rgba(22,119,255,.25)!important;
+    }
+
+    .modal_flat_buttons{
+      display:flex!important;
+      gap:12px!important;
+      margin-top:18px!important;
+    }
+
+    .modal_flat_main button{
+      box-sizing:border-box!important;
+      min-height:44px!important;
+      padding:10px 16px!important;
+      border-radius:6px!important;
+      cursor:pointer!important;
+      outline:none!important;
+      font:600 16px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif!important;
+      line-height:1.2!important;
+    }
+
+    button.modal_flat_ok{
+      flex:1 1 0!important;
+      width:auto!important;
+      border:1px solid var(--green-dark)!important;
+      background:var(--green)!important;
+      color:#fff!important;
+    }
+
+    button.modal_flat_ok:hover{
+      background:var(--green-dark)!important;
+    }
+
+    button.modal_flat_cancel{
+      flex:1 1 0!important;
+      width:auto!important;
+      margin-left:0!important;
+      border:1px solid #3d4449!important;
+      background:#4f565b!important;
+      color:#fff!important;
+    }
+
+    button.modal_flat_cancel:hover{
+      background:#3d4449!important;
+    }
+
+    .websiteFixerSavePrompt h2{
+      margin:0 0 20px!important;
+      text-align:center!important;
+      color:#000!important;
+      font-size:28px!important;
+      line-height:1.15!important;
+    }
+
+    .websiteFixerSavePrompt .filenameLabel{
+      margin:0!important;
+      font-weight:700!important;
+      font-size:18px!important;
+    }
+
+    .websiteFixerAlert{
+      text-align:center!important;
+      color:#000!important;
+      font-size:18px!important;
+      line-height:1.45!important;
+    }
+
+    .websiteFixerAlert p{
+      margin:0!important;
+    }
+
+    .websiteFixerInstructions{
+      text-align:left!important;
+      max-height:60vh!important;
+      overflow-y:auto!important;
+      padding-right:6px!important;
+    }
+
+    .websiteFixerInstructions h2{
+      margin:0 0 14px!important;
+      text-align:center!important;
+      color:var(--purple-dark)!important;
+    }
+
+    @media (max-width:900px){
+      body{overflow:auto}
+      .app{height:auto;min-height:100dvh;overflow:visible}
+      .main{display:block;overflow:visible}
+      .column{overflow:visible;margin-bottom:var(--gap)}
+      #inputCard,#outputCard{min-height:420px}
+    }
+    @media (max-width:720px){
+      .hero{
+        padding:calc(13px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) 12px calc(18px + env(safe-area-inset-left));
+      }
+      .hero h1{
+        font-size:clamp(1.05rem,5vw,1.4rem);
+        line-height:1.03;
+        white-space:nowrap;
+      }
+      .hero p{
+        max-width:34em;
+        margin-top:6px;
+        font-size:.92rem;
+        line-height:1.28;
+      }
+      .versionNumber{
+        top:calc(7px + env(safe-area-inset-top));
+        right:calc(9px + env(safe-area-inset-right));
+        font-size:.64rem;
+      }
+      .buttonRow{flex-direction:column}
+      .buttonRow button{width:100%}
+      .fileWrap{min-width:0}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <section class="hero">
+    <div class="versionNumber">Version 1.0.4</div>
+    <h1>ABC Two-Column Lyrics Website Fixer</h1>
+    <p>Updates websites exported by the abcjs-eskin Website Builder so<br/>ABC Two-Column Lyrics Formatter output aligns correctly on the website.</p>
+  </section>
+
+  <main class="main">
+    <section class="column">
+      <div class="card" id="inputCard">
+        <div class="inputHeader">
+          <h2>Exported Website</h2>
+          <div class="fileWrap">
+            <input id="fileInput" type="file" accept=".html,.htm,text/html">
+          </div>
+        </div>
+        <div class="taWrap">
+          <textarea id="inputText" spellcheck="false" placeholder="Open or drop an exported Website Builder HTML file here."></textarea>
+        </div>
+        <div class="buttonRow">
+          <button id="fixButton" class="primary" disabled>Apply Two-Column Lyrics Fix</button>
+          <button id="clearButton" disabled>Clear</button>
+        </div>
+        <div class="note">
+          The utility modifies only the website JavaScript rendering path. The embedded ABC, generated <b>%%begincss / %%endcss</b> lyric CSS, ABC Transcription Tools links, and ordinary tunes remain unchanged.
+        </div>
+      </div>
+    </section>
+
+    <section class="column">
+      <div class="card" id="outputCard">
+        <h2>Corrected Website</h2>
+        <div class="taWrap">
+          <textarea id="outputText" spellcheck="false" readonly placeholder="The corrected website source will appear here."></textarea>
+        </div>
+        <div class="buttonRow">
+          <button id="saveButton" disabled>Save Corrected Website</button>
+          <button id="copyButton" disabled>Copy HTML</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="statusHeader"><h2>Status</h2></div>
+        <div id="status" class="status">Open an exported Website Builder HTML file to begin.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <button id="instructionsButton">Instructions</button>
+  </footer>
+</div>
+
+<script>
+'use strict';
+
+const FIX_MARKER = 'ABC Two-Column Lyrics Website Fix v4';
+const FORMATTER_MARKER = 'ABC Two-Column Lyrics Formatter generated CSS';
+
+const fileInput = document.getElementById('fileInput');
+const inputText = document.getElementById('inputText');
+const outputText = document.getElementById('outputText');
+const fixButton = document.getElementById('fixButton');
+const clearButton = document.getElementById('clearButton');
+const saveButton = document.getElementById('saveButton');
+const copyButton = document.getElementById('copyButton');
+const instructionsButton = document.getElementById('instructionsButton');
+const statusEl = document.getElementById('status');
+const inputCard = document.getElementById('inputCard');
+
+let originalFileName = '';
+let correctedHtml = '';
+
+function setStatus(message) {
+  statusEl.textContent = message;
+}
+
+function dayPilotOptions() {
+  return {
+    theme: 'modal_flat',
+    top: 150,
+    width: 620,
+    autoFocus: false,
+    scrollWithPage: true,
+    dragDrop: false
+  };
+}
+
+function modalAlert(html) {
+  if (window.DayPilot && DayPilot.Modal) {
+    return DayPilot.Modal.alert(
+      `<div class="websiteFixerAlert">${html}</div>`,
+      {...dayPilotOptions(), okText:'OK'}
+    );
+  }
+  console.error('DayPilot.Modal is not available.');
+  return Promise.resolve();
+}
+
+function cleanFileName(name) {
+  return String(name || '')
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')
+    .trim();
+}
+
+function suggestedFixedName(name) {
+  let base = String(name || 'website.html').trim();
+  if (!base) base = 'website.html';
+
+  const match = base.match(/^(.*?)(\.(?:html?|HTML?))$/);
+  if (match) return `${match[1]}_fixed${match[2]}`;
+  return `${base.replace(/\.+$/,'')}_fixed.html`;
+}
+
+function normalizeSavedHtmlName(name) {
+  let result = cleanFileName(name);
+  if (!result) return '';
+  if (!/\.html?$/i.test(result)) {
+    result = result.replace(/\.[^.]+$/, '');
+    result += '.html';
+  }
+  return result;
+}
+
+function isLikelyWebsiteBuilderExport(source) {
+  return /ABCJS\.renderAbc\s*\(/.test(source) &&
+         /async\s+function\s+prepareWork\s*\(\s*work\s*,\s*choiceId\s*\)/.test(source) &&
+         /abcForInstrumentChoice\s*\(\s*work\s*,\s*choice\s*\)/.test(source);
+}
+
+function helperSource() {
+  return `
+  /* ${FIX_MARKER}
+     Website-only compatibility fix for ABC Two-Column Lyrics Formatter output.
+     The embedded ABC and its PDF/ABC Transcription Tools CSS are not modified.
+  */
+  function hasTwoColumnLyricsFormatterCSS(abc) {
+    return String(abc || "").includes("${FORMATTER_MARKER}");
+  }
+
+  function firstAbcTitleForTwoColumnFix(abc) {
+    const m = String(abc || "").match(/^T:\\s*(.+)$/m);
+    return m ? m[1].trim() : "";
+  }
+
+  function reversedArticleTitleForTwoColumnFix(title) {
+    const m = String(title || "").trim().match(/^(.*),\\s*(The|A|An)$/i);
+    return m ? \`\${m[2]} \${m[1]}\`.trim() : "";
+  }
+
+  function rightColumnInfoFromFormatterCSS(abc) {
+    const source = String(abc || "");
+    if (!hasTwoColumnLyricsFormatterCSS(source)) return null;
+
+    const title = firstAbcTitleForTwoColumnFix(source);
+    const titleVariants = [title, reversedArticleTitleForTwoColumnFix(title)]
+      .filter(Boolean);
+
+    const cssMatch = source.match(
+      /%%begincss\\s*\\n([\\s\\S]*?ABC Two-Column Lyrics Formatter generated CSS[\\s\\S]*?)\\n%%endcss/i
+    );
+    if (!cssMatch || !titleVariants.length) return null;
+
+    const css = cssMatch[1];
+    const ruleRe = /([^{}]+)\\{([^{}]*)\\}/g;
+    const ranges = [];
+    let rule;
+
+    while ((rule = ruleRe.exec(css))) {
+      const selectors = rule[1];
+      const body = rule[2];
+
+      if (!/transform\\s*:\\s*translate\\(\\s*max\\(/i.test(body)) continue;
+
+      const matchesCurrentTune = titleVariants.some(titleVariant => {
+        const escaped = String(titleVariant)
+          .replace(/\\\\/g, "\\\\\\\\")
+          .replace(/"/g, '\\\\"');
+        return selectors.includes(\`aria-label*="\${escaped}"\`);
+      });
+      if (!matchesCurrentTune) continue;
+
+      const dyMatch = body.match(
+        /transform\\s*:\\s*translate\\(\\s*max\\([\\s\\S]*?\\)\\s*,\\s*(-?\\d+(?:\\.\\d+)?)px\\s*\\)/i
+      );
+      if (!dyMatch) continue;
+
+      const dy = parseFloat(dyMatch[1]);
+      if (!Number.isFinite(dy)) continue;
+
+      const rangeRe = /nth-of-type\\(n\\+(\\d+)\\):nth-of-type\\(-n\\+(\\d+)\\)|nth-of-type\\((\\d+)\\)/g;
+      let rm;
+
+      while ((rm = rangeRe.exec(selectors))) {
+        let start, end;
+        if (rm[1] && rm[2]) {
+          start = parseInt(rm[1], 10);
+          end = parseInt(rm[2], 10);
+        } else if (rm[3]) {
+          start = end = parseInt(rm[3], 10);
+        } else {
+          continue;
+        }
+
+        if (Number.isFinite(start) && Number.isFinite(end) && end >= start) {
+          ranges.push({ start, end, dy });
+        }
+      }
+    }
+
+    if (!ranges.length) return null;
+
+    const unique = [];
+    const seen = new Set();
+    for (const range of ranges) {
+      const key = \`\${range.start}:\${range.end}:\${range.dy}\`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push(range);
+    }
+    unique.sort((a,b) => a.start - b.start);
+
+    return {
+      ranges: unique,
+      firstRightIndex: unique[0].start,
+      firstRightDy: unique[0].dy
+    };
+  }
+
+  function alignTwoColumnLyricsForWebsite(paper, abc) {
+    if (!paper || !hasTwoColumnLyricsFormatterCSS(abc)) return;
+
+    // Website Builder normally renders with oneSvgPerLine:true, so the
+    // unaligned W: lyric group may be in a later SVG. Search the entire paper.
+    const lyricTexts = Array.from(
+      paper.querySelectorAll(".abcjs-unaligned-words > text")
+    );
+    if (lyricTexts.length < 2) return;
+
+    const info = rightColumnInfoFromFormatterCSS(abc);
+    if (!info) return;
+
+    const leftFirst = lyricTexts[0];
+    const rightFirst = lyricTexts[info.firstRightIndex - 1];
+    if (!leftFirst || !rightFirst) return;
+
+    const leftY = parseFloat(leftFirst.getAttribute("y"));
+    const rightY = parseFloat(rightFirst.getAttribute("y"));
+    if (!Number.isFinite(leftY) || !Number.isFinite(rightY)) return;
+
+    const correction = leftY - (rightY + info.firstRightDy);
+    if (!Number.isFinite(correction) || Math.abs(correction) < 0.01) return;
+
+    const rightIndices = new Set();
+    for (const range of info.ranges) {
+      for (let index = range.start; index <= range.end; index++) {
+        rightIndices.add(index);
+      }
+    }
+
+    for (const index of rightIndices) {
+      const element = lyricTexts[index - 1];
+      if (!element) continue;
+
+      const y = parseFloat(element.getAttribute("y"));
+      if (!Number.isFinite(y)) continue;
+
+      element.setAttribute(
+        "y",
+        String(Math.round((y + correction) * 1000) / 1000)
+      );
+    }
+
+    paper.dataset.twoColumnLyricsCorrection =
+      String(Math.round(correction * 1000) / 1000);
+  }
+
+`;
+}
+
+function applyWebsiteFix(source) {
+  const input = String(source || '');
+
+  if (!input.trim()) {
+    return { ok:false, error:'The website source is empty.' };
+  }
+
+  if (!isLikelyWebsiteBuilderExport(input)) {
+    return {
+      ok:false,
+      error:'This does not appear to be a compatible abcjs-eskin Website Builder export.'
+    };
+  }
+
+  if (!input.includes(FORMATTER_MARKER)) {
+    return {
+      ok:false,
+      error:'No ABC Two-Column Lyrics Formatter generated CSS was found in this website.'
+    };
+  }
+
+  if (input.includes(FIX_MARKER) &&
+      input.includes('alignTwoColumnLyricsForWebsite(paper, renderAbcSource);')) {
+    return {
+      ok:true,
+      alreadyFixed:true,
+      html:input,
+      message:'This website already contains the two-column lyrics website fix.'
+    };
+  }
+
+  const preparePattern = /(^[ \t]*)async\s+function\s+prepareWork\s*\(\s*work\s*,\s*choiceId\s*\)\s*\{/m;
+  const prepareMatch = input.match(preparePattern);
+  if (!prepareMatch) {
+    return {
+      ok:false,
+      error:'Could not locate the Website Builder prepareWork() function.'
+    };
+  }
+
+  let result = input.replace(
+    preparePattern,
+    helperSource() + prepareMatch[0]
+  );
+
+  const renderPattern = /(^[ \t]*)const\s+rendered\s*=\s*ABCJS\.renderAbc\(\s*\n?\s*paperId\s*,\s*\n?\s*abcForInstrumentChoice\(\s*work\s*,\s*choice\s*\)\s*,\s*\n?\s*getRenderParams\(\s*activeDisplayMode\s*\)\s*\n?\s*\);\s*\n\s*if\s*\(\s*!rendered\s*\|\|\s*rendered\.length\s*!==\s*1\s*\)\s*throw\s+new\s+Error\(\s*"Expected one rendered tune\."\s*\);/m;
+
+  const renderMatch = result.match(renderPattern);
+  if (!renderMatch) {
+    return {
+      ok:false,
+      error:'Could not locate the expected Website Builder ABCJS.renderAbc() block. The website may have been generated by an incompatible builder version.'
+    };
+  }
+
+  const indent = renderMatch[1] || '      ';
+  const replacement =
+`${indent}const renderAbcSource = abcForInstrumentChoice(work, choice);
+${indent}const rendered = ABCJS.renderAbc(
+${indent}  paperId,
+${indent}  renderAbcSource,
+${indent}  getRenderParams(activeDisplayMode)
+${indent});
+${indent}if (!rendered || rendered.length !== 1) throw new Error("Expected one rendered tune.");
+
+${indent}// Website-only compatibility correction for ABC Two-Column Lyrics
+${indent}// Formatter output. Embedded ABC and PDF/ATTools CSS remain unchanged.
+${indent}alignTwoColumnLyricsForWebsite(paper, renderAbcSource);`;
+
+  result = result.replace(renderPattern, replacement);
+
+  const formatterOccurrences =
+    (result.match(new RegExp(FORMATTER_MARKER.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g')) || []).length;
+
+  return {
+    ok:true,
+    alreadyFixed:false,
+    html:result,
+    formatterOccurrences,
+    message:'The website compatibility fix was added successfully.'
+  };
+}
+
+function updateButtons() {
+  const hasInput = !!inputText.value.trim();
+  fixButton.disabled = !hasInput;
+  clearButton.disabled = !hasInput && !outputText.value;
+  saveButton.disabled = !correctedHtml;
+  copyButton.disabled = !correctedHtml;
+}
+
+async function loadFile(file) {
+  if (!file) return;
+
+  if (!/\.html?$/i.test(file.name || '')) {
+    await modalAlert('<p>Please select an exported <b>.html</b> website file.</p>');
+    return;
+  }
+
+  try {
+    const source = await file.text();
+    originalFileName = file.name || 'website.html';
+    inputText.value = source;
+    outputText.value = '';
+    correctedHtml = '';
+
+    const hasMarker = source.includes(FORMATTER_MARKER);
+    setStatus(
+      `Loaded: ${originalFileName}\n` +
+      `Size: ${source.length.toLocaleString()} characters\n` +
+      `Two-column lyric CSS found: ${hasMarker ? 'Yes' : 'No'}\n` +
+      `Ready to apply the website compatibility fix.`
+    );
+    updateButtons();
+  } catch (error) {
+    console.error(error);
+    await modalAlert(`<p>Could not read the selected file.<br><br>${escapeHtml(error.message || String(error))}</p>`);
+  }
+}
+
+async function runFix() {
+  const result = applyWebsiteFix(inputText.value);
+
+  if (!result.ok) {
+    await modalAlert(`<p>${escapeHtml(result.error)}</p>`);
+    return;
+  }
+
+  correctedHtml = result.html;
+  outputText.value = correctedHtml;
+  updateButtons();
+
+  if (result.alreadyFixed) {
+    setStatus(
+      'No changes were necessary.\n' +
+      'This website already contains the two-column lyrics website compatibility fix.'
+    );
+    await modalAlert('<p>This website already contains the two-column lyrics website fix.</p>');
+    return;
+  }
+
+  setStatus(
+    `Fix applied successfully.\n` +
+    `Input: ${inputText.value.length.toLocaleString()} characters\n` +
+    `Output: ${correctedHtml.length.toLocaleString()} characters\n` +
+    `Formatter CSS marker occurrences: ${result.formatterOccurrences.toLocaleString()}\n\n` +
+    `The embedded ABC and original %%begincss / %%endcss blocks were not changed.\n` +
+    `Normal tunes are unaffected.`
+  );
+}
+
+function downloadTextFile(text, fileName) {
+  const blob = new Blob([text], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function saveCorrected() {
+  if (!correctedHtml) return;
+
+  if (!(window.DayPilot && DayPilot.Modal)) {
+    console.error('DayPilot.Modal is not available.');
+    return;
+  }
+
+  const suggested = suggestedFixedName(originalFileName || 'website.html');
+
+  const args = await DayPilot.Modal.prompt(
+    '<div class="websiteFixerSavePrompt"><h2>Save Corrected Website</h2><div class="filenameLabel">Filename:</div></div>',
+    suggested,
+    {...dayPilotOptions(), okText:'Save', cancelText:'Cancel'}
+  );
+
+  if (args.result == null) return;
+
+  const fileName = normalizeSavedHtmlName(args.result);
+  if (!fileName) {
+    await modalAlert('<p>Please enter a valid filename.</p>');
+    return;
+  }
+
+  downloadTextFile(correctedHtml, fileName);
+  setStatus(statusEl.textContent + `\n\nSaved as: ${fileName}`);
+}
+
+async function copyCorrected() {
+  if (!correctedHtml) return;
+
+  try {
+    await navigator.clipboard.writeText(correctedHtml);
+    setStatus(statusEl.textContent + '\n\nCorrected HTML copied to the clipboard.');
+  } catch (error) {
+    console.error(error);
+    await modalAlert('<p>Could not copy the corrected HTML to the clipboard.</p>');
+  }
+}
+
+function clearAll() {
+  fileInput.value = '';
+  inputText.value = '';
+  outputText.value = '';
+  originalFileName = '';
+  correctedHtml = '';
+  setStatus('Open an exported Website Builder HTML file to begin.');
+  updateButtons();
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+function showInstructions() {
+  const html = `
+    <div class="websiteFixerInstructions">
+      <h2>ABC Two-Column Lyrics Website Fixer</h2>
+      <p>This utility post-processes an <b>HTML website exported by the abcjs-eskin Website Builder</b> when the embedded ABC tunes have already been processed by the <b>ABC Two-Column Lyrics Formatter</b>.</p>
+      <p>The Website Builder's SVG layout differs slightly from ABC Transcription Tools/PDF rendering. Without this compatibility fix, the second column of unaligned <b>W:</b> lyrics can start lower than the first column.</p>
+      <ol style="padding-left:24px">
+        <li>Open or drag an exported Website Builder <b>.html</b> file into the tool.</li>
+        <li>Click <b>Apply Two-Column Lyrics Fix</b>.</li>
+        <li>Click <b>Save Corrected Website</b>.</li>
+        <li>The suggested filename is the original website filename with <b>_fixed</b> added before <b>.html</b>. You can change it before saving.</li>
+      </ol>
+      <p>The fix is added to the website's rendering JavaScript. It activates only for tunes containing the marker <code>${FORMATTER_MARKER}</code>. It does <b>not</b> alter the embedded ABC, the formatter's <b>%%begincss / %%endcss</b> block, share links, or ordinary tunes.</p>
+      <p>If the website already contains this fix, the utility detects it and does not add a second copy.</p>
+      <p><b>Note:</b> This utility expects the Website Builder rendering structure used by the current exported websites. If that structure changes in a future Website Builder release, the utility will report that it cannot locate the required rendering block instead of making an uncertain modification.</p>
+    </div>`;
+
+  modalAlert(html);
+}
+
+fileInput.addEventListener('change', () => loadFile(fileInput.files && fileInput.files[0]));
+fixButton.addEventListener('click', runFix);
+saveButton.addEventListener('click', saveCorrected);
+copyButton.addEventListener('click', copyCorrected);
+clearButton.addEventListener('click', clearAll);
+instructionsButton.addEventListener('click', showInstructions);
+
+inputText.addEventListener('input', () => {
+  correctedHtml = '';
+  outputText.value = '';
+  updateButtons();
+});
+
+for (const eventName of ['dragenter','dragover']) {
+  inputCard.addEventListener(eventName, event => {
+    event.preventDefault();
+    inputCard.classList.add('drag');
+  });
+}
+for (const eventName of ['dragleave','drop']) {
+  inputCard.addEventListener(eventName, event => {
+    event.preventDefault();
+    inputCard.classList.remove('drag');
+  });
+}
+inputCard.addEventListener('drop', event => {
+  const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+  if (file) loadFile(file);
+});
+
+updateButtons();
+</script>
+</body>
+</html>

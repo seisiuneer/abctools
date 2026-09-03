@@ -62,7 +62,7 @@
 </head>
 <body>
 <div class="app">
-<section class="hero"><div class="versionNumber">Version 1.0.22</div><h1>ABC Two-Column Lyrics Formatter</h1><p>Generates tune-specific custom CSS to arrange multi-stanza <b>W:</b> lyrics into two columns.</p></section>
+<section class="hero"><div class="versionNumber">Version 1.0.23</div><h1>ABC Two-Column Lyrics Formatter</h1><p>Generates tune-specific custom CSS to arrange multi-stanza <b>W:</b> lyrics into two columns.</p></section>
 <div class="main">
 <div class="column">
 <section class="card" id="inputCard">
@@ -94,7 +94,7 @@
 <li>The utility formats multi-stanza <b>W:</b> lyrics into <b>two columns</b>.</li>
 <li>Click <b>Format Lyrics</b>. The utility examines every tune independently. Tunes with only one detected <b>W:</b> stanza are left completely untargeted.</li>
 <li>A stanza boundary is recognized when a blank <b>W:</b> tag is followed later by another non-blank <b>W:</b> tag, or when a non-blank <b>W:</b> line starts with a stanza number such as <b>2.</b>, <b>3.</b>, or <b>4)</b>. Only uppercase <b>W:</b> fields are treated as unaligned stanza lyrics; lowercase <b>w:</b> fields aligned beneath the notes are ignored. Blank <b>W:</b> tags are used as manual stanza spacers and do not count as rendered lyric lines. When consecutive numbered stanzas have no blank <b>W:</b> spacer between them, the formatter automatically adds a modest visual gap between stanzas; if a blank <b>W:</b> spacer is already present, no extra automatic gap is added.</li>
-<li>The formatter calculates the two-column layout directly from the ABC <b>W:</b> stanza structure. Stanzas are kept intact and divided into contiguous column groups. The formatter measures the widest lyric line in each column independently, chooses the largest safe common font size, and adjusts the second-column X position to make the best use of the available width. No abcjs rendering library is required by this utility.</li>
+<li>The formatter calculates the two-column layout directly from the ABC <b>W:</b> stanza structure. Stanzas are kept intact and divided into contiguous column groups. The formatter measures the widest lyric line in each column independently, chooses the largest safe common font size, and adjusts the second-column X position to make the best use of the available width. The right column also includes a one-line vertical compensation based on the active <b>%%wordsfont</b> size so its first stanza aligns more closely with the first stanza in the left column. No abcjs rendering library is required by this utility.</li>
 <li>The generated CSS is inserted at the very top of the complete ABC inside a <b>%%begincss</b> / <b>%%endcss</b> block. Each tune is targeted through its normal <b>#notationN</b> container and also directly through the tune SVG. The direct SVG selector uses the tune title plus the exact number of rendered <b>W:</b> lines, and also includes a common article-reversed title variant (for example <b>Banks of the Bann, The</b> and <b>The Banks of the Bann</b>). This keeps the formatting active during ABC Transcription Tools PDF export when each SVG is copied out of its notation container before rasterization. Existing ABC content is otherwise preserved.</li>
 <li>If the ABC file header already contains one or more <b>%%begincss</b> / <b>%%endcss</b> blocks, the formatter removes those header CSS blocks completely and replaces them with the newly generated lyric-column CSS block. CSS blocks inside individual tunes are not removed.</li>
 <li><b>Copy Results</b> copies the complete processed ABC. <b>Save ABC File</b> saves it as an ABC file.</li>
@@ -184,7 +184,7 @@ function cssForTune(tuneIndex,title,parsed,layout,columns){
   for(let col=0;col<groups.length;col++){
     const [a,b]=groups[col];
     const baseDx=col===0?0:fit.dx;
-    const baseDy=col===0?0:-layout.starts[a];
+    const baseDy=col===0?0:-layout.starts[a]-layout.lineStep;
     let cumulativeAutoGap=0;
     for(let s=a;s<b;s++){
       if(s>a&&!stanzas[s].manualSpacerBefore){cumulativeAutoGap+=autoStanzaGap;autoGapCount++;}
