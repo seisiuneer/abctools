@@ -37408,7 +37408,6 @@ function ExportImageDialog(theABC, callback, val, metronome_state) {
 
 }
 
-
 //
 // Make W: stanzas two-column using the same formatter logic as the
 // ABC Two-Column Lyrics Formatter utility (Version 1.0.23).
