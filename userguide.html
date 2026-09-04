@@ -929,9 +929,8 @@
             </details>
 
             <details>
-            <summary><h3>Reformat Using MusicXML, Make Stanzas 2-Column, Normalize Voice Keys/Dynamics, and Launch MuseScore MusicXML to ABC Optimizer</h3></summary>
+            <summary><h3>Reformat Using MusicXML, Normalize Voice Keys/Dynamics, and Launch MuseScore MusicXML to ABC Optimizer</h3></summary>
             <a style="text-decoration:none;" href="#reformat_using_musicxml">Reformat Using MusicXML</a>
-            <a style="text-decoration:none;" href="#make_stanzas_two_column">Make Stanzas 2-Column</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys/Dynamics</a>
             <a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a>
             </details>
@@ -994,6 +993,7 @@
             <details>
             <summary><h3>Advanced abcjs Rendering Options</h3></summary>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
+            <a style="text-decoration:none;" href="#stanzas_two_column">Displaying W: Stanzas in Two Columns</a>
             <a style="text-decoration:none;" href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a>
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             <a style="text-decoration:none;" href="#hide_tempos">Showing/Hiding Tempo Marks</a>
@@ -1499,10 +1499,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a></p>
                     </div>
 
-                    <button class="accordion" title="Click to expand/collapse this section">Reformat Using MusicXML, Make Stanzas 2-Column, Normalize Voice Keys/Dynamics, and Launch MuseScore MusicXML to ABC Optimizer</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Reformat Using MusicXML, Normalize Voice Keys/Dynamics, and Launch MuseScore MusicXML to ABC Optimizer</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#reformat_using_musicxml">Reformat Using MusicXML</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#make_stanzas_two_column">Make Stanzas 2-Column</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys/Dynamics</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#musescorexml">Launch MuseScore MusicXML to ABC Optimizer</a></p>
                     </div>
@@ -1565,6 +1564,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#stanzas_two_column">Displaying W: Stanzas in Two Columns</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_tempos">Showing/Hiding Tempo Marks</a></p>
@@ -6745,23 +6745,6 @@
                 <p>When reformatting large ABC collections, since MusicXML-based reformatting doesn't require rendering the tunes, I suggest using the "Quick Editor" which only renders the currently selected in the collection.</p>
                 <p>This can be particularly helpful if the initial rendering of the collection is slow in the standard editor because of "one measure per ABC line" formatting of the ABC.</p>
                 <p>From the "Quick Editor" you can then run "Reformat Using MusicXML", save the resulting ABC, then open the reformatted ABC in the standard editor.</p>            
-                <hr class="hidden-print" id="make_stanzas_two_column">
-                <h1 class="page_break_always">Make Stanzas 2-Column</h1>
-                <a href="#table_of_contents" class="index-pill hidden-print">
-                  Table of Contents
-                </a>
-                <p>Formats multi-stanza uppercase <strong>W:</strong> verse lyrics into two columns by generating tune-specific custom CSS at the top of the ABC.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/FBBZCxT8I90" title="Make Stanzas 2-Column" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>The operation examines every tune independently. Tunes with fewer than two detected <strong>W:</strong> stanzas are not given any tune-specific lyric positioning rules. Lowercase <strong>w:</strong> lyrics aligned beneath the notes are ignored. If no songs with multiple <strong>W:</strong> stanzas are found, an alert is displayed, the ABC is left unchanged, and no <strong>%%begincss</strong> / <strong>%%endcss</strong> block is added.</p>
-                <p>A new stanza is detected after a blank <strong>W:</strong> line when another non-blank <strong>W:</strong> line follows, or when a non-blank <strong>W:</strong> line begins with a stanza number such as <strong>2.</strong>, <strong>3.</strong>, or <strong>4)</strong>. Blank <strong>W:</strong> lines act as manual stanza spacers.</p>
-                <p>The formatter keeps each stanza intact, assigns contiguous stanza groups to the two columns, measures the widest lyric line in each column, and automatically chooses a suitable common lyric font size and second-column position. The extra stanza is placed in the left column when the number of stanzas is odd.</p>
-                <p>If the tops of the left and right columns do not line up as desired, adding one additional blank <strong>W:</strong> tag immediately before the first stanza in the right column may help align the tops of the two columns.</p>
-                <p>The generated CSS is inserted at the very top of the complete ABC inside a <strong>%%begincss</strong> / <strong>%%endcss</strong> block. If one or more custom CSS blocks already exist in the file header before the first <strong>X:</strong> tag, they are removed and replaced by the newly generated two-column lyric CSS. CSS blocks inside individual tunes are not removed.</p>
-                <p>The generated selectors target both the normal notation containers and the rendered tune SVGs so the layout is preserved when exporting PDFs from ABC Transcription Tools.</p>
-                <p>The generated CSS uses the marker <strong>ABC Two-Column Lyrics Formatter generated CSS</strong>. Websites created with the abcjs-eskin Website Builder recognize this marker and apply their post-render two-column alignment adjustment automatically.</p>
-                <p><strong>Important:</strong> because this command replaces header-level custom CSS, save or copy any unrelated custom header CSS that you want to keep before using <strong>Make Stanzas 2-Column</strong>.</p>
-                <p>Large tunebooks with many multi-stanza songs can generate a substantial amount of tune-specific CSS and may take longer to render.</p>
-                <p><strong>Note:</strong> The custom CSS for the 2-column stanza display does not display correctly in the <strong>Quick Editor</strong>, you must use the standard version of the editor for this feature.</p>
                 <hr class="hidden-print" id="hamburger_normalize_voice_keys">
                 <h1 class="page_break_always">Normalize Voice Keys/Dynamics</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -7926,6 +7909,20 @@
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <p>Only the first instance of %abcjs_render_params found in a tune will be used.</p>
                 <p>If present both in the tune and the ABC file header, the file header version will be used.</p>
+                <hr class="hidden-print" id="stanzas_two_column">
+                <h1 class="page_break_always">Displaying W: Stanzas in Two Columns</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>The custom abcjs renderer supports the following native ABC directive for controlling the number of columns used to display uppercase <strong>W:</strong> stanzas:</p>
+                <p class="code">%%stanzas 2</p>
+                <p>The only supported values are <strong>1</strong> and <strong>2</strong>. The default is <strong>1</strong>, so if no <strong>%%stanzas</strong> directive is present, uppercase <strong>W:</strong> text is rendered normally in one column. <strong>%%stanzas 1</strong> is therefore a no-op and explicitly selects the normal one-column behavior. <strong>%%stanzas 2</strong> enables the native two-column stanza layout.</p>
+                <p>The directive may be placed inside an individual tune to affect only that tune, or in the ABC file header before the first <strong>X:</strong> tag to apply to all tunes in the tunebook.</p>
+                <p>When <strong>%%stanzas 2</strong> is present, abcjs detects stanza boundaries in the uppercase <strong>W:</strong> text, keeps each stanza together, and divides the stanzas between the left and right columns. If there is an odd number of stanzas, the extra stanza is placed in the left column.</p>
+                <p>A new stanza is detected after a blank <strong>W:</strong> line when more stanza text follows, or when a non-blank <strong>W:</strong> line begins with a stanza number such as <strong>2.</strong>, <strong>3.</strong>, or <strong>4)</strong>. Lowercase <strong>w:</strong> lyrics aligned beneath the notes are not affected.</p>
+                <p>The column positions and text widths are calculated by abcjs as part of the native SVG rendering. The right column is positioned around the middle of the available notation width, and the renderer attempts to leave enough room for the widest lines in both columns.</p>
+                <p>If a line in the left column is too wide and runs into the right column, split that text into two uppercase <strong>W:</strong> lines. For example, replace one very long <strong>W:</strong> line with two shorter consecutive <strong>W:</strong> lines. This reduces the width required by the left column and will normally fix the overlap.</p>
+                <p>If fewer than two stanzas are detected, <strong>%%stanzas 2</strong> has no special visual effect and the uppercase <strong>W:</strong> text is rendered using the normal one-column layout.</p>
                 <hr class="hidden-print" id="tablature_only">
                 <h1 class="page_break_always">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -8952,6 +8949,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#custom_ornament_timing">Custom Timing and Offsets for Trills, Mordents, Turns, and Tremolo</a></p>
 
                 <h1 class="page_break_never" id="index_D" style="text-align:left;margin-bottom:12px;">D</h1>
+                <p class="toc"><a style="text-decoration:none;" href="#stanzas_two_column">Displaying W: Stanzas in Two Columns</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#default_reverb">Default %reverb annotation (blank = no reverb)</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#roll_timing">Defining Custom Roll Timing Parameters</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a></p>
@@ -9056,7 +9054,6 @@
                 <p class="toc"><a style="text-decoration:none;" href="#custom_reverb">Load Custom Reverb Impulse</a></p>
 
                 <h1 class="page_break_never" id="index_M" style="text-align:left;margin-bottom:12px;">M</h1>
-                <p class="toc"><a style="text-decoration:none;" href="#make_stanzas_two_column">Make Stanzas 2-Column</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a></p>

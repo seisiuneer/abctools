@@ -5042,6 +5042,7 @@ var bookParser = function bookParser(book) {
       /^%%staffsep.*$/,      
       /^%%staffwidth.*$/,
       /^%%stretchlast.*$/,
+      /^%%stanzas\s+[12]\s*$/i,
       /^%%leftmargin.*$/,
       /^%%rightmargin.*$/,
       /^%%scale.*$/,
@@ -6391,6 +6392,17 @@ var parseDirective = {};
         chordGridDirective[1]
           ? chordGridDirective[1].toLowerCase()
           : "guitar";
+      return null;
+    }
+
+    // Tool-specific native two-column stanza layout. Handle this before
+    // tokenization because the normal directive tokenizer treats underscores
+    // as separators.
+    var stanzasMatch = /^\s*stanzas\s+([12])\s*$/i.exec(str);
+    if (stanzasMatch) {
+      // %%stanzas 1 is the default/no-op; %%stanzas 2 enables native
+      // two-column rendering of uppercase W: stanzas.
+      tune.formatting.stanzasTwoColumn = stanzasMatch[1] === "2";
       return null;
     }
 
@@ -28104,12 +28116,291 @@ module.exports = BeamElem;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var addTextIf = __webpack_require__(/*! ../add-text-if */ "./src/write/creation/add-text-if.js");
-function BottomText(metaText, width, isPrint, paddingLeft, spacing, getTextSize) {
+function BottomText(metaText, width, isPrint, paddingLeft, spacing, getTextSize, formatting) {
   this.rows = [];
-  if (metaText.unalignedWords && metaText.unalignedWords.length > 0) this.unalignedWords(metaText.unalignedWords, paddingLeft, spacing, getTextSize);
+  if (metaText.unalignedWords && metaText.unalignedWords.length > 0) {
+    if (formatting && formatting.stanzasTwoColumn) {
+      var didTwoColumn = this.unalignedWordsTwoColumn(
+        metaText.unalignedWords,
+        width,
+        paddingLeft,
+        spacing,
+        getTextSize
+      );
+      if (!didTwoColumn) {
+        this.unalignedWords(metaText.unalignedWords, paddingLeft, spacing, getTextSize);
+      }
+    } else {
+      this.unalignedWords(metaText.unalignedWords, paddingLeft, spacing, getTextSize);
+    }
+  }
   this.extraText(metaText, paddingLeft, spacing, getTextSize);
   if (metaText.footer && isPrint) this.footer(metaText.footer, width, paddingLeft, getTextSize);
 }
+
+// Native two-column rendering for uppercase W: stanzas.
+//
+// Stanza boundaries follow the same rules used by ABC Transcription Tools:
+// a blank W: line starts the next stanza when more text follows, and a W: line
+// beginning with a stanza number such as "2." or "3)" also starts a new stanza.
+// Complete stanzas are kept together and an odd extra stanza goes in the left
+// column.
+//
+// This produces real SVG text at its final x/y position. No CSS transforms,
+// notation-container selectors, or post-render adjustment are required.
+BottomText.prototype.unalignedWordsTwoColumn = function (unalignedWords, width, paddingLeft, spacing, getTextSize) {
+  var klass = 'meta-bottom unaligned-words';
+  var defFont = 'wordsfont';
+  var space = getTextSize.calc("i", defFont, klass);
+  var normalLine = getTextSize.calc("A", defFont, klass);
+  var defaultLineHeight = Math.round(normalLine.height * 1.1);
+
+  function linePlainText(item) {
+    if (typeof item === 'string') return item;
+    if (!item || !item.length) return "";
+    var out = "";
+    for (var i = 0; i < item.length; i++) {
+      out += item[i] && item[i].text ? item[i].text : "";
+    }
+    return out;
+  }
+
+  function isBlank(item) {
+    var text = linePlainText(item).trim();
+    return text === "" || text === "%";
+  }
+
+  function isNumbered(item) {
+    return /^\d+\s*[.)]\s*/.test(linePlainText(item).trim());
+  }
+
+  // Parse the W: entries into stanzas while preserving the original text/font
+  // objects for rendering.
+  var stanzas = [];
+  var current = null;
+  var pendingBlank = false;
+  var blankRun = 0;
+
+  for (var j = 0; j < unalignedWords.length; j++) {
+    var item = unalignedWords[j];
+
+    if (isBlank(item)) {
+      if (current) {
+        pendingBlank = true;
+        blankRun++;
+      }
+      continue;
+    }
+
+    var numbered = isNumbered(item);
+    var startsNew = !current || pendingBlank || (numbered && current.items.length);
+
+    if (startsNew) {
+      if (current && current.items.length) stanzas.push(current);
+      current = {
+        items: [],
+        manualSpacerBefore: pendingBlank,
+        manualSpacerLinesBefore: pendingBlank ? blankRun : 0
+      };
+    }
+
+    current.items.push(item);
+    pendingBlank = false;
+    blankRun = 0;
+  }
+
+  if (current && current.items.length) stanzas.push(current);
+
+  // The directive is harmless on songs without at least two detected stanzas:
+  // use the unchanged abcjs one-column W: renderer instead.
+  if (stanzas.length < 2) return false;
+
+  // Divide contiguous stanzas between two columns. When odd, the extra stanza
+  // is placed in the left column.
+  var leftCount = Math.ceil(stanzas.length / 2);
+  var groups = [
+    [0, leftCount],
+    [leftCount, stanzas.length]
+  ];
+
+  function itemMetrics(item) {
+    if (typeof item === 'string') {
+      return {
+        width: getTextSize.calc(item, defFont, klass).width,
+        height: defaultLineHeight
+      };
+    }
+
+    var widthSum = 0;
+    var largestY = 0;
+
+    for (var k = 0; k < item.length; k++) {
+      var word = item[k];
+      var font = word.font ? word.font : defFont;
+      var text = word.text || "";
+      var size = getTextSize.calc(text, font, klass);
+      widthSum += size.width;
+      largestY = Math.max(largestY, size.height);
+
+      // Match the existing abcjs W: renderer: SVG text measurement does not
+      // include a trailing space, so account for it explicitly.
+      if (text.length && text[text.length - 1] === ' ') {
+        widthSum += space.width;
+      }
+    }
+
+    return {
+      width: widthSum,
+      height: largestY || defaultLineHeight
+    };
+  }
+
+  function widestInGroup(group) {
+    var widest = 0;
+    for (var s = group[0]; s < group[1]; s++) {
+      for (var n = 0; n < stanzas[s].items.length; n++) {
+        widest = Math.max(widest, itemMetrics(stanzas[s].items[n]).width);
+      }
+    }
+    return widest;
+  }
+
+  var leftWidth = widestInGroup(groups[0]);
+  var rightWidth = widestInGroup(groups[1]);
+
+  // Keep a useful gutter and, only when necessary, uniformly reduce the W:
+  // text enough to fit both widest lines. The lower bound is intentionally
+  // conservative so the text remains readable; exceptionally long lines may
+  // still overlap and can be handled with %%wordsfont.
+  var gutter = Math.max(18, width * 0.035);
+  var fontScale = 1;
+
+  if (leftWidth + rightWidth + gutter > width) {
+    fontScale = Math.max(
+      0.56,
+      Math.min(1, (width - gutter) / Math.max(1, leftWidth + rightWidth))
+    );
+  }
+
+  var scaledLeftWidth = leftWidth * fontScale;
+  var scaledRightWidth = rightWidth * fontScale;
+  var idealRightX = paddingLeft + width / 2;
+  var minRightX = paddingLeft + scaledLeftWidth + gutter;
+  var maxRightX = paddingLeft + width - scaledRightWidth;
+  var rightX;
+
+  if (minRightX <= maxRightX) {
+    rightX = Math.max(minRightX, Math.min(idealRightX, maxRightX));
+  } else {
+    // If the minimum font scale is still too wide, keep the right column at
+    // the visual midpoint rather than pushing it outside the staff width.
+    rightX = idealRightX;
+  }
+
+  this.rows.push({
+    startGroup: "unalignedWords",
+    klass: 'abcjs-meta-bottom abcjs-unaligned-words abcjs-stanzas-two-column',
+    name: "words"
+  });
+
+  this.rows.push({
+    move: spacing.words
+  });
+
+  var autoStanzaGap = Math.max(7, defaultLineHeight * 0.5) * fontScale;
+  var blankSpacerHeight = space.height * fontScale;
+
+  function appendLineRows(rows, item, x, yOffset) {
+    var metrics = itemMetrics(item);
+
+    if (typeof item === 'string') {
+      rows.push({
+        left: x,
+        text: item,
+        font: defFont,
+        inGroup: true,
+        name: "words",
+        yOffset: yOffset,
+        fontScale: fontScale
+      });
+      return metrics.height * fontScale;
+    }
+
+    var offsetX = 0;
+
+    for (var k = 0; k < item.length; k++) {
+      var word = item[k];
+      var font = word.font ? word.font : defFont;
+      var text = word.text || "";
+      var size = getTextSize.calc(text, font, klass);
+
+      rows.push({
+        left: x + offsetX * fontScale,
+        text: text,
+        font: font,
+        anchor: 'start',
+        inGroup: true,
+        name: "words",
+        yOffset: yOffset,
+        fontScale: fontScale
+      });
+
+      offsetX += size.width;
+      if (text.length && text[text.length - 1] === ' ') {
+        offsetX += space.width;
+      }
+    }
+
+    return metrics.height * fontScale;
+  }
+
+  var columnHeights = [0, 0];
+
+  for (var col = 0; col < 2; col++) {
+    var group = groups[col];
+    var x = col === 0 ? paddingLeft : rightX;
+    var yOffset = 0;
+
+    for (var s = group[0]; s < group[1]; s++) {
+      var stanza = stanzas[s];
+
+      // A blank W: separating the stanza that begins a new column belongs to
+      // the old linear layout and should not lower the top of the new column.
+      if (s > group[0]) {
+        if (stanza.manualSpacerBefore) {
+          yOffset += Math.max(1, stanza.manualSpacerLinesBefore) * blankSpacerHeight;
+        } else {
+          yOffset += autoStanzaGap;
+        }
+      }
+
+      for (var n = 0; n < stanza.items.length; n++) {
+        yOffset += appendLineRows(this.rows, stanza.items[n], x, yOffset);
+      }
+    }
+
+    columnHeights[col] = yOffset;
+  }
+
+  this.rows.push({
+    move: Math.max(columnHeights[0], columnHeights[1])
+  });
+
+  this.rows.push({
+    move: space.height * 2 * fontScale
+  });
+
+  this.rows.push({
+    endGroup: "unalignedWords",
+    absElemType: "unalignedWords",
+    startChar: -1,
+    endChar: -1,
+    name: "unalignedWords"
+  });
+
+  return true;
+};
+
 BottomText.prototype.unalignedWords = function (unalignedWords, paddingLeft, spacing, getTextSize) {
   var klass = 'meta-bottom unaligned-words';
   var defFont = 'wordsfont';
@@ -30671,12 +30962,13 @@ function nonMusic(renderer, obj, selectables) {
       var x = row.left ? row.left : 0;
       var el = renderText(renderer, {
         x: x,
-        y: renderer.y,
+        y: renderer.y + (row.yOffset || 0),
         text: row.text,
         type: row.font,
         klass: row.klass,
         name: row.name,
-        anchor: row.anchor
+        anchor: row.anchor,
+        fontScale: row.fontScale
       });
       if (row.absElemType) {
         selectables.wrapSvgEl({
@@ -31841,6 +32133,19 @@ function renderText(renderer, params, alreadyInGroup) {
     hash = params.dim;
     hash.attr["class"] = params.klass;
   } else hash = renderer.controller.getFontAndAttr.calc(params.type, params.klass);
+  // Native two-column stanza rows can request a uniform font scale. Clone the
+  // font/attribute objects before changing them so no shared formatting state is
+  // modified.
+  if (params.fontScale && params.fontScale !== 1) {
+    hash = {
+      font: Object.assign({}, hash.font),
+      attr: Object.assign({}, hash.attr)
+    };
+    hash.font.size *= params.fontScale;
+    hash.attr["font-size"] = hash.font.size;
+    if (hash.font.padding) hash.font.padding *= params.fontScale;
+  }
+
   if (params.anchor) hash.attr["text-anchor"] = params.anchor;
   hash.attr.x = params.x;
   hash.attr.y = y;
@@ -32611,7 +32916,15 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
       (chordGridRows * chordGridRowHeight * chordGridScale) / spacing.STEP;
   }
 
-  abcTune.bottomText = new BottomText(abcTune.metaText, this.width, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
+  abcTune.bottomText = new BottomText(
+    abcTune.metaText,
+    this.width,
+    this.renderer.isPrint,
+    this.renderer.padding.left,
+    this.renderer.spacing,
+    this.getTextSize,
+    abcTune.formatting
+  );
 };
 EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOffset) {
 
@@ -32648,6 +32961,22 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
     //debugger;
 
     abcTune.topText = new TopText(abcTune.metaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, maxWidth, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
+
+    // Bottom text is normally created before horizontal layout. If this tune
+    // expands beyond the nominal staff width, rebuild it with the actual final
+    // width too. This keeps native two-column W: stanzas centered on the
+    // rendered notation rather than on the original 740px nominal width.
+    if (abcTune.formatting && abcTune.formatting.stanzasTwoColumn) {
+      abcTune.bottomText = new BottomText(
+        abcTune.metaText,
+        maxWidth,
+        this.renderer.isPrint,
+        this.renderer.padding.left,
+        this.renderer.spacing,
+        this.getTextSize,
+        abcTune.formatting
+      );
+    }
 
     if ((abcTune.lines)&&(abcTune.lines.length > 0)){
 

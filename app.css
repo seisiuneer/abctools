@@ -179,8 +179,7 @@ body.flat-buttons #export_tunetitlesbutton,
 body.flat-buttons #export_smartdrawbutton,
 body.flat-buttons #launchcsvextractor,
 body.flat-buttons #export_websitebutton,
-body.flat-buttons #websiteabcjseskin,
-body.flat-buttons #makeversestwocolumn {
+body.flat-buttons #websiteabcjseskin{
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
@@ -708,13 +707,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab,#injecttablatureonly,#phrasebuilder,#splitlongtextandtags,#normalizevoicekeysignatures,#websitefull,#injectmidigchord,#reformatusingmusicxml{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab,#injecttablatureonly,#phrasebuilder,#splitlongtextandtags,#normalizevoicekeysignatures,#websitefull,#injectmidigchord{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websiteabcjseskin,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#musescorexml,#makeversestwocolumn{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websiteabcjseskin,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#musescorexml,#reformatusingmusicxml{
 height:42px;
 padding:12px;
 }
@@ -6236,11 +6235,6 @@ body.dp-tabs-building .modal_flat_main {
 .btn-reformatusingmusicxml{
   --color: black;
   --background-color: #f0fff0;	
-}
-
-.btn-makeversestwocolumn{
-  --color: black;
-  --background-color: #f0fff0;
 }
 
 .btn-injectmidigchord{
