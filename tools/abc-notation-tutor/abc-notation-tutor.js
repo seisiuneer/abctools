@@ -1,7 +1,8 @@
 (function(){
 "use strict";
 
-var STORAGE_KEY = "abcNotationTutorStateV1";
+var STORAGE_KEY = "abcNotationTutorStateV2";
+var LEGACY_STORAGE_KEY = "abcNotationTutorStateV1";
 var WELCOME_KEY = "abcNotationTutorWelcomeSeenV1";
 var FATBOY = "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var renderTimer = null;
@@ -10,6 +11,14 @@ var visualObj = null;
 var state = { currentLesson:0, completed:{} };
 
 var lessons = [
+{
+ title:"Introduction",
+ summary:"What ABC notation is, where it came from, and why it is especially useful for traditional music.",
+ goals:["what ABC is","a little ABC history","why musicians use it","ABC and Irish traditional music"],
+ abc:null,
+ notes:`<p><strong>ABC notation</strong> is a text-based way of writing music. Instead of entering notes on a graphical staff, you describe the music with ordinary characters: letters for pitches, numbers and symbols for note lengths, vertical bars for measures, and short fields for information such as the title, meter, tempo, and key. Software can then turn that text into conventional sheet music and play it back.</p><p>ABC was developed by Chris Walshaw in the early 1990s as a compact way to notate and exchange tunes. It became particularly popular among folk and traditional musicians because a tune can be stored, copied, emailed, posted on the web, searched, edited, and shared as plain text while still containing enough musical information to produce useful notation and playback.</p><p>ABC is especially well suited to <strong>traditional Irish music</strong>. Reels, jigs, hornpipes, polkas, slides, airs, and other traditional tunes are often centered on a single melody line with recurring sections and relatively compact forms. ABC can represent those melodies very efficiently, while also handling features such as repeats, first and second endings, ornaments, chord symbols, parts, and different keys and meters. Large collections containing hundreds or even thousands of tunes can remain surprisingly compact and easy to work with.</p><p>ABC is not limited to Irish music or to simple melodies. It can represent many kinds of music and can include lyrics, multiple voices, layout instructions, and playback information. But one of its greatest strengths is that you do not need to learn all of that at once. A small amount of ABC syntax is enough to start entering useful tunes.</p><p>The next <strong>15 lessons</strong> build that syntax progressively. You will begin with the basic structure of an ABC tune, then work through pitches, rhythms, meters, keys, repeats, endings, chords, decorations, text, lyrics, and multiple voices. Each lesson provides an ABC example that you can edit, rendered notation, playback, an interactive walkthrough, and a short quiz.</p><p>When you are ready, click <strong>Next Lesson</strong> to begin Lesson 1: <em>The Structure of an ABC Tune</em>.</p>`,
+ tour:[]
+},
 {
  title:"The Structure of an ABC Tune",
  summary:"Learn the small set of header fields that turn plain text into a complete ABC tune.",
@@ -282,7 +291,7 @@ P:A
 w: Do re mi fa | sol la sol mi | fa mi re do | sing it once more |
 P:B
 "_Below"F E D C | D E F G | A G F E | D C C2 |]
-w: Now we walk back | up the scale now | down we come a- | gain home, done! |
+w: Now we walk back | up the scale now | down we come a- | gain home _ |
 %%center Here is some center-justified text after the notation`,
  notes:`<p>A single percent sign <code>%</code> starts a comment. Comments are useful for notes in the ABC source and are not rendered as part of the notation.</p><p><code>%%text</code> adds a standalone left-justified line of text, while <code>%%center</code> adds a standalone centered line. In this example they appear before and after the notation.</p><p>Text annotations can be attached to a note: <code>"^Above"C</code> places <em>Above</em> above the staff, while <code>"_Below"F</code> places <em>Below</em> below it. The <code>^</code> and <code>_</code> are positioning markers and are not displayed as part of the annotation.</p><p>A <code>w:</code> line attaches lyrics to the preceding music line. Hyphens can split syllables and underscores or other lyric controls can extend alignment.</p><p><code>P:</code> can identify sections or parts of a tune. This example uses <code>P:A</code> and <code>P:B</code>.</p>`,
  tour:[
@@ -325,6 +334,7 @@ C,4 G,4 | C,4 G,4 | F,4 C4 | C,8 |]`,
 
 
 var lessonQuizzes = [
+ null,
  [
   {
    "q": "Which ABC header field identifies the tune with a reference number?",
@@ -1049,6 +1059,23 @@ function loadState(){
         state.currentLesson=Math.max(0,Math.min(lessons.length-1,Number(saved.currentLesson)||0));
         state.completed=saved.completed && typeof saved.completed==="object" ? saved.completed : {};
       }
+      return;
+    }
+
+    // Migrate progress from the original 15-lesson version. The new
+    // Introduction occupies index 0, so every original lesson moves up one index.
+    var legacyRaw=localStorage.getItem(LEGACY_STORAGE_KEY);
+    if(legacyRaw){
+      var legacy=JSON.parse(legacyRaw);
+      if(legacy && typeof legacy === "object"){
+        state.currentLesson=Math.max(1,Math.min(lessons.length-1,(Number(legacy.currentLesson)||0)+1));
+        state.completed={};
+        var oldCompleted=legacy.completed && typeof legacy.completed==="object" ? legacy.completed : {};
+        Object.keys(oldCompleted).forEach(function(k){
+          if(oldCompleted[k]) state.completed[String((Number(k)||0)+1)]=true;
+        });
+        saveState();
+      }
     }
   }catch(e){}
 }
@@ -1084,8 +1111,8 @@ function showWelcomeIfNeeded(){
   dialog.innerHTML=
     '<h2 id="welcomeTitle">Welcome to the ABC Notation Tutor</h2>'+
     '<div id="welcomeText">'+
-      '<p>The tutor contains 15 progressive lessons. Each lesson includes an ABC example, explanatory notes, rendered notation, playback, and a short quiz.</p>'+
-      '<p><strong>Click the “Start Lesson” button at the top of each lesson for a guided tour of the lesson.</strong></p>'+
+      '<p>The tutor begins with a short introduction followed by 15 progressive lessons. Each numbered lesson includes an ABC example, explanatory notes, rendered notation, playback, and a short quiz.</p>'+
+      '<p><strong>In each numbered lesson, click the “Start Lesson” button for a guided tour of the material.</strong></p>'+
       '<p>You can also edit the ABC example at any time to see and hear how your changes affect the music.</p>'+
       '<p>When you are ready to explore further, use <strong>Open in ABC Transcription Tools</strong> above the notation to open the current ABC directly in the full editor for more advanced editing, playback, practice, sharing, and export features.</p>'+
       '<p>Your lesson-completion progress is saved in this browser.</p>'+
@@ -1141,7 +1168,7 @@ function startQuiz(){
     answered=false;
     var item=quiz[index];
     dialog.innerHTML=
-      '<div class="quizHeader"><div><div class="quizEyebrow">Lesson '+(state.currentLesson+1)+' Quiz</div><h2 id="quizTitle">'+escapeHtml(lesson.title)+'</h2></div>'+ 
+      '<div class="quizHeader"><div><div class="quizEyebrow">Lesson '+state.currentLesson+' Quiz</div><h2 id="quizTitle">'+escapeHtml(lesson.title)+'</h2></div>'+ 
       '<button type="button" class="quizClose" aria-label="Close quiz">×</button></div>'+ 
       '<div class="quizProgress">Question '+(index+1)+' of '+quiz.length+'</div>'+ 
       '<div class="quizQuestion">'+escapeHtml(item.q)+'</div>'+ 
@@ -1189,7 +1216,7 @@ function startQuiz(){
   function renderResult(){
     var percent=Math.round((score/quiz.length)*100);
     dialog.innerHTML=
-      '<div class="quizHeader"><div><div class="quizEyebrow">Lesson '+(state.currentLesson+1)+' Quiz</div><h2 id="quizTitle">Quiz Complete</h2></div>'+ 
+      '<div class="quizHeader"><div><div class="quizEyebrow">Lesson '+state.currentLesson+' Quiz</div><h2 id="quizTitle">Quiz Complete</h2></div>'+ 
       '<button type="button" class="quizClose" aria-label="Close quiz">×</button></div>'+ 
       '<div class="quizResult"><div class="quizScore">'+score+' of '+quiz.length+'</div><p>You answered '+percent+'% correctly.</p><p class="muted">You can retry the quiz as often as you like. Quiz scores are not saved.</p></div>'+ 
       '<div class="quizActions"><button type="button" class="secondary" data-quiz="close">Close</button><button type="button" data-quiz="retry">Retry Quiz</button></div>';
@@ -1220,13 +1247,13 @@ function renderLessonList(){
     b.className="lessonItem"+(i===state.currentLesson?" active":"");
     b.dataset.lesson=String(i);
     var done=!!state.completed[lessonKey(i)];
-    b.innerHTML='<span class="num">'+(i+1)+'</span><span>'+escapeHtml(lesson.title)+'</span><span class="done">'+(done?"✓":"")+"</span>";
+    b.innerHTML='<span class="num'+(i===0?' introNum':'')+'">'+(i===0?'':i)+'</span><span>'+escapeHtml(lesson.title)+'</span><span class="done">'+(done?'✓':'')+"</span>";
     b.title=(done?"Completed: ":"Open: ")+lesson.title;
     b.addEventListener("click",function(){ selectLesson(i); });
     list.appendChild(b);
   });
   var count=Object.keys(state.completed).filter(function(k){return state.completed[k];}).length;
-  document.getElementById("progressText").textContent=count+" of "+lessons.length+" lessons completed";
+  document.getElementById("progressText").textContent=count+" of 15 lessons completed";
 }
 function selectLesson(i){
   stopAudio();
@@ -1262,18 +1289,31 @@ function addRenderStretchLast(abc){
 
 function showLesson(){
   var l=current(), key=lessonKey(state.currentLesson);
-  document.getElementById("lessonNumber").textContent="Lesson "+(state.currentLesson+1)+" of "+lessons.length;
+  var isIntroduction=state.currentLesson===0;
+  document.getElementById("lessonNumber").textContent=isIntroduction?"Introduction":"Lesson "+state.currentLesson+" of 15";
   document.getElementById("lessonTitle").textContent=l.title;
   document.getElementById("lessonSummary").textContent=l.summary;
   document.getElementById("lessonGoals").innerHTML=l.goals.map(function(g){return '<span class="goalChip">'+escapeHtml(g)+'</span>';}).join("");
   document.getElementById("lessonNotes").innerHTML=l.notes;
-  document.getElementById("abcEditor").value=sanitizeEditorABC(l.abc);
-  document.getElementById("completeBtn").textContent=state.completed[key]?"Mark Uncompleted":"Mark Completed";
-  document.getElementById("completeBtn").classList.toggle("secondary",!!state.completed[key]);
-  document.getElementById("prevLessonBtn").disabled=state.currentLesson===0;
+  document.getElementById("tourBtn").hidden=isIntroduction;
+  document.getElementById("quizBtn").hidden=isIntroduction;
+  document.getElementById("completeBtn").hidden=isIntroduction;
+  document.querySelector(".workGrid").hidden=isIntroduction;
+  document.getElementById("prevLessonBtn").disabled=isIntroduction;
   document.getElementById("nextLessonBtn").disabled=state.currentLesson===lessons.length-1;
+  if(!isIntroduction){
+    document.getElementById("abcEditor").value=sanitizeEditorABC(l.abc);
+    document.getElementById("completeBtn").textContent=state.completed[key]?"Mark Uncompleted":"Mark Completed";
+    document.getElementById("completeBtn").classList.toggle("secondary",!!state.completed[key]);
+  }else{
+    stopAudio();
+    document.getElementById("abcEditor").value="";
+    document.getElementById("paper").innerHTML="";
+    document.getElementById("audio").innerHTML="";
+    setStatus("",false);
+  }
   renderLessonList();
-  renderABC();
+  if(!isIntroduction) renderABC();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function escapeHtml(s){

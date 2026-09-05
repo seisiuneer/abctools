@@ -83,6 +83,7 @@ h2,h3{margin:0;color:var(--builder-ink)}
 .lessonItem .num{
   width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#eef2ef;color:#355341;font-size:.78rem
 }
+.lessonItem .num.introNum{background:transparent}
 .lessonItem .done{color:var(--builder-green);font-weight:900;min-width:18px;text-align:center}
 .workGrid{display:grid;grid-template-columns:minmax(360px,.9fr) minmax(420px,1.1fr);gap:var(--gap);min-height:440px}
 .editorCard,.notationCard{min-height:440px;display:flex;flex-direction:column}
@@ -332,3 +333,6 @@ h2,h3{margin:0;color:var(--builder-ink)}
   .notationCard .sectionHeadingRow{align-items:center}
   .abcToolsButton{white-space:normal;text-align:center}
 }
+
+/* Hide the editor and notation/playback workspace for the Introduction. */
+.workGrid[hidden]{display:none!important}
