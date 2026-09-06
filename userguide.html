@@ -7714,19 +7714,27 @@
                     .abcjs-cursor {transform: translate(7px, 7px);}<br/>
                 %%endcss</p>
                 <hr>
-                <p><strong>Example #6</strong> - Make the recorder tab larger and dark green, also move the playback cursor down a bit to cover it entirely during playback:</p>
+                <p><strong>Example #6</strong> - Create compact spacing for long stacked custom fingering tablature:</p>
                 <p>Click the image to try this example live in the tool:</p>
                 <div class="image_holder">
-                    <a href="https://michaeleskin.com/abctools/abctools.html?lzw=KTBGFMHMEsDsGMDOiBQA6ALgQ1AWlgK4C2EATgAQDeGpWsiAZgPalEBcNdiANlhuAE0AFACYADAAcAHgEoA3PCbcWbACZZSAa0ilw4WHIC+6XYtKrwFSs1gZciaAC9wbAOySpR9DngArRLjwBKSILFSc9MysbOQRPHzgQq7SADTkAIwe8sYg+qpIqCgAGjHpKAAqMeUAFuDkANLgiNUoAMJVtKrQGNBMsFjcKABKMQBS0JAoALIxAGwA9AAcKAAypUsoAIoxAMxLALzp4ij1MQDiRFi+KCCI2AwMiOASs2I3oQSwqjYY5Ax8oCYAE8bsApgBJAAi4PIElITB0WCI5DeIAh0PI8GqLFUcIRKNB6JhoCwyDxkHIO2WwEQAHc4BSxGgRABWFAAHzYACIzjyAIJnchnPkAIXZXMhXNFfPIotU4t54FUqnIkGV4taXKVIvIEq5qhFfPZKB5-MFwrFeulspF8tNSpVastkoFADFdbyzjs2MbOabDTqDXbNVA6nqDUb-aLyAazuKXYbZcLjVHA7aNVrIGHeUGM5AGBS9VhIFgFVzQPnVd7jUA&format=recorder&ssp=10&name=CSS_Example_6&editor=1" target="_blank"> 
-                        <img class="image" loading="lazy" src="img/css_example_6b.jpg">
+                    <a href="https://michaeleskin.com/abctools/abctools.html?def=eJztlt1u2jAUx-_9FEeRIoFU1oTvuepF6VTUdUjdxqRN0zQZ4kA2sKPY0KKxJ-Bil3u_PcnsbMCoSCAurPvgwoo5_P3L-bJj2-7QXsC6QiAx7oGkt_KtRyQpMDKkpxZhjEsiA86sd5jJfoH7BTkJac7NA3wCGREmfB4N8Y_pgEj6Jleo1sPb_Al8zoYspiJdE2QpDVkpmyDLachyzQRZSUU6JshqGrJUMUHW0pBFo4rXU5FGFX-chnSNKu46-WSkUcFdN5noxDjbpszTmxK9xuCqn0uWz5mEa6LUAeNQR20M7T6FKyr66FzNI-IFWkcG6AWGp0EPtTBUj-vomSKpx3MMpeP6qVt00BWG5pB8QDay4ZWgIBXngsgGn4DgI-bpV2FkL-bgE9nhk4WeMDjr8pGQQReaKgQPrgOinIoXgAotJrbogHuTI2gQIY5Aq877PPKEItutyyeXEEa8F5EhOHNDRym1cWnp6hVzk3r7SypjtmYukTDmg9GQCsg5BbdYy-Nfgeo_qJZXgHPTTyABEdJu4KtoyFCFIIH7IG4C1tNJ0E9wHhUrWm8LSXxf0BDq2kddeWiTDoZGpDIADR6NlHksPgYhuBU0xdb7b1-_nGweMz2s5jby2UJ-lpEOD-vNbEXemO4Xn5G-VW52781s3bC8tblZq431NCM-o3yRm9kmT2J9b7_ePFBuEgqb2De7wWfsyik6HDiJuTwcOHdlC_nhwPmNfWPQ9Isl1kXWPVXC0y3uIffr5b_jzNxx69-jN1Pof9j35NA3iRvr3_6c3Al25_eQ_6FxDgeOeW4Mg02X-xnpK_eQjcMihs5vSY9zs5U21nf2m8qsdzR9D_kOkzwGOA&format=noten&ssp=10&name=CSS_Example_6&editor=1" target="_blank"> 
+                        <img class="image" loading="lazy" src="img/css_example_6c.jpg">
                     </a>
                 </div>
                 <p>Custom CSS:</p>
                 <p class="code">%%begincss<br/>
-                .tab-number {transform:translateY(20px);color:darkgreen;}<br/>
-                .recorder {font-size:70px;}<br/>
-                .abcjs-cursor {transform: translate(7px, 10px);}<br/>
-                %%endcss</p>
+                    svg text[data-name="annotation"]:nth-of-type(1)  { transform: translateY(-68px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(2)  { transform: translateY(-61px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(3)  { transform: translateY(-54px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(4)  { transform: translateY(-47px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(5)  { transform: translateY(-40px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(6)  { transform: translateY(-35px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(7)  { transform: translateY(-28px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(8)  { transform: translateY(-21px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(9)  { transform: translateY(-14px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(10) { transform: translateY(-7px); }<br/>
+                    svg text[data-name="annotation"]:nth-of-type(11) { transform: translateY(0); }<br/>
+                    %%endcss</p>
                 <hr>
                 <p><strong>Example #7</strong> - Completely hide the notation, only show the whistle tab:</p>
                 <p>Click the image to try this example live in the tool:</p>
