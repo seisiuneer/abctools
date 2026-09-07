@@ -23925,7 +23925,7 @@ function SaveMyTemplate() {
   sendGoogleAnalytics("action", "SaveMyTemplate");
 
   if (!gLocalStorageAvailable) {
-    DayPilot.Modal.alert(makeCenteredPromptString("Browser local storage is not available, so your ABC template cannot be saved."), {
+    DayPilot.Modal.alert(makeCenteredPromptString("Your browser is unable to save your ABC template right now."), {
       theme: "modal_flat",
       top: 150,
       scrollWithPage: (AllowDialogsToScroll())
@@ -23946,13 +23946,13 @@ function SaveMyTemplate() {
 
   try {
     localStorage.MyABCTemplate = theABC;
-    DayPilot.Modal.alert(makeCenteredPromptString("Your preferred ABC template has been saved in browser local storage."), {
+    DayPilot.Modal.alert(makeCenteredPromptString("Your preferred ABC template has been saved in this browser."), {
       theme: "modal_flat",
       top: 150,
       scrollWithPage: (AllowDialogsToScroll())
     });
   } catch (e) {
-    DayPilot.Modal.alert(makeCenteredPromptString("Unable to save your ABC template in browser local storage."), {
+    DayPilot.Modal.alert(makeCenteredPromptString("Unable to save your ABC template in this browser."), {
       theme: "modal_flat",
       top: 150,
       scrollWithPage: (AllowDialogsToScroll())
@@ -23968,7 +23968,7 @@ function LoadMyTemplate() {
   sendGoogleAnalytics("action", "LoadMyTemplate");
 
   if (!gLocalStorageAvailable) {
-    DayPilot.Modal.alert(makeCenteredPromptString("Browser local storage is not available, so your saved ABC template cannot be loaded."), {
+    DayPilot.Modal.alert(makeCenteredPromptString("Your browser is unable to access your saved ABC template right now."), {
       theme: "modal_flat",
       top: 150,
       scrollWithPage: (AllowDialogsToScroll())
