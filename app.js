@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3334_090426_1300";
+var gVersionNumber = "3335_090726_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23288,11 +23288,12 @@ function AddABC() {
   modal_msg += '<div id="addabc-tab-templates" class="adv-tab-panel' + (isTemplatesActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
   modal_msg += '<input id="addnewtunetemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTempate();" type="button" value="Add a Tune Template" title="Adds a tune template to the end of the ABC">';
-  modal_msg += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
   modal_msg += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
+  modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
+  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="SaveMyTemplate();" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents in browser local storage as your preferred ABC template">';
+  modal_msg += '<input id="loadmytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="LoadMyTemplate();" type="button" value="Add My ABC Template" title="Adds your preferred ABC template from browser local storage to the end of the ABC">';
   modal_msg += '</p></div>';
 
   /* ---------------- PDF features tab ---------------- */
@@ -23917,6 +23918,110 @@ function AppendSampleHornpipe() {
 }
 
 //
+// Save the current ABC as the user's preferred template
+//
+function SaveMyTemplate() {
+
+  sendGoogleAnalytics("action", "SaveMyTemplate");
+
+  if (!gLocalStorageAvailable) {
+    DayPilot.Modal.alert(makeCenteredPromptString("Browser local storage is not available, so your ABC template cannot be saved."), {
+      theme: "modal_flat",
+      top: 150,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+    return;
+  }
+
+  var theABC = getABCEditorText();
+
+  if (!theABC || theABC.trim().length === 0) {
+    DayPilot.Modal.alert(makeCenteredPromptString("There is no ABC in the editor to save as your ABC template."), {
+      theme: "modal_flat",
+      top: 150,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+    return;
+  }
+
+  try {
+    localStorage.MyABCTemplate = theABC;
+    DayPilot.Modal.alert(makeCenteredPromptString("Your preferred ABC template has been saved in browser local storage."), {
+      theme: "modal_flat",
+      top: 150,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+  } catch (e) {
+    DayPilot.Modal.alert(makeCenteredPromptString("Unable to save your ABC template in browser local storage."), {
+      theme: "modal_flat",
+      top: 150,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+  }
+}
+
+//
+// Append the user's preferred template to the ABC
+//
+function LoadMyTemplate() {
+
+  sendGoogleAnalytics("action", "LoadMyTemplate");
+
+  if (!gLocalStorageAvailable) {
+    DayPilot.Modal.alert(makeCenteredPromptString("Browser local storage is not available, so your saved ABC template cannot be loaded."), {
+      theme: "modal_flat",
+      top: 150,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+    return;
+  }
+
+  var theTemplate = localStorage.MyABCTemplate || "";
+
+  if (!theTemplate) {
+    DayPilot.Modal.alert(makeCenteredPromptString("You have not saved a preferred ABC template yet."), {
+      theme: "modal_flat",
+      top: 150,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+    return;
+  }
+
+  var currentABC = getABCEditorText();
+  var separator = "";
+
+  if (currentABC.length > 0 && theTemplate.length > 0) {
+    var trailingNewlines = (currentABC.match(/\n+$/) || [""])[0].length;
+    var leadingNewlines = (theTemplate.match(/^\n+/) || [""])[0].length;
+    var newlinesNeeded = Math.max(0, 2 - trailingNewlines - leadingNewlines);
+    separator = "\n".repeat(newlinesNeeded);
+  }
+
+  var originalLength = currentABC.length;
+
+  setABCEditorText(currentABC + separator + theTemplate);
+  gIsDirty = true;
+
+  if (gDisplayedName != "No ABC file selected" && gDisplayedName.indexOf("+ added tunes") == -1) {
+    gDisplayedName = gDisplayedName + " + added tunes";
+  }
+
+  RenderAsync(true, null, function() {
+    UpdateNotationTopPosition();
+    if (!gIsMaximized) {
+      var addedOffset = originalLength + separator.length;
+      if (gEnableSyntax) {
+        ScrollABCTextIntoView(gTheCM, addedOffset, addedOffset, 10);
+      } else {
+        var abc = document.getElementById("abc");
+        abc.focus();
+        abc.setSelectionRange(addedOffset, addedOffset);
+      }
+    }
+  });
+}
+
+//
 // Add a new tune template to the ABC
 //
 function AppendTuneTempate() {
@@ -23966,87 +24071,6 @@ function AppendTuneTempate() {
   theValue += "%\n";
   theValue += "% Add your tune's ABC below:\n";
   theValue += '"C"C2 D2 E2 F2| G2 A2 B2 c2|]\n';
-
-  // Do common tune addition processing
-  ProcessAddTune(theValue);
-
-}
-
-//
-// Add a new song template to the ABC
-//
-function AppendSongTemplate() {
-
-  // Keep track of actions
-  sendGoogleAnalytics("action", "AppendSongTemplate");
-
-  // Stuff in some default ABC with additional options explained
-  var theValue = ""
-
-  var nTunes = CountTunes();
-
-  if (nTunes > 0) {
-    theValue += "\n";
-  }
-
-  theValue += "% Stripped-down self-documenting song in ABC, by Linda Eskin\n";
-  theValue += "% Replace the WORDS IN UPPER-CASE with your own information.\n";
-  theValue += "% You can remove all these comments with single % signs.\n";
-  theValue += "%\n";
-  theValue += "X: 1\n";
-  theValue += "%\n";
-  theValue += "% *** THIS HEADER CONVEYS INFORMATION ABOUT THE SONG ***\n";
-  theValue += "%\n";
-  theValue += "% These text elements appear above the music:\n";
-  theValue += "T: TITLE OF THE SONG\n";
-  theValue += "T: ALTERNATE TITLE\n";
-  theValue += "C: COMPOSER/SONGWRITER\n";
-  theValue += "O: ORIGIN/GEOGRAPHIC\n";
-  theValue += "%%text GENERAL PURPOSE TEXT\n";
-  theValue += "%\n";
-  theValue += "% These appear below the music and lyrics:\n";
-  theValue += "S: SOURCE OF THE SONG\n";
-  theValue += "D: DISCOGRAPHY - CD, LP, ETC.\n";
-  theValue += "N: NOTES (TEXT)\n";
-  theValue += "Z: TRANSCRIBER, COPYRIGHT, PERMISSIONS\n";
-  theValue += "H: HISTORY OF THE SONG\n";
-  theValue += "H: This self-documenting ABC song template was created by Linda Eskin.\n";
-  theValue += "%\n";
-  theValue += "% This appears in your ABC file only, for reference.\n";
-  theValue += "F: FILE URL - WHERE TO FIND THIS ONLINE\n";
-  theValue += "%\n";
-  theValue += "% These appear above the music AND control how it is played:\n";
-  theValue += "R: RHYTHM, E.G. JIG, WALTZ\n";
-  theValue += "M: 4/4\n";
-  theValue += "L: 1/4\n";
-  theValue += "Q: 1/4=120\n";
-  theValue += "K: C\n";
-  theValue += "% The K (key) tag should be the last thing in the header.\n";
-  theValue += "%\n";
-  theValue += "% *** THE SONG ITSELF STARTS HERE - REPLACE THIS WITH YOUR SONG ***\n";
-  theValue += "%\n";
-  theValue += "P: PART - VERSE, CHORUS, ETC.\n";
-  theValue += '"C"C D2 E|"F"F G3|"Am"A B2 c|"E7"d e3|\n';
-  theValue += "w: The words to the act-u-al tune go here\n";
-  theValue += "w: You can put more ver-ses here is you like\n";
-  theValue += "%\n";
-  theValue += '"C"C D2 E|"F"F G3|"Am"A B2 c|"E7"d e3|]\n';
-  theValue += "w: This tune is a scale. See how the notes work!\n";
-  theValue += "w: This line is for the se-cond verse. Ta-da!\n";
-  theValue += "%\n";
-  theValue += "% *** YOU CAN PUT MORE LYRICS AFTER THE TUNE, TOO. ***\n";
-  theValue += "%\n";
-  theValue += "W: Write your extra verses here, verses here, verses here.\n";
-  theValue += "W: Write your extra verses here, or the whole song if you like.\n";
-  theValue += "W:\n";
-  theValue += "W: --- This is where the chorus goes, chorus goes, chorus goes.\n";
-  theValue += "W: --- Indent it with dashes if you like, but spaces will not work.\n";
-  theValue += "W:\n";
-  theValue += "W: Here we have another verse, another verse, another verse.\n";
-  theValue += "W: Now we have reached the end - this is the last verse of this song.\n";
-  theValue += "%\n";
-  theValue += "% That should get you started. Go play!\n";
-
 
   // Do common tune addition processing
   ProcessAddTune(theValue);
@@ -31302,13 +31326,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_4sep2026;
+        var updatePresented = localStorage.sawUpdate_7sep2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_4sep2026 = true;
+          localStorage.sawUpdate_7sep2026 = true;
 
         }
 
@@ -60105,7 +60129,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 4 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 7 September 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>Save and Reuse Your Own ABC Template</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab now includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Save My ABC Template stores the entire current ABC editor contents in browser local storage as your preferred template. Add My ABC Template appends the saved template to the ABC, separated from existing ABC by a blank line.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -67046,13 +67077,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_4sep2026;
+    var updatePresented = localStorage.sawUpdate_7sep2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_4sep2026 = true;
+      localStorage.sawUpdate_7sep2026 = true;
 
     }
 
