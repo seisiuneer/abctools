@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3335_090726_1000";
+var gVersionNumber = "3336_090726_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23292,7 +23292,7 @@ function AddABC() {
   modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="SaveMyTemplate();" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents in browser local storage as your preferred ABC template">';
+  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="SaveMyTemplate();" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents in browser local storage as your preferred ABC template">';
   modal_msg += '<input id="loadmytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="LoadMyTemplate();" type="button" value="Add My ABC Template" title="Adds your preferred ABC template from browser local storage to the end of the ABC">';
   modal_msg += '</p></div>';
 
