@@ -23944,20 +23944,40 @@ function SaveMyTemplate() {
     return;
   }
 
-  try {
-    localStorage.MyABCTemplate = theABC;
-    DayPilot.Modal.alert(makeCenteredPromptString("Your preferred ABC template has been saved in this browser."), {
-      theme: "modal_flat",
-      top: 150,
-      scrollWithPage: (AllowDialogsToScroll())
-    });
-  } catch (e) {
-    DayPilot.Modal.alert(makeCenteredPromptString("Unable to save your ABC template in this browser."), {
-      theme: "modal_flat",
-      top: 150,
-      scrollWithPage: (AllowDialogsToScroll())
-    });
+  function saveTemplate() {
+    try {
+      localStorage.MyABCTemplate = theABC;
+      DayPilot.Modal.alert(makeCenteredPromptString("Your preferred ABC template has been saved in this browser."), {
+        theme: "modal_flat",
+        top: 150,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+    } catch (e) {
+      DayPilot.Modal.alert(makeCenteredPromptString("Unable to save your ABC template in this browser."), {
+        theme: "modal_flat",
+        top: 150,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+    }
   }
+
+  if (localStorage.MyABCTemplate) {
+    var thePrompt = makeCenteredPromptString("You already have a preferred ABC template saved in this browser.<br/><br/>Do you want to replace it with the current ABC?");
+
+    DayPilot.Modal.confirm(thePrompt, {
+      theme: "modal_flat",
+      top: 150,
+      okText: "Replace",
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(args) {
+      if (!args.canceled) {
+        saveTemplate();
+      }
+    });
+    return;
+  }
+
+  saveTemplate();
 }
 
 //
