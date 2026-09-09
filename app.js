@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3336_090726_1900";
+var gVersionNumber = "3337_090926_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23292,8 +23292,8 @@ function AddABC() {
   modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="SaveMyTemplate();" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents in browser local storage as your preferred ABC template">';
-  modal_msg += '<input id="loadmytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="LoadMyTemplate();" type="button" value="Add My ABC Template" title="Adds your preferred ABC template from browser local storage to the end of the ABC">';
+  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="SaveMyTemplate(event);" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents as one of four preferred ABC templates. Click=#1, Shift-click=#2, Alt-click=#3, Shift-Alt-click=#4">';
+  modal_msg += '<input id="loadmytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="LoadMyTemplate(event);" type="button" value="Add My ABC Template" title="Adds one of four preferred ABC templates to the end of the ABC. Click=#1, Shift-click=#2, Alt-click=#3, Shift-Alt-click=#4">';
   modal_msg += '</p></div>';
 
   /* ---------------- PDF features tab ---------------- */
@@ -23920,7 +23920,49 @@ function AppendSampleHornpipe() {
 //
 // Save the current ABC as the user's preferred template
 //
-function SaveMyTemplate() {
+function GetMyTemplateSlot(e) {
+
+  if (e && e.shiftKey && e.altKey) {
+    return 4;
+  }
+
+  if (e && e.altKey) {
+    return 3;
+  }
+
+  if (e && e.shiftKey) {
+    return 2;
+  }
+
+  return 1;
+}
+
+function GetMyTemplateStorageKey(slot) {
+  return slot === 1 ? "MyABCTemplate" : "MyABCTemplate" + slot;
+}
+
+function SetMyTemplateButtonFeedback(buttonID, text, defaultText) {
+
+  var elem = document.getElementById(buttonID);
+
+  if (!elem) {
+    return;
+  }
+
+  elem.value = text;
+
+  setTimeout(function() {
+    var currentElem = document.getElementById(buttonID);
+    if (currentElem) {
+      currentElem.value = defaultText;
+    }
+  }, 500);
+}
+
+//
+// Save the current ABC as one of the user's four preferred templates
+//
+function SaveMyTemplate(e) {
 
   sendGoogleAnalytics("action", "SaveMyTemplate");
 
@@ -23944,16 +23986,15 @@ function SaveMyTemplate() {
     return;
   }
 
+  var slot = GetMyTemplateSlot(e);
+  var storageKey = GetMyTemplateStorageKey(slot);
+
   function saveTemplate() {
     try {
-      localStorage.MyABCTemplate = theABC;
-      DayPilot.Modal.alert(makeCenteredPromptString("Your preferred ABC template has been saved in this browser."), {
-        theme: "modal_flat",
-        top: 150,
-        scrollWithPage: (AllowDialogsToScroll())
-      });
-    } catch (e) {
-      DayPilot.Modal.alert(makeCenteredPromptString("Unable to save your ABC template in this browser."), {
+      localStorage[storageKey] = theABC;
+      SetMyTemplateButtonFeedback("savemytemplate", "Saved Template #" + slot, "Save My ABC Template");
+    } catch (err) {
+      DayPilot.Modal.alert(makeCenteredPromptString("Unable to save ABC Template #" + slot + " in this browser."), {
         theme: "modal_flat",
         top: 150,
         scrollWithPage: (AllowDialogsToScroll())
@@ -23961,8 +24002,8 @@ function SaveMyTemplate() {
     }
   }
 
-  if (localStorage.MyABCTemplate) {
-    var thePrompt = makeCenteredPromptString("You already have a preferred ABC template saved in this browser.<br/><br/>Do you want to replace it with the current ABC?");
+  if (localStorage[storageKey]) {
+    var thePrompt = makeCenteredPromptString("ABC Template #" + slot + " is already saved in this browser.<br/><br/>Do you want to replace it with the current ABC?");
 
     DayPilot.Modal.confirm(thePrompt, {
       theme: "modal_flat",
@@ -23981,14 +24022,14 @@ function SaveMyTemplate() {
 }
 
 //
-// Append the user's preferred template to the ABC
+// Append one of the user's four preferred templates to the ABC
 //
-function LoadMyTemplate() {
+function LoadMyTemplate(e) {
 
   sendGoogleAnalytics("action", "LoadMyTemplate");
 
   if (!gLocalStorageAvailable) {
-    DayPilot.Modal.alert(makeCenteredPromptString("Your browser is unable to access your saved ABC template right now."), {
+    DayPilot.Modal.alert(makeCenteredPromptString("Your browser is unable to access your saved ABC templates right now."), {
       theme: "modal_flat",
       top: 150,
       scrollWithPage: (AllowDialogsToScroll())
@@ -23996,10 +24037,12 @@ function LoadMyTemplate() {
     return;
   }
 
-  var theTemplate = localStorage.MyABCTemplate || "";
+  var slot = GetMyTemplateSlot(e);
+  var storageKey = GetMyTemplateStorageKey(slot);
+  var theTemplate = localStorage[storageKey] || "";
 
   if (!theTemplate) {
-    DayPilot.Modal.alert(makeCenteredPromptString("You have not saved a preferred ABC template yet."), {
+    DayPilot.Modal.alert(makeCenteredPromptString("You have not saved ABC Template #" + slot + " yet."), {
       theme: "modal_flat",
       top: 150,
       scrollWithPage: (AllowDialogsToScroll())
@@ -24038,6 +24081,8 @@ function LoadMyTemplate() {
         abc.setSelectionRange(addedOffset, addedOffset);
       }
     }
+
+    SetMyTemplateButtonFeedback("loadmytemplate", "Added Template #" + slot, "Add My ABC Template");
   });
 }
 
@@ -31346,13 +31391,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_7sep2026;
+        var updatePresented = localStorage.sawUpdate_9sep2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_7sep2026 = true;
+          localStorage.sawUpdate_9sep2026 = true;
 
         }
 
@@ -60149,14 +60194,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 7 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 September 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Save and Reuse Your Own ABC Template</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab now includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Save My ABC Template stores the entire current ABC editor contents in browser local storage as your preferred template. Add My ABC Template appends the saved template to the ABC, separated from existing ABC by a blank line.</p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Four preferred templates are available using the same modifier keys as Snapshots: click for #1, Shift-click for #2, Alt-click for #3, and Shift-Alt click for #4. <strong>Add My ABC Template</strong> appends the selected saved template to the ABC.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -67097,13 +67142,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_7sep2026;
+    var updatePresented = localStorage.sawUpdate_9sep2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_7sep2026 = true;
+      localStorage.sawUpdate_9sep2026 = true;
 
     }
 

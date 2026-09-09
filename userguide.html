@@ -659,6 +659,8 @@
             <a style="text-decoration:none;" href="#add_restore_auto">Restore from Auto-Snapshot</a>
             <a style="text-decoration:none;" href="#add_examples">Add Example Tunes</a>
             <a style="text-decoration:none;" href="#add_templates">Add Example Templates</a>
+            <a style="text-decoration:none;" href="#save_my_abc_template">Save My ABC Template</a>
+            <a style="text-decoration:none;" href="#add_my_abc_template">Add My ABC Template</a>
             <a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Template</a>
             <a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a>
             <a style="text-decoration:none;" href="#add_all_pdf_features">Inject All PDF Tunebook Features</a>
@@ -1228,6 +1230,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#add_restore_auto">Restore from Auto-Snapshot</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_examples">Add Example Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_templates">Add Example Templates</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#save_my_abc_template">Save My ABC Template</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#add_my_abc_template">Add My ABC Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_all_pdf_features">Inject All PDF Tunebook Features</a></p>
@@ -2149,10 +2153,7 @@
                   Table of Contents
                 </a>
                 <p><strong>Add:</strong></p>
-                <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, save and reuse your own preferred ABC template, or inject the commands for PDF tunebook features:</p>
-                <p>On the <strong>Add Example Templates</strong> tab, click <strong>Save My ABC Template</strong> to save the entire current contents of the ABC editor in browser local storage as your preferred template.</p>
-                <p>Click <strong>Add My ABC Template</strong> to add your saved preferred template to the ABC editor. If the editor already contains ABC, a blank line is inserted between the existing ABC and the added template.</p>
-                <p>Your preferred template remains available in that browser until its local storage is cleared or the template is replaced by saving a new one.</p>
+                <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, save and reuse your own preferred ABC templates, or inject the commands for PDF tunebook features:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/add_example_template_42.jpg"/>
                 </div>
@@ -2210,7 +2211,7 @@
                 <p>This button appears if there is a saved Snapshot available in browser storage.</p>
                 <p>When clicked, restores a saved Snapshot from browser storage, replacing the contents of the ABC editor.</p>
                 <p>There are four Snapshots available in browser storage.</p>
-                <p>Hold down the following modifier keys while clicking the button to select which Snapshot to restore:</p>
+                <p>On systems with a keyboard, hold down the following modifier keys while clicking the button to select which Snapshot to restore:</p>
                 <p>Click - Snapshot #1</p>
                 <p>Shift-click - Snapshot #2</p>
                 <p>Alt-click - Snapshot #3</p>
@@ -2264,14 +2265,28 @@
                 <hr>
                 <p><strong>Add Bodhran Backing Template</strong></p>
                 <p>Opens the Bodhran Backing Track Template dialog, where you can choose a backing track template for a common tune style to add to the ABC.</p>
-                <hr>
+                <hr id="save_my_abc_template">
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/d3mpraSOl9A" title="Save My ABC Template / Add My ABC Template Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <hr>
+                <hr class="hidden-print">
                 <p><strong>Save My ABC Template</strong></p>
-                <p>Saves the entire current contents of the ABC editor in browser local storage as your preferred ABC template.</p>
-                <hr>
+                <p>Saves the entire current contents of the ABC editor as one of four preferred ABC templates.</p>
+                <p>On systems with a keyboard, use the following modifier keys to select the template slot for the save:</p>
+                <p>Click - ABC Template #1</p>
+                <p>Shift-click - ABC Template #2</p>
+                <p>Alt-click - ABC Template #3</p>
+                <p>Shift-Alt-click - ABC Template #4</p>
+                <p>If a template is already saved in the selected slot, you will be asked to confirm before replacing it. After a successful save, the button briefly displays <strong>Saved Template #1</strong>, <strong>Saved Template #2</strong>, <strong>Saved Template #3</strong>, or <strong>Saved Template #4</strong>.</p>
+                <p>On mobile devices with no keyboard, only ABC Template #1 is available.</p>
+                <hr id="add_my_abc_template">
                 <p><strong>Add My ABC Template</strong></p>
-                <p>Adds your preferred ABC template from browser local storage to the ABC editor. If ABC is already present, a blank line is inserted before the added template.</p>
+                <p>Adds the selected saved ABC template to the ABC editor on systems with a keyboard using the same modifier keys shown above.</p>
+                <p>Click - ABC Template #1</p>
+                <p>Shift-click - ABC Template #2</p>
+                <p>Alt-click - ABC Template #3</p>
+                <p>Shift-Alt-click - ABC Template #4</p>
+                <p>After the template is added to the editor the button, for example for template #2, will briefly show <strong>Added Template #2</strong> when the operation completes.</p>
+                <p>Each of the four saved templates remains available in that browser until it is replaced or the browser's stored website data is cleared.</p>
+                <p>On mobile devices with no keyboard, only ABC Template #1 is available.</p>
                 <hr class="hidden-print" id="add_bodhran_backing_track">
                 <h1 class="page_break_always">Add Bodhran Backing Template</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -8945,6 +8960,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation/Decoding to Your Own Website</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#add_my_abc_template">Add My ABC Template</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_align_all">Align Bars (All Tunes)</a></p>
@@ -9158,6 +9174,7 @@
 
                 <h1 class="page_break_never" id="index_S" style="text-align:left;margin-bottom:12px;">S</h1>
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_save">Save</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#save_my_abc_template">Save My ABC Template</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#default_player_settings">Select Default Player Instruments and Volumes</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#grace_timing">Setting Grace Note Duration for Ornamentation</a></p>
