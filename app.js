@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3337_090926_1100";
+var gVersionNumber = "3338_090926_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2909,7 +2909,7 @@ function TransposeToKeyDialog() {
   }, {
     html: '<p style="margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Any modes specified in the tune keys will be preserved.</p>'
   }, {
-    html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>If the Transpose to Key results are too high or too low:</strong><br/>Click in a single tune or select across one or more tunes in the ABC editor then <strong>Alt-click</strong> the lower toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'
+    html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>If the Transpose to Key results are too high or too low:</strong><br/>Click in a single tune or select across one or more tunes in the ABC editor then <strong>Alt/Option-click</strong> the lower toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'
   }, {
     name: "Root key:",
     id: "transposekey",
@@ -21376,7 +21376,7 @@ function AddFromSearch(e, callback) {
   modal_msg += '<p style="margin-top:20px;text-align: center;">';
 
   if (isPureDesktopBrowser()) {
-    modal_msg += 'Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click or Alt-click to select an entire tune.<br/><br/>';
+    modal_msg += 'Select text to add or add all text if no selection.&nbsp;&nbsp;Triple-click or Alt/Option-click to select an entire tune.<br/><br/>';
   } else {
     modal_msg += 'Select text to add or add all text if no selection.&nbsp;&nbsp;Click once in a tune to select it.<br/><br/>';
   }
@@ -21453,7 +21453,7 @@ function AddFromSearch(e, callback) {
 
     document.getElementById('search_results').addEventListener('click', function(event) {
 
-      if ((event.detail === 3) || (event.altKey)) { // Triple-click or Alt-click detected
+      if ((event.detail === 3) || (event.altKey)) { // Triple-click or Alt/Option-click detected
         const textarea = event.target;
         const text = textarea.value;
         const selectionStart = textarea.selectionStart;
@@ -23244,7 +23244,7 @@ function AddABC() {
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose Files to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden multiple/></label>';
 
-  modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt-click for Snapshot #3, Shift-Alt-click for Snapshot #4." style="display:' + snapshotDisplayStyle + ';">';
+  modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt/Option-click for Snapshot #3, Shift-Alt/Option-click for Snapshot #4." style="display:' + snapshotDisplayStyle + ';">';
 
   modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:' + autoSnapshotDisplayStyle + ';">';
 
@@ -23292,8 +23292,8 @@ function AddABC() {
   modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="SaveMyTemplate(event);" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents as one of four preferred ABC templates. Click=#1, Shift-click=#2, Alt-click=#3, Shift-Alt-click=#4">';
-  modal_msg += '<input id="loadmytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="LoadMyTemplate(event);" type="button" value="Add My ABC Template" title="Adds one of four preferred ABC templates to the end of the ABC. Click=#1, Shift-click=#2, Alt-click=#3, Shift-Alt-click=#4">';
+  modal_msg += '<input id="savemytemplate" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="SaveMyTemplate(event);" type="button" value="Save My ABC Template" title="Saves the current ABC editor contents as one of four preferred ABC templates. Click=#1, Shift-click=#2, Alt/Option-click=#3, Shift-Alt/Option-click=#4">';
+  modal_msg += '<input id="loadmytemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="LoadMyTemplate(event);" type="button" value="Add My ABC Template" title="Adds one of four preferred ABC templates to the end of the ABC. Click=#1, Shift-click=#2, Alt/Option-click=#3, Shift-Alt/Option-click=#4">';
   modal_msg += '</p></div>';
 
   /* ---------------- PDF features tab ---------------- */
@@ -60201,7 +60201,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Save and Reuse Your Own ABC Template</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Four preferred templates are available using the same modifier keys as Snapshots: click for #1, Shift-click for #2, Alt-click for #3, and Shift-Alt click for #4. <strong>Add My ABC Template</strong> appends the selected saved template to the ABC.</p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Four preferred templates are available using the same modifier keys as Snapshots: click for #1, Shift-click for #2, Alt/Option-click for #3, and Shift-Alt/Option-click for #4. <strong>Add My ABC Template</strong> appends the selected saved template to the ABC.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -66312,7 +66312,7 @@ async function DoStartup() {
   document.getElementById("zoombutton").onclick =
     function(e) {
 
-      // Alt-click to Enter presentation mode
+      // Alt/Option-click to Enter presentation mode
       if (e.altKey) {
         togglePresentationMode();
       } else {
@@ -69031,7 +69031,7 @@ function launchAbcChordChartGenerator(){
 
 //
 // Hidden direct transfer to the MusicXML to ABC Optimizer.
-// Launched only by Alt+Shift-clicking the ABC Chord Chart Generator image
+// Launched only by Alt/Option+Shift-clicking the ABC Chord Chart Generator image
 // in the Open ABC in External Tool dialog.
 //
 var gMusicXMLToABCOptimizerURL = "https://michaeleskin.com/tools/musicxml-to-abc-optimizer.html";
@@ -70546,7 +70546,7 @@ function wireClickish(cm, AUTOSCROLLDEBOUNCEMS) {
 
   // Your click action, unchanged
   const onClickish = debounce((ev) => {
-    // Desktop-only Alt+click block
+    // Desktop-only Alt/Option+click block
     if (isPureDesktopBrowser() && ev.altKey) {
       const text = cm.getValue();
 
