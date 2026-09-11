@@ -37,7 +37,7 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Real Time Tuning Analysis" />
-  <meta property="og:description" content="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." />
+  <meta property="og:description" content="Real-time tuning analysis (box-plot style) from live mic input. Adjustable pitch-detection strategies for wind, string, and piano instruments, temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/tools/rtta.html" />
   <meta property="og:site_name" content="Real Time Tuning Analysis" />
   <meta property="og:image" content="https://michaeleskin.com/tools/img/tool_rtta.jpg" />
@@ -248,6 +248,10 @@
     /* Temperament row uses 3 equal columns */
     .row-intonation{
       grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .row-detection{
+      grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 
     label{
@@ -474,6 +478,7 @@
       canvas{ height: 420px; }
       button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
       .row{ grid-template-columns: 1fr; }
+      .row-detection{ grid-template-columns: 1fr; }
       .title-long{ display:none; }
       .title-short{ display:inline; }
 
@@ -571,6 +576,9 @@
       }
       .row-intonation{
         grid-template-columns: 1fr 1fr 1fr !important;
+      }
+      .row-detection{
+        grid-template-columns: 1fr 1fr 1fr 1fr !important;
       }
 
       label{
@@ -989,7 +997,8 @@
 
             <div class="instr-title">How to use this tool</div>
             <div class="instr-body">
-              1) Select the A4 reference frequency and input level adjustment.<br/>
+              1) Select the A4 reference frequency, input level adjustment, and <b>Pitch detection strategy</b>.<br/>
+              Use <b>Wind</b> for stable sustained notes, <b>String</b> for quicker response and vibrato, or <b>Piano</b> for percussive attacks and piano-string harmonics/inharmonicity.<br/>
               2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean, or a Fiddle Sweetened preset.<br/>
               3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
               Root note is not used for Equal Temperament or the Fiddle Sweetened presets.<br/>
@@ -1082,6 +1091,15 @@
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
+            <div class="instr-title">Pitch Detection Strategy</div>
+            <div class="instr-body">
+              <b>Wind</b> prioritizes stable, precise measurements of sustained notes. It uses stronger pitch-confidence filtering and a longer stabilization window.<br/><br/>
+              <b>String</b> responds more quickly and uses a shorter stabilization window so natural vibrato and faster note changes are represented without making the display excessively jumpy.<br/><br/>
+              <b>Piano</b> is optimized for the note attack. In addition to rapid YIN tracking, it evaluates the harmonic structure and allows for the slight stretching of upper partials caused by piano-string inharmonicity.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
             <div class="instr-title">A4 Reference Frequency</div>
             <div class="instr-body">
               The options include modern A4 reference frequencies from A:438 to A:446 as well as A:415 for Baroque, A:392 for French Baroque, and common Scottish bagpipes A4 references from A:465 to A:482.<br/><br/>
@@ -1144,7 +1162,7 @@
       <span class="title-short">RTTA</span>
     </h1>
 
-    <div class="row">
+    <div class="row row-detection">
       <div>
         <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
         <div class="select-wrap">
@@ -1197,6 +1215,17 @@
             <option value="50" selected>±50 cents</option>
             <option value="75">±75 cents</option>
             <option value="100">±100 cents</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="detectionstrategy">&nbsp;&nbsp;Pitch detection strategy</label>
+        <div class="select-wrap">
+          <select id="detectionstrategy">
+            <option value="wind" selected>Wind</option>
+            <option value="string">String</option>
+            <option value="piano">Piano</option>
           </select>
         </div>
       </div>
@@ -1331,6 +1360,7 @@
   const LS_KEY_A4REF = "abctools_rt_tuning_a4ref_hz";
   const LS_KEY_BOOST = "abctools_rt_tuning_input_boost_v1";
   const LS_KEY_YRANGE = "abctools_rt_tuning_yrange_v1";
+  const LS_KEY_DETECTION_STRATEGY = "abctools_rt_tuning_detection_strategy_v1";
 
   const LS_KEY_INTONATION = "abctools_rt_tuning_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_rt_tuning_rootnote_v1";
@@ -1661,7 +1691,7 @@
   }
 
   // Pitch detector (YIN)
-  function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
+  function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold, probabilityMin) {
     const halfSize = Math.floor(buffer.length / 2);
 
     const minTau = Math.floor(sampleRate / maxFreq);
@@ -1697,7 +1727,7 @@
     if (tauEstimate === -1) return null;
 
     const probability = 1 - cmnd[tauEstimate];
-    const PROB_MIN = IS_IOS ? 0.62 : 0.75;
+    const PROB_MIN = (probabilityMin != null) ? probabilityMin : (IS_IOS ? 0.62 : 0.75);
     if (probability < PROB_MIN) return null;
 
     const x0 = tauEstimate > 1 ? tauEstimate - 1 : tauEstimate;
@@ -2028,8 +2058,91 @@
   const lastSampleTimeByMidi = new Map();
 
   let pitchHistory = [];
-  const PITCH_HIST_FRAMES = 15;
-  const PITCH_NEED_FRAMES = 8;
+
+  let gDetectionStrategy = "wind";
+  const DETECTION_PROFILES = {
+    wind: {
+      yinThreshold: 0.08,
+      probabilityMin: IS_IOS ? 0.68 : 0.84,
+      historyFrames: 21,
+      needFrames: 12,
+      sampleIntervalMs: 100,
+      label: "Wind"
+    },
+    string: {
+      yinThreshold: 0.15,
+      probabilityMin: IS_IOS ? 0.58 : 0.68,
+      historyFrames: 9,
+      needFrames: 4,
+      sampleIntervalMs: 65,
+      label: "String"
+    },
+    piano: {
+      yinThreshold: 0.18,
+      probabilityMin: IS_IOS ? 0.56 : 0.66,
+      historyFrames: 5,
+      needFrames: 2,
+      sampleIntervalMs: 55,
+      label: "Piano"
+    }
+  };
+
+  function getDetectionProfile(){
+    return DETECTION_PROFILES[gDetectionStrategy] || DETECTION_PROFILES.wind;
+  }
+
+  // Estimate energy near one sinusoidal frequency. Used only by Piano mode.
+  function sinusoidEnergy(buffer, sampleRate, freq){
+    if (!(freq > 0) || freq >= sampleRate * 0.48) return 0;
+    const step = 2;
+    const omega = 2 * Math.PI * freq / sampleRate;
+    let re = 0, im = 0, n = 0;
+    for (let i = 0; i < buffer.length; i += step){
+      const w = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / Math.max(1, buffer.length - 1));
+      const x = buffer[i] * w;
+      const phase = omega * i;
+      re += x * Math.cos(phase);
+      im -= x * Math.sin(phase);
+      n++;
+    }
+    return (re * re + im * im) / Math.max(1, n * n);
+  }
+
+  // Piano strings have slightly stretched partials. Score a few plausible
+  // inharmonicity coefficients and nearby octave candidates, then retain the
+  // fundamental whose stretched harmonic pattern best matches the attack.
+  function refinePianoPitch(buffer, sampleRate, yinFreq){
+    if (!(yinFreq > 0)) return yinFreq;
+    const candidates = [yinFreq];
+    if (yinFreq > 90) candidates.push(yinFreq / 2);
+    if (yinFreq < 1000) candidates.push(yinFreq * 2);
+    const bValues = [0, 0.00015, 0.0004, 0.0008];
+    let bestFreq = yinFreq;
+    let bestScore = -Infinity;
+
+    for (const f0 of candidates){
+      if (f0 < 55 || f0 > 2000) continue;
+      for (const B of bValues){
+        let score = 0;
+        let weightSum = 0;
+        for (let h = 1; h <= 6; h++){
+          const stretched = h * f0 * Math.sqrt(1 + B * h * h);
+          if (stretched >= sampleRate * 0.48) break;
+          const weight = 1 / Math.sqrt(h);
+          score += weight * Math.log1p(sinusoidEnergy(buffer, sampleRate, stretched) * 1e6);
+          weightSum += weight;
+        }
+        if (weightSum > 0) score /= weightSum;
+        // Prefer YIN's octave unless the harmonic evidence is meaningfully stronger.
+        if (Math.abs(Math.log2(f0 / yinFreq)) > 0.4) score -= 0.18;
+        if (score > bestScore){
+          bestScore = score;
+          bestFreq = f0;
+        }
+      }
+    }
+    return bestFreq;
+  }
 
   let silentFrames = 0;
   let lastDetectedMidi = null;
@@ -2391,6 +2504,7 @@
       const a4 = localStorage.getItem(LS_KEY_A4REF);
       const boost = localStorage.getItem(LS_KEY_BOOST);
       const yr = localStorage.getItem(LS_KEY_YRANGE);
+      const detectionStrategy = localStorage.getItem(LS_KEY_DETECTION_STRATEGY);
 
       const intonation = localStorage.getItem(LS_KEY_INTONATION);
       const rootnote = localStorage.getItem(LS_KEY_ROOTNOTE);
@@ -2407,6 +2521,10 @@
       const yrSel = document.getElementById("yrange");
       if (yrSel && yr && yrSel.querySelector(`option[value="${CSS.escape(yr)}"]`)) {
         yrSel.value = yr;
+      }
+      const detectionSel = document.getElementById("detectionstrategy");
+      if (detectionSel && detectionStrategy && detectionSel.querySelector(`option[value="${CSS.escape(detectionStrategy)}"]`)) {
+        detectionSel.value = detectionStrategy;
       }
 
       const intSel = document.getElementById("intonation");
@@ -2430,9 +2548,11 @@
       const a4Sel = document.getElementById("a4ref");
       const boostSel = document.getElementById("inputboost");
       const yrSel = document.getElementById("yrange");
+      const detectionSel = document.getElementById("detectionstrategy");
       if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
       if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
       if (yrSel) localStorage.setItem(LS_KEY_YRANGE, String(yrSel.value));
+      if (detectionSel) localStorage.setItem(LS_KEY_DETECTION_STRATEGY, String(detectionSel.value));
 
       const intSel = document.getElementById("intonation");
       const rootSel = document.getElementById("rootnote");
@@ -2676,7 +2796,8 @@
   function pushSample(midi, cents){
     const now = performance.now();
     const lastT = lastSampleTimeByMidi.get(midi) || 0;
-    if ((now - lastT) < MIN_MS_BETWEEN_SAMPLES) return;
+    const minSampleMs = getDetectionProfile().sampleIntervalMs || MIN_MS_BETWEEN_SAMPLES;
+    if ((now - lastT) < minSampleMs) return;
     lastSampleTimeByMidi.set(midi, now);
 
     const arr = noteSamples.get(midi) || [];
@@ -2745,10 +2866,14 @@
 
     silentFrames = 0;
 
-    const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
+    const profile = getDetectionProfile();
+    const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, profile.yinThreshold, profile.probabilityMin);
 
     if (yin && yin.freq){
-      const midiFloatNow = freqToMidi(yin.freq);
+      const detectedFreq = (gDetectionStrategy === "piano")
+        ? refinePianoPitch(timeDataPitch, audioCtx.sampleRate, yin.freq)
+        : yin.freq;
+      const midiFloatNow = freqToMidi(detectedFreq);
       const midiNow = Math.round(midiFloatNow);
 
       if (lastDetectedMidi !== null && midiNow !== lastDetectedMidi) {
@@ -2756,10 +2881,10 @@
       }
       lastDetectedMidi = midiNow;
 
-      pitchHistory.push(yin.freq);
-      while (pitchHistory.length > PITCH_HIST_FRAMES) pitchHistory.shift();
+      pitchHistory.push(detectedFreq);
+      while (pitchHistory.length > profile.historyFrames) pitchHistory.shift();
 
-      if (pitchHistory.length >= PITCH_NEED_FRAMES){
+      if (pitchHistory.length >= profile.needFrames){
         const f0 = median(pitchHistory);
 
         if (f0 && isFinite(f0) && f0 > 0){
@@ -2895,49 +3020,55 @@
                <p>A smaller range gives a more zoomed-in view. A larger range shows more spread.</p>`
       },
       {
-        title: "Step 6: Temperament",
+        title: "Step 6: Pitch Detection Strategy",
+        selector: "#detectionstrategy",
+        body: `<p>Choose the pitch detector behavior that best matches your instrument.</p>
+               <p><strong>Wind</strong> prioritizes stable, precise sustained-note measurements. <strong>String</strong> responds faster and is more tolerant of vibrato. <strong>Piano</strong> responds quickly to the attack and evaluates the harmonic pattern with allowance for piano-string inharmonicity.</p>`
+      },
+      {
+        title: "Step 7: Temperament",
         selector: "#intonation",
         body: `<p>Choose the <strong>temperament</strong> you want to measure against.</p>
                <p>You can use Equal Temperament, Just Intonation, Pythagorean, or one of the Fiddle Sweetened presets.</p>`
       },
       {
-        title: "Step 7: Root Note",
+        title: "Step 8: Root Note",
         selector: "#rootnote",
         body: `<p>This <strong>Root note</strong> setting is used with <strong>Just Intonation</strong> and <strong>Pythagorean</strong>.</p>
                <p>It is not used for Equal Temperament or the Fiddle Sweetened presets, so the control is disabled in those modes.</p>`
       },
       {
-        title: "Step 8: Displayed Note Transpose",
+        title: "Step 9: Displayed Note Transpose",
         selector: "#displaytranspose",
         body: `<p>Optionally transpose the <strong>displayed note names</strong> by a selected number of semitones.</p>
                <p>This does not change the detected pitch, cents values, or the root tone of the selected temperament.</p>`
       },
       {
-        title: "Step 9: Live Note Readout",
+        title: "Step 10: Live Note Readout",
         selector: "#live-pair",
         body: `<p>This shows the currently detected note and its <strong>cents offset</strong>.</p>
                <p>When the reading is near 0.0 cents, the note is close to the selected tuning reference.</p>`
       },
       {
-        title: "Step 10: Start Analysis",
+        title: "Step 11: Start Analysis",
         selector: "#start-btn",
         body: `<p>Click <strong>START</strong> and play your instrument to begin live pitch analysis.</p>
                <p>Your browser may ask for permission to use the microphone. You must allow microphone access for the tool to work.</p>`
       },
       {
-        title: "Step 11: Pitch Distribution Graph",
+        title: "Step 12: Pitch Distribution Graph",
         selector: "#plot-wrap",
         body: `<p>This graph builds a <strong>pitch distribution</strong> for each note you play.</p>
                <p>Each yellow box plot shows the spread of measurements for that note, making it easier to see your typical tuning tendency.</p>`
       },
       {
-        title: "Step 12: Export JPEG",
+        title: "Step 13: Export JPEG",
         selector: "#export-plot-btn",
         body: `<p>Click <strong>JPEG</strong> to export the graph as an image file.</p>
                <p>On phones and tablets, landscape orientation usually gives the best result.</p>`
       },
       {
-        title: "Step 13: Export CSV",
+        title: "Step 14: Export CSV",
         selector: "#export-csv-btn",
         body: `<p>Click <strong>CSV</strong> to export the median cents values for the notes in the graph.</p>
                <p>This is useful if you want to save or compare measurements outside the tool.</p>`
@@ -3121,6 +3252,18 @@
     });
   }
 
+  const detectionStrategySelect = document.getElementById("detectionstrategy");
+  if (detectionStrategySelect) {
+    gDetectionStrategy = detectionStrategySelect.value || "wind";
+    detectionStrategySelect.addEventListener("change", () => {
+      gDetectionStrategy = detectionStrategySelect.value || "wind";
+      saveSettingsToLocalStorage();
+      pitchHistory = [];
+      lastDetectedMidi = null;
+      if (analysisStarted) clearAnalysis();
+    });
+  }
+
   const displayTransposeSelect = document.getElementById("displaytranspose");
   if (displayTransposeSelect) {
     gDisplayTranspose = parseInt(displayTransposeSelect.value, 10) || 0;
@@ -3177,6 +3320,7 @@
   restoreSettingsFromLocalStorage();
   if (a4RefSelect) gA4RefHz = parseFloat(a4RefSelect.value) || 440;
   if (yRangeSelect) gYRange = parseInt(yRangeSelect.value, 10) || 50;
+  if (detectionStrategySelect) gDetectionStrategy = detectionStrategySelect.value || "wind";
   if (displayTransposeSelect) gDisplayTranspose = parseInt(displayTransposeSelect.value, 10) || 0;
   setUserBoostGainFromUI();
   applyIntonationFromUI();
