@@ -6590,3 +6590,76 @@ body.flat-buttons .btn {
   }
 }
 
+/* ============================================================
+   My Tools
+   ============================================================ */
+
+/* My Tools management controls intentionally use the same basic geometry as
+   the normal More Tools buttons instead of browser/input pill styling. */
+#advanced-controls-dialog .mytools-management-button {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  min-width: 170px !important;
+  padding: 6px 9px !important;
+  border-radius: 0.5rem !important;
+  box-sizing: border-box !important;
+  line-height: 1.2 !important;
+}
+
+/* My Tools command buttons inherit their actual rendered colors from the
+   original More Tools controls in JavaScript. Top-toolbar commands are white. */
+#mytools-tools-container .mytools-shortcut {
+  box-sizing: border-box;
+}
+
+/* Use the same rollover highlight for every command on the My Tools tab,
+   regardless of the command's normal source color or button mode. */
+@media (hover: hover) {
+  #mytools-tools-container .mytools-shortcut:hover,
+  #mytools-tools-container .mytools-shortcut:focus {
+    --background-color: palegreen !important;
+    background-color: palegreen !important;
+  }
+}
+
+/* Edit My Tools: independent Clear All button.
+   The surrounding .modal_flat_main button rule supplies the standard
+   DayPilot modal-button shape without using the semantic Cancel class. */
+.mytools-selector-clear-button {
+  margin-left: 5px !important;
+  white-space: nowrap !important;
+}
+
+@media (hover: hover) {
+  .mytools-selector-clear-button {
+    transition: transform .1s ease-in-out 0s;
+  }
+
+  .mytools-selector-clear-button:hover {
+    transform: matrix(1.04, 0, 0, 1.04, 0, 0);
+  }
+}
+
+/* My Tools mobile order controls */
+#mobile_mytools_order_up {
+  height: 42px;
+  padding: 12px;
+  margin-right: 24px;
+}
+
+#mobile_mytools_order_down {
+  height: 42px;
+  padding: 12px;
+}
+
+.draggable_mytool_mobile {
+  cursor: pointer;
+}
+
+/* My Tools management buttons: very light grey background */
+#advanced-controls-dialog #mytools-edit,
+#advanced-controls-dialog #mytools-change-order {
+  background-color: #f5f5f5 !important;
+}

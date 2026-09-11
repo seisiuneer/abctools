@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3338_090926_1130";
+var gVersionNumber = "3339_091126_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31391,13 +31391,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_9sep2026;
+        var updatePresented = localStorage.sawUpdate_11sep2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_9sep2026 = true;
+          localStorage.sawUpdate_11sep2026 = true;
 
         }
 
@@ -54018,6 +54018,683 @@ function InjectTablatureOnly() {
 // More ABC Tools Dialog
 //
 
+
+// ------------------------------------------------------------
+// My Tools - Customizable shortcuts
+// ------------------------------------------------------------
+var gMyToolsSelected = [];
+var gMyToolsTopBarCommands = [];
+var gMyToolsEditSelection = null;
+var MYTOOLS_STORAGE_KEY = "ABCTranscriptionTools_MyTools";
+
+function MyTools_MakeStableId(prefix, value) {
+  return prefix + ":" + String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function MyTools_NormalizeTopBarLabel(name) {
+  return String(name || "")
+    .replace(/\s+\((?:Ctrl|⌘|Alt|Option|Shift)[^)]*\)\s*$/i, "")
+    .trim();
+}
+
+function MyTools_CaptureTopBarCommands(items) {
+  if (!Array.isArray(items)) {
+    gMyToolsTopBarCommands = [];
+    return;
+  }
+
+  var seen = new Set();
+  var commands = [];
+
+  items.forEach(function(item) {
+    if (!item || typeof item.name !== "string" || typeof item.fn !== "function") return;
+
+    var label = MyTools_NormalizeTopBarLabel(item.name);
+    if (!label) return;
+
+    // Editor-switch/help commands are deliberately not offered in My Tools.
+    if (label === "Launch Quick Editor" ||
+        label === "Launch Standard Editor" ||
+        label === "About the Quick Editor" ||
+        label === "*A new version is available!" ||
+        label === "*Click here to update the tool") return;
+
+    var id = MyTools_MakeStableId("top", label);
+    if (seen.has(id)) return;
+    seen.add(id);
+
+    commands.push({
+      id: id,
+      label: label,
+      source: "top",
+      run: item.fn
+    });
+  });
+
+  gMyToolsTopBarCommands = commands;
+}
+
+function MyTools_Load() {
+  // If localStorage is unavailable, keep the current in-memory selection
+  // so My Tools continues to work for the rest of the browser session.
+  if (!gLocalStorageAvailable) return;
+
+  try {
+    var saved = localStorage.getItem(MYTOOLS_STORAGE_KEY);
+    if (!saved) {
+      gMyToolsSelected = [];
+      return;
+    }
+
+    var parsed = JSON.parse(saved);
+    if (Array.isArray(parsed)) {
+      gMyToolsSelected = parsed.filter(function(v) { return typeof v === "string"; });
+    }
+  } catch (e) {
+    // Ignore localStorage failures and keep the current session state.
+  }
+}
+
+function MyTools_Save() {
+  if (!gLocalStorageAvailable) return;
+  try {
+    localStorage.setItem(MYTOOLS_STORAGE_KEY, JSON.stringify(gMyToolsSelected));
+  } catch (e) {
+    // Ignore localStorage failures and keep the current session state.
+  }
+}
+
+function MyTools_GetAvailableCommands() {
+  var commands = [];
+  var seen = new Set();
+  var dialog = document.getElementById("advanced-controls-dialog");
+
+  if (dialog) {
+    // Only include commands that live inside the actual More ABC Tools tab panels.
+    // The always-visible Show/Hide ABC Features and Strip ABC Features controls
+    // above the tab set are intentionally excluded from My Tools.
+    // Also exclude the My Tools panel itself so its management buttons can never
+    // become selectable shortcuts.
+    var moreToolButtons = dialog.querySelectorAll(
+      '.adv-tab-panel:not(#adv-tab-mytools) input[type="button"][onclick]'
+    );
+
+    moreToolButtons.forEach(function(button) {
+      
+    if (isMobileBrowser() && button.id === "configure_batch_mp3_export") return;
+if (!button.id || button.id.indexOf("mytools-") === 0) return;
+      if (!button.value) return;
+
+      var id = "more:" + button.id;
+      if (seen.has(id)) return;
+      seen.add(id);
+
+      var sourcePanel = button.closest(".adv-tab-panel");
+      var sourceTabId = sourcePanel ? sourcePanel.id : "";
+      var sourceTabName = ({
+        "adv-tab-injection": "ABC Features",
+        "adv-tab-tablatures": "Inject Tablature",
+        "adv-tab-players": "Explorers",
+        "adv-tab-bagpipes": "Other Tools"
+      })[sourceTabId] || "More Tools";
+
+      commands.push({
+        id: id,
+        label: button.value,
+        source: "more",
+        sourceTabId: sourceTabId,
+        sourceTabName: sourceTabName,
+        elementId: button.id,
+        className: button.className || "advancedcontrols btn btn-injectcontrols",
+        title: button.title || ""
+      });
+    });
+  }
+
+  gMyToolsTopBarCommands.forEach(function(command) {
+    if (seen.has(command.id)) return;
+    seen.add(command.id);
+    commands.push(command);
+  });
+
+  return commands;
+}
+
+function MyTools_GetCommandMap() {
+  var map = new Map();
+  MyTools_GetAvailableCommands().forEach(function(command) {
+    map.set(command.id, command);
+  });
+  return map;
+}
+
+function MyTools_Run(commandId) {
+  var command = MyTools_GetCommandMap().get(commandId);
+  if (!command) return;
+
+  if (command.source === "more") {
+    var sourceButton = document.getElementById(command.elementId);
+    if (sourceButton) sourceButton.click();
+    return;
+  }
+
+  if (command.source === "top" && typeof command.run === "function") {
+    // A top-bar command normally runs after its dropdown has closed. Close the
+    // More Tools dialog first so invoking it from My Tools behaves the same way.
+    DayPilot.Modal.close(null);
+    setTimeout(function() {
+      command.run(null);
+    }, 0);
+  }
+}
+
+function MyTools_RenderPanel() {
+  var panel = document.getElementById("mytools-tools-container");
+  var orderButton = document.getElementById("mytools-change-order");
+  if (!panel) return;
+
+  var commandMap = MyTools_GetCommandMap();
+  var validSelected = gMyToolsSelected.filter(function(id) { return commandMap.has(id); });
+
+  // Render only commands available in the current editor. Do not remove
+  // unavailable IDs from gMyToolsSelected here: the Standard and Quick Editors
+  // expose slightly different command sets but share localStorage.
+  if (orderButton) {
+    orderButton.style.display = (validSelected.length > 1) ? "inline-block" : "none";
+  }
+
+  panel.replaceChildren();
+
+  if (!validSelected.length) {
+    var empty = document.createElement("p");
+    empty.style.textAlign = "center";
+    empty.style.fontSize = "12pt";
+    empty.style.fontFamily = "helvetica";
+    empty.style.marginTop = "32px";
+    empty.textContent = "No tools selected. Click Edit My Tools to choose your frequently used commands.";
+    panel.appendChild(empty);
+    return;
+  }
+
+  var grid = document.createElement("div");
+  grid.style.display = "grid";
+  grid.style.gridTemplateColumns = isMobileBrowser()
+    ? (window.innerWidth < 520 ? "1fr" : "repeat(2, minmax(0, 1fr))")
+    : "repeat(3, minmax(0, 1fr))";
+  grid.style.gap = "14px 12px";
+  grid.style.padding = "4px 8px 12px 8px";
+  grid.style.alignItems = "stretch";
+  panel.appendChild(grid);
+
+  validSelected.forEach(function(id) {
+    var command = commandMap.get(id);
+    // Use a real <button> instead of <input type="button"> so longer tool
+    // names can wrap naturally without changing the command they invoke.
+    var button = document.createElement("button");
+    button.type = "button";
+    button.textContent = command.label;
+    button.id = "mytools-shortcut-" + MyTools_MakeStableId("", id).replace(/^:/, "");
+    button.className = (command.source === "more"
+      ? command.className
+      : "advancedcontrols btn") + " mytools-shortcut";
+
+    // Match the actual color variables of the original More Tools button.
+    // Copying the resolved CSS custom properties is more reliable than merely
+    // copying its class list because some button styles are affected by the
+    // current flat/standard button mode and other cascade rules.
+    if (command.source === "more") {
+      var sourceButtonForStyle = document.getElementById(command.elementId);
+      if (sourceButtonForStyle) {
+        var sourceStyle = window.getComputedStyle(sourceButtonForStyle);
+        var sourceBackground = sourceStyle.backgroundColor;
+        var sourceColor = sourceStyle.color;
+        var sourceBorderColor = sourceStyle.borderTopColor;
+        var sourceBorderStyle = sourceStyle.borderTopStyle;
+        var sourceBorderWidth = sourceStyle.borderTopWidth;
+
+        // Apply the actual rendered colors directly. This deliberately does not
+        // depend on the source button's CSS custom properties being inherited
+        // correctly by a newly-created button in another tab.
+        if (sourceBackground) button.style.backgroundColor = sourceBackground;
+        if (sourceColor) button.style.color = sourceColor;
+        if (sourceBorderColor) button.style.borderColor = sourceBorderColor;
+        if (sourceBorderStyle) button.style.borderStyle = sourceBorderStyle;
+        if (sourceBorderWidth) button.style.borderWidth = sourceBorderWidth;
+      }
+    } else {
+      // Commands sourced from the top toolbar dropdown intentionally use a
+      // simple white/black treatment on My Tools.
+      button.style.setProperty("--background-color", "#ffffff");
+      button.style.setProperty("--color", "#000000");
+      button.style.setProperty("--border-color", "#000000");
+      button.style.backgroundColor = "#ffffff";
+      button.style.color = "#000000";
+      button.style.borderColor = "#000000";
+    }
+
+    button.style.width = "100%";
+    button.style.margin = "0";
+    button.style.minWidth = "0";
+    button.style.minHeight = "38px";
+    button.style.height = "100%";
+    button.style.padding = "6px 9px";
+    button.style.whiteSpace = "normal";
+    button.style.lineHeight = "1.2";
+    button.style.boxSizing = "border-box";
+    if (command.title) button.title = command.title;
+
+    if (command.source === "more") {
+      var sourceButton = document.getElementById(command.elementId);
+      if (sourceButton && sourceButton.disabled) button.disabled = true;
+    }
+
+    button.addEventListener("click", function() {
+      MyTools_Run(id);
+    });
+
+    grid.appendChild(button);
+  });
+}
+
+function MyTools_EditToggle(checkbox) {
+  if (!gMyToolsEditSelection || !checkbox) return;
+  var id = checkbox.getAttribute("data-mytools-id");
+  if (!id) return;
+  if (checkbox.checked) gMyToolsEditSelection.add(id);
+  else gMyToolsEditSelection.delete(id);
+}
+
+function MyTools_EditClearAll() {
+  if (!gMyToolsEditSelection) return;
+  gMyToolsEditSelection.clear();
+
+  document.querySelectorAll(".mytools-edit-checkbox").forEach(function(checkbox) {
+    checkbox.checked = false;
+  });
+}
+
+function EditMyToolsDialog() {
+
+  var commands = MyTools_GetAvailableCommands();
+  var selected = new Set(gMyToolsSelected);
+  gMyToolsEditSelection = new Set(gMyToolsSelected);
+  var moreCommands = commands.filter(function(c) { return c.source === "more"; });
+  var topCommands = commands.filter(function(c) { return c.source === "top"; });
+  var moreToolTabGroups = [
+    { id: "adv-tab-injection", title: "ABC Features" },
+    { id: "adv-tab-tablatures", title: "Inject Tablature" },
+    { id: "adv-tab-players", title: "Explorers" },
+    { id: "adv-tab-bagpipes", title: "Other Tools" }
+  ];
+
+  var checkboxListOrder = [];
+
+  function buildSection(title, list, isFirst) {
+    if (!list.length) return "";
+    var sectionTop = isFirst ? 6 : 18;
+    var mobileSelector = isMobileBrowser();
+    var rowsPerColumn = mobileSelector ? list.length : Math.ceil(list.length / 2);
+    var selectorColumns = mobileSelector ? '1fr' : 'repeat(2,minmax(0,1fr))';
+    var selectorFlow = mobileSelector ? 'row' : 'column';
+    var html = '<div style="margin-top:' + sectionTop + 'px;font-size:13pt;font-family:helvetica;font-weight:bold;">' + title + '</div>';
+    html += '<div style="margin-top:6px;display:grid;grid-template-columns:' + selectorColumns + ';grid-template-rows:repeat(' + rowsPerColumn + ',auto);grid-auto-flow:' + selectorFlow + ';gap:8px 18px;">';
+    list.forEach(function(command) {
+      checkboxListOrder.push(command.id);
+      var checked = selected.has(command.id) ? " checked" : "";
+      html += '<label style="font-size:11pt;font-family:helvetica;line-height:1.3;display:flex;align-items:flex-start;gap:9px;padding:2px 0;">' +
+              '<input type="checkbox" class="mytools-edit-checkbox" data-mytools-id="' + command.id + '" onchange="MyTools_EditToggle(this)"' + checked + ' style="flex:0 0 auto;margin-top:2px;">' +
+              '<span style="display:block;line-height:1.3;">' + command.label.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</span></label>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  // Build sections in the exact order they are displayed. buildSection()
+  // also records checkboxListOrder, so construction order must match visual order.
+  var selectorSections = buildSection("Top Toolbar Menu", topCommands, true);
+
+  moreToolTabGroups.forEach(function(group) {
+    var groupCommands = moreCommands.filter(function(command) {
+      return command.sourceTabId === group.id;
+    });
+    if (!groupCommands.length) return;
+    selectorSections += buildSection(group.title, groupCommands, false);
+  });
+
+  var body = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:18px;">Edit My Tools</p>' +
+             '<p style="font-size:12pt;font-family:helvetica;line-height:18pt;margin-bottom:4px;">Select the commands you want displayed on the My Tools tab.</p>' +
+             '<div style="max-height:' + Math.max(280, window.innerHeight - 400) + 'px;overflow-y:auto;padding:0 8px 8px 2px;">' +
+             selectorSections +
+             '</div>';
+
+  var editModalPromise = DayPilot.Modal.form([{ html: body }], {}, {
+    theme: "modal_flat",
+    top: 50,
+    width: isMobileBrowser() ? Math.max(300, Math.min(700, window.innerWidth - 24)) : 700,
+    okText: "Save",
+    autoFocus: false,
+    scrollWithPage: false
+  });
+
+  setTimeout(function() {
+
+    // Use the same proven approach used elsewhere in the app for DayPilot
+    // dialogs: the last modal_flat_* buttons belong to the dialog just opened.
+    var cancelButtons = document.getElementsByClassName("modal_flat_cancel");
+    var cancelButton = cancelButtons.length ? cancelButtons[cancelButtons.length - 1] : null;
+    if (!cancelButton) return;
+
+    var buttonRow = cancelButton.parentNode;
+    if (!buttonRow || buttonRow.querySelector(".mytools-selector-clear-button")) return;
+
+    // Create an independent button rather than cloning DayPilot's Cancel button.
+    // This keeps Clear All completely separate from any current or future
+    // behavior associated with the modal_flat_cancel class.
+    var clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.className = "mytools-selector-clear-button";
+    clearButton.textContent = "Clear All";
+
+    clearButton.onclick = function(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      MyTools_EditClearAll();
+      return false;
+    };
+
+    // Save | Clear All | Cancel
+    buttonRow.insertBefore(clearButton, cancelButton);
+
+  }, 0);
+
+  editModalPromise.then(function(args) {
+    if (args && args.canceled) {
+      gMyToolsEditSelection = null;
+      return;
+    }
+
+    var checkedSet = gMyToolsEditSelection || new Set();
+
+    // Selected commands in the exact order they appear in the checkbox list.
+    var checkedIds = checkboxListOrder.filter(function(id) {
+      return checkedSet.has(id);
+    });
+
+    // Commands unavailable in the current editor are not shown as checkboxes.
+    // Preserve them unchanged so editing My Tools in Quick Editor doesn't erase
+    // Standard-only choices (and vice versa).
+    var visibleIdSet = new Set(checkboxListOrder);
+
+    var newOrder;
+
+    if (!gMyToolsSelected.length) {
+      // First-time setup: use the checkbox-list order exactly.
+      newOrder = checkedIds.slice();
+    }
+    else {
+      // Editing an existing list:
+      // 1. Keep surviving visible commands in their current My Tools order.
+      // 2. Drop visible commands that were unchecked.
+      // 3. Preserve saved commands unavailable in this editor.
+      // 4. Append newly checked visible commands in checkbox-list order.
+      newOrder = gMyToolsSelected.filter(function(id) {
+        return !visibleIdSet.has(id) || checkedSet.has(id);
+      });
+
+      checkedIds.forEach(function(id) {
+        if (newOrder.indexOf(id) === -1) newOrder.push(id);
+      });
+    }
+
+    gMyToolsSelected = newOrder;
+    gMyToolsEditSelection = null;
+    MyTools_Save();
+    MyTools_RenderPanel();
+  });
+}
+
+var gMyToolsOrderMobileCurrent = null;
+var gMyToolsOrderMobileNewOrder = [];
+
+function MyToolsOrderMobileRefreshOrder() {
+  var children = document.querySelectorAll('#sortable-mytools-list-mobile .draggable_mytool_mobile');
+  gMyToolsOrderMobileNewOrder = Array.from(children).map(function(div) {
+    return div.getAttribute('data-mytools-id');
+  });
+}
+
+function MyToolsOrderMobileSelect(item) {
+
+  if (gMyToolsOrderMobileCurrent) {
+    gMyToolsOrderMobileCurrent.classList.remove('draggable_tune_mobile_selected');
+  }
+
+  gMyToolsOrderMobileCurrent = item;
+
+  if (item) {
+    item.classList.add('draggable_tune_mobile_selected');
+  }
+}
+
+function MyToolsOrderMobileUp() {
+
+  if (!gMyToolsOrderMobileCurrent) return;
+
+  var previousSibling = gMyToolsOrderMobileCurrent.previousElementSibling;
+  if (!previousSibling) return;
+
+  var sortableList = document.getElementById('sortable-mytools-list-mobile');
+  if (!sortableList) return;
+
+  sortableList.insertBefore(gMyToolsOrderMobileCurrent, previousSibling);
+  MyToolsOrderMobileRefreshOrder();
+}
+
+function MyToolsOrderMobileDown() {
+
+  if (!gMyToolsOrderMobileCurrent) return;
+
+  var nextSibling = gMyToolsOrderMobileCurrent.nextElementSibling;
+  if (!nextSibling) return;
+
+  var sortableList = document.getElementById('sortable-mytools-list-mobile');
+  if (!sortableList) return;
+
+  var afterNext = nextSibling.nextElementSibling;
+
+  if (afterNext) {
+    sortableList.insertBefore(gMyToolsOrderMobileCurrent, afterNext);
+  }
+  else {
+    sortableList.appendChild(gMyToolsOrderMobileCurrent);
+  }
+
+  MyToolsOrderMobileRefreshOrder();
+}
+
+function MyTools_CommitVisibleOrder(commandMap, newOrder) {
+
+  if (!newOrder || !newOrder.length) return;
+
+  // Replace only currently available command slots. Commands that are saved
+  // for the other editor variant remain in their existing positions.
+  var reorderedIndex = 0;
+  gMyToolsSelected = gMyToolsSelected.map(function(id) {
+    if (commandMap.has(id)) {
+      return newOrder[reorderedIndex++];
+    }
+    return id;
+  });
+
+  MyTools_Save();
+  MyTools_RenderPanel();
+}
+
+function ChangeMyToolsOrderMobileDialog(commandMap, order) {
+
+  gMyToolsOrderMobileCurrent = null;
+  gMyToolsOrderMobileNewOrder = order.slice();
+
+  var listHeight = Math.max(220, window.innerHeight - 430);
+  var listHtml = '<div id="sortable-mytools-list-mobile" style="overflow:auto;height:' + listHeight + 'px;margin-top:10px">';
+
+  order.forEach(function(id) {
+    var command = commandMap.get(id);
+    listHtml += '<div class="draggable_tune_mobile draggable_mytool_mobile" data-mytools-id="' + id +
+                '" onclick="MyToolsOrderMobileSelect(this)">' +
+                command.label.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") +
+                '</div>';
+  });
+
+  listHtml += '</div>';
+
+  var form = [{
+    html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change My Tools Order</p>'
+  }, {
+    html: '<p style="margin-top:18px;font-size:12pt;">Select a tool, then use Move Up or Move Down to change its position on the My Tools tab:</p>'
+  }, {
+    html: listHtml
+  }, {
+    html: '<p style="text-align:center;margin-top:36px;">' +
+          '<input id="mobile_mytools_order_up" class="advancedcontrols btn btn-injectcontrols-headers" onclick="MyToolsOrderMobileUp();" type="button" value="Move Up" title="Moves the currently selected tool up one position">' +
+          '<input id="mobile_mytools_order_down" class="advancedcontrols btn btn-injectcontrols-headers" onclick="MyToolsOrderMobileDown();" type="button" value="Move Down" title="Moves the currently selected tool down one position">' +
+          '</p>'
+  }];
+
+  var mobileOrderPromise = DayPilot.Modal.form(form, {}, {
+    theme: "modal_flat",
+    top: 25,
+    width: Math.max(300, Math.min(650, window.innerWidth - 24)),
+    scrollWithPage: false,
+    autoFocus: false,
+    okText: "Change Order"
+  });
+
+  // Keep Change Order on one line in the mobile modal.
+  setTimeout(function() {
+    var okButtons = document.getElementsByClassName("modal_flat_ok");
+    var okButton = okButtons.length ? okButtons[okButtons.length - 1] : null;
+    if (okButton) {
+      okButton.style.minWidth = "145px";
+      okButton.style.whiteSpace = "nowrap";
+    }
+  }, 0);
+
+  mobileOrderPromise.then(function(args) {
+    gMyToolsOrderMobileCurrent = null;
+    if (args && args.canceled) {
+      gMyToolsOrderMobileNewOrder = [];
+      return;
+    }
+
+    // DayPilot removes the modal DOM before this promise resolves, so keep the
+    // working order updated as Move Up/Move Down are used and commit that array.
+    var newOrder = gMyToolsOrderMobileNewOrder.slice();
+    gMyToolsOrderMobileNewOrder = [];
+
+    if (newOrder.length === order.length) {
+      MyTools_CommitVisibleOrder(commandMap, newOrder);
+    }
+  });
+}
+
+function ChangeMyToolsOrderDesktopDialog(commandMap, order) {
+
+  var newOrder = order.slice();
+
+  var listHtml = '<div id="sortable-mytools-list" style="overflow:auto;height:' + Math.max(220, window.innerHeight - 420) + 'px;margin-top:10px">';
+  order.forEach(function(id) {
+    var command = commandMap.get(id);
+    listHtml += '<div class="draggable_tune draggable_mytool" draggable="true" data-mytools-id="' + id + '">' +
+                command.label.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</div>';
+  });
+  listHtml += '</div>';
+
+  var form = [{
+    html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change My Tools Order</p>'
+  }, {
+    html: '<p style="margin-top:18px;font-size:12pt;">Drag and drop the tool names to change their order on the My Tools tab:</p>'
+  }, {
+    html: listHtml
+  }];
+
+  DayPilot.Modal.form(form, {}, {
+    theme: "modal_flat_wide",
+    top: 25,
+    width: 650,
+    scrollWithPage: false,
+    autoFocus: false,
+    okText: "Change Order"
+  }).then(function(args) {
+    if (args.canceled) return;
+
+    if (newOrder.length === order.length) {
+      MyTools_CommitVisibleOrder(commandMap, newOrder);
+    }
+  });
+
+  var sortableList = document.getElementById('sortable-mytools-list');
+  if (!sortableList) return;
+
+  // Keep this dialog's Change Order button on one line without changing
+  // the button sizing used by other modal_flat_wide dialogs.
+  var orderModal = sortableList.closest('.modal_flat_wide_main');
+  if (orderModal) {
+    var orderOkButton = orderModal.querySelector('.modal_flat_wide_ok');
+    if (orderOkButton) {
+      orderOkButton.style.width = '175px';
+      orderOkButton.style.whiteSpace = 'nowrap';
+    }
+  }
+
+  var dragItem = null;
+
+  sortableList.addEventListener('dragstart', function(e) {
+    dragItem = e.target.closest('.draggable_mytool');
+    if (!dragItem) return;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', dragItem.getAttribute('data-mytools-id'));
+    dragItem.classList.add('draggable_tune_selected');
+  });
+
+  sortableList.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    var target = e.target.closest('.draggable_mytool');
+    if (!target || !dragItem || target === dragItem) return;
+
+    var rect = target.getBoundingClientRect();
+    var next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+    sortableList.insertBefore(dragItem, next ? target.nextElementSibling : target);
+
+    var children = sortableList.querySelectorAll('.draggable_mytool');
+    newOrder = Array.from(children).map(function(div) { return div.getAttribute('data-mytools-id'); });
+  });
+
+  sortableList.addEventListener('dragend', function() {
+    if (dragItem) dragItem.classList.remove('draggable_tune_selected');
+    dragItem = null;
+  });
+}
+
+function ChangeMyToolsOrderDialog() {
+
+  var commandMap = MyTools_GetCommandMap();
+  var order = gMyToolsSelected.filter(function(id) { return commandMap.has(id); });
+  if (order.length < 2) return;
+
+  if (isMobileBrowser()) {
+    ChangeMyToolsOrderMobileDialog(commandMap, order);
+  }
+  else {
+    ChangeMyToolsOrderDesktopDialog(commandMap, order);
+  }
+}
+
 // ------------------------------------------------------------
 // Remember last selected More Tools tab
 // ------------------------------------------------------------
@@ -54046,36 +54723,18 @@ function AdvancedControls_SelectTab(tabId) {
 
 }
 
-function AdvancedControls_InitTabs() {
-  
-  var dialog = document.getElementById("advanced-controls-dialog");
-  if (!dialog) return;
-
-  var tabBar = dialog.querySelector(".adv-tab-bar");
-  if (!tabBar) return;
-
-  var btns = tabBar.querySelectorAll(".adv-tab-btn");
-  if (!btns.length) return;
-
-  // Restore remembered tab if it exists
-  if (gMoreToolsLastTab && dialog.querySelector("#" + gMoreToolsLastTab)) {
-    AdvancedControls_SelectTab(gMoreToolsLastTab);
-  } else {
-    AdvancedControls_SelectTab(btns[0].getAttribute("data-tab"));
-  }
-}
-
 function AdvancedControlsDialog() {
 
   sendGoogleAnalytics("dialog", "AdvancedControlsDialog");
 
-  // Decide initial tab BEFORE rendering to prevent flashing
-  // Uses your global from earlier: gMoreToolsLastTab
-  var initialTab = "adv-tab-injection";
+  // Decide the initial tab BEFORE rendering so the dialog opens directly
+  // on the correct tab with no post-render tab switching or visual flash.
+  var initialTab = "adv-tab-mytools";
   if (gMoreToolsLastTab === "adv-tab-injection" ||
       gMoreToolsLastTab === "adv-tab-tablatures" ||
       gMoreToolsLastTab === "adv-tab-players" ||
-      gMoreToolsLastTab === "adv-tab-bagpipes") {
+      gMoreToolsLastTab === "adv-tab-bagpipes" ||
+      gMoreToolsLastTab === "adv-tab-mytools") {
     initialTab = gMoreToolsLastTab;
   }
 
@@ -54083,6 +54742,7 @@ function AdvancedControlsDialog() {
   var isTablaturesActive  = (initialTab === "adv-tab-tablatures");
   var isPlayersActive     = (initialTab === "adv-tab-players");
   var isOtherToolsActive  = (initialTab === "adv-tab-bagpipes");
+  var isMyToolsActive     = (initialTab === "adv-tab-mytools");
 
   var modal_msg = '';
   modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
@@ -54128,6 +54788,10 @@ function AdvancedControlsDialog() {
 
   modal_msg += '<div id="moretoolsanchor" class="adv-tabs">';
   modal_msg += '<div class="adv-tab-bar">';
+
+  modal_msg += '<button class="adv-tab-btn' + (isMyToolsActive ? ' active' : '') +
+               '" data-tab="adv-tab-mytools" aria-selected="' + (isMyToolsActive ? 'true' : 'false') +
+               '" onclick="AdvancedControls_SelectTab(\'adv-tab-mytools\');MyTools_RenderPanel();">My Tools</button>';
 
   modal_msg += '<button class="adv-tab-btn' + (isInjectionActive ? ' active' : '') +
                '" data-tab="adv-tab-injection" aria-selected="' + (isInjectionActive ? 'true' : 'false') +
@@ -54245,6 +54909,15 @@ function AdvancedControlsDialog() {
   modal_msg += '</p>';
   modal_msg += '</div>';
 
+  /* ---------------- My Tools tab ---------------- */
+  modal_msg += '<div id="adv-tab-mytools" class="adv-tab-panel' + (isMyToolsActive ? ' active' : '') + '">';
+  modal_msg += '<div style="text-align:center;margin:2px 0 16px 0;">';
+  modal_msg += '<input id="mytools-edit" class="advancedcontrols btn btn-injectcontrols-headers mytools-management-button" onclick="EditMyToolsDialog()" type="button" value="Edit My Tools" style="margin-right:16px;">';
+  modal_msg += '<input id="mytools-change-order" class="advancedcontrols btn btn-injectcontrols-headers mytools-management-button" onclick="ChangeMyToolsOrderDialog()" type="button" value="Change Order" style="display:none;">';
+  modal_msg += '</div>';
+  modal_msg += '<div id="mytools-tools-container" style="height:235px;overflow-y:auto;overflow-x:hidden;padding:4px 2px 2px 2px;box-sizing:border-box;"></div>';
+  modal_msg += '</div>';
+
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
   modal_msg += '</div></div></div>';
 
@@ -54258,8 +54931,9 @@ function AdvancedControlsDialog() {
     // Idle the show tab names control
     IdleAllowShowTabNames();
 
-    // Init the tabs (safe now: panels are hidden by default and one is already active)
-    AdvancedControls_InitTabs();
+    // Restore and render My Tools on all browser types.
+    MyTools_Load();
+    MyTools_RenderPanel();
 
   }, 50);
 
@@ -60194,7 +60868,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 11 September 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Customizable My Tools Tab</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The new <strong>My Tools</strong> tab in <strong>More ABC Tools</strong> lets you create your own collection of frequently used commands from the other <strong>More ABC Tools</strong> tabs and supported top toolbar menu commands.</p>';
+  modal_msg += '<p style="font-size:12pt;">Your selections and preferred order are saved in the browser, with drag-and-drop ordering on desktop and Move Up/Move Down controls on mobile.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60202,14 +60884,6 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>Save and Reuse Your Own ABC Template</strong></p>';
   modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Four preferred templates are available using the same modifier keys as Snapshots: click for #1, Shift-click for #2, Alt/Option-click for #3, and Shift-Alt/Option-click for #4. <strong>Add My ABC Template</strong> appends the selected saved template to the ABC.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>Easier Two-Column Song Stanza Formatting</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now format song stanzas as two columns just by adding <strong>%%stanzas 2</strong> to either an individual tune or the ABC file header. Only values of 1 or 2 are currently allowed.</p>';
-  modal_msg += '<p style="font-size:12pt;">If added to the file header, force a full redraw by clicking the <strong>Notation</strong> button.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -65478,6 +66152,7 @@ function SetupContextMenu(showUpdateItem) {
     }
   }
 
+  MyTools_CaptureTopBarCommands(items);
   var cm1 = new ContextMenu('.context-menu', items);
 }
 
@@ -67142,13 +67817,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_9sep2026;
+    var updatePresented = localStorage.sawUpdate_11sep2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_9sep2026 = true;
+      localStorage.sawUpdate_11sep2026 = true;
 
     }
 
