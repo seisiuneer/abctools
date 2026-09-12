@@ -7922,7 +7922,20 @@ var parseKeyVoice = {};
     key.accidentals.forEach(function (k) {
       ret.accidentals.push(parseCommon.clone(k));
     });
+    if (key.explicitAccidentals) {
+      ret.explicitAccidentals = [];
+      key.explicitAccidentals.forEach(function (k) {
+        ret.explicitAccidentals.push(parseCommon.clone(k));
+      });
+    }
     return ret;
+  };
+
+  // Keep inline key changes local to the active voice. A non-inline K: field
+  // remains the global key that is restored when switching to a voice that
+  // doesn't yet have its own key. This mirrors current upstream abcjs behavior.
+  var setVoiceKey = function setVoiceKey() {
+    if (multilineVars.currentVoice) multilineVars.currentVoice.key = parseKeyVoice.deepCopyKey(multilineVars.key);
   };
   var pitches = {
     A: 5,
@@ -8054,6 +8067,8 @@ var parseKeyVoice = {};
         };
         ret.foundKey = true;
         tokens.shift();
+        if (!isInline) multilineVars.globalKey = parseKeyVoice.deepCopyKey(multilineVars.key);
+        setVoiceKey();
         break;
       case 'Hp':
         parseDirective.addDirective("bagpipes");
@@ -8074,6 +8089,8 @@ var parseKeyVoice = {};
         };
         ret.foundKey = true;
         tokens.shift();
+        if (!isInline) multilineVars.globalKey = parseKeyVoice.deepCopyKey(multilineVars.key);
+        setVoiceKey();
         break;
       case 'none':
         // we got the none key - that's the same as C to us
@@ -8085,6 +8102,8 @@ var parseKeyVoice = {};
         };
         ret.foundKey = true;
         tokens.shift();
+        if (!isInline) multilineVars.globalKey = parseKeyVoice.deepCopyKey(multilineVars.key);
+        setVoiceKey();
         break;
       default:
         var retPitch = tokenizer.getKeyPitch(tokens[0].token);
@@ -8149,6 +8168,8 @@ var parseKeyVoice = {};
               }
             }
           }
+          if (!isInline) multilineVars.globalKey = parseKeyVoice.deepCopyKey(multilineVars.key);
+          setVoiceKey();
         }
         break;
     }
@@ -8200,6 +8221,8 @@ var parseKeyVoice = {};
           }
         }
       }
+      if (!isInline) multilineVars.globalKey = parseKeyVoice.deepCopyKey(multilineVars.key);
+      setVoiceKey();
     }
 
     // Now see if any optional parameters are present. They have the form "key=value", except that "clef=" is optional
@@ -8431,8 +8454,14 @@ var parseKeyVoice = {};
     return ret;
   };
   var setCurrentVoice = function setCurrentVoice(id) {
-    multilineVars.currentVoice = multilineVars.voices[id];
-    tuneBuilder.setCurrentVoice(multilineVars.currentVoice.staffNum, multilineVars.currentVoice.index);
+    var currentVoice = multilineVars.voices[id];
+    if (multilineVars.currentVoice) {
+      if (multilineVars.currentVoice.index === currentVoice.index && multilineVars.currentVoice.staffNum === currentVoice.staffNum) return;
+    }
+    multilineVars.currentVoice = currentVoice;
+    if (currentVoice.key) multilineVars.key = parseKeyVoice.deepCopyKey(currentVoice.key);
+    else if (multilineVars.globalKey) multilineVars.key = parseKeyVoice.deepCopyKey(multilineVars.globalKey);
+    return tuneBuilder.setCurrentVoice(currentVoice.staffNum, currentVoice.index);
   };
   parseKeyVoice.parseVoice = function (line, i, e) {
     //First truncate the string to the first non-space character after V: through either the
