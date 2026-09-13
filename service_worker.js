@@ -12,7 +12,11 @@
 //
 //
 //
-// Updated 12 Sep 2026 1130
+//
+//
+// Updated 12 Sep 2026 1800
+//
+//
 //
 //
 //
@@ -26,7 +30,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3341';
+const cacheName = 'abctoolscache-3342';
 
 const contentToCache = [
     'abctools.html',
@@ -132,7 +136,6 @@ const contentToCache = [
     'img/abc-favicon-32x32.png',
     'img/abc-favicon-96x96.png',
     'img/abc-favicon.ico',
-    'img/abc-icon-512x512.png',
     'img/abc-icon-user-guide-basic.png',
     'img/abc-icon.png',
     'img/abc-ms-icon-144x144.png',
