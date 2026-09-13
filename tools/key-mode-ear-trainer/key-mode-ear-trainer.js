@@ -1,0 +1,454 @@
+(function(){
+"use strict";
+
+var VERSION="1.34";
+var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
+var SESSION_LENGTH=25;
+var MODE_INFO={
+  major:{label:"Major",shortLabel:"Major",abcSuffix:""},
+  dorian:{label:"Dorian",shortLabel:"Dorian",abcSuffix:"dor"},
+  mixolydian:{label:"Mixolydian",shortLabel:"Mixolydian",abcSuffix:"mix"},
+  minor:{label:"Minor",shortLabel:"Minor",abcSuffix:"m"}
+};
+var MODE_ORDER=["major","dorian","mixolydian","minor"];
+var allTunes=[];
+var tuneById={};
+var state=null;
+var tuneController=null;
+var tunePreparePromise=null;
+var chosenScaleController=null;
+var correctScaleController=null;
+var activeScale=null;
+var prepareSerial=0;
+
+function $(id){return document.getElementById(id);}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function stableTuneId(abc){
+  // Deterministic FNV-1a style hash of the complete tune text. Unlike the old
+  // positional IDs, this survives filtering, reordering, and collection expansion.
+  var text=String(abc||"").replace(/\r\n?/g,"\n").trim();
+  var h=2166136261;
+  for(var i=0;i<text.length;i++){
+    h^=text.charCodeAt(i);
+    h=Math.imul(h,16777619);
+  }
+  return "t"+(h>>>0).toString(36);
+}
+function normalizeTonic(s){
+  var m=String(s||"").trim().match(/^([A-Ga-g])([#b]?)/);
+  if(!m)return "";
+  var accidental=m[2]==="#"?"#":(m[2]?"b":"");
+  return m[1].toUpperCase()+accidental;
+}
+function parseKey(k){
+  k=String(k||"").trim();
+  var tonic=normalizeTonic(k);
+  if(!tonic)return null;
+
+  // ABC permits both compact and spaced mode names, with arbitrary case:
+  // Edor / E Dor / E Dorian, DMaj / D Major, Dm / Dmin / D Minor, Dmix / D Mixolydian.
+  // Test the explicit major names before the one-letter minor alias so "maj" can never be mistaken for "m".
+  var rest=k.slice(tonic.length).trim();
+  if(!rest)return {tonic:tonic,mode:"major"};
+
+  var modeMatch=rest.match(/^(major|maj|ionian|ion|minor|min|aeolian|aeo|dorian|dor|mixolydian|mix|m)(?=\s|$|[^A-Za-z])/i);
+  if(modeMatch){
+    var token=modeMatch[1].toLowerCase();
+    if(token==="major"||token==="maj"||token==="ionian"||token==="ion")return {tonic:tonic,mode:"major"};
+    if(token==="minor"||token==="min"||token==="aeolian"||token==="aeo"||token==="m")return {tonic:tonic,mode:"minor"};
+    if(token==="dorian"||token==="dor")return {tonic:tonic,mode:"dorian"};
+    if(token==="mixolydian"||token==="mix")return {tonic:tonic,mode:"mixolydian"};
+  }
+
+  // A bare key followed immediately by normal ABC K: parameters is still major.
+  if(/^(clef|middle|transpose|octave|stafflines|staffscale|style|map|score|voices?)\s*=/i.test(rest))return {tonic:tonic,mode:"major"};
+  return null;
+}
+function parseTunes(text){
+  var chunks=String(text||"").replace(/\r\n?/g,"\n").split(/(?=^X\s*:)/m).filter(function(x){return /^X\s*:/m.test(x);});
+  var out=[];
+  chunks.forEach(function(abc,n){
+    var km=abc.match(/^K\s*:\s*(.+)$/mi); if(!km)return;
+    var key=parseKey(km[1]); if(!key)return;
+    var tm=abc.match(/^T\s*:\s*(.*)$/mi);
+    var rm=abc.match(/^R\s*:\s*(.*)$/mi);
+    var normalizedAbc=abc.trim()+"\n";
+    out.push({id:stableTuneId(normalizedAbc),title:tm&&tm[1].trim()?tm[1].trim():("Tune "+(n+1)),style:rm&&rm[1].trim()?rm[1].trim():"",abc:normalizedAbc,tonic:key.tonic,mode:key.mode});
+  });
+  return out;
+}
+function modeCountText(tunes){return MODE_ORDER.map(function(m){var n=tunes.filter(function(t){return t.mode===m;}).length;return n?MODE_INFO[m].shortLabel+": "+n:null;}).filter(Boolean).join(" · ");}
+function answerName(a){return a.tonic+" "+MODE_INFO[a.mode].shortLabel;}
+function commonChordNames(a){
+  var scaleIntervals={
+    major:[0,2,4,5,7,9,11],
+    minor:[0,2,3,5,7,8,10],
+    dorian:[0,2,3,5,7,9,10],
+    mixolydian:[0,2,4,5,7,9,10]
+  };
+  var patterns={
+    major:[{degree:1,quality:"Major"},{degree:4,quality:"Major"},{degree:5,quality:"Major"}],
+    minor:[{degree:1,quality:"Minor"},{degree:7,quality:"Major"},{degree:5,quality:"Major"}],
+    dorian:[{degree:1,quality:"Minor"},{degree:7,quality:"Major"},{degree:5,quality:"Major"}],
+    mixolydian:[{degree:1,quality:"Major"},{degree:7,quality:"Major"},{degree:5,quality:"Major"}]
+  };
+  var naturalPc={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+  var letters=["C","D","E","F","G","A","B"];
+  var tonicMatch=String(a.tonic||"").match(/^([A-G])([#b]?)/);
+  if(!tonicMatch||!scaleIntervals[a.mode]||!patterns[a.mode])return "";
+  var tonicLetter=tonicMatch[1];
+  var tonicAcc=tonicMatch[2]==="#"?1:(tonicMatch[2]==="b"?-1:0);
+  var tonicPc=(naturalPc[tonicLetter]+tonicAcc+12)%12;
+  var tonicLetterIndex=letters.indexOf(tonicLetter);
+  function degreeRoot(degree){
+    var letter=letters[(tonicLetterIndex+degree-1)%7];
+    var targetPc=(tonicPc+scaleIntervals[a.mode][degree-1])%12;
+    var diff=(targetPc-naturalPc[letter]+12)%12;
+    if(diff>6)diff-=12;
+    var accidental=diff===-2?"bb":diff===-1?"b":diff===1?"#":diff===2?"##":"";
+    return letter+accidental;
+  }
+  return patterns[a.mode].map(function(chord){var name=degreeRoot(chord.degree)+" "+chord.quality;return chord.occasional?"(occasionally "+name+")":name;}).join(", ");
+}
+function currentTune(){return state&&state.sessionIds.length?tuneById[state.sessionIds[state.currentIndex]]:null;}
+function elapsed(start){return Math.round(performance.now()-start)+" ms";}
+
+function log(message,data){
+  var stamp=new Date().toLocaleTimeString();
+  var line="["+stamp+"] "+message;
+  if(data!==undefined){
+    try{line+=" "+(typeof data==="string"?data:JSON.stringify(data));}catch(e){line+=" "+String(data);}
+  }
+  try{console.log("[KeyModeTrainer]",message,data===undefined?"":data);}catch(e){}
+}
+function logError(label,error){
+  var msg=error&&error.stack?error.stack:(error&&error.message?error.message:String(error));
+  log(label+" ERROR: "+msg);
+}
+function defaultState(){return {version:3,sessionIds:chooseSessionTunes().map(function(t){return t.id;}),currentIndex:0,answers:{},answerStyle:"separate"};}
+function chooseSessionTunes(){
+  var groups={major:[],dorian:[],mixolydian:[],minor:[]};
+  allTunes.forEach(function(t){groups[t.mode].push(t);});
+  MODE_ORDER.forEach(function(m){groups[m]=shuffle(groups[m]);});
+  var picked=[];
+  ["mixolydian","minor","dorian"].forEach(function(m){if(groups[m].length&&picked.length<SESSION_LENGTH)picked.push(groups[m].shift());});
+  var cycle=["dorian","major","minor","major","mixolydian","major"],ci=0;
+  while(picked.length<Math.min(SESSION_LENGTH,allTunes.length)){
+    var m=cycle[ci++%cycle.length];
+    if(groups[m].length)picked.push(groups[m].shift());
+    else{
+      var fallback=MODE_ORDER.find(function(x){return groups[x].length;});
+      if(!fallback)break;
+      picked.push(groups[fallback].shift());
+    }
+  }
+  return shuffle(picked);
+}
+function loadState(){
+  // Every page load starts a completely fresh in-memory 25-tune session.
+  // Nothing is read from or written to localStorage.
+  state=defaultState();
+  $("answerStyle").value=state.answerStyle;
+  log("Created fresh session",{tunes:state.sessionIds.length});
+}
+
+function startNewSet(){
+  pauseAllControllers();
+  state=defaultState();
+  state.answerStyle=$("answerStyle").value;
+  log("Started completely new 25-tune set",{ids:state.sessionIds});
+  renderQuestion();
+}
+
+function configureAbcjs(){
+  if(!window.ABCJS||!ABCJS.eskinConfig){log("ABCJS.eskinConfig unavailable");return;}
+  var cfg=ABCJS.eskinConfig;
+  var available={
+    setIrishRolls:typeof cfg.setIrishRolls==="function",
+    setCustomGMSounds:typeof cfg.setCustomGMSounds==="function",
+    setPlayerDefaults:typeof cfg.setPlayerDefaults==="function",
+    setSoundFontUrl:typeof cfg.setSoundFontUrl==="function",
+    setReverb:typeof cfg.setReverb==="function"
+  };
+  log("eskinConfig API",available);
+  if(available.setIrishRolls){cfg.setIrishRolls(true);log("eskinConfig.setIrishRolls(true)");}
+  if(available.setCustomGMSounds){cfg.setCustomGMSounds(true);log("eskinConfig.setCustomGMSounds(true)");}
+  if(available.setPlayerDefaults){cfg.setPlayerDefaults(100,false);log("eskinConfig.setPlayerDefaults(100, false)");}
+  if(available.setSoundFontUrl){cfg.setSoundFontUrl(FATBOY);log("eskinConfig.setSoundFontUrl",FATBOY);}
+  if(available.setReverb){cfg.setReverb({enabled:false});log("eskinConfig reverb disabled");}
+}
+function safePause(controller,label){
+  if(controller&&typeof controller.pause==="function"){
+    try{controller.pause();log((label||"controller")+" paused");}catch(e){logError((label||"controller")+" pause",e);}
+  }
+}
+function safeDestroy(controller,label){
+  if(!controller)return;
+  safePause(controller,label);
+  if(typeof controller.destroy==="function"){
+    try{controller.destroy();log((label||"controller")+" destroyed");}catch(e){logError((label||"controller")+" destroy",e);}
+  }
+}
+function resetScaleButtons(){
+  activeScale=null;
+  if($("chosenScaleBtn"))$("chosenScaleBtn").textContent="Play Your Scale";
+  if($("correctScaleBtn"))$("correctScaleBtn").textContent="Play Correct Scale";
+}
+function setScalePlaying(which){
+  activeScale=which;
+  $("chosenScaleBtn").textContent=which==="chosen"?"Stop Playing Scale":"Play Your Scale";
+  $("correctScaleBtn").textContent=which==="correct"?"Stop Playing Scale":"Play Correct Scale";
+}
+function pauseAllControllers(){safePause(tuneController,"tune");safePause(chosenScaleController,"chosen scale");safePause(correctScaleController,"correct scale");resetScaleButtons();}
+function clearTuneController(){safeDestroy(tuneController,"tune");tuneController=null;tunePreparePromise=null;$("hiddenTuneRender").innerHTML="";$("tuneAudioControls").innerHTML="";}
+function clearScaleControllers(){safeDestroy(chosenScaleController,"chosen scale");safeDestroy(correctScaleController,"correct scale");chosenScaleController=correctScaleController=null;resetScaleButtons();$("hiddenScaleRenderChosen").innerHTML="";$("hiddenScaleAudioChosen").innerHTML="";$("hiddenScaleRenderCorrect").innerHTML="";$("hiddenScaleAudioCorrect").innerHTML="";}
+function tuneAbcForPlayback(abc){
+  // Keep the original tune intact for rendering/audio. The notation is rendered
+  // off-screen, so title/chord text does not need to be stripped. This avoids
+  // changing the visual tune structure that abcjs uses to build playback timing.
+  var out=String(abc||"").trim();
+  var directives=[];
+  if(!/^\s*%soundfont\s+/mi.test(out))directives.push("%soundfont fatboy");
+  if(!/^\s*%%MIDI\s+program\s+/mi.test(out))directives.push("%%MIDI program 0");
+  if(directives.length){
+    if(/^\s*X\s*:.*$/mi.test(out))out=out.replace(/^(\s*X\s*:.*)$/mi,"$1\n"+directives.join("\n"));
+    else out=directives.join("\n")+"\n"+out;
+  }
+  return out+"\n";
+}
+
+function createHiddenCursorControl(label){
+  return {
+    _loggedFirstEvent:false,
+    onStart:function(){log(label+": cursor onStart");},
+    onEvent:function(ev){
+      if(!ev)return;
+      if(!this._loggedFirstEvent){this._loggedFirstEvent=true;log(label+": cursor first event",{left:ev.left,top:ev.top,width:ev.width,height:ev.height});}
+    },
+    onFinished:function(){
+      log(label+": cursor onFinished");
+      this._loggedFirstEvent=false;
+      if(label==="Chosen scale"&&activeScale==="chosen")resetScaleButtons();
+      else if(label==="Correct scale"&&activeScale==="correct")resetScaleButtons();
+    }
+  };
+}
+function objectSummary(obj){
+  if(!obj)return {type:String(obj)};
+  var keys=[];try{keys=Object.keys(obj).slice(0,60);}catch(e){}
+  var summary={constructor:obj&&obj.constructor&&obj.constructor.name||"",keys:keys};
+  ["isLoaded","isStarted","isRunning","isPlaying","paused","loaded"].forEach(function(k){if(k in obj)summary[k]=obj[k];});
+  return summary;
+}
+function renderedSummary(v){
+  if(!v)return {present:false};
+  var out={present:true,keys:Object.keys(v).slice(0,50)};
+  if(Array.isArray(v.lines))out.lines=v.lines.length;
+  if(v.metaText)out.metaTextKeys=Object.keys(v.metaText);
+  try{if(typeof v.getTotalTime==="function")out.totalTime=v.getTotalTime();}catch(e){out.totalTimeError=String(e);}
+  try{if(typeof v.getBeatsPerMeasure==="function")out.beatsPerMeasure=v.getBeatsPerMeasure();}catch(e){}
+  return out;
+}
+
+async function prepareController(abc,renderId,audioId,label,options){
+  options=options||{};
+  var started=performance.now();
+  if(!window.ABCJS)throw new Error("ABCJS is not defined. Check abcjs-eskin-portable-min.js.");
+  if(typeof ABCJS.renderAbc!=="function")throw new Error("ABCJS.renderAbc is unavailable.");
+  if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("ABCJS.synth.SynthController is unavailable.");
+  configureAbcjs();
+  $(renderId).innerHTML="";$(audioId).innerHTML="";
+  log(label+": renderAbc begin",{abcChars:abc.length,hasSoundfont:/^\s*%soundfont\s+fatboy/im.test(abc),hasMidiProgram:/^\s*%%MIDI\s+program\s+0/im.test(abc)});
+  var rendered=ABCJS.renderAbc(renderId,abc,{responsive:"resize"});
+  log(label+": renderAbc complete",{count:rendered&&rendered.length||0,elapsed:elapsed(started)});
+  if(!rendered||!rendered.length)throw new Error("renderAbc returned no tune.");
+  log(label+": rendered tune summary",renderedSummary(rendered[0]));
+  var controller=new ABCJS.synth.SynthController();
+  log(label+": SynthController created");
+  controller.load("#"+audioId,createHiddenCursorControl(label),options.playerOptions||{displayLoop:false,displayRestart:false,displayPlay:true,displayProgress:false,displayWarp:false});
+  log(label+": controller.load complete");
+  var tuneStart=performance.now();
+  log(label+": setTune begin");
+  await controller.setTune(rendered[0],false,options.synthOptions||{program:0,chordsOff:false});
+  log(label+": setTune resolved",{elapsed:elapsed(tuneStart),total:elapsed(started)});
+  log(label+": controller after setTune",objectSummary(controller));
+  return controller;
+}
+async function prepareCurrentTune(force){
+  var tune=currentTune(); if(!tune)return null;
+  var serial=++prepareSerial;
+  if(force)clearTuneController();
+  else if(tuneController)return tuneController;
+  else if(tunePreparePromise)return tunePreparePromise;
+  $("tuneAudioControls").innerHTML="";
+  $("playbackStatus").className="status";$("playbackStatus").textContent="Preparing tune audio…";
+  var expectedId=tune.id;
+  tunePreparePromise=(async function(){
+    try{
+      var controller=await prepareController(tuneAbcForPlayback(tune.abc),"hiddenTuneRender","tuneAudioControls","Tune "+(state.currentIndex+1),{playerOptions:{displayLoop:false,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:false},synthOptions:{program:0,chordsOff:true}});
+      if(serial!==prepareSerial||!currentTune()||currentTune().id!==expectedId){safeDestroy(controller,"stale tune");return null;}
+      tuneController=controller;
+      // Start each tune with looping enabled without synthesizing a DOM click.
+      // Using the SynthController API avoids accidentally triggering player loading state.
+      if(typeof controller.toggleLoop==="function") controller.toggleLoop();
+      $("playbackStatus").textContent="";
+      $("listenSubheading").textContent="";
+      return controller;
+    }catch(e){
+      logError("prepareCurrentTune",e);
+      $("playbackStatus").className="status error";
+      $("playbackStatus").textContent="Audio preparation failed: "+(e&&e.message?e.message:String(e));
+      $("listenSubheading").textContent="Audio preparation failed. Reload the page and try again.";
+      return null;
+    }finally{tunePreparePromise=null;}
+  })();
+  return tunePreparePromise;
+}
+
+
+function uniqueTonics(){var a=[];allTunes.forEach(function(t){if(a.indexOf(t.tonic)<0)a.push(t.tonic);});var o={C:0,"C#":1,Db:1,D:2,"D#":3,Eb:3,E:4,F:5,"F#":6,Gb:6,G:7,"G#":8,Ab:8,A:9,"A#":10,Bb:10,B:11};return a.sort(function(x,y){return (o[x]===undefined?99:o[x])-(o[y]===undefined?99:o[y])||x.localeCompare(y);});}
+function makeRadio(container,name,value,label){var l=document.createElement("label");l.className="choiceLabel";l.dataset.value=value;var i=document.createElement("input");i.type="radio";i.name=name;i.value=value;var s=document.createElement("span");s.textContent=label;l.appendChild(i);l.appendChild(s);container.appendChild(l);i.addEventListener("change",validateAnswerReady);}
+function buildAnswerChoices(){
+  var tune=currentTune(); if(!tune)return;
+  $("answerForm").classList.remove("answered");
+  var sep=state.answerStyle==="separate";$("separateAnswers").hidden=!sep;$("combinedAnswers").hidden=sep;$("separateAnswers").style.display=sep?"":"none";$("combinedAnswers").style.display=sep?"none":"";$("tonicChoices").innerHTML="";$("modeChoices").innerHTML="";$("combinedChoices").innerHTML="";
+  if(sep){
+    uniqueTonics().forEach(function(t){makeRadio($("tonicChoices"),"tonic",t,t);});
+    MODE_ORDER.filter(function(m){return allTunes.some(function(t){return t.mode===m;});}).forEach(function(m){makeRadio($("modeChoices"),"mode",m,MODE_INFO[m].label);});
+  }else{
+    var c=[]; allTunes.forEach(function(t){var key=t.tonic+"|"+t.mode;if(!c.some(function(x){return x.key===key;}))c.push({key:key,tonic:t.tonic,mode:t.mode});});
+    var correct=tune.tonic+"|"+tune.mode,sel=shuffle(c.filter(function(x){return x.key!==correct;})).slice(0,7);sel.push({key:correct,tonic:tune.tonic,mode:tune.mode});
+    shuffle(sel).forEach(function(x){makeRadio($("combinedChoices"),"combined",x.key,x.tonic+" "+MODE_INFO[x.mode].shortLabel);});
+  }
+  restoreAnswerUI();
+}
+function readAnswer(){
+  if(state.answerStyle==="separate"){
+    var t=document.querySelector('input[name="tonic"]:checked'),m=document.querySelector('input[name="mode"]:checked');return t&&m?{tonic:t.value,mode:m.value}:null;
+  }
+  var c=document.querySelector('input[name="combined"]:checked');if(!c)return null;var p=c.value.split("|");return {tonic:p[0],mode:p[1]};
+}
+function validateAnswerReady(){var saved=state.answers[currentTune().id];if(saved){$("submitBtn").disabled=true;return;}if(state.answerStyle==="separate")$("submitBtn").disabled=!(document.querySelector('input[name="tonic"]:checked')&&document.querySelector('input[name="mode"]:checked'));else $("submitBtn").disabled=!document.querySelector('input[name="combined"]:checked');}
+function markChoices(choice){var tune=currentTune();if(state.answerStyle==="separate"){document.querySelectorAll('#tonicChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.tonic)l.classList.add("correct");else if(l.dataset.value===choice.tonic)l.classList.add("incorrect");});document.querySelectorAll('#modeChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.mode)l.classList.add("correct");else if(l.dataset.value===choice.mode)l.classList.add("incorrect");});}else{var corr=tune.tonic+"|"+tune.mode,chosen=choice.tonic+"|"+choice.mode;document.querySelectorAll('#combinedChoices .choiceLabel').forEach(function(l){if(l.dataset.value===corr)l.classList.add("correct");else if(l.dataset.value===chosen)l.classList.add("incorrect");});}}
+function setInputsDisabled(disabled){document.querySelectorAll('#answerForm input').forEach(function(i){i.disabled=disabled;});}
+function restoreAnswerUI(){
+  var tune=currentTune(),saved=state.answers[tune.id];
+  $("feedback").hidden=true;$("differencePanel").hidden=true;clearScaleControllers();
+  if(!saved){setInputsDisabled(false);$("submitBtn").disabled=true;return;}
+  $("answerForm").classList.add("answered");
+  if(state.answerStyle==="separate"){
+    var t=document.querySelector('input[name="tonic"][value="'+CSS.escape(saved.choice.tonic)+'"]');var m=document.querySelector('input[name="mode"][value="'+CSS.escape(saved.choice.mode)+'"]');if(t)t.checked=true;if(m)m.checked=true;
+  }else{
+    var c=document.querySelector('input[name="combined"][value="'+CSS.escape(saved.choice.tonic+"|"+saved.choice.mode)+'"]');if(c)c.checked=true;
+  }
+  markChoices(saved.choice);setInputsDisabled(true);$("submitBtn").disabled=true;showFeedback(saved,false);
+}
+function submitAnswer(ev){
+  ev.preventDefault();var tune=currentTune();if(!tune||state.answers[tune.id])return;var choice=readAnswer();if(!choice)return;
+  var correct=choice.tonic===tune.tonic&&choice.mode===tune.mode;
+  var saved={choice:choice,correct:correct};state.answers[tune.id]=saved;$("answerForm").classList.add("answered");markChoices(choice);setInputsDisabled(true);$("submitBtn").disabled=true;showFeedback(saved,true);updateProgress();
+}
+function showFeedback(saved,prepareScales){
+  var tune=currentTune();$("feedback").hidden=false;$("feedback").className="feedback "+(saved.correct?"correct":"incorrect");
+  var correctAnswer={tonic:tune.tonic,mode:tune.mode};
+  var chordText=commonChordNames(correctAnswer);
+  var commonChordsHtml=chordText?' &nbsp;&nbsp; <strong>Common chords:</strong> '+escapeHtml(chordText):'';
+  if(saved.correct){$("feedback").innerHTML='<strong>Correct: '+escapeHtml(answerName(correctAnswer))+'</strong>'+commonChordsHtml+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');$("differencePanel").hidden=true;}
+  else{
+    $("feedback").innerHTML='<strong>Not quite.</strong> You chose '+escapeHtml(answerName(saved.choice))+'. The correct answer is <strong>'+escapeHtml(answerName(correctAnswer))+'</strong>.'+commonChordsHtml+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');
+    $("differencePanel").hidden=false;$("differenceText").textContent="Compare the scale you selected with the correct scale.";$("chosenScaleLabel").textContent="Your answer: "+answerName(saved.choice);$("correctScaleLabel").textContent="Correct: "+answerName({tonic:tune.tonic,mode:tune.mode});
+    resetScaleButtons();$("chosenScaleBtn").disabled=false;$("correctScaleBtn").disabled=false;
+    if(prepareScales)clearScaleControllers();
+  }
+}
+
+function makeScaleAbc(a){
+  var notesByTonic={C:"C D E F G A B c",D:"D E F G A B c d",E:"E F G A B c d e",F:"F G A B c d e f",G:"G A B c d e f g",A:"A B c d e f g a",B:"B c d e f g a b","C#":"^C ^D ^E ^F ^G ^A ^B ^c","F#":"^F ^G ^A B ^c ^d ^e ^f",Bb:"_B C D _E F G A _B"};
+  var simple=notesByTonic[a.tonic]||"C D E F G A B c";
+  return "X:1\nT:Scale\nM:4/4\nL:1/4\nQ:1/4=96\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+simple+" | "+simple.split(" ").reverse().join(" ")+" |]\n";
+}
+async function playScale(which){
+  var saved=state.answers[currentTune().id];if(!saved||saved.correct)return;
+  var isChosen=which==="chosen";
+  var answer=isChosen?saved.choice:{tonic:currentTune().tonic,mode:currentTune().mode};
+  var controller=isChosen?chosenScaleController:correctScaleController;
+
+  // Clicking the currently playing scale button stops it.
+  if(activeScale===which){
+    safePause(controller,isChosen?"chosen scale":"correct scale");
+    resetScaleButtons();
+    return;
+  }
+
+  try{
+    // Any other playback action stops the previous scale and restores its button label.
+    pauseAllControllers();
+
+    controller=isChosen?chosenScaleController:correctScaleController;
+    if(!controller){
+      controller=await prepareController(
+        makeScaleAbc(answer),
+        isChosen?"hiddenScaleRenderChosen":"hiddenScaleRenderCorrect",
+        isChosen?"hiddenScaleAudioChosen":"hiddenScaleAudioCorrect",
+        isChosen?"Chosen scale":"Correct scale"
+      );
+      if(isChosen)chosenScaleController=controller;else correctScaleController=controller;
+    }
+
+    setScalePlaying(which);
+    log((isChosen?"Chosen":"Correct")+" scale play begin");
+    await Promise.resolve(controller.play());
+    log((isChosen?"Chosen":"Correct")+" scale play started");
+  }catch(e){
+    resetScaleButtons();
+    logError("playScale",e);
+    $("differenceText").textContent="Scale playback error: "+(e&&e.message?e.message:String(e));
+  }
+}
+
+function updateProgress(){
+  var answers=Object.keys(state.answers).map(function(id){return {id:id,data:state.answers[id],tune:tuneById[id]};}).filter(function(x){return x.tune;});
+  var correct=answers.filter(function(x){return x.data.correct;}).length;
+  $("scoreText").textContent=correct+" / "+answers.length;
+  $("accuracyText").textContent=answers.length?(Math.round(correct/answers.length*100)+"% correct · "+correct+" / "+answers.length):"No answers yet";
+  $("progressBar").style.width=(answers.length/state.sessionIds.length*100)+"%";
+  var bits=[];MODE_ORDER.forEach(function(m){var rs=answers.filter(function(x){return x.tune.mode===m;});if(rs.length){bits.push(MODE_INFO[m].shortLabel+": "+rs.filter(function(x){return x.data.correct;}).length+"/"+rs.length);}});$("breakdown").textContent=bits.length?bits.join(" · "):"Your results will appear here";
+}
+function renderQuestion(){
+  pauseAllControllers();clearTuneController();clearScaleControllers();
+  var tune=currentTune();if(!tune)return;
+  $("questionEyebrow").textContent="Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
+  $("questionTitle").textContent="What tonal center and mode do you hear?";
+  $("listenHeading").textContent="Click play to listen to the tune";$("listenSubheading").textContent="";
+  $("prevBtn").disabled=state.currentIndex===0;$("nextBtn").disabled=state.currentIndex===state.sessionIds.length-1;
+  buildAnswerChoices();updateProgress();
+  void prepareCurrentTune(false);
+}
+function go(delta){var n=state.currentIndex+delta;if(n<0||n>=state.sessionIds.length)return;state.currentIndex=n;log(delta<0?"Previous Tune clicked":"Next Tune clicked",{question:n+1,tuneId:state.sessionIds[n]});renderQuestion();}
+
+function initialize(){
+  window.addEventListener("error",function(event){log("window.error: "+(event.message||"unknown error")+(event.filename?(" @ "+event.filename+":"+event.lineno):""));});
+  window.addEventListener("unhandledrejection",function(event){logError("unhandledrejection",event.reason||"unknown rejection");});
+  log("Trainer initialization begin",{href:location.href,protocol:location.protocol});
+  var text=window.KEY_MODE_EAR_TRAINER_ABC;
+  if(typeof text!=="string"||!text.trim()){log("examples.js data missing");return;}
+  allTunes=parseTunes(text);tuneById={};allTunes.forEach(function(t){tuneById[t.id]=t;});
+  if(!allTunes.length){log("No usable tunes parsed");return;}
+  log("Tune collection parsed",{count:allTunes.length,modes:modeCountText(allTunes)});
+  $("newSetBtn").disabled=false;
+  loadState();
+  renderQuestion();
+}
+
+$("newSetBtn").addEventListener("click",startNewSet);
+$("answerForm").addEventListener("submit",submitAnswer);
+$("prevBtn").addEventListener("click",function(){go(-1);});
+$("nextBtn").addEventListener("click",function(){go(1);});
+$("chosenScaleBtn").addEventListener("click",function(){void playScale("chosen");});
+$("correctScaleBtn").addEventListener("click",function(){void playScale("correct");});
+$("answerStyle").addEventListener("change",function(){state.answerStyle=this.value;buildAnswerChoices();});
+window.addEventListener("beforeunload",function(){pauseAllControllers();});
+
+initialize();
+})();
