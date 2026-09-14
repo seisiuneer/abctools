@@ -1,16 +1,15 @@
 (function(){
 "use strict";
 
-var VERSION="1.66";
+var VERSION="1.69";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var MODE_INFO={
   major:{label:"Major",shortLabel:"Major",abcSuffix:""},
   dorian:{label:"Dorian",shortLabel:"Dorian",abcSuffix:"dor"},
-  mixolydian:{label:"Mixolydian",shortLabel:"Mixolydian",abcSuffix:"mix"},
-  minor:{label:"Minor",shortLabel:"Minor",abcSuffix:"m"}
+  mixolydian:{label:"Mixolydian",shortLabel:"Mixolydian",abcSuffix:"mix"}
 };
-var MODE_ORDER=["major","dorian","mixolydian","minor"];
+var MODE_ORDER=["major","dorian","mixolydian"];
 var allTunes=[];
 var tuneById={};
 var state=null;
@@ -47,8 +46,8 @@ function parseKey(k){
   if(!tonic)return null;
 
   // ABC permits both compact and spaced mode names, with arbitrary case:
-  // Edor / E Dor / E Dorian, DMaj / D Major, Dm / Dmin / D Minor, Dmix / D Mixolydian.
-  // Test the explicit major names before the one-letter minor alias so "maj" can never be mistaken for "m".
+  // Edor / E Dor / E Dorian, DMaj / D Major, Dmix / D Mixolydian.
+  // Minor spellings are recognized only so they can be rejected cleanly; this trainer supports Major, Dorian, and Mixolydian.
   var rest=k.slice(tonic.length).trim();
   if(!rest)return {tonic:tonic,mode:"major"};
 
@@ -56,7 +55,7 @@ function parseKey(k){
   if(modeMatch){
     var token=modeMatch[1].toLowerCase();
     if(token==="major"||token==="maj"||token==="ionian"||token==="ion")return {tonic:tonic,mode:"major"};
-    if(token==="minor"||token==="min"||token==="aeolian"||token==="aeo"||token==="m")return {tonic:tonic,mode:"minor"};
+    if(token==="minor"||token==="min"||token==="aeolian"||token==="aeo"||token==="m")return null;
     if(token==="dorian"||token==="dor")return {tonic:tonic,mode:"dorian"};
     if(token==="mixolydian"||token==="mix")return {tonic:tonic,mode:"mixolydian"};
   }
@@ -83,13 +82,11 @@ function answerName(a){return a.tonic+" "+MODE_INFO[a.mode].shortLabel;}
 function commonChordNames(a){
   var scaleIntervals={
     major:[0,2,4,5,7,9,11],
-    minor:[0,2,3,5,7,8,10],
     dorian:[0,2,3,5,7,9,10],
     mixolydian:[0,2,4,5,7,9,10]
   };
   var patterns={
     major:[{degree:1,quality:"Major"},{degree:4,quality:"Major"},{degree:5,quality:"Major"}],
-    minor:[{degree:1,quality:"Minor"},{degree:7,quality:"Major"},{degree:5,quality:"Minor"}],
     dorian:[{degree:1,quality:"Minor"},{degree:7,quality:"Major"},{degree:5,quality:"Minor"}],
     mixolydian:[{degree:1,quality:"Major"},{degree:7,quality:"Major"},{degree:5,quality:"Major"}]
   };
@@ -596,18 +593,17 @@ function showInstructions(){
       '<p>This trainer helps you practice recognizing the tonal center and mode of traditional Irish tunes by ear.</p>',
 
       '<h3>Starting a session</h3>',
-      '<p>Each session contains 10 randomly selected tunes. A fresh set is created whenever the tool is loaded or when you choose <strong>Start Over with New Tunes</strong>.</p>',
+      '<p>Each session contains 10 tunes randomly selected from the full '+allTunes.length+'-tune collection. A fresh set is created whenever the tool is loaded or when you choose <strong>Start Over with New Tunes</strong>.</p>',
 
       '<h3>1. Listen to the tune</h3>',
       '<p>Click the play button on the bar to start the tune playing. The answer choices remain disabled until you start playback for that tune. Tunes loop automatically so you can concentrate on the tonal center and overall modal sound.</p>',
 
       '<h3>2. Choose your answer</h3>',
-      '<p>Select the tonal center and mode you hear, then choose <strong>Submit Answer</strong>.</p>',
+      '<p>Select the tonal center and mode you hear, then choose <strong>Submit Answer</strong>. The available modes are <strong>Major</strong>, <strong>Dorian</strong>, and <strong>Mixolydian</strong>.</p>',
       '<ul>',
         '<li><strong>Major</strong> — the familiar major sound.</li>',
         '<li><strong>Dorian</strong> — a minor-centered sound with a characteristic raised sixth.</li>',
         '<li><strong>Mixolydian</strong> — a major-centered sound with a lowered seventh.</li>',
-        '<li><strong>Minor</strong> — the natural-minor sound.</li>',
       '</ul>',
       '<p>The <strong>Answer style</strong> control lets you answer with separate tonal-center and mode choices or with combined key/mode choices.</p>',
 
