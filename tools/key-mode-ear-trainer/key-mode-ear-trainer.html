@@ -30,7 +30,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK&cb=20260914-2300"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -38,14 +38,14 @@
     gtag('config', 'G-VM0N9HL3MK');
   </script>
 
-  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260913-0931">
-  <link rel="stylesheet" href="key-mode-ear-trainer.css">
+  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260914-2300">
+  <link rel="stylesheet" href="key-mode-ear-trainer.css?cb=20260914-2300">
 </head>
 <body>
 <div class="app">
   <header class="heroCard">
     <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a>
-    <div class="toolVersion">v1.34</div>
+    <div class="toolVersion">v1.66</div>
     <div class="heroTop">
       <h1 class="heroTitle">Traditional Irish Tune Key and Mode Ear Trainer</h1>
       <p class="heroText">Train your ear to identify a tune's tonal center and mode.</p>
@@ -54,18 +54,30 @@
 
   <main class="main">
     <aside class="left">
+      <button id="instructionsBtn" class="instructionsButton secondary" type="button">Instructions</button>
+
       <section class="card setupCard">
-        <div class="setupBlock">
-          <label for="answerStyle"><strong>Answer style</strong></label>
-          <select id="answerStyle">
-            <option value="separate">Tonal center + mode</option>
-            <option value="combined">Combined key/mode choices</option>
-          </select>
-        </div>
+              <div class="setupBlock">
+                <label for="answerStyle"><strong>Answer style</strong></label>
+                <select id="answerStyle">
+                  <option value="separate">Tonal center + mode</option>
+                  <option value="combined">Combined key/mode choices</option>
+                </select>
+              </div>
+      
+              <button id="newSetBtn" class="startButton" type="button" disabled>Start Over with New Tunes</button>
+      
+            </section>
 
-        <button id="newSetBtn" class="startButton" type="button" disabled>Start Over with New Tunes</button>
+      <section class="card progressCard">
+              <div class="progressHeader">
+                <h3>Session Progress</h3>
+                <div id="accuracyText" class="muted small">No answers yet</div>
+              </div>
+              <div class="progressTrack"><div id="progressBar" class="progressBar"></div></div>
+              <div id="breakdown" class="breakdown muted small">Your results will appear here</div>
+            </section>
 
-      </section>
     </aside>
 
     <section class="right">
@@ -83,7 +95,7 @@
         <div class="listenPanel">
           <div class="listenIcon" aria-hidden="true">♪</div>
           <div class="listenCopy">
-            <strong id="listenHeading">Click play to listen to the tune</strong>
+            <strong id="listenHeading">Click the play button below to listen to the tune</strong>
             <span id="listenSubheading" hidden></span>
           </div>
         </div>
@@ -119,7 +131,7 @@
           <div class="differencePlayers">
             <div class="differencePlayer">
               <strong id="chosenScaleLabel"></strong>
-              <button id="chosenScaleBtn" class="secondary" type="button" disabled>Play Your Scale</button>
+              <button id="chosenScaleBtn" class="secondary" type="button" disabled>Play Selected Scale</button>
             </div>
             <div class="differencePlayer">
               <strong id="correctScaleLabel"></strong>
@@ -131,16 +143,8 @@
         <div class="nextRow navRow" id="nextRow">
           <button id="prevBtn" class="secondary" type="button">Previous Tune</button>
           <button id="nextBtn" type="button">Next Tune</button>
+          <button id="finalReviewInlineBtn" type="button" hidden>Show Final Review</button>
         </div>
-      </section>
-
-      <section class="card progressCard">
-        <div class="progressHeader">
-          <h3>Session Progress</h3>
-          <div id="accuracyText" class="muted small">No answers yet</div>
-        </div>
-        <div class="progressTrack"><div id="progressBar" class="progressBar"></div></div>
-        <div id="breakdown" class="breakdown muted small">Your results will appear here</div>
       </section>
 
     </section>
@@ -154,9 +158,10 @@
 <div id="hiddenScaleRenderCorrect" class="hiddenRender" aria-hidden="true"></div>
 <div id="hiddenScaleAudioCorrect" class="hiddenAudio" aria-hidden="true"></div>
 
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260913-0931"></script>
-<script id="abcjsPortableScript" src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260913-0931"></script>
-<script src="examples.js"></script>
-<script src="key-mode-ear-trainer.js"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260914-2300"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260914-2300"></script>
+<script src="daypilot-modal.min-3.10.1.js?cb=20260914-2300"></script>
+<script src="examples.js?cb=20260914-2300"></script>
+<script src="key-mode-ear-trainer.js?cb=20260914-2300"></script>
 </body>
 </html>
