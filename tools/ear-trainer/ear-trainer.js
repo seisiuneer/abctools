@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.17";
+var VERSION="2.18";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -811,7 +811,7 @@ function showInstructions(){
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
 
       '<h3>Choose Your Instrument</h3>',
-      '<p>Before starting, use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
+      '<p>Before starting, use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
       '<p>Your instrument choice is saved in your browser and restored the next time you use the tool.</p>',
 
       '<h3>Starting a session</h3>',
