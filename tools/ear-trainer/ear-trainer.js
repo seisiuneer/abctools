@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.16";
+var VERSION="2.17";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -158,7 +158,7 @@ function chooseSessionTunes(){
 }
 function loadState(){
   // Every page load starts a fresh in-memory 10-tune session. Only the user's
-  // preferred answer style is restored from localStorage.
+  // preferred answer style and instrument are restored from localStorage.
   state=defaultState();
   $("answerStyle").value=state.answerStyle;
   $("instrument").value=loadPreferredInstrument();
@@ -838,6 +838,9 @@ function showInstructions(){
 
       '<h3>End-of-session review</h3>',
       '<p>After you answer tune 10, the <strong>Show Final Review</strong> button appears in the navigation area where <strong>Next Tune</strong> appears on earlier tunes. Click it when you are ready to see your final score and a review of each missed tune.</p>',
+
+      '<h3>Not hearing sound on an iPhone or iPad?</h3>',
+      '<p>On iPhone and iPad, <strong>Mute must be turned off in Control Center for the audio to be heard</strong>. This is an iOS audio behavior and is not specific to the ear trainer.</p>',
 
       '<h3>Tip Jars</h3>',
       '<p>This ear training tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>',
