@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="1.69";
+var VERSION="1.77";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var MODE_INFO={
@@ -17,7 +17,10 @@ var tuneController=null;
 var tunePreparePromise=null;
 var chosenScaleController=null;
 var correctScaleController=null;
+var chosenRootController=null;
+var correctRootController=null;
 var activeScale=null;
+var activeRoot=null;
 var prepareSerial=0;
 
 function $(id){return document.getElementById(id);}
@@ -174,6 +177,14 @@ function safeDestroy(controller,label){
     try{controller.destroy();log((label||"controller")+" destroyed");}catch(e){logError((label||"controller")+" destroy",e);}
   }
 }
+function safeRewind(controller,label){
+  if(!controller)return false;
+  if(typeof controller.restart==="function"){
+    try{controller.restart();log((label||"controller")+" rewound");return true;}catch(e){logError((label||"controller")+" rewind",e);}
+  }
+  return false;
+}
+
 function resetScaleButtons(){
   activeScale=null;
   if($("chosenScaleBtn"))$("chosenScaleBtn").textContent="Play Selected Scale";
@@ -183,6 +194,11 @@ function resetScaleButtons(){
     $("correctScaleBtn").textContent=saved&&saved.correct?"Play Scale":"Play Correct Scale";
   }
 }
+function resetRootButtons(){
+  activeRoot=null;
+  if($("chosenRootBtn"))$("chosenRootBtn").textContent="Root Note";
+  if($("correctRootBtn"))$("correctRootBtn").textContent="Root Note";
+}
 function setScalePlaying(which){
   activeScale=which;
   $("chosenScaleBtn").textContent=which==="chosen"?"Stop Playing Scale":"Play Selected Scale";
@@ -190,9 +206,38 @@ function setScalePlaying(which){
   var saved=tune&&state&&state.answers?state.answers[tune.id]:null;
   $("correctScaleBtn").textContent=which==="correct"?"Stop Playing Scale":(saved&&saved.correct?"Play Scale":"Play Correct Scale");
 }
-function pauseAllControllers(){safePause(tuneController,"tune");safePause(chosenScaleController,"chosen scale");safePause(correctScaleController,"correct scale");resetScaleButtons();}
+function setRootPlaying(which){
+  activeRoot=which;
+  $("chosenRootBtn").textContent=which==="chosen"?"Stop Root Note":"Root Note";
+  $("correctRootBtn").textContent=which==="correct"?"Stop Root Note":"Root Note";
+}
+function stopComparisonControllers(){
+  safeDestroy(chosenScaleController,"chosen scale");safeDestroy(correctScaleController,"correct scale");
+  safeDestroy(chosenRootController,"chosen root");safeDestroy(correctRootController,"correct root");
+  chosenScaleController=correctScaleController=chosenRootController=correctRootController=null;
+  resetScaleButtons();resetRootButtons();
+}
+async function resetTuneForComparisonPlayback(){
+  // Rebuild instead of pause+restart. abcjs SynthController can require an extra
+  // Play click after programmatic pause; a fresh controller is unambiguously
+  // stopped at time zero and its native Play button works on the first click.
+  await prepareCurrentTune(true);
+}
+function pauseAllControllers(){
+  safePause(tuneController,"tune");
+  stopComparisonControllers();
+}
 function clearTuneController(){safeDestroy(tuneController,"tune");tuneController=null;tunePreparePromise=null;$("hiddenTuneRender").innerHTML="";$("tuneAudioControls").innerHTML="";}
-function clearScaleControllers(){safeDestroy(chosenScaleController,"chosen scale");safeDestroy(correctScaleController,"correct scale");chosenScaleController=correctScaleController=null;resetScaleButtons();$("hiddenScaleRenderChosen").innerHTML="";$("hiddenScaleAudioChosen").innerHTML="";$("hiddenScaleRenderCorrect").innerHTML="";$("hiddenScaleAudioCorrect").innerHTML="";}
+function clearScaleControllers(){
+  safeDestroy(chosenScaleController,"chosen scale");safeDestroy(correctScaleController,"correct scale");
+  safeDestroy(chosenRootController,"chosen root");safeDestroy(correctRootController,"correct root");
+  chosenScaleController=correctScaleController=chosenRootController=correctRootController=null;
+  resetScaleButtons();resetRootButtons();
+  $("hiddenScaleRenderChosen").innerHTML="";$("hiddenScaleAudioChosen").innerHTML="";
+  $("hiddenScaleRenderCorrect").innerHTML="";$("hiddenScaleAudioCorrect").innerHTML="";
+  $("hiddenRootRenderChosen").innerHTML="";$("hiddenRootAudioChosen").innerHTML="";
+  $("hiddenRootRenderCorrect").innerHTML="";$("hiddenRootAudioCorrect").innerHTML="";
+}
 function tuneAbcForPlayback(abc){
   // Keep the original tune intact for rendering/audio. The notation is rendered
   // off-screen, so title/chord text does not need to be stripped. This avoids
@@ -221,6 +266,8 @@ function createHiddenCursorControl(label){
       this._loggedFirstEvent=false;
       if(label==="Chosen scale"&&activeScale==="chosen")resetScaleButtons();
       else if(label==="Correct scale"&&activeScale==="correct")resetScaleButtons();
+      else if(label==="Chosen root"&&activeRoot==="chosen")resetRootButtons();
+      else if(label==="Correct root"&&activeRoot==="correct")resetRootButtons();
     }
   };
 }
@@ -390,8 +437,11 @@ function showFeedback(saved,prepareScales){
     $("correctScaleLabel").textContent="Correct: "+answerName(correctAnswer);
     resetScaleButtons();
     $("correctScaleBtn").textContent="Play Scale";
+    $("correctRootBtn").textContent="Root Note";
     $("chosenScaleBtn").disabled=true;
+    $("chosenRootBtn").disabled=true;
     $("correctScaleBtn").disabled=false;
+    $("correctRootBtn").disabled=false;
     if(prepareScales)clearScaleControllers();
   }else{
     $("feedback").innerHTML='<strong>Not quite.</strong> You chose '+escapeHtml(answerName(saved.choice))+'. The correct answer is <strong>'+escapeHtml(answerName(correctAnswer))+'</strong>.'+commonChordsHtml+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');
@@ -399,7 +449,9 @@ function showFeedback(saved,prepareScales){
     $("differencePanel").classList.remove("correctScaleOnly");
     $("differencePanel").querySelector("h3").textContent="Hear the difference";
     $("differenceText").textContent="Compare the scale you selected with the correct scale.";$("chosenScaleLabel").textContent="Your answer: "+answerName(saved.choice);$("correctScaleLabel").textContent="Correct: "+answerName({tonic:tune.tonic,mode:tune.mode});
-    resetScaleButtons();$("chosenScaleBtn").disabled=false;$("correctScaleBtn").disabled=false;
+    resetScaleButtons();resetRootButtons();
+    $("chosenScaleBtn").disabled=false;$("chosenRootBtn").disabled=false;
+    $("correctScaleBtn").disabled=false;$("correctRootBtn").disabled=false;
     if(prepareScales)clearScaleControllers();
   }
 }
@@ -409,6 +461,50 @@ function makeScaleAbc(a){
   var simple=notesByTonic[a.tonic]||"C D E F G A B c";
   return "X:1\nT:Scale\nM:4/4\nL:1/4\nQ:1/4=96\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+simple+" | "+simple.split(" ").reverse().join(" ")+" |]\n";
 }
+function makeRootAbc(a){
+  var rootByTonic={C:"C4",D:"D4",E:"E4",F:"F4",G:"G4",A:"A4",B:"B4","C#":"^C4","F#":"^F4",Bb:"_B4"};
+  var root=rootByTonic[a.tonic]||"C4";
+  return "X:1\nT:Root Note\nM:4/4\nL:1/4\nQ:1/4=60\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+root+" |]\n";
+}
+async function playRoot(which){
+  var saved=state.answers[currentTune().id];if(!saved)return;
+  var isChosen=which==="chosen";
+  if(saved.correct&&isChosen)return;
+  var answer=isChosen?saved.choice:{tonic:currentTune().tonic,mode:currentTune().mode};
+  var controller=isChosen?chosenRootController:correctRootController;
+
+  if(activeRoot===which){
+    safeDestroy(controller,isChosen?"chosen root":"correct root");
+    if(isChosen)chosenRootController=null;else correctRootController=null;
+    resetRootButtons();
+    return;
+  }
+
+  try{
+    stopComparisonControllers();
+    await resetTuneForComparisonPlayback();
+    controller=isChosen?chosenRootController:correctRootController;
+    if(!controller){
+      controller=await prepareController(
+        makeRootAbc(answer),
+        isChosen?"hiddenRootRenderChosen":"hiddenRootRenderCorrect",
+        isChosen?"hiddenRootAudioChosen":"hiddenRootAudioCorrect",
+        isChosen?"Chosen root":"Correct root",
+        {synthOptions:{program:0,chordsOff:true}}
+      );
+      if(isChosen)chosenRootController=controller;else correctRootController=controller;
+    }
+    setRootPlaying(which);
+    log((isChosen?"Chosen":"Correct")+" root play begin");
+    await Promise.resolve(controller.play());
+    log((isChosen?"Chosen":"Correct")+" root play started");
+  }catch(e){
+    resetRootButtons();
+    logError("playRoot",e);
+    $("differenceText").textContent="Root-note playback error: "+(e&&e.message?e.message:String(e));
+  }
+}
+
 async function playScale(which){
   var saved=state.answers[currentTune().id];if(!saved)return;
   var isChosen=which==="chosen";
@@ -416,16 +512,20 @@ async function playScale(which){
   var answer=isChosen?saved.choice:{tonic:currentTune().tonic,mode:currentTune().mode};
   var controller=isChosen?chosenScaleController:correctScaleController;
 
-  // Clicking the currently playing scale button stops it.
+  // Clicking the currently playing scale button stops and rewinds it.
+  // Discard the controller so the next click is guaranteed to start at time zero.
   if(activeScale===which){
-    safePause(controller,isChosen?"chosen scale":"correct scale");
+    safeDestroy(controller,isChosen?"chosen scale":"correct scale");
+    if(isChosen)chosenScaleController=null;else correctScaleController=null;
     resetScaleButtons();
     return;
   }
 
   try{
-    // Any other playback action stops the previous scale and restores its button label.
-    pauseAllControllers();
+    // Reset the tune to a genuinely stopped, time-zero controller before starting
+    // comparison playback. This keeps the native tune Play button one-click ready.
+    stopComparisonControllers();
+    await resetTuneForComparisonPlayback();
 
     controller=isChosen?chosenScaleController:correctScaleController;
     if(!controller){
@@ -611,10 +711,10 @@ function showInstructions(){
       '<p>After submitting, the trainer shows the correct key and mode, common accompaniment chords for that mode, the tune name, and the tune style.</p>',
 
       '<h3>Hear the scale</h3>',
-      '<p>After a correct answer, use <strong>Play Scale</strong> to reinforce the tonal center and mode you identified.</p>',
+      '<p>After a correct answer, use <strong>Root Note</strong> to hear the sustained tonal center, or <strong>Play Scale</strong> to reinforce the tonal center and mode you identified. Playback always starts from the beginning; starting one playback stops and resets any other playback to the beginning.</p>',
 
       '<h3>Hear the difference</h3>',
-      '<p>When an answer is incorrect, use <strong>Play Selected Scale</strong> and <strong>Play Correct Scale</strong> to compare the two scale tonalities directly.</p>',
+      '<p>When an answer is incorrect, use the <strong>Root Note</strong> buttons to compare the tonal centers, and <strong>Play Selected Scale</strong> and <strong>Play Correct Scale</strong> to compare the two scale tonalities directly.</p>',
 
       '<h3>End-of-session review</h3>',
       '<p>After you answer tune 10, the <strong>Show Final Review</strong> button appears in the navigation area where <strong>Next Tune</strong> appears on earlier tunes. Click it when you are ready to see your final score, the tonal centers and modes you missed most often, and a review of each missed tune showing your answer, the correct answer, and common chords.</p>',
@@ -652,11 +752,18 @@ $("finalReviewInlineBtn").addEventListener("click",showFinalReview);
 $("answerForm").addEventListener("submit",submitAnswer);
 $("prevBtn").addEventListener("click",function(){go(-1);});
 $("nextBtn").addEventListener("click",function(){go(1);});
+$("chosenRootBtn").addEventListener("click",function(){void playRoot("chosen");});
 $("chosenScaleBtn").addEventListener("click",function(){void playScale("chosen");});
+$("correctRootBtn").addEventListener("click",function(){void playRoot("correct");});
 $("correctScaleBtn").addEventListener("click",function(){void playScale("correct");});
 $("tuneAudioControls").addEventListener("click",function(ev){
-  if(isTunePlayControl(ev.target))unlockCurrentAnswers();
-});
+  if(isTunePlayControl(ev.target)){
+    // Run before abcjs' own Play handler. This makes the same click that stops
+    // comparison audio also start the tune; no second click is required.
+    stopComparisonControllers();
+    unlockCurrentAnswers();
+  }
+},true);
 $("answerStyle").addEventListener("change",function(){state.answerStyle=this.value;buildAnswerChoices();});
 window.addEventListener("beforeunload",function(){pauseAllControllers();});
 

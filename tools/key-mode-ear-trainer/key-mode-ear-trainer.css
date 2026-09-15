@@ -28,7 +28,7 @@ button:active{transform:translateY(1px)}
 button:disabled{opacity:.42;cursor:default;transform:none;box-shadow:none}
 button.secondary{background:var(--soft-green);border-color:#a9c2b1;color:var(--builder-green-dark)}
 button.secondary:hover{background:#d7e8dc}
-.app{min-height:100vh;display:flex;flex-direction:column;gap:var(--gap)}
+.app{display:flex;flex-direction:column;gap:var(--gap)}
 .heroCard{
   position:relative;margin:0;border-radius:0 0 14px 14px;padding:17px 28px 18px;
   background:linear-gradient(135deg,var(--builder-green-dark),var(--builder-green));
@@ -43,7 +43,7 @@ button.secondary:hover{background:#d7e8dc}
 .toolVersion{position:absolute;right:28px;top:18px;color:rgba(255,255,255,.9);font-size:.82rem;font-weight:600;letter-spacing:.02em}
 .heroTop{text-align:center}.heroTitle{margin:0;color:#fff;font-size:clamp(1.7rem,3.5vw,2.15rem);line-height:1.08}
 .heroText{max-width:850px;margin:9px auto 0;color:#dcebe2;line-height:1.45}
-.main{flex:1;display:grid;grid-template-columns:minmax(255px,330px) minmax(0,1fr);gap:var(--gap);padding:0 var(--page-pad) 24px;min-width:0}
+.main{display:grid;grid-template-columns:minmax(255px,330px) minmax(0,1fr);gap:var(--gap);padding:0 var(--page-pad) 24px;min-width:0}
 .left,.right{min-width:0}.left{display:flex;flex-direction:column;gap:12px}.right{display:flex;flex-direction:column;gap:var(--gap)}
 .card{border:var(--bd);border-radius:12px;padding:16px;background:#fff;min-width:0}
 .setupCard{position:sticky;top:12px}
@@ -74,7 +74,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
 .answerActions{display:flex;justify-content:flex-end;margin-top:14px}.feedback{margin-top:10px;padding:9px 12px;border-radius:9px;line-height:1.4}.feedback.correct{background:#eaf5ed;border:1px solid #b7d2bf}.feedback.incorrect{background:#fff3e5;border:1px solid #e0c39d}.feedback .tuneReveal{display:block;margin-top:5px;color:#3d4b42}
 .differencePanel{margin-top:10px;padding:10px 12px;border-left:4px solid var(--builder-accent);background:#f2f8fd;border-radius:8px}.differencePanel h3{margin-bottom:5px}.differencePanel p{margin:0 0 11px}.differenceButtons{display:flex;gap:8px;flex-wrap:wrap}
 .nextRow{display:flex;justify-content:flex-end;margin-top:10px;padding-top:9px;border-top:1px solid #d9dfdb}.progressCard{padding:10px 14px}.progressTrack{height:10px;background:#edf1ee;border-radius:999px;overflow:hidden;margin-top:11px}.progressBar{height:100%;width:0;background:var(--builder-green);transition:width .2s ease}.breakdown{margin-top:10px}.instructionsCard p{margin:8px 0 0;max-width:100ch}
-.hiddenRender,.hiddenAudio{position:absolute!important;left:-10000px!important;top:auto!important;width:800px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
+.hiddenRender,.hiddenAudio{position:fixed!important;left:-10000px!important;top:0!important;width:800px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
 .srOnly{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 @media(max-width:1000px){.main{grid-template-columns:1fr;padding:0 16px 20px}.setupCard{position:relative;top:auto}.answerGrid{grid-template-columns:1fr}.combinedChoices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -262,4 +262,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
   min-width:96px;
   padding:11px 20px !important;
   font-size:1rem !important;
+}
+
+/* v1.70: root-note comparison controls sit immediately left of scale controls. */
+.differencePlayer .differenceButtons{display:flex;gap:8px;flex-wrap:wrap}
+.differencePlayer .differenceButtons button{flex:0 1 auto}
+@media(max-width:620px){
+  .differencePlayer .differenceButtons button{flex:1 1 180px}
 }

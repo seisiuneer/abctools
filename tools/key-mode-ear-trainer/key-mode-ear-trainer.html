@@ -30,7 +30,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK&cb=20260914-1611"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK&cb=20260915-0324"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -38,14 +38,14 @@
     gtag('config', 'G-VM0N9HL3MK');
   </script>
 
-  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260914-1611">
-  <link rel="stylesheet" href="key-mode-ear-trainer.css?cb=20260914-1611">
+  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260915-0324">
+  <link rel="stylesheet" href="key-mode-ear-trainer.css?cb=20260915-0324">
 </head>
 <body>
 <div class="app">
   <header class="heroCard">
     <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a>
-    <div class="toolVersion">v1.69</div>
+    <div class="toolVersion">v1.77</div>
     <div class="heroTop">
       <h1 class="heroTitle">Traditional Irish Tune Key and Mode Ear Trainer</h1>
       <p class="heroText">Train your ear to identify a tune's tonal center and mode.</p>
@@ -131,11 +131,17 @@
           <div class="differencePlayers">
             <div class="differencePlayer">
               <strong id="chosenScaleLabel"></strong>
-              <button id="chosenScaleBtn" class="secondary" type="button" disabled>Play Selected Scale</button>
+              <div class="differenceButtons">
+                <button id="chosenRootBtn" class="secondary" type="button" disabled>Root Note</button>
+                <button id="chosenScaleBtn" class="secondary" type="button" disabled>Play Selected Scale</button>
+              </div>
             </div>
             <div class="differencePlayer">
               <strong id="correctScaleLabel"></strong>
-              <button id="correctScaleBtn" class="secondary" type="button" disabled>Play Correct Scale</button>
+              <div class="differenceButtons">
+                <button id="correctRootBtn" class="secondary" type="button" disabled>Root Note</button>
+                <button id="correctScaleBtn" class="secondary" type="button" disabled>Play Correct Scale</button>
+              </div>
             </div>
           </div>
         </div>
@@ -157,11 +163,15 @@
 <div id="hiddenScaleAudioChosen" class="hiddenAudio" aria-hidden="true"></div>
 <div id="hiddenScaleRenderCorrect" class="hiddenRender" aria-hidden="true"></div>
 <div id="hiddenScaleAudioCorrect" class="hiddenAudio" aria-hidden="true"></div>
+<div id="hiddenRootRenderChosen" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenRootAudioChosen" class="hiddenAudio" aria-hidden="true"></div>
+<div id="hiddenRootRenderCorrect" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenRootAudioCorrect" class="hiddenAudio" aria-hidden="true"></div>
 
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260914-1611"></script>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260914-1611"></script>
-<script src="daypilot-modal.min-3.10.1.js?cb=20260914-1611"></script>
-<script src="examples.js?cb=20260914-1611"></script>
-<script src="key-mode-ear-trainer.js?cb=20260914-1611"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260915-0324"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260915-0324"></script>
+<script src="daypilot-modal.min-3.10.1.js?cb=20260915-0324"></script>
+<script src="examples.js?cb=20260915-0324"></script>
+<script src="key-mode-ear-trainer.js?cb=20260915-0324"></script>
 </body>
 </html>
