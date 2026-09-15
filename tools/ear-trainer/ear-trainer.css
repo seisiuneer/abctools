@@ -399,3 +399,6 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
 .modal_default_buttons{
   text-align:center !important;
 }
+
+/* Instrument selector spacing below Answer style. */
+.instrumentBlock{margin-top:12px}

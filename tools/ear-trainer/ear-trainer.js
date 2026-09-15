@@ -1,10 +1,12 @@
 (function(){
 "use strict";
 
-var VERSION="2.15";
+var VERSION="2.16";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
+var INSTRUMENT_STORAGE_KEY="keyModeEarTrainerInstrument";
+var INSTRUMENT_PROGRAMS={piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15};
 var ANSWER_STYLES=["separate","combined","rhythmSeparate","rhythmCombined","rhythmOnly"];
 var MODE_INFO={
   major:{label:"Major",shortLabel:"Major",abcSuffix:""},
@@ -94,6 +96,16 @@ function loadPreferredAnswerStyle(){
 function savePreferredAnswerStyle(style){
   try{localStorage.setItem(ANSWER_STYLE_STORAGE_KEY,style);}catch(e){}
 }
+function loadPreferredInstrument(){
+  try{var v=localStorage.getItem(INSTRUMENT_STORAGE_KEY);return Object.prototype.hasOwnProperty.call(INSTRUMENT_PROGRAMS,v)?v:"piano";}catch(e){return "piano";}
+}
+function savePreferredInstrument(instrument){
+  try{localStorage.setItem(INSTRUMENT_STORAGE_KEY,instrument);}catch(e){}
+}
+function currentProgram(){
+  var v=$("instrument")?$("instrument").value:loadPreferredInstrument();
+  return Object.prototype.hasOwnProperty.call(INSTRUMENT_PROGRAMS,v)?INSTRUMENT_PROGRAMS[v]:0;
+}
 function commonChordNames(a){
   var scaleIntervals={
     major:[0,2,4,5,7,9,11],
@@ -149,6 +161,7 @@ function loadState(){
   // preferred answer style is restored from localStorage.
   state=defaultState();
   $("answerStyle").value=state.answerStyle;
+  $("instrument").value=loadPreferredInstrument();
   log("Created fresh session",{tunes:state.sessionIds.length,answerStyle:state.answerStyle});
 }
 
@@ -258,7 +271,9 @@ function tuneAbcForPlayback(abc){
   var out=String(abc||"").trim();
   var directives=[];
   if(!/^\s*%soundfont\s+/mi.test(out))directives.push("%soundfont fatboy");
-  if(!/^\s*%%MIDI\s+program\s+/mi.test(out))directives.push("%%MIDI program 0");
+  // The trainer's Instrument selector controls playback, overriding any tune-level program.
+  out=out.replace(/^\s*%%MIDI\s+program\s+\d+.*$/gmi,"");
+  directives.push("%%MIDI program "+currentProgram());
   if(directives.length){
     if(/^\s*X\s*:.*$/mi.test(out))out=out.replace(/^(\s*X\s*:.*)$/mi,"$1\n"+directives.join("\n"));
     else out=directives.join("\n")+"\n"+out;
@@ -309,7 +324,7 @@ async function prepareController(abc,renderId,audioId,label,options){
   if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("ABCJS.synth.SynthController is unavailable.");
   configureAbcjs();
   $(renderId).innerHTML="";$(audioId).innerHTML="";
-  log(label+": renderAbc begin",{abcChars:abc.length,hasSoundfont:/^\s*%soundfont\s+fatboy/im.test(abc),hasMidiProgram:/^\s*%%MIDI\s+program\s+0/im.test(abc)});
+  log(label+": renderAbc begin",{abcChars:abc.length,hasSoundfont:/^\s*%soundfont\s+fatboy/im.test(abc),midiProgram:currentProgram()});
   var rendered=ABCJS.renderAbc(renderId,abc,{responsive:"resize"});
   log(label+": renderAbc complete",{count:rendered&&rendered.length||0,elapsed:elapsed(started)});
   if(!rendered||!rendered.length)throw new Error("renderAbc returned no tune.");
@@ -320,7 +335,7 @@ async function prepareController(abc,renderId,audioId,label,options){
   log(label+": controller.load complete");
   var tuneStart=performance.now();
   log(label+": setTune begin");
-  await controller.setTune(rendered[0],false,options.synthOptions||{program:0,chordsOff:false});
+  await controller.setTune(rendered[0],false,options.synthOptions||{program:currentProgram(),chordsOff:false});
   log(label+": setTune resolved",{elapsed:elapsed(tuneStart),total:elapsed(started)});
   log(label+": controller after setTune",objectSummary(controller));
   return controller;
@@ -336,7 +351,7 @@ async function prepareCurrentTune(force){
   var expectedId=tune.id;
   tunePreparePromise=(async function(){
     try{
-      var controller=await prepareController(tuneAbcForPlayback(tune.abc),"hiddenTuneRender","tuneAudioControls","Tune "+(state.currentIndex+1),{playerOptions:{displayLoop:false,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:false},synthOptions:{program:0,chordsOff:true}});
+      var controller=await prepareController(tuneAbcForPlayback(tune.abc),"hiddenTuneRender","tuneAudioControls","Tune "+(state.currentIndex+1),{playerOptions:{displayLoop:false,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:false},synthOptions:{program:currentProgram(),chordsOff:true}});
       if(serial!==prepareSerial||!currentTune()||currentTune().id!==expectedId){safeDestroy(controller,"stale tune");return null;}
       tuneController=controller;
       // Start each tune with looping enabled without synthesizing a DOM click.
@@ -582,12 +597,12 @@ function showFeedback(saved,prepareScales){
 function makeScaleAbc(a){
   var notesByTonic={C:"C D E F G A B c",D:"D E F G A B c d",E:"E F G A B c d e",F:"F G A B c d e f",G:"G A B c d e f g",A:"A B c d e f g a",B:"B c d e f g a b","C#":"^C ^D ^E ^F ^G ^A ^B ^c","F#":"^F ^G ^A B ^c ^d ^e ^f",Bb:"_B C D _E F G A _B"};
   var simple=notesByTonic[a.tonic]||"C D E F G A B c";
-  return "X:1\nT:Scale\nM:4/4\nL:1/4\nQ:1/4=96\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+simple+" | "+simple.split(" ").reverse().join(" ")+" |]\n";
+  return "X:1\n%%MIDI program "+currentProgram()+"\nT:Scale\nM:4/4\nL:1/4\nQ:1/4=96\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+simple+" | "+simple.split(" ").reverse().join(" ")+" |]\n";
 }
 function makeRootAbc(a){
   var rootByTonic={C:"C4",D:"D4",E:"E4",F:"F4",G:"G4",A:"A4",B:"B4","C#":"^C4","F#":"^F4",Bb:"_B4"};
   var root=rootByTonic[a.tonic]||"C4";
-  return "X:1\nT:Root Note\nM:4/4\nL:1/4\nQ:1/4=60\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+root+" |]\n";
+  return "X:1\n%%MIDI program "+currentProgram()+"\nT:Root Note\nM:4/4\nL:1/4\nQ:1/4=60\nK:"+a.tonic+MODE_INFO[a.mode].abcSuffix+"\n"+root+" |]\n";
 }
 async function playRoot(which){
   var saved=state.answers[currentTune().id];if(!saved)return;
@@ -613,7 +628,7 @@ async function playRoot(which){
         isChosen?"hiddenRootRenderChosen":"hiddenRootRenderCorrect",
         isChosen?"hiddenRootAudioChosen":"hiddenRootAudioCorrect",
         isChosen?"Chosen root":"Correct root",
-        {synthOptions:{program:0,chordsOff:true}}
+        {synthOptions:{program:currentProgram(),chordsOff:true}}
       );
       if(isChosen)chosenRootController=controller;else correctRootController=controller;
     }
@@ -788,8 +803,16 @@ function showInstructions(){
   var availableHeight=Math.max(0,Math.min(620,window.innerHeight-100));
   var html=[
     '<div class="keyModeInstructionsScroll" style="max-height:'+availableHeight+'px">',
-      '<h2>Traditional Irish Tune Rhythm, Key, and Mode Trainer</h2>',
+      '<h2 style="text-align:center;">Traditional Irish Tune Rhythm, Key, and Mode Trainer</h2>',
       '<p>This trainer helps you practice recognizing the rhythm style, key, and mode of traditional Irish tunes by ear.</p>',
+
+      '<h3>Choose Your Answer Style</h3>',
+      '<p>The <strong>Answer Style</strong> control offers five exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, and <strong>Key/Mode</strong>.</p>',
+      '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
+
+      '<h3>Choose Your Instrument</h3>',
+      '<p>Before starting, use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
+      '<p>Your instrument choice is saved in your browser and restored the next time you use the tool.</p>',
 
       '<h3>Starting a session</h3>',
       '<p>Each session contains 10 tunes randomly selected from the full '+allTunes.length+'-tune collection. A fresh set is created whenever the tool is loaded or when you choose <strong>Start Over with New Tunes</strong>.</p>',
@@ -804,8 +827,6 @@ function showInstructions(){
         '<li><strong>Dorian</strong> — a minor-centered sound with a characteristic raised sixth.</li>',
         '<li><strong>Mixolydian</strong> — a major-centered sound with a lowered seventh.</li>',
       '</ul>',
-      '<p>The <strong>Answer style</strong> control offers five exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, and <strong>Key/Mode</strong>.</p>',
-
       '<h3>3. Review the result</h3>',
       '<p>After submitting, the trainer shows the correct answer for every item being tested, along with the tune name and tune style. When key and mode are included, common accompaniment chords are shown in the correct-scale comparison section immediately after the <strong>Correct:</strong> key/mode indication.</p>',
 
@@ -881,6 +902,13 @@ $("answerStyle").addEventListener("change",async function(){
     state=defaultState(); state.answerStyle=newStyle; renderQuestion(); return;
   }
   state.answerStyle=newStyle; savePreferredAnswerStyle(newStyle); buildAnswerChoices();
+});
+$("instrument").addEventListener("change",async function(){
+  savePreferredInstrument(this.value);
+  pauseAllControllers();
+  clearScaleControllers();
+  await prepareCurrentTune(true);
+  log("Playback instrument changed",{instrument:this.value,program:currentProgram()});
 });
 window.addEventListener("beforeunload",function(){pauseAllControllers();});
 
