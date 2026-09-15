@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="1.77";
+var VERSION="1.78";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var MODE_INFO={
