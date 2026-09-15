@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="color-scheme" content="light">
+  <title>Traditional Irish Tune Rhythm, Key, and Mode Trainer</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Traditional Irish Tune Rhythm, Key, and Mode Trainer" />
+  <meta property="og:description" content="Train your ear to identify a traditional Irish tune's rhythm, key, and mode." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/ear-trainer/ear-trainer.html" />
+  <meta property="og:site_name" content="Traditional Irish Tune Rhythm, Key, and Mode Trainer" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/ear-trainer/ear-trainer-1.jpg"/>
+  <meta name="description" content="Train your ear to identify a traditional Irish tune's rhythm, key, and mode.">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+  <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK&cb=20260915-2_14"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+  </script>
+
+  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260915-2_14">
+  <link rel="stylesheet" href="ear-trainer.css?cb=20260915-2_14">
+</head>
+<body>
+<div class="app">
+  <header class="heroCard">
+    <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a>
+    <div class="toolVersion">v2.14</div>
+    <div class="heroTop">
+      <h1 class="heroTitle">Traditional Irish Tune Rhythm, Key, and Mode Trainer</h1>
+      <p class="heroText">Train your ear to identify a traditional Irish tune's rhythm, key, and mode.</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="left">
+      <button id="instructionsBtn" class="instructionsButton secondary" type="button">Instructions</button>
+
+      <section class="card setupCard">
+              <div class="setupBlock">
+                <label for="answerStyle"><strong>Answer style</strong></label>
+                <select id="answerStyle">
+                  <option value="rhythmSeparate">Rhythm + Key + Mode</option>
+                  <option value="rhythmCombined">Rhythm + Key/Mode</option>
+                  <option class="answerStyleSeparator" disabled>──────────</option>
+                  <option value="rhythmOnly">Rhythm Only</option>
+                  <option class="answerStyleSeparator" disabled>──────────</option>
+                  <option value="separate">Key + Mode</option>
+                  <option value="combined">Key/Mode</option>
+                </select>
+              </div>
+      
+              <button id="newSetBtn" class="startButton" type="button" disabled>Start Over with New Tunes</button>
+      
+            </section>
+
+      <section class="card progressCard">
+              <div class="progressHeader">
+                <h3>Session Progress</h3>
+                <div id="accuracyText" class="muted small">No answers yet</div>
+              </div>
+              <div class="progressTrack"><div id="progressBar" class="progressBar"></div></div>
+            </section>
+
+    </aside>
+
+    <section class="right">
+      <section class="card questionCard" id="questionCard">
+        <div class="questionTop">
+          <div>
+            <div id="questionEyebrow" class="eyebrow">Loading</div>
+            <h2 id="questionTitle">Preparing your ear-training session…</h2>
+          </div>
+          <div class="scoreBox" id="scoreBox">
+            <span id="scoreText">0 / 0</span>
+          </div>
+        </div>
+
+        <div class="listenPanel">
+          <div class="listenIcon" aria-hidden="true">♪</div>
+          <div class="listenCopy">
+            <strong id="listenHeading">Click the play button below to listen to the tune</strong>
+            <span id="listenSubheading" hidden></span>
+          </div>
+        </div>
+        <div id="tuneAudioControls" class="audio-controls trainerAudioControls" aria-label="Tune playback controls"></div>
+        <div id="playbackStatus" class="status" aria-live="polite" hidden></div>
+
+        <form id="answerForm">
+          <div id="answerChoiceLayout" class="answerChoiceLayout">
+            <fieldset id="rhythmAnswers" class="answerFieldset rhythmFieldset" hidden>
+              <legend id="rhythmLegend">1. What rhythm do you hear?</legend>
+              <div id="rhythmChoices" class="choiceGrid rhythmChoices"></div>
+            </fieldset>
+
+          <div id="separateAnswers" class="answerGrid">
+            <fieldset class="answerFieldset">
+              <legend>1. What key do you hear?</legend>
+              <div id="tonicChoices" class="choiceGrid tonicChoices"></div>
+            </fieldset>
+            <fieldset class="answerFieldset">
+              <legend>2. What mode do you hear?</legend>
+              <div id="modeChoices" class="choiceGrid modeChoices"></div>
+            </fieldset>
+          </div>
+
+          <fieldset id="combinedAnswers" class="answerFieldset" hidden>
+            <legend id="combinedLegend">What key and mode do you hear?</legend>
+            <div id="combinedChoices" class="choiceGrid combinedChoices"></div>
+          </fieldset>
+          </div>
+
+          <div class="answerActions">
+            <button id="submitBtn" type="submit" disabled>Submit Answer</button>
+          </div>
+        </form>
+
+        <div id="feedback" class="feedback" hidden aria-live="polite"></div>
+        <div id="differencePanel" class="differencePanel" hidden>
+          <h3>Hear the difference</h3>
+          <p id="differenceText"></p>
+          <div class="differencePlayers">
+            <div class="differencePlayer">
+              <strong id="chosenScaleLabel"></strong>
+              <div class="differenceButtons">
+                <button id="chosenRootBtn" class="secondary" type="button" disabled>Root Note</button>
+                <button id="chosenScaleBtn" class="secondary" type="button" disabled>Play Selected Scale</button>
+              </div>
+            </div>
+            <div class="differencePlayer">
+              <strong id="correctScaleLabel"></strong>
+              <div class="differenceButtons">
+                <button id="correctRootBtn" class="secondary" type="button" disabled>Root Note</button>
+                <button id="correctScaleBtn" class="secondary" type="button" disabled>Play Correct Scale</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nextRow navRow" id="nextRow">
+          <button id="prevBtn" class="secondary" type="button">Previous Tune</button>
+          <button id="nextBtn" type="button">Next Tune</button>
+          <button id="finalReviewInlineBtn" type="button" hidden>Show Final Review</button>
+        </div>
+      </section>
+
+    </section>
+  </main>
+</div>
+
+<!-- abcjs needs a real render target and audio-control target, but both remain permanently off-screen. -->
+<div id="hiddenTuneRender" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenScaleRenderChosen" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenScaleAudioChosen" class="hiddenAudio" aria-hidden="true"></div>
+<div id="hiddenScaleRenderCorrect" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenScaleAudioCorrect" class="hiddenAudio" aria-hidden="true"></div>
+<div id="hiddenRootRenderChosen" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenRootAudioChosen" class="hiddenAudio" aria-hidden="true"></div>
+<div id="hiddenRootRenderCorrect" class="hiddenRender" aria-hidden="true"></div>
+<div id="hiddenRootAudioCorrect" class="hiddenAudio" aria-hidden="true"></div>
+
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260915-2_14"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260915-2_14"></script>
+<script src="daypilot-modal.min-3.10.1.js?cb=20260915-2_14"></script>
+<script src="examples.js?cb=20260915-2_14"></script>
+<script src="ear-trainer.js?cb=20260915-2_14"></script>
+</body>
+</html>

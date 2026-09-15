@@ -1,0 +1,401 @@
+:root{
+  color-scheme:light;
+  --fs-base:clamp(15px,1.05vw + 12px,17px);
+  --page-pad:28px;
+  --gap:14px;
+  --bd:1px solid rgba(127,127,127,.35);
+  --builder-ink:#17241c;
+  --builder-green:#176b43;
+  --builder-green-dark:#0d4c2f;
+  --builder-line:#c9d5cc;
+  --builder-accent:#e2ad3b;
+  --soft-green:#e4efe8;
+  --blue:#174a8b;
+  --red:#8f2f2f;
+  --orange:#9a5f10;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#fff;color:#000}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:var(--fs-base);line-height:1.35}
+button,select,input{font:inherit}
+button{
+  appearance:none;border:1px solid var(--builder-green-dark);background:var(--builder-green);color:#fff;
+  border-radius:6px;padding:10px 14px;line-height:1.15;font-weight:650;cursor:pointer;
+  transition:background .12s ease,box-shadow .12s ease,transform .08s ease
+}
+button:hover{background:var(--builder-green-dark);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+button:active{transform:translateY(1px)}
+button:disabled{opacity:.42;cursor:default;transform:none;box-shadow:none}
+button.secondary{background:var(--soft-green);border-color:#a9c2b1;color:var(--builder-green-dark)}
+button.secondary:hover{background:#d7e8dc}
+.app{display:flex;flex-direction:column;gap:var(--gap)}
+.heroCard{
+  position:relative;margin:0;border-radius:0 0 14px 14px;padding:17px 28px 18px;
+  background:linear-gradient(135deg,var(--builder-green-dark),var(--builder-green));
+  border-bottom:4px solid var(--builder-accent);box-shadow:0 2px 8px rgba(0,0,0,.16);color:#fff
+}
+.tipJarButton{
+  position:absolute;left:28px;top:14px;z-index:1;display:inline-block;padding:7px 11px;
+  border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;
+  font-size:.84rem;font-weight:750;line-height:1.15;box-shadow:0 1px 3px rgba(0,0,0,.18)
+}
+.tipJarButton:hover{background:#a7ffe2;border-color:#e2fff6}
+.toolVersion{position:absolute;right:28px;top:18px;color:rgba(255,255,255,.9);font-size:.82rem;font-weight:600;letter-spacing:.02em}
+.heroTop{text-align:center}.heroTitle{margin:0;color:#fff;font-size:clamp(1.7rem,3.5vw,2.15rem);line-height:1.08}
+.heroText{max-width:850px;margin:9px auto 0;color:#dcebe2;line-height:1.45}
+.main{display:grid;grid-template-columns:minmax(255px,330px) minmax(0,1fr);gap:var(--gap);padding:0 var(--page-pad) 24px;min-width:0}
+.left,.right{min-width:0}.left{display:flex;flex-direction:column;gap:12px}.right{display:flex;flex-direction:column;gap:var(--gap)}
+.card{border:var(--bd);border-radius:12px;padding:16px;background:#fff;min-width:0}
+.setupCard{position:sticky;top:12px}
+h2,h3{margin:0;color:var(--builder-ink)}
+.muted{opacity:.72}.small{font-size:.9rem}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--builder-green);margin-bottom:3px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:rgba(127,127,127,.12);padding:1px 4px;border-radius:4px}
+.modeButtons{display:grid;gap:8px;margin:14px 0}.modeButton{width:100%}.modeButton.active{box-shadow:inset 4px 0 0 var(--builder-accent)}
+.setupBlock{display:grid;gap:6px;margin-top:0}.setupBlock select{
+  -webkit-appearance:none;
+  appearance:none;
+  box-sizing:border-box;
+  width:100%;
+  min-height:44px;
+  margin:0;
+  padding:10px 42px 10px 12px;
+  border:1px solid #b8c7bd;
+  border-radius:7px;
+  background-color:#fff;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  background-size:14px 9px;
+  color:#17241c;
+  font-family:inherit;
+  font-size:1rem;
+  font-weight:600;
+  line-height:1.25;
+  cursor:pointer;
+  outline:none;
+}
+.setupBlock select:hover{border-color:#8eaa98}
+.setupBlock select:focus{border-color:var(--builder-green);box-shadow:0 0 0 3px rgba(23,107,67,.14)}
+.setupBlock select:disabled{cursor:not-allowed;opacity:.6;background-color:#f4f6f5}
+.setupBlock select::-ms-expand{display:none}
+.startButton{width:100%;margin-top:16px;padding:12px 14px}.divider{height:1px;background:#d9dfdb;margin:18px 0}
+.libraryStatus{margin:9px 0 12px;padding:9px 10px;background:#f4f8f5;border:1px solid #d8e3db;border-radius:7px;font-size:.9rem}
+.collectionHint{margin:10px 0 0}
+.questionTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.progressHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.scoreBox{background:#eef5f0;border:1px solid #c7d8cd;color:#234732;border-radius:999px;padding:6px 10px;font-weight:800}
+.listenPanel{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;margin-top:10px;padding:9px 12px;border:1px solid #c9d5cc;border-radius:10px;background:#f7faf8}
+.listenIcon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--soft-green);color:var(--builder-green-dark);font-size:1.35rem;font-weight:800}
+.listenCopy{display:grid;gap:3px}.listenCopy span{font-size:.9rem;color:#4d5c52}.listenActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.answerChoiceLayout{display:block;margin-top:10px}.answerChoiceLayout.withRhythm{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(0,1.8fr);gap:12px;align-items:start}.answerChoiceLayout.rhythmOnly{display:block}.answerChoiceLayout>.answerFieldset,.answerChoiceLayout>.answerGrid{margin-top:0}.answerGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.answerFieldset{min-width:0;border:1px solid #d2dcd5;border-radius:10px;padding:13px;margin:18px 0 0}.answerGrid .answerFieldset{margin:0}
+.answerFieldset legend{padding:0 6px;font-weight:750;color:var(--builder-ink)}
+.choiceGrid{display:grid;gap:8px;margin-top:6px}.rhythmChoices{grid-template-columns:repeat(2,minmax(0,1fr))}.tonicChoices{grid-template-columns:repeat(4,minmax(0,1fr))}.modeChoices{grid-template-columns:repeat(2,minmax(0,1fr))}.combinedChoices{grid-template-columns:repeat(3,minmax(0,1fr))}
+.choiceLabel{position:relative;display:flex;align-items:center;justify-content:center;min-height:46px;padding:9px;border:1px solid #cfd9d2;border-radius:8px;background:#fff;cursor:pointer;font-weight:650;text-align:center}
+.choiceLabel:hover{background:#f1f7f3}.choiceLabel:has(input:checked){background:#e4efe8;border-color:#7eaa8d;box-shadow:inset 0 0 0 1px #7eaa8d}.choiceLabel input{position:absolute;opacity:0;pointer-events:none}
+.answerForm.answered .choiceLabel:has(input:checked){background:#fff;border-color:#cfd9d2;box-shadow:none}
+.choiceLabel.correct{background:#e3f3e7 !important;border:2px solid #3f8a57 !important;box-shadow:inset 0 0 0 1px rgba(63,138,87,.12)}
+.choiceLabel.incorrect{background:#fde9e9 !important;border:2px solid #bd5a5a !important;box-shadow:inset 0 0 0 1px rgba(189,90,90,.10)}
+.answerForm.answered .choiceLabel.correct::after,.answerForm.answered .choiceLabel.incorrect::after{position:absolute;top:4px;right:6px;padding:1px 6px;border-radius:999px;font-size:.62rem;font-weight:850;line-height:1.35;letter-spacing:.02em}
+.answerForm.answered .choiceLabel.correct::after{content:"Correct";color:#245d36;background:#d2ead9}
+.answerForm.answered .choiceLabel.incorrect::after{content:"Your answer";color:#8d3535;background:#f7d1d1}
+.answerActions{display:flex;justify-content:flex-end;margin-top:14px}.feedback{margin-top:10px;padding:9px 12px;border-radius:9px;line-height:1.4}.feedback.correct{background:#eaf5ed;border:1px solid #b7d2bf}.feedback.incorrect{background:#fff3e5;border:1px solid #e0c39d}.feedback .tuneReveal{display:block;margin-top:5px;color:#3d4b42}
+.differencePanel{margin-top:10px;padding:10px 12px;border-left:4px solid var(--builder-accent);background:#f2f8fd;border-radius:8px}.differencePanel h3{margin-bottom:5px}.differencePanel p{margin:0 0 11px}.differenceButtons{display:flex;gap:8px;flex-wrap:wrap}
+.nextRow{display:flex;justify-content:flex-end;margin-top:10px;padding-top:9px;border-top:1px solid #d9dfdb}.progressCard{padding:10px 14px}.progressTrack{height:10px;background:#edf1ee;border-radius:999px;overflow:hidden;margin-top:11px}.progressBar{height:100%;width:0;background:var(--builder-green);transition:width .2s ease}.instructionsCard p{margin:8px 0 0;max-width:100ch}
+.hiddenRender,.hiddenAudio{position:fixed!important;left:-10000px!important;top:0!important;width:800px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
+.srOnly{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+/* v2.07: intermediate answer layout for narrower desktop windows.
+   Rhythm gets a full row; key and mode remain side-by-side.
+   The existing 1000px breakpoint then stacks all answer groups. */
+@media (min-width:1001px) and (max-width:1250px){
+  .answerChoiceLayout.withRhythm{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:1000px){.main{grid-template-columns:1fr;padding:0 16px 20px}.setupCard{position:relative;top:auto}.answerChoiceLayout.withRhythm{grid-template-columns:1fr}.answerGrid{grid-template-columns:1fr}.combinedChoices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+@media(max-width:760px){
+  .heroTop{padding-top:40px}
+  .heroTitle{font-size:1.3rem;line-height:1.15}
+}
+@media(max-width:620px){.heroCard{padding:14px 14px 15px}.tipJarButton{left:10px;top:9px;padding:6px 9px;font-size:.78rem}.toolVersion{right:10px;top:13px;font-size:.76rem}.heroTop{padding-top:38px}.heroTitle{font-size:1.3rem;line-height:1.15}.heroText{font-size:.9rem}.main{padding:0 10px 16px}.listenPanel{grid-template-columns:auto minmax(0,1fr)}.listenActions{grid-column:1 / -1;justify-content:stretch}.listenActions button{flex:1}.rhythmChoices{grid-template-columns:repeat(2,minmax(0,1fr))}.tonicChoices{grid-template-columns:repeat(3,minmax(0,1fr))}.modeChoices,.combinedChoices{grid-template-columns:1fr}.differenceButtons button{flex:1 1 145px}.answerActions button,.nextRow button{width:100%}}
+
+.audioLabel{font-weight:750;color:var(--builder-ink);margin-bottom:4px}.audio{min-width:150px;min-height:42px}.audio .abcjs-inline-audio{max-width:100%}.differencePlayers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}.differencePlayer{border:1px solid #cfd9d2;border-radius:8px;padding:10px}.differencePlayer strong{display:block;margin-bottom:6px}@media(max-width:620px){.differencePlayers{grid-template-columns:1fr}}
+
+/* Session navigation */
+.navRow{justify-content:space-between}.navRow button{min-width:140px}
+@media(max-width:620px){.navRow{gap:8px}.navRow button{min-width:0;flex:1}}
+
+/* v1.8: the tune uses abcjs's native player while notation stays off-screen. */
+.trainerAudioControls{width:100%;margin:8px 0 0;}
+.trainerAudioControls .abcjs-inline-audio{width:100%;}
+.hiddenRender .abcjs-cursor{display:none!important;}
+
+/* Instructions */
+.instructionsButton{
+  width:100%;
+  margin-top:0;
+  padding:11px 14px;
+}
+.keyModeInstructionsScroll{
+  overflow-y:auto;
+  padding:4px 8px 4px 2px;
+  color:#17241c;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.45;
+  overscroll-behavior:contain;
+}
+.keyModeInstructionsScroll h2{
+  margin:0 0 12px;
+  color:#0d4c2f;
+  font-size:1.35rem;
+}
+.keyModeInstructionsScroll h3{
+  margin:18px 0 7px;
+  color:#17241c;
+  font-size:1rem;
+}
+.keyModeInstructionsScroll p{
+  margin:0 0 10px;
+}
+.keyModeInstructionsScroll ul{
+  margin:6px 0 12px 22px;
+  padding:0;
+}
+.keyModeInstructionsScroll li{
+  margin:5px 0;
+}
+@media(max-width:620px){
+  .instructionsButton{margin-top:0}
+  .keyModeInstructionsScroll{padding-right:4px}
+}
+
+
+
+/* v1.38: correct-answer scale playback and end-of-session review */
+.differencePanel.correctScaleOnly .differencePlayer:first-child{display:none}
+.differencePanel.correctScaleOnly .differencePlayers{grid-template-columns:minmax(0,1fr)}
+.reviewItem{padding:9px 11px;border:1px solid #d2dcd5;border-radius:8px;background:#f7faf8;line-height:1.4}
+
+.keyModeFinalReviewScroll{
+  overflow-y:auto;
+  padding:4px 8px 4px 2px;
+  color:#17241c;
+  line-height:1.45;
+  overscroll-behavior:contain;
+}
+.keyModeFinalReviewScroll h2{
+  margin:0 0 10px;
+  color:#0d4c2f;
+  font-size:1.35rem;
+}
+.keyModeFinalReviewScroll p{margin:0 0 10px}
+
+/* v1.42: consistent left-column spacing; Instructions is first in the column. */
+
+
+/* v1.45: keep the centered hero title clear of Tip Jars/version at intermediate widths. */
+@media (min-width:621px) and (max-width:1250px){
+  .heroTop{padding-left:170px;padding-right:110px}
+}
+
+
+/* v1.48: compact wide/short-screen layout for laptop displays.
+   This only applies when the viewport is both wide and relatively short. */
+@media (min-width:1200px) and (max-height:900px){
+  :root{--gap:9px;--page-pad:22px}
+  body{font-size:15px}
+
+  .heroCard{padding:10px 24px 11px;border-bottom-width:3px}
+  .tipJarButton{left:24px;top:9px;padding:6px 10px;font-size:.8rem}
+  .toolVersion{right:24px;top:12px;font-size:.78rem}
+  .heroTitle{font-size:1.75rem;line-height:1.03}
+  .heroText{margin-top:4px;line-height:1.25}
+
+  .main{gap:9px;padding:0 var(--page-pad) 12px}
+  .left{gap:8px}
+  .right{gap:9px}
+  .card{padding:11px;border-radius:10px}
+  .progressCard{padding:9px 12px}
+
+  .instructionsButton{padding:8px 12px}
+  .setupBlock{gap:4px;margin-top:0}
+  .startButton{margin-top:9px;padding:9px 12px}
+
+  .eyebrow{margin-bottom:1px}
+  .scoreBox{padding:4px 9px}
+  .listenPanel{gap:8px;margin-top:6px;padding:6px 9px}
+  .listenIcon{width:34px;height:34px;font-size:1.15rem}
+  .listenCopy{gap:1px}
+  .trainerAudioControls{margin-top:4px}
+
+  .answerGrid{gap:9px;margin-top:6px}
+  .answerFieldset{padding:9px;margin-top:10px;border-radius:8px}
+  .choiceGrid{gap:6px;margin-top:4px}
+  .choiceLabel{min-height:38px;padding:6px 8px;border-radius:7px}
+
+  .answerActions{margin-top:8px}
+  .answerActions button{padding:8px 12px}
+  .feedback{margin-top:6px;padding:7px 10px}
+  .differencePanel{margin-top:6px;padding:7px 10px}
+  .differencePanel h3{margin-bottom:3px}
+  .differencePanel p{margin-bottom:7px}
+  .differencePlayers{gap:8px;margin-top:6px}
+  .differencePlayer{padding:7px}
+  .differencePlayer strong{margin-bottom:4px}
+  .differencePlayer button{padding:8px 10px}
+
+  .nextRow{margin-top:6px;padding-top:6px}
+  .navRow button{padding:8px 12px}
+  .progressTrack{margin-top:7px}
+}
+
+
+
+/* v1.57: before playback, gray only the answer-button fill. */
+#answerForm .choiceLabel.preListenDisabled,
+#answerForm .choiceLabel.preListenDisabled:hover,
+#answerForm .choiceLabel.preListenDisabled:active{
+  opacity:.48 !important;
+  cursor:not-allowed !important;
+  background:#d8dcda !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+/* v1.49: final review is user-invoked after the session is complete. */
+/* v1.59: contextual navigation visibility. */
+.navRow button[hidden]{display:none!important}
+#finalReviewInlineBtn:not([hidden]){margin-left:auto}
+
+
+/* v1.60: keep Next Tune in its normal right-side position when Previous Tune is hidden. */
+#prevBtn[hidden] + #nextBtn:not([hidden]){
+  margin-left:auto;
+}
+
+
+/* v1.61: Final Review matches the standard Next Tune navigation button. */
+#finalReviewInlineBtn{
+  min-width:140px;
+}
+#finalReviewInlineBtn:not([hidden]){
+  margin-left:auto;
+}
+@media(max-width:620px){
+  #finalReviewInlineBtn{
+    min-width:0;
+    flex:1;
+  }
+}
+
+/* v1.64: larger Close button in the Instructions and Final Review DayPilot dialogs. */
+/* DayPilot modal action buttons: compact, consistent, and never wrap. */
+.modal_default_main .modal_default_ok,
+.modal_default_main .modal_default_cancel,
+.modal_default_main button.modal_default_ok,
+.modal_default_main button.modal_default_cancel,
+.modal_default_main .modal_default_buttons button{
+  box-sizing:border-box;
+  min-width:112px;
+  width:auto !important;
+  min-height:44px;
+  height:auto !important;
+  margin:0 6px 0 0 !important;
+  padding:12px 20px !important;
+  border-radius:6px !important;
+  font-size:1rem !important;
+  font-weight:650 !important;
+  line-height:1.15 !important;
+  white-space:nowrap !important;
+}
+/* v1.70: root-note comparison controls sit immediately left of scale controls. */
+.differencePlayer .differenceButtons{display:flex;gap:8px;flex-wrap:wrap}
+.differencePlayer .differenceButtons button{flex:0 1 auto}
+@media(max-width:620px){
+  .differencePlayer .differenceButtons button{flex:1 1 180px}
+}
+
+.correctScaleStatus{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  flex-wrap:wrap;
+  width:100%;
+}
+.correctScaleStatus .correctKeyMode,
+.correctScaleStatus .commonChords{
+  display:inline !important;
+  margin:0 !important;
+}
+.correctScaleStatus .commonChords{font-weight:400}
+.correctScaleStatus .commonChords strong{display:inline !important}
+
+.setupBlock select option.answerStyleSeparator{
+  color:#8da096;
+  background:#fff;
+  font-weight:400;
+}
+
+/* Answer choices behave like buttons, not selectable text. */
+.choiceLabel,
+.choiceLabel *{
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+.choiceLabel{
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+/* Slightly roomier DayPilot confirmation dialogs. */
+.modal_default_main .modal_default_content{
+  padding:6px 8px !important;
+}
+.modal_default_main .modal_default_buttons{
+  padding-top:8px !important;
+  padding-bottom:6px !important;
+}
+
+/* Slightly darker outlines for enabled rhythm, key, mode, and combined answer choices. */
+.choiceLabel:not(.preListenDisabled):not(.disabled){
+  border-color:#9db4a5;
+}
+.choiceLabel:hover:not(.preListenDisabled):not(.disabled){
+  border-color:#789a84;
+}
+
+/* Match the Correct key/mode label to the Your answer label. */
+.correctScaleStatus .correctKeyMode{
+  display:inline !important;
+  margin:0 !important;
+  font:inherit !important;
+  font-weight:700 !important;
+  line-height:inherit !important;
+}
+
+/* Wrong selected-answer comparison box uses the same peach family as Not quite. */
+.differencePlayer:first-child{
+  background:#fff3e5;
+  border-color:#e0c39d;
+}
+.correctScaleOnly .differencePlayer:first-child{
+  background:transparent;
+  border-color:#cfd9d2;
+}
+
+.correctScaleStatus strong{
+  display:inline !important;
+  margin:0 !important;
+}
+
+.keyModeFinalReviewScroll .missedReviewItem{
+  background:#fff3e5;
+  border-color:#e0c39d;
+}
+
+/* v2.06: center the Instructions dialog Close button. */
+.modal_default_buttons{
+  text-align:center !important;
+}
