@@ -402,3 +402,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
 
 /* Instrument selector spacing below Answer style. */
 .instrumentBlock{margin-top:12px}
+
+/* v2.20: missed-tune practice action in Final Review */
+.practiceMissedTunesRow{display:flex;justify-content:center;margin-top:16px}
+.practiceMissedTunesRow button{min-width:190px}

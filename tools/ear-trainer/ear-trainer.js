@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.19";
+var VERSION="2.21";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -687,6 +687,24 @@ async function playScale(which){
   }
 }
 
+
+function startMissedTunePractice(ids){
+  var practiceIds=(ids||[]).filter(function(id){return !!tuneById[id];});
+  if(!practiceIds.length)return;
+  pauseAllControllers();
+  state={
+    version:4,
+    sessionIds:practiceIds.slice(),
+    currentIndex:0,
+    answers:{},
+    heard:{},
+    answerStyle:$("answerStyle").value
+  };
+  savePreferredAnswerStyle(state.answerStyle);
+  log("Started missed-tune practice",{ids:state.sessionIds});
+  renderQuestion();
+}
+
 function showFinalReview(){
   var complete=state.sessionIds.length>0&&state.sessionIds.every(function(id){return !!state.answers[id];});
   if(!complete)return;
@@ -727,11 +745,20 @@ function showFinalReview(){
         if(assessed.tonic)lines.push('<br>Your key/mode answer: '+escapeHtml(answerName(a.choice))+'<br>Correct key/mode: <strong>'+escapeHtml(answerName({tonic:x.tune.tonic,mode:x.tune.mode}))+'</strong>');
         lines.push('</div>');return lines.join("");
       }).join(""):'<p style="margin-top:12px">Perfect session — no missed tunes to review.</p>',
+      missed.length?'<div class="practiceMissedTunesRow"><button id="practiceMissedTunesBtn" type="button">Practice Missed Tunes</button></div>':'',
     '</div>'
   ].join("");
   var pageX=window.scrollX||window.pageXOffset||0,pageY=window.scrollY||window.pageYOffset||0;
   function restorePageScroll(){window.scrollTo(pageX,pageY);}
   var modalPromise=DayPilot.Modal.alert(body,{okText:"Close",width:Math.min(720,Math.max(300,window.innerWidth-32)),top:50});
+  var practiceBtn=document.getElementById("practiceMissedTunesBtn");
+  if(practiceBtn){
+    practiceBtn.addEventListener("click",function(){
+      var ids=missed.map(function(x){return x.tune.id;});
+      if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.close==="function")DayPilot.Modal.close("practice");
+      startMissedTunePractice(ids);
+    });
+  }
   restorePageScroll();requestAnimationFrame(function(){restorePageScroll();requestAnimationFrame(restorePageScroll);});
   if(modalPromise&&typeof modalPromise.then==="function")modalPromise.then(restorePageScroll);
 }
@@ -838,6 +865,7 @@ function showInstructions(){
 
       '<h3>End-of-session review</h3>',
       '<p>After you answer tune 10, the <strong>Show Final Review</strong> button appears in the navigation area where <strong>Next Tune</strong> appears on earlier tunes. Click it when you are ready to see your final score and a review of each missed tune.</p>',
+      '<p>If you missed any tunes, choose <strong>Practice Missed Tunes</strong> at the bottom of the Final Review to start a new practice session containing only those tunes. The practice session uses your current Answer Style and Instrument, and your answers and progress start fresh.</p>',
 
       '<h3>Not hearing sound on an iPhone or iPad?</h3>',
       '<p>On iPhone and iPad, <strong>Mute must be turned off in Control Center for the audio to be heard</strong>. This is an iOS audio behavior and is not specific to the ear trainer.</p>',
