@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.21";
+var VERSION="2.22";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -867,6 +867,10 @@ function showInstructions(){
       '<p>After you answer tune 10, the <strong>Show Final Review</strong> button appears in the navigation area where <strong>Next Tune</strong> appears on earlier tunes. Click it when you are ready to see your final score and a review of each missed tune.</p>',
       '<p>If you missed any tunes, choose <strong>Practice Missed Tunes</strong> at the bottom of the Final Review to start a new practice session containing only those tunes. The practice session uses your current Answer Style and Instrument, and your answers and progress start fresh.</p>',
 
+      '<h3>Why no Minor tunes?</h3>',
+      '<p>It is often fairly ambiguous whether a traditional Irish tune is Dorian or Minor (Aeolian), and in my session playing experience true Minor tunes are far less common than Dorian mode tunes. Including Minor as a separate choice would therefore be more confusing than useful for this ear trainer.</p>',
+      '<p>A collection of easily identifiable true Minor (Aeolian) tunes could be added to the trainer in the future as an advanced option.</p>',
+
       '<h3>Not hearing sound on an iPhone or iPad?</h3>',
       '<p>On iPhone and iPad, <strong>Mute must be turned off in Control Center for the audio to be heard</strong>. This is an iOS audio behavior and is not specific to the ear trainer.</p>',
 
@@ -874,6 +878,7 @@ function showInstructions(){
       '<p>This ear training tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>',
       '<p>If you find it useful, please consider making a contribution via my online tip jars:</p>',
       '<p style="text-align:center"><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin\'s Tip Jars</a></p>',
+
     '</div>'
   ].join("");
 
