@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3342_091226_1800";
+var gVersionNumber = "3343_091626_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -54366,7 +54366,7 @@ function EditMyToolsDialog() {
     selectorSections += buildSection(group.title, groupCommands, false);
   });
 
-  var body = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:18px;">Edit My Tools</p>' +
+  var body = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:18px;">Edit My Tools&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#my_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>' +
              '<p style="font-size:12pt;font-family:helvetica;line-height:18pt;margin-bottom:4px;">Select the commands you want displayed on the My Tools tab.</p>' +
              '<div style="max-height:' + Math.max(280, window.innerHeight - 400) + 'px;overflow-y:auto;padding:0 8px 8px 2px;">' +
              selectorSections +
@@ -54556,7 +54556,7 @@ function ChangeMyToolsOrderMobileDialog(commandMap, order) {
   listHtml += '</div>';
 
   var form = [{
-    html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change My Tools Order</p>'
+    html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change My Tools Order&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#my_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
     html: '<p style="margin-top:18px;font-size:12pt;">Select a tool, then use Move Up or Move Down to change its position on the My Tools tab:</p>'
   }, {
@@ -54618,7 +54618,7 @@ function ChangeMyToolsOrderDesktopDialog(commandMap, order) {
   listHtml += '</div>';
 
   var form = [{
-    html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change My Tools Order</p>'
+    html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Change My Tools Order&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#my_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
     html: '<p style="margin-top:18px;font-size:12pt;">Drag and drop the tool names to change their order on the My Tools tab:</p>'
   }, {
