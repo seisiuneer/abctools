@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.22";
+var VERSION="2.23";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -836,6 +836,7 @@ function showInstructions(){
       '<h3>Choose Your Answer Style</h3>',
       '<p>The <strong>Answer Style</strong> control offers five exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, and <strong>Key/Mode</strong>.</p>',
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
+      '<p>Changing between an Answer Style that includes rhythm and one that does not, or changing to or from <strong>Rhythm Only</strong>, requires starting a new 10-tune session. You will be asked for confirmation before your current answers and progress are cleared.</p>',
 
       '<h3>Choose Your Instrument</h3>',
       '<p>Before starting, use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
