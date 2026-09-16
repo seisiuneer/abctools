@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.18";
+var VERSION="2.19";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -803,7 +803,7 @@ function showInstructions(){
   var availableHeight=Math.max(0,Math.min(620,window.innerHeight-100));
   var html=[
     '<div class="keyModeInstructionsScroll" style="max-height:'+availableHeight+'px">',
-      '<h2 style="text-align:center;">Traditional Irish Tune Rhythm, Key, and Mode Trainer</h2>',
+      '<h2 style="text-align:center;">Traditional Irish Tune Rhythm, Key, and Mode Ear Trainer</h2>',
       '<p>This trainer helps you practice recognizing the rhythm style, key, and mode of traditional Irish tunes by ear.</p>',
 
       '<h3>Choose Your Answer Style</h3>',
