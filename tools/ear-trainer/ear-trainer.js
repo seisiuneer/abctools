@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.23";
+var VERSION="2.28";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -139,17 +139,12 @@ function currentTune(){return state&&state.sessionIds.length?tuneById[state.sess
 function elapsed(start){return Math.round(performance.now()-start)+" ms";}
 
 function log(message,data){
-  var stamp=new Date().toLocaleTimeString();
-  var line="["+stamp+"] "+message;
-  if(data!==undefined){
-    try{line+=" "+(typeof data==="string"?data:JSON.stringify(data));}catch(e){line+=" "+String(data);}
-  }
-  try{console.log("[KeyModeTrainer]",message,data===undefined?"":data);}catch(e){}
+  // Console logging intentionally disabled for release builds.
 }
 function logError(label,error){
-  var msg=error&&error.stack?error.stack:(error&&error.message?error.message:String(error));
-  log(label+" ERROR: "+msg);
+  // Console logging intentionally disabled for release builds.
 }
+
 function defaultState(){return {version:4,sessionIds:chooseSessionTunes().map(function(t){return t.id;}),currentIndex:0,answers:{},heard:{},answerStyle:loadPreferredAnswerStyle()};}
 function chooseSessionTunes(){
   // Pick 10 unique tunes uniformly at random from the entire collection.
@@ -731,7 +726,7 @@ function showFinalReview(){
     summary.push('<strong>Most missed key:</strong> '+mostMissedText(tonicMisses,function(x){return x;}));
     summary.push('<strong>Most missed mode:</strong> '+mostMissedText(modeMisses,function(x){return MODE_INFO[x]?MODE_INFO[x].shortLabel:x;}));
   }
-  if(!window.DayPilot||!DayPilot.Modal||typeof DayPilot.Modal.alert!=="function"){console.error("Final review unavailable because DayPilot.Modal has not been loaded.");return;}
+  if(!window.DayPilot||!DayPilot.Modal||typeof DayPilot.Modal.alert!=="function"){return;}
   var availableHeight=Math.max(0,Math.min(660,window.innerHeight-100));
   var body=[
     '<div class="keyModeFinalReviewScroll" style="max-height:'+availableHeight+'px">',
@@ -815,7 +810,7 @@ function go(delta){
 
 async function dayPilotConfirm(message,okText){
   if(!window.DayPilot||!DayPilot.Modal||typeof DayPilot.Modal.confirm!=="function"){
-    console.error("DayPilot.Modal.confirm is unavailable."); return false;
+    return false;
   }
   var result=await DayPilot.Modal.confirm(message,{okText:okText||"OK",cancelText:"Cancel",width:Math.min(520,Math.max(300,window.innerWidth-32)),top:50});
   return !!(result&&result.result);
@@ -823,7 +818,7 @@ async function dayPilotConfirm(message,okText){
 
 function showInstructions(){
   if(!window.DayPilot||!DayPilot.Modal||typeof DayPilot.Modal.alert!=="function"){
-    console.error("The instructions dialog is unavailable because DayPilot.Modal has not been loaded.");
+    
     return;
   }
 
@@ -831,6 +826,7 @@ function showInstructions(){
   var html=[
     '<div class="keyModeInstructionsScroll" style="max-height:'+availableHeight+'px">',
       '<h2 style="text-align:center;">Traditional Irish Tune Rhythm, Key, and Mode Ear Trainer</h2>',
+      '<div style="text-align:center;margin:18px 0;"><button id="runGuidedTourFromInstructions" type="button">Run Guided Tour</button></div>',
       '<p>This trainer helps you practice recognizing the rhythm style, key, and mode of traditional Irish tunes by ear.</p>',
 
       '<h3>Choose Your Answer Style</h3>',
@@ -839,7 +835,7 @@ function showInstructions(){
       '<p>Changing between an Answer Style that includes rhythm and one that does not, or changing to or from <strong>Rhythm Only</strong>, requires starting a new 10-tune session. You will be asked for confirmation before your current answers and progress are cleared.</p>',
 
       '<h3>Choose Your Instrument</h3>',
-      '<p>Before starting, use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
+      '<p>Use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
       '<p>Your instrument choice is saved in your browser and restored the next time you use the tool.</p>',
 
       '<h3>Starting a session</h3>',
@@ -902,6 +898,9 @@ function initialize(){
   $("newSetBtn").disabled=false;
   loadState();
   renderQuestion();
+  if(typeof window.StartEarTrainerFirstRunTourIfNeeded==="function"){
+    window.StartEarTrainerFirstRunTourIfNeeded();
+  }
 }
 
 $("newSetBtn").addEventListener("click",async function(){
@@ -909,6 +908,15 @@ $("newSetBtn").addEventListener("click",async function(){
   if(ok)startNewSet();
 });
 $("instructionsBtn").addEventListener("click",showInstructions);
+document.addEventListener("click",function(event){
+  var button=event.target&&event.target.closest?event.target.closest("#runGuidedTourFromInstructions"):null;
+  if(!button)return;
+  event.preventDefault();
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.close==="function")DayPilot.Modal.close("guided-tour");
+  setTimeout(function(){
+    if(typeof window.StartEarTrainerGuidedTour==="function")window.StartEarTrainerGuidedTour();
+  },120);
+});
 $("finalReviewInlineBtn").addEventListener("click",showFinalReview);
 $("answerForm").addEventListener("submit",submitAnswer);
 $("prevBtn").addEventListener("click",function(){go(-1);});
