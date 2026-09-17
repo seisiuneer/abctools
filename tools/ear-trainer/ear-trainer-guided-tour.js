@@ -74,7 +74,7 @@ function ensureVisible(target){
   return Promise.resolve();
 }
 function steps(){return[
- {title:"Welcome to the Ear Trainer Guided Tour",body:"<p>This quick tour shows you how to choose an exercise and instrument, listen to a tune, answer the questions, and review your progress.</p>"},
+ {title:"Welcome to the Guided Tour",body:"<p>This quick tour shows you how to choose an exercise and instrument, listen to a tune, answer the questions, and review your progress.</p>"},
  {title:"1. Choose an Answer Style",selector:"#answerStyle",body:"<p>Choose what you want to identify by ear: rhythm, key, mode, or a combination of them. Your choice is saved in this browser.</p>"},
  {title:"2. Choose an Instrument",selector:"#instrument",body:"<p>Choose the instrument used for tune, root-note, and scale playback. Your choice is saved in this browser.</p>"},
  {title:"3. Listen to the Tune",selector:"#tuneAudioControls",body:"<p>Use this playback bar to listen to the current tune. Tunes loop automatically. The answer choices become available after you start playback.</p>"},
