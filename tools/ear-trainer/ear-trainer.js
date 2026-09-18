@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.34";
+var VERSION="2.36";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
@@ -412,10 +412,14 @@ function buildAnswerChoices(){
   $("separateAnswers").style.gridTemplateColumns=(usesKey&&usesMode)?"1fr 1fr":"1fr";
   $("answerChoiceLayout").classList.toggle("withRhythm",hasRhythm&&usesTM);
   $("answerChoiceLayout").classList.toggle("rhythmOnly",style==="rhythmOnly");
-  $("rhythmLegend").textContent=usesTM?"1. What rhythm do you hear?":"What rhythm do you hear?";
+  $("rhythmLegend").textContent=usesTM?"1. Which rhythm do you hear?":"Which rhythm do you hear?";
   var offset=hasRhythm?1:0,legends=$("separateAnswers").querySelectorAll("legend"),q=1+offset;
-  if(legends.length>=2){if(usesKey)legends[0].textContent=(q++)+". What key do you hear?";if(usesMode)legends[1].textContent=(q++)+". What mode do you hear?";}
-  $("combinedLegend").textContent=hasRhythm?"2. What key and mode do you hear?":"What key and mode do you hear?";
+  var visibleQuestionCount=(hasRhythm?1:0)+(usesKey?1:0)+(usesMode?1:0);
+  if(legends.length>=2){
+    if(usesKey)legends[0].textContent=(visibleQuestionCount>1?(q++)+". ":"")+"Which key do you hear?";
+    if(usesMode)legends[1].textContent=(visibleQuestionCount>1?(q++)+". ":"")+"Which mode do you hear?";
+  }
+  $("combinedLegend").textContent=hasRhythm?"2. Which key and mode do you hear?":"Which key and mode do you hear?";
   $("rhythmChoices").innerHTML=""; $("tonicChoices").innerHTML=""; $("modeChoices").innerHTML=""; $("combinedChoices").innerHTML="";
   if(hasRhythm)uniqueRhythms().forEach(function(r){makeRadio($("rhythmChoices"),"rhythm",r,r);});
   if(usesTM&&!combined){
@@ -734,7 +738,7 @@ function renderQuestion(){
   var tune=currentTune();if(!tune)return;
   $("questionEyebrow").textContent="Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
   var qParts=[];if(styleIncludesRhythm(state.answerStyle))qParts.push("rhythm");if(styleUsesKey(state.answerStyle))qParts.push("key");if(styleUsesMode(state.answerStyle))qParts.push("mode");
-  $("questionTitle").textContent="What "+(qParts.length===1?qParts[0]:qParts.slice(0,-1).join(", ")+" and "+qParts[qParts.length-1])+" do you hear?";
+  $("questionTitle").textContent="Which "+(qParts.length===1?qParts[0]:qParts.slice(0,-1).join(", ")+" and "+qParts[qParts.length-1])+" do you hear?";
   $("listenHeading").textContent="Click the play button below to listen to the tune";$("listenSubheading").textContent="";
   buildAnswerChoices();updateProgress();updateNavigationButtons();
   void prepareCurrentTune(false);
@@ -774,7 +778,7 @@ function showInstructions(){
       '<p>This trainer helps you practice recognizing the rhythm style, key, and mode of traditional Irish tunes by ear.</p>',
 
       '<h3>Choose Your Answer Style</h3>',
-      '<p>The <strong>Answer Style</strong> control offers nine exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm + Key</strong>, <strong>Rhythm + Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, <strong>Key/Mode</strong>, <strong>Key</strong>, and <strong>Mode</strong>.</p>',
+      '<p>The <strong>Answer Style</strong> control offers nine exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm + Key</strong>, <strong>Rhythm + Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, <strong>Key/Mode</strong>, <strong>Key Only</strong>, and <strong>Mode Only</strong>.</p>',
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
       '<p>You can change Answer Style freely before answering any tunes. After you have answered at least one tune, changing Answer Style asks for confirmation, clears your answers and progress, and restarts the current session from its first tune using the <strong>same tunes</strong>. It does not choose a new set of tunes.</p>',
 
