@@ -1,0 +1,525 @@
+:root {
+  color-scheme:light;
+  --fs-base:clamp(15px,1.05vw + 12px,17px);
+  --page-pad:28px;
+  --gap:14px;
+  --bd:1px solid rgba(127,127,127,.35);
+  --ink:#17241c;
+  --green:#176b43;
+  --green-dark:#0d4c2f;
+  --accent:#e2ad3b;
+  --soft:#e4efe8
+}
+
+* {
+  box-sizing:border-box
+}
+
+html,body {
+  margin:0;
+  min-height:100%;
+  background:#fff;
+  color:#000
+}
+
+body {
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  font-size:var(--fs-base);
+  line-height:1.35
+}
+
+button,select,input {
+  font:inherit
+}
+
+button {
+  appearance:none;
+  border:1px solid var(--green-dark);
+  background:var(--green);
+  color:#fff;
+  border-radius:6px;
+  padding:10px 14px;
+  font-weight:650;
+  cursor:pointer
+}
+
+button:hover {
+  background:var(--green-dark)
+}
+
+button:disabled {
+  opacity:.42;
+  cursor:default
+}
+
+button.secondary {
+  background:var(--soft);
+  border-color:#a9c2b1;
+  color:var(--green-dark)
+}
+
+button.secondary:hover {
+  background:#d7e8dc
+}
+
+.full {
+  width:100%
+}
+
+.spaced {
+  margin-top:8px
+}
+
+.app {
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap)
+}
+
+.heroCard {
+  position:relative;
+  padding:17px 28px 18px;
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  border-bottom:4px solid var(--accent);
+  color:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.16)
+}
+
+.tipJarButton {
+  position:absolute;
+  left:28px;
+  top:14px;
+  padding:7px 11px;
+  border:1px solid #c8fff1;
+  border-radius:6px;
+  background:#7fffd4;
+  color:#12382d;
+  text-decoration:none;
+  font-size:.84rem;
+  font-weight:750
+}
+
+.toolVersion {
+  position:absolute;
+  right:28px;
+  top:18px;
+  font-size:.82rem
+}
+
+.heroTop {
+  text-align:center
+}
+
+.heroTitle {
+  margin:0;
+  color:#fff;
+  font-size:clamp(1.7rem,3.5vw,2.15rem)
+}
+
+.heroText {
+  margin:9px auto 0;
+  color:#dcebe2
+}
+
+.main {
+  display:grid;
+  grid-template-columns:minmax(255px,330px) minmax(0,1fr);
+  gap:var(--gap);
+  padding:0 var(--page-pad) 24px
+}
+
+.left,.right {
+  min-width:0
+}
+
+.left {
+  display:flex;
+  flex-direction:column;
+  gap:12px
+}
+
+.card {
+  border:var(--bd);
+  border-radius:12px;
+  padding:16px;
+  background:#fff
+}
+
+.setupCard {
+  position:sticky;
+  top:12px
+}
+
+h2,h3 {
+  margin:0;
+  color:var(--ink)
+}
+
+.muted {
+  opacity:.72
+}
+
+.small {
+  font-size:.9rem
+}
+
+.eyebrow {
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--green);
+  margin-bottom:3px
+}
+
+.setupBlock {
+  display:grid;
+  gap:6px
+}
+
+.setupBlock select {
+  width:100%;
+  min-height:44px;
+  padding:10px 12px;
+  border:1px solid #b8c7bd;
+  border-radius:7px;
+  background:#fff;
+  color:var(--ink);
+  font-weight:600
+}
+
+.divider {
+  height:1px;
+  background:#d9dfdb;
+  margin:18px 0
+}
+
+.libraryStatus {
+  margin:8px 0 10px;
+  padding:9px 10px;
+  background:#f4f8f5;
+  border:1px solid #d8e3db;
+  border-radius:7px;
+  font-size:.9rem
+}
+
+.collectionHint {
+  margin:9px 0 0
+}
+
+.startButton {
+  margin-top:16px
+}
+
+.questionTop,.progressHeader {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap
+}
+
+.scoreBox {
+  background:#eef5f0;
+  border:1px solid #c7d8cd;
+  border-radius:999px;
+  padding:6px 10px;
+  font-weight:800
+}
+
+.listenPanel {
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:10px;
+  align-items:center;
+  margin-top:10px;
+  padding:9px 12px;
+  border:1px solid #c9d5cc;
+  border-radius:10px;
+  background:#f7faf8
+}
+
+.listenIcon {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--soft);
+  color:var(--green-dark);
+  font-size:1.35rem;
+  font-weight:800
+}
+
+.trainerAudioControls {
+  width:100%;
+  margin:8px 0 0
+}
+
+.trainerAudioControls .abcjs-inline-audio {
+  width:100%
+}
+
+.answerFieldset {
+  border:1px solid #d2dcd5;
+  border-radius:10px;
+  padding:13px;
+  margin:18px 0 0
+}
+
+.answerFieldset legend {
+  padding:0 6px;
+  font-weight:750;
+  color:var(--ink)
+}
+
+.choiceGrid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:6px
+}
+
+.choiceLabel {
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:9px;
+  border:1px solid #9db4a5;
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  font-weight:650;
+  text-align:center;
+  user-select:none
+}
+
+.choiceLabel:hover {
+  background:#f1f7f3
+}
+
+.choiceLabel:has(input:checked) {
+  background:#e4efe8;
+  border-color:#7eaa8d;
+  box-shadow:inset 0 0 0 1px #7eaa8d
+}
+
+.choiceLabel input {
+  position:absolute;
+  opacity:0;
+  pointer-events:none
+}
+
+.choiceLabel.preListenDisabled {
+  opacity:.48;
+  cursor:not-allowed;
+  background:#d8dcda
+}
+
+.answerForm.answered .choiceLabel.correct {
+  background:#e3f3e7;
+  border:2px solid #3f8a57
+}
+
+.answerForm.answered .choiceLabel.incorrect {
+  background:#fde9e9;
+  border:2px solid #bd5a5a
+}
+
+.answerActions {
+  display:flex;
+  justify-content:flex-end;
+  margin-top:14px
+}
+
+.feedback {
+  margin-top:10px;
+  padding:9px 12px;
+  border-radius:9px
+}
+
+.feedback.correct {
+  background:#eaf5ed;
+  border:1px solid #b7d2bf
+}
+
+.feedback.incorrect {
+  background:#fff3e5;
+  border:1px solid #e0c39d
+}
+
+.nextRow {
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid #d9dfdb
+}
+
+.navRow button {
+  min-width:140px
+}
+
+.navRow button[hidden] {
+  display:none!important
+}
+
+#prevBtn[hidden]+#nextBtn {
+  margin-left:auto
+}
+
+#finalReviewInlineBtn:not([hidden]) {
+  margin-left:auto
+}
+
+.progressCard {
+  padding:10px 14px
+}
+
+.progressTrack {
+  height:10px;
+  background:#edf1ee;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:11px
+}
+
+.progressBar {
+  height:100%;
+  width:0;
+  background:var(--green)
+}
+
+.hiddenRender {
+  position:fixed!important;
+  left:-10000px!important;
+  top:0!important;
+  width:800px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important
+}
+
+.status {
+  margin-top:6px
+}
+
+.tuneNameInstructionsScroll,.tuneNameFinalReviewScroll {
+  overflow-y:auto;
+  padding:4px 8px 4px 2px;
+  color:var(--ink);
+  line-height:1.45;
+  overscroll-behavior:contain
+}
+
+.tuneNameInstructionsScroll h2,.tuneNameFinalReviewScroll h2 {
+  color:var(--green-dark);
+  font-size:1.35rem
+}
+
+.tuneNameInstructionsScroll h3 {
+  margin:18px 0 7px
+}
+
+.reviewItem {
+  padding:9px 11px;
+  border:1px solid #e0c39d;
+  border-radius:8px;
+  background:#fff3e5;
+  line-height:1.4;
+  margin:8px 0
+}
+
+.practiceMissedTunesRow {
+  display:flex;
+  justify-content:center;
+  margin-top:16px
+}
+
+.modal_default_buttons {
+  text-align:center!important;
+  padding-top:8px!important
+}
+
+/* Keep DayPilot confirmation buttons compact and on one line. */
+.modal_default_buttons input,
+.modal_default_buttons button {
+  display:inline-block!important;
+  width:auto!important;
+  min-width:110px!important;
+  max-width:none!important;
+  margin:0 5px!important;
+  padding:9px 14px!important;
+  white-space:nowrap!important;
+  line-height:1.15!important;
+  font-size:1rem!important;
+  font-weight:650!important;
+  vertical-align:middle!important
+}
+
+@media(max-width:1000px) {
+  .main {
+    grid-template-columns:1fr;
+    padding:0 16px 20px
+  }
+
+  .setupCard {
+    position:relative;
+    top:auto
+  }
+
+}
+
+@media(max-width:620px) {
+  .heroCard {
+    padding:14px
+  }
+
+  .tipJarButton {
+    left:10px;
+    top:9px;
+    font-size:.78rem
+  }
+
+  .toolVersion {
+    right:10px;
+    top:13px
+  }
+
+  .heroTop {
+    padding-top:38px
+  }
+
+  .heroTitle {
+    font-size:1.3rem
+  }
+
+  .main {
+    padding:0 10px 16px
+  }
+
+  .choiceGrid {
+    grid-template-columns:1fr
+  }
+
+  .answerActions button,.nextRow button {
+    width:100%
+  }
+
+  .navRow {
+    gap:8px
+  }
+
+  .navRow button {
+    min-width:0;
+    flex:1
+  }
+
+}
+
+.choiceCountBlock {
+  margin-top:14px
+}

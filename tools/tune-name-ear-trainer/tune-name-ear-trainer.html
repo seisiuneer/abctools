@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="light" name="color-scheme"/>
+  <title>Traditional Irish Tune Name Ear Trainer</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Traditional Irish Tune Name Ear Trainer" />
+  <meta property="og:description" content="Train your ear to identify traditional Irish tunes by name." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/tune-name-ear-trainer/tune-name-ear-trainer.html" />
+  <meta property="og:site_name" content="Traditional Irish Tune Name Ear Trainer" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/tune-name-ear-trainer/tune-name-ear-trainer-1.jpg"/>
+  <meta name="description" content="Train your ear to identify traditional Irish tunes by name.">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+  <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+  <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260918-1_09" rel="stylesheet"/>
+  <link href="tune-name-ear-trainer.css?cb=20260918-1_09" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="app">
+   <header class="heroCard">
+    <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
+     Tip Jars
+    </a>
+    <div class="toolVersion">
+     v1.09
+    </div>
+    <div class="heroTop">
+     <h1 class="heroTitle">
+      Traditional Irish Tune Name Ear Trainer
+     </h1>
+     <p class="heroText">
+      Listen to a traditional Irish tune and identify its name.
+     </p>
+    </div>
+   </header>
+   <main class="main">
+    <aside class="left">
+     <button class="secondary full" id="instructionsBtn" type="button">
+      Instructions
+     </button>
+     <section class="card setupCard">
+      <div class="setupBlock">
+       <label for="instrument">
+        <strong>
+         Instrument
+        </strong>
+       </label>
+       <select id="instrument">
+        <option value="piano">
+         Piano
+        </option>
+        <option value="flute">
+         Flute
+        </option>
+        <option value="whistle">
+         Whistle
+        </option>
+        <option value="fiddle">
+         Fiddle
+        </option>
+        <option value="mandolin">
+         Mandolin
+        </option>
+        <option value="banjo">
+         Tenor Banjo
+        </option>
+        <option value="accordion">
+         Accordion
+        </option>
+        <option value="concertina">
+         Concertina
+        </option>
+        <option value="hammeredDulcimer">
+         Hammered Dulcimer
+        </option>
+       </select>
+      </div>
+      <div class="setupBlock choiceCountBlock">
+       <label for="choiceCount">
+        <strong>
+         Number of Tune Name Choices
+        </strong>
+       </label>
+       <select id="choiceCount">
+        <option value="2">
+         2
+        </option>
+        <option value="4">
+         4
+        </option>
+        <option value="6" selected>
+         6
+        </option>
+        <option value="8">
+         8
+        </option>
+        <option value="10">
+         10
+        </option>
+       </select>
+      </div>
+      <div class="divider">
+      </div>
+      <div class="eyebrow">
+       Tune Collection
+      </div>
+      <div class="libraryStatus" id="libraryStatus">
+      </div>
+      <div id="customCollectionControls">
+       <input accept=".abc,.txt,text/plain" hidden="" id="abcFileInput" type="file"/>
+       <button class="secondary full" id="loadAbcBtn" type="button">
+        Load My ABC Tunes
+       </button>
+       <button class="secondary full spaced" id="restoreDefaultsBtn" type="button">
+        Restore Default Tunes
+       </button>
+      </div>
+      <button class="startButton full" id="newSetBtn" type="button">
+       Start Over with New Tunes
+      </button>
+     </section>
+     <section class="card progressCard">
+      <div class="progressHeader">
+       <h3>
+        Session Progress
+       </h3>
+       <div class="muted small" id="accuracyText">
+        No answers yet
+       </div>
+      </div>
+      <div class="progressTrack">
+       <div class="progressBar" id="progressBar">
+       </div>
+      </div>
+     </section>
+    </aside>
+    <section class="right">
+     <section class="card questionCard">
+      <div class="questionTop">
+       <div>
+        <div class="eyebrow" id="questionEyebrow">
+         Loading
+        </div>
+        <h2 id="questionTitle">
+         Preparing your ear-training session…
+        </h2>
+       </div>
+       <div class="scoreBox">
+        <span id="scoreText">
+         0 / 0
+        </span>
+       </div>
+      </div>
+      <div class="listenPanel">
+       <div aria-hidden="true" class="listenIcon">
+        ♪
+       </div>
+       <div class="listenCopy">
+        <strong>
+         Click the play button below to listen to the tune
+        </strong>
+       </div>
+      </div>
+      <div aria-label="Tune playback controls" class="audio-controls trainerAudioControls" id="tuneAudioControls">
+      </div>
+      <div aria-live="polite" class="status" hidden="" id="playbackStatus">
+      </div>
+      <form id="answerForm">
+       <fieldset class="answerFieldset">
+        <legend>
+         Which tune do you hear?
+        </legend>
+        <div class="choiceGrid tuneChoices" id="tuneChoices">
+        </div>
+       </fieldset>
+       <div class="answerActions">
+        <button disabled="" id="submitBtn" type="submit">
+         Submit Answer
+        </button>
+       </div>
+      </form>
+      <div aria-live="polite" class="feedback" hidden="" id="feedback">
+      </div>
+      <div class="nextRow navRow">
+       <button class="secondary" id="prevBtn" type="button">
+        Previous Tune
+       </button>
+       <button id="nextBtn" type="button">
+        Next Tune
+       </button>
+       <button hidden="" id="finalReviewInlineBtn" type="button">
+        Show Final Review
+       </button>
+      </div>
+     </section>
+    </section>
+   </main>
+  </div>
+  <div aria-hidden="true" class="hiddenRender" id="hiddenTuneRender">
+  </div>
+  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260918-1_09">
+  </script>
+  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260918-1_09">
+  </script>
+  <script src="daypilot-modal.min-3.10.1.js?cb=20260918-1_09">
+  </script>
+  <script src="examples.js?cb=20260918-1_09">
+  </script>
+  <script src="tune-name-ear-trainer-guided-tour.js?cb=20260918-1_09">
+  </script>
+  <script src="tune-name-ear-trainer.js?cb=20260918-1_09">
+  </script>
+ </body>
+</html>
+
