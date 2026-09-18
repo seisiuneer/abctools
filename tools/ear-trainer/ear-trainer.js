@@ -819,6 +819,14 @@ function showInstructions(){
       '<h3>Not hearing sound on an iPhone or iPad?</h3>',
       '<p>On iPhone and iPad, <strong>Mute must be turned off in Control Center for the audio to be heard</strong>. This is an iOS audio behavior and is not specific to the ear trainer.</p>',
 
+      '<h3>Traditional Irish Tune Name Ear Trainer</h3>',
+      '<p>Want to challenge your ear in a different way? Try the <strong>Traditional Irish Tune Name Ear Trainer</strong>, where you can practice recognizing the name of traditional Irish tunes just by listening.</p>',
+
+      '<p style="text-align:center">',
+        '<a href="https://michaeleskin.com/tools/tune-name-ear-trainer/tune-name-ear-trainer.html" ',
+        'target="_blank" rel="noopener noreferrer">Traditional Irish Tune Name Ear Trainer</a>',
+      '</p>',
+
       '<h3>Tip Jars</h3>',
       '<p>This ear training tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>',
       '<p>If you find it useful, please consider making a contribution via my online tip jars:</p>',
