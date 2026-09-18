@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  var VERSION="1.09",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",SESSION_LENGTH=10,CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount";
+  var VERSION="1.10",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",SESSION_LENGTH=10,CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount";
   var PROGRAMS={
     piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15
   }
@@ -115,6 +115,13 @@
       return false
     }
   }
+  function isIOS(){
+    if(/iPad|iPhone|iPod/.test(navigator.platform)){
+      return true
+    }
+    return navigator.maxTouchPoints&&navigator.maxTouchPoints>2&&/MacIntel/.test(navigator.platform)
+  }
+  var gIsIOS=isIOS();
   var canStoreCustomCollection=localStorageAvailable();
   function loadInstrument(){
     if(!canStoreCustomCollection)return "piano";
@@ -566,6 +573,9 @@
     r.readAsText(file)
   }
   function init(){
+    if(gIsIOS){
+      $("abcFileInput").removeAttribute("accept")
+    }
     var controls=$("customCollectionControls");
     if(controls)controls.hidden=!canStoreCustomCollection;
     var custom=storedABC();
