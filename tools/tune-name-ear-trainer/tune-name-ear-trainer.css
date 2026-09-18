@@ -178,14 +178,47 @@ h2,h3 {
 }
 
 .setupBlock select {
+  -webkit-appearance:none;
+  appearance:none;
+  box-sizing:border-box;
   width:100%;
   min-height:44px;
-  padding:10px 12px;
+  margin:0;
+  padding:10px 42px 10px 12px;
   border:1px solid #b8c7bd;
   border-radius:7px;
-  background:#fff;
-  color:var(--ink);
-  font-weight:600
+  background-color:#fff;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  background-size:14px 9px;
+  color:#17241c;
+  font-family:inherit;
+  font-size:1rem;
+  font-weight:600;
+  line-height:1.25;
+  cursor:pointer;
+  outline:none;
+}
+
+
+.setupBlock select:hover {
+  border-color:#8eaa98
+}
+
+.setupBlock select:focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(23,107,67,.14)
+}
+
+.setupBlock select:disabled {
+  cursor:not-allowed;
+  opacity:.6;
+  background-color:#f4f6f5
+}
+
+.setupBlock select::-ms-expand {
+  display:none
 }
 
 .divider {
@@ -458,6 +491,32 @@ h2,h3 {
   font-size:1rem!important;
   font-weight:650!important;
   vertical-align:middle!important
+}
+
+/* Keep the centered hero title clear of Tip Jars and the version number
+   at intermediate window widths. */
+@media (min-width:761px) and (max-width:1350px) {
+  .heroTop {
+    padding-left:125px;
+    padding-right:80px
+  }
+
+  .heroTitle {
+    font-size:clamp(1.65rem,3vw,2.15rem);
+    white-space:nowrap
+  }
+}
+
+/* At narrower widths, move the title below the corner controls. */
+@media(max-width:760px) {
+  .heroTop {
+    padding-top:40px
+  }
+
+  .heroTitle {
+    font-size:1.3rem;
+    line-height:1.15
+  }
 }
 
 @media(max-width:1000px) {

@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  var VERSION="1.10",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",SESSION_LENGTH=10,CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount";
+  var VERSION="1.13",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",SESSION_LENGTH=10,CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount";
   var PROGRAMS={
     piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15
   }
