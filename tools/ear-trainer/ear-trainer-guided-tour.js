@@ -75,13 +75,13 @@ function ensureVisible(target){
 }
 function steps(){return[
  {title:"Welcome to the Guided Tour",body:"<p>This quick tour shows you how to choose an exercise and instrument, listen to a tune, answer the questions, and review your progress.</p>"},
- {title:"1. Choose an Answer Style",selector:"#answerStyle",body:"<p>Choose what you want to identify by ear: rhythm, key, mode, or a combination of them. Your choice is saved in this browser.</p>"},
+ {title:"1. Choose an Answer Style",selector:"#answerStyle",body:"<p>Choose what you want to identify by ear: rhythm, key, mode, or a combination of them. Your choice is saved in this browser. If you change Answer Style after answering a tune, your answers and progress are cleared and the same session restarts from its first tune.</p>"},
  {title:"2. Choose the Playback Instrument",selector:"#instrument",body:"<p>Choose the instrument used for tune, root-note, and scale playback. Your choice is saved in this browser.</p>"},
  {title:"3. Listen to the Tune",selector:"#tuneAudioControls",body:"<p>Use this playback bar to listen to the current tune. Tunes loop automatically. The answer choices become available after you start playback.</p>"},
  {title:"4. Choose Your Answer",selector:"#answerChoiceLayout",body:"<p>Select your answer for each question shown here. The questions depend on the Answer Style you selected.</p>"},
- {title:"5. Submit and Review",selector:"#submitBtn",body:"<p>Click <strong>Submit Answer</strong> to check your response. The trainer shows the correct answer and identifies the tune. For key and mode exercises, you can also listen to root notes and scales to reinforce or compare your answers.</p>"},
+ {title:"5. Submit and Review",selector:"#submitBtn",body:"<p>Click <strong>Submit Answer</strong> to check your response. The trainer shows the correct answer and identifies the tune. For key and/or mode exercises, you can also listen to root notes and scales to reinforce or compare your answers.</p>"},
  {title:"6. Follow Your Progress",selector:".progressCard",body:"<p>Session Progress shows how many tunes you have answered and your current accuracy during the session.</p>"},
- {title:"7. Move Through the Session",selector:"#nextBtn",body:"<p>Click <strong>Next Tune</strong> to continue to the next tune. You can also return to previously answered tunes. After the final tune, <strong>Show Final Review</strong> displays your session results and lets you practice any tunes you missed.</p>"},
+ {title:"7. Move Through the Session",selector:"#nextBtn",body:"<p>Click <strong>Next Tune</strong> to continue to the next tune. Each session contains 10 tunes randomly selected from the full tune collection. You can also return to previously answered tunes. After the final tune, <strong>Show Final Review</strong> displays your session results and lets you practice any tunes you missed.</p>"},
  {title:"Tour Complete",selector:"#instructionsBtn",body:"<p>You’re ready to begin. Full instructions are always available from <strong>Instructions</strong>. To take this tour again, click <strong>Run Guided Tour</strong> at the top of the Instructions.</p>"}
 ]}
 function showStep(step,index,total){return new Promise(async function(resolve){

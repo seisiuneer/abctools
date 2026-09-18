@@ -1,13 +1,13 @@
 (function(){
 "use strict";
 
-var VERSION="2.30";
+var VERSION="2.34";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
 var INSTRUMENT_STORAGE_KEY="keyModeEarTrainerInstrument";
 var INSTRUMENT_PROGRAMS={piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15};
-var ANSWER_STYLES=["separate","combined","rhythmSeparate","rhythmCombined","rhythmOnly"];
+var ANSWER_STYLES=["rhythmSeparate","rhythmCombined","rhythmKey","rhythmMode","rhythmOnly","separate","combined","keyOnly","modeOnly"];
 var MODE_INFO={
   major:{label:"Major",shortLabel:"Major",abcSuffix:""},
   dorian:{label:"Dorian",shortLabel:"Dorian",abcSuffix:"dor"},
@@ -87,8 +87,11 @@ function parseTunes(text){
 function modeCountText(tunes){return MODE_ORDER.map(function(m){var n=tunes.filter(function(t){return t.mode===m;}).length;return n?MODE_INFO[m].shortLabel+": "+n:null;}).filter(Boolean).join(" · ");}
 function answerName(a){return a.tonic+" "+MODE_INFO[a.mode].shortLabel;}
 function styleIncludesRhythm(style){return /^rhythm/.test(String(style||""));}
-function styleUsesTonalMode(style){return style!=="rhythmOnly";}
-function styleUsesSeparateTonalMode(style){return style==="separate"||style==="rhythmSeparate";}
+function styleUsesKey(style){return ["rhythmSeparate","rhythmCombined","rhythmKey","separate","combined","keyOnly"].indexOf(style)>=0;}
+function styleUsesMode(style){return ["rhythmSeparate","rhythmCombined","rhythmMode","separate","combined","modeOnly"].indexOf(style)>=0;}
+function styleUsesTonalMode(style){return styleUsesKey(style)||styleUsesMode(style);}
+function styleUsesCombinedTonalMode(style){return style==="combined"||style==="rhythmCombined";}
+function styleUsesSeparateTonalMode(style){return styleUsesTonalMode(style)&&!styleUsesCombinedTonalMode(style);}
 function uniqueRhythms(){var a=[];allTunes.forEach(function(t){if(t.rhythm&&a.indexOf(t.rhythm)<0)a.push(t.rhythm);});var order={"Reel":0,"Jig":1,"Hornpipe":2,"Slip Jig":3,"Slide":4,"Polka":5,"Barndance":6};return a.sort(function(x,y){return (order[x]===undefined?99:order[x])-(order[y]===undefined?99:order[y])||x.localeCompare(y);});}
 function loadPreferredAnswerStyle(){
   try{var v=localStorage.getItem(ANSWER_STYLE_STORAGE_KEY);return ANSWER_STYLES.indexOf(v)>=0?v:"rhythmSeparate";}catch(e){return "rhythmSeparate";}
@@ -147,9 +150,36 @@ function logError(label,error){
 
 function defaultState(){return {version:4,sessionIds:chooseSessionTunes().map(function(t){return t.id;}),currentIndex:0,answers:{},heard:{},answerStyle:loadPreferredAnswerStyle()};}
 function chooseSessionTunes(){
-  // Pick 10 unique tunes uniformly at random from the entire collection.
-  // No balancing by mode is applied.
-  return shuffle(allTunes).slice(0,Math.min(SESSION_LENGTH,allTunes.length));
+  // Build a randomized 10-tune session while guaranteeing, when the collection
+  // permits it, at least one tune of every available rhythm and every available mode.
+  var target=Math.min(SESSION_LENGTH,allTunes.length);
+  if(target<=0)return [];
+
+  var selected=[];
+  var selectedIds={};
+  function addTune(tune){
+    if(!tune||selectedIds[tune.id]||selected.length>=target)return false;
+    selected.push(tune);selectedIds[tune.id]=true;return true;
+  }
+
+  // Choose a random representative of each rhythm found in the collection.
+  var rhythms=shuffle(uniqueRhythms());
+  rhythms.forEach(function(rhythm){
+    var candidates=shuffle(allTunes.filter(function(t){return t.rhythm===rhythm&&!selectedIds[t.id];}));
+    addTune(candidates[0]);
+  });
+
+  // Add a random representative for any mode not already represented.
+  var availableModes=shuffle(MODE_ORDER.filter(function(mode){return allTunes.some(function(t){return t.mode===mode;});}));
+  availableModes.forEach(function(mode){
+    if(selected.some(function(t){return t.mode===mode;}))return;
+    var candidates=shuffle(allTunes.filter(function(t){return t.mode===mode&&!selectedIds[t.id];}));
+    addTune(candidates[0]);
+  });
+
+  // Fill any remaining positions randomly from the rest of the collection.
+  shuffle(allTunes).forEach(function(t){addTune(t);});
+  return shuffle(selected);
 }
 function loadState(){
   // Every page load starts a fresh in-memory 10-tune session. Only the user's
@@ -373,37 +403,24 @@ function buildAnswerChoices(){
   var tune=currentTune(); if(!tune)return;
   $("answerForm").classList.remove("answered");
   var style=state.answerStyle;
-  var hasRhythm=styleIncludesRhythm(style);
-  var usesTM=styleUsesTonalMode(style);
-  var sep=styleUsesSeparateTonalMode(style);
-
-  $("rhythmAnswers").hidden=!hasRhythm;
-  $("rhythmAnswers").style.display=hasRhythm?"":"none";
-  $("separateAnswers").hidden=!(usesTM&&sep);
-  $("separateAnswers").style.display=(usesTM&&sep)?"":"none";
-  $("combinedAnswers").hidden=!(usesTM&&!sep);
-  $("combinedAnswers").style.display=(usesTM&&!sep)?"":"none";
+  var hasRhythm=styleIncludesRhythm(style),usesKey=styleUsesKey(style),usesMode=styleUsesMode(style),usesTM=usesKey||usesMode,combined=styleUsesCombinedTonalMode(style);
+  $("rhythmAnswers").hidden=!hasRhythm; $("rhythmAnswers").style.display=hasRhythm?"":"none";
+  $("separateAnswers").hidden=!(usesTM&&!combined); $("separateAnswers").style.display=(usesTM&&!combined)?"":"none";
+  $("combinedAnswers").hidden=!(usesTM&&combined); $("combinedAnswers").style.display=(usesTM&&combined)?"":"none";
+  var tonalFieldsets=$("separateAnswers").querySelectorAll("fieldset");
+  if(tonalFieldsets.length>=2){tonalFieldsets[0].hidden=!usesKey;tonalFieldsets[0].style.display=usesKey?"":"none";tonalFieldsets[1].hidden=!usesMode;tonalFieldsets[1].style.display=usesMode?"":"none";}
+  $("separateAnswers").style.gridTemplateColumns=(usesKey&&usesMode)?"1fr 1fr":"1fr";
   $("answerChoiceLayout").classList.toggle("withRhythm",hasRhythm&&usesTM);
   $("answerChoiceLayout").classList.toggle("rhythmOnly",style==="rhythmOnly");
-
   $("rhythmLegend").textContent=usesTM?"1. What rhythm do you hear?":"What rhythm do you hear?";
-  var offset=hasRhythm?1:0;
-  var legends=$("separateAnswers").querySelectorAll("legend");
-  if(legends.length>=2){
-    legends[0].textContent=(1+offset)+". What key do you hear?";
-    legends[1].textContent=(2+offset)+". What mode do you hear?";
-  }
+  var offset=hasRhythm?1:0,legends=$("separateAnswers").querySelectorAll("legend"),q=1+offset;
+  if(legends.length>=2){if(usesKey)legends[0].textContent=(q++)+". What key do you hear?";if(usesMode)legends[1].textContent=(q++)+". What mode do you hear?";}
   $("combinedLegend").textContent=hasRhythm?"2. What key and mode do you hear?":"What key and mode do you hear?";
-
-  $("rhythmChoices").innerHTML="";
-  $("tonicChoices").innerHTML="";
-  $("modeChoices").innerHTML="";
-  $("combinedChoices").innerHTML="";
-
+  $("rhythmChoices").innerHTML=""; $("tonicChoices").innerHTML=""; $("modeChoices").innerHTML=""; $("combinedChoices").innerHTML="";
   if(hasRhythm)uniqueRhythms().forEach(function(r){makeRadio($("rhythmChoices"),"rhythm",r,r);});
-  if(usesTM&&sep){
-    uniqueTonics().forEach(function(t){makeRadio($("tonicChoices"),"tonic",t,t);});
-    MODE_ORDER.filter(function(m){return allTunes.some(function(t){return t.mode===m;});}).forEach(function(m){makeRadio($("modeChoices"),"mode",m,MODE_INFO[m].label);});
+  if(usesTM&&!combined){
+    if(usesKey)uniqueTonics().forEach(function(t){makeRadio($("tonicChoices"),"tonic",t,t);});
+    if(usesMode)MODE_ORDER.filter(function(m){return allTunes.some(function(t){return t.mode===m;});}).forEach(function(m){makeRadio($("modeChoices"),"mode",m,MODE_INFO[m].label);});
   }else if(usesTM){
     var c=[]; allTunes.forEach(function(t){var key=t.tonic+"|"+t.mode;if(!c.some(function(x){return x.key===key;}))c.push({key:key,tonic:t.tonic,mode:t.mode});});
     var correct=tune.tonic+"|"+tune.mode,sel=shuffle(c.filter(function(x){return x.key!==correct;})).slice(0,7);sel.push({key:correct,tonic:tune.tonic,mode:tune.mode});
@@ -412,50 +429,29 @@ function buildAnswerChoices(){
   restoreAnswerUI();
 }
 function readAnswer(){
-  var style=state.answerStyle;
-  var choice={};
-  if(styleIncludesRhythm(style)){
-    var r=document.querySelector('input[name="rhythm"]:checked');
-    if(!r)return null;
-    choice.rhythm=r.value;
-  }
-  if(styleUsesTonalMode(style)){
-    if(styleUsesSeparateTonalMode(style)){
-      var t=document.querySelector('input[name="tonic"]:checked'),m=document.querySelector('input[name="mode"]:checked');
-      if(!t||!m)return null;
-      choice.tonic=t.value;choice.mode=m.value;
-    }else{
-      var c=document.querySelector('input[name="combined"]:checked');
-      if(!c)return null;
-      var p=c.value.split("|");choice.tonic=p[0];choice.mode=p[1];
-    }
+  var style=state.answerStyle,choice={};
+  if(styleIncludesRhythm(style)){var r=document.querySelector('input[name="rhythm"]:checked');if(!r)return null;choice.rhythm=r.value;}
+  if(styleUsesCombinedTonalMode(style)){var c=document.querySelector('input[name="combined"]:checked');if(!c)return null;var p=c.value.split("|");choice.tonic=p[0];choice.mode=p[1];}
+  else{
+    if(styleUsesKey(style)){var t=document.querySelector('input[name="tonic"]:checked');if(!t)return null;choice.tonic=t.value;}
+    if(styleUsesMode(style)){var m=document.querySelector('input[name="mode"]:checked');if(!m)return null;choice.mode=m.value;}
   }
   return choice;
 }
 function validateAnswerReady(){
-  var saved=state.answers[currentTune().id];if(saved){$("submitBtn").disabled=true;return;}
-  var style=state.answerStyle;
-  var ready=true;
+  var saved=state.answers[currentTune().id];if(saved){$("submitBtn").disabled=true;return;}var style=state.answerStyle,ready=true;
   if(styleIncludesRhythm(style))ready=ready&&!!document.querySelector('input[name="rhythm"]:checked');
-  if(styleUsesTonalMode(style)){
-    if(styleUsesSeparateTonalMode(style))ready=ready&&!!document.querySelector('input[name="tonic"]:checked')&&!!document.querySelector('input[name="mode"]:checked');
-    else ready=ready&&!!document.querySelector('input[name="combined"]:checked');
-  }
+  if(styleUsesCombinedTonalMode(style))ready=ready&&!!document.querySelector('input[name="combined"]:checked');
+  else{if(styleUsesKey(style))ready=ready&&!!document.querySelector('input[name="tonic"]:checked');if(styleUsesMode(style))ready=ready&&!!document.querySelector('input[name="mode"]:checked');}
   $("submitBtn").disabled=!ready;
 }
 function markChoices(choice){
   var tune=currentTune(),style=state.answerStyle;
-  if(styleIncludesRhythm(style)){
-    document.querySelectorAll('#rhythmChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.rhythm)l.classList.add("correct");else if(l.dataset.value===choice.rhythm)l.classList.add("incorrect");});
-  }
-  if(styleUsesTonalMode(style)){
-    if(styleUsesSeparateTonalMode(style)){
-      document.querySelectorAll('#tonicChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.tonic)l.classList.add("correct");else if(l.dataset.value===choice.tonic)l.classList.add("incorrect");});
-      document.querySelectorAll('#modeChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.mode)l.classList.add("correct");else if(l.dataset.value===choice.mode)l.classList.add("incorrect");});
-    }else{
-      var corr=tune.tonic+"|"+tune.mode,chosen=choice.tonic+"|"+choice.mode;
-      document.querySelectorAll('#combinedChoices .choiceLabel').forEach(function(l){if(l.dataset.value===corr)l.classList.add("correct");else if(l.dataset.value===chosen)l.classList.add("incorrect");});
-    }
+  if(styleIncludesRhythm(style))document.querySelectorAll('#rhythmChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.rhythm)l.classList.add("correct");else if(l.dataset.value===choice.rhythm)l.classList.add("incorrect");});
+  if(styleUsesCombinedTonalMode(style)){var corr=tune.tonic+"|"+tune.mode,chosen=choice.tonic+"|"+choice.mode;document.querySelectorAll('#combinedChoices .choiceLabel').forEach(function(l){if(l.dataset.value===corr)l.classList.add("correct");else if(l.dataset.value===chosen)l.classList.add("incorrect");});}
+  else{
+    if(styleUsesKey(style))document.querySelectorAll('#tonicChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.tonic)l.classList.add("correct");else if(l.dataset.value===choice.tonic)l.classList.add("incorrect");});
+    if(styleUsesMode(style))document.querySelectorAll('#modeChoices .choiceLabel').forEach(function(l){if(l.dataset.value===tune.mode)l.classList.add("correct");else if(l.dataset.value===choice.mode)l.classList.add("incorrect");});
   }
 }
 function setInputsDisabled(disabled){document.querySelectorAll('#answerForm input').forEach(function(i){i.disabled=disabled;});}
@@ -504,14 +500,10 @@ function restoreAnswerUI(){
   if(styleIncludesRhythm(state.answerStyle)&&saved.choice.rhythm){
     var r=document.querySelector('input[name="rhythm"][value="'+CSS.escape(saved.choice.rhythm)+'"]');if(r)r.checked=true;
   }
-  if(styleUsesTonalMode(state.answerStyle)&&saved.choice.tonic&&saved.choice.mode){
-    if(styleUsesSeparateTonalMode(state.answerStyle)){
-      var t=document.querySelector('input[name="tonic"][value="'+CSS.escape(saved.choice.tonic)+'"]');
-      var m=document.querySelector('input[name="mode"][value="'+CSS.escape(saved.choice.mode)+'"]');
-      if(t)t.checked=true;if(m)m.checked=true;
-    }else{
-      var c=document.querySelector('input[name="combined"][value="'+CSS.escape(saved.choice.tonic+"|"+saved.choice.mode)+'"]');if(c)c.checked=true;
-    }
+  if(styleUsesCombinedTonalMode(state.answerStyle)&&saved.choice.tonic&&saved.choice.mode){var c=document.querySelector('input[name="combined"][value="'+CSS.escape(saved.choice.tonic+"|"+saved.choice.mode)+'"]');if(c)c.checked=true;}
+  else{
+    if(styleUsesKey(state.answerStyle)&&saved.choice.tonic){var t=document.querySelector('input[name="tonic"][value="'+CSS.escape(saved.choice.tonic)+'"]');if(t)t.checked=true;}
+    if(styleUsesMode(state.answerStyle)&&saved.choice.mode){var m=document.querySelector('input[name="mode"][value="'+CSS.escape(saved.choice.mode)+'"]');if(m)m.checked=true;}
   }
   markChoices(saved.choice);setInputsDisabled(true);$("submitBtn").disabled=true;showFeedback(saved,false);
 }
@@ -519,7 +511,7 @@ function submitAnswer(ev){
   ev.preventDefault();
   var tune=currentTune();if(!tune||state.answers[tune.id])return;
   var choice=readAnswer();if(!choice)return;
-  var assessed={rhythm:styleIncludesRhythm(state.answerStyle),tonic:styleUsesTonalMode(state.answerStyle),mode:styleUsesTonalMode(state.answerStyle)};
+  var assessed={rhythm:styleIncludesRhythm(state.answerStyle),tonic:styleUsesKey(state.answerStyle),mode:styleUsesMode(state.answerStyle)};
   var rhythmCorrect=!assessed.rhythm||choice.rhythm===tune.rhythm;
   var tonicCorrect=!assessed.tonic||choice.tonic===tune.tonic;
   var modeCorrect=!assessed.mode||choice.mode===tune.mode;
@@ -528,64 +520,19 @@ function submitAnswer(ev){
   state.answers[tune.id]=saved;
   $("answerForm").classList.add("answered");markChoices(choice);setInputsDisabled(true);$("submitBtn").disabled=true;showFeedback(saved,true);updateProgress();updateNavigationButtons();
 }
+function completeAnswerForPlayback(choice,tune){return {tonic:choice.tonic||tune.tonic,mode:choice.mode||tune.mode};}
 function showFeedback(saved,prepareScales){
-  var tune=currentTune();
-  var assessed=saved.assessed||{rhythm:saved.choice.rhythm!==undefined,tonic:saved.choice.tonic!==undefined,mode:saved.choice.mode!==undefined};
-  var rhythmCorrect=!assessed.rhythm||saved.choice.rhythm===tune.rhythm;
-  var tonicCorrect=!assessed.tonic||saved.choice.tonic===tune.tonic;
-  var modeCorrect=!assessed.mode||saved.choice.mode===tune.mode;
+  var tune=currentTune(),assessed=saved.assessed||{rhythm:saved.choice.rhythm!==undefined,tonic:saved.choice.tonic!==undefined,mode:saved.choice.mode!==undefined};
+  var rhythmCorrect=!assessed.rhythm||saved.choice.rhythm===tune.rhythm,tonicCorrect=!assessed.tonic||saved.choice.tonic===tune.tonic,modeCorrect=!assessed.mode||saved.choice.mode===tune.mode;
   $("feedback").hidden=false;$("feedback").className="feedback "+(saved.correct?"correct":"incorrect");
-  var correctAnswer={tonic:tune.tonic,mode:tune.mode};
-  var chordText=commonChordNames(correctAnswer);
-  var rhythmHtml=assessed.rhythm?' &nbsp;&nbsp; <strong>Rhythm:</strong> '+escapeHtml(tune.rhythm):'';
-  var tonalWrong=assessed.tonic&&(!tonicCorrect||!modeCorrect);
-
-  if(saved.correct){
-    var correctParts=[];
-    if(assessed.rhythm)correctParts.push('<strong>Rhythm:</strong> '+escapeHtml(tune.rhythm));
-    if(assessed.tonic)correctParts.push('<strong>Correct:</strong> '+escapeHtml(answerName(correctAnswer)));
-
-    $("feedback").innerHTML=correctParts.join(' &nbsp;&nbsp; ')+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');
-  }else{
-    var parts=[];
-    // Feedback follows the answer-group order: rhythm first, then key/mode.
-    if(assessed.rhythm&&!rhythmCorrect)parts.push('You chose <strong>'+escapeHtml(saved.choice.rhythm)+'</strong> for the rhythm. The correct rhythm is <strong>'+escapeHtml(tune.rhythm)+'</strong>.');
-    if(tonalWrong)parts.push('You chose <strong>'+escapeHtml(answerName(saved.choice))+'</strong> for the key/mode. The correct key/mode is <strong>'+escapeHtml(answerName(correctAnswer))+'</strong>.');
-    var statusLines=[];
-    if(parts.length){
-      statusLines.push('<strong>Not quite.</strong> '+parts[0]);
-      for(var pi=1;pi<parts.length;pi++)statusLines.push(parts[pi]);
-    }
-    $("feedback").innerHTML=statusLines.join('<br>')+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');
-  }
-
-  // Scale/root feedback is relevant only when key/mode were assessed.
-  if(!assessed.tonic){
-    $("differencePanel").hidden=true;
-    if(prepareScales)clearScaleControllers();
-    return;
-  }
-
+  var correctAnswer={tonic:tune.tonic,mode:tune.mode},chordText=commonChordNames(correctAnswer),tonalWrong=(assessed.tonic&&!tonicCorrect)||(assessed.mode&&!modeCorrect);
+  function tonalResultParts(prefix,choice){var a=[];if(assessed.tonic)a.push('<strong>Key:</strong> '+escapeHtml(choice.tonic));if(assessed.mode)a.push('<strong>Mode:</strong> '+escapeHtml(MODE_INFO[choice.mode].shortLabel));return (prefix?'<strong>'+prefix+'</strong> ':'')+a.join(' &nbsp;&nbsp; ');}
+  if(saved.correct){var parts=[];if(assessed.rhythm)parts.push('<strong>Rhythm:</strong> '+escapeHtml(tune.rhythm));if(assessed.tonic||assessed.mode)parts.push(tonalResultParts('Correct:',correctAnswer));$("feedback").innerHTML=parts.join(' &nbsp;&nbsp; ')+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');}
+  else{var parts=[];if(assessed.rhythm&&!rhythmCorrect)parts.push('You chose <strong>'+escapeHtml(saved.choice.rhythm)+'</strong> for the rhythm. The correct rhythm is <strong>'+escapeHtml(tune.rhythm)+'</strong>.');if(assessed.tonic&&!tonicCorrect)parts.push('You chose <strong>'+escapeHtml(saved.choice.tonic)+'</strong> for the key. The correct key is <strong>'+escapeHtml(tune.tonic)+'</strong>.');if(assessed.mode&&!modeCorrect)parts.push('You chose <strong>'+escapeHtml(MODE_INFO[saved.choice.mode].shortLabel)+'</strong> for the mode. The correct mode is <strong>'+escapeHtml(MODE_INFO[tune.mode].shortLabel)+'</strong>.');$("feedback").innerHTML='<strong>Not quite.</strong> '+parts.join('<br>')+'<br><strong>Tune:</strong> '+escapeHtml(tune.title)+(tune.style?' &nbsp;&nbsp; <strong>Style:</strong> '+escapeHtml(tune.style):'');}
+  if(!assessed.tonic&&!assessed.mode){$("differencePanel").hidden=true;if(prepareScales)clearScaleControllers();return;}
   $("differencePanel").hidden=false;
-  if(!tonalWrong){
-    $("differencePanel").classList.add("correctScaleOnly");
-    $("differencePanel").querySelector("h3").textContent="Hear the scale";
-    $("differenceText").textContent="Reinforce the key and mode by listening to the root note or scale.";
-    $("correctScaleLabel").innerHTML='<span class="correctScaleStatus"><strong class="correctKeyMode">Correct: '+escapeHtml(answerName(correctAnswer))+'</strong>'+(chordText?'<span class="commonChords"><strong>Common chords:</strong> '+escapeHtml(chordText)+'</span>':'')+'</span>';
-    resetScaleButtons();resetRootButtons();
-    $("correctScaleBtn").textContent="Play Scale";$("correctRootBtn").textContent="Root Note";
-    $("chosenScaleBtn").disabled=true;$("chosenRootBtn").disabled=true;
-    $("correctScaleBtn").disabled=false;$("correctRootBtn").disabled=false;
-  }else{
-    $("differencePanel").classList.remove("correctScaleOnly");
-    $("differencePanel").querySelector("h3").textContent="Hear the difference";
-    $("differenceText").textContent="Compare the key and scale you selected with the correct answer.";
-    $("chosenScaleLabel").textContent="Your answer: "+answerName(saved.choice);
-    $("correctScaleLabel").innerHTML='<span class="correctScaleStatus"><strong class="correctKeyMode">Correct: '+escapeHtml(answerName(correctAnswer))+'</strong>'+(chordText?'<span class="commonChords"><strong>Common chords:</strong> '+escapeHtml(chordText)+'</span>':'')+'</span>';
-    resetScaleButtons();resetRootButtons();
-    $("chosenScaleBtn").disabled=false;$("chosenRootBtn").disabled=false;
-    $("correctScaleBtn").disabled=false;$("correctRootBtn").disabled=false;
-  }
+  if(!tonalWrong){$("differencePanel").classList.add("correctScaleOnly");$("differencePanel").querySelector("h3").textContent="Hear the scale";$("differenceText").textContent="Reinforce the key and mode by listening to the root note or scale.";$("correctScaleLabel").innerHTML='<span class="correctScaleStatus"><strong class="correctKeyMode">Correct: '+escapeHtml(answerName(correctAnswer))+'</strong>'+(chordText?'<span class="commonChords"><strong>Common chords:</strong> '+escapeHtml(chordText)+'</span>':'')+'</span>';resetScaleButtons();resetRootButtons();$("correctScaleBtn").textContent="Play Scale";$("correctRootBtn").textContent="Root Note";$("chosenScaleBtn").disabled=true;$("chosenRootBtn").disabled=true;$("correctScaleBtn").disabled=false;$("correctRootBtn").disabled=false;}
+  else{var chosen=completeAnswerForPlayback(saved.choice,tune);$("differencePanel").classList.remove("correctScaleOnly");$("differencePanel").querySelector("h3").textContent="Hear the difference";$("differenceText").textContent="Compare your selected answer with the correct key and scale.";$("chosenScaleLabel").textContent="Your answer: "+answerName(chosen);$("correctScaleLabel").innerHTML='<span class="correctScaleStatus"><strong class="correctKeyMode">Correct: '+escapeHtml(answerName(correctAnswer))+'</strong>'+(chordText?'<span class="commonChords"><strong>Common chords:</strong> '+escapeHtml(chordText)+'</span>':'')+'</span>';resetScaleButtons();resetRootButtons();$("chosenScaleBtn").disabled=false;$("chosenRootBtn").disabled=false;$("correctScaleBtn").disabled=false;$("correctRootBtn").disabled=false;}
   if(prepareScales)clearScaleControllers();
 }
 
@@ -603,7 +550,7 @@ async function playRoot(which){
   var saved=state.answers[currentTune().id];if(!saved)return;
   var isChosen=which==="chosen";
   if(saved.correct&&isChosen)return;
-  var answer=isChosen?saved.choice:{tonic:currentTune().tonic,mode:currentTune().mode};
+  var answer=isChosen?completeAnswerForPlayback(saved.choice,currentTune()):{tonic:currentTune().tonic,mode:currentTune().mode};
   var controller=isChosen?chosenRootController:correctRootController;
 
   if(activeRoot===which){
@@ -642,7 +589,7 @@ async function playScale(which){
   var saved=state.answers[currentTune().id];if(!saved)return;
   var isChosen=which==="chosen";
   if(saved.correct&&isChosen)return;
-  var answer=isChosen?saved.choice:{tonic:currentTune().tonic,mode:currentTune().mode};
+  var answer=isChosen?completeAnswerForPlayback(saved.choice,currentTune()):{tonic:currentTune().tonic,mode:currentTune().mode};
   var controller=isChosen?chosenScaleController:correctScaleController;
 
   // Clicking the currently playing scale button stops and rewinds it.
@@ -712,7 +659,7 @@ function showFinalReview(){
     var a=x.answer,assessed=a.assessed||{rhythm:a.choice.rhythm!==undefined,tonic:a.choice.tonic!==undefined,mode:a.choice.mode!==undefined};
     if(assessed.rhythm){hasRhythmStats=true;if(a.choice.rhythm!==x.tune.rhythm)rhythmMisses[x.tune.rhythm]=(rhythmMisses[x.tune.rhythm]||0)+1;}
     if(assessed.tonic){hasTonalStats=true;if(a.choice.tonic!==x.tune.tonic)tonicMisses[x.tune.tonic]=(tonicMisses[x.tune.tonic]||0)+1;}
-    if(assessed.mode&&a.choice.mode!==x.tune.mode)modeMisses[x.tune.mode]=(modeMisses[x.tune.mode]||0)+1;
+    if(assessed.mode){hasTonalStats=true;if(a.choice.mode!==x.tune.mode)modeMisses[x.tune.mode]=(modeMisses[x.tune.mode]||0)+1;}
   });
   function mostMissedText(counts,labelFn){
     var entries=Object.keys(counts).map(function(key){return {key:key,count:counts[key]};});
@@ -723,8 +670,8 @@ function showFinalReview(){
   var summary=[];
   if(hasRhythmStats)summary.push('<strong>Most missed rhythm:</strong> '+mostMissedText(rhythmMisses,function(x){return x;}));
   if(hasTonalStats){
-    summary.push('<strong>Most missed key:</strong> '+mostMissedText(tonicMisses,function(x){return x;}));
-    summary.push('<strong>Most missed mode:</strong> '+mostMissedText(modeMisses,function(x){return MODE_INFO[x]?MODE_INFO[x].shortLabel:x;}));
+    if(rows.some(function(x){return x.answer.assessed&&x.answer.assessed.tonic;}))summary.push('<strong>Most missed key:</strong> '+mostMissedText(tonicMisses,function(x){return x;}));
+    if(rows.some(function(x){return x.answer.assessed&&x.answer.assessed.mode;}))summary.push('<strong>Most missed mode:</strong> '+mostMissedText(modeMisses,function(x){return MODE_INFO[x]?MODE_INFO[x].shortLabel:x;}));
   }
   if(!window.DayPilot||!DayPilot.Modal||typeof DayPilot.Modal.alert!=="function"){return;}
   var availableHeight=Math.max(0,Math.min(660,window.innerHeight-100));
@@ -737,7 +684,7 @@ function showFinalReview(){
         var a=x.answer,assessed=a.assessed||{rhythm:a.choice.rhythm!==undefined,tonic:a.choice.tonic!==undefined,mode:a.choice.mode!==undefined};
         var lines=['<div class="reviewItem missedReviewItem"><strong>'+escapeHtml(x.tune.title)+'</strong>'+(x.tune.style?' <span class="muted">('+escapeHtml(x.tune.style)+')</span>':'')];
         if(assessed.rhythm)lines.push('<br>Your rhythm answer: '+escapeHtml(a.choice.rhythm)+'<br>Correct rhythm: <strong>'+escapeHtml(x.tune.rhythm)+'</strong>');
-        if(assessed.tonic)lines.push('<br>Your key/mode answer: '+escapeHtml(answerName(a.choice))+'<br>Correct key/mode: <strong>'+escapeHtml(answerName({tonic:x.tune.tonic,mode:x.tune.mode}))+'</strong>');
+        if(assessed.tonic)lines.push('<br>Your key answer: '+escapeHtml(a.choice.tonic)+'<br>Correct key: <strong>'+escapeHtml(x.tune.tonic)+'</strong>');if(assessed.mode)lines.push('<br>Your mode answer: '+escapeHtml(MODE_INFO[a.choice.mode].shortLabel)+'<br>Correct mode: <strong>'+escapeHtml(MODE_INFO[x.tune.mode].shortLabel)+'</strong>');
         lines.push('</div>');return lines.join("");
       }).join(""):'<p style="margin-top:12px">Perfect session — no missed tunes to review.</p>',
       missed.length?'<div class="practiceMissedTunesRow"><button id="practiceMissedTunesBtn" type="button">Practice Missed Tunes</button></div>':'',
@@ -786,11 +733,8 @@ function renderQuestion(){
   pauseAllControllers();clearTuneController();clearScaleControllers();
   var tune=currentTune();if(!tune)return;
   $("questionEyebrow").textContent="Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
-  $("questionTitle").textContent=state.answerStyle==="rhythmOnly"
-    ?"What rhythm do you hear?"
-    :(styleIncludesRhythm(state.answerStyle)
-      ?"What rhythm, key, and mode do you hear?"
-      :"What key and mode do you hear?");
+  var qParts=[];if(styleIncludesRhythm(state.answerStyle))qParts.push("rhythm");if(styleUsesKey(state.answerStyle))qParts.push("key");if(styleUsesMode(state.answerStyle))qParts.push("mode");
+  $("questionTitle").textContent="What "+(qParts.length===1?qParts[0]:qParts.slice(0,-1).join(", ")+" and "+qParts[qParts.length-1])+" do you hear?";
   $("listenHeading").textContent="Click the play button below to listen to the tune";$("listenSubheading").textContent="";
   buildAnswerChoices();updateProgress();updateNavigationButtons();
   void prepareCurrentTune(false);
@@ -830,9 +774,9 @@ function showInstructions(){
       '<p>This trainer helps you practice recognizing the rhythm style, key, and mode of traditional Irish tunes by ear.</p>',
 
       '<h3>Choose Your Answer Style</h3>',
-      '<p>The <strong>Answer Style</strong> control offers five exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, and <strong>Key/Mode</strong>.</p>',
+      '<p>The <strong>Answer Style</strong> control offers nine exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm + Key</strong>, <strong>Rhythm + Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, <strong>Key/Mode</strong>, <strong>Key</strong>, and <strong>Mode</strong>.</p>',
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
-      '<p>Changing between an Answer Style that includes rhythm and one that does not, or changing to or from <strong>Rhythm Only</strong>, requires starting a new 10-tune session. You will be asked for confirmation before your current answers and progress are cleared.</p>',
+      '<p>You can change Answer Style freely before answering any tunes. After you have answered at least one tune, changing Answer Style asks for confirmation, clears your answers and progress, and restarts the current session from its first tune using the <strong>same tunes</strong>. It does not choose a new set of tunes.</p>',
 
       '<h3>Choose Your Instrument</h3>',
       '<p>Use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
@@ -852,7 +796,7 @@ function showInstructions(){
         '<li><strong>Mixolydian</strong> — a major-centered sound with a lowered seventh.</li>',
       '</ul>',
       '<h3>3. Review the result</h3>',
-      '<p>After submitting, the trainer shows the correct answer for every item being tested, along with the tune name and tune style. When key and mode are included, common accompaniment chords are shown in the correct-scale comparison section immediately after the <strong>Correct:</strong> key/mode indication.</p>',
+      '<p>After submitting, the trainer shows the correct answer for every item being tested, along with the tune name and tune style. When key and/or mode are included, common accompaniment chords are shown in the correct-scale comparison section immediately after the <strong>Correct:</strong> key/mode indication.</p>',
 
       '<h3>Hear the scale</h3>',
       '<p>After a correct answer, use <strong>Root Note</strong> to hear the sustained key, or <strong>Play Scale</strong> to reinforce the key and mode you identified. Playback always starts from the beginning; starting one playback stops and resets any other playback to the beginning.</p>',
@@ -935,18 +879,22 @@ $("tuneAudioControls").addEventListener("click",function(ev){
 },true);
 $("answerStyle").addEventListener("change",async function(){
   var oldStyle=state.answerStyle,newStyle=this.value;
-  var crossesRhythmBoundary=styleIncludesRhythm(oldStyle)!==styleIncludesRhythm(newStyle);
-  var crossesRhythmOnlyBoundary=(oldStyle==="rhythmOnly")!==(newStyle==="rhythmOnly");
-  if(crossesRhythmBoundary||crossesRhythmOnlyBoundary){
-    var restartReason=crossesRhythmOnlyBoundary
-      ?"Changing to or from Rhythm-only requires restarting the 10-question session. Start over with 10 new tunes?"
-      :"Changing between an answer style that includes rhythm and one that does not requires restarting the 10-question session. Start over with 10 new tunes?";
-    var ok=await dayPilotConfirm(restartReason,"Start Over");
+  var hasAnswers=Object.keys(state.answers||{}).length>0;
+  if(hasAnswers){
+    var ok=await dayPilotConfirm("Changing Answer Style will clear your answers and progress and restart this session from the first tune. The same tunes will be used.","Change Style");
     if(!ok){this.value=oldStyle;return;}
-    pauseAllControllers(); savePreferredAnswerStyle(newStyle);
-    state=defaultState(); state.answerStyle=newStyle; renderQuestion(); return;
+    pauseAllControllers();
+    state.answerStyle=newStyle;
+    state.currentIndex=0;
+    state.answers={};
+    state.heard={};
+    savePreferredAnswerStyle(newStyle);
+    renderQuestion();
+    return;
   }
-  state.answerStyle=newStyle; savePreferredAnswerStyle(newStyle); buildAnswerChoices();
+  state.answerStyle=newStyle;
+  savePreferredAnswerStyle(newStyle);
+  buildAnswerChoices();
 });
 $("instrument").addEventListener("change",async function(){
   savePreferredInstrument(this.value);
