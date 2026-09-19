@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  var VERSION="1.17",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount";
+  var VERSION="1.22",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount",AUTOPLAY_KEY="tuneNameEarTrainerAutoPlayNext";
   var PROGRAMS={
     piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15
   }
@@ -174,6 +174,23 @@
       localStorage.setItem(QUESTION_COUNT_KEY,String(v))
     } catch(e){}
   }
+  function loadAutoPlayNext(){
+    if(!canStoreCustomCollection)return false;
+    try{
+      return localStorage.getItem(AUTOPLAY_KEY)==="enabled"
+    } catch(e){
+      return false
+    }
+  }
+  function saveAutoPlayNext(enabled){
+    if(!canStoreCustomCollection)return;
+    try{
+      localStorage.setItem(AUTOPLAY_KEY,enabled?"enabled":"disabled")
+    } catch(e){}
+  }
+  function autoPlayNextEnabled(){
+    return $("autoPlayNext").value==="enabled"
+  }
   function questionCount(){
     var v=$("questionCount").value;
     return v==="25"||v==="unlimited"?v:"10"
@@ -279,21 +296,22 @@
     else out=accompaniment+"\n"+out;
     return out+"\n";
   }
-  function cursorControl(){
+  function cursorControl(onFinished){
     return {
       onStart:function(){
       }
       ,onFinished:function(){
+        if(typeof onFinished==="function")onFinished()
       }
       ,onEvent:function(){
       }
     }
   }
-  async function prepareTune(){
+  async function prepareTune(autoPlay){
     var serial=++prepareSerial,current=tune();
     clearController();
-    $("playbackStatus").hidden=false;
-    $("playbackStatus").textContent="Preparing tune audio…";
+    $("playbackStatus").hidden=true;
+    $("playbackStatus").textContent="";
     try{
       if(!window.ABCJS||!ABCJS.synth)throw new Error("ABCJS audio is unavailable.");
       var rendered=ABCJS.renderAbc("hiddenTuneRender",playbackABC(current.abc),{
@@ -302,21 +320,40 @@
       );
       if(!rendered.length)throw new Error("Tune could not be rendered.");
       var c=new ABCJS.synth.SynthController();
-      c.load("#tuneAudioControls",cursorControl(),{
+      var restartingLoop=false;
+      c.load("#tuneAudioControls",cursorControl(function(){
+        if(restartingLoop||serial!==prepareSerial||tuneController!==c)return;
+        restartingLoop=true;
+        try{
+          if(c.restart)c.restart();
+          var p=c.play?c.play():null;
+          if(p&&typeof p.then==="function"){
+            p.then(function(){restartingLoop=false}).catch(function(){restartingLoop=false})
+          } else {
+            restartingLoop=false
+          }
+        } catch(e){
+          restartingLoop=false
+        }
+      }),{
         displayLoop:false,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:false
       }
       );
-      await c.setTune(rendered[0],false,{
+      await c.setTune(rendered[0],!!autoPlay,{
         program:program(),chordsOff:false,soundFontUrl:FATBOY
       }
       );
       if(serial!==prepareSerial)return;
       tuneController=c;
-      try{
-        if(c.toggleLoop)c.toggleLoop()
-      } catch(e){
+      $("playbackStatus").hidden=true;
+      if(autoPlay&&serial===prepareSerial){
+        state.heard[answerKey()]=true;
+        buildChoices();
+        try{
+          if(c.play)c.play()
+        } catch(e){
+        }
       }
-      $("playbackStatus").hidden=true
     } catch(e){
       $("playbackStatus").textContent="Audio preparation failed. Reload the page and try again."
     }
@@ -416,12 +453,12 @@
     $("nextBtn").disabled=!answered||last;
     $("finalReviewInlineBtn").hidden=!(last&&answered)
   }
-  function render(){
+  function render(autoPlay){
     pause();
     var current=tune();
     $("questionEyebrow").textContent=unlimitedMode()?"Question "+state.questionNumber:"Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
     $("questionTitle").textContent="Which tune do you hear?";
-    buildChoices();updateProgress();nav();void prepareTune()
+    buildChoices();updateProgress();nav();void prepareTune(!!autoPlay)
   }
   function startNew(ids){
     pause();
@@ -463,11 +500,11 @@
       state.sessionIds=[randomTuneIdExcept(previousId)];
       state.currentIndex=0;
       state.answers={};state.heard={};state.questionNumber++;
-      render();return
+      render(autoPlayNextEnabled());return
     }
     var n=state.currentIndex+d;
     if(n<0||n>=state.sessionIds.length)return;
-    state.currentIndex=n;render()
+    state.currentIndex=n;render(d>0&&autoPlayNextEnabled())
   }
   async function confirmModal(msg,ok){
     if(window.DayPilot&&DayPilot.Modal&&DayPilot.Modal.confirm){
@@ -515,9 +552,10 @@
       '<p>This trainer helps you learn to recognize traditional Irish tunes by name.</p>',
 
       '<h3>Starting a session</h3>',
-      '<p>First choose how you want to identify the tunes: select <strong>Reveal Answer — No Choices</strong> to guess without tune-name hints, ',
+      '<p>First choose the playback instrument. Then choose how you want to identify the tunes: select <strong>Reveal Answer — No Choices</strong> to guess without tune-name hints, ',
       'or choose <strong>2, 4, 6, 8, or 10</strong> tune-name choices for each question. ',
-      'Then choose <strong>10</strong>, <strong>25</strong>, or <strong>Unlimited</strong> questions. ',
+      'Then choose <strong>10</strong>, <strong>25</strong>, or <strong>Unlimited</strong> questions, and choose whether ',
+      '<strong>Auto-play on Next Tune</strong> is enabled or disabled. ',
       'Tunes are selected at random from the current tune collection.</p>',
 
       '<h3>1. Listen</h3>',
@@ -537,13 +575,25 @@
       'the tune names you missed and lets you practice them again. In Reveal Answer mode, it lists the tune names ',
       'you worked through without assigning a score.</p>',
 
-      '<h3>Answer mode</h3>',
+      '<h3>Instrument</h3>',
+      '<p>Choose the playback instrument in the left panel. ',
+      'Your choice is saved in this browser when possible.</p>',
+
+      '<h3>Answer Mode / Tune Name Choices</h3>',
       '<p>The first option, <strong>Reveal Answer — No Choices</strong>, gives you no tune-name hints and keeps no score. ',
       'Or choose <strong>2, 4, 6, 8, or 10</strong> possible tune name choices for each question. ',
       'The default is 6. ',
       'Changing this setting during a session requires confirmation and starts a new session.</p>',
 
-      '<h3>Your own ABC tunes</h3>',
+      '<h3>Number of Questions</h3>',
+      '<p>Choose <strong>10</strong> questions (the default), <strong>25</strong> questions, or <strong>Unlimited</strong>. ',
+      'Unlimited mode continues with random tunes, never repeats the same tune twice in a row, and has no progress bar or final review.</p>',
+
+      '<h3>Auto-play on Next Tune</h3>',
+      '<p>This setting is disabled by default. When enabled, clicking <strong>Next Tune</strong> automatically starts playback after the next tune is loaded. ',
+      'Playback loops automatically. Your setting is saved in this browser when possible.</p>',
+
+      '<h3>Using your own ABC tunes</h3>',
 
       canStoreCustomCollection
         ? [
@@ -560,10 +610,6 @@
             '<p>Loading and saving a custom tune collection is not available in this browser. ',
             'This browser is currently using the default tune collection.</p>'
           ].join(""),
-
-      '<h3>Instrument</h3>',
-      '<p>Choose the playback instrument in the left panel. ',
-      'Your choice is saved in this browser when possible.</p>',
 
       '<h3>Not hearing sound on an iPhone or iPad?</h3>',
       '<p>On iPhone and iPad, <strong>Mute must be turned off in Control Center for the audio to be heard</strong>. This is an iOS audio behavior and is not specific to the ear trainer.</p>',
@@ -676,6 +722,7 @@
     $("instrument").value=loadInstrument();
     $("choiceCount").value=String(loadChoiceCount());
     $("choiceCount").dataset.previousValue=$("choiceCount").value;
+    $("autoPlayNext").value=loadAutoPlayNext()?"enabled":"disabled";
     $("questionCount").value=loadQuestionCount();
     $("questionCount").dataset.previousValue=$("questionCount").value;
     state=newState();
@@ -730,6 +777,9 @@
     }
   }
   ;
+  $("autoPlayNext").onchange=function(){
+    saveAutoPlayNext(this.value==="enabled")
+  };
   $("questionCount").onchange=async function(){
     var select=this,previous=select.dataset.previousValue||"10",next=questionCount();
     if(next===previous)return;

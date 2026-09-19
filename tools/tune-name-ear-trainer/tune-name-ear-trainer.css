@@ -2,7 +2,7 @@
   color-scheme:light;
   --fs-base:clamp(15px,1.05vw + 12px,17px);
   --page-pad:28px;
-  --gap:14px;
+  --gap:11px;
   --bd:1px solid rgba(127,127,127,.35);
   --ink:#17241c;
   --green:#176b43;
@@ -32,13 +32,28 @@ button,select,input {
   font:inherit
 }
 
+/*
+ * Safari can ignore inherited/system-ui fonts in the native popup menu.
+ * Use an explicit installed sans-serif face for the select and its menu items.
+ */
+select,
+select option,
+select optgroup {
+  font-family:Arial,Helvetica,sans-serif!important
+}
+
+select option,
+select optgroup {
+  font-weight:400!important
+}
+
 button {
   appearance:none;
   border:1px solid var(--green-dark);
   background:var(--green);
   color:#fff;
   border-radius:6px;
-  padding:10px 14px;
+  padding:8px 13px;
   font-weight:650;
   cursor:pointer
 }
@@ -135,13 +150,13 @@ button.secondary:hover {
 .left {
   display:flex;
   flex-direction:column;
-  gap:12px
+  gap:9px
 }
 
 .card {
   border:var(--bd);
   border-radius:12px;
-  padding:16px;
+  padding:14px;
   background:#fff
 }
 
@@ -174,7 +189,7 @@ h2,h3 {
 
 .setupBlock {
   display:grid;
-  gap:6px
+  gap:4px
 }
 
 .setupBlock select {
@@ -182,9 +197,9 @@ h2,h3 {
   appearance:none;
   box-sizing:border-box;
   width:100%;
-  min-height:44px;
+  min-height:38px;
   margin:0;
-  padding:10px 42px 10px 12px;
+  padding:7px 40px 7px 11px;
   border:1px solid #b8c7bd;
   border-radius:7px;
   background-color:#fff;
@@ -193,9 +208,9 @@ h2,h3 {
   background-position:right 14px center;
   background-size:14px 9px;
   color:#17241c;
-  font-family:inherit;
+  font-family:Arial,Helvetica,sans-serif!important;
   font-size:1rem;
-  font-weight:600;
+  font-weight:400;
   line-height:1.25;
   cursor:pointer;
   outline:none;
@@ -224,12 +239,12 @@ h2,h3 {
 .divider {
   height:1px;
   background:#d9dfdb;
-  margin:18px 0
+  margin:13px 0
 }
 
 .libraryStatus {
-  margin:8px 0 10px;
-  padding:9px 10px;
+  margin:6px 0 8px;
+  padding:7px 9px;
   background:#f4f8f5;
   border:1px solid #d8e3db;
   border-radius:7px;
@@ -241,7 +256,7 @@ h2,h3 {
 }
 
 .startButton {
-  margin-top:16px
+  margin-top:11px
 }
 
 .questionTop,.progressHeader {
@@ -594,9 +609,14 @@ h2,h3 {
 }
 
 .choiceCountBlock {
-  margin-top:14px
+  margin-top:10px
 }
 
 .questionCountBlock {
-  margin-top:14px
+  margin-top:10px
+}
+
+
+.autoPlayBlock {
+  margin-top:10px
 }
