@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  var VERSION="1.16",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount";
+  var VERSION="1.17",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount";
   var PROGRAMS={
     piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15
   }
@@ -346,7 +346,7 @@
       $("feedback").hidden=!answer;
       if(answer){
         $("feedback").className="feedback reveal";
-        $("feedback").innerHTML="<strong>The tune is "+esc(displayTitle(current.title))+".</strong>"
+        $("feedback").innerHTML="The tune is <strong>"+esc(displayTitle(current.title))+"</strong>."
       }
       return
     }
