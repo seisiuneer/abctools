@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  var VERSION="1.22",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount",AUTOPLAY_KEY="tuneNameEarTrainerAutoPlayNext";
+  var VERSION="1.25",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount",AUTOPLAY_KEY="tuneNameEarTrainerAutoPlayNext";
   var PROGRAMS={
     piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15
   }
@@ -438,6 +438,19 @@
     $("accuracyText").textContent=vals.length?Math.round(correct/vals.length*100)+"% correct · "+correct+" / "+vals.length:"No answers yet";
     $("progressBar").style.width=(vals.length/state.sessionIds.length*100)+"%"
   }
+  function scrollEnabledNavButtonIntoView(button){
+    if(!button||button.hidden||button.disabled)return;
+    if(!window.matchMedia||!window.matchMedia("(max-width:1000px)").matches)return;
+    window.requestAnimationFrame(function(){
+      window.requestAnimationFrame(function(){
+        var rect=button.getBoundingClientRect();
+        var safeBottom=window.innerHeight-90;
+        if(rect.bottom>safeBottom||rect.top<12){
+          button.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"})
+        }
+      })
+    })
+  }
   function nav(){
     var answered=!!state.answers[answerKey()];
     if(unlimitedMode()){
@@ -445,13 +458,15 @@
       $("nextBtn").hidden=false;
       $("nextBtn").disabled=!answered;
       $("finalReviewInlineBtn").hidden=true;
+      if(answered)scrollEnabledNavButtonIntoView($("nextBtn"));
       return
     }
     var first=state.currentIndex===0,last=state.currentIndex===state.sessionIds.length-1;
     $("prevBtn").hidden=first;
     $("nextBtn").hidden=last;
     $("nextBtn").disabled=!answered||last;
-    $("finalReviewInlineBtn").hidden=!(last&&answered)
+    $("finalReviewInlineBtn").hidden=!(last&&answered);
+    if(answered)scrollEnabledNavButtonIntoView(last?$("finalReviewInlineBtn"):$("nextBtn"))
   }
   function render(autoPlay){
     pause();

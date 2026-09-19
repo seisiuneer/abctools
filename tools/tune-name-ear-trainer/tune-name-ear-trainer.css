@@ -416,7 +416,8 @@ h2,h3 {
 }
 
 .navRow button {
-  min-width:140px
+  min-width:140px;
+  scroll-margin-bottom:70px
 }
 
 .navRow button[hidden] {
@@ -551,7 +552,7 @@ h2,h3 {
 @media(max-width:1000px) {
   .main {
     grid-template-columns:1fr;
-    padding:0 16px 20px
+    padding:0 16px calc(110px + env(safe-area-inset-bottom, 0px))
   }
 
   .setupCard {
@@ -586,7 +587,7 @@ h2,h3 {
   }
 
   .main {
-    padding:0 10px 16px
+    padding:0 10px calc(110px + env(safe-area-inset-bottom, 0px))
   }
 
   .choiceGrid {

@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 
-var VERSION="2.42";
+var VERSION="2.43";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
 var INSTRUMENT_STORAGE_KEY="keyModeEarTrainerInstrument";
@@ -723,11 +723,29 @@ function updateProgress(){
   $("scoreText").textContent=correct+" / "+answers.length;$("accuracyText").textContent=answers.length?(Math.round(correct/answers.length*100)+"% correct · "+correct+" / "+answers.length):"No answers yet";
   $("progressBar").style.width=(answers.length/state.sessionIds.length*100)+"%";
 }
+function scrollEnabledNavButtonIntoView(button){
+  if(!button||button.hidden||button.disabled)return;
+  if(!window.matchMedia||!window.matchMedia("(max-width:1000px)").matches)return;
+  window.requestAnimationFrame(function(){
+    window.requestAnimationFrame(function(){
+      var rect=button.getBoundingClientRect();
+      var safeBottom=window.innerHeight-90;
+      if(rect.bottom>safeBottom||rect.top<12){
+        button.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"});
+      }
+    });
+  });
+}
 function updateNavigationButtons(){
   var tune=currentTune(),answered=!!(tune&&state.answers[tune.id]);
-  if(unlimitedMode()){$("prevBtn").hidden=true;$("prevBtn").disabled=true;$("nextBtn").hidden=false;$("nextBtn").disabled=!answered;$("finalReviewInlineBtn").hidden=true;return;}
+  if(unlimitedMode()){
+    $("prevBtn").hidden=true;$("prevBtn").disabled=true;$("nextBtn").hidden=false;$("nextBtn").disabled=!answered;$("finalReviewInlineBtn").hidden=true;
+    if(answered)scrollEnabledNavButtonIntoView($("nextBtn"));
+    return;
+  }
   var isFirst=state.currentIndex===0,isLast=state.currentIndex===state.sessionIds.length-1;
   $("prevBtn").hidden=isFirst;$("prevBtn").disabled=isFirst;$("nextBtn").hidden=isLast;$("nextBtn").disabled=!answered||isLast;$("finalReviewInlineBtn").hidden=!(isLast&&answered);
+  if(answered)scrollEnabledNavButtonIntoView(isLast?$("finalReviewInlineBtn"):$("nextBtn"));
 }
 function renderQuestion(autoPlay){
   pauseAllControllers();clearTuneController();clearScaleControllers();var tune=currentTune();if(!tune)return;

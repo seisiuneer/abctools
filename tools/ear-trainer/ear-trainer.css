@@ -117,18 +117,18 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
   }
 }
 
-@media(max-width:1000px){.main{grid-template-columns:1fr;padding:0 16px 20px}.setupCard{position:relative;top:auto}.answerChoiceLayout.withRhythm{grid-template-columns:1fr}.answerGrid{grid-template-columns:1fr}.combinedChoices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1000px){.main{grid-template-columns:1fr;padding:0 16px calc(110px + env(safe-area-inset-bottom, 0px))}.setupCard{position:relative;top:auto}.answerChoiceLayout.withRhythm{grid-template-columns:1fr}.answerGrid{grid-template-columns:1fr}.combinedChoices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 @media(max-width:760px){
   .heroTop{padding-top:40px}
   .heroTitle{font-size:1.3rem;line-height:1.15}
 }
-@media(max-width:620px){.heroCard{padding:14px 14px 15px}.tipJarButton{left:10px;top:9px;padding:6px 9px;font-size:.78rem}.toolVersion{right:10px;top:13px;font-size:.76rem}.heroTop{padding-top:38px}.heroTitle{font-size:1.3rem;line-height:1.15}.heroText{font-size:.9rem}.main{padding:0 10px 16px}.listenPanel{grid-template-columns:auto minmax(0,1fr)}.listenActions{grid-column:1 / -1;justify-content:stretch}.listenActions button{flex:1}.rhythmChoices{grid-template-columns:repeat(2,minmax(0,1fr))}.tonicChoices{grid-template-columns:repeat(3,minmax(0,1fr))}.modeChoices,.combinedChoices{grid-template-columns:1fr}.differenceButtons button{flex:1 1 145px}.answerActions button,.nextRow button{width:100%}}
+@media(max-width:620px){.heroCard{padding:14px 14px 15px}.tipJarButton{left:10px;top:9px;padding:6px 9px;font-size:.78rem}.toolVersion{right:10px;top:13px;font-size:.76rem}.heroTop{padding-top:38px}.heroTitle{font-size:1.3rem;line-height:1.15}.heroText{font-size:.9rem}.main{padding:0 10px calc(110px + env(safe-area-inset-bottom, 0px))}.listenPanel{grid-template-columns:auto minmax(0,1fr)}.listenActions{grid-column:1 / -1;justify-content:stretch}.listenActions button{flex:1}.rhythmChoices{grid-template-columns:repeat(2,minmax(0,1fr))}.tonicChoices{grid-template-columns:repeat(3,minmax(0,1fr))}.modeChoices,.combinedChoices{grid-template-columns:1fr}.differenceButtons button{flex:1 1 145px}.answerActions button,.nextRow button{width:100%}}
 
 .audioLabel{font-weight:750;color:var(--builder-ink);margin-bottom:4px}.audio{min-width:150px;min-height:42px}.audio .abcjs-inline-audio{max-width:100%}.differencePlayers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}.differencePlayer{border:1px solid #cfd9d2;border-radius:8px;padding:10px}.differencePlayer strong{display:block;margin-bottom:6px}@media(max-width:620px){.differencePlayers{grid-template-columns:1fr}}
 
 /* Session navigation */
-.navRow{justify-content:space-between}.navRow button{min-width:140px}
+.navRow{justify-content:space-between}.navRow button{min-width:140px;scroll-margin-bottom:70px}
 @media(max-width:620px){.navRow{gap:8px}.navRow button{min-width:0;flex:1}}
 
 /* v1.8: the tune uses abcjs's native player while notation stays off-screen. */
