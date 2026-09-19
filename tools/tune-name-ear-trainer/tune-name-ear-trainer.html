@@ -29,7 +29,7 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    
+      
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK&cb=20260918-2_36"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -38,8 +38,8 @@
     gtag('config', 'G-VM0N9HL3MK');
   </script> 
 
-  <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260918-1_13" rel="stylesheet"/>
-  <link href="tune-name-ear-trainer.css?cb=20260918-1_13" rel="stylesheet"/>
+  <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260918-1_16" rel="stylesheet"/>
+  <link href="tune-name-ear-trainer.css?cb=20260918-1_16" rel="stylesheet"/>
  </head>
  <body>
   <div class="app">
@@ -48,7 +48,7 @@
      Tip Jars
     </a>
     <div class="toolVersion">
-     v1.13
+     v1.16
     </div>
     <div class="heroTop">
      <h1 class="heroTitle">
@@ -104,10 +104,13 @@
       <div class="setupBlock choiceCountBlock">
        <label for="choiceCount">
         <strong>
-         Number of Tune Name Choices
+         Answer Mode / Tune Name Choices
         </strong>
        </label>
        <select id="choiceCount">
+        <option value="0">
+         Reveal Answer — No Choices
+        </option>
         <option value="2">
          2
         </option>
@@ -122,6 +125,24 @@
         </option>
         <option value="10">
          10
+        </option>
+       </select>
+      </div>
+      <div class="setupBlock questionCountBlock">
+       <label for="questionCount">
+        <strong>
+         Number of Questions
+        </strong>
+       </label>
+       <select id="questionCount">
+        <option value="10" selected>
+         10
+        </option>
+        <option value="25">
+         25
+        </option>
+        <option value="unlimited">
+         Unlimited
         </option>
        </select>
       </div>
@@ -192,7 +213,7 @@
       <div aria-live="polite" class="status" hidden="" id="playbackStatus">
       </div>
       <form id="answerForm">
-       <fieldset class="answerFieldset">
+       <fieldset class="answerFieldset" id="answerFieldset">
         <legend>
          Which tune do you hear?
         </legend>
@@ -224,17 +245,17 @@
   </div>
   <div aria-hidden="true" class="hiddenRender" id="hiddenTuneRender">
   </div>
-  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260918-1_13">
+  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260918-1_16">
   </script>
-  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260918-1_13">
+  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260918-1_16">
   </script>
-  <script src="daypilot-modal.min-3.10.1.js?cb=20260918-1_13">
+  <script src="daypilot-modal.min-3.10.1.js?cb=20260918-1_16">
   </script>
-  <script src="examples.js?cb=20260918-1_13">
+  <script src="examples.js?cb=20260918-1_16">
   </script>
-  <script src="tune-name-ear-trainer-guided-tour.js?cb=20260918-1_13">
+  <script src="tune-name-ear-trainer-guided-tour.js?cb=20260918-1_16">
   </script>
-  <script src="tune-name-ear-trainer.js?cb=20260918-1_13">
+  <script src="tune-name-ear-trainer.js?cb=20260918-1_16">
   </script>
  </body>
 </html>

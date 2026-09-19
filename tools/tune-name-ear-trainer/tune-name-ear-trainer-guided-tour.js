@@ -77,47 +77,52 @@ function steps(){
   return [
     {
       title:"Welcome to the Guided Tour",
-      body:"<p>This quick tour shows you how to listen to a tune, identify its name, choose how many names are shown, use your own ABC collection, and review missed tunes.</p>"
+      body:"<p>This quick tour shows you how to listen to a tune, identify its name with or without multiple-choice hints, use your own ABC collection, and follow your session progress.</p>"
     },
     {
       title:"1. Choose the Playback Instrument",
       selector:"#instrument",
-      body:"<p>Choose the instrument used for tune playback. Your choice is saved in this browser when local storage is available.</p>"
+      body:"<p>Choose the instrument used for tune playback. Your choice is saved in this browser when possible.</p>"
     },
     {
-      title:"2. Choose the Number of Tune Names",
+      title:"2. Choose the Answer Mode",
       selector:"#choiceCount",
-      body:"<p>Choose 2, 4, 6, 8, or 10 possible tune names for each question. The default is 6. Changing this setting during a session requires confirmation and starts a new 10-tune session.</p>"
+      body:"<p>Choose Reveal Answer — No Choices to identify each tune without any tune-name hints or scoring, or choose 2, 4, 6, 8, or 10 possible tune names. The default is 6. Changing this setting during a session requires confirmation and starts a new session.</p>"
     },
     {
-      title:"3. Choose the Tune Collection",
+      title:"3. Choose the Number of Questions",
+      selector:"#questionCount",
+      body:"<p>Choose 10 questions (the default), 25 questions, or Unlimited. Your choice is saved in this browser when possible. Unlimited mode keeps giving you random tunes, never repeats the same tune twice in a row, and has no progress bar or final review.</p>"
+    },
+    {
+      title:"4. Choose the Tune Collection",
       selector:"#customCollectionControls",
-      body:"<p>When browser local storage is available, you can load your own .abc or .txt file. It must contain at least ten tunes with ten distinct first T: titles. It is validated and saved in this browser. Restore Default Tunes returns to the original collection.</p>"
+      body:"<p>When this browser can save your tune collection, you can load your own .abc or .txt file. It must contain at least 10 tunes, each with a first T: title, and at least 10 distinct tune names. It is validated and saved in this browser. Restore Default Tunes returns to the original collection.</p>"
     },
     {
-      title:"4. Listen to the Tune",
+      title:"5. Listen to the Tune",
       selector:"#tuneAudioControls",
-      body:"<p>Use this playback bar to listen to the current tune. The tune-name choices become available after you start playback.</p>"
+      body:"<p>Use this playback bar to listen to the current tune. In a multiple-choice mode, the tune-name choices become available after you start playback. In Reveal Answer mode, the Reveal Answer button becomes available instead.</p>"
     },
     {
-      title:"5. Choose the Tune Name",
-      selector:"#tuneChoices",
-      body:"<p>Select the tune name you think matches what you hear. Only tune names are shown.</p>"
+      title:"6. Make Your Guess",
+      selector:"#answerForm",
+      body:"<p>In a multiple-choice mode, select the tune name you think matches what you hear. In Reveal Answer mode, no choices are shown, so make your guess without any hints.</p>"
     },
     {
-      title:"6. Submit Your Answer",
+      title:"7. Submit or Reveal",
       selector:"#submitBtn",
-      body:"<p>Click Submit Answer to check your choice. The correct tune name is then shown.</p>"
+      body:"<p>In a multiple-choice mode, click Submit Answer to check your choice. In Reveal Answer mode, the button says Reveal Answer and simply shows the tune name without scoring it right or wrong.</p>"
     },
     {
-      title:"7. Follow Your Progress",
+      title:"8. Follow Your Progress",
       selector:".progressCard",
-      body:"<p>Session Progress shows how many answers you have submitted and your current accuracy.</p>"
+      body:"<p>In a multiple-choice mode, Session Progress shows how many answers you have submitted and your current accuracy. In Reveal Answer mode, it tracks how many answers you have revealed. In Unlimited mode, the progress bar is hidden; multiple-choice mode shows only running Correct and Incorrect totals, while Reveal Answer shows a running Revealed total.</p>"
     },
     {
-      title:"8. Finish and Review",
+      title:"9. Finish and Review",
       selector:"#nextBtn",
-      body:"<p>Each regular session contains 10 randomly selected tunes. After the last tune, Show Final Review lists the tune names you missed and lets you practice them again.</p>"
+      body:"<p>For 10- and 25-question sessions, Show Final Review lists the tune names you missed and lets you practice them again in multiple-choice mode; in Reveal Answer mode it lists the tunes you worked through and keeps no score. Unlimited mode continues with random tunes and has no final review.</p>"
     },
     {
       title:"Tour Complete",

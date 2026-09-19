@@ -1,6 +1,6 @@
 (function(){
   "use strict";
-  var VERSION="1.13",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",SESSION_LENGTH=10,CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount";
+  var VERSION="1.16",FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/",CUSTOM_KEY="tuneNameEarTrainerCustomABC",INSTRUMENT_KEY="tuneNameEarTrainerInstrument",CHOICE_COUNT_KEY="tuneNameEarTrainerChoiceCount",QUESTION_COUNT_KEY="tuneNameEarTrainerQuestionCount";
   var PROGRAMS={
     piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15
   }
@@ -143,7 +143,7 @@
     if(!canStoreCustomCollection)return 6;
     try{
       var v=parseInt(localStorage.getItem(CHOICE_COUNT_KEY),10);
-      return v===2||v===4||v===6||v===8||v===10?v:6
+      return v===0||v===2||v===4||v===6||v===8||v===10?v:6
     } catch(e){
       return 6
     }
@@ -157,7 +157,35 @@
   }
   function choiceCount(){
     var v=parseInt($("choiceCount").value,10);
-    return v===2||v===4||v===6||v===8||v===10?v:6
+    return v===0||v===2||v===4||v===6||v===8||v===10?v:6
+  }
+  function loadQuestionCount(){
+    if(!canStoreCustomCollection)return "10";
+    try{
+      var v=localStorage.getItem(QUESTION_COUNT_KEY);
+      return v==="25"||v==="unlimited"?v:"10"
+    } catch(e){
+      return "10"
+    }
+  }
+  function saveQuestionCount(v){
+    if(!canStoreCustomCollection)return;
+    try{
+      localStorage.setItem(QUESTION_COUNT_KEY,String(v))
+    } catch(e){}
+  }
+  function questionCount(){
+    var v=$("questionCount").value;
+    return v==="25"||v==="unlimited"?v:"10"
+  }
+  function unlimitedMode(){
+    return questionCount()==="unlimited"
+  }
+  function finiteQuestionCount(){
+    return questionCount()==="25"?25:10
+  }
+  function revealMode(){
+    return choiceCount()===0
   }
   function program(){
     return PROGRAMS[$("instrument").value]||0
@@ -188,7 +216,7 @@
       distinct[t.title]=1
     });
     if(parsed.length<10||Object.keys(distinct).length<10){
-      throw new Error("The collection must contain at least ten ABC tunes with ten distinct first T: titles.");
+      throw new Error("The collection must contain at least 10 ABC tunes, each with a first T: title, and at least 10 distinct tune names.");
     }
     allTunes=parsed;
     usingCustom=custom;
@@ -202,23 +230,34 @@
     $("libraryStatus").textContent=(custom?"My tunes: ":"Default tunes: ")+allTunes.length+" tunes";
     $("restoreDefaultsBtn").disabled=!custom
   }
-  function chooseSession(){
-    return shuffle(allTunes).slice(0,Math.min(SESSION_LENGTH,allTunes.length))
+  function chooseSession(count){
+    var out=[];
+    while(out.length<count){
+      var batch=shuffle(allTunes);
+      for(var i=0;i<batch.length&&out.length<count;i++){
+        if(out.length&&out[out.length-1].id===batch[i].id)continue;
+        out.push(batch[i])
+      }
+    }
+    return out
+  }
+  function randomTuneIdExcept(previousId){
+    if(allTunes.length<2)return allTunes[0].id;
+    var t;
+    do{t=allTunes[Math.floor(Math.random()*allTunes.length)]}while(t.id===previousId);
+    return t.id
   }
   function newState(ids){
+    var unlimited=unlimitedMode();
     return {
-      sessionIds:(ids||chooseSession().map(function(t){
-        return t.id
-      }
-      )),currentIndex:0,answers:{
-      }
-      ,heard:{
-      }
+      sessionIds:(ids||(unlimited?[randomTuneIdExcept(null)]:chooseSession(finiteQuestionCount()).map(function(t){return t.id}))),
+      currentIndex:0,answers:{},heard:{},correctTotal:0,incorrectTotal:0,revealedTotal:0,questionNumber:1
     }
   }
   function tune(){
     return tuneById[state.sessionIds[state.currentIndex]]
   }
+  function answerKey(){return String(state.currentIndex)}
   function pause(){
     try{
       if(tuneController&&tuneController.pause)tuneController.pause()
@@ -295,22 +334,38 @@
     return shuffle(names)
   }
   function buildChoices(){
-    var current=tune(),answer=state.answers[current.id],names=answer?answer.options:choicesFor(current);
+    var current=tune(),answer=state.answers[answerKey()],isReveal=revealMode();
+
+    $("answerFieldset").hidden=isReveal;
+    $("submitBtn").textContent=isReveal?"Reveal Answer":"Submit Answer";
+    $("answerForm").classList.toggle("answered",!!answer);
+
+    if(isReveal){
+      $("tuneChoices").innerHTML="";
+      $("submitBtn").disabled=!!answer||!state.heard[answerKey()];
+      $("feedback").hidden=!answer;
+      if(answer){
+        $("feedback").className="feedback reveal";
+        $("feedback").innerHTML="<strong>The tune is "+esc(displayTitle(current.title))+".</strong>"
+      }
+      return
+    }
+
+    var names=answer?answer.options:choicesFor(current);
     if(!answer&&names.length<choiceCount()){
       $("tuneChoices").innerHTML="<p>This collection does not contain enough distinct tune names for the selected number of choices.</p>";
       return
     }
     $("tuneChoices").innerHTML=names.map(function(name){
-      var cls="choiceLabel"+(state.heard[current.id]?"":" preListenDisabled");
+      var cls="choiceLabel"+(state.heard[answerKey()]?"":" preListenDisabled");
       if(answer){
         if(name===current.title)cls+=" correct";
         if(name===answer.choice&&name!==current.title)cls+=" incorrect"
       }
-      return '<label class="'+cls+'"><input type="radio" name="tuneName" value="'+esc(name)+'" '+(answer&&answer.choice===name?"checked":"")+' '+(answer||!state.heard[current.id]?"disabled":"")+'><span>'+esc(displayTitle(name))+'</span></label>'
+      return '<label class="'+cls+'"><input type="radio" name="tuneName" value="'+esc(name)+'" '+(answer&&answer.choice===name?"checked":"")+' '+(answer||!state.heard[answerKey()]?"disabled":"")+'><span>'+esc(displayTitle(name))+'</span></label>'
     }
     ).join("");
-    $("answerForm").classList.toggle("answered",!!answer);
-    $("submitBtn").disabled=!!answer||!state.heard[current.id]||!document.querySelector('input[name="tuneName"]:checked');
+    $("submitBtn").disabled=!!answer||!state.heard[answerKey()]||!document.querySelector('input[name="tuneName"]:checked');
     $("feedback").hidden=!answer;
     if(answer){
       $("feedback").className="feedback "+(answer.correct?"correct":"incorrect");
@@ -318,19 +373,44 @@
     }
   }
   function updateProgress(){
-    var vals=Object.keys(state.answers).map(function(k){
-      return state.answers[k]
+    var vals=Object.keys(state.answers).map(function(k){return state.answers[k]});
+    var track=$("progressBar").parentElement;
+    track.hidden=unlimitedMode();
+    var scoreBox=document.querySelector(".scoreBox");
+    if(scoreBox)scoreBox.hidden=unlimitedMode();
+
+    if(unlimitedMode()){
+      if(revealMode()){
+        $("scoreText").textContent="Revealed: "+state.revealedTotal;
+        $("accuracyText").textContent=state.revealedTotal+" revealed"
+      } else {
+        $("scoreText").textContent="Correct: "+state.correctTotal+" · Incorrect: "+state.incorrectTotal;
+        $("accuracyText").textContent="Correct "+state.correctTotal+" · Incorrect "+state.incorrectTotal
+      }
+      return
     }
-    ),correct=vals.filter(function(a){
-      return a.correct
+
+    if(revealMode()){
+      $("scoreText").textContent=vals.length+" / "+state.sessionIds.length;
+      $("accuracyText").textContent=vals.length?vals.length+" of "+state.sessionIds.length+" revealed":"No answers revealed yet";
+      $("progressBar").style.width=(vals.length/state.sessionIds.length*100)+"%";
+      return
     }
-    ).length;
+    var correct=vals.filter(function(a){return a.correct}).length;
     $("scoreText").textContent=correct+" / "+vals.length;
     $("accuracyText").textContent=vals.length?Math.round(correct/vals.length*100)+"% correct · "+correct+" / "+vals.length:"No answers yet";
     $("progressBar").style.width=(vals.length/state.sessionIds.length*100)+"%"
   }
   function nav(){
-    var answered=!!state.answers[tune().id],first=state.currentIndex===0,last=state.currentIndex===state.sessionIds.length-1;
+    var answered=!!state.answers[answerKey()];
+    if(unlimitedMode()){
+      $("prevBtn").hidden=true;
+      $("nextBtn").hidden=false;
+      $("nextBtn").disabled=!answered;
+      $("finalReviewInlineBtn").hidden=true;
+      return
+    }
+    var first=state.currentIndex===0,last=state.currentIndex===state.sessionIds.length-1;
     $("prevBtn").hidden=first;
     $("nextBtn").hidden=last;
     $("nextBtn").disabled=!answered||last;
@@ -339,12 +419,9 @@
   function render(){
     pause();
     var current=tune();
-    $("questionEyebrow").textContent="Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
+    $("questionEyebrow").textContent=unlimitedMode()?"Question "+state.questionNumber:"Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
     $("questionTitle").textContent="Which tune do you hear?";
-    buildChoices();
-    updateProgress();
-    nav();
-    void prepareTune()
+    buildChoices();updateProgress();nav();void prepareTune()
   }
   function startNew(ids){
     pause();
@@ -353,26 +430,44 @@
   }
   function submit(e){
     e.preventDefault();
-    var current=tune(),sel=document.querySelector('input[name="tuneName"]:checked');
-    if(!sel||state.answers[current.id])return;
+    var current=tune();
+    if(state.answers[answerKey()]||!state.heard[answerKey()])return;
+
+    if(revealMode()){
+      state.answers[answerKey()]={revealed:true,correct:null,choice:"",options:[]};
+      if(unlimitedMode())state.revealedTotal++;
+      buildChoices();
+      updateProgress();
+      nav();
+      return
+    }
+
+    var sel=document.querySelector('input[name="tuneName"]:checked');
+    if(!sel)return;
     var options=Array.prototype.map.call(document.querySelectorAll('input[name="tuneName"]'),function(x){
       return x.value
     }
     );
-    state.answers[current.id]={
-      choice:sel.value,correct:sel.value===current.title,options:options
+    state.answers[answerKey()]={choice:sel.value,correct:sel.value===current.title,options:options};
+    if(unlimitedMode()){
+      if(sel.value===current.title)state.correctTotal++;else state.incorrectTotal++
     }
-    ;
     buildChoices();
     updateProgress();
     nav()
   }
   function go(d){
-    if(d>0&&!state.answers[tune().id])return;
+    if(d>0&&!state.answers[answerKey()])return;
+    if(unlimitedMode()&&d>0){
+      var previousId=tune().id;
+      state.sessionIds=[randomTuneIdExcept(previousId)];
+      state.currentIndex=0;
+      state.answers={};state.heard={};state.questionNumber++;
+      render();return
+    }
     var n=state.currentIndex+d;
     if(n<0||n>=state.sessionIds.length)return;
-    state.currentIndex=n;
-    render()
+    state.currentIndex=n;render()
   }
   async function confirmModal(msg,ok){
     if(window.DayPilot&&DayPilot.Modal&&DayPilot.Modal.confirm){
@@ -392,37 +487,17 @@
     alert(html.replace(/<[^>]+>/g," "))
   }
   function finalReview(){
-    if(!state.sessionIds.every(function(id){
-      return !!state.answers[id]
-    }
-    ))return;
+    if(unlimitedMode())return;
+    if(state.sessionIds.some(function(id,index){return !state.answers[String(index)]}))return;
     pause();
-    var missed=state.sessionIds.map(function(id){
-      return {
-        t:tuneById[id],a:state.answers[id]
-      }
+    if(revealMode()){
+      var revealBody='<div class="tuneNameFinalReviewScroll" style="max-height:'+Math.max(200,Math.min(650,window.innerHeight-100))+'px"><h2>End-of-Session Review</h2><p>You completed all '+state.sessionIds.length+' tunes in <strong>Reveal Answer</strong> mode. No score is kept in this mode.</p><p>Tune names:</p>'+state.sessionIds.map(function(id){return '<div class="reviewItem revealReviewItem"><strong>'+esc(displayTitle(tuneById[id].title))+'</strong></div>'}).join('')+'</div>';
+      return alertModal(revealBody)
     }
-    ).filter(function(x){
-      return !x.a.correct
-    }
-    ),correct=state.sessionIds.length-missed.length;
-    var body='<div class="tuneNameFinalReviewScroll" style="max-height:'+Math.max(200,Math.min(650,window.innerHeight-100))+'px"><h2>End-of-Session Review</h2><p><strong>Final score: '+correct+' / '+state.sessionIds.length+'</strong></p>'+(missed.length?'<p>Tune names you missed:</p>'+missed.map(function(x){
-      return '<div class="reviewItem"><strong>'+esc(displayTitle(x.t.title))+'</strong><br>Your answer: '+esc(displayTitle(x.a.choice))+'</div>'
-    }
-    ).join('')+'<div class="practiceMissedTunesRow"><button id="practiceMissedTunesBtn" type="button">Practice Missed Tunes</button></div>':'<p>Perfect session — no missed tune names to review.</p>')+'</div>';
+    var missed=state.sessionIds.map(function(id,index){return {t:tuneById[id],a:state.answers[String(index)]}}).filter(function(x){return !x.a.correct}),correct=state.sessionIds.length-missed.length;
+    var body='<div class="tuneNameFinalReviewScroll" style="max-height:'+Math.max(200,Math.min(650,window.innerHeight-100))+'px"><h2>End-of-Session Review</h2><p><strong>Final score: '+correct+' / '+state.sessionIds.length+'</strong></p>'+(missed.length?'<p>Tune names you missed:</p>'+missed.map(function(x){return '<div class="reviewItem"><strong>'+esc(displayTitle(x.t.title))+'</strong><br>Your answer: '+esc(displayTitle(x.a.choice))+'</div>'}).join('')+'<div class="practiceMissedTunesRow"><button id="practiceMissedTunesBtn" type="button">Practice Missed Tunes</button></div>':'<p>Perfect session — no missed tune names to review.</p>')+'</div>';
     var p=alertModal(body);
-    setTimeout(function(){
-      var b=$("practiceMissedTunesBtn");
-      if(b)b.onclick=function(){
-        var ids=missed.map(function(x){
-          return x.t.id
-        }
-        );
-        if(DayPilot&&DayPilot.Modal&&DayPilot.Modal.close)DayPilot.Modal.close();
-        startNew(ids)
-      }
-    }
-    ,0);
+    setTimeout(function(){var b=$("practiceMissedTunesBtn");if(b)b.onclick=function(){var ids=missed.map(function(x){return x.t.id});if(DayPilot&&DayPilot.Modal&&DayPilot.Modal.close)DayPilot.Modal.close();startNew(ids)}},0);
     return p
   }
   function instructions(){
@@ -440,27 +515,33 @@
       '<p>This trainer helps you learn to recognize traditional Irish tunes by name.</p>',
 
       '<h3>Starting a session</h3>',
-      '<p>Each regular session contains 10 tunes selected at random from the current tune collection. ',
-      'Only the first <strong>T:</strong> title of each ABC tune is used as its name.</p>',
+      '<p>First choose how you want to identify the tunes: select <strong>Reveal Answer — No Choices</strong> to guess without tune-name hints, ',
+      'or choose <strong>2, 4, 6, 8, or 10</strong> tune-name choices for each question. ',
+      'Then choose <strong>10</strong>, <strong>25</strong>, or <strong>Unlimited</strong> questions. ',
+      'Tunes are selected at random from the current tune collection.</p>',
 
       '<h3>1. Listen</h3>',
       '<p>Use the playback bar to listen to the current tune. ',
-      'The tune-name choices become available after playback begins. ',
+      'In a multiple-choice mode, the tune-name choices become available after playback begins. ',
       'Tunes loop automatically.</p>',
 
-      '<h3>2. Choose and submit</h3>',
-      '<p>Select one of the tune names and click <strong>Submit Answer</strong>. ',
+      '<h3>2. Choose and submit, or reveal the answer</h3>',
+      '<p>With 2, 4, 6, 8, or 10 choices, select one of the tune names and click <strong>Submit Answer</strong>. ',
       'The trainer marks your selection and shows the correct tune name. ',
+      'In <strong>Reveal Answer</strong> mode, no tune-name choices are shown. Try to identify the tune without any hints, ',
+      'then click <strong>Reveal Answer</strong> to see its name. There is no right-or-wrong scoring in this mode.</p>',
 
       '<h3>3. Continue and review</h3>',
       '<p>Use <strong>Next Tune</strong> to continue. ',
-      'After the last tune, choose <strong>Show Final Review</strong> to see the tune names you missed ',
-      'and optionally practice only those tunes again.</p>',
+      'After the last tune in a 10- or 25-question session, choose <strong>Show Final Review</strong>. In a multiple-choice mode, the review shows ',
+      'the tune names you missed and lets you practice them again. In Reveal Answer mode, it lists the tune names ',
+      'you worked through without assigning a score.</p>',
 
-      '<h3>Number of tune-name choices</h3>',
-      '<p>Choose whether each question shows <strong>2, 4, 6, 8, or 10</strong> possible tune names. ',
-      'The default is 6. When browser local storage is available, your choice is saved in this browser. ',
-      'Changing this setting during a session requires confirmation and starts a new 10-tune session.</p>',
+      '<h3>Answer mode</h3>',
+      '<p>The first option, <strong>Reveal Answer — No Choices</strong>, gives you no tune-name hints and keeps no score. ',
+      'Or choose <strong>2, 4, 6, 8, or 10</strong> possible tune name choices for each question. ',
+      'The default is 6. ',
+      'Changing this setting during a session requires confirmation and starts a new session.</p>',
 
       '<h3>Your own ABC tunes</h3>',
 
@@ -468,7 +549,7 @@
         ? [
             '<p>Click <strong>Load My ABC Tunes</strong> and choose a <strong>.abc</strong> or ',
             '<strong>.txt</strong> file containing ABC tunes. ',
-            'The file must contain at least ten tunes with ten distinct first T: titles. ',
+            'The file must contain at least 10 tunes, each with a first T: title, and at least 10 distinct tune names. ',
             'The collection is validated before use and saved in this browser. ',
             'If the file is invalid or cannot be saved, you will be alerted and the default tunes will be used.</p>',
 
@@ -476,13 +557,13 @@
             'and returns to the original built-in tunes.</p>'
           ].join("")
         : [
-            '<p>Loading and storing a custom tune collection is available only when browser local storage is available. ',
+            '<p>Loading and saving a custom tune collection is not available in this browser. ',
             'This browser is currently using the default tune collection.</p>'
           ].join(""),
 
       '<h3>Instrument</h3>',
       '<p>Choose the playback instrument in the left panel. ',
-      'Your choice is saved in this browser when local storage is available.</p>',
+      'Your choice is saved in this browser when possible.</p>',
 
       '<h3>Not hearing sound on an iPhone or iPad?</h3>',
       '<p>On iPhone and iPad, <strong>Mute must be turned off in Control Center for the audio to be heard</strong>. This is an iOS audio behavior and is not specific to the ear trainer.</p>',
@@ -549,12 +630,12 @@
         }
         );
         if(!parsed.length)throw new Error("The selected file does not contain any valid ABC tunes with an X: field and a first T: title.");
-        if(parsed.length<10||Object.keys(distinct).length<10)throw new Error("The selected file must contain at least ten ABC tunes with ten distinct first T: titles so the 10-choice setting can be used.");
+        if(parsed.length<10||Object.keys(distinct).length<10)throw new Error("The selected file must contain at least 10 ABC tunes, each with a first T: title, and at least 10 distinct tune names so the 10-choice setting can be used.");
         try{
           localStorage.setItem(CUSTOM_KEY,text);
           if(localStorage.getItem(CUSTOM_KEY)!==text)throw new Error("The saved data could not be verified.")
         } catch(storageError){
-          throw new Error("The custom tune collection could not be saved in browser local storage.")
+          throw new Error("The custom tune collection could not be saved in this browser.")
         }
         setCollection(text,true);
         startNew()
@@ -595,12 +676,14 @@
     $("instrument").value=loadInstrument();
     $("choiceCount").value=String(loadChoiceCount());
     $("choiceCount").dataset.previousValue=$("choiceCount").value;
+    $("questionCount").value=loadQuestionCount();
+    $("questionCount").dataset.previousValue=$("questionCount").value;
     state=newState();
     render();
     if(window.StartTuneNameEarTrainerFirstRunTourIfNeeded)window.StartTuneNameEarTrainerFirstRunTourIfNeeded()
   }
   $("answerForm").addEventListener("change",function(){
-    if(!state.answers[tune().id])$("submitBtn").disabled=!document.querySelector('input[name="tuneName"]:checked')
+    if(!state.answers[answerKey()])$("submitBtn").disabled=!document.querySelector('input[name="tuneName"]:checked')
   }
   );
   $("answerForm").addEventListener("submit",submit);
@@ -615,7 +698,7 @@
   $("finalReviewInlineBtn").onclick=finalReview;
   $("newSetBtn").onclick=async function(){
     if(await confirmModal(
-      "Start over with 10 new randomly selected tunes? Your current session progress will be cleared.",
+      unlimitedMode()?"Start over with a new random tune? Your current totals will be cleared.":"Start over with a new "+finiteQuestionCount()+"-question session? Your current session progress will be cleared.",
       "Start Over"
     )){
       startNew()
@@ -636,7 +719,7 @@
     if(next===previous)return;
 
     if(await confirmModal(
-      "Changing the number of tune-name choices will start a new 10-tune session and clear your current session progress. Continue?",
+      "Changing the answer mode or number of tune-name choices will start a new session and clear your current session progress. Continue?",
       "Start New Session"
     )){
       saveChoiceCount(next);
@@ -647,6 +730,13 @@
     }
   }
   ;
+  $("questionCount").onchange=async function(){
+    var select=this,previous=select.dataset.previousValue||"10",next=questionCount();
+    if(next===previous)return;
+    if(await confirmModal("Changing the number of questions will start a new session and clear your current session progress. Continue?","Start New Session")){
+      saveQuestionCount(next);select.dataset.previousValue=next;startNew()
+    } else select.value=previous
+  };
   $("loadAbcBtn").onclick=function(){
     $("abcFileInput").click()
   }
@@ -670,8 +760,8 @@
   $("tuneAudioControls").addEventListener("click",function(e){
     if(e.target.closest&&e.target.closest(".abcjs-midi-start")){
       var current=tune();
-      if(!state.heard[current.id]){
-        state.heard[current.id]=true;
+      if(!state.heard[answerKey()]){
+        state.heard[answerKey()]=true;
         setTimeout(buildChoices,0)
       }
     }
