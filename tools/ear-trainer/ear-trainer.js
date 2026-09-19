@@ -748,7 +748,7 @@ function showInstructions(){
       '<h3>Choose Your Answer Style</h3>',
       '<p>The <strong>Answer Style</strong> control offers nine exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm + Key</strong>, <strong>Rhythm + Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, <strong>Key/Mode</strong>, <strong>Key Only</strong>, and <strong>Mode Only</strong>.</p>',
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
-      '<p>You can change Answer Style freely before answering a tune. In a 10- or 25-question session, changing Answer Style after answering has begun asks for confirmation, clears your answers and progress, and restarts the same tunes from the first question. In Unlimited mode, changing Answer Style after answering a tune asks for confirmation, clears the running Correct and Incorrect totals, and restarts with the current tune.</p>',
+      '<p>You can change Answer Style freely before answering a tune. In a 10- or 25-question session, changing Answer Style after answering has begun asks for confirmation, clears your answers and progress, and restarts the same tunes from the first question.</p>',
 
       '<h3>Choose Your Instrument</h3>',
       '<p>Use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
@@ -756,7 +756,7 @@ function showInstructions(){
 
       '<h3>Choose the Number of Questions</h3>',
       '<p>Choose <strong>10</strong> questions (the default), <strong>25</strong> questions, or <strong>Unlimited</strong>. Your choice is saved in your browser.</p>',
-      '<p>For 10- and 25-question sessions, tunes are randomly selected from the full '+allTunes.length+'-tune collection. <strong>Unlimited</strong> keeps giving you random tunes and never repeats the same tune twice in a row. Unlimited mode has no progress bar and no Final Review; Session Progress shows running Correct and Incorrect totals instead.</p>',
+      '<p>For 10- and 25-question sessions, tunes are randomly selected from the full '+allTunes.length+'-tune collection. <strong>Unlimited</strong> keeps giving you random tunes and never repeats the same tune twice in a row. </p>',
       '<p>A fresh session is created whenever the tool is loaded, when you change the number of questions, or when you choose <strong>Start Over with New Tunes</strong>.</p>',
 
       '<h3>1. Listen to the tune</h3>',
