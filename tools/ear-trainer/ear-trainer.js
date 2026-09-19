@@ -1,11 +1,11 @@
 (function(){
 "use strict";
 
-var VERSION="2.36";
+var VERSION="2.39";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
-var SESSION_LENGTH=10;
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
 var INSTRUMENT_STORAGE_KEY="keyModeEarTrainerInstrument";
+var QUESTION_COUNT_STORAGE_KEY="keyModeEarTrainerQuestionCount";
 var INSTRUMENT_PROGRAMS={piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15};
 var ANSWER_STYLES=["rhythmSeparate","rhythmCombined","rhythmKey","rhythmMode","rhythmOnly","separate","combined","keyOnly","modeOnly"];
 var MODE_INFO={
@@ -105,6 +105,17 @@ function loadPreferredInstrument(){
 function savePreferredInstrument(instrument){
   try{localStorage.setItem(INSTRUMENT_STORAGE_KEY,instrument);}catch(e){}
 }
+function loadQuestionCount(){
+  try{var v=localStorage.getItem(QUESTION_COUNT_STORAGE_KEY);return v==="25"||v==="unlimited"?v:"10";}catch(e){return "10";}
+}
+function saveQuestionCount(v){try{localStorage.setItem(QUESTION_COUNT_STORAGE_KEY,String(v));}catch(e){}}
+function questionCount(){var el=$("questionCount"),v=el?el.value:loadQuestionCount();return v==="25"||v==="unlimited"?v:"10";}
+function unlimitedMode(){return questionCount()==="unlimited";}
+function finiteQuestionCount(){return questionCount()==="25"?25:10;}
+function randomTuneIdExcept(previousId){
+  if(!allTunes.length)return null;if(allTunes.length<2)return allTunes[0].id;
+  var t;do{t=allTunes[Math.floor(Math.random()*allTunes.length)];}while(t.id===previousId);return t.id;
+}
 function currentProgram(){
   var v=$("instrument")?$("instrument").value:loadPreferredInstrument();
   return Object.prototype.hasOwnProperty.call(INSTRUMENT_PROGRAMS,v)?INSTRUMENT_PROGRAMS[v]:0;
@@ -148,55 +159,29 @@ function logError(label,error){
   // Console logging intentionally disabled for release builds.
 }
 
-function defaultState(){return {version:4,sessionIds:chooseSessionTunes().map(function(t){return t.id;}),currentIndex:0,answers:{},heard:{},answerStyle:loadPreferredAnswerStyle()};}
-function chooseSessionTunes(){
-  // Build a randomized 10-tune session while guaranteeing, when the collection
-  // permits it, at least one tune of every available rhythm and every available mode.
-  var target=Math.min(SESSION_LENGTH,allTunes.length);
-  if(target<=0)return [];
-
-  var selected=[];
-  var selectedIds={};
-  function addTune(tune){
-    if(!tune||selectedIds[tune.id]||selected.length>=target)return false;
-    selected.push(tune);selectedIds[tune.id]=true;return true;
-  }
-
-  // Choose a random representative of each rhythm found in the collection.
-  var rhythms=shuffle(uniqueRhythms());
-  rhythms.forEach(function(rhythm){
-    var candidates=shuffle(allTunes.filter(function(t){return t.rhythm===rhythm&&!selectedIds[t.id];}));
-    addTune(candidates[0]);
-  });
-
-  // Add a random representative for any mode not already represented.
-  var availableModes=shuffle(MODE_ORDER.filter(function(mode){return allTunes.some(function(t){return t.mode===mode;});}));
-  availableModes.forEach(function(mode){
+function defaultState(){
+  var unlimited=unlimitedMode();
+  return {version:5,sessionIds:unlimited?[randomTuneIdExcept(null)]:chooseSessionTunes(finiteQuestionCount()).map(function(t){return t.id;}),currentIndex:0,answers:{},heard:{},answerStyle:loadPreferredAnswerStyle(),correctTotal:0,incorrectTotal:0,questionNumber:1};
+}
+function chooseSessionTunes(requestedCount){
+  var target=Math.min(requestedCount||10,allTunes.length);if(target<=0)return [];
+  var selected=[],selectedIds={};
+  function addTune(tune){if(!tune||selectedIds[tune.id]||selected.length>=target)return false;selected.push(tune);selectedIds[tune.id]=true;return true;}
+  shuffle(uniqueRhythms()).forEach(function(rhythm){addTune(shuffle(allTunes.filter(function(t){return t.rhythm===rhythm&&!selectedIds[t.id];}))[0]);});
+  shuffle(MODE_ORDER.filter(function(mode){return allTunes.some(function(t){return t.mode===mode;});})).forEach(function(mode){
     if(selected.some(function(t){return t.mode===mode;}))return;
-    var candidates=shuffle(allTunes.filter(function(t){return t.mode===mode&&!selectedIds[t.id];}));
-    addTune(candidates[0]);
+    addTune(shuffle(allTunes.filter(function(t){return t.mode===mode&&!selectedIds[t.id];}))[0]);
   });
-
-  // Fill any remaining positions randomly from the rest of the collection.
-  shuffle(allTunes).forEach(function(t){addTune(t);});
-  return shuffle(selected);
+  shuffle(allTunes).forEach(function(t){addTune(t);});return shuffle(selected);
 }
 function loadState(){
-  // Every page load starts a fresh in-memory 10-tune session. Only the user's
-  // preferred answer style and instrument are restored from localStorage.
-  state=defaultState();
-  $("answerStyle").value=state.answerStyle;
-  $("instrument").value=loadPreferredInstrument();
-  log("Created fresh session",{tunes:state.sessionIds.length,answerStyle:state.answerStyle});
+  $("questionCount").value=loadQuestionCount();$("questionCount").dataset.previousValue=$("questionCount").value;
+  state=defaultState();$("answerStyle").value=state.answerStyle;$("instrument").value=loadPreferredInstrument();
+  log("Created fresh session",{tunes:state.sessionIds.length,answerStyle:state.answerStyle,questionCount:questionCount()});
 }
-
 function startNewSet(){
-  pauseAllControllers();
-  state=defaultState();
-  state.answerStyle=$("answerStyle").value;
-  savePreferredAnswerStyle(state.answerStyle);
-  log("Started completely new 10-tune set",{ids:state.sessionIds});
-  renderQuestion();
+  pauseAllControllers();state=defaultState();state.answerStyle=$("answerStyle").value;savePreferredAnswerStyle(state.answerStyle);
+  log("Started new session",{ids:state.sessionIds,questionCount:questionCount()});renderQuestion();
 }
 
 function configureAbcjs(){
@@ -522,6 +507,7 @@ function submitAnswer(ev){
   var correct=rhythmCorrect&&tonicCorrect&&modeCorrect;
   var saved={choice:choice,assessed:assessed,rhythmCorrect:rhythmCorrect,tonicCorrect:tonicCorrect,modeCorrect:modeCorrect,correct:correct};
   state.answers[tune.id]=saved;
+  if(unlimitedMode()){if(saved.correct)state.correctTotal++;else state.incorrectTotal++;}
   $("answerForm").classList.add("answered");markChoices(choice);setInputsDisabled(true);$("submitBtn").disabled=true;showFeedback(saved,true);updateProgress();updateNavigationButtons();
 }
 function completeAnswerForPlayback(choice,tune){return {tonic:choice.tonic||tune.tonic,mode:choice.mode||tune.mode};}
@@ -652,6 +638,7 @@ function startMissedTunePractice(ids){
 }
 
 function showFinalReview(){
+  if(unlimitedMode())return;
   var complete=state.sessionIds.length>0&&state.sessionIds.every(function(id){return !!state.answers[id];});
   if(!complete)return;
   pauseAllControllers();
@@ -710,51 +697,32 @@ function showFinalReview(){
 }
 
 function updateProgress(){
+  var track=$("progressBar").parentElement,scoreBox=$("scoreBox");track.hidden=unlimitedMode();if(scoreBox)scoreBox.hidden=unlimitedMode();
+  if(unlimitedMode()){$("accuracyText").textContent="Correct "+state.correctTotal+" · Incorrect "+state.incorrectTotal;return;}
   var answers=Object.keys(state.answers).map(function(id){return {id:id,data:state.answers[id],tune:tuneById[id]};}).filter(function(x){return x.tune;});
   var correct=answers.filter(function(x){return x.data.correct;}).length;
-  $("scoreText").textContent=correct+" / "+answers.length;
-  $("accuracyText").textContent=answers.length?(Math.round(correct/answers.length*100)+"% correct · "+correct+" / "+answers.length):"No answers yet";
+  $("scoreText").textContent=correct+" / "+answers.length;$("accuracyText").textContent=answers.length?(Math.round(correct/answers.length*100)+"% correct · "+correct+" / "+answers.length):"No answers yet";
   $("progressBar").style.width=(answers.length/state.sessionIds.length*100)+"%";
 }
 function updateNavigationButtons(){
-  var tune=currentTune();
-  var answered=!!(tune&&state.answers[tune.id]);
-  var isFirst=state.currentIndex===0;
-  var isLast=state.currentIndex===state.sessionIds.length-1;
-
-  // Hide Previous Tune on question 1.
-  $("prevBtn").hidden=isFirst;
-  $("prevBtn").disabled=isFirst;
-
-  // Hide Next Tune on question 10.
-  $("nextBtn").hidden=isLast;
-  $("nextBtn").disabled=!answered||isLast;
-
-  // After question 10 is answered, put Final Review in the normal Next Tune position.
-  $("finalReviewInlineBtn").hidden=!(isLast&&answered);
+  var tune=currentTune(),answered=!!(tune&&state.answers[tune.id]);
+  if(unlimitedMode()){$("prevBtn").hidden=true;$("prevBtn").disabled=true;$("nextBtn").hidden=false;$("nextBtn").disabled=!answered;$("finalReviewInlineBtn").hidden=true;return;}
+  var isFirst=state.currentIndex===0,isLast=state.currentIndex===state.sessionIds.length-1;
+  $("prevBtn").hidden=isFirst;$("prevBtn").disabled=isFirst;$("nextBtn").hidden=isLast;$("nextBtn").disabled=!answered||isLast;$("finalReviewInlineBtn").hidden=!(isLast&&answered);
 }
 function renderQuestion(){
-  pauseAllControllers();clearTuneController();clearScaleControllers();
-  var tune=currentTune();if(!tune)return;
-  $("questionEyebrow").textContent="Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
+  pauseAllControllers();clearTuneController();clearScaleControllers();var tune=currentTune();if(!tune)return;
+  $("questionEyebrow").textContent=unlimitedMode()?"Question "+state.questionNumber:"Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
   var qParts=[];if(styleIncludesRhythm(state.answerStyle))qParts.push("rhythm");if(styleUsesKey(state.answerStyle))qParts.push("key");if(styleUsesMode(state.answerStyle))qParts.push("mode");
   $("questionTitle").textContent="Which "+(qParts.length===1?qParts[0]:qParts.slice(0,-1).join(", ")+" and "+qParts[qParts.length-1])+" do you hear?";
   $("listenHeading").textContent="Click the play button below to listen to the tune";$("listenSubheading").textContent="";
-  buildAnswerChoices();updateProgress();updateNavigationButtons();
-  void prepareCurrentTune(false);
+  buildAnswerChoices();updateProgress();updateNavigationButtons();void prepareCurrentTune(false);
 }
 function go(delta){
-  if(delta>0){
-    var tune=currentTune();
-    if(!tune||!state.answers[tune.id])return;
-  }
-  var n=state.currentIndex+delta;
-  if(n<0||n>=state.sessionIds.length)return;
-  state.currentIndex=n;
-  log(delta<0?"Previous Tune clicked":"Next Tune clicked",{question:n+1,tuneId:state.sessionIds[n]});
-  renderQuestion();
+  if(delta>0){var tune=currentTune();if(!tune||!state.answers[tune.id])return;}
+  if(unlimitedMode()&&delta>0){var previousId=currentTune().id;state.sessionIds=[randomTuneIdExcept(previousId)];state.currentIndex=0;state.answers={};state.heard={};state.questionNumber++;renderQuestion();return;}
+  var n=state.currentIndex+delta;if(n<0||n>=state.sessionIds.length)return;state.currentIndex=n;log(delta<0?"Previous Tune clicked":"Next Tune clicked",{question:n+1,tuneId:state.sessionIds[n]});renderQuestion();
 }
-
 
 async function dayPilotConfirm(message,okText){
   if(!window.DayPilot||!DayPilot.Modal||typeof DayPilot.Modal.confirm!=="function"){
@@ -780,14 +748,16 @@ function showInstructions(){
       '<h3>Choose Your Answer Style</h3>',
       '<p>The <strong>Answer Style</strong> control offers nine exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm + Key</strong>, <strong>Rhythm + Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, <strong>Key/Mode</strong>, <strong>Key Only</strong>, and <strong>Mode Only</strong>.</p>',
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
-      '<p>You can change Answer Style freely before answering any tunes. After you have answered at least one tune, changing Answer Style asks for confirmation, clears your answers and progress, and restarts the current session from its first tune using the <strong>same tunes</strong>. It does not choose a new set of tunes.</p>',
+      '<p>You can change Answer Style freely before answering a tune. In a 10- or 25-question session, changing Answer Style after answering has begun asks for confirmation, clears your answers and progress, and restarts the same tunes from the first question. In Unlimited mode, changing Answer Style after answering a tune asks for confirmation, clears the running Correct and Incorrect totals, and restarts with the current tune.</p>',
 
       '<h3>Choose Your Instrument</h3>',
       '<p>Use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
       '<p>Your instrument choice is saved in your browser and restored the next time you use the tool.</p>',
 
-      '<h3>Starting a session</h3>',
-      '<p>Each session contains 10 tunes randomly selected from the full '+allTunes.length+'-tune collection. A fresh set is created whenever the tool is loaded or when you choose <strong>Start Over with New Tunes</strong>.</p>',
+      '<h3>Choose the Number of Questions</h3>',
+      '<p>Choose <strong>10</strong> questions (the default), <strong>25</strong> questions, or <strong>Unlimited</strong>. Your choice is saved in your browser.</p>',
+      '<p>For 10- and 25-question sessions, tunes are randomly selected from the full '+allTunes.length+'-tune collection. <strong>Unlimited</strong> keeps giving you random tunes and never repeats the same tune twice in a row. Unlimited mode has no progress bar and no Final Review; Session Progress shows running Correct and Incorrect totals instead.</p>',
+      '<p>A fresh session is created whenever the tool is loaded, when you change the number of questions, or when you choose <strong>Start Over with New Tunes</strong>.</p>',
 
       '<h3>1. Listen to the tune</h3>',
       '<p>Click the play button on the bar to start the tune playing. The answer choices remain disabled until you start playback for that tune. Tunes loop automatically so you can concentrate on the rhythm, key, and overall modal sound.</p>',
@@ -809,8 +779,9 @@ function showInstructions(){
       '<p>When a key or mode answer is incorrect, use the <strong>Root Note</strong> buttons to compare the keys, and <strong>Play Selected Scale</strong> and <strong>Play Correct Scale</strong> to compare the two scale tonalities directly. A wrong rhythm answer simply shows the correct rhythm.</p>',
 
       '<h3>End-of-session review</h3>',
-      '<p>After you answer tune 10, the <strong>Show Final Review</strong> button appears in the navigation area where <strong>Next Tune</strong> appears on earlier tunes. Click it when you are ready to see your final score and a review of each missed tune.</p>',
+      '<p>After you answer the last tune in a 10- or 25-question session, the <strong>Show Final Review</strong> button appears in the navigation area where <strong>Next Tune</strong> appears on earlier tunes. Click it when you are ready to see your final score and a review of each missed tune.</p>',
       '<p>If you missed any tunes, choose <strong>Practice Missed Tunes</strong> at the bottom of the Final Review to start a new practice session containing only those tunes. The practice session uses your current Answer Style and Instrument, and your answers and progress start fresh.</p>',
+      '<p><strong>Unlimited</strong> mode continues with random tunes and has no Final Review.</p>',
 
       '<h3>Why no Minor tunes?</h3>',
       '<p>It is often fairly ambiguous whether a traditional Irish tune is Dorian or Minor (Aeolian), and in my session playing experience true Minor tunes are far less common than Dorian mode tunes. Including Minor as a separate choice would therefore be more confusing than useful for this ear trainer.</p>',
@@ -860,7 +831,8 @@ function initialize(){
 }
 
 $("newSetBtn").addEventListener("click",async function(){
-  var ok=await dayPilotConfirm("Start over with 10 new tunes? Your answers and progress for the current session will be cleared.","Start Over");
+  var message=unlimitedMode()?"Start over with a new random tune? Your current totals will be cleared.":"Start over with "+finiteQuestionCount()+" new tunes? Your answers and progress for the current session will be cleared.";
+  var ok=await dayPilotConfirm(message,"Start Over");
   if(ok)startNewSet();
 });
 $("instructionsBtn").addEventListener("click",showInstructions);
@@ -893,13 +865,15 @@ $("answerStyle").addEventListener("change",async function(){
   var oldStyle=state.answerStyle,newStyle=this.value;
   var hasAnswers=Object.keys(state.answers||{}).length>0;
   if(hasAnswers){
-    var ok=await dayPilotConfirm("Changing Answer Style will clear your answers and progress and restart this session from the first tune. The same tunes will be used.","Change Style");
+    var styleMessage=unlimitedMode()?"Changing Answer Style will clear your current answer and running totals and restart Unlimited mode with the current tune. Continue?":"Changing Answer Style will clear your answers and progress and restart this session from the first tune. The same tunes will be used.";
+    var ok=await dayPilotConfirm(styleMessage,"Change Style");
     if(!ok){this.value=oldStyle;return;}
     pauseAllControllers();
     state.answerStyle=newStyle;
     state.currentIndex=0;
     state.answers={};
     state.heard={};
+    state.correctTotal=0;state.incorrectTotal=0;state.questionNumber=1;
     savePreferredAnswerStyle(newStyle);
     renderQuestion();
     return;
@@ -907,6 +881,11 @@ $("answerStyle").addEventListener("change",async function(){
   state.answerStyle=newStyle;
   savePreferredAnswerStyle(newStyle);
   buildAnswerChoices();
+});
+$("questionCount").addEventListener("change",async function(){
+  var select=this,previous=select.dataset.previousValue||"10",next=questionCount();if(next===previous)return;
+  var ok=await dayPilotConfirm("Changing the number of questions will start a new session and clear your current session progress. Continue?","Start New Session");
+  if(ok){saveQuestionCount(next);select.dataset.previousValue=next;startNewSet();}else select.value=previous;
 });
 $("instrument").addEventListener("change",async function(){
   savePreferredInstrument(this.value);

@@ -51,7 +51,7 @@ h2,h3{margin:0;color:var(--builder-ink)}
 .muted{opacity:.72}.small{font-size:.9rem}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--builder-green);margin-bottom:3px}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:rgba(127,127,127,.12);padding:1px 4px;border-radius:4px}
 .modeButtons{display:grid;gap:8px;margin:14px 0}.modeButton{width:100%}.modeButton.active{box-shadow:inset 4px 0 0 var(--builder-accent)}
-.setupBlock{display:grid;gap:6px;margin-top:0}.setupBlock select{
+.setupBlock{display:grid;gap:6px;margin-top:0}.setupBlock + .setupBlock{margin-top:12px}.setupBlock select{
   -webkit-appearance:none;
   appearance:none;
   box-sizing:border-box;
