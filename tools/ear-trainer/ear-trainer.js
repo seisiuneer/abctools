@@ -1,11 +1,12 @@
 (function(){
 "use strict";
 
-var VERSION="2.39";
+var VERSION="2.42";
 var FATBOY="https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
 var ANSWER_STYLE_STORAGE_KEY="keyModeEarTrainerAnswerStyle";
 var INSTRUMENT_STORAGE_KEY="keyModeEarTrainerInstrument";
 var QUESTION_COUNT_STORAGE_KEY="keyModeEarTrainerQuestionCount";
+var AUTOPLAY_NEXT_STORAGE_KEY="keyModeEarTrainerAutoPlayNext";
 var INSTRUMENT_PROGRAMS={piano:0,flute:73,whistle:78,fiddle:110,mandolin:141,banjo:105,accordion:21,concertina:133,hammeredDulcimer:15};
 var ANSWER_STYLES=["rhythmSeparate","rhythmCombined","rhythmKey","rhythmMode","rhythmOnly","separate","combined","keyOnly","modeOnly"];
 var MODE_INFO={
@@ -109,6 +110,9 @@ function loadQuestionCount(){
   try{var v=localStorage.getItem(QUESTION_COUNT_STORAGE_KEY);return v==="25"||v==="unlimited"?v:"10";}catch(e){return "10";}
 }
 function saveQuestionCount(v){try{localStorage.setItem(QUESTION_COUNT_STORAGE_KEY,String(v));}catch(e){}}
+function loadAutoPlayNext(){try{return localStorage.getItem(AUTOPLAY_NEXT_STORAGE_KEY)==="enabled";}catch(e){return false;}}
+function saveAutoPlayNext(enabled){try{localStorage.setItem(AUTOPLAY_NEXT_STORAGE_KEY,enabled?"enabled":"disabled");}catch(e){}}
+function autoPlayNextEnabled(){return $("autoPlayNext").value==="enabled";}
 function questionCount(){var el=$("questionCount"),v=el?el.value:loadQuestionCount();return v==="25"||v==="unlimited"?v:"10";}
 function unlimitedMode(){return questionCount()==="unlimited";}
 function finiteQuestionCount(){return questionCount()==="25"?25:10;}
@@ -341,7 +345,7 @@ async function prepareController(abc,renderId,audioId,label,options){
   log(label+": rendered tune summary",renderedSummary(rendered[0]));
   var controller=new ABCJS.synth.SynthController();
   log(label+": SynthController created");
-  controller.load("#"+audioId,createHiddenCursorControl(label),options.playerOptions||{displayLoop:false,displayRestart:false,displayPlay:true,displayProgress:false,displayWarp:false});
+  controller.load("#"+audioId,options.cursorControl||createHiddenCursorControl(label),options.playerOptions||{displayLoop:false,displayRestart:false,displayPlay:true,displayProgress:false,displayWarp:false});
   log(label+": controller.load complete");
   var tuneStart=performance.now();
   log(label+": setTune begin");
@@ -350,32 +354,47 @@ async function prepareController(abc,renderId,audioId,label,options){
   log(label+": controller after setTune",objectSummary(controller));
   return controller;
 }
-async function prepareCurrentTune(force){
-  var tune=currentTune(); if(!tune)return null;
+async function prepareCurrentTune(force,autoPlay){
+  var tune=currentTune();if(!tune)return null;
   var serial=++prepareSerial;
   if(force)clearTuneController();
-  else if(tuneController)return tuneController;
-  else if(tunePreparePromise)return tunePreparePromise;
+  else if(tuneController){
+    if(autoPlay){unlockCurrentAnswers();try{if(tuneController.play)await tuneController.play();}catch(e){}}
+    return tuneController;
+  }else if(tunePreparePromise)return tunePreparePromise;
   $("tuneAudioControls").innerHTML="";
   $("playbackStatus").className="status";$("playbackStatus").textContent="Preparing tune audio…";
-  var expectedId=tune.id;
+  var expectedId=tune.id,holder={controller:null,restarting:false};
+  var loopCursor=createHiddenCursorControl("Tune "+(state.currentIndex+1));
+  var baseFinished=loopCursor.onFinished;
+  loopCursor.onFinished=function(){
+    if(baseFinished)baseFinished.call(loopCursor);
+    var c=holder.controller;
+    if(holder.restarting||serial!==prepareSerial||!c||tuneController!==c)return;
+    holder.restarting=true;
+    try{
+      if(c.restart)c.restart();
+      var p=c.play?c.play():null;
+      if(p&&typeof p.then==="function")p.then(function(){holder.restarting=false;}).catch(function(){holder.restarting=false;});
+      else holder.restarting=false;
+    }catch(e){holder.restarting=false;}
+  };
   tunePreparePromise=(async function(){
     try{
-      var controller=await prepareController(tuneAbcForPlayback(tune.abc),"hiddenTuneRender","tuneAudioControls","Tune "+(state.currentIndex+1),{playerOptions:{displayLoop:false,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:false},synthOptions:{program:currentProgram(),chordsOff:true}});
+      var controller=await prepareController(tuneAbcForPlayback(tune.abc),"hiddenTuneRender","tuneAudioControls","Tune "+(state.currentIndex+1),{
+        cursorControl:loopCursor,
+        playerOptions:{displayLoop:false,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:false},
+        synthOptions:{program:currentProgram(),chordsOff:true}
+      });
       if(serial!==prepareSerial||!currentTune()||currentTune().id!==expectedId){safeDestroy(controller,"stale tune");return null;}
-      tuneController=controller;
-      // Start each tune with looping enabled without synthesizing a DOM click.
-      // Using the SynthController API avoids accidentally triggering player loading state.
-      if(typeof controller.toggleLoop==="function") controller.toggleLoop();
-      $("playbackStatus").textContent="";
-      $("listenSubheading").textContent="";
+      holder.controller=controller;tuneController=controller;
+      $("playbackStatus").textContent="";$("listenSubheading").textContent="";
+      if(autoPlay&&serial===prepareSerial){unlockCurrentAnswers();try{if(controller.play)await controller.play();}catch(e){}}
       return controller;
     }catch(e){
-      logError("prepareCurrentTune",e);
-      $("playbackStatus").className="status error";
+      logError("prepareCurrentTune",e);$("playbackStatus").className="status error";
       $("playbackStatus").textContent="Audio preparation failed: "+(e&&e.message?e.message:String(e));
-      $("listenSubheading").textContent="Audio preparation failed. Reload the page and try again.";
-      return null;
+      $("listenSubheading").textContent="Audio preparation failed. Reload the page and try again.";return null;
     }finally{tunePreparePromise=null;}
   })();
   return tunePreparePromise;
@@ -710,18 +729,18 @@ function updateNavigationButtons(){
   var isFirst=state.currentIndex===0,isLast=state.currentIndex===state.sessionIds.length-1;
   $("prevBtn").hidden=isFirst;$("prevBtn").disabled=isFirst;$("nextBtn").hidden=isLast;$("nextBtn").disabled=!answered||isLast;$("finalReviewInlineBtn").hidden=!(isLast&&answered);
 }
-function renderQuestion(){
+function renderQuestion(autoPlay){
   pauseAllControllers();clearTuneController();clearScaleControllers();var tune=currentTune();if(!tune)return;
   $("questionEyebrow").textContent=unlimitedMode()?"Question "+state.questionNumber:"Tune "+(state.currentIndex+1)+" of "+state.sessionIds.length;
   var qParts=[];if(styleIncludesRhythm(state.answerStyle))qParts.push("rhythm");if(styleUsesKey(state.answerStyle))qParts.push("key");if(styleUsesMode(state.answerStyle))qParts.push("mode");
   $("questionTitle").textContent="Which "+(qParts.length===1?qParts[0]:qParts.slice(0,-1).join(", ")+" and "+qParts[qParts.length-1])+" do you hear?";
   $("listenHeading").textContent="Click the play button below to listen to the tune";$("listenSubheading").textContent="";
-  buildAnswerChoices();updateProgress();updateNavigationButtons();void prepareCurrentTune(false);
+  buildAnswerChoices();updateProgress();updateNavigationButtons();void prepareCurrentTune(false,!!autoPlay);
 }
 function go(delta){
   if(delta>0){var tune=currentTune();if(!tune||!state.answers[tune.id])return;}
-  if(unlimitedMode()&&delta>0){var previousId=currentTune().id;state.sessionIds=[randomTuneIdExcept(previousId)];state.currentIndex=0;state.answers={};state.heard={};state.questionNumber++;renderQuestion();return;}
-  var n=state.currentIndex+delta;if(n<0||n>=state.sessionIds.length)return;state.currentIndex=n;log(delta<0?"Previous Tune clicked":"Next Tune clicked",{question:n+1,tuneId:state.sessionIds[n]});renderQuestion();
+  if(unlimitedMode()&&delta>0){var previousId=currentTune().id;state.sessionIds=[randomTuneIdExcept(previousId)];state.currentIndex=0;state.answers={};state.heard={};state.questionNumber++;renderQuestion(autoPlayNextEnabled());return;}
+  var n=state.currentIndex+delta;if(n<0||n>=state.sessionIds.length)return;state.currentIndex=n;log(delta<0?"Previous Tune clicked":"Next Tune clicked",{question:n+1,tuneId:state.sessionIds[n]});renderQuestion(delta>0&&autoPlayNextEnabled());
 }
 
 async function dayPilotConfirm(message,okText){
@@ -748,7 +767,7 @@ function showInstructions(){
       '<h3>Choose Your Answer Style</h3>',
       '<p>The <strong>Answer Style</strong> control offers nine exercise formats: <strong>Rhythm + Key + Mode</strong>, <strong>Rhythm + Key/Mode</strong>, <strong>Rhythm + Key</strong>, <strong>Rhythm + Mode</strong>, <strong>Rhythm Only</strong>, <strong>Key + Mode</strong>, <strong>Key/Mode</strong>, <strong>Key Only</strong>, and <strong>Mode Only</strong>.</p>',
       '<p>Your Answer Style choice is saved in your browser and restored the next time you use the tool.</p>',
-      '<p>You can change Answer Style freely before answering a tune. In a 10- or 25-question session, changing Answer Style after answering has begun asks for confirmation, clears your answers and progress, and restarts the same tunes from the first question.</p>',
+      '<p>You can change Answer Style freely before answering a tune. In a 10- or 25-question session, changing Answer Style after answering has begun asks for confirmation, clears your answers and progress, and restarts the same tunes from the first question. In Unlimited mode, changing Answer Style after answering a tune asks for confirmation, clears the running Correct and Incorrect totals, and restarts with the current tune.</p>',
 
       '<h3>Choose Your Instrument</h3>',
       '<p>Use the <strong>Instrument</strong> selector to choose the sound used for all playback. Choices are Piano, Flute, Whistle, Fiddle, Mandolin, Tenor Banjo, Accordion, Concertina, and Hammered Dulcimer. Piano is the default.</p>',
@@ -756,8 +775,11 @@ function showInstructions(){
 
       '<h3>Choose the Number of Questions</h3>',
       '<p>Choose <strong>10</strong> questions (the default), <strong>25</strong> questions, or <strong>Unlimited</strong>. Your choice is saved in your browser.</p>',
-      '<p>For 10- and 25-question sessions, tunes are randomly selected from the full '+allTunes.length+'-tune collection. <strong>Unlimited</strong> keeps giving you random tunes and never repeats the same tune twice in a row. </p>',
+      '<p>For 10- and 25-question sessions, tunes are randomly selected from the full '+allTunes.length+'-tune collection. <strong>Unlimited</strong> keeps giving you random tunes and never repeats the same tune twice in a row. Unlimited mode has no progress bar and no Final Review; Session Progress shows running Correct and Incorrect totals instead.</p>',
       '<p>A fresh session is created whenever the tool is loaded, when you change the number of questions, or when you choose <strong>Start Over with New Tunes</strong>.</p>',
+
+      '<h3>Auto-play on Next Tune</h3>',
+      '<p>This setting is disabled by default. When enabled, clicking <strong>Next Tune</strong> automatically starts playback after the next tune is loaded. Playback loops automatically. Your setting is saved in this browser when possible.</p>',
 
       '<h3>1. Listen to the tune</h3>',
       '<p>Click the play button on the bar to start the tune playing. The answer choices remain disabled until you start playback for that tune. Tunes loop automatically so you can concentrate on the rhythm, key, and overall modal sound.</p>',
@@ -824,6 +846,7 @@ function initialize(){
   log("Tune collection parsed",{count:allTunes.length,modes:modeCountText(allTunes)});
   $("newSetBtn").disabled=false;
   loadState();
+  $("autoPlayNext").value=loadAutoPlayNext()?"enabled":"disabled";
   renderQuestion();
   if(typeof window.StartEarTrainerFirstRunTourIfNeeded==="function"){
     window.StartEarTrainerFirstRunTourIfNeeded();
@@ -887,6 +910,7 @@ $("questionCount").addEventListener("change",async function(){
   var ok=await dayPilotConfirm("Changing the number of questions will start a new session and clear your current session progress. Continue?","Start New Session");
   if(ok){saveQuestionCount(next);select.dataset.previousValue=next;startNewSet();}else select.value=previous;
 });
+$("autoPlayNext").addEventListener("change",function(){saveAutoPlayNext(this.value==="enabled");});
 $("instrument").addEventListener("change",async function(){
   savePreferredInstrument(this.value);
   pauseAllControllers();

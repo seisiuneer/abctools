@@ -18,6 +18,11 @@
 html,body{margin:0;min-height:100%;background:#fff;color:#000}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:var(--fs-base);line-height:1.35}
 button,select,input{font:inherit}
+select,
+select option,
+select optgroup{font-family:Arial,Helvetica,sans-serif!important}
+select option,
+select optgroup{font-weight:400!important}
 button{
   appearance:none;border:1px solid var(--builder-green-dark);background:var(--builder-green);color:#fff;
   border-radius:6px;padding:10px 14px;line-height:1.15;font-weight:650;cursor:pointer;
@@ -40,7 +45,7 @@ button.secondary:hover{background:#d7e8dc}
   font-size:.84rem;font-weight:750;line-height:1.15;box-shadow:0 1px 3px rgba(0,0,0,.18)
 }
 .tipJarButton:hover{background:#a7ffe2;border-color:#e2fff6}
-.toolVersion{position:absolute;right:28px;top:18px;color:rgba(255,255,255,.9);font-size:.82rem;font-weight:600;letter-spacing:.02em}
+.toolVersion{position:absolute;right:28px;top:18px;color:rgba(255,255,255,.9);font-size:.82rem;font-weight:400;letter-spacing:.02em}
 .heroTop{text-align:center}.heroTitle{margin:0;color:#fff;font-size:clamp(1.7rem,3.5vw,2.15rem);line-height:1.08}
 .heroText{max-width:850px;margin:9px auto 0;color:#dcebe2;line-height:1.45}
 .main{display:grid;grid-template-columns:minmax(255px,330px) minmax(0,1fr);gap:var(--gap);padding:0 var(--page-pad) 24px;min-width:0}
@@ -56,9 +61,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
   appearance:none;
   box-sizing:border-box;
   width:100%;
-  min-height:44px;
+  min-height:38px;
   margin:0;
-  padding:10px 42px 10px 12px;
+  padding:7px 40px 7px 11px;
   border:1px solid #b8c7bd;
   border-radius:7px;
   background-color:#fff;
@@ -67,9 +72,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
   background-position:right 14px center;
   background-size:14px 9px;
   color:#17241c;
-  font-family:inherit;
+  font-family:Arial,Helvetica,sans-serif!important;
   font-size:1rem;
-  font-weight:600;
+  font-weight:400;
   line-height:1.25;
   cursor:pointer;
   outline:none;
@@ -220,6 +225,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
 
   .instructionsButton{padding:8px 12px}
   .setupBlock{gap:4px;margin-top:0}
+  .setupBlock + .setupBlock{margin-top:8px}
+  .setupBlock select{min-height:34px;padding-top:5px;padding-bottom:5px}
   .startButton{margin-top:9px;padding:9px 12px}
 
   .eyebrow{margin-bottom:1px}
