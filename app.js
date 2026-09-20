@@ -60904,7 +60904,7 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>Export Audio, Image, or PDF</strong> now available on the <strong>ABC Features</strong> tab of the <strong>More ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>Export Audio, Image, or PDF</strong> is now available on the <strong>ABC Features</strong> tab of the <strong>More ABC Tools</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">The new button has the same functionality as the button with the same label on the <strong>Player</strong> and can be added to <strong>My Tools</strong> if desired.</p>';
   modal_msg += '<p style="font-size:12pt;">On the <strong>Quick Editor</strong> version, the new button is labeled <strong>Export Audio or Image</strong> since PDF export is not available in the <strong>Quick Editor</strong>.</p>';
   modal_msg += '</div>';
