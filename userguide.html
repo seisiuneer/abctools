@@ -872,6 +872,11 @@
             </details>
 
             <details>
+            <summary><h3>Export Audio, Image, or PDF</h3></summary>
+            <a style="text-decoration:none;" href="#advanced_export_audio_image">Export Audio, Image, or PDF</a>
+            </details>
+
+            <details>
             <summary><h3>Export All Tunes in Multiple Formats</h3></summary>
             <a style="text-decoration:none;" href="#export_all">Export All Tunes</a>
             <a style="text-decoration:none;" href="#export_all_as_mp3">Export All Tunes as MP3</a>
@@ -1447,6 +1452,11 @@
                     <button class="accordion" title="Click to expand/collapse this section">Inject %tablature_only</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#inject_tablature_only">Inject %tablature_only</a></p>
+                    </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Export Audio, Image, or PDF</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_export_audio_image">Export Audio, Image, or PDF</a></p>
                     </div>
 
                     <button class="accordion" title="Click to expand/collapse this section">Export All Tunes in Multiple Formats</button>
@@ -4166,7 +4176,7 @@
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <p>If you click <strong>Export Audio, Image, or PDF</strong> in the Player, a dialog will appear where you can export the the currently selected tune in the Player to an audio file in either .WAV or .MP3 format, the note playback events as a MIDI file, the tune image as .JPG, .PNG, or .SVG files, or all the tunes loaded in the Player as a PDF file.</p>
+                <p>If you click <strong>Export Audio, Image, or PDF</strong> in the Player, a dialog will appear where you can export the the currently selected tune in the Player to an audio file in either .WAV or .MP3 format, the note playback events as a MIDI file, the tune image as .JPG, .PNG, or .SVG files, or all the tunes loaded in the Player as a PDF file (PDF export not available on the <strong>Quick Editor</strong> version).</p>
                 <p>The exported audio files will include any speed changes you have entered in the Player speed percentage control on the far right of the control bar.</p>
                 <p>On iOS the native iOS sharing dialog can be used to save the files to the Files area or to share them to another app.</p>
                 <div class="image_holder_p">
@@ -6025,6 +6035,16 @@
                 <p><a href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a></p>
                 <p>For 5 and 6 string tablatures, for best results, you may want to manually change the staff separation to:</p>
                 <p class="code">%%staffsep 100</p>
+                <hr class="hidden-print" id="advanced_export_audio_image">
+                <h1 class="page_break_always">Export Audio, Image, or PDF</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>Click <strong>Export Audio, Image, or PDF</strong> on the <strong>More Tools → ABC Features</strong> tab to export the current tune without first opening the Player yourself. In the Quick Editor, where PDF export is not available from this feature, the button is labeled <strong>Export Audio or Image</strong>.</p>
+                <p>The button works the same as the <strong>Export Audio, Image, or PDF</strong> button in the Player. The current tune is opened and prepared in the Player, then the same export dialog is displayed.</p>
+                <p>From the dialog you can export the current tune as WAV or MP3 audio, with or without reverb, as a MIDI file, or as a JPEG, PNG, or SVG image. In the standard Editor, you can also export to PDF using the same PDF option available from the Player export dialog. PDF export is not shown for this feature in the Quick Editor.</p>
+                <p>The <strong>current tune</strong> is the tune containing the current ABC editor selection/cursor, using the same tune-selection behavior as clicking <strong>Play</strong>.</p>
+                <p>For full details on the available export formats and options, see <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a>.</p>
                 <hr class="hidden-print" id="export_all">
                 <h1 class="page_break_always">Export All Tunes</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -9050,6 +9070,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Example PDF All Features Template</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_only_features_templates">Example PDF Only Play Features Template</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_adv_settings_tab">Export Advanced Settings</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#advanced_export_audio_image">Export Audio, Image, or PDF</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_all_as_csv">Export all Share URLs as CSV</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_all_tune_titles">Export All Tune Titles</a></p>

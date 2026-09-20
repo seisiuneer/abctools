@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3343_091626_1030";
+var gVersionNumber = "3344_092026_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31391,13 +31391,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_11sep2026;
+        var updatePresented = localStorage.sawUpdate_20sep2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_11sep2026 = true;
+          localStorage.sawUpdate_20sep2026 = true;
 
         }
 
@@ -39409,6 +39409,26 @@ async function DownloadMIDI(callback, val) {
 
   }
 }
+//
+// Open the Player export dialog for the current tune from More Tools.
+// This deliberately goes through PlayABC so the current tune is selected,
+// preprocessed, rendered, and prepared exactly as it is for the Player.
+//
+function ExportCurrentTuneAudioImagePDFFromMoreTools() {
+
+  DayPilot.Modal.close(null);
+
+  setTimeout(function() {
+    PlayABC(null);
+
+    // PlayABCDialog builds the Player synchronously. Open the same export
+    // dialog used by the Player after the Player modal has been installed.
+    setTimeout(function() {
+      ExportAudioOrImage();
+    }, 0);
+  }, 0);
+}
+
 //
 // Export the tune in various audio or image formats
 //
@@ -54849,6 +54869,14 @@ function AdvancedControlsDialog() {
 
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="injecttablatureonly" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectTablatureOnly()" type="button" value="Inject %tablature_only"' + injectTablatureOnlyStyle + ' title="Injects %tablature_only and %%staffsep 80 before the first X: field to show standalone stringed instrument tablature without standard notation">';
+  var currentTuneExportLabel = gIsQuickEditor ? "Export Audio or Image" : "Export Audio, Image, or PDF";
+  var currentTuneExportTitle = gIsQuickEditor
+    ? "Exports the current tune in the available audio, MIDI, or image formats"
+    : "Brings up the same export dialog as the Player for the current tune";
+  var currentTuneExportStyle = isMobileBrowser()
+    ? ' style="height:42px;padding:12px;margin-left:24px;margin-right:0px;"'
+    : ' style="height:42px;padding:12px;margin-right:24px;"';
+  modal_msg += '<input id="moretools_exportaudioimage" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ExportCurrentTuneAudioImagePDFFromMoreTools()" type="button" value="' + currentTuneExportLabel + '" title="' + currentTuneExportTitle + '"' + currentTuneExportStyle + '>';
   modal_msg += '<input id="configure_batch_mp3_export" class="advancedcontrols btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
 
   modal_msg += '</p></div>';
@@ -60870,7 +60898,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 20 September 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>Export Audio, Image, or PDF</strong> now available on the <strong>ABC Features</strong> tab of the <strong>More ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">The new button has the same functionality as the button with the same label on the <strong>Player</strong> and can be added to <strong>My Tools</strong> if desired.</p>';
+  modal_msg += '<p style="font-size:12pt;">On the <strong>Quick Editor</strong> version, the new button is labeled <strong>Export Audio or Image</strong> since PDF export is not available in the <strong>Quick Editor</strong>.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60881,12 +60917,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">Your selections and preferred order are saved in the browser, with drag-and-drop ordering on desktop and Move Up/Move Down controls on mobile.</p>';
   modal_msg += '</div>';
 
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>Save and Reuse Your Own ABC Template</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Add → Add Example Templates</strong> tab includes <strong>Save My ABC Template</strong> and <strong>Add My ABC Template</strong>. Four preferred templates are available using the same modifier keys as Snapshots: click for #1, Shift-click for #2, Alt/Option-click for #3, and Shift-Alt/Option-click for #4. <strong>Add My ABC Template</strong> appends the selected saved template to the ABC.</p>';
-  modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
 
@@ -67819,13 +67849,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_11sep2026;
+    var updatePresented = localStorage.sawUpdate_20sep2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_11sep2026 = true;
+      localStorage.sawUpdate_20sep2026 = true;
 
     }
 

@@ -3248,6 +3248,13 @@ margin-top:-7px;
 	padding:12px;
 }
 
+/* Current-tune export shortcut on More Tools > ABC Features. */
+#moretools_exportaudioimage{
+	height:42px;
+	padding:12px;
+	margin-right:24px;
+}
+
 #configure_swing_explorer{
 	height:42px;
 	padding:12px;
