@@ -37,9 +37,9 @@
   gtag('config', 'G-VM0N9HL3MK');
 </script>
 
-<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1110" rel="stylesheet"/>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1110"></script>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1110"></script>
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet"/>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
 
 <style>
 :root{color-scheme:light;--fs-base:clamp(15px,1.05vw + 12px,17px);--page-pad:32px;--helpbar-est-height:62px}
@@ -379,7 +379,7 @@ select::-ms-expand{display:none}
 <body>
 <div class="app">
   <header class="app-header">
-    <div class="appVersion">Version 1.05</div>
+    <div class="appVersion">Version 1.06</div>
     <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
     </a>
@@ -417,7 +417,7 @@ select::-ms-expand{display:none}
           <button id="startBtn" class="btn-primary">Start Listening</button>
           <button id="clearBtn">Clear ABC</button>
           <button id="copyBtn">Copy ABC to Clipboard</button>
-          <button id="saveBtn">Save .abc File</button>
+          <button id="saveBtn">Save ABC File</button>
           <button id="openBtn">Open in ABC Transcription Tools</button>
         </div>
       </div>
@@ -549,7 +549,7 @@ select::-ms-expand{display:none}
       </p>
 
       <p>
-        You can also edit the ABC manually, copy it, save it as an <code>.abc</code> file, or open it
+        You can also edit the ABC manually, copy it, save it as an <code>.abc</code> (<code>.txt</code> on iOS) file, or open it
         directly in the <strong>ABC Transcription Tools</strong>.
       </p>
 
@@ -1041,10 +1041,29 @@ document.getElementById('meterSelect').onchange=()=>{updateHeaderFields();saveSe
 document.getElementById('transposeOctave').onchange=()=>{pitchHistory=[];lastDetectedMidi=committedMidi=null;activeNoteRms=0;breakFrames=0;saveSettings();setStatus(document.getElementById('transposeOctave').checked?'Tin whistle octave transposition enabled. New detected notes will be written one octave lower.':'Octave transposition disabled.')};
 document.getElementById('clearBtn').onclick=()=>{abcText.value=makeABCHeader();abcChanged();pitchHistory=[];lastDetectedMidi=committedMidi=null;activeNoteRms=0;breakFrames=0;setStatus('ABC cleared. Header restored for K:'+document.getElementById('keySelect').value+'.')};
 document.getElementById('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(abcText.value);setStatus('ABC copied to the clipboard.')}catch(e){abcText.focus();abcText.select();document.execCommand('copy');setStatus('ABC copied to the clipboard.')}};
+function firstABCTitle(){
+  const match=abcText.value.match(/^T:\s*(.*?)\s*$/m);
+  return match&&match[1]?match[1].trim():'';
+}
+function sanitizeFilenameBase(text){
+  return String(text||'')
+    .normalize('NFKC')
+    .replace(/[\\/:*?"<>|]/g,' ')
+    .replace(/[\x00-\x1F\x7F]/g,' ')
+    .replace(/\s+/g,' ')
+    .replace(/^\.+|[. ]+$/g,'')
+    .trim();
+}
+function suggestedABCFileName(){
+  const title=sanitizeFilenameBase(firstABCTitle());
+  const base=title||'detected_notes';
+  return base+(IS_IOS?'.txt':'.abc');
+}
 function saveABCFile(filename){
-  let name=(filename||'detected_notes').trim();
-  if(!name)name='detected_notes';
-  if(!/\.abc$/i.test(name))name+='.abc';
+  const wantedExt=IS_IOS?'.txt':'.abc';
+  let name=(filename||'').trim();
+  if(!name)name=suggestedABCFileName();
+  if(!/\.(?:abc|txt)$/i.test(name))name+=wantedExt;
   const blob=new Blob([abcText.value],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download=name;
@@ -1060,9 +1079,10 @@ document.getElementById('saveBtn').onclick=async()=>{
     return;
   }
   try{
+    const suggestedName=suggestedABCFileName();
     let filename=null;
     if(typeof DayPilot.Modal.prompt==='function'){
-      const modal=await DayPilot.Modal.prompt('Save ABC file as:','detected_notes.abc',{
+      const modal=await DayPilot.Modal.prompt('Save ABC file as:',suggestedName,{
         theme:'modal_filename',
         top:80,
         scrollWithPage:false
@@ -1070,8 +1090,8 @@ document.getElementById('saveBtn').onclick=async()=>{
       if(!modal||modal.canceled)return;
       filename=String(modal.result||'');
     }else{
-      const form=[{name:'File name',id:'filename',type:'text',value:'detected_notes.abc'}];
-      const modal=await DayPilot.Modal.form(form,{filename:'detected_notes.abc'},{
+      const form=[{name:'File name',id:'filename',type:'text',value:suggestedName}];
+      const modal=await DayPilot.Modal.form(form,{filename:suggestedName},{
         theme:'modal_filename',
         top:80,
         scrollWithPage:false
@@ -1103,7 +1123,7 @@ document.getElementById('backspaceBtn').onclick=()=>{
 document.getElementById('openBtn').onclick=openTools;
 const overlay=document.getElementById('helpOverlay');document.getElementById('helpBtn').onclick=()=>overlay.style.display='block';document.getElementById('helpClose').onclick=()=>overlay.style.display='none';overlay.onclick=e=>{if(e.target===overlay)overlay.style.display='none'};document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.style.display='none'});
 </script>
-<script src="pako.min.js?cb=20260920_1110"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1110"></script>
+<script src="pako.min.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 </body>
 </html>
