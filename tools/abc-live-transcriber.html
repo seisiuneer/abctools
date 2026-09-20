@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Live Transcriber</title>
-<meta name="description" content="ABC Live Transcriber listens to sustained instrument notes and transcribes detected pitches into editable ABC notation, with selectable key and meter, tin-whistle octave transposition, input gain and level monitoring, ABC editing controls, clipboard copy, .abc file saving, and direct opening in ABC Transcription Tools." />
+<meta name="description" content="ABC Live Transcriber listens to sustained instrument notes and transcribes detected pitches into editable ABC notation, with selectable key and meter, tin-whistle octave transposition, input gain and level monitoring, live notation preview and playback with a note-following cursor, ABC editing controls, clipboard copy, .abc file saving, and direct opening in ABC Transcription Tools." />
 <meta name="keywords" content="ABC notation, pitch detection, note recognition, music transcription, tin whistle, Irish traditional music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ABC Live Transcriber" />
-<meta property="og:description" content="ABC Live Transcriber listens as you play sustained instrument notes and transcribes them into editable ABC notation, with key-aware note spelling, meter selection, tin-whistle octave transposition, and ABC export tools." />
+<meta property="og:description" content="ABC Live Transcriber listens as you play sustained instrument notes and transcribes them into editable ABC notation, with key-aware note spelling, meter selection, tin-whistle octave transposition, live notation preview and playback with a note-following cursor, and ABC export tools." />
 <meta property="og:site_name" content="ABC Live Transcriber" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-live-transcriber.html" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-live-transcriber-1.jpg"/>
@@ -29,13 +29,17 @@
 <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK&cb=20260919_1100"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-VM0N9HL3MK');
 </script>
+
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260919_1100" rel="stylesheet"/>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260919_1100"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260919_1100"></script>
 
 <style>
 :root{color-scheme:light;--fs-base:clamp(15px,1.05vw + 12px,17px);--page-pad:32px;--helpbar-est-height:62px}
@@ -193,6 +197,7 @@ select::-ms-expand{display:none}
 
 /* Header styling matched to ABC Custom Chord Grid Builder */
 .app-header{
+  position:relative;
   flex:0 0 auto;
   color:#fff;
   background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96)),
@@ -243,11 +248,134 @@ select::-ms-expand{display:none}
 
 }
 
+
+/* Live ABC notation preview */
+.previewCard{flex:0 0 auto;min-height:0}
+.previewHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+#abcPreview{background:#fff;overflow:auto;min-height:118px;max-height:38vh;border:1px solid rgba(127,127,127,.25);border-radius:10px;padding:8px}
+#abcPreview svg{display:block;max-width:100%;height:auto}
+#abcAudio{margin-top:8px}
+@media(max-width:980px){#abcPreview{max-height:none}}
+
+.right{
+  display:grid;
+  grid-template-rows:minmax(0,var(--preview-split,1fr)) 5px minmax(0,var(--editor-split,1fr));
+  gap:4px;
+  min-height:0;
+  overflow:hidden;
+}
+.previewCard{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  min-height:0;
+  overflow:hidden;
+}
+.previewHeader{
+  min-height:0;
+}
+.abcPreviewViewport{
+  min-height:0;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  border:1px solid rgba(127,127,127,.25);
+  border-radius:10px;
+  background:#fff;
+}
+#abcPreview .abcjs-cursor{
+  stroke:#00f000;
+  stroke-width:12px;
+  stroke-opacity:.25;
+  transform:translate(7px,0);
+  pointer-events:none;
+}
+#abcPreview{
+  min-height:max-content;
+  max-height:none;
+  height:auto;
+  overflow:visible;
+  border:0;
+  border-radius:0;
+  padding:8px;
+  background:#fff;
+}
+.abcAudioRow{
+  position:relative;
+  z-index:2;
+  flex:none;
+  min-height:34px;
+  margin-top:8px;
+  background:var(--bg);
+  overflow:visible;
+}
+#abcAudio{
+  position:static !important;
+  inset:auto !important;
+  width:100%;
+  margin:0;
+}
+.splitBar{position:relative;min-height:5px;height:5px;cursor:row-resize;touch-action:none;user-select:none;-webkit-user-select:none;outline:none;z-index:5}
+.splitBar::after{content:"";position:absolute;left:0;right:0;top:-7px;bottom:-7px;cursor:row-resize}
+.splitBar::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;transform:translateY(-50%);border-radius:2px;background:rgba(127,127,127,.42);transition:background-color .05s ease,box-shadow .05s ease}
+.splitBar:hover::before,.splitBar.dragging::before,.splitBar:focus-visible::before{background:#8eaa98;box-shadow:0 0 0 2px rgba(23,107,67,.10)}
+.taCard{
+  min-height:0;
+  overflow:hidden;
+}
+.taWrap{
+  min-height:0;
+  height:auto;
+  flex:1 1 auto;
+}
+
+@media(max-width:980px){
+  .right{
+    height:calc(100vh - 150px);
+    min-height:640px;
+    grid-template-rows:minmax(0,var(--preview-split,1fr)) 5px minmax(0,var(--editor-split,1fr));
+    overflow:hidden;
+    padding-bottom:12px;
+  }
+  .abcPreviewViewport{
+    min-height:0;
+    height:100%;
+  }
+  #abcPreview{
+    max-height:none;
+    height:auto;
+  }
+  .taWrap{
+    height:auto;
+    min-height:0;
+  }
+}
+
+
+.appVersion{
+  position:absolute;
+  right:28px;
+  top:14px;
+  color:#dcebe2;
+  font-size:.84rem;
+  font-weight:600;
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  .appVersion{
+    right:10px;
+    top:9px;
+    font-size:.72rem;
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="app">
   <header class="app-header">
+    <div class="appVersion">Version 1.00</div>
     <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
     </a>
@@ -292,6 +420,12 @@ select::-ms-expand{display:none}
       <div class="card"><strong>Status</strong><div id="status" class="status muted" style="margin-top:8px">Ready. Click Start Listening and allow microphone access.</div></div>
     </div>
     <div class="right">
+      <div class="card previewCard">
+        <div class="previewHeader"><strong>Notation Preview</strong></div>
+        <div class="abcPreviewViewport"><div id="abcPreview" aria-label="ABC notation preview"></div></div>
+        <div class="abcAudioRow"><div id="abcAudio" aria-label="ABC playback controls"></div></div>
+      </div>
+      <div id="splitBar" class="splitBar" role="separator" aria-orientation="horizontal" aria-label="Resize notation preview and ABC editor" aria-valuemin="25" aria-valuemax="75" aria-valuenow="50" tabindex="0" title="Drag to resize. Double-click to reset to 50/50."></div>
       <div class="card taCard">
         <div class="rightHeader"><strong>Detected ABC</strong></div>
         <div class="taWrap"><textarea id="abcText" spellcheck="false"></textarea></div>
@@ -307,7 +441,7 @@ select::-ms-expand{display:none}
           <button type="button" data-insert="3">3</button>
           <button type="button" data-insert="4">4</button>
           <button type="button" data-insert="6">6</button>
-          <button type="button" data-insert="3">8</button>
+          <button type="button" data-insert="8">8</button>
           <button type="button" data-insert="(3">(3</button>
           <button type="button" data-insert="{">{</button>
           <button type="button" data-insert="}">}</button>
@@ -323,7 +457,117 @@ select::-ms-expand{display:none}
   </div>
   <div id="instructions_div" class="card"><button id="helpBtn">Instructions</button></div>
 </div>
-<div id="helpOverlay"><div id="helpModal"><h2>ABC Live Transcriber Instructions</h2><div id="helpText"><p><b>ABC Live Transcriber</b> listens as you play and adds recognized pitches to the ABC area. Click <b>Start Listening</b>, allow microphone access, and play one sustained note at a time. The tool is optimized for notes from <b>G below middle C (G3)</b> through <b>D7</b>.</p><p>Set <b>Input gain</b> as needed. The level meter at the upper right shows the incoming signal level.</p><p>Your Input gain, Key, Meter, and tin-whistle octave-transposition settings are saved automatically in this browser and restored the next time the tool is opened.</p><p>Select the tune <b>Key</b>. The K: field is updated automatically, and detected pitches are written relative to that key signature. For example, in <b>K:D</b>, a detected F-sharp is entered as <code>F</code>, because F-sharp is already part of the D-major key signature. Accidentals outside the key signature use ABC accidentals, with sharp spelling where applicable.</p><p>Select the <b>Meter</b>: 2/4, 4/4, 6/8, 9/8, or 12/8. The M:, L:, and Q: header fields update automatically without changing any entered notes. L: is always 1/8. For 2/4 and 4/4, Q: is 1/2=90; for 6/8, 9/8, and 12/8, Q: is 3/8=120.</p><p>For tin whistle, enable <b>Transpose detected notes down one octave</b>. Pitch recognition still shows the note actually played, while the ABC output is written one octave lower.</p><p>When a note is stable, its ABC note name is appended directly after the previous detected note with no automatic spaces. Duration is not measured; every detected note is entered as a single ABC note token.</p><p>The buttons below the ABC area can insert spaces, barlines, repeats, line breaks, duration modifiers, triplets, and grace-note braces at the current insertion point.</p><p><b>Clear ABC</b> restores the standard ABC header using the currently selected key.</p><p>You can also edit the ABC manually, copy it, save it as an <code>.abc</code> file, or open it directly in the <strong>ABC Transcription Tools</strong>.</p><p>For best results, use a clean monophonic instrument tone, avoid chords, and leave a small separation between repeated notes of the same pitch.</p><p>This <strong>ABC Live Transcriber</strong> tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p><p>If you find it useful, please consider making a contribution via my online tip jars:</p><p style="text-align:center"><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p></div><button id="helpClose">Close</button></div></div>
+<div id="helpOverlay">
+  <div id="helpModal">
+    <h2>ABC Live Transcriber Instructions</h2>
+
+    <!--
+      INSTRUCTIONS
+      Edit the text below directly. Each <p>...</p> block is one paragraph.
+      Use <b>...</b> for bold text and <code>...</code> for ABC/code examples.
+    -->
+    <div id="helpText">
+
+      <p>
+        <b>ABC Live Transcriber</b> listens as you play and adds recognized pitches to the ABC area.
+        Click <b>Start Listening</b>, allow microphone access, and play one sustained note at a time.
+        The tool is optimized for notes from <b>G below middle C (G3)</b> through <b>D7</b>.
+      </p>
+
+      <p>
+        Set <b>Input gain</b> as needed.
+        The level meter at the upper right shows the incoming signal level.
+      </p>
+
+      <p>
+        Select the tune <b>Key</b>. The K: field is updated automatically, and detected pitches are
+        written relative to that key signature. For example, in <b>K:D</b>, a detected F-sharp is
+        entered as <code>F</code>, because F-sharp is already part of the D-major key signature.
+        Accidentals outside the key signature use ABC accidentals, with sharp spelling where applicable.
+      </p>
+
+      <p>
+        Select the <b>Meter</b>: 2/4, 4/4, 6/8, 9/8, or 12/8. The M:, L:, and Q: header fields update
+        automatically without changing any entered notes. L: is always 1/8. For 2/4 and 4/4,
+        Q: is 1/2=90; for 6/8, 9/8, and 12/8, Q: is 3/8=120.
+      </p>
+
+      <p>
+        For tin whistle, enable <b>Transpose detected notes down one octave</b>. Pitch recognition
+        still shows the note actually played, while the ABC output is written one octave lower.
+      </p>
+
+      <p>
+        When a note is stable, its ABC note name is appended directly after the previous detected
+        note with no automatic spaces. Duration is not measured; every detected note is entered
+        as a single ABC note token.
+      </p>
+
+      <p>
+        The <b>Notation Preview</b> above the ABC area automatically updates whenever the ABC changes.
+        For longer tunes, scroll within the preview area to see additional notation.
+      </p>
+
+      <p>
+        Drag the <b>split bar</b> between the notation/playback panel and the ABC editor to give either
+        area more room. The split position is saved as a percentage, so it adapts to different window
+        sizes when restored. Double-click the split bar to reset it to 50/50.
+      </p>
+
+      <p>
+        Use the <b>playback controls</b> directly below the notation preview to listen to the current ABC.
+        During playback, a cursor tracks the notes being played and the notation preview automatically
+        scrolls as needed to keep the cursor visible. If microphone listening is active, pitch detection
+        is temporarily paused during playback so the playback audio is not transcribed; listening resumes
+        when playback is paused or finishes.
+      </p>
+
+      <p>
+        The buttons below the ABC area can insert spaces, barlines, repeats, line breaks, duration
+        modifiers, triplets, and grace-note braces at the current insertion point.
+      </p>
+
+      <p>
+        <b>Clear ABC</b> restores the standard ABC header using the currently selected key.
+      </p>
+
+      <p>
+        You can also edit the ABC manually, copy it, save it as an <code>.abc</code> file, or open it
+        directly in the <strong>ABC Transcription Tools</strong>.
+      </p>
+
+      <p>
+        For best results, use a clean monophonic instrument tone, avoid chords, and leave a small
+        separation between repeated notes of the same pitch.
+      </p>
+
+      <p>
+        Your <b>Input gain</b>, <b>Key</b>, <b>Meter</b>, tin-whistle octave-transposition setting, and
+        preview/editor split position are saved automatically in this browser and restored the next time
+        the tool is opened.
+      </p>
+
+      <p>
+        This <strong>ABC Live Transcriber</strong> tool was created by
+        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
+      </p>
+
+      <p>
+        If you find it useful, please consider making a contribution via my online tip jars:
+      </p>
+
+      <p style="text-align:center">
+        <a href="https://michaeleskin.com/abctools/tipjars.html"
+           target="_blank"
+           rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
+      </p>
+
+    </div>
+    <!-- END INSTRUCTIONS -->
+
+    <button id="helpClose">Close</button>
+  </div>
+</div>
 <script>
 function tempoForMeter(meter){return (meter==='2/4'||meter==='4/4')?'1/2=90':'3/8=120'}
 function makeABCHeader(){
@@ -331,13 +575,118 @@ function makeABCHeader(){
   return `X: 1\nT: Title\nC: Composer\nR: Rhythm\nM: ${meter}\nL: 1/8\nQ: ${tempoForMeter(meter)}\nK: ${document.getElementById('keySelect').value}\n`;
 }
 const MIN_MIDI=55, MAX_MIDI=98; // G3 through D7
-const MIN_FREQ=185, MAX_FREQ=1200;
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let audioCtx=null, stream=null, source=null, gainNode=null, analyser=null, data=null, running=false, raf=0;
 let noiseFloor=0, noisePrimed=false, adaptiveGate=0.020, calibration=30;
 let levelSmooth=0, committedMidi=null, silenceFrames=0, pitchHistory=[], lastDetectedMidi=null;
 let activeNoteRms=0, breakFrames=0;
 const abcText=document.getElementById('abcText'), statusEl=document.getElementById('status'), startBtn=document.getElementById('startBtn');
+let previewTimer=0, previewGeneration=0, previewSynthController=null;
+let listeningSuspendedForPlayback=false;
+
+function suspendListeningForPlayback(){
+  if(!running||listeningSuspendedForPlayback)return;
+  listeningSuspendedForPlayback=true;
+  cancelAnimationFrame(raf);
+  raf=0;
+  setMeter(0);
+  pitchHistory=[];
+  lastDetectedMidi=null;
+  committedMidi=null;
+  activeNoteRms=0;
+  breakFrames=0;
+  setStatus('Playback active. Audio listening is temporarily paused.');
+}
+function resumeListeningAfterPlayback(){
+  if(!running||!listeningSuspendedForPlayback)return;
+  listeningSuspendedForPlayback=false;
+  resetAdaptiveGate();
+  setStatus('Listening. Play a sustained single note.');
+  raf=requestAnimationFrame(tick);
+}
+function schedulePreview(){
+  clearTimeout(previewTimer);
+  previewTimer=setTimeout(updatePreview,90);
+}
+async function updatePreview(){
+  const generation=++previewGeneration;
+  const preview=document.getElementById('abcPreview');
+  const audio=document.getElementById('abcAudio');
+  if(!preview||!audio)return;
+  if(typeof ABCJS==='undefined'||typeof ABCJS.renderAbc!=='function'){
+    preview.innerHTML='<div class="muted small">Notation preview unavailable.</div>';
+    audio.innerHTML='';
+    return;
+  }
+  try{
+    if(previewSynthController&&typeof previewSynthController.pause==='function'){
+      try{previewSynthController.pause()}catch(e){}
+    }
+    preview.innerHTML='';
+    audio.innerHTML='';
+    const visual=ABCJS.renderAbc('abcPreview',abcText.value,{
+      responsive:'resize',
+      add_classes:true
+    });
+    if(generation!==previewGeneration)return;
+    if(!visual||!visual.length)return;
+    if(ABCJS.synth&&typeof ABCJS.synth.SynthController==='function'){
+      const controller=new ABCJS.synth.SynthController();
+      let playbackCursor=null;
+      let cursorScrollFrame=0;
+      const previewViewport=preview.closest('.abcPreviewViewport');
+      function cancelCursorScroll(){if(!cursorScrollFrame)return;cancelAnimationFrame(cursorScrollFrame);cursorScrollFrame=0}
+      function keepPlaybackCursorVisible(){if(!playbackCursor||!previewViewport)return;const c=playbackCursor.getBoundingClientRect(),v=previewViewport.getBoundingClientRect(),m=28;if(c.top<v.top+m)previewViewport.scrollBy({top:c.top-(v.top+m),behavior:'smooth'});else if(c.bottom>v.bottom-m)previewViewport.scrollBy({top:c.bottom-(v.bottom-m),behavior:'smooth'})}
+      function scheduleCursorScroll(){if(!playbackCursor||!previewViewport||cursorScrollFrame)return;cursorScrollFrame=requestAnimationFrame(function(){cursorScrollFrame=0;keepPlaybackCursorVisible()})}
+      function removePlaybackCursor(){cancelCursorScroll();if(playbackCursor)playbackCursor.remove();playbackCursor=null}
+      const cursorControl={
+        onStart:function(){suspendListeningForPlayback();removePlaybackCursor();const svg=preview.querySelector('svg');if(!svg)return;svg.querySelectorAll('.abcjs-cursor').forEach(function(item){item.remove()});playbackCursor=document.createElementNS('http://www.w3.org/2000/svg','line');playbackCursor.setAttribute('class','abcjs-cursor');svg.appendChild(playbackCursor)},
+        onEvent:function(event){if(!playbackCursor||!event||event.left==null)return;playbackCursor.style.display='';playbackCursor.setAttribute('x1',String(event.left-2));playbackCursor.setAttribute('x2',String(event.left-2));playbackCursor.setAttribute('y1',String(event.top));playbackCursor.setAttribute('y2',String(event.top+event.height));scheduleCursorScroll()},
+        onFinished:function(){removePlaybackCursor();resumeListeningAfterPlayback()}
+      };
+      controller.load('#abcAudio',cursorControl,{
+        displayLoop:true,
+        displayRestart:true,
+        displayPlay:true,
+        displayProgress:true,
+        displayWarp:true
+      });
+
+      // Also intercept explicit Play/Pause calls so pausing resumes microphone
+      // analysis immediately rather than waiting for the tune to finish.
+      if(typeof controller.play==='function'){
+        const originalPlay=controller.play.bind(controller);
+        controller.play=function(){
+          suspendListeningForPlayback();
+          return originalPlay(...arguments);
+        };
+      }
+      if(typeof controller.pause==='function'){
+        const originalPause=controller.pause.bind(controller);
+        controller.pause=function(){
+          const result=originalPause(...arguments);
+          resumeListeningAfterPlayback();
+          return result;
+        };
+      }
+
+      previewSynthController=controller;
+      await controller.setTune(visual[0],false,{});
+      if(generation!==previewGeneration){
+        try{controller.pause()}catch(e){}
+        return;
+      }
+    }
+  }catch(e){
+    if(generation!==previewGeneration)return;
+    preview.innerHTML='<div class="muted small">Preview will update when the ABC is valid.</div>';
+    audio.innerHTML='';
+  }
+}
+function abcChanged(){
+  schedulePreview();
+}
+abcText.addEventListener('input',abcChanged);
 const SETTINGS_KEY='abcNoteListenerSettings';
 function saveSettings(){
   try{
@@ -345,7 +694,8 @@ function saveSettings(){
       gain:document.getElementById('gainSlider').value,
       key:document.getElementById('keySelect').value,
       meter:document.getElementById('meterSelect').value,
-      transposeOctave:document.getElementById('transposeOctave').checked
+      transposeOctave:document.getElementById('transposeOctave').checked,
+      splitPercent:getSplitPercent()
     }));
   }catch(e){}
 }
@@ -367,10 +717,78 @@ function restoreSettings(){
     if(saved.key!==undefined&&[...key.options].some(o=>o.value===saved.key))key.value=saved.key;
     if(saved.meter!==undefined&&[...meter.options].some(o=>o.value===saved.meter))meter.value=saved.meter;
     if(typeof saved.transposeOctave==='boolean')transpose.checked=saved.transposeOctave;
+    if(saved.splitPercent!==undefined)applySplitPercent(Number(saved.splitPercent),false);
   }catch(e){}
 }
+const rightPane=document.querySelector('.right');
+const splitBar=document.getElementById('splitBar');
+
+function getSplitPercent(){
+  const v=Number(splitBar?.dataset.splitPercent);
+  return Number.isFinite(v)?v:50;
+}
+function applySplitPercent(value,save=true){
+  const pct=Math.max(25,Math.min(75,Number(value)||50));
+  const r=rightPane.getBoundingClientRect();
+  const barH=splitBar.getBoundingClientRect().height||5;
+  const gapTotal=8; // two 4px grid gaps
+  const usable=Math.max(100,r.height-barH-gapTotal);
+  const previewPx=usable*(pct/100);
+  const editorPx=usable-previewPx;
+  rightPane.style.setProperty('--preview-split',previewPx+'px');
+  rightPane.style.setProperty('--editor-split',editorPx+'px');
+  splitBar.dataset.splitPercent=String(pct);
+  splitBar.setAttribute('aria-valuenow',String(Math.round(pct)));
+  if(save)saveSettings();
+}
+function splitPercentFromPointer(clientY){
+  const r=rightPane.getBoundingClientRect();
+  const barH=splitBar.getBoundingClientRect().height||5;
+  const usable=Math.max(100,r.height-barH-8);
+  return ((clientY-r.top-(barH/2))/usable)*100;
+}
+
+let splitPointerId=null;
+splitBar.addEventListener('pointerdown',e=>{
+  if(e.button!==undefined&&e.button!==0)return;
+  splitPointerId=e.pointerId;
+  try{splitBar.setPointerCapture(e.pointerId)}catch(_){}
+  splitBar.classList.add('dragging');
+  applySplitPercent(splitPercentFromPointer(e.clientY),false);
+  e.preventDefault();
+});
+splitBar.addEventListener('pointermove',e=>{
+  if(splitPointerId!==e.pointerId)return;
+  applySplitPercent(splitPercentFromPointer(e.clientY),false);
+  e.preventDefault();
+});
+function finishSplitDrag(e){
+  if(splitPointerId===null)return;
+  if(e&&e.pointerId!==undefined&&e.pointerId!==splitPointerId)return;
+  splitPointerId=null;
+  splitBar.classList.remove('dragging');
+  saveSettings();
+}
+splitBar.addEventListener('pointerup',finishSplitDrag);
+splitBar.addEventListener('pointercancel',finishSplitDrag);
+splitBar.addEventListener('dblclick',()=>applySplitPercent(50,true));
+splitBar.addEventListener('keydown',e=>{
+  if(e.key==='ArrowUp'||e.key==='ArrowDown'){
+    e.preventDefault();
+    applySplitPercent(getSplitPercent()+(e.key==='ArrowDown'?2:-2),true);
+  }else if(e.key==='Home'){
+    e.preventDefault();applySplitPercent(25,true);
+  }else if(e.key==='End'){
+    e.preventDefault();applySplitPercent(75,true);
+  }
+});
+
+applySplitPercent(50,false);
 restoreSettings();
-abcText.value=makeABCHeader();
+requestAnimationFrame(()=>applySplitPercent(getSplitPercent(),false));
+window.addEventListener('resize',()=>applySplitPercent(getSplitPercent(),false));
+
+abcText.value=makeABCHeader();schedulePreview();
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function rms(buf){let s=0;for(const v of buf)s+=v*v;return Math.sqrt(s/buf.length)}
 function midiToFreq(m){return 440*Math.pow(2,(m-69)/12)}
 function noteLabel(m){const n=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];return n[m%12]+(Math.floor(m/12)-1)}
@@ -405,6 +823,7 @@ function updateHeaderFields(){
     lines.splice(qi+1,0,'K: '+key);
   }
   abcText.value=lines.join('\n');
+  abcChanged();
 }
 function setStatus(s){statusEl.textContent=s}function setMeter(x){levelSmooth=.3*clamp(x,0,1)+.7*levelSmooth;document.getElementById('level-meter-fill').style.width=Math.round(levelSmooth*100)+'%'}
 function updateGate(r){
@@ -462,9 +881,9 @@ function yinPitch(buffer,sampleRate,minFreq,maxFreq,threshold){
   if(!(freq>0)||freq<minFreq||freq>maxFreq)return null;
   return {freq,probability};
 }
-function appendNote(m){const token=midiToABC(m);abcText.value+=token;abcText.selectionStart=abcText.selectionEnd=abcText.value.length;abcText.scrollTop=abcText.scrollHeight;document.getElementById('abcDisplay').textContent=token;setStatus('Added '+noteLabel(m)+' as '+token+'.')}
+function appendNote(m){const token=midiToABC(m);abcText.value+=token;abcChanged();abcText.selectionStart=abcText.selectionEnd=abcText.value.length;abcText.scrollTop=abcText.scrollHeight;document.getElementById('abcDisplay').textContent=token;setStatus('Added '+noteLabel(m)+' as '+token+'.')}
 function tick(){
-  if(!running||!analyser)return;
+  if(!running||!analyser||listeningSuspendedForPlayback)return;
   analyser.getFloatTimeDomainData(data);
   const r=rms(data);setMeter(r/.10);updateGate(r);
 
@@ -521,14 +940,14 @@ function tick(){
   }
   raf=requestAnimationFrame(tick);
 }
-async function start(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{autoGainControl:false,echoCancellation:false,noiseSuppression:false}});const track=stream.getAudioTracks()[0];if(track?.applyConstraints)try{await track.applyConstraints({autoGainControl:false,echoCancellation:false,noiseSuppression:false})}catch(e){}source=audioCtx.createMediaStreamSource(stream);gainNode=audioCtx.createGain();gainNode.gain.value=+document.getElementById('gainSlider').value;analyser=audioCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;data=new Float32Array(analyser.fftSize);source.connect(gainNode);gainNode.connect(analyser);const silent=audioCtx.createGain();silent.gain.value=0;analyser.connect(silent);silent.connect(audioCtx.destination);running=true;startBtn.textContent='Stop Listening';setStatus('Listening. Play a sustained single note.');raf=requestAnimationFrame(tick)}catch(e){setStatus('Microphone access failed: '+(e?.message||e));running=false}}
-async function stop(){running=false;cancelAnimationFrame(raf);if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)try{await audioCtx.close()}catch(e){}stream=source=gainNode=analyser=audioCtx=null;startBtn.textContent='Start Listening';setMeter(0);setStatus('Stopped.');}
+async function start(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{autoGainControl:false,echoCancellation:false,noiseSuppression:false}});const track=stream.getAudioTracks()[0];if(track?.applyConstraints)try{await track.applyConstraints({autoGainControl:false,echoCancellation:false,noiseSuppression:false})}catch(e){}source=audioCtx.createMediaStreamSource(stream);gainNode=audioCtx.createGain();gainNode.gain.value=+document.getElementById('gainSlider').value;analyser=audioCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;data=new Float32Array(analyser.fftSize);source.connect(gainNode);gainNode.connect(analyser);const silent=audioCtx.createGain();silent.gain.value=0;analyser.connect(silent);silent.connect(audioCtx.destination);running=true;listeningSuspendedForPlayback=false;startBtn.textContent='Stop Listening';setStatus('Listening. Play a sustained single note.');raf=requestAnimationFrame(tick)}catch(e){setStatus('Microphone access failed: '+(e?.message||e));running=false}}
+async function stop(){running=false;listeningSuspendedForPlayback=false;cancelAnimationFrame(raf);if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)try{await audioCtx.close()}catch(e){}stream=source=gainNode=analyser=audioCtx=null;startBtn.textContent='Start Listening';setMeter(0);setStatus('Stopped.');}
 startBtn.onclick=()=>running?stop():start();
 document.getElementById('gainSlider').oninput=e=>{const v=+e.target.value;document.getElementById('gainValue').textContent=v.toFixed(2).replace(/0$/,'')+'×';if(gainNode)gainNode.gain.value=v;saveSettings()};
 document.getElementById('keySelect').onchange=()=>{updateHeaderFields();pitchHistory=[];lastDetectedMidi=committedMidi=null;activeNoteRms=0;breakFrames=0;saveSettings();setStatus('Key changed to '+document.getElementById('keySelect').value+'. K: tag updated.')};
 document.getElementById('meterSelect').onchange=()=>{updateHeaderFields();saveSettings();setStatus('Meter changed to '+document.getElementById('meterSelect').value+'. M:, L:, and Q: tags updated; entered notes unchanged.')};
 document.getElementById('transposeOctave').onchange=()=>{pitchHistory=[];lastDetectedMidi=committedMidi=null;activeNoteRms=0;breakFrames=0;saveSettings();setStatus(document.getElementById('transposeOctave').checked?'Tin whistle octave transposition enabled. New detected notes will be written one octave lower.':'Octave transposition disabled.')};
-document.getElementById('clearBtn').onclick=()=>{abcText.value=makeABCHeader();pitchHistory=[];lastDetectedMidi=committedMidi=null;activeNoteRms=0;breakFrames=0;setStatus('ABC cleared. Header restored for K:'+document.getElementById('keySelect').value+'.')};
+document.getElementById('clearBtn').onclick=()=>{abcText.value=makeABCHeader();abcChanged();pitchHistory=[];lastDetectedMidi=committedMidi=null;activeNoteRms=0;breakFrames=0;setStatus('ABC cleared. Header restored for K:'+document.getElementById('keySelect').value+'.')};
 document.getElementById('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(abcText.value);setStatus('ABC copied to the clipboard.')}catch(e){abcText.focus();abcText.select();document.execCommand('copy');setStatus('ABC copied to the clipboard.')}};
 function saveABCFile(filename){
   let name=(filename||'detected_notes').trim();
@@ -575,12 +994,12 @@ document.getElementById('saveBtn').onclick=async()=>{
 };
 function bytesToBase64URL(bytes){let s='';for(let i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 async function openTools(){try{if(typeof pako==='undefined')throw new Error('pako.min.js is not loaded.');const bytes=new TextEncoder().encode(abcText.value),def=pako.deflate(bytes,{level:6}),payload=bytesToBase64URL(def),params=new URLSearchParams();params.set('def',payload);params.set('format','noten');params.set('ssp','0');params.set('name','Detected_Notes');params.set('editor','1');const url='https://michaeleskin.com/abctools/abctools.html?'+params.toString();if(url.length>=8100)throw new Error('The Share URL is too long. Save the ABC file or copy the ABC instead.');window.open(url,'_blank','noopener,noreferrer');setStatus('ABC opened in the ABC Transcription Tools.')}catch(e){setStatus('Open in ABC Transcription Tools failed: '+(e?.message||e))}}
-document.querySelectorAll('.abcInsertButtons button').forEach(btn=>btn.addEventListener('click',()=>{const text=btn.dataset.insert||'';const start=abcText.selectionStart??abcText.value.length,end=abcText.selectionEnd??start;abcText.setRangeText(text,start,end,'end');abcText.focus();abcText.scrollTop=abcText.scrollHeight;}));
-document.getElementById('backspaceBtn').onclick=()=>{const start=abcText.selectionStart??abcText.value.length,end=abcText.selectionEnd??start;if(start!==end){abcText.setRangeText('',start,end,'end')}else if(start>0){abcText.setRangeText('',start-1,start,'end')}abcText.focus();abcText.scrollTop=abcText.scrollHeight;};
+document.querySelectorAll('.abcInsertButtons button').forEach(btn=>btn.addEventListener('click',()=>{const text=btn.dataset.insert||'';const start=abcText.selectionStart??abcText.value.length,end=abcText.selectionEnd??start;abcText.setRangeText(text,start,end,'end');abcText.focus();abcText.scrollTop=abcText.scrollHeight;abcChanged();}));
+document.getElementById('backspaceBtn').onclick=()=>{const start=abcText.selectionStart??abcText.value.length,end=abcText.selectionEnd??start;if(start!==end){abcText.setRangeText('',start,end,'end')}else if(start>0){abcText.setRangeText('',start-1,start,'end')}abcText.focus();abcText.scrollTop=abcText.scrollHeight;abcChanged();};
 document.getElementById('openBtn').onclick=openTools;
 const overlay=document.getElementById('helpOverlay');document.getElementById('helpBtn').onclick=()=>overlay.style.display='block';document.getElementById('helpClose').onclick=()=>overlay.style.display='none';overlay.onclick=e=>{if(e.target===overlay)overlay.style.display='none'};document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.style.display='none'});
 </script>
-<script src="pako.min.js?v=1"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+<script src="pako.min.js?cb=20260919_1100"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260919_1100"></script>
 </body>
 </html>
