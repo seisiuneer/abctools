@@ -108,8 +108,46 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   line-height:1.2;
   cursor:pointer;
 }
+
+/* Normalize modal action buttons on Safari/iOS. */
+#helpClose {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:650 !important;
+  line-height:1.2 !important;
+  width:180px !important;
+  padding:10px 18px !important;
+}
+
+/* DayPilot prompt/alert buttons are inserted outside the app markup. */
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_main button,
+.modal_default_button {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+  min-width:88px !important;
+  width:auto !important;
+  padding:8px 18px !important;
+}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.15</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.16</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control"><label>ABC file</label><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -157,7 +195,7 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
       </p>
 
       <p>Click the <b>tempo percentage</b>
-        box in the playback controls to open the tempo percentage-setting dialog. Range is 15-200% of the original tune tempo. The selected
+        box in the playback controls to open the tempo-setting dialog. The selected
         tempo is remembered in this browser and reused for every tune until you
         change it.
       </p>
