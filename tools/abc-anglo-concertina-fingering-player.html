@@ -64,6 +64,50 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 .modal_default_main .modal_default_content{font-size:18px !important}
 .modal_default_main input{font-size:20px !important}
 .modal_default_main button,.modal_default_main input[type=button],.modal_default_main input[type=submit]{font-size:18px !important}
+
+/* Normalize toolbar controls on Safari/iOS. */
+.control select{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  border-color:#b8c7bd;
+}
+.toolbar button,.bottomBar button,.diagramHeader button{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+
+/* Give the native file picker a consistent button treatment where supported.
+   The input remains native so iOS can still choose .abc and .txt files. */
+.control input[type=file]{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+.control input[type=file]::file-selector-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+.control input[type=file]::-webkit-file-upload-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
 </style></head><body><div class="app">
 <header class="app-header"><div class="version">Version 1.11</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
