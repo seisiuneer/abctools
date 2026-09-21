@@ -1,0 +1,1763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABC Anglo Concertina Fingering Image Generator</title>
+<meta name="description" content="Generate a sequence of Anglo concertina fingering JPEG images from ABC tunes, with Jeffries and Wheatstone layouts, On-Row and Cross-Row fingering styles, and one clearly labeled Push/Draw diagram per note." />
+<meta name="keywords" content="ABC notation, Anglo concertina, concertina fingering, Jeffries concertina, Wheatstone concertina, Cross-Row fingering, On-Row fingering, Irish traditional music, ABC Transcription Tools" />
+<meta name="author" content="Michael Eskin" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ABC Anglo Concertina Fingering Image Generator" />
+<meta property="og:description" content="Generate a sequence of clearly labeled Anglo concertina fingering JPEG images from ABC tunes, with Jeffries and Wheatstone layouts, On-Row and Cross-Row styles, and Push/Draw guidance for every note." />
+<meta property="og:site_name" content="ABC Anglo Concertina Fingering Image Generator" />
+<meta property="og:url" content="https://michaeleskin.com/tools/abc-anglo-fingering-image-generator.html" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-anglo-fingering-image-generator-1.jpg"/>
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+
+<style>
+:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35)}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff}
+.app-header{position:relative;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:18px 20px 16px;text-align:center}
+.app-header h1{margin:0;font-size:clamp(1.55rem,4vw,2.25rem);line-height:1.1} .app-header p{margin:8px auto 0;color:#dcebe2;max-width:850px}
+.version{position:absolute;right:22px;top:13px;font-size:.78rem;color:#dcebe2;font-weight:600}
+.tipJarButton{position:absolute;left:28px;top:14px;padding:7px 11px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.84rem;font-weight:750;transition:background-color .05s ease,border-color .05s ease,box-shadow .05s ease}
+.tipJarButton:hover,.tipJarButton:focus-visible{background:#b8ffe8;border-color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.22)}
+@media(max-width:760px){
+  .app-header{
+    padding:62px 14px 16px;
+  }
+  .app-header h1{
+    font-size:clamp(1.45rem,7vw,1.9rem);
+    line-height:1.12;
+    padding:0;
+  }
+  .app-header p{
+    margin-top:10px;
+    font-size:.95rem;
+    line-height:1.35;
+    max-width:34rem;
+  }
+  .tipJarButton{
+    left:12px;
+    top:12px;
+    font-size:.78rem;
+    padding:6px 10px;
+  }
+  .version{
+    display:block;
+    right:12px;
+    top:14px;
+    font-size:.72rem;
+  }
+  main{
+    margin:16px auto;
+    padding:0 12px 22px;
+  }
+  .card{
+    padding:14px;
+    margin-bottom:12px;
+  }
+}
+@media(max-width:1050px){
+  .app-header{
+    padding-top:64px;
+  }
+  .app-header h1{
+    font-size:clamp(1.65rem,4.5vw,2.15rem);
+    line-height:1.12;
+  }
+  .tipJarButton{
+    left:28px;
+    top:16px;
+  }
+  .version{
+    right:28px;
+    top:19px;
+  }
+}
+main{max-width:820px;margin:24px auto;padding:0 18px 28px} .card{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 14px;font-size:1.2rem} label{display:block;font-weight:650;margin:14px 0 7px}
+input[type=file],select,button{font:inherit;width:100%} select{appearance:none;min-height:42px;padding:8px 40px 8px 11px;border:1px solid #b8c7bd;border-radius:8px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 14px center}
+button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11px 14px;font-weight:700;cursor:pointer} button:hover:not(:disabled){background:#cfe2ff} button:disabled{opacity:.45;cursor:default}
+.filepick{border:1px dashed #9db4a4;border-radius:10px;padding:14px;background:#f8fbf9} .muted{color:#607068;font-size:.92rem;margin-top:8px}
+.status{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.45;overflow-wrap:anywhere}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media(max-width:620px){.grid{grid-template-columns:1fr}}
+.note{font-size:.9rem;line-height:1.45;color:#4d5c54}
+.modal_filename_background{background:#000;opacity:.4} .modal_filename_main{border:1px solid #333;box-shadow:0 0 15px -2px rgba(0,0,0,.75);width:min(620px,calc(100vw - 48px))!important;max-width:min(620px,calc(100vw - 48px))!important;height:auto!important;max-height:260px!important;overflow:hidden!important}
+.modal_filename_inner{padding:20px 22px 18px;background:#fff;color:#000;display:flex;flex-direction:column} .modal_filename_content{margin:8px 0 10px;overflow:auto!important}
+.modal_filename_main,.modal_filename_main input,.modal_filename_main button{font-size:16px} .modal_filename_main input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px}
+.modal_filename_buttons{text-align:center;margin-top:14px;padding:10px 0 12px} .modal_filename_buttons button{margin:0 3px;width:100px}
+
+/* Instructions DayPilot alert */
+.modal_instructions_background{background:#000;opacity:.4}
+.modal_instructions_main{
+  border:1px solid #333;
+  box-shadow:0 0 15px -2px rgba(0,0,0,.75);
+  width:min(700px,calc(100vw - 32px))!important;
+  max-width:min(700px,calc(100vw - 32px))!important;
+  height:min(620px,calc(100vh - 48px))!important;
+  max-height:min(620px,calc(100vh - 48px))!important;
+  overflow:hidden!important;
+}
+.modal_instructions_inner{
+  height:100%!important;
+  padding:0!important;
+  background:#fff;
+  color:#17241c;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+.modal_instructions_content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  padding:22px 24px 16px!important;
+  margin:0!important;
+  text-align:left!important;
+  line-height:1.5;
+  -webkit-overflow-scrolling:touch;
+}
+.modal_instructions_content h2{margin:0 0 14px;font-size:1.35rem}
+.modal_instructions_content h3{margin:18px 0 6px;font-size:1.02rem}
+.modal_instructions_content p{margin:0 0 10px}
+.modal_instructions_content ol,.modal_instructions_content ul{margin:6px 0 12px;padding-left:24px}
+.modal_instructions_buttons{
+  flex:0 0 auto!important;
+  position:relative!important;
+  bottom:auto!important;
+  margin:0!important;
+  padding:12px 16px 14px!important;
+  border-top:1px solid var(--border);
+  background:#fff;
+  text-align:center!important;
+}
+.modal_instructions_buttons button{
+  width:110px!important;
+  margin:0 auto!important;
+  float:none!important;
+  display:inline-block!important;
+}
+@media(max-width:620px){
+  .modal_instructions_main{
+    width:calc(100vw - 20px)!important;
+    max-width:calc(100vw - 20px)!important;
+    height:calc(100vh - 28px)!important;
+    max-height:calc(100vh - 28px)!important;
+  }
+  .modal_instructions_content{padding:18px 18px 14px!important}
+}
+</style>
+</head>
+<body>
+<header class="app-header"><div class="version">Version 1.09</div>
+<a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
+<p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
+<main>
+  <section class="card">
+    <h2>ABC File</h2>
+    <div class="filepick"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><div id="fileInfo" class="muted">No ABC file loaded.</div></div>
+    <div class="grid">
+      <div><label for="system">Fingering system</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
+      <div><label for="style">Fingering style</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
+    </div>
+  </section>
+  <section class="card">
+    <button id="generateBtn" disabled>Generate JPEG Images and Save ZIP</button>
+    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Green</b>.</p>
+  </section>
+  <section class="card"><h2>Status</h2><div id="status" class="status">Ready. Open an ABC file.</div></section>
+  <button id="instructionsBtn" type="button">Instructions</button>
+</main>
+
+<script src="daypilot-modal.min-3.10.1.js"></script>
+<script src="jszip-min.js"></script>
+
+<script>
+
+var gInjectTab_ConcertinaFingering = 0;
+var gInjectTab_ConcertinaStyle = 0;
+var gInjectTab_GaryCoover = false;
+// Preserve physical button identity so the image renderer can highlight the exact button.
+var gAngloButtonNames = [
+ "L1a","L2a","L3a","L4a","L5a","R1a","R2a","R3a","R4a","R5a",
+ "L1","L2","L3","L4","L5","R1","R2","R3","R4","R5",
+ "L6","L7","L8","L9","L10","R6","R7","R8","R9","R10"
+];
+
+//
+// app-anglo-fingerings.js
+//
+// ABC Muscial Notation Converter for Anglo Concertina
+//
+// This version for integration into the ABC Transcription Tools
+//
+// Annotates an ABC format tune with semi-optimal fingerings
+// for the Anglo Concertina.
+//
+// This code is a fork of the original Anglo Concertina fingering utility at:
+//
+// https://jvandonsel.github.io/fingering/fingering.html
+//
+// Updated and extended 19 July 2023 by: 
+//
+// Michael Eskin
+// https://michaeleskin.com
+//
+// Copyright (c) 2013 James van Donsel
+//
+// Released under CC0 - No Rights Reserved
+// https://creativecommons.org/share-your-work/public-domain/cc0/
+//
+
+//
+// Put the whole thing in a function for isolation
+//
+var angloFingeringsGenerator = function (theABC, callback){
+
+    var gAngloVerbose = false;
+
+    var abcOutput = "";
+
+    // *** CHANGE: collect tunes that needed `x` substitutions
+    var tunesWithX = [];
+    var currentTuneHadX = false;
+
+    // Button constructor
+    var Button = function(name, notes, cost, finger) {
+        this.name = name;
+        this.notes = notes;
+        this.cost = cost;
+        this.finger = finger;
+    };
+
+    // Button maps
+    // Lower cost means button is preferred
+    // Notes are [PUSH, DRAW].
+    var PUSH_INDEX = 0;
+    var DRAW_INDEX = 1;
+
+    var baseMapOriginal = {
+
+        // Top row, LH
+        "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
+        "L2a": new Button("L2a", ["A,", "_B,"], 10, "l4"),
+        "L3a": new Button("L3a", ["^C", "_E"], 10, "l3"),
+        "L4a": new Button("L4a", ["A", "G"], 10, "l2"),
+        "L5a": new Button("L5a", ["^G", "_B"], 10, "l1"),
+
+        // Middle row, LH
+        "L1": new Button("L1", ["C,", "G,"], 1, "l4"),
+        "L2": new Button("L2", ["G,", "B,"], 1, "l4"),
+        "L3": new Button("L3", ["C", "D"], 1, "l3"),
+        "L4": new Button("L4", ["E", "F"], 1, "l2"),
+        "L5": new Button("L5", ["G", "A"], 1, "l1"),
+
+        // Bottom row, LH
+        "L6": new Button("L6", ["B,", "A,"], 1, "l4"),
+        "L7": new Button("L7", ["D", "^F"], 2, "l4"),
+        "L8": new Button("L8", ["G", "A"], 2, "l3"),
+        "L9": new Button("L9", ["B", "c"], 2, "l2"),
+        "L10": new Button("L10", ["d", "e"], 2, "l1"),
+
+        // Middle row, RH
+        "R1": new Button("R1", ["c", "B"], 1, "r1"),
+        "R2": new Button("R2", ["e", "d"], 1, "r2"),
+        "R3": new Button("R3", ["g", "f"], 2, "r3"),
+        "R4": new Button("R4", ["c'", "a"], 2, "r4"),
+        "R5": new Button("R5", ["e'", "b"], 2, "r4"),
+
+        // Bottom row, RH
+        "R6": new Button("R6", ["g", "^f"], 1, "r1"),
+        "R7": new Button("R7", ["b", "a"], 1, "r2"),
+        "R8": new Button("R8", ["d'", "c'"], 1, "r3"),
+        "R9": new Button("R9", ["g'", "e'"], 1, "r4"),
+        "R10": new Button("R10", ["b'", "^f'"], 1, "r4")
+
+    };
+
+    //
+    // Cross-row map for Wheatstone
+    //
+    var baseMapCrossRowWheatstone = {
+
+        // Top row, LH
+        "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
+        "L2a": new Button("L2a", ["A,", "_B,"], 10, "l4"),
+        "L3a": new Button("L3a", ["^C", "_E"], 10, "l3"),
+        "L4a": new Button("L4a", ["A", "G"], 10, "l2"),
+        "L5a": new Button("L5a", ["^G", "_B"], 10, "l1"),
+
+        // Middle row, LH
+        "L1": new Button("L1", ["C,", "G,"], 1, "l4"),
+        "L2": new Button("L2", ["G,", "B,"], 1, "l4"),
+        "L3": new Button("L3", ["C", "D"], 1, "l3"),
+        "L4": new Button("L4", ["E", "F"], 1, "l2"),
+        "L5": new Button("L5", ["G", "A"], 1, "l1"),
+
+        // Bottom row, LH
+        "L6": new Button("L6", ["B,", "A,"], 1, "l4"),
+        "L7": new Button("L7", ["D", "^F"], 2, "l4"),
+        "L8": new Button("L8", ["G", "A"], 2, "l3"),
+        "L9": new Button("L9", ["B", "c"], 2, "l2"),
+        "L10": new Button("L10", ["d", "e"], 1, "l1"),
+
+        // Middle row, RH
+        "R1": new Button("R1", ["c", "B"], 1, "r1"),
+        "R2": new Button("R2", ["e", "d"], 2, "r2"),
+        "R3": new Button("R3", ["g", "f"], 2, "r3"),
+        "R4": new Button("R4", ["c'", "a"], 2, "r4"),
+        "R5": new Button("R5", ["e'", "b"], 2, "r4"),
+
+        // Bottom row, RH
+        "R6": new Button("R6", ["g", "^f"], 1, "r1"),
+        "R7": new Button("R7", ["b", "a"], 1, "r2"),
+        "R8": new Button("R8", ["d'", "c'"], 1, "r3"),
+        "R9": new Button("R9", ["g'", "e'"], 1, "r4"),
+        "R10": new Button("R10", ["b'", "^f'"], 1, "r4")
+
+    };
+
+    //
+    // My preferred fingering map for Cross-Row playing
+    //
+    var baseMapCrossRow = {
+
+        // Top row, LH
+        "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
+        "L2a": new Button("L2a", ["A,", "_B,"], 10, "l4"), 
+        "L3a": new Button("L3a", ["^C", "_E"], 10, "l3"),
+        "L4a": new Button("L4a", ["A", "G"], 10, "l2"),
+        "L5a": new Button("L5a", ["^G", "_B"], 10, "l1"),
+
+        // Middle row, LH
+        "L1": new Button("L1", ["C,", "G,"], 1, "l4"),
+        "L2": new Button("L2", ["G,", "B,"], 1, "l4"),
+        "L3": new Button("L3", ["C", "D"], 1, "l3"),
+        "L4": new Button("L4", ["E", "F"], 1, "l2"),
+        "L5": new Button("L5", ["G", "A"], 1, "l1"),
+
+        // Bottom row, LH
+        "L6": new Button("L6", ["B,", "A,"], 1, "l4"), 
+        "L7": new Button("L7", ["D", "^F"], 2, "l4"),
+        "L8": new Button("L8", ["G", "A"], 2, "l3"),
+        "L9": new Button("L9", ["B", "z"], 2, "l2"),
+        "L9a": new Button("L9", ["z", "c"], 1, "l2"),
+        "L10": new Button("L10", ["d", "e"], 1, "l1"),
+
+        // Middle row, RH
+        "R1": new Button("R1", ["c", "x"], 2, "r1"),
+        "R1x": new Button("R1",["x", "B"], 1, "r1"),
+        "R2": new Button("R2", ["e", "d"], 2, "r2"),
+        "R3": new Button("R3", ["g", "f"], 2, "r3"),
+        "R4": new Button("R4", ["c'", "a"], 2, "r4"),
+        "R5": new Button("R5", ["e'", "b"], 2, "r4"),
+
+        // Bottom row, RH
+        "R6": new Button("R6", ["g", "^f"], 1, "r1"),
+        "R7": new Button("R7", ["b", "a"], 1, "r2"),
+        "R8": new Button("R8", ["d'", "c'"], 1, "r3"),
+        "R9": new Button("R9", ["g'", "e'"], 1, "r4"),
+        "R10": new Button("R10", ["b'", "^f'"], 1, "r4")
+
+    };
+
+    var jeffriesRxMapOriginal = {
+        // Top row, RH
+        "R1a": new Button("R1a", ["^d", "^c"], 1, "r1"),
+        "R2a": new Button("R2a", ["^c", "^d"], 10, "r2"),
+        "R3a": new Button("R3a", ["^g", "g"], 10, "r3"),
+        "R4a": new Button("R4a", ["^c'", "_b"], 10, "r4"),
+        "R5a": new Button("R5a", ["a", "d'"], 10, "r4")
+    };
+
+    // Prefers a R2a press C#
+    var jeffriesRxMapAlt = {
+        // Top row, RH
+        "R1a": new Button("R1a", ["^d", "^c"], 10, "r1"),
+        "R2a": new Button("R2a", ["^c", "^d"], 1, "r2"),
+        "R3a": new Button("R3a", ["^g", "g"], 10, "r3"),
+        "R4a": new Button("R4a", ["^c'", "_b"], 10, "r4"),
+        "R5a": new Button("R5a", ["a", "d'"], 10, "r4")
+    };
+
+    var wheatstoneRxMapOriginal = {
+        // Top row, RH
+        "R1a": new Button("R1a", ["^c", "^d"], 10, "r1"),
+        "R2a": new Button("R2a", ["a", "g"], 10, "r2"),
+        "R3a": new Button("R3a", ["^g", "_b"], 10, "r3"),
+        "R4a": new Button("R4a", ["^c'", "_e'"], 10, "r4"),
+        "R5a": new Button("R5a", ["a'", "f'"], 10, "r4"),
+    };
+
+    var gAngloButtonNames_GaryCoover = [
+
+        // Top row, LH
+        "1a",
+        "2a",
+        "3a",
+        "4a",
+        "5a",
+
+        // Top row, RH
+        "1a",
+        "2a",
+        "3a",
+        "4a",
+        "5a",
+
+        // Middle row, LH
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+
+        // Middle row, RH
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+
+        // Bottom row, LH
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+
+        // Bottom row, RH
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+    ];
+
+    // Initialization of the original button map
+    var jeffriesMap = null;
+    var wheatstoneMap = null;
+    var buttonToNoteMap = null;
+    var buttonMapIndex = null;
+
+    //
+    // Process the button naming matrix at tab build time
+    //
+    function processButtonNoteNames(map){
+
+        var originalButtonNames = gAngloButtonNames;
+
+        if (gInjectTab_GaryCoover){
+            gAngloButtonNames = gAngloButtonNames_GaryCoover;
+        }
+
+        // Top row
+        map["L1a"].name = gAngloButtonNames[0];
+        map["L2a"].name = gAngloButtonNames[1];
+        map["L3a"].name = gAngloButtonNames[2];
+        map["L4a"].name = gAngloButtonNames[3];
+        map["L5a"].name = gAngloButtonNames[4];
+        map["R1a"].name = gAngloButtonNames[5];
+        map["R2a"].name = gAngloButtonNames[6];
+        map["R3a"].name = gAngloButtonNames[7];
+        map["R4a"].name = gAngloButtonNames[8];
+        map["R5a"].name = gAngloButtonNames[9];
+
+        // Middle row
+        map["L1"].name = gAngloButtonNames[10];
+        map["L2"].name = gAngloButtonNames[11];
+        map["L3"].name = gAngloButtonNames[12];
+        map["L4"].name = gAngloButtonNames[13];
+        map["L5"].name = gAngloButtonNames[14];
+        map["R1"].name = gAngloButtonNames[15];
+
+        // Special case
+        if (map["R1x"]){
+            map["R1x"].name = gAngloButtonNames[15];
+        }
+
+        map["R2"].name = gAngloButtonNames[16];
+        map["R3"].name = gAngloButtonNames[17];
+        map["R4"].name = gAngloButtonNames[18];
+        map["R5"].name = gAngloButtonNames[19];
+
+        // Bottom row
+        map["L6"].name = gAngloButtonNames[20];
+        map["L7"].name = gAngloButtonNames[21];
+        map["L8"].name = gAngloButtonNames[22];
+        map["L9"].name = gAngloButtonNames[23];
+
+         // Special case
+        if (map["L9a"]){
+            map["L9a"].name = gAngloButtonNames[23];
+        }
+       
+        map["L10"].name = gAngloButtonNames[24];
+        map["R6"].name = gAngloButtonNames[25];
+        map["R7"].name = gAngloButtonNames[26];
+        map["R8"].name = gAngloButtonNames[27];
+        map["R9"].name = gAngloButtonNames[28];
+        map["R10"].name = gAngloButtonNames[29];
+
+        // Restore the original map
+        if (gInjectTab_GaryCoover){
+            gAngloButtonNames = originalButtonNames;
+        }
+
+        return map;
+    }
+
+    // 
+    // Called at solution generation time
+    //
+    function setButtonToNoteMap() {
+
+        var baseMapIndex = parseInt(gInjectTab_ConcertinaFingering);
+
+        jeffriesMap = [];
+        wheatstoneMap = [];
+
+        switch (baseMapIndex) {
+
+            // Original
+            case 0:
+
+                for (var x in jeffriesRxMapAlt) {
+                    jeffriesMap[x] = jeffriesRxMapAlt[x];
+                }
+
+                for (var x in wheatstoneRxMapOriginal) {
+                    wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
+                }
+
+                for (var x in baseMapOriginal) {
+                    jeffriesMap[x] = baseMapOriginal[x];
+                    wheatstoneMap[x] = baseMapOriginal[x];
+                }
+
+                break;
+
+            // Cross-row
+            case 1:
+
+                for (var x in jeffriesRxMapAlt) {
+                    jeffriesMap[x] = jeffriesRxMapAlt[x];
+                }
+
+                for (var x in wheatstoneRxMapOriginal) {
+                    wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
+                }
+
+                for (var x in baseMapCrossRow) {
+                    jeffriesMap[x] = baseMapCrossRow[x];
+                }
+
+                for (var x in baseMapCrossRow) {
+                      wheatstoneMap[x] = baseMapCrossRow[x];
+                }
+
+                break;
+        }
+
+        if (parseInt(gInjectTab_ConcertinaStyle) == 0){
+
+            buttonToNoteMap = jeffriesMap;
+
+        }
+        else{
+
+            buttonToNoteMap = wheatstoneMap;
+
+        }
+
+        // Inject custom button names
+        buttonToNoteMap = processButtonNoteNames(buttonToNoteMap);
+
+    }
+
+
+    // Globals
+    var keySignature = null;
+    var bestCost;
+    var bestPathFromState = null;
+    var stateCount = 0;
+
+    function angloLog(s) {
+        if (gAngloVerbose)
+            console.log(s);
+    }
+
+    function generateAngloFingerings(abcInput) {
+
+        angloLog("Got input:" + abcInput);
+
+        // Make sure the button note map is up to date
+        setButtonToNoteMap();
+
+        // Find the key signature in the input
+        keySignature = findKeySignature(abcInput);
+
+        if (keySignature == null) {
+            return ("ERROR: Unknown or unsupported key signature");
+        }
+
+        // Generate an array of note objects. Each
+        var notes = getAbcNotes(abcInput);
+
+        // Generate the inverse mapping
+        var noteToButtonMap = generateNoteToButtonMap(buttonToNoteMap);
+
+        // Sort the inverse mapping table with the least costly buttons first.
+        // This speeds up tree pruning later
+        sortButtonMap(noteToButtonMap);
+
+        // Generate a state tree
+        var stateTree = generateStateTree(notes, noteToButtonMap);
+
+        var path = chooseFingerings(stateTree);
+
+        if (path == null) {
+            angloLog("No fingerings generated!");
+            return abcOutput;
+        }
+
+        // Merge the chosen fingerings with the ABC notation
+        abcOutput = mergeFingerings(abcInput, path, notes);
+
+        return abcOutput;
+
+    }
+
+
+    // Path constructor.
+    var Path = function(states, cost) {
+        this.states = states;
+        this.cost = cost;
+    };
+
+    // Note constructor
+    var Note = function(index, unNormalizedValue, normalizedValue) {
+        this.index = index; // Index of this note in the original ABC input string
+        this.unNormalizedValue = unNormalizedValue;
+        this.normalizedValue = normalizedValue;
+    };
+
+    // State constructor
+    var State = function(note, button, direction) {
+        this.note = note;
+        this.button = button;
+        this.direction = direction;
+        this.nextStates = [];
+        this.id = stateCount++;
+
+        this.toString = function() {
+            var s = "[" + this.id + "] Note:";
+            if (this.note) { s += this.note.normalizedValue; } else { s += "none"; }
+            s += " Button:" + this.button.name;
+            return s;
+        };
+    };
+
+
+    // Determines the key signature
+    function findKeySignature(abcInput) {
+
+        var myMap = null;
+
+        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
+        if (keyMatch == null || keyMatch.length < 3) {
+            return null;
+        }
+
+        var keySignatureBase;
+        var keyExtra;
+
+        if (keyMatch[2] == undefined) {
+            keySignatureBase = keyMatch[1];
+        } else {
+            keySignatureBase = keyMatch[1] + keyMatch[2];
+        }
+        keyExtra = keyMatch[3].toLowerCase();
+
+        // Strip any trailing comments
+        var searchExp = /%.*/
+        keyExtra = keyExtra.replace(searchExp,"");
+        keyExtra = keyExtra.trim();
+
+        angloLog("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
+        
+        // Determine musical mode
+        if (keyExtra == "" ||
+            keyExtra.search("maj") != -1 ||
+            keyExtra.search("ion") != -1) {
+            angloLog("Mode: Ionian (major)");
+            myMap = keySignatureMap(keySignatureBase, 0);
+        } else if (keyExtra.search("mix") != -1) {
+            angloLog("Mode: Mixolydian");
+            myMap = keySignatureMap(keySignatureBase, 1);
+        } else if (keyExtra.search("dor") != -1) {
+            angloLog("Mode: Dorian");
+            myMap = keySignatureMap(keySignatureBase, 2);
+        } else if ((keyExtra.search("m") != -1 && keyExtra.search("mix") == -1) ||
+            keyExtra.search("min") != -1 ||
+            keyExtra.search("aeo") != -1) {
+            angloLog("Mode: Aeolian (minor)");
+            myMap = keySignatureMap(keySignatureBase, 3);
+        } else if (keyExtra.search("phr") != -1) {
+            angloLog("Mode: Phrygian");
+            myMap = keySignatureMap(keySignatureBase, 4);
+        } else if (keyExtra.search("loc") != -1) {
+            angloLog("Mode: Locrian");
+            myMap = keySignatureMap(keySignatureBase, 5);
+        } else if (keyExtra.search("lyd") != -1) {
+            angloLog("Mode: Lydian");
+            myMap = keySignatureMap(keySignatureBase, -1);
+        } else if (keyExtra.search("exp") != -1) {
+            angloLog("(Accidentals to be explicitly specified)");
+            myMap = keySignatureMap("C", 0);
+        } else {
+            // Unknown
+            angloLog("Failed to determine key signature mode");
+            myMap = null;
+        }
+
+        if (myMap == null) {
+            return myMap;
+        }
+
+        //Handle explicit accidentals
+        var explicitFlats = keyExtra.match(/_./g);
+        var explicitSharps = keyExtra.match(/\^./g);
+
+        for (note in explicitFlats) {
+            myMap.flats += explicitFlats[note][1].toUpperCase();
+        }
+
+        for (note in explicitSharps) {
+            myMap.sharps += explicitSharps[note][1].toUpperCase();
+        }
+
+        return myMap;
+
+    }
+
+    // Calculates a key signature map given a tonic and a mode
+    function keySignatureMap(tonic, modeFlatness) {
+        var circleOfFifths = "FCGDAEB";
+
+        var signature = {
+            sharps: "",
+            flats: ""
+        };
+
+        var baseSharpness = circleOfFifths.indexOf(tonic[0]) - 1;
+
+        if (baseSharpness == -2) {
+            angloLog("Bad tonic: " + tonic);
+            return null;
+        }
+
+        if (tonic.slice(1) == "b") {
+            baseSharpness -= 7;
+        } else if (tonic.slice(1) == "#") {
+            baseSharpness += 7;
+        }
+
+        var totalSharpness = baseSharpness - modeFlatness;
+
+        if (totalSharpness > 7) {
+            angloLog("Too many sharps: " + totalSharpness);
+            return null;
+        } else if (totalSharpness < -7) {
+            angloLog("Too many flats: " + (totalSharpness * -1));
+            return null;
+        } else if (totalSharpness > 0) {
+            signature.sharps = circleOfFifths.slice(0, totalSharpness);
+        } else if (totalSharpness < 0) {
+            signature.flats = circleOfFifths.slice(totalSharpness);
+        }
+
+        signature.accidentalSharps = "";
+        signature.accidentalFlats = "";
+        signature.accidentalNaturals = "";
+
+        return signature;
+    }
+
+    // Merges an array of Button objects with an array of Notes
+    // with the original string input.
+    // Returns a merged string.
+    function mergeFingerings(input, path, notes) {
+
+        // Drop the first state of the path - it's a dummy root state
+        path.states.shift();
+
+        if (path.states.length != notes.length) {
+            return "ERROR: Internal error. Length mismatch";
+        }
+
+        var result = input;
+        var insertedTotal = 0;
+
+        var location = parseInt(gInjectTab_TabLocation);
+
+        for (var i = 0; i < path.states.length; ++i) {
+
+            var index = notes[i].index + insertedTotal;
+
+            var fingering = path.states[i].button.name;
+
+            // *** CHANGE: mark tune if we render an x or if direction is invalid
+            const dir = path.states[i].direction;
+            const hasValidDir = (dir === PUSH_NAME || dir === DRAW_NAME);
+
+            if (fingering === "x" || !hasValidDir) {
+                currentTuneHadX = true;
+                let simpleX;
+                switch (location) {
+                    case 0: // Above
+                        simpleX = "\"^x\"";
+                        break;
+                    case 1: // Below
+                        simpleX = "\"_x\"";
+                        break;
+                    default:
+                        simpleX = "\"^x\"";
+                }
+                result = result.substr(0, index) + simpleX + result.substr(index);
+                insertedTotal += simpleX.length;
+                continue;
+            }
+
+            if (gInjectTab_GaryCoover){
+
+                var finger = path.states[i].button.finger;
+
+                var isLeftSide = (finger.indexOf("l") == 0);
+
+                // Left side is below the staff
+                if (isLeftSide){
+
+                    if (path.states[i].direction == PUSH_NAME){
+
+                        // Add double quotes to fingering, to be rendered below the note
+                        fingering = "\"_" + " " + ";" + fingering + "\"";
+
+                    }
+                    else{
+
+                        var len = fingering.length;
+                        var theBar = "";
+
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+
+                        var origFingering = fingering;
+                        fingering = "\"_" + theBar + ";";
+                        fingering = fingering + origFingering + "\"";                       
+                    }
+
+                }
+                else{
+
+                    if (path.states[i].direction == PUSH_NAME){
+
+                        // Add double quotes to fingering, to be rendered above the note
+                        fingering = "\"^" + fingering + "\"";
+
+                    }
+                    else{
+
+                        var len = fingering.length;
+                        var theBar = "";
+
+                        for (var j=0;j<len;++j){
+                            theBar += "_";
+                        }
+
+                        var origFingering = fingering;
+                        fingering = "\"^" + theBar + ";";
+                        fingering = fingering + origFingering + "\"";
+                       
+                    }
+                }
+            }
+            else{
+
+                if (gInjectTab_UseBarForDraw){
+
+                   switch (location){
+
+                        // Above
+                        case 0:
+
+                            if (path.states[i].direction == PUSH_NAME){
+
+                                // Add double quotes to fingering, to be rendered above the note
+                                fingering = "\"^" + fingering + "\"";
+
+                            }
+                            else{
+
+                                var len = fingering.length;
+                                var theBar = "";
+
+                                for (var j=0;j<len;++j){
+                                    theBar += "_";
+                                }
+
+                                var origFingering = fingering;
+                                fingering = "\"^" + theBar + ";";
+                                fingering = fingering + origFingering + "\"";
+                               
+                            }
+
+                            break;
+
+                        // Below
+                        case 1:
+
+                           if (path.states[i].direction == PUSH_NAME){
+
+                                // Add double quotes to fingering, to be rendered below the note
+                                fingering = "\"_" + " " + ";" + fingering + "\"";
+
+                            }
+                            else{
+
+                                var len = fingering.length;
+                                var theBar = "";
+
+                                for (var j=0;j<len;++j){
+                                    theBar += "_";
+                                }
+
+                                var origFingering = fingering;
+                                fingering = "\"_" + theBar + ";";
+                                fingering = fingering + origFingering + "\"";
+                               
+                            }
+     
+                            break;
+
+                    }
+                }
+                else{
+
+                    switch (location){
+
+                        // Above
+                        case 0:
+
+                            // Add double quotes to fingering, to be rendered above the note
+                            fingering = "\"^" + fingering + ";";
+
+                            // Optionally append bellows direction, to be rendered below the button number.
+                            fingering = fingering + path.states[i].direction + "\"";
+
+                            break;
+
+                        // Below
+                        case 1:
+
+                            // Add double quotes to fingering, to be rendered below the note
+                            fingering = "\"_" + fingering + ";";
+
+                            // Optionally append bellows direction, to be rendered below the button number.
+                            fingering = fingering + path.states[i].direction + "\"";
+
+                            break;
+
+                    }
+                }
+            }
+
+            var fingLen = fingering.length;
+
+            result = result.substr(0, index) + fingering + result.substr(index);
+
+            insertedTotal += fingLen;
+        }
+
+        return result;
+    }
+
+    // Determines the bellows direction (PUSH/DRAW) given
+    // a button and note.
+    function findBellowsDirection(note, button) {
+
+        if (note.normalizedValue == button.notes[PUSH_INDEX]) {
+
+            return PUSH_NAME;
+
+        } else if (note.normalizedValue == button.notes[DRAW_INDEX]) {
+
+            return DRAW_NAME;
+
+        } else {
+
+            var respelled = respellNormalized(note.normalizedValue);
+
+            if (respelled == button.notes[PUSH_INDEX]) {
+
+                return PUSH_NAME;
+
+            } else if (respelled == button.notes[DRAW_INDEX]) {
+
+                return DRAW_NAME;
+
+            } else {
+
+                return " "; // Better than saying "null"
+
+            }
+        }
+    }
+
+
+    // Determines if these two buttons would be a hop if played back-to-back
+    function isHop(button1, button2) {
+        return (button1.finger == button2.finger && button1.name != button2.name);
+    }
+
+
+    // Generate a state tree from the notes.
+    function generateStateTree(notes, noteToButtonMap) {
+
+        var firstNoteStates = null;
+        var lastNoteStates = null;
+
+        for (var i = 0; i < notes.length; ++i) {
+            var note = notes[i];
+
+            var normalizedValue = note.normalizedValue;
+            var buttons = noteToButtonMap[normalizedValue];
+
+            if (buttons == null || buttons.length < 1) {
+                angloLog("Failed to find button for note " + normalizedValue);
+                angloLog("Attempting respell...");
+                var otherName = respell(normalizedValue);
+                angloLog("Respelled as " + otherName);
+                buttons = noteToButtonMap[otherName];
+
+                // *** CHANGE: if still not found, inject a fallback 'x' button and mark tune
+                if (buttons == null || buttons.length < 1) {
+                    angloLog("Respelling as " + otherName + " failed to find a button. Inserting fallback 'x'.");
+                    const fallbackButton = new Button("x", [normalizedValue, normalizedValue], 0, "na");
+                    buttons = [fallbackButton];
+                    currentTuneHadX = true; // mark for this tune
+                }
+            }
+
+            var states = [];
+            // Create a state per button
+            buttons.forEach(function(button) {
+                states.push(new State(note, button, findBellowsDirection(note, button)));
+            });
+
+            if (firstNoteStates == null) {
+                firstNoteStates = states;
+            }
+            if (lastNoteStates != null) {
+                lastNoteStates.forEach(function(lastState) {
+                    lastState.nextStates = states;
+                });
+            }
+            lastNoteStates = states;
+        }
+
+        // Create a dummy state as our tree root
+        var rootState = new State(null, new Button("root", [], 0, "none"));
+        rootState.nextStates = firstNoteStates;
+        return rootState;
+
+    } // end generateStateTree
+
+
+
+    // Chooses fingerings (wrapper)
+    function chooseFingerings(stateTree) {
+        bestCost = 100000000;
+        bestPathFromState = {};
+        return chooseFingeringsRecursive(stateTree);
+    }
+
+    // Choose best fingerings for current state.
+    function chooseFingeringsRecursive(state) {
+
+        if (state.nextStates.length == 0) {
+            angloLog("Last state, note=" + state.note.normalizedValue + " button=" + state.button.name + ". Popping up the stack");
+            return new Path([state], state.button.cost);
+        }
+
+        var note = state.note;
+        var unNormalizedValue = null;
+        var normalizedValue = null;
+        if (note != null) {
+            unNormalizedValue = note.unNormalizedValue;
+            normalizedValue = note.normalizedValue;
+        }
+
+        angloLog("Choosing: current note=" + normalizedValue + " button=" + state.button.name);
+
+        if (bestPathFromState[state]) {
+            angloLog("Already visited state note=" + state.note.normalizedValue + " button=" + state.button.name);
+            return bestPathFromState[state];
+        }
+
+        var bestPath = new Path([], 10000000);
+
+        // Consider all the possible next states
+        for (var i = 0; i < state.nextStates.length; ++i) {
+
+            var nextState = state.nextStates[i];
+
+            angloLog("Trying next [" + i + "/" + state.nextStates.length + "] note=" + nextState.note.normalizedValue + " button=" + nextState.button.name);
+
+            // Recurse! Find the fingering for the rest of the tune.
+            var path = chooseFingeringsRecursive(nextState);
+            if (path == null) {
+                angloLog("Could not get fingerings");
+                return null;
+            }
+
+            var myCost = state.button.cost;
+            var HOP_COST = 100;
+
+            if (path.states.length != 0) {
+                var nextButton = path.states[0].button;
+
+                if (isHop(state.button, nextButton)) {
+                    angloLog("Penalizing finger hop for note " + normalizedValue);
+                    myCost += HOP_COST;
+                }
+            }
+
+            angloLog("path had cost of " + path.cost + " my cost=" + myCost);
+            if (path.cost + myCost < bestPath.cost) {
+                var newStateList = path.states.slice(0);
+                newStateList.unshift(state);
+                bestPath = new Path(newStateList, path.cost + myCost);
+                angloLog("New best path for note[" + normalizedValue + "], cost=" + bestPath.cost);
+            }
+
+        } // end for nextState
+
+        bestPathFromState[state] = bestPath;
+
+        angloLog("Done choosing: current note=" + normalizedValue + " button=" + state.button.name + " best cost=" + bestPath.cost);
+
+        return bestPath;
+
+    } // end chooseFingeringsRecursive
+
+    // Replaces parts of the given string with '*'
+    function sanitizeString(input, start, len) {
+        var s = "";
+        for (var i = 0; i < len; ++i) { s += "*"; }
+        return input.substr(0, start) + s + input.substr(start + len);
+    }
+
+    // Returns an array of Notes from the ABC string input
+    function getAbcNotes(input) {
+
+        var sanitizedInput = input;
+        var headerRegex = /^\w:.*$/mg;
+        var x;
+        while (x = headerRegex.exec(input)) {
+            sanitizedInput = sanitizeString(sanitizedInput, x.index, x[0].length);
+        }
+
+        // Sanitize chord markings
+        var searchRegExp = /"[^"]*"/gm
+        while (m = searchRegExp.exec(sanitizedInput)) {
+            var start = m.index;
+            var end = start + m[0].length;
+            for (var index=start;index<end;++index){
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+            }
+        }
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+        while (m = searchRegExp.exec(sanitizedInput)) {
+            var start = m.index;
+            var end = start + m[0].length;
+            for (var index=start;index<end;++index){
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+            }
+        }  
+
+        // Sanitize !*! style annotations
+        searchRegExp = /![^!\n]*!/gm 
+        while (m = searchRegExp.exec(sanitizedInput)) {
+            var start = m.index;
+            var end = start + m[0].length;
+            for (var index=start;index<end;++index){
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+            }
+        }
+
+        // Sanitize multi-line comments
+        searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
+        while (m = searchRegExp.exec(sanitizedInput)) {
+            var start = m.index;
+            var end = start + m[0].length;
+            for (var index=start;index<end;++index){
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+            }
+        }  
+
+        // Sanitize comments
+        searchRegExp = /^%.*$/gm
+        while (m = searchRegExp.exec(sanitizedInput)) {
+            var start = m.index;
+            var end = start + m[0].length;
+            for (var index=start;index<end;++index){
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+            }
+        }    
+
+        // Sanitize !
+        sanitizedInput = sanitizedInput.replaceAll("!","*");
+
+        angloLog("orginal input:\n" + input);
+        angloLog("sanitized input:\n" + sanitizedInput);
+
+        // Find all the notes
+        var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
+        var notes = [];
+        var m;
+        while (m = regex.exec(sanitizedInput)) {
+            var unNormalizedValue = m[1];
+            if (unNormalizedValue == "|") {
+                keySignature.accidentalFlats = "";
+                keySignature.accidentalSharps = "";
+                keySignature.accidentalNaturals = "";
+            } else {
+                var normalizedValue = normalize(unNormalizedValue);
+                angloLog("UnNormalized=" + unNormalizedValue + " normalized=" + normalizedValue);
+                notes.push(new Note((m.index), unNormalizedValue, normalizedValue));
+            }
+        }
+
+        return notes;
+    }
+
+    function respell(note) {
+        var respellings = {
+            "_A": "^G",
+            "^A": "_B",
+            "_D": "^C",
+            "^D": "_E",
+            "_E": "^D",
+            "_G": "^F",
+            "_F": "E",
+            "^E": "F"
+        };
+
+        for (var x in respellings) {
+            if (note.includes(x)) {
+                return note.replace(x, respellings[x]);
+            }
+            if (note.includes(x.toLowerCase())) {
+                return note.replace(x.toLowerCase(), respellings[x].toLowerCase());
+            }
+        }
+
+        // no replacement performed
+        return note;
+    }
+
+    function respellNormalized(note) {
+        var ret = note;
+
+        var respellings = {
+            "_A": "^G",
+            "^A": "_B",
+            "_D": "^C",
+            "^D": "_E",
+            "_E": "^D", 
+            "_G": "^F",
+            "_F": "E",
+            "^E": "F"
+        };
+
+        for (var x in respellings) {
+            if (ret.includes(x)) {
+                return ret.replace(x, respellings[x]);
+            }
+            if (ret.includes(x.toLowerCase())) {
+                return ret.replace(x.toLowerCase(), respellings[x].toLowerCase());
+            }
+        }
+
+        // No replacements performed
+        return ret;
+    }
+
+    // Normalizes the given note string, given the key signature.
+    function normalize(value) {
+
+        var i = value.search(/[A-G]/i);
+        if (i == -1) {
+            angloLog("Failed to find basename for value!");
+            return value;
+        }
+        var baseName = value.substr(i, 1).toUpperCase();
+
+        // Does it have a natural?
+        if (value.substr(0, 1) == "=") {
+            keySignature.accidentalFlats = keySignature.accidentalFlats.replace(baseName, "");
+            keySignature.accidentalSharps = keySignature.accidentalSharps.replace(baseName, "");
+            keySignature.accidentalNaturals += baseName;
+            return value.substr(1);
+        }
+
+        // Does it already have an accidental?
+        if (value.substr(0, 1) == "_") {
+            keySignature.accidentalFlats += baseName;
+            keySignature.accidentalSharps = keySignature.accidentalSharps.replace(baseName, "");
+            keySignature.accidentalNaturals = keySignature.accidentalNaturals.replace(baseName, "");
+            return value;
+        }
+
+        if (value.substr(0, 1) == "^") {
+            keySignature.accidentalFlats = keySignature.accidentalFlats.replace(baseName, "");
+            keySignature.accidentalNaturals = keySignature.accidentalNaturals.replace(baseName, "");
+            keySignature.accidentalSharps += baseName;
+            return value;
+        }
+
+        // Transform to key signature
+        if (keySignature.accidentalNaturals.search(baseName) != -1) {
+            return value;
+        }
+
+        if (keySignature.sharps.search(baseName) != -1 ||
+            keySignature.accidentalSharps.search(baseName) != -1) {
+            return "^" + value;
+        }
+
+        if (keySignature.flats.search(baseName) != -1 ||
+            keySignature.accidentalFlats.search(baseName) != -1) {
+            return "_" + value;
+        }
+
+        return value;
+    }
+
+    // Sorts the button entries in the given note->button map, with lowest cost first
+    function sortButtonMap(noteToButtonMap) {
+        for (var note in noteToButtonMap) {
+            var buttons = noteToButtonMap[note];
+            buttons.sort(function(a, b) { return a.cost - b.cost; });
+        }
+    }
+
+    // Given a button->note map, generate the corresponding note->button map.
+    function generateNoteToButtonMap(buttonToNoteMap) {
+
+        var noteMap = {};
+
+        for (var buttonName in buttonToNoteMap) {
+
+            var notes = buttonToNoteMap[buttonName].notes;
+
+            if (notes == null) {
+                angloLog("Failed to find entry for button " + b);
+                continue;
+            }
+
+            notes.forEach(function(v) {
+
+                if (noteMap[v] == null) {
+                    noteMap[v] = [buttonToNoteMap[buttonName]];
+                } else {
+                    noteMap[v].push(buttonToNoteMap[buttonName]);
+                }
+
+                v = respell(v);
+
+                if (noteMap[v] == null) {
+                    noteMap[v] = [buttonToNoteMap[buttonName]];
+                } else {
+                    noteMap[v].push(buttonToNoteMap[buttonName]);
+                }
+
+            });
+
+        }
+
+        return noteMap;
+    }
+
+    //
+    // Count the tunes in the text area
+    //
+    function angloCountTunes(theABC) {
+        var theNotes = theABC;
+        var theTunes = theNotes.split(/^X:.*$/gm);
+        var nTunes = theTunes.length - 1;
+        return nTunes;
+    }
+
+    // Glyphs for bellows push and draw indications
+    var PUSH_NAME = "↓";
+    var DRAW_NAME = "↑";
+
+    //
+    // Generate Anglo Concertina Tablature
+    window.solveAngloTune = function(abc, system, fingeringStyle) {
+        gInjectTab_ConcertinaStyle = system === "wheatstone" ? 1 : 0;
+        gInjectTab_ConcertinaFingering = fingeringStyle === "cross" ? 1 : 0;
+        PUSH_NAME = "push";
+        DRAW_NAME = "draw";
+        setButtonToNoteMap();
+        keySignature = findKeySignature(abc);
+        if (keySignature == null) throw new Error("Unknown or unsupported key signature.");
+        var notes = getAbcNotes(abc);
+        var noteToButtonMap = generateNoteToButtonMap(buttonToNoteMap);
+        sortButtonMap(noteToButtonMap);
+        var stateTree = generateStateTree(notes, noteToButtonMap);
+        var path = chooseFingerings(stateTree);
+        if (!path) throw new Error("No fingering solution could be generated.");
+        var states = path.states.slice(1);
+        if (states.length !== notes.length) throw new Error("Internal fingering length mismatch.");
+        return states.map(function(state, i) {
+            return {
+                index: i + 1,
+                abcIndex: notes[i].index,
+                abcNote: notes[i].unNormalizedValue,
+                normalizedNote: notes[i].normalizedValue,
+                button: state.button.name,
+                direction: state.direction
+            };
+        });
+    };
+    return window.solveAngloTune(theABC, gInjectTab_ConcertinaStyle ? "wheatstone" : "jeffries",
+        gInjectTab_ConcertinaFingering ? "cross" : "onrow");
+};
+
+</script>
+<script>
+
+const $ = id => document.getElementById(id);
+let loadedABC = "";
+let loadedFileName = "";
+const PUSH_COLOR = "#d60062";
+const DRAW_COLOR = "#18e94e";
+
+const PREF_SYSTEM_KEY = "abcAngloFingeringSystem";
+const PREF_STYLE_KEY = "abcAngloFingeringStyle";
+
+function restoreFingeringPreferences() {
+  let system = "jeffries";
+  let style = "cross";
+  try {
+    const savedSystem = localStorage.getItem(PREF_SYSTEM_KEY);
+    const savedStyle = localStorage.getItem(PREF_STYLE_KEY);
+    if (savedSystem === "jeffries" || savedSystem === "wheatstone") system = savedSystem;
+    if (savedStyle === "onrow" || savedStyle === "cross") style = savedStyle;
+  } catch (_) {}
+  $("system").value = system;
+  $("style").value = style;
+}
+
+function saveFingeringPreferences() {
+  try {
+    localStorage.setItem(PREF_SYSTEM_KEY, $("system").value);
+    localStorage.setItem(PREF_STYLE_KEY, $("style").value);
+  } catch (_) {}
+}
+
+restoreFingeringPreferences();
+$("system").addEventListener("change", saveFingeringPreferences);
+$("style").addEventListener("change", saveFingeringPreferences);
+
+async function showInstructions() {
+  const html = `
+    <h2>Instructions</h2>
+    <p>This tool creates a sequence of JPEG fingering diagrams from one or more ABC tunes for a 30-button Anglo concertina.</p>
+
+    <h3>1. Open an ABC file</h3>
+    <p>Click <b>Browse</b> and select an <b>.abc</b> or text file containing one or more ABC tunes. Each tune must have a supported <b>K:</b> key field. The first <b>T:</b> field in each tune is used as the tune name.</p>
+
+    <h3>2. Choose the fingering system</h3>
+    <p>Select <b>Jeffries</b> or <b>Wheatstone</b>. This selects the concertina button layout used when solving and drawing the fingering diagrams.</p>
+
+    <h3>3. Choose the fingering style</h3>
+    <p>Select <b>On-Row</b> or <b>Cross-Row</b>. The tool remembers your most recent fingering system and style in this browser. The initial defaults are <b>Jeffries</b> and <b>Cross-Row</b>.</p>
+
+    <h3>4. Generate the images</h3>
+    <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the button and bellows direction for each note.</p>
+    <p>One JPEG is created for every note. The tune title appears at the top and the current note name is shown prominently below it. The upper-left shows the note position, fingering system, and On-Row/Cross-Row style.</p>
+    <p>The required concertina button is circled on the diagram. <b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>. A Push/Draw legend is included at the bottom.</p>
+
+    <h3>5. File names and ZIP file</h3>
+    <p>JPEGs are named from the tune title followed by the three-digit note index, beginning with <b>001</b>, for example <b>Kesh_001.jpg</b>.</p>
+    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, and fingering style, for example <b>Kesh_Jeffries_Cross-Row.zip</b>. For a file containing multiple tunes, the first part is <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row.zip</b>.</p>
+    <p>The ZIP filename is shown before saving and may be edited.</p>
+
+    <p>This <strong>ABC Anglo Concertina Fingering Image Generator</strong> tool was created by
+      <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
+    </p>
+
+    <p>If you find it useful, please consider making a contribution via my online tip jars:</p>
+
+    <p style="text-align:center">
+      <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
+    </p>
+  `;
+
+  await DayPilot.Modal.alert(html, {
+    theme: "modal_instructions",
+    top: 50,
+    width: 700,
+    height: Math.min(620, Math.max(360, window.innerHeight - 48)),
+    okText: "OK"
+  });
+}
+
+$("instructionsBtn").addEventListener("click", showInstructions);
+
+const BASE = {
+  common: {
+    L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],
+    L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],
+    L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],
+    R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],
+    R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]
+  },
+  jeffriesRx: {
+    R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]
+  },
+  wheatstoneRx: {
+    R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]
+  }
+};
+
+function abcPitchToScientific(s) {
+  if (!s || s === "x" || s === "z") return "—";
+  let m = String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);
+  if (!m) return s;
+  const acc = m[1], letter = m[2], marks = m[3];
+  let octave = letter === letter.toLowerCase() ? 5 : 4;
+  for (const ch of marks) octave += ch === "'" ? 1 : -1;
+  let accidental = acc.includes("^") ? "#" : acc.includes("_") ? "b" : "";
+  return letter.toUpperCase() + accidental + octave;
+}
+
+function mapFor(system) {
+  return Object.assign({}, BASE.common, system === "wheatstone" ? BASE.wheatstoneRx : BASE.jeffriesRx);
+}
+
+function stripChordSymbols(abc) {
+  // Strip quoted ABC chord symbols/annotations before the Anglo solver sees the tune.
+  // Preserve string length so source note indices remain stable if they are ever used.
+  return abc.replace(/"[^"\r\n]*"/g, function(m) { return " ".repeat(m.length); });
+}
+
+function splitTunes(abc) {
+  const lines = abc.replace(/\r\n?/g,"\n").split("\n");
+  const tunes = [];
+  let pre = [], cur = null;
+  for (const line of lines) {
+    if (/^X\s*:/.test(line)) {
+      if (cur) tunes.push(cur.join("\n").trim());
+      cur = [...pre, line];
+      pre = [];
+    } else if (cur) cur.push(line);
+    else pre.push(line);
+  }
+  if (cur) tunes.push(cur.join("\n").trim());
+  if (!tunes.length && abc.trim()) tunes.push(abc.trim());
+  return tunes.filter(Boolean);
+}
+
+function firstTitle(tune, n) {
+  const m = tune.match(/^T:\s*(.*?)\s*$/m);
+  return (m && m[1].trim()) || `Tune ${n}`;
+}
+function sanitize(s) {
+  return String(s||"").normalize("NFKC").replace(/[\\/:*?"<>|]/g," ")
+    .replace(/[\x00-\x1f\x7f]/g," ").replace(/\s+/g," ").replace(/^\.+|[. ]+$/g,"").trim() || "tune";
+}
+function setStatus(s) { $("status").textContent = s; }
+
+$("openFile").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  loadedABC = await f.text();
+  loadedFileName = f.name;
+  const tunes = splitTunes(loadedABC);
+  $("generateBtn").disabled = !tunes.length;
+  $("fileInfo").textContent = `${f.name} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
+  setStatus(`Loaded ${f.name}. Ready to generate fingering images.`);
+});
+
+function buttonLayout() {
+  const leftX=[90,200,310,420,530], rightX=[750,860,970,1080,1190];
+  const ys=[210,345,480];
+  const ids=[
+    ["L1a","L2a","L3a","L4a","L5a","R1a","R2a","R3a","R4a","R5a"],
+    ["L1","L2","L3","L4","L5","R1","R2","R3","R4","R5"],
+    ["L6","L7","L8","L9","L10","R6","R7","R8","R9","R10"]
+  ];
+  const out={};
+  ids.forEach((row,r)=>row.forEach((id,c)=>out[id]={x:(c<5?leftX[c]:rightX[c-5]),y:ys[r]}));
+  return out;
+}
+const POS = buttonLayout();
+
+function drawButton(ctx,x,y,push,draw,highlight,direction) {
+  const r=51;
+  ctx.save();
+  ctx.lineWidth=2; ctx.strokeStyle="#171717"; ctx.fillStyle="#fff";
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x-r,y); ctx.lineTo(x+r,y); ctx.stroke();
+  ctx.fillStyle="#111"; ctx.font="600 25px Arial, Helvetica, sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText(push,x,y-22); ctx.fillText(draw,x,y+23);
+  if (highlight) {
+    ctx.lineWidth=10; ctx.strokeStyle=direction==="push"?PUSH_COLOR:DRAW_COLOR;
+    ctx.beginPath(); ctx.arc(x,y,r+7,0,Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function makeCanvas(title, solution, item, system, style) {
+  const c=document.createElement("canvas"); c.width=1280; c.height=670;
+  const ctx=c.getContext("2d");
+  ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle="#333"; ctx.textBaseline="alphabetic";
+
+  // Compact fingering/status information in the upper-left.
+  ctx.textAlign="left";
+  ctx.font="400 18px Arial, Helvetica, sans-serif";
+  ctx.fillStyle="#555";
+  ctx.fillText(`Note ${item.index} of ${solution.length} • ${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`,28,34);
+
+  // Tune title centered at the top.
+  ctx.textAlign="center";
+  ctx.font="400 54px Arial, Helvetica, sans-serif";
+  ctx.fillStyle="#333";
+  ctx.fillText(title,640,78);
+
+  // Current note name prominently centered below the tune title.
+  const shownNote = abcPitchToScientific(item.normalizedNote || item.abcNote);
+  ctx.font="700 48px Arial, Helvetica, sans-serif";
+  ctx.fillStyle="#111";
+  ctx.fillText(shownNote,640,137);
+
+  const bm=mapFor(system);
+  Object.keys(POS).forEach(id=>{
+    const pair=bm[id]||["?","?"];
+    drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]),
+      id===item.button,item.direction);
+  });
+
+  // Legend
+  ctx.lineWidth=9; ctx.strokeStyle=PUSH_COLOR; ctx.beginPath(); ctx.arc(575,603,34,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle="#444"; ctx.font="400 23px Arial, Helvetica, sans-serif"; ctx.textAlign="center"; ctx.fillText("Push",575,611);
+  ctx.strokeStyle=DRAW_COLOR; ctx.beginPath(); ctx.arc(700,603,34,0,Math.PI*2); ctx.stroke();
+  ctx.fillText("Draw",700,611);
+  return c;
+}
+function canvasBlob(canvas) {
+  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("JPEG encoding failed.")),"image/jpeg",0.94));
+}
+async function askZipName(suggested) {
+  if (typeof DayPilot==="undefined" || !DayPilot.Modal) return suggested;
+  const modal = await DayPilot.Modal.prompt("Save image ZIP file as:", suggested, {
+    theme:"modal_filename", top:80, scrollWithPage:false
+  });
+  if (!modal || modal.canceled) return null;
+  let name=String(modal.result||"").trim();
+  if (!name) name=suggested;
+  if (!/\.zip$/i.test(name)) name += ".zip";
+  return name;
+}
+
+$("generateBtn").addEventListener("click", async()=>{
+  if (!loadedABC) return;
+  if (typeof JSZip==="undefined") { setStatus("JSZip is not loaded."); return; }
+  const system=$("system").value, style=$("style").value;
+  const tunes=splitTunes(loadedABC);
+  const zip=new JSZip();
+  $("generateBtn").disabled=true; $("openFile").disabled=true;
+  try {
+    let totalImages=0, skipped=[];
+    for (let ti=0; ti<tunes.length; ti++) {
+      const tune=tunes[ti], title=firstTitle(tune,ti+1);
+      setStatus(`Solving ${ti+1} of ${tunes.length}: ${title}`);
+      let solution;
+      try {
+        // angloFingeringsGenerator contains the solver implementation and
+        // publishes solveAngloTune when invoked. Set the requested options
+        // before entering it so the first tune works as well as later tunes.
+        gInjectTab_ConcertinaStyle = system === "wheatstone" ? 1 : 0;
+        gInjectTab_ConcertinaFingering = style === "cross" ? 1 : 0;
+        const tuneForSolver = stripChordSymbols(tune);
+        solution = angloFingeringsGenerator(tuneForSolver);
+      }
+      catch(err) { skipped.push(`${title}: ${err.message||err}`); continue; }
+      const base=sanitize(title);
+      for (let i=0;i<solution.length;i++) {
+        const item=solution[i];
+        setStatus(`Generating ${title}: image ${i+1} of ${solution.length}`);
+        const canvas=makeCanvas(title,solution,item,system,style);
+        const blob=await canvasBlob(canvas);
+        zip.file(`${base}_${String(i+1).padStart(3,"0")}.jpg`,blob);
+        totalImages++;
+        if ((i&7)===7) await new Promise(r=>setTimeout(r,0));
+      }
+    }
+    if (!totalImages) throw new Error(skipped.length ? "No images generated. "+skipped.join(" | ") : "No notes found.");
+    const zipFirst = tunes.length > 1 ? "Multiple" : sanitize(firstTitle(tunes[0], 1)).replace(/\s+/g, "_");
+    const zipSystem = system === "jeffries" ? "Jeffries" : "Wheatstone";
+    const zipStyle = style === "cross" ? "Cross-Row" : "On-Row";
+    const suggested = `${zipFirst}_${zipSystem}_${zipStyle}.zip`;
+    const zipName=await askZipName(suggested);
+    if (!zipName) { setStatus("Save canceled."); return; }
+    setStatus("Building ZIP file…");
+    const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=zipName;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+    setStatus(`Saved ${totalImages} JPEG image${totalImages===1?"":"s"} in ${zipName}.`+
+      (skipped.length?`\nSkipped: ${skipped.join(" | ")}`:""));
+  } catch(err) {
+    setStatus("Generation failed: "+(err.message||err));
+  } finally {
+    $("generateBtn").disabled=!loadedABC; $("openFile").disabled=false;
+  }
+});
+
+</script>
+</body>
+</html>
