@@ -1420,7 +1420,11 @@ var angloFingeringsGenerator = function (theABC, callback){
 
 </script>
 <script>
-const $=id=>document.getElementById(id);const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let loadedABC="",tunes=[],currentTune=0,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
+const $=id=>document.getElementById(id);
+// On iOS/iPadOS, omit the accept filter so the native file picker can select .abc as well as .txt files.
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(IS_IOS)$("openFile").removeAttribute("accept");
+const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let loadedABC="",tunes=[],currentTune=0,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
