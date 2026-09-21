@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3344_092026_1030";
+var gVersionNumber = "3345_092126_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60898,7 +60898,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 20 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 21 September 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
@@ -61101,7 +61101,7 @@ var RESIZETEXTBOX_DEBOUNCEMS = 20;
 
 var gLastResizeTextboxTime = 0;
 
-function ResizeTextBox() {
+function ResizeTextBox(force) {
 
   if (gIsMaximized) {
     return;
@@ -61111,7 +61111,10 @@ function ResizeTextBox() {
 
   var deltaTime = theTime - gLastResizeTextboxTime;
 
-  if (deltaTime > RESIZETEXTBOX_DEBOUNCEMS) {
+  // ResizeObserver can deliver its final notification inside the debounce
+  // interval. Allow callers that change the editor width programmatically
+  // (for example Maximize Editor) to force the final layout calculation.
+  if (force || (deltaTime > RESIZETEXTBOX_DEBOUNCEMS)) {
 
     gLastResizeTextboxTime = theTime;
 
@@ -62638,17 +62641,18 @@ function InjectMIDIGChordTemplates() {
 // Call this once after gTheCM is created (and after your page layout settles)
 function captureEditorBaselines() {
   const wrapper = gTheCM.getWrapperElement();
-  const container = wrapper.parentElement;           // adjust if you use a different container
 
-  // Baselines formerly taken from the textarea:
-  window.gInitialTextBoxWidth           = wrapper.offsetWidth;
-  window.gInitialTextBoxContainerWidth  = container.offsetWidth;
+  // Use the same layout reference elements as the plain textarea path.
+  // The CodeMirror wrapper lives inside #inputarea, but #inputarea is not the
+  // fixed 850px editor column used by the resize/notation positioning logic.
+  // Mixing those coordinate systems caused CodeMirror resizing to calculate
+  // different deltas and left-edge limits than the normal editor.
+  const editorColumn = document.getElementById("notenlinks");
+  const fixedPanel = document.getElementById("noscroller");
 
-  // Left edge baseline (relative to the page)
-  const rect = wrapper.getBoundingClientRect();
-  window.gInitialTextBoxContainerLeft   = rect.left;
-
-  // If you previously used these globals elsewhere, they now refer to CM wrapper metrics.
+  window.gInitialTextBoxWidth = wrapper.offsetWidth;
+  window.gInitialTextBoxContainerWidth = editorColumn.offsetWidth;
+  window.gInitialTextBoxContainerLeft = fixedPanel.offsetLeft;
 }
 
 // For the QuickEditor
@@ -62677,39 +62681,14 @@ function MaximizeEditor() {
 
     gTheCM.refresh();
 
-    // 2) After layout settles, compute the delta and slide as before.
-    //    Using rAF + a small timeout ensures fonts/wrapping are baked.
+    // 2) Use the same resize/layout path as a manual editor resize. This keeps
+    //    CodeMirror and the plain textarea behavior identical, including the
+    //    notation shift to the right. Force the calculation so the final
+    //    programmatic resize cannot be lost to the ResizeObserver debounce.
     requestAnimationFrame(() => {
       setTimeout(() => {
-        const currentWidth = wrapper.offsetWidth;
-
-        const theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth) / 2;
-
-        if (currentWidth > gInitialTextBoxContainerWidth) {
-          const theDelta = ((currentWidth - gInitialTextBoxWidth) / 2) - theOffset;
-
-          // Only slide if we won’t go past the original left edge budget
-          if (theDelta <= gInitialTextBoxContainerLeft) {
-            wrapper.style.marginLeft = (-theDelta) + "px";
-            gTheCM.refresh();
-
-            if (!gIsOneColumn) {
-              const theAppContainer = document.getElementById("app-container");
-              let m = theAppContainer && theAppContainer.style.marginLeft;
-              if (m) {
-                m = parseFloat(m.replace("px", ""));
-                if (!isNaN(m)) {
-                  // Your “edge delta factor”
-                  const edgeBudget = m - 48;
-                  if (theDelta < edgeBudget) {
-                    // Slide the notation to the right but don't allow wrapping
-                    gTheNotation.style.marginLeft = theDelta + "px";
-                  }
-                }
-              }
-            }
-          }
-        }
+        ResizeTextBox(true);
+        gTheCM.refresh();
       }, 100);
     });
   }
@@ -67198,7 +67177,9 @@ async function DoStartup() {
 
 
       } else {
-        gInitialTextBoxWidth = gTheCM.offsetWidth;
+        // gTheCM is a CodeMirror instance, not a DOM element. Measure the
+        // wrapper, which is the element the user actually resizes.
+        gInitialTextBoxWidth = gTheCM.getWrapperElement().offsetWidth;
       }
     }
     else{
