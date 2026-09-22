@@ -367,7 +367,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 body.popoverDragging{user-select:none;-webkit-user-select:none}
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.85</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.88</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -538,6 +538,8 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         that note location while you click its controls.</p>
       <p>If that note already has a valid tab annotation, palette
         choices modify the existing annotation rather than adding a second one.</p>
+      <p>If the cursor is in whitespace before a note on the same music line, the popover targets that note, including when that note already has a valid tablature annotation.</p>
+      <p>It does not move across a barline, other text, a line break, or an ABC header to find a note.</p>
       <p>The palette provides
         left-hand buttons <b>1–10</b>, right-hand buttons
         <b>①–⑩</b>, <b>*</b> for the top accidental row, <b>↓</b> for Push, and <b>↑</b> for Draw.</p>
@@ -2450,7 +2452,14 @@ function insertTabOverrideCharacter(ch){
   // the beginning of the complete ABC note token so an override is always
   // inserted BEFORE accidentals and never inside a note's suffix.
   if(start===end){
-    const token=noteTokenAtPosition(value,start);
+    // Resolve horizontal whitespace first. noteTokenAtPosition() deliberately
+    // accepts a token's trailing edge as an abcjs/browser fallback, but at the
+    // first space after a note that would otherwise incorrectly select the
+    // PREVIOUS note instead of the following note.
+    let token=/[ \t]/.test(value[start]||"")
+      ? nextNoteAfterHorizontalWhitespace(value,start)
+      : noteTokenAtPosition(value,start);
+    if(!token)token=nextNoteAfterHorizontalWhitespace(value,start);
     if(token){
       start=token.start;
       end=token.start;
@@ -2723,11 +2732,34 @@ function abcNoteTokens(value){
 function abcNoteStarts(value){
   return abcNoteTokens(value).map(t=>t.start);
 }
+function nextNoteAfterHorizontalWhitespace(value,pos){
+  // If the cursor is in horizontal whitespace before a musical note on this
+  // same line, target that note. A single valid tablature annotation already
+  // attached to that note is allowed between the whitespace and the note so
+  // the palette edits it instead of inserting a new annotation in the gap.
+  // Never cross a barline, unrelated text/annotation, decoration, header, or
+  // line break.
+  const tokens=abcNoteTokens(value);
+  const next=tokens.find(t=>t.start>pos);
+  if(!next)return null;
+  const between=value.slice(pos,next.start);
+  if(/^[ \t]*$/.test(between))return next;
+  const m=between.match(/^[ \t]*"([^"]*)"[ \t]*$/);
+  return m&&validTabAnnotationText(m[1])?next:null;
+}
 function noteTokenAtPosition(value,pos){
   const tokens=abcNoteTokens(value);
-  // Treat either a position inside the token or exactly at its end as belonging
-  // to that token. abcjs/browser source selections can collapse at either edge.
-  return tokens.find(t=>pos>=t.start&&pos<=t.end) || null;
+  // A cursor exactly at the start of a note must belong to that note, not to
+  // the immediately preceding note whose end is the same position. This is
+  // especially important for adjacent ABC notes such as GAG.
+  const atStart=tokens.find(t=>pos===t.start);
+  if(atStart)return atStart;
+  // Otherwise prefer a position genuinely inside a token.
+  const inside=tokens.find(t=>pos>t.start&&pos<t.end);
+  if(inside)return inside;
+  // abcjs/browser source selections can occasionally collapse exactly at the
+  // trailing edge of a token, so retain that case only as a final fallback.
+  return tokens.find(t=>pos===t.end) || null;
 }
 function tabAnnotationForNote(value,notePos){
   // Find a valid quoted tab annotation immediately before this note, allowing
