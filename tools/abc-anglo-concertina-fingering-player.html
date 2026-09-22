@@ -37,12 +37,14 @@
 <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet">
 <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
 <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#18e94e;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
-.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(125px,.8fr) minmax(125px,.8fr) minmax(170px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled{opacity:.45;cursor:default}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(125px,.8fr) minmax(125px,.8fr) minmax(170px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:14px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}.notationViewport{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}.notation{padding:7px;min-height:max-content}.notation svg{display:block;max-width:100%;height:auto}.notation .abcjs-cursor{stroke:#00c83c;stroke-width:12px;stroke-opacity:.28;transform:translate(7px,0);pointer-events:none}.audioRow{flex:0 0 auto;padding:7px 9px 9px;border-top:1px solid rgba(127,127,127,.18)}
 /* Make the abcjs Repeat/Loop button unmistakable when enabled. */
 #audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
@@ -50,9 +52,9 @@
 .splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
 .diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff}.diagramStack{position:relative;width:100%;max-height:100%;aspect-ratio:1280/670}.diagramStack canvas{display:block;width:100%;height:100%;object-fit:contain}.diagramStack #diagramOverlay{position:absolute;inset:0;pointer-events:none}
 .liveNoteName{position:absolute;left:0;right:0;top:15.5%;text-align:center;font:700 clamp(28px,3.75vw,48px) Arial,Helvetica,sans-serif;color:#111;line-height:1;pointer-events:none}.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
-body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveNoteName{font-size:clamp(52px,6vw,86px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
+body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveNoteName{font-size:clamp(52px,6vw,86px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
 @media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr 1fr}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.diagramStack{height:auto;max-height:none}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
-@media(max-width:650px){.toolbar{grid-template-columns:1fr}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
+@media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
 
 .modal_default_main{max-width:460px !important;width:calc(100vw - 32px) !important}
 /* Larger file/status text and a more compact, larger-type DayPilot tempo dialog. */
@@ -146,14 +148,91 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   width:auto !important;
   padding:8px 18px !important;
 }
+
+/* Improve DayPilot alert readability and center its content/actions. */
+.modal_default_main .modal_default_content {
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons {
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons table {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Slightly taller, consistent panel headers with compact Fingering Diagram actions. */
+.panelHeader,
+.diagramHeader {
+  min-height: 42px;
+  box-sizing: border-box;
+}
+.diagramHeader .fullBtn,
+.diagramHeader .exitFull {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
+
+/* The portable controller uses the same SVG node for the temporary loading
+   spinner and the normal Play glyph. Do not hide that SVG. Instead, after
+   setTune() has completed, the host clears abcjs-loading from the SVG so the
+   library's normal Play presentation is restored. */
+
+
+/* Explicit cross-platform styling for the share-link Enable Playback control. */
+#enablePlaybackBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid #7fb99a;
+  border-radius: 8px;
+  background: #e6f4ec;
+  color: #17251d;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 1;
+  -webkit-text-fill-color: #17251d;
+}
+#enablePlaybackBtn:hover:not(:disabled) {
+  background: #d3ebde;
+}
+#enablePlaybackBtn:active:not(:disabled) {
+  background: #c3e2d1;
+}
+#enablePlaybackBtn:focus-visible {
+  outline: 2px solid #1769ff;
+  outline-offset: 2px;
+}
+#enablePlaybackBtn:disabled {
+  cursor: default;
+  opacity: .65;
+  color: #17251d;
+  -webkit-text-fill-color: #17251d;
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.17</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.43</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control"><label>ABC file</label><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
  <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
  <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
- <button id="fullBtn" class="fullBtn" disabled>Full-Page Fingering</button>
+ <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
@@ -162,7 +241,7 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   <section class="card panel"><div class="panelHeader"><span>Notation</span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="exitFull" class="exitFull">Exit Full Page</button></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Open an ABC file to begin.</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Open an ABC file to begin.</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -171,11 +250,13 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
     <h2 style="text-align:center;margin:0 0 16px">ABC Anglo Concertina Fingering Player Instructions</h2>
 
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Opening and Selecting Tunes</p>
       <p>
         Open an <b>ABC file</b> containing one or more tunes. If the file contains
         multiple tunes, choose the tune from the <b>Tune</b> menu.
       </p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
       <p>
         Select the <b>Concertina type</b> (Jeffries or Wheatstone) and
         <b>Fingering solution</b> (On-Row or Cross-Row). These choices are
@@ -196,39 +277,60 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
       <p>For Jeffries-style instruments:</p>
       <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing, Notation, and Fingering Display</p>
       <p>
         The upper-left panel contains editable ABC and the lower-left panel shows
         the rendered notation and playback controls. Editing the ABC rebuilds the
         notation, audio, and fingering solution. 
       </p>
- 
+
       <p>
         As each melody note plays, the notation cursor follows the tune and the
         fingering diagram highlights the required concertina button. <b>Red</b>
         indicates Push and <b>green</b> indicates Draw.
       </p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>Click the <b>tempo percentage</b>
         box in the playback controls to open the tempo-setting dialog. The selected
         tempo is remembered in this browser and reused for every tune until you
         change it.
       </p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing the Panels</p>
       <p>
-				On wide screens you can drag the divider between the left and right sides to resize the ABC/notation area and fingering diagram. Drag the divider between the ABC and notation panels to resize those two panels independently. Double-click either divider to restore that divider to its original default position. The divider positions are remembered in this browser and restored the next time the tool is opened on a wide screen.
+        On wide screens you can drag the divider between the left and right sides to resize the ABC/notation area and fingering diagram. Drag the divider between the ABC and notation panels to resize those two panels independently. Double-click either divider to restore that divider to its original default position. The divider positions are remembered in this browser and restored the next time the tool is opened on a wide screen.
       </p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Full-Page Fingering Diagram</p>
       <p>
-        Use <b>Full-Page Fingering</b> when you want the diagram to occupy the main
-        browser view while keeping the playback controls across the bottom. Use
-        <b>Exit Full Page</b> or press <b>Escape</b> to return.
+        Use <b>Full-Page View</b> in the Fingering Diagram header when you want the
+        diagram to occupy the main browser view while keeping the playback controls
+        across the bottom. Use <b>Exit Full Page</b> or press <b>Escape</b> to return.
       </p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Sharing Tunes</p>
+      <p>
+        Use <b>Share Tune</b> to create a share link for the currently displayed tune,
+        or <b>Share All Tunes</b> to create a share link containing all loaded tunes.
+        The link includes the current Concertina type and Fingering solution and is
+        copied to the clipboard. A share button
+        is disabled when its resulting link would exceed the maximum allowed of 8100 characters. 
+      </p>
+      <p>Opening a share link restores its concertina style (Jeffries or Wheatstone) and fingering settings (Cross-Row or On-Row) and displays the
+        first tune encoded in the link.</p>
+      <p>When a tune is opened from a share link, click the
+        <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.
+        This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.
+      </p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Chord Symbols</p>
       <p>
         Quoted ABC chord symbols are ignored by the fingering solver but remain
         available to abcjs for accompaniment.
       </p>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">About</p>
       <p>
         This tool was created by
         <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
@@ -1521,6 +1623,8 @@ const $=id=>document.getElementById(id);
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 if(IS_IOS)$("openFile").removeAttribute("accept");
 const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let loadedABC="",tunes=[],currentTune=0,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
+// Current rendered tune used by the playback controller.
+let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
@@ -1564,6 +1668,9 @@ function buildPlaybackABC(abc){
 }
 function splitTunes(abc){const lines=abc.replace(/\r\n?/g,"\n").split("\n"),out=[];let pre=[],cur=null;for(const line of lines){if(/^X\s*:/.test(line)){if(cur)out.push(cur.join("\n").trim());cur=[...pre,line];pre=[]}else if(cur)cur.push(line);else pre.push(line)}if(cur)out.push(cur.join("\n").trim());if(!out.length&&abc.trim())out.push(abc.trim());return out.filter(Boolean)}
 function firstTitle(tune,n){const m=tune.match(/^T:\s*(.*?)\s*$/m);return m&&m[1].trim()||`Tune ${n}`}
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
 function buttonLayout(){const leftX=[90,200,310,420,530],rightX=[750,860,970,1080,1190],ys=[210,345,480],ids=[["L1a","L2a","L3a","L4a","L5a","R1a","R2a","R3a","R4a","R5a"],["L1","L2","L3","L4","L5","R1","R2","R3","R4","R5"],["L6","L7","L8","L9","L10","R6","R7","R8","R9","R10"]],out={};ids.forEach((row,r)=>row.forEach((id,c)=>out[id]={x:c<5?leftX[c]:rightX[c-5],y:ys[r]}));return out}const POS=buttonLayout();
 function drawButton(ctx,x,y,push,draw,highlight,direction){const r=51;ctx.save();ctx.lineWidth=2;ctx.strokeStyle="#171717";ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();ctx.fillStyle="#111";ctx.font="600 25px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(push,x,y-22);ctx.fillText(draw,x,y+23);if(highlight){ctx.lineWidth=10;ctx.strokeStyle=direction==="push"?PUSH_COLOR:DRAW_COLOR;ctx.beginPath();ctx.arc(x,y,r+7,0,Math.PI*2);ctx.stroke()}ctx.restore()}
 
@@ -1592,7 +1699,7 @@ function prepareDiagramBase(){
   ctx.fillStyle="#444";ctx.font="400 23px Arial";ctx.fillText("Push",575,611);
   ctx.strokeStyle=DRAW_COLOR;ctx.beginPath();ctx.arc(700,603,34,0,Math.PI*2);ctx.stroke();ctx.fillText("Draw",700,611);
 
-  $("diagramStack").hidden=false;$("emptyDiagram").hidden=true;
+  $("diagramStack").hidden=false;$("emptyDiagram").hidden=true;$("fullBtn").disabled=false;
   $("diagramMeta").textContent=`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`;
   lastDiagramIndex=-2;
 }
@@ -1669,6 +1776,142 @@ function installSplitters(){
  sh.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setHorizontalSplit(DEFAULT_SPLIT_H);saveSplitterPercents()});
  window.addEventListener("resize",()=>{if(!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}});
 }
+
+const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-anglo-concertina-fingering-player.html";
+const SHARE_LINK_MAX_LEN=8100;
+
+function bytesToBase64URL(bytes){
+  let binary="";
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function base64URLToBytes(value){
+  let s=String(value||"").replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  const binary=atob(s),bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return bytes;
+}
+function compressABCDeflate(abc){
+  if(typeof pako==="undefined"||!pako.deflate)throw new Error("pako.js did not load.");
+  return bytesToBase64URL(pako.deflate(new TextEncoder().encode(abc),{level:6}));
+}
+function decompressABCDeflate(payload){
+  if(typeof pako==="undefined"||!pako.inflate)throw new Error("pako.js did not load.");
+  return new TextDecoder().decode(pako.inflate(base64URLToBytes(payload)));
+}
+function syncCurrentTuneFromEditor(){
+  if(tunes.length&&currentTune>=0&&currentTune<tunes.length&&!$("abcText").disabled){
+    tunes[currentTune]=$("abcText").value;
+    loadedABC=tunes.join("\n\n");
+  }
+}
+function generateShareLink(abc){
+  if(!abc||!abc.trim())return "";
+  try{
+    const params=new URLSearchParams();
+    params.set("def",compressABCDeflate(abc));
+    params.set("system",$("system").value);
+    params.set("style",$("style").value);
+    return `${SHARE_BASE_URL}?${params.toString()}`;
+  }catch(_){
+    return "";
+  }
+}
+function updateShareButtons(){
+  const tuneBtn=$("shareTuneBtn"),allBtn=$("shareAllBtn");
+  if(!tuneBtn||!allBtn)return;
+  if(!tunes.length){
+    tuneBtn.disabled=true;allBtn.disabled=true;
+    tuneBtn.title=allBtn.title="Open an ABC file first.";
+    return;
+  }
+  syncCurrentTuneFromEditor();
+  const tuneURL=generateShareLink($("abcText").value);
+  const allURL=generateShareLink(tunes.join("\n\n"));
+  tuneBtn.disabled=!tuneURL||tuneURL.length>SHARE_LINK_MAX_LEN;
+  allBtn.disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;
+  tuneBtn.title=tuneBtn.disabled?"Current tune share link exceeds 8100 characters.":"Create a share link for the current tune and copy it to the clipboard.";
+  allBtn.title=allBtn.disabled?"All-tunes share link exceeds 8100 characters.":"Create a share link for all loaded tunes and copy it to the clipboard.";
+}
+async function copyShareLink(allTunes){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
+  const url=generateShareLink(abc);
+  if(!url||url.length>SHARE_LINK_MAX_LEN)return;
+  let copied=false;
+  try{
+    await navigator.clipboard.writeText(url);
+    copied=true;
+  }catch(_){
+    const ta=document.createElement("textarea");
+    ta.value=url;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";
+    try{
+      document.body.appendChild(ta);
+      ta.select();
+      copied=document.execCommand("copy");
+    }catch(_){
+      copied=false;
+    }finally{
+      ta.remove();
+    }
+  }
+  if(copied){
+    const tuneName=firstTitle($("abcText").value,currentTune+1);
+    const message=allTunes
+      ? "Share link for all tunes copied to the clipboard."
+      : `Share link for the current tune <b>${escapeHTML(tuneName)}</b> copied to the clipboard.`;
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(allTunes
+        ? "Share link for all tunes copied to the clipboard."
+        : `Share link for the current tune ${tuneName} copied to the clipboard.`);
+    }
+  }else{
+    const message="Unable to copy the share link to the clipboard.";
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(message);
+    }
+  }
+}
+function populateTuneSelector(label){
+  $("fileLabel").textContent=`${label} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
+  $("tuneSelect").innerHTML=tunes.map((t,i)=>`<option value="${i}">${firstTitle(t,i+1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</option>`).join("");
+  $("tuneSelect").disabled=false;
+  $("fullBtn").disabled=true;
+}
+function processLoadedABC(abc,label){
+  loadedABC=abc;
+  tunes=splitTunes(loadedABC);
+  if(!tunes.length)throw new Error("No ABC tunes found.");
+  if(NEEDS_INITIAL_AUDIO_RETRY)initialAudioRetry=true;
+  populateTuneSelector(label);
+  loadTune(0,false);
+}
+
+function loadShareLinkAfterStartup(){
+  const params=new URLSearchParams(location.search);
+  const payload=params.get("def");
+  if(!payload){updateShareButtons();return;}
+  // Let the page and abcjs finish their ordinary startup first. Then decode the
+  // share link and feed its ABC through the same post-read path used by File Open.
+  setTimeout(()=>{
+    try{
+      const system=params.get("system"),style=params.get("style");
+      if(system==="jeffries"||system==="wheatstone")$("system").value=system;
+      if(style==="onrow"||style==="cross")$("style").value=style;
+      savePrefs();
+      sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
+    }catch(err){
+      alert("Unable to open share link: "+(err&&err.message||err));
+    }
+  },750);
+}
+
+
 const PREFS_KEY="abcAngloConcertinaPrefs";
 const TEMPO_KEY="abcAngloConcertinaTempo";
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value}))}catch(_){}}
@@ -1680,10 +1923,10 @@ function applyTempoToInput(input,n){if(!input)return;input.value=String(n);input
 async function openTempoDialog(input){
   if(!input||typeof DayPilot==="undefined"||!DayPilot.Modal)return;
   const current=Math.round(Number(input.value))||savedTempo();
-  const modal=await DayPilot.Modal.prompt("Tempo percentage (15–200):",String(current),{top:150,width:460});
+  const modal=await DayPilot.Modal.prompt("Tempo percentage (15–200%):",String(current),{top:150,width:460});
   if(modal.canceled)return;
   const n=Math.round(Number(modal.result));
-  if(!Number.isFinite(n)||n<15||n>200){await DayPilot.Modal.alert("Please enter a tempo percentage from 15 to 200.",{top:150,width:460});return openTempoDialog(input)}
+  if(!Number.isFinite(n)||n<15||n>200){await DayPilot.Modal.alert("Please enter a tempo percentage from 15% to 200%.",{top:150,width:460});return openTempoDialog(input)}
   saveTempo(n);applyTempoToInput(input,n);
 }
 function installTempoDialog(){
@@ -1696,18 +1939,65 @@ function installTempoDialog(){
   input.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")open(e);else if(e.key.length===1||e.key==="Backspace"||e.key==="Delete")e.preventDefault()});
   return true;
 }
+
+
+
 function installTempoDialogWhenReady(){if(installTempoDialog())return;let tries=0;const retry=()=>{if(installTempoDialog()||++tries>=20)return;setTimeout(retry,50)};requestAnimationFrame(retry)}
-// iOS/iPadOS needs setTune(..., true, ...) because opening the ABC file is the user action
-// that permits audio initialization. Desktop Safari can still occasionally leave abcjs' first
-// SynthController loading, so only desktop Safari gets one fresh rebuild after setTune completes.
+// File-open and share-link ABC use the same post-read loading path and audio preparation.
 const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.test(navigator.userAgent);
 const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
-let safariInitialAudioRetry=false;
-async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{responsive:"resize",add_classes:true});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");controller=new ABCJS.synth.SynthController();const cursorControl={onStart(){removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible()}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){removeCursor();drawDiagram(null,true)}};controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});await controller.setTune(visual[0],IS_IOS,{});if(gen!==renderGeneration)return;installTempoDialogWhenReady();if(safariInitialAudioRetry){safariInitialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
+let initialAudioRetry=false;
+
+let sharePlaybackNeedsGesture=false;
+
+function showEnablePlaybackButton(){
+  const audio=$("audio");
+  audio.innerHTML="";
+  const btn=document.createElement("button");
+  btn.type="button";
+  btn.id="enablePlaybackBtn";
+  btn.className="primary";
+  btn.textContent="Click to Enable Playback";
+  btn.style.width="100%";
+  btn.style.minHeight="44px";
+  btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    btn.textContent="Enabling Playback…";
+    try{
+      // This is a genuine user gesture, satisfying browsers that prohibit
+      // automatic AudioContext startup.
+      const ctx=window.abcjsAudioContext;
+      if(ctx&&ctx.state==="suspended")await ctx.resume();
+      sharePlaybackNeedsGesture=false;
+      await rebuild();
+    }catch(e){
+      sharePlaybackNeedsGesture=true;
+      btn.disabled=false;
+      btn.textContent="Click to Enable Playback";
+      alert("Unable to enable playback: "+(e&&e.message||e));
+    }
+  },{once:true});
+  audio.appendChild(btn);
+}
+
+async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{responsive:"resize",add_classes:true});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
+    if(sharePlaybackNeedsGesture){
+      showEnablePlaybackButton();
+      return;
+    }
+    const cursorControl={onStart(){removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible()}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){removeCursor();drawDiagram(null,true)}};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});await controller.setTune(visual[0],false,{});if(gen!==renderGeneration)return;installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
 let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
-function loadTune(index){currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;scheduleRebuild()}
-$("openFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{loadedABC=await f.text();tunes=splitTunes(loadedABC);if(NEEDS_INITIAL_AUDIO_RETRY)safariInitialAudioRetry=true;if(!tunes.length)throw new Error("No ABC tunes found.");$("fileLabel").textContent=`${f.name} — ${tunes.length} tune${tunes.length===1?"":"s"}`;$("tuneSelect").innerHTML=tunes.map((t,i)=>`<option value="${i}">${firstTitle(t,i+1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</option>`).join("");$("tuneSelect").disabled=false;$("fullBtn").disabled=false;loadTune(0)}catch(err){alert("File load failed: "+(err.message||err))}});
-$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild()});$("abcText").addEventListener("input",scheduleRebuild);
+function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+$("openFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{sharePlaybackNeedsGesture=false;processLoadedABC(await f.text(),f.name)}catch(err){alert("File load failed: "+(err.message||err))}});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("abcText").addEventListener("input",()=>{syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons()});$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
 function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>drawDiagram(currentDiagramItem,true))}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false)});
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();
+// This script is at the end of the document and the portable abcjs library may
+// already be cached. In that case window.load can fire before this listener is
+// installed. Handle both states so share links are always consumed.
+if(document.readyState==="complete"){
+  loadShareLinkAfterStartup();
+}else{
+  window.addEventListener("load",loadShareLinkAfterStartup,{once:true});
+}
 </script></body></html>
