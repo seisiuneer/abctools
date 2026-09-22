@@ -271,6 +271,36 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 .tabOverrideTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
 .tabOverrideTop .tabOverrideTitle{margin:0}
 #tabFingeringDiagramBtn{padding:4px 9px;min-height:30px;font-size:.8rem;white-space:nowrap}
+
+/* Match the Tab Override number-key styling for these controls on all platforms. */
+#tabOverrideBtn,
+#tabFingeringDiagramBtn,
+#tabPrevNote,
+#tabNextNote{
+  -webkit-appearance:none;
+  appearance:none;
+  box-sizing:border-box;
+  color:#17251d;
+  -webkit-text-fill-color:#17251d;
+  background:#f7faf8;
+  border:1px solid #aebbb4;
+  border-radius:7px;
+  box-shadow:none;
+  font-family:inherit;
+  font-weight:650;
+  line-height:1.2;
+  cursor:pointer;
+}
+#tabOverrideBtn:not(:disabled):hover,
+#tabFingeringDiagramBtn:not(:disabled):hover,
+#tabPrevNote:not(:disabled):hover,
+#tabNextNote:not(:disabled):hover{background:#e4efe8;border-color:#789b87}
+#tabOverrideBtn:not(:disabled):active,
+#tabFingeringDiagramBtn:not(:disabled):active,
+#tabPrevNote:not(:disabled):active,
+#tabNextNote:not(:disabled):active{background:#d5e7dc}
+#tabOverrideBtn:disabled{opacity:.45;cursor:default}
+
 .tabDiagramPopover{position:fixed;z-index:3700;width:min(544px,calc(100vw - 24px));padding:11px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
 .tabDiagramPopover[hidden]{display:none}
 .tabDiagramPopover img{display:block;width:100%;height:auto;border-radius:6px}
