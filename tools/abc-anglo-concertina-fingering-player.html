@@ -53,7 +53,7 @@
 .diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff}.diagramStack{position:relative;width:100%;max-height:100%;aspect-ratio:1280/670}.diagramStack canvas{display:block;width:100%;height:100%;object-fit:contain}.diagramStack #diagramOverlay{position:absolute;inset:0;pointer-events:none}
 .liveNoteName{position:absolute;left:0;right:0;top:15.5%;text-align:center;font:700 clamp(28px,3.75vw,48px) Arial,Helvetica,sans-serif;color:#111;line-height:1;pointer-events:none}.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
 body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveNoteName{font-size:clamp(52px,6vw,86px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
-@media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr 1fr}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.diagramStack{height:auto;max-height:none}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
+@media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.diagramStack{height:auto;max-height:none}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
 @media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
 
 .modal_default_main{max-width:460px !important;width:calc(100vw - 32px) !important}
@@ -225,10 +225,151 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   -webkit-text-fill-color: #17251d;
 }
 
+
+/* Tab Override entry palette */
+.abcHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+#tabOverrideBtn{padding:5px 10px;min-height:30px;font-size:.86rem;white-space:nowrap}
+.tabOverridePopover{
+  position:fixed;z-index:3600;width:min(430px,calc(100vw - 24px));
+  padding:12px;border:1px solid #aebbb4;border-radius:10px;background:#fff;
+  box-shadow:0 8px 28px rgba(0,0,0,.22)
+}
+.tabOverridePopover[hidden]{display:none}
+.tabOverrideTitle{font-weight:700;margin:0 0 9px}
+.tabOverrideGroup{display:grid;grid-template-columns:88px 1fr;gap:8px;align-items:start;margin-top:8px}
+.tabOverrideLabel{font-size:.84rem;font-weight:700;padding-top:6px}
+.tabOverrideKeys{display:flex;flex-wrap:wrap;gap:6px}
+.tabOverrideKey{
+  -webkit-appearance:none;appearance:none;min-width:34px;height:34px;padding:3px 8px;
+  border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;
+  -webkit-text-fill-color:#17251d;font:600 15px/1 inherit;text-align:center;cursor:pointer
+}
+.tabOverrideKey:hover{background:#e4efe8;border-color:#789b87}
+.tabOverrideKey:active{background:#d5e7dc}
+.tabOverrideHint{margin:10px 0 0;font-size:.78rem;line-height:1.35;color:#53635a}
+@media(max-width:760px){
+  .abcHeaderRight{gap:6px}
+  #tabOverrideBtn{padding:4px 8px;font-size:.8rem}
+  .tabOverridePopover{width:calc(100vw - 20px);padding:10px}
+  .tabOverrideGroup{grid-template-columns:76px 1fr}
+}
+
+
+#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px}
+#abcText.editorTextSmall{font-size:14px}
+#abcText.editorTextMedium{font-size:16px}
+#abcText.editorTextLarge{font-size:17px}
+#abcText.editorTextLargest{font-size:18px}
+.tabOverrideNav{display:flex;gap:8px;margin-left:auto}
+.tabOverrideNav button{min-width:72px;height:34px;padding:3px 10px;white-space:nowrap}
+
+
+.helpFingeringImageLink{display:block;margin:14px auto;text-align:center}
+.helpFingeringImage{display:block;max-width:100%;width:min(520px,100%);height:auto;margin:0 auto;border:1px solid #d7ddd9;border-radius:6px}
+
+
+.tabOverrideTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.tabOverrideTop .tabOverrideTitle{margin:0}
+#tabFingeringDiagramBtn{padding:4px 9px;min-height:30px;font-size:.8rem;white-space:nowrap}
+.tabDiagramPopover{position:fixed;z-index:3700;width:min(544px,calc(100vw - 24px));padding:11px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
+.tabDiagramPopover[hidden]{display:none}
+.tabDiagramPopover img{display:block;width:100%;height:auto;border-radius:6px}
+
+.fileControlRow{display:flex;align-items:center;gap:8px;min-width:0}
+.fileControlRow #openFile{min-width:0;flex:1 1 auto}
+.fileControlRow #saveAbcBtn{flex:0 0 auto}
+
+
+/* Save filename prompt: left-align its title while preserving centered share alerts. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  text-align:left !important;
+}
+
+
+/* Refined DayPilot prompt/alert styling: lighter scale and simple border. */
+.modal_default_main{
+  border:1px solid #17241c !important;
+  box-shadow:0 8px 28px rgba(0,0,0,.18) !important;
+  font-size:16px !important;
+}
+.modal_default_main .modal_default_content{
+  font-size:16px !important;
+  line-height:1.45 !important;
+}
+.modal_default_main input{
+  font-size:18px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:16px !important;
+  min-width:82px !important;
+  padding:7px 16px !important;
+}
+.modal_default_main,
+.modal_default_main > div,
+.modal_default_main .modal_default_content,
+.modal_default_main .modal_default_buttons{
+  outline:0 !important;
+}
+
+
+/* DayPilot dialog typography refinement. */
+.modal_default_main input{
+  font-size:16px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:14px !important;
+  min-width:78px !important;
+  padding:6px 14px !important;
+}
+
+
+/* Final DayPilot spacing refinements. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  line-height:1.4 !important;
+}
+body.save-name-prompt-open .modal_default_main input{
+  padding:7px 9px !important;
+}
+/* Pull the save prompt slightly closer to its filename field. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  padding-bottom:8px !important;
+}
+/* Give share-confirmation copy just a touch more breathing room. */
+body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
+  line-height:1.55 !important;
+}
+
+
+/* Match the physical concertina layout: five numbered buttons per row. */
+.tabOverrideGroup .tabOverrideKeys{
+  display:grid;
+  grid-template-columns:repeat(5,auto);
+  justify-content:start;
+  gap:6px;
+}
+.tabOverrideGroup:last-of-type .tabOverrideKeys{
+  display:flex;
+  align-items:center;
+}
+
+
+/* Draggable Tab Override and fingering-diagram popovers. */
+.tabOverrideTop{cursor:move;user-select:none;-webkit-user-select:none}
+.tabOverrideTop button{cursor:pointer}
+.tabDiagramPopover{cursor:move;touch-action:none}
+.tabDiagramPopover img{pointer-events:none;user-select:none;-webkit-user-drag:none}
+body.popoverDragging{user-select:none;-webkit-user-select:none}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.44</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.85</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
- <div class="control"><label>ABC file</label><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div>
+ <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
  <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
  <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
@@ -236,36 +377,67 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel"><div class="panelHeader"><span>ABC</span><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false" disabled></textarea></div></section>
+  <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
   <section class="card panel"><div class="panelHeader"><span>Notation</span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Open an ABC file to begin.</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
+
+<div id="tabOverridePopover" class="tabOverridePopover" hidden role="dialog" aria-label="Tab Override">
+  <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div><button type="button" id="tabFingeringDiagramBtn">Fingering Diagram</button></div>
+  <div class="tabOverrideGroup"><div class="tabOverrideLabel">Left Hand</div><div class="tabOverrideKeys" id="tabLeftKeys"></div></div>
+  <div class="tabOverrideGroup"><div class="tabOverrideLabel">Right Hand</div><div class="tabOverrideKeys" id="tabRightKeys"></div></div>
+  <div class="tabOverrideGroup"><div class="tabOverrideLabel">Other</div><div class="tabOverrideKeys">
+    <button type="button" class="tabOverrideKey" data-tab-char="*" title="Top-row accidental button">*</button>
+    <button type="button" class="tabOverrideKey" data-tab-char="↓" title="Push">↓</button>
+    <button type="button" class="tabOverrideKey" data-tab-char="↑" title="Draw">↑</button>
+    <span class="tabOverrideNav">
+      <button type="button" id="tabPrevNote">Previous</button>
+      <button type="button" id="tabNextNote">Next</button>
+    </span>
+  </div></div>
+</div>
+
+<div id="tabDiagramPopover" class="tabDiagramPopover" hidden role="dialog" aria-label="Anglo concertina fingering diagram"><img src="img/anglo-fingerings.jpg" alt="Anglo concertina button-number diagram showing left-hand and right-hand button numbers and Push and Draw directions"></div>
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
-    <h2 style="text-align:center;margin:0 0 16px">ABC Anglo Concertina Fingering Player Instructions</h2>
+    <h2 style="text-align:center;margin:0 0 24px">ABC Anglo Concertina Fingering Player Instructions</h2>
 
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
-      <p style="text-align:left;font-weight:700;margin:0 0 6px">Opening and Selecting Tunes</p>
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Anglo concertina fingerings.</p>
+      <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or Cross-Row fingering solutions.</p>
+      <p>Play tunes with synchronized notation highlighting and a fingering diagram that shows the required button and Push or Draw direction.</p>
+      <p>Edit the ABC directly, click rendered notes to locate them in the editor, and use manual tablature overrides when you want to specify particular fingerings.</p>
+      <p>Load and work with multi-tune ABC collections, save your edited ABC, and create share links for one tune or the complete collection.</p>
+      <p>Use the resizable workspace and optional full-page fingering diagram for practice on desktop and mobile browsers.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
       <p>
-        Open an <b>ABC file</b> containing one or more tunes, or send a set of tunes directly from
-        <b>ABC Transcription Tools</b>. If more than one tune is loaded, choose the tune from the <b>Tune</b> menu.
+        You can start by typing or pasting a <b>single tune</b> directly into the ABC text area, open an <b>ABC file</b> containing one or more tunes, or send a set of tunes directly from
+        <b>ABC Transcription Tools</b>.
+      </p>
+      <p>
+        If more than one tune is loaded from a file, share link, or direct transfer, choose the tune from the <b>Tune</b> menu.
+      </p> 
+      <p>The ABC text area accepts only one tune at a time when pasting.</p>
+      <p>If a paste would put multiple tunes in the editor, the paste is not performed and a message asks you to save the tunes to a <b>.abc</b> file and load that file into the tool instead.</p>
+      <p>If you have unsaved ABC changes and choose a new ABC file, the tool warns that the existing work will be lost and asks you to confirm before the new file is opened.
       </p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
-      <p>
-        Select the <b>Concertina type</b> (Jeffries or Wheatstone) and
-        <b>Fingering solution</b> (On-Row or Cross-Row). These choices are
-        remembered in this browser.
-      </p>
+      <p>Select the <b>Concertina type</b> (Jeffries or Wheatstone) and
+        <b>Fingering solution</b> (On-Row or Cross-Row).</p>
+      <p>These choices are
+        remembered in this browser.</p>
 
       <p>The fingering solution descriptions below are relative to C/G tuning.</p>
       <p><strong>On-Row:</strong></p>
-      <p>Jim Van Donsel's original fingering solution, favors center row:</p>
+      <p>Jim Van Donsel's original fingering solution, which favors the C-row:</p>
       <p>Favors playing D5 and E5 on the right-side C-row.</p>
       <p>For Jeffries-style instruments:</p>
       <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
@@ -276,59 +448,130 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
       <p>Favors playing B4 on the right-side C-row draw.</p>
       <p>For Jeffries-style instruments:</p>
       <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
-
+      
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing, Notation, and Fingering Display</p>
-      <p>
-        The upper-left panel contains editable ABC and the lower-left panel shows
-        the rendered notation and playback controls. Editing the ABC rebuilds the
-        notation, audio, and fingering solution. 
-      </p>
-
-      <p>
-        As each melody note plays, the notation cursor follows the tune and the
-        fingering diagram highlights the required concertina button. <b>Red</b>
-        indicates Push and <b>green</b> indicates Draw.
-      </p>
-
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
-      <p>Click the <b>tempo percentage</b>
-        box in the playback controls to open the tempo-setting dialog. The selected
-        tempo is remembered in this browser and reused for every tune until you
-        change it.
-      </p>
+      <p>The upper-left panel contains editable ABC and the lower-left panel shows
+        the rendered notation and playback controls.</p>
+      <p>Editing the ABC rebuilds the
+        notation, audio, and fingering solution.</p>
+      <p>Click a note head in the rendered notation to highlight it in red and select its
+        associated note in the ABC editor.</p>
+      <p>The complete ABC note token is selected, making it easy to replace the complete note.</p>
+      <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size.</p>
+      <p>Medium is the default,
+        and the selection is saved in this browser.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing the Panels</p>
       <p>
-        On wide screens you can drag the divider between the left and right sides to resize the ABC/notation area and fingering diagram. Drag the divider between the ABC and notation panels to resize those two panels independently. Double-click either divider to restore that divider to its original default position. The divider positions are remembered in this browser and restored the next time the tool is opened on a wide screen.
+        On wide screens you can drag the divider between the left and right sides to resize the ABC/notation area and fingering diagram.
+      </p>
+      <p>
+        Drag the divider between the ABC and notation panels to resize those two panels independently. 
+      </p>
+      <p>
+        Double-click either divider to restore that divider to its original default position. 
+      </p>
+      <p>
+        The divider positions are remembered in this browser and restored the next time the tool is opened on a wide screen.
+      </p>
+ 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>As each melody note plays, the notation cursor follows the tune and the
+        fingering diagram highlights the required concertina button.</p>
+      <p><b>Red</b>
+        indicates Push and <b>green</b> indicates Draw.</p>
+      <p>Click the <b>tempo percentage</b>
+        box in the playback controls to open the tempo-setting dialog.
+      </p>
+      <p>
+        The selected tempo is remembered in this browser and reused for every tune until you
+        change it.
       </p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Full-Page Fingering Diagram</p>
-      <p>
-        Use <b>Full-Page View</b> in the Fingering Diagram header when you want the
+      <p>Click <b>Full-Page View</b> in the Fingering Diagram header when you want the
         diagram to occupy the main browser view while keeping the playback controls
-        across the bottom. Use <b>Exit Full Page</b> or press <b>Escape</b> to return.
-      </p>
+        across the bottom.</p>
+      <p>Click <b>Exit Full Page</b> or press <b>Escape</b> to return.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving the ABC</p>
+      <p>Click <b>Save</b> to save the entire currently loaded tune collection, including edits made to any tune.</p>
+      <p>Edits are retained when you change tunes with the Tune menu.</p>
+      <p>On mobile devices, the file is saved with a .txt extension.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Sharing Tunes</p>
-      <p>
-        Use <b>Share Tune</b> to create a share link for the currently displayed tune,
-        or <b>Share All Tunes</b> to create a share link containing all loaded tunes.
-        The link includes the current Concertina type and Fingering solution and is
-        copied to the clipboard. A share button
-        is disabled when its resulting link would exceed the maximum allowed of 8100 characters. 
-      </p>
+      <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune,
+        or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
+      <p>The link includes the current Concertina type and Fingering solution and is
+        copied to the clipboard.</p>
+      <p>A share button
+        is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
       <p>Opening a share link restores its concertina style (Jeffries or Wheatstone) and fingering settings (Cross-Row or On-Row) and displays the
         first tune encoded in the link.</p>
       <p>When tunes are opened from a share link or transferred directly from <b>ABC Transcription Tools</b>, click the
-        <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.
-        This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.
-      </p>
+        <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
+      <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Chord Symbols</p>
       <p>
         Quoted ABC chord symbols are ignored by the fingering solver but remain
         available to abcjs for accompaniment.
       </p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Advanced: Manual Tablature Overrides</p>
+      <p>
+        ABC annotation-based Anglo concertina tablature using the default <b>ABC Transcription Tools</b>
+        syntax overrides the fingering solution calculated automatically by this tool.
+      </p>
+      <p>The tool first solves
+        the complete tune using the selected Concertina type and Fingering solution, then applies any valid
+        tablature annotations as overrides to the corresponding notes.</p>
+      <p>Notes without override annotations
+        continue to use the automatically calculated fingering.</p>
+      <p>Click <b>Tab Override</b> in the ABC panel header to add or edit these overrides manually at the current
+        ABC cursor position.</p>
+      <p>When the popover is opened, any ABC text selection is cleared while the cursor remains
+        at the start of that selection.</p>
+      <p>This makes it easy to click a note in the notation to locate it, then open
+        <b>Tab Override</b> and add a fingering annotation without replacing the note itself.</p>
+      <p>The popover remembers
+        that note location while you click its controls.</p>
+      <p>If that note already has a valid tab annotation, palette
+        choices modify the existing annotation rather than adding a second one.</p>
+      <p>The palette provides
+        left-hand buttons <b>1–10</b>, right-hand buttons
+        <b>①–⑩</b>, <b>*</b> for the top accidental row, <b>↓</b> for Push, and <b>↑</b> for Draw.</p>
+      <p>Click <b>Fingering Diagram</b> in the popover to display the button-number reference.</p>
+      <p>Both the Tab Override
+        popover and its Fingering Diagram can be dragged to a convenient position.</p>
+      <p>Once moved, each popover remembers
+        its position while the tool remains open; the positions are reset when the page is reloaded.</p>
+      <a class="helpFingeringImageLink" href="img/anglo-fingerings.jpg" target="_blank" rel="noopener noreferrer" title="Open fingering button-number diagram in a new tab">
+        <img class="helpFingeringImage" src="img/anglo-fingerings.jpg" alt="Anglo concertina button-number diagram showing left-hand and right-hand button numbers and Push and Draw directions">
+      </a>
+      <p>If the cursor is already inside a valid tablature annotation, selecting a number replaces the existing
+        button number, and selecting Push or Draw replaces the existing direction.</p>
+      <p>The <b>*</b> control toggles
+        the top-row marker.</p>
+      <p>The syntax is always maintained as <b>number</b>, optional <b>*</b>, <b>;</b>,
+        then the <b>direction arrow</b>, for example <b>"_4;↓"</b> or <b>"_4*;↑"</b>.</p>
+      <p>If there is no existing valid annotation for the note, the tool creates one beginning with <b>_</b>
+        so the annotation is displayed below the rendered notation.</p>
+      <p>If a button number is entered without a
+        direction, Push is supplied by default.</p>
+      <p>Click <b>Previous</b> and <b>Next</b> to move through the notes while entering tablature.</p>
+      <p>If the destination
+        note already has a valid tab annotation, the next palette selection modifies it.</p>
+      <p>If it has no tab annotation,
+        the next palette selection creates one for that note.</p>
+      <p>When navigation begins inside an annotation, it is
+        relative to the note to which that annotation applies.</p>
+      <p>When a manual override is added, for best notation rendering, if the current tune does not already contain an
+        <b>%%annotationfont</b> command, the tool adds <b>%%annotationfont Palatino 12</b> immediately below
+        <b>X:</b>.</p>
+      <p>If it does not already contain <b>%%staffsep</b>, the tool adds <b>%%staffsep 70</b>
+        immediately after the annotation-font command.</p>
+      <p>Existing commands are left unchanged.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">About</p>
       <p>
@@ -340,8 +583,7 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
       </p>
       <p style="text-align: center">
         <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>.
-      </p>
-    </div>
+      </p>    </div>
 
     <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
   </div>
@@ -1622,7 +1864,7 @@ const $=id=>document.getElementById(id);
 // On iOS/iPadOS, omit the accept filter so the native file picker can select .abc as well as .txt files.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 if(IS_IOS)$("openFile").removeAttribute("accept");
-const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let loadedABC="",tunes=[],currentTune=0,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
+const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
@@ -1631,6 +1873,59 @@ const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G
 function mapFor(system){return Object.assign({},BASE.common,system==="wheatstone"?BASE.wheatstoneRx:BASE.jeffriesRx)}
 function abcPitchToScientific(s){if(!s||s==="x"||s==="z")return"—";const m=String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);if(!m)return s;const acc=m[1],letter=m[2],marks=m[3];let octave=letter===letter.toLowerCase()?5:4;for(const ch of marks)octave+=ch==="'"?1:-1;const accidental=acc.includes("^")?"#":acc.includes("_")?"b":"";return letter.toUpperCase()+accidental+octave}
 function stripChordSymbols(abc){return abc.replace(/"[^"\r\n]*"/g,m=>" ".repeat(m.length))}
+
+/*
+ * ABC Transcription Tools can inject concertina tablature immediately before
+ * a melody note. The automatic solver still runs first; recognized injected
+ * tab then overrides only the corresponding solved note.
+ *
+ * Injected button numbering:
+ *   plain 1-10 = left hand, circled ①-⑩ = right hand
+ *   * = top-row accidental button, ↓ = Push, ↑ = Draw
+ */
+const CIRCLED_BUTTON_NUMBERS={"①":1,"②":2,"③":3,"④":4,"⑤":5,"⑥":6,"⑦":7,"⑧":8,"⑨":9,"⑩":10};
+function parseInjectedConcertinaTab(text){
+  if(!text)return null;
+  let t=String(text).trim().replace(/^[_^]/,"").trim();
+  const direction=t.includes("↓")?"push":t.includes("↑")?"draw":null;
+  if(!direction)return null;
+
+  let hand=null,num=null;
+  for(const glyph of Object.keys(CIRCLED_BUTTON_NUMBERS)){
+    if(t.includes(glyph)){hand="R";num=CIRCLED_BUTTON_NUMBERS[glyph];break}
+  }
+  if(num==null){
+    const m=t.match(/(?:^|\s)(10|[1-9])(?=\s*[*;↓↑]|\s*$)/);
+    if(m){hand="L";num=parseInt(m[1],10)}
+  }
+  if(num==null)return null;
+
+  const topRow=/\*/.test(t);
+  if(topRow&&num>5)return null;
+  const button=hand+String(num)+(topRow?"a":"");
+  if(!POS[button])return null;
+  return {button,direction};
+}
+function injectedTabBeforeNote(abc,noteIndex){
+  if(!abc||noteIndex==null||noteIndex<0)return null;
+  const before=abc.slice(0,noteIndex);
+  // Injected tablature is an ABC text annotation immediately preceding its note.
+  // Permit whitespace between the closing quote and note, but never cross a line.
+  const m=before.match(/"([^"\r\n]*)"[ \t]*$/);
+  return m?parseInjectedConcertinaTab(m[1]):null;
+}
+function applyInjectedTabOverrides(abc,automaticSolution){
+  let count=0;
+  for(const item of automaticSolution){
+    const override=injectedTabBeforeNote(abc,item.abcIndex);
+    if(!override)continue;
+    item.button=override.button;
+    item.direction=override.direction;
+    item.injectedTabOverride=true;
+    count++;
+  }
+  return count;
+}
 
 /*
  * Playback always uses these settings, regardless of directives in the source.
@@ -1883,10 +2178,85 @@ function populateTuneSelector(label){
   $("tuneSelect").disabled=false;
   $("fullBtn").disabled=true;
 }
-function processLoadedABC(abc,label){
+
+function setAbcDirty(dirty=true){abcDirty=!!dirty}
+async function confirmDiscardDirtyForOpen(){
+  if(!abcDirty||!tunes.length)return true;
+  const message="You have unsaved changes to the current ABC tunes.<br><br>Opening a new ABC file will discard those changes. Do you want to continue?";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.confirm==="function"){
+    const r=await DayPilot.Modal.confirm(message,{top:100,width:460});
+    return !!(r&&!r.canceled&&r.result);
+  }
+  return window.confirm("You have unsaved changes to the current ABC tunes.\n\nOpening a new ABC file will discard those changes. Do you want to continue?");
+}
+
+function baseNameForSave(name){
+  const s=String(name||"").trim().replace(/^.*[\\/]/,"").replace(/\.(?:abc|txt)$/i,"");
+  return s||"anglo-concertina-tunes";
+}
+function syncAllTunesForSave(){
+  syncCurrentTuneFromEditor();
+  return tunes.join("\n\n").replace(/\s+$/,"")+"\n";
+}
+function mobileSavePlatform(){
+  const ua=navigator.userAgent||"";
+  return /iPhone|iPad|iPod|Android/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+}
+function manualTuneTitleBaseName(){
+  if(!manualEntryCollection||tunes.length!==1)return "";
+  syncCurrentTuneFromEditor();
+  const m=(tunes[0]||"").match(/^T:\s*(.*?)\s*$/m);
+  return m&&m[1].trim()?baseNameForSave(m[1].trim()):"";
+}
+async function askSaveBaseName(){
+  const mobile=mobileSavePlatform();
+  const ext=mobile?".txt":".abc";
+  const def=baseNameForSave(currentSaveBaseName||manualTuneTitleBaseName()||"anglo-concertina-tune")+ext;
+  let v=null;
+  document.body.classList.add("save-name-prompt-open");
+  try{
+    if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){
+      const r=await DayPilot.Modal.prompt("Save ABC file name:",def,{top:100});
+      if(!r||r.canceled)return null;
+      v=r.result;
+    }else{
+      v=window.prompt("Save ABC file name:",def);
+      if(v===null)return null;
+    }
+  }finally{
+    document.body.classList.remove("save-name-prompt-open");
+  }
+  v=baseNameForSave(v);
+  currentSaveBaseName=v;
+  return v;
+}
+async function saveCurrentCollection(){
+  if(!tunes.length)return;
+  const base=await askSaveBaseName();if(!base)return;
+  const data=syncAllTunesForSave(),mobile=mobileSavePlatform();
+  const filename=base+(mobile?".txt":".abc");
+  const blob=new Blob([data],{type:"text/plain;charset=utf-8"});
+  if(mobile&&navigator.share){
+    try{
+      const file=new File([blob],filename,{type:"text/plain"});
+      if(!navigator.canShare||navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:filename});
+        setAbcDirty(false);
+        return;
+      }
+    }catch(e){if(e&&e.name==="AbortError")return}
+  }
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setAbcDirty(false);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function processLoadedABC(abc,label){$("saveAbcBtn").disabled=false;
   loadedABC=abc;
   tunes=splitTunes(loadedABC);
   if(!tunes.length)throw new Error("No ABC tunes found.");
+  setAbcDirty(false);
   if(NEEDS_INITIAL_AUDIO_RETRY)initialAudioRetry=true;
   populateTuneSelector(label);
   loadTune(0,false);
@@ -1923,7 +2293,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   try{
     if($("openFile"))$("openFile").value="";
     sharePlaybackNeedsGesture=true;
-    processLoadedABC(abcText,sourceName);
+    manualEntryCollection=false;currentSaveBaseName="transferred-anglo-concertina-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
     console.error(error);
@@ -1967,7 +2337,7 @@ function loadShareLinkAfterStartup(){
       if(system==="jeffries"||system==="wheatstone")$("system").value=system;
       if(style==="onrow"||style==="cross")$("style").value=style;
       savePrefs();
-      sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-anglo-concertina-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
       alert("Unable to open share link: "+(err&&err.message||err));
     }
@@ -1978,6 +2348,436 @@ function loadShareLinkAfterStartup(){
 const PREFS_KEY="abcAngloConcertinaPrefs";
 const TEMPO_KEY="abcAngloConcertinaTempo";
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value}))}catch(_){}}
+
+const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
+function buildTabOverridePalette(){
+  const left=$("tabLeftKeys"),right=$("tabRightKeys");
+  for(let i=1;i<=10;i++){
+    const b=document.createElement("button");b.type="button";b.className="tabOverrideKey";b.dataset.tabChar=String(i);b.textContent=String(i);left.appendChild(b);
+    const r=document.createElement("button");r.type="button";r.className="tabOverrideKey";r.dataset.tabChar=TAB_CIRCLED[i-1];r.textContent=TAB_CIRCLED[i-1];right.appendChild(r);
+  }
+}
+function validTabAnnotationText(s){
+  const t=String(s||"").trim().replace(/^[_^]/,"").trim();
+  return t==="" || /^(?:(?:10|[1-9])|[①②③④⑤⑥⑦⑧⑨⑩]|\*|↓|↑|[;\s])+$/.test(t);
+}
+function quotedAnnotationAtCursor(value,pos){
+  const lineStart=Math.max(value.lastIndexOf("\n",Math.max(0,pos-1)),value.lastIndexOf("\r",Math.max(0,pos-1)))+1;
+  const lineEndCandidates=[value.indexOf("\n",pos),value.indexOf("\r",pos)].filter(n=>n>=0);
+  const lineEnd=lineEndCandidates.length?Math.min(...lineEndCandidates):value.length;
+  const line=value.slice(lineStart,lineEnd),rel=pos-lineStart;
+  let open=-1;
+  for(let i=0;i<rel;i++)if(line[i]==='"')open=open<0?i:-1;
+  if(open<0)return null;
+  const close=line.indexOf('"',rel);
+  if(close<0)return null;
+  const content=line.slice(open+1,close);
+  if(!validTabAnnotationText(content))return null;
+  return {start:lineStart+open+1,end:lineStart+close};
+}
+function ensureManualTabDirectives(){
+  const ta=$("abcText");
+  let value=ta.value;
+  const newline=value.includes("\r\n")?"\r\n":"\n";
+  let start=ta.selectionStart??0,end=ta.selectionEnd??start;
+
+  const lines=value.split(/\r?\n/);
+  const xIndex=lines.findIndex(line=>/^\s*X\s*:/.test(line));
+  if(xIndex<0)return;
+
+  const annotationIndex=lines.findIndex(line=>/^\s*%%annotationfont\b/i.test(line));
+  const staffsepIndex=lines.findIndex(line=>/^\s*%%staffsep\b/i.test(line));
+  if(annotationIndex>=0&&staffsepIndex>=0)return;
+
+  // Convert line index to source offset.
+  const lineOffset=i=>{
+    let n=0;
+    for(let k=0;k<i;k++)n+=lines[k].length+newline.length;
+    return n;
+  };
+
+  const insertAt=(offset,s)=>{
+    value=value.slice(0,offset)+s+value.slice(offset);
+    if(offset<=start){start+=s.length;end+=s.length}
+  };
+
+  if(annotationIndex<0){
+    // Both missing: add annotationfont immediately below X:, then staffsep
+    // immediately after it. If staffsep already exists elsewhere, preserve it.
+    const offset=lineOffset(xIndex+1);
+    let add="%%annotationfont Palatino 12"+newline;
+    if(staffsepIndex<0)add+="%%staffsep 70"+newline;
+    insertAt(offset,add);
+  }else if(staffsepIndex<0){
+    // Existing annotationfont: put the missing staffsep directly after it.
+    const offset=lineOffset(annotationIndex+1);
+    insertAt(offset,"%%staffsep 70"+newline);
+  }
+
+  ta.value=value;
+  ta.setSelectionRange(start,end);
+}
+
+function normalizeTabOverrideContent(content){
+  const prefix=String(content||"").trim().startsWith("_")?"_":"";
+  const button=(String(content||"").match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/)||[])[0]||"";
+  const star=String(content||"").includes("*")?"*":"";
+  const arrow=(String(content||"").match(/[↓↑]/)||[])[0]||"";
+  if(button){
+    return prefix+button+star+(arrow?";"+arrow:"");
+  }
+  return prefix+(arrow?";"+arrow:"");
+}
+
+function insertTabOverrideCharacter(ch){
+  const ta=$("abcText");if(!ta||ta.disabled)return;
+
+  // Restore the exact location captured when Tab Override was opened. This
+  // avoids browser-dependent selection changes when a palette button gets focus.
+  if(Number.isInteger(tabOverrideAnchorPos)){
+    const p=Math.max(0,Math.min(tabOverrideAnchorPos,ta.value.length));
+    ta.setSelectionRange(p,p);
+  }
+
+  // If directives are inserted above the cursor, this routine adjusts the
+  // textarea selection so it continues to point at the same musical note.
+  ensureManualTabDirectives();
+
+  let start=ta.selectionStart??0,end=ta.selectionEnd??start,value=ta.value;
+
+  // A browser/abcjs cursor may land on the pitch letter, after the pitch letter,
+  // or among octave/length suffix characters. Normalize any such position to
+  // the beginning of the complete ABC note token so an override is always
+  // inserted BEFORE accidentals and never inside a note's suffix.
+  if(start===end){
+    const token=noteTokenAtPosition(value,start);
+    if(token){
+      start=token.start;
+      end=token.start;
+      ta.setSelectionRange(start,end);
+    }
+  }
+
+  let annotation=start===end?quotedAnnotationAtCursor(value,start):null;
+
+  // In the click-note -> Tab Override workflow the cursor is exactly at the
+  // beginning of the note, so first look directly behind that note for an
+  // already attached tab annotation.
+  if(!annotation && start===end)annotation=tabAnnotationForNote(value,start);
+
+  // Opening Tab Override after clicking a rendered note collapses the ABC
+  // selection to the start of that note. In that state the cursor is not
+  // inside a preceding tab annotation, so explicitly look for a valid tab
+  // annotation already attached to the note at the cursor. This ensures a
+  // palette choice edits that annotation instead of inserting a duplicate.
+  if(!annotation && start===end){
+    // The cursor can be at the start of the note token OR, for accidentals and
+    // abcjs source ranges, somewhere within the note token. Find the note whose
+    // token contains the cursor, then resolve any valid annotation attached to it.
+    const notes=abcNoteStarts(value);
+    let noteAtCursor=notes.find(n=>n===start);
+    if(noteAtCursor===undefined){
+      noteAtCursor=notes.slice().reverse().find(n=>{
+        if(n>start)return false;
+        let e=n;
+        while(value[e]==="^"||value[e]==="_"||value[e]==="=")e++;
+        if(/[A-Ga-g]/.test(value[e]||"")){
+          e++;
+          while(/[',0-9/]/.test(value[e]||""))e++;
+        }
+        return start>=n && start<=e;
+      });
+    }
+    if(noteAtCursor!==undefined)annotation=tabAnnotationForNote(value,noteAtCursor);
+  }
+
+  if(annotation){
+    let content=value.slice(annotation.start,annotation.end);
+    let rel=Math.max(0,Math.min(start-annotation.start,content.length));
+
+    // Button identity is one semantic field. Clicking any plain or circled
+    // number replaces an existing button number instead of accumulating one.
+    const isNumber=/^(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])$/.test(ch);
+    const isArrow=ch==="↓"||ch==="↑";
+    if(isNumber){
+      const re=/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/g;
+      const matches=[...content.matchAll(re)];
+      if(matches.length){
+        const hit=matches[0],a=hit.index,b=a+hit[0].length;
+        content=content.slice(0,a)+ch+content.slice(b);
+        rel=a+ch.length;
+      }else{
+        content=content.slice(0,rel)+ch+content.slice(rel);
+        rel+=ch.length;
+      }
+      // A newly selected button defaults to Push when the annotation does
+      // not already specify a direction. Preserve an existing Push/Draw.
+      if(!/[↓↑]/.test(content)){
+        content+="↓";
+      }
+    }else if(isArrow){
+      const idx=Math.max(content.indexOf("↓"),content.indexOf("↑"));
+      if(idx>=0){
+        content=content.slice(0,idx)+ch+content.slice(idx+1);
+        rel=idx+ch.length;
+      }else{
+        content=content.slice(0,rel)+ch+content.slice(rel);
+        rel+=ch.length;
+      }
+    }else if(ch==="*"){
+      // Toggle the top-row marker. When present it always belongs immediately
+      // after the button number.
+      if(content.includes("*")){
+        const star=content.indexOf("*");
+        content=content.replace(/\*/g,"");
+        rel=Math.min(star,content.length);
+      }else{
+        const button=content.match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/);
+        if(button){
+          const pos=button.index+button[0].length;
+          content=content.slice(0,pos)+"*"+content.slice(pos);
+          rel=pos+1;
+        }else{
+          content=content.slice(0,rel)+"*"+content.slice(rel);
+          rel+=1;
+        }
+      }
+    }else{
+      content=content.slice(0,rel)+ch+content.slice(rel);
+      rel+=ch.length;
+    }
+    // Canonical injected-tab order is always:
+    // _ + button number + optional * + ; + Push/Draw arrow.
+    content=normalizeTabOverrideContent(content);
+    const semicolon=content.indexOf(";");
+    if(isNumber||ch==="*")rel=semicolon>=0?semicolon:content.length;
+    else if(isArrow)rel=content.length;
+    else rel=Math.min(rel,content.length);
+    ta.setRangeText(content,annotation.start,annotation.end,"end");
+    const newPos=annotation.start+rel;
+    ta.setSelectionRange(newPos,newPos);
+  }else{
+    const isNumber=/^(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])$/.test(ch);
+    const initialContent=normalizeTabOverrideContent("_"+ch+(isNumber?";↓":""));
+    const insert='"'+initialContent+'"';
+    ta.setRangeText(insert,start,end,"end");
+    // Leave the cursor inside the quotes. For a number, place it just before
+    // the default Push arrow so * can still be inserted naturally after it.
+    const newPos=start+2+ch.length;
+    ta.setSelectionRange(newPos,newPos);
+  }
+
+  ta.focus({preventScroll:true});
+  // After the first palette action, the cursor inside the annotation becomes
+  // authoritative for subsequent palette actions.
+  tabOverrideAnchorPos=null;
+  setAbcDirty(true);
+  syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons();
+}
+
+function clampPopoverToViewport(pop){
+  if(pop.hidden)return;
+  const margin=8,w=pop.offsetWidth,h=pop.offsetHeight;
+  let left=parseFloat(pop.style.left)||margin,top=parseFloat(pop.style.top)||margin;
+  left=Math.min(Math.max(margin,left),Math.max(margin,window.innerWidth-w-margin));
+  top=Math.min(Math.max(margin,top),Math.max(margin,window.innerHeight-h-margin));
+  pop.style.left=left+"px";pop.style.top=top+"px";
+}
+function makePopoverDraggable(pop,handle){
+  let drag=null;
+  handle.addEventListener("pointerdown",e=>{
+    if(e.button!==undefined&&e.button!==0)return;
+    if(e.target.closest("button,a,input,select,textarea"))return;
+    const r=pop.getBoundingClientRect();
+    drag={id:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};
+    pop.dataset.dragged="1";
+    document.body.classList.add("popoverDragging");
+    try{handle.setPointerCapture(e.pointerId)}catch(_){}
+    e.preventDefault();
+  });
+  handle.addEventListener("pointermove",e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    const margin=8,w=pop.offsetWidth,h=pop.offsetHeight;
+    const left=Math.min(Math.max(margin,e.clientX-drag.dx),Math.max(margin,window.innerWidth-w-margin));
+    const top=Math.min(Math.max(margin,e.clientY-drag.dy),Math.max(margin,window.innerHeight-h-margin));
+    pop.style.left=left+"px";pop.style.top=top+"px";
+    e.preventDefault();
+  });
+  const stop=e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    drag=null;document.body.classList.remove("popoverDragging");
+    try{handle.releasePointerCapture(e.pointerId)}catch(_){}
+  };
+  handle.addEventListener("pointerup",stop);
+  handle.addEventListener("pointercancel",stop);
+}
+
+function positionTabDiagramPopover(){
+  const pop=$("tabDiagramPopover"),anchor=$("tabFingeringDiagramBtn");if(pop.hidden)return;
+  const r=anchor.getBoundingClientRect(),margin=8;pop.style.left="0px";pop.style.top="0px";
+  const w=pop.offsetWidth,h=pop.offsetHeight;
+  let left=Math.min(Math.max(margin,r.right-w),window.innerWidth-w-margin),top=r.bottom+6;
+  if(top+h>window.innerHeight-margin)top=Math.max(margin,r.top-h-6);
+  pop.style.left=left+"px";pop.style.top=top+"px";
+}
+function toggleTabDiagramPopover(){
+  const pop=$("tabDiagramPopover");pop.hidden=!pop.hidden;
+  // Once dragged, preserve this popover's position for the rest of this page use.
+  // No localStorage persistence is intentional.
+  if(!pop.hidden&&!pop.dataset.dragged)requestAnimationFrame(positionTabDiagramPopover);
+}
+function positionTabOverridePopover(){
+  const pop=$("tabOverridePopover"),btn=$("tabOverrideBtn");if(pop.hidden)return;
+  const r=btn.getBoundingClientRect(),margin=8;
+  pop.style.left="0px";pop.style.top="0px";
+  const w=pop.offsetWidth,h=pop.offsetHeight;
+  let left=Math.min(Math.max(margin,r.right-w),window.innerWidth-w-margin);
+  let top=r.bottom+6;
+  if(top+h>window.innerHeight-margin)top=Math.max(margin,r.top-h-6);
+  pop.style.left=left+"px";pop.style.top=top+"px";
+}
+let tabOverrideAnchorPos=null;
+
+function toggleTabOverridePopover(){
+  const pop=$("tabOverridePopover");
+  const opening=pop.hidden;
+  if(opening){
+    // A notation click or manual editor action may leave ABC selected.
+    // The palette inserts/edits at the cursor, so collapse that selection
+    // to its start before opening to avoid replacing the selected note.
+    const ta=$("abcText");
+    if(ta&&!ta.disabled){
+      const start=Number.isInteger(ta.selectionStart)?ta.selectionStart:0;
+      ta.setSelectionRange(start,start);
+      // Remember the editor location independently of textarea focus. Clicking
+      // a palette control moves focus away from the editor on some browsers.
+      tabOverrideAnchorPos=start;
+    }
+  }
+  pop.hidden=!pop.hidden;
+  // Once dragged, preserve this popover's position for the rest of this page use.
+  // No localStorage persistence is intentional.
+  if(!pop.hidden&&!pop.dataset.dragged)requestAnimationFrame(positionTabOverridePopover);
+}
+
+
+const EDITOR_SIZE_KEY="abcAngloEditorTextSize";
+function applyEditorTextSize(size,save=false){
+  if(!["small","medium","large","largest"].includes(size))size="medium";
+  const ta=$("abcText");
+  ta.classList.remove("editorTextSmall","editorTextMedium","editorTextLarge","editorTextLargest");
+  ta.classList.add("editorText"+size[0].toUpperCase()+size.slice(1));
+  $("editorTextSize").value=size;
+  if(save)try{localStorage.setItem(EDITOR_SIZE_KEY,size)}catch(_){}
+}
+function restoreEditorTextSize(){
+  let size="medium";
+  try{size=localStorage.getItem(EDITOR_SIZE_KEY)||"medium"}catch(_){}
+  applyEditorTextSize(size,false);
+}
+function abcNoteTokens(value){
+  // Return complete ABC note-token ranges. A token starts with any accidental
+  // prefix (^, ^^, _, __, =) and ends after octave marks and/or duration.
+  // Quoted text, headers/comments, decorations and grace groups are ignored.
+  const tokens=[]; let inQuote=false,inGrace=false,lineStart=true,headerLine=false;
+  for(let i=0;i<value.length;){
+    const c=value[i];
+    if(lineStart){
+      headerLine=/^[A-Za-z]:/.test(value.slice(i,i+2)) || c==="%";
+      lineStart=false;
+    }
+    if(c==="\n"||c==="\r"){lineStart=true;headerLine=false;i++;continue}
+    if(headerLine){i++;continue}
+    if(c==='"'){inQuote=!inQuote;i++;continue}
+    if(inQuote){i++;continue}
+    if(c==="{"){inGrace=true;i++;continue}
+    if(c==="}"){inGrace=false;i++;continue}
+    if(inGrace){i++;continue}
+    if(c==="!"){const e=value.indexOf("!",i+1);i=e>=0?e+1:i+1;continue}
+    if(c==="+"){const e=value.indexOf("+",i+1);i=e>=0?e+1:i+1;continue}
+
+    const start=i;
+    let j=i;
+    // ABC accidentals: ^, ^^, _, __, or =.
+    if(value[j]==="=")j++;
+    else if(value[j]==="^"||value[j]==="_"){
+      const accidental=value[j++];
+      if(value[j]===accidental)j++;
+    }
+
+    if(/[A-Ga-g]/.test(value[j]||"")){
+      const pitch=j;
+      j++;
+      // Octave markers belong to the note token.
+      while(value[j]==="'"||value[j]===",")j++;
+      // ABC length suffix: digits and slash forms such as 2, /, /2, //, 3/2.
+      while(/[0-9/]/.test(value[j]||""))j++;
+      tokens.push({start,end:j,pitch});
+      i=j;
+      continue;
+    }
+    i++;
+  }
+  return tokens;
+}
+function abcNoteStarts(value){
+  return abcNoteTokens(value).map(t=>t.start);
+}
+function noteTokenAtPosition(value,pos){
+  const tokens=abcNoteTokens(value);
+  // Treat either a position inside the token or exactly at its end as belonging
+  // to that token. abcjs/browser source selections can collapse at either edge.
+  return tokens.find(t=>pos>=t.start&&pos<=t.end) || null;
+}
+function tabAnnotationForNote(value,notePos){
+  // Find a valid quoted tab annotation immediately before this note, allowing
+  // horizontal whitespace between the closing quote and the note.
+  let close=notePos-1;
+  while(close>=0&&/[ \t]/.test(value[close]))close--;
+  if(close<0||value[close]!=='"')return null;
+  const open=value.lastIndexOf('"',close-1);
+  if(open<0)return null;
+  const content=value.slice(open+1,close);
+  if(!validTabAnnotationText(content))return null;
+  return {start:open+1,end:close};
+}
+
+function moveTabOverrideToNote(direction){
+  tabOverrideAnchorPos=null;
+  const ta=$("abcText"),value=ta.value,notes=abcNoteStarts(value);
+  if(!notes.length)return;
+  const pos=ta.selectionStart??0;
+  const annotation=ta.selectionStart===ta.selectionEnd?quotedAnnotationAtCursor(value,pos):null;
+  // Resolve an annotation to the exact musical note it belongs to before
+  // choosing Previous/Next. This keeps repeated navigation independent of
+  // the particular cursor position used inside the annotation.
+  const appliedNote=annotation?notes.find(n=>n>annotation.end):undefined;
+  const reference=appliedNote!==undefined?appliedNote:pos;
+
+  let target=-1;
+  if(direction<0){
+    for(let i=notes.length-1;i>=0;i--)if(notes[i]<reference){target=notes[i];break}
+  }else{
+    for(let i=0;i<notes.length;i++)if(notes[i]>reference){target=notes[i];break}
+  }
+  if(target<0)return;
+  ta.focus({preventScroll:true});
+  const existing=tabAnnotationForNote(value,target);
+  if(existing){
+    // Select a position inside the annotation so the next palette click
+    // edits/replaces its semantic fields rather than inserting a second one.
+    const inside=Math.min(existing.end,existing.start+1);
+    ta.setSelectionRange(inside,inside);
+  }else{
+    // No annotation for this note: the next palette click will create one
+    // immediately before the note.
+    ta.setSelectionRange(target,target);
+  }
+  const line=value.slice(0,target).split(/\r?\n/).length;
+  const lh=parseFloat(getComputedStyle(ta).lineHeight)||18;
+  ta.scrollTop=Math.max(0,(line-3)*lh);
+}
+
 function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=15&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
@@ -2043,17 +2843,136 @@ function showEnablePlaybackButton(){
   audio.appendChild(btn);
 }
 
-async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{responsive:"resize",add_classes:true});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
+function selectClickedNotationNote(abcelem){
+  if(!abcelem||!Number.isInteger(abcelem.startChar)||!Number.isInteger(abcelem.endChar))return;
+
+  // renderAbc() receives playbackABC, which has a fixed block inserted before K:.
+  // Melody-note source offsets therefore need that prefix removed to map back to
+  // the editable ABC.
+  let start=abcelem.startChar-prefixLength;
+  let end=abcelem.endChar-prefixLength;
+  const ta=$("abcText");
+  if(!ta||start<0||end<=start)return;
+  start=Math.min(start,ta.value.length);
+  end=Math.min(end,ta.value.length);
+
+  // abcjs source ranges are not guaranteed to cover the whole ABC note token:
+  // they may begin at the pitch letter (omitting an accidental) or end before
+  // octave/length suffixes. Find the complete musical token whose pitch/range
+  // overlaps the clicked source range, then select that whole token.
+  const clickedToken=abcNoteTokens(ta.value).find(t=>
+    (t.pitch>=start&&t.pitch<end) || (t.start<end&&t.end>start)
+  );
+  if(clickedToken){
+    start=clickedToken.start;
+    end=clickedToken.end;
+  }else{
+    while(start<end && /\s/.test(ta.value[start]))start++;
+    while(end>start && /\s/.test(ta.value[end-1]))end--;
+  }
+  if(end<=start)return;
+
+  ta.focus({preventScroll:true});
+  ta.setSelectionRange(start,end);
+
+  // Keep the selected ABC visible without moving the notation pane.
+  const before=ta.value.slice(0,start);
+  const line=before.split("\n").length-1;
+  const lineHeight=parseFloat(getComputedStyle(ta).lineHeight)||20;
+  ta.scrollTop=Math.max(0,(line*lineHeight)-(ta.clientHeight/2)+(lineHeight/2));
+}
+
+async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+  responsive:"resize",
+  add_classes:true,
+  clickListener:function(abcelem){
+    selectClickedNotationNote(abcelem);
+  }
+});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
     if(sharePlaybackNeedsGesture){
       showEnablePlaybackButton();
       return;
     }
     const cursorControl={onStart(){removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible()}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){removeCursor();drawDiagram(null,true)}};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});await controller.setTune(visual[0],false,{});if(gen!==renderGeneration)return;installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
 let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
-function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
-$("openFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{sharePlaybackNeedsGesture=false;processLoadedABC(await f.text(),f.name)}catch(err){alert("File load failed: "+(err.message||err))}});
-$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("abcText").addEventListener("input",()=>{syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons()});$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+$("saveAbcBtn").addEventListener("click",saveCurrentCollection);
+$("openFile").addEventListener("change",async e=>{
+  const input=e.target,f=input.files&&input.files[0];if(!f)return;
+  if(!(await confirmDiscardDirtyForOpen())){input.value="";return}
+  try{
+    const abc=await f.text();
+    sharePlaybackNeedsGesture=false;
+    manualEntryCollection=false;
+    currentSaveBaseName=baseNameForSave(f.name);
+    processLoadedABC(abc,f.name);
+  }catch(err){
+    input.value="";
+    alert("File load failed: "+(err.message||err));
+  }
+});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+
+function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
+function beginManualTuneIfNeeded(){
+  const text=$("abcText").value;
+  if(tunes.length||!text.trim())return;
+  tunes=[text];loadedABC=text;currentTune=0;manualEntryCollection=true;currentSaveBaseName="";
+  $("saveAbcBtn").disabled=false;
+  populateTuneSelector("Entered ABC");
+  $("tuneSelect").value="0";
+  $("tabOverrideBtn").disabled=false;
+}
+async function showMultiplePasteAlert(){
+  const message="Pasting multiple tunes into the ABC editor is not allowed.<br><br>Please save the multiple tunes to a <b>.abc</b> file and then load the file into the tool.";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function")await DayPilot.Modal.alert(message,{top:100,width:460});
+  else alert("Pasting multiple tunes into the ABC editor is not allowed.\n\nPlease save the multiple tunes to a .abc file and then load the file into the tool.");
+}
+$("abcText").addEventListener("paste",e=>{
+  const pasted=(e.clipboardData||window.clipboardData)?.getData("text")||"";
+  const ta=e.currentTarget,start=ta.selectionStart??ta.value.length,end=ta.selectionEnd??start;
+  const resulting=ta.value.slice(0,start)+pasted+ta.value.slice(end);
+  if(splitTunes(resulting).length>1){e.preventDefault();showMultiplePasteAlert()}
+});
+$("abcText").addEventListener("input",()=>{
+  setAbcDirty(true);
+  beginManualTuneIfNeeded();
+  syncCurrentTuneFromEditor();
+  const text=$("abcText").value;
+  if(hasMinimumABCForRender(text))scheduleRebuild();
+  updateShareButtons();
+});
+$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
 function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>drawDiagram(currentDiagramItem,true))}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false)});
+// Firefox may restore textarea/form state across a reload. Clear the ABC editor
+// synchronously at startup so stale ABC is never visible. Keep the empty editor
+// enabled so a user can immediately type or paste a single tune.
+$("abcText").value="";
+$("abcText").disabled=false;
+buildTabOverridePalette();
+restoreEditorTextSize();
+$("editorTextSize").addEventListener("change",e=>applyEditorTextSize(e.target.value,true));
+$("tabPrevNote").addEventListener("click",e=>{e.preventDefault();moveTabOverrideToNote(-1)});
+$("tabNextNote").addEventListener("click",e=>{e.preventDefault();moveTabOverrideToNote(1)});
+
+makePopoverDraggable($("tabOverridePopover"),$("tabOverridePopover").querySelector(".tabOverrideTop"));
+makePopoverDraggable($("tabDiagramPopover"),$("tabDiagramPopover"));
+$("tabOverrideBtn").addEventListener("click",e=>{e.stopPropagation();$("tabDiagramPopover").hidden=true;toggleTabOverridePopover()});
+$("tabFingeringDiagramBtn").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();toggleTabDiagramPopover()});
+$("tabOverridePopover").addEventListener("click",e=>{
+  const key=e.target.closest("[data-tab-char]");
+  if(key){e.preventDefault();insertTabOverrideCharacter(key.dataset.tabChar)}
+});
+document.addEventListener("pointerdown",e=>{
+  const pop=$("tabOverridePopover"),diagram=$("tabDiagramPopover");
+  if(!diagram.hidden&&!diagram.contains(e.target)&&e.target!==$("tabFingeringDiagramBtn"))diagram.hidden=true;
+  if(!pop.hidden&&!pop.contains(e.target)&&!diagram.contains(e.target)&&e.target!==$("tabOverrideBtn")){pop.hidden=true;diagram.hidden=true}
+});
+window.addEventListener("resize",()=>{
+  const p=$("tabOverridePopover"),d=$("tabDiagramPopover");
+  p.dataset.dragged?clampPopoverToViewport(p):positionTabOverridePopover();
+  d.dataset.dragged?clampPopoverToViewport(d):positionTabDiagramPopover();
+});
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
