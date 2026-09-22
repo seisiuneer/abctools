@@ -226,7 +226,7 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.43</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.44</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control"><label>ABC file</label><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -252,8 +252,8 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Opening and Selecting Tunes</p>
       <p>
-        Open an <b>ABC file</b> containing one or more tunes. If the file contains
-        multiple tunes, choose the tune from the <b>Tune</b> menu.
+        Open an <b>ABC file</b> containing one or more tunes, or send a set of tunes directly from
+        <b>ABC Transcription Tools</b>. If more than one tune is loaded, choose the tune from the <b>Tune</b> menu.
       </p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
@@ -319,7 +319,7 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
       </p>
       <p>Opening a share link restores its concertina style (Jeffries or Wheatstone) and fingering settings (Cross-Row or On-Row) and displays the
         first tune encoded in the link.</p>
-      <p>When a tune is opened from a share link, click the
+      <p>When tunes are opened from a share link or transferred directly from <b>ABC Transcription Tools</b>, click the
         <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.
         This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.
       </p>
@@ -1892,6 +1892,69 @@ function processLoadedABC(abc,label){
   loadTune(0,false);
 }
 
+/* ============================================================
+   ABC Transcription Tools direct-transfer message support.
+   Uses the same startup handshake as the ABC Chord Chart Generator.
+   ============================================================ */
+function trustedABCTranscriptionToolsMessage(event){
+  const expectedSources=[];
+  if(window.opener)expectedSources.push(window.opener);
+  if(window.parent&&window.parent!==window)expectedSources.push(window.parent);
+  if(expectedSources.length&&!expectedSources.includes(event.source))return false;
+  if(window.location.protocol==="file:")return true;
+  return event.origin===window.location.origin||event.origin==="https://michaeleskin.com";
+}
+function acknowledgeABCTranscriptionToolsLoad(event,messageId,tuneCount){
+  if(!event.source||typeof event.source.postMessage!=="function")return;
+  try{
+    event.source.postMessage({
+      type:"abcjsEskinWebsiteBuilderABCLoaded",
+      messageId:messageId||"",
+      tuneCount
+    },event.origin&&event.origin!=="null"?event.origin:"*");
+  }catch(error){
+    console.warn("Unable to acknowledge ABC Transcription Tools load message.",error);
+  }
+}
+function loadABCFromABCTranscriptionTools(data,event){
+  const abcText=typeof data.abc==="string"?data.abc:"";
+  const sourceName=String(data.sourceName||"ABC Transcription Tools").trim()||"ABC Transcription Tools";
+  if(!abcText.trim())return;
+  try{
+    if($("openFile"))$("openFile").value="";
+    sharePlaybackNeedsGesture=true;
+    processLoadedABC(abcText,sourceName);
+    acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
+  }catch(error){
+    console.error(error);
+    alert("Unable to load ABC from "+sourceName+": "+(error&&error.message||error));
+  }
+}
+function handleABCTranscriptionToolsMessage(event){
+  if(!trustedABCTranscriptionToolsMessage(event))return;
+  const data=event.data||{};
+  if(data.type!=="abcjsEskinWebsiteBuilderLoadABC")return;
+  loadABCFromABCTranscriptionTools(data,event);
+}
+function notifyABCTranscriptionToolsReady(){
+  const message={type:"abcjsEskinWebsiteBuilderReady"};
+  const targets=[];
+  if(window.opener)targets.push(window.opener);
+  if(window.parent&&window.parent!==window)targets.push(window.parent);
+  targets.forEach(target=>{
+    try{target.postMessage(message,"*")}catch(error){
+      console.warn("Unable to notify ABC Transcription Tools that the Anglo concertina fingering player is ready.",error);
+    }
+  });
+}
+let gABCTranscriptionToolsHandshakeStarted=false;
+function startABCTranscriptionToolsHandshake(){
+  if(gABCTranscriptionToolsHandshakeStarted)return;
+  gABCTranscriptionToolsHandshakeStarted=true;
+  window.addEventListener("message",handleABCTranscriptionToolsMessage);
+  [0,250,750,1500].forEach(delay=>setTimeout(notifyABCTranscriptionToolsReady,delay));
+}
+
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
   const payload=params.get("def");
@@ -1991,7 +2054,7 @@ function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor
 $("openFile").addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{sharePlaybackNeedsGesture=false;processLoadedABC(await f.text(),f.name)}catch(err){alert("File load failed: "+(err.message||err))}});
 $("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("abcText").addEventListener("input",()=>{syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons()});$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
 function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>drawDiagram(currentDiagramItem,true))}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false)});
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
 // installed. Handle both states so share links are always consumed.
