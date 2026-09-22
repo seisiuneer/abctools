@@ -9,7 +9,12 @@
 //
 //
 //
-// Updated 21 Sep 2026 1100
+//
+//
+//
+// Updated 21 Sep 2026 1830
+//
+//
 //
 //
 //
@@ -21,7 +26,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3345';
+const cacheName = 'abctoolscache-3346';
 
 const contentToCache = [
     'abctools.html',
@@ -106,6 +111,7 @@ const contentToCache = [
     'img/tool_abc2csv_2.jpg',
     'img/tool_custominstrument_2.jpg',
     'img/tool_chord_grid_1.jpg',
+    'img/tool-abc-anglo-player-1.jpg',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',
