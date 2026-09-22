@@ -37,9 +37,9 @@
   gtag('config', 'G-VM0N9HL3MK');
 </script>
 
-<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet"/>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260922_0235" rel="stylesheet"/>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260922_0235"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260922_0235"></script>
 
 <style>
 :root{color-scheme:light;--fs-base:clamp(15px,1.05vw + 12px,17px);--page-pad:32px;--helpbar-est-height:62px}
@@ -379,7 +379,7 @@ select::-ms-expand{display:none}
 <body>
 <div class="app">
   <header class="app-header">
-    <div class="appVersion">Version 1.06</div>
+    <div class="appVersion">Version 1.08</div>
     <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
     </a>
@@ -473,11 +473,15 @@ select::-ms-expand{display:none}
     -->
     <div id="helpText">
 
+      <p><b>Getting Started</b></p>
+
       <p>
         <b>ABC Live Transcriber</b> listens as you play and adds recognized pitches to the ABC area.
         Click <b>Start Listening</b>, allow microphone access, and play one sustained note at a time.
         The tool is optimized for notes from <b>G below middle C (G3)</b> through <b>D7</b>.
       </p>
+
+      <p><b>Input and Transcription Settings</b></p>
 
       <p>
         Set <b>Input gain</b> as needed.
@@ -502,6 +506,8 @@ select::-ms-expand{display:none}
         still shows the note actually played, while the ABC output is written one octave lower.
       </p>
 
+      <p><b>Transcribing Notes</b></p>
+
       <p>
         For best results, use a clean monophonic instrument tone, avoid chords, and leave a small
         separation between repeated notes of the same pitch.
@@ -516,23 +522,20 @@ select::-ms-expand{display:none}
         Duration is not measured; every detected note is entered as a single ABC note.
       </p>
 
+      <p><b>Editing the ABC</b></p>
+
       <p>
         The buttons below the ABC area insert spaces, barlines, repeats, line breaks, duration
         modifiers, triplets, and grace-note braces at the current insertion point. If text is selected,
         the inserted item replaces the selection and the insertion point moves immediately after it.
       </p>
 
-      <p>
-        The <b>Notation Preview</b> above the ABC area automatically updates whenever the ABC changes.
-        For longer tunes, scroll within the preview area to see additional notation.
-      </p>
+      <p><b>Notation Preview and Playback</b></p>
 
       <p>
-        On wider screens, drag the <b>vertical split bar</b> between the left controls and the right
-        notation/ABC area to give either side more room. Drag the <b>horizontal split bar</b> between the
-        notation/playback panel and the ABC editor to resize those areas. Both split positions are saved
-        as percentages and restored the next time the tool is opened. Double-click either split bar to
-        reset that split to 50/50.
+        The <b>Notation Preview</b> above the ABC area automatically updates whenever the ABC changes.
+        Click a note in the rendered notation to highlight it and select the corresponding note text in the ABC editor, making it easy to replace that note.
+        For longer tunes, scroll within the preview area to see additional notation.
       </p>
 
       <p>
@@ -544,8 +547,20 @@ select::-ms-expand{display:none}
         is paused or finishes.
       </p>
 
+      <p><b>Resizing the Workspace</b></p>
+
       <p>
-        <b>Clear ABC</b> restores the standard ABC header using the currently selected key.
+        On wider screens, drag the <b>vertical split bar</b> between the left controls and the right
+        notation/ABC area to give either side more room. Drag the <b>horizontal split bar</b> between the
+        notation/playback panel and the ABC editor to resize those areas. Both split positions are saved
+        as percentages and restored the next time the tool is opened. Double-click either split bar to
+        reset that split to 50/50.
+      </p>
+
+      <p><b>Clearing, Saving, and Exporting</b></p>
+
+      <p>
+        <b>Clear ABC</b> restores the standard ABC header using the currently selected key and meter.
       </p>
 
       <p>
@@ -553,11 +568,15 @@ select::-ms-expand{display:none}
         directly in the <strong>ABC Transcription Tools</strong>.
       </p>
 
+      <p><b>Saved Settings</b></p>
+
       <p>
         Your <b>Input gain</b>, <b>Key</b>, <b>Meter</b>, tin-whistle octave-transposition setting, and
         left/right and preview/editor split positions are saved automatically in this browser and restored the next time
         the tool is opened.
       </p>
+
+      <p><b>About</b></p>
 
       <p>
         This <strong>ABC Live Transcriber</strong> tool was created by
@@ -642,7 +661,23 @@ async function updatePreview(){
     audio.innerHTML='';
     const visual=ABCJS.renderAbc('abcPreview',abcText.value,{
       responsive:'resize',
-      add_classes:true
+      add_classes:true,
+      clickListener:function(abcelem){
+        if(!abcelem||!abcelem.startChar||!abcelem.endChar)return;
+        let start=abcelem.startChar;
+        let end=abcelem.endChar;
+        if(!Number.isInteger(start)||!Number.isInteger(end)||end<=start)return;
+        while(start<end && /\s/.test(abcText.value[start]))start++;
+        while(end>start && /\s/.test(abcText.value[end-1]))end--;
+        if(end<=start)return;
+        abcText.focus();
+        abcText.setSelectionRange(start,end);
+        const before=abcText.value.slice(0,start);
+        const line=before.split('\n').length-1;
+        const lineHeight=parseFloat(getComputedStyle(abcText).lineHeight)||20;
+        const targetTop=Math.max(0,(line*lineHeight)-(abcText.clientHeight/2)+(lineHeight/2));
+        abcText.scrollTop=targetTop;
+      }
     });
     if(generation!==previewGeneration)return;
     if(!visual||!visual.length)return;
@@ -1123,7 +1158,7 @@ document.getElementById('backspaceBtn').onclick=()=>{
 document.getElementById('openBtn').onclick=openTools;
 const overlay=document.getElementById('helpOverlay');document.getElementById('helpBtn').onclick=()=>overlay.style.display='block';document.getElementById('helpClose').onclick=()=>overlay.style.display='none';overlay.onclick=e=>{if(e.target===overlay)overlay.style.display='none'};document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.style.display='none'});
 </script>
-<script src="pako.min.js?cb=20260920_1125"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+<script src="pako.min.js?cb=20260922_0235"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260922_0235"></script>
 </body>
 </html>
