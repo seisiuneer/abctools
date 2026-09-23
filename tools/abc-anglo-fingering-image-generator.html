@@ -171,10 +171,11 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
   }
   .modal_instructions_content{padding:18px 18px 14px!important}
 }
+
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.10</div>
+<header class="app-header"><div class="version">Version 1.24</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -188,12 +189,11 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
   </section>
   <section class="card">
     <button id="generateBtn" disabled>Generate JPEG Images and Save ZIP</button>
-    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Green</b>.</p>
+    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. Compatible Anglo concertina tab annotations override the automatic fingering used for the exported note images. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Green</b>.</p>
   </section>
   <section class="card"><h2>Status</h2><div id="status" class="status">Ready. Open an ABC file.</div></section>
   <button id="instructionsBtn" type="button">Instructions</button>
 </main>
-
 <script src="daypilot-modal.min-3.10.1.js"></script>
 <script src="jszip-min.js"></script>
 
@@ -1529,9 +1529,8 @@ async function showInstructions() {
     <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
 
     <h3>4. Generate the images</h3>
-    <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the button and bellows direction for each note.</p>
-    <p>One JPEG is created for every note. The tune title appears at the top and the current note name is shown prominently below it. The upper-left shows the note position, fingering system, and On-Row/Cross-Row style.</p>
-    <p>The required concertina button is circled on the diagram. <b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>. A Push/Draw legend is included at the bottom.</p>
+    <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the default button and bellows direction for each note.</p>
+    <p>If the ABC contains compatible Anglo Concertina tablature annotations created by ABC Transcription Tools or the ABC Anglo Concertina Fingering Player, those annotations override the automatic fingering for their individual notes. Notes without an override continue to use the selected automatic On-Row or Cross-Row solution.</p>
 
     <h3>5. File names and ZIP file</h3>
     <p>JPEGs are named from the tune title followed by the three-digit note index, beginning with <b>001</b>, for example <b>Kesh_001.jpg</b>.</p>
@@ -1624,16 +1623,7 @@ function sanitize(s) {
 }
 function setStatus(s) { $("status").textContent = s; }
 
-$("openFile").addEventListener("change", async e => {
-  const f = e.target.files && e.target.files[0];
-  if (!f) return;
-  loadedABC = await f.text();
-  loadedFileName = f.name;
-  const tunes = splitTunes(loadedABC);
-  $("generateBtn").disabled = !tunes.length;
-  $("fileInfo").textContent = `${f.name} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
-  setStatus(`Loaded ${f.name}. Ready to generate fingering images.`);
-});
+/* Enhanced editable file-open behavior is installed below. */
 
 function buttonLayout() {
   const leftX=[90,200,310,420,530], rightX=[750,860,970,1080,1190];
@@ -1721,14 +1711,14 @@ $("generateBtn").addEventListener("click", async()=>{
   if (!loadedABC) return;
   if (typeof JSZip==="undefined") { setStatus("JSZip is not loaded."); return; }
   const system=$("system").value, style=$("style").value;
-  const tunes=splitTunes(loadedABC);
+  const exportTunes=splitTunes(loadedABC);
   const zip=new JSZip();
   $("generateBtn").disabled=true; $("openFile").disabled=true;
   try {
     let totalImages=0, skipped=[];
-    for (let ti=0; ti<tunes.length; ti++) {
-      const tune=tunes[ti], title=firstTitle(tune,ti+1);
-      setStatus(`Solving ${ti+1} of ${tunes.length}: ${title}`);
+    for (let ti=0; ti<exportTunes.length; ti++) {
+      const tune=exportTunes[ti], title=firstTitle(tune,ti+1);
+      setStatus(`Solving ${ti+1} of ${exportTunes.length}: ${title}`);
       let solution;
       try {
         // angloFingeringsGenerator contains the solver implementation and
@@ -1738,6 +1728,7 @@ $("generateBtn").addEventListener("click", async()=>{
         gInjectTab_ConcertinaFingering = style === "cross" ? 1 : 0;
         const tuneForSolver = stripChordSymbols(tune);
         solution = angloFingeringsGenerator(tuneForSolver);
+        applyInjectedTabOverrides(tune, solution);
       }
       catch(err) { skipped.push(`${title}: ${err.message||err}`); continue; }
       const base=sanitize(title);
@@ -1752,7 +1743,7 @@ $("generateBtn").addEventListener("click", async()=>{
       }
     }
     if (!totalImages) throw new Error(skipped.length ? "No images generated. "+skipped.join(" | ") : "No notes found.");
-    const zipFirst = tunes.length > 1 ? "Multiple" : sanitize(firstTitle(tunes[0], 1)).replace(/\s+/g, "_");
+    const zipFirst = exportTunes.length > 1 ? "Multiple" : sanitize(firstTitle(exportTunes[0], 1)).replace(/\s+/g, "_");
     const zipSystem = system === "jeffries" ? "Jeffries" : "Wheatstone";
     const zipStyle = style === "cross" ? "Cross-Row" : "On-Row";
     const suggested = `${zipFirst}_${zipSystem}_${zipStyle}.zip`;
@@ -1771,6 +1762,39 @@ $("generateBtn").addEventListener("click", async()=>{
   }
 });
 
+
+
+const CIRCLED_BUTTON_NUMBERS={"①":1,"②":2,"③":3,"④":4,"⑤":5,"⑥":6,"⑦":7,"⑧":8,"⑨":9,"⑩":10};
+function parseInjectedConcertinaTab(text){
+  if(!text)return null;
+  let t=String(text).trim().replace(/^[_^]/,"").trim();
+  const direction=t.includes("↓")?"push":t.includes("↑")?"draw":null;
+  if(!direction)return null;
+  let hand=null,num=null;
+  for(const glyph of Object.keys(CIRCLED_BUTTON_NUMBERS))if(t.includes(glyph)){hand="R";num=CIRCLED_BUTTON_NUMBERS[glyph];break}
+  if(num==null){const m=t.match(/(?:^|\s)(10|[1-9])(?=\s*[*;↓↑]|\s*$)/);if(m){hand="L";num=parseInt(m[1],10)}}
+  if(num==null)return null;
+  const topRow=/\*/.test(t);if(topRow&&num>5)return null;
+  return {button:hand+String(num)+(topRow?"a":""),direction};
+}
+function injectedTabBeforeNote(abc,noteIndex){
+  const before=abc.slice(0,noteIndex),m=before.match(/"([^"\r\n]*)"[ \t]*$/);
+  return m?parseInjectedConcertinaTab(m[1]):null;
+}
+function applyInjectedTabOverrides(abc,automaticSolution){
+  for(const item of automaticSolution){const o=injectedTabBeforeNote(abc,item.abcIndex);if(o){item.button=o.button;item.direction=o.direction;item.injectedTabOverride=true}}
+  return automaticSolution;
+}
+$("openFile").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  loadedABC = await f.text();
+  loadedFileName = f.name;
+  const loadedTunes = splitTunes(loadedABC);
+  $("generateBtn").disabled = !loadedTunes.length;
+  $("fileInfo").textContent = `${f.name} — ${loadedTunes.length} tune${loadedTunes.length===1?"":"s"}`;
+  setStatus(`Loaded ${f.name}. Ready to generate fingering images.`);
+});
 </script>
 </body>
 </html>
