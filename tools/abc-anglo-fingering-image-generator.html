@@ -175,7 +175,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.24</div>
+<header class="app-header"><div class="version">Version 1.26</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -186,10 +186,14 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
       <div><label for="system">Fingering system</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
       <div><label for="style">Fingering style</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
     </div>
+    <label style="display:flex;align-items:center;gap:9px;margin-top:14px;font-weight:600;cursor:pointer">
+      <input id="respectRepeats" type="checkbox" checked style="width:auto;margin:0">
+      Respect repeats and first/second endings in image sequence
+    </label>
   </section>
   <section class="card">
     <button id="generateBtn" disabled>Generate JPEG Images and Save ZIP</button>
-    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. Compatible Anglo concertina tab annotations override the automatic fingering used for the exported note images. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Green</b>.</p>
+    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. Compatible Anglo concertina tab annotations override the automatic fingering used for the exported note images. When <b>Respect repeats and first/second endings</b> is enabled, the JPEG sequence follows normal repeat playback order. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Green</b>.</p>
   </section>
   <section class="card"><h2>Status</h2><div id="status" class="status">Ready. Open an ABC file.</div></section>
   <button id="instructionsBtn" type="button">Instructions</button>
@@ -1531,6 +1535,7 @@ async function showInstructions() {
     <h3>4. Generate the images</h3>
     <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the default button and bellows direction for each note.</p>
     <p>If the ABC contains compatible Anglo Concertina tablature annotations created by ABC Transcription Tools or the ABC Anglo Concertina Fingering Player, those annotations override the automatic fingering for their individual notes. Notes without an override continue to use the selected automatic On-Row or Cross-Row solution.</p>
+    <p><b>Respect repeats and first/second endings in image sequence</b> is enabled by default and remembered in this browser. When enabled, repeated sections are expanded in the JPEG sequence, including <b>|: ... :|</b>, first/second endings written as <b>[1 ... [2 ...</b> or <b>|1 ... :|2 ...</b>, and an end repeat <b>:|</b> with no preceding start repeat, which repeats from the beginning of the tune. Turn the option off to export each written note only once in ABC order.</p>
 
     <h3>5. File names and ZIP file</h3>
     <p>JPEGs are named from the tune title followed by the three-digit note index, beginning with <b>001</b>, for example <b>Kesh_001.jpg</b>.</p>
@@ -1654,7 +1659,7 @@ function drawButton(ctx,x,y,push,draw,highlight,direction) {
   ctx.restore();
 }
 
-function makeCanvas(title, solution, item, system, style) {
+function makeCanvas(title, solution, item, system, style, playedIndex) {
   const c=document.createElement("canvas"); c.width=1280; c.height=670;
   const ctx=c.getContext("2d");
   ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
@@ -1664,7 +1669,7 @@ function makeCanvas(title, solution, item, system, style) {
   ctx.textAlign="left";
   ctx.font="400 18px Arial, Helvetica, sans-serif";
   ctx.fillStyle="#555";
-  ctx.fillText(`Note ${item.index} of ${solution.length} • ${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`,28,34);
+  ctx.fillText(`Note ${playedIndex} of ${solution.length} • ${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`,28,34);
 
   // Tune title centered at the top.
   ctx.textAlign="center";
@@ -1707,6 +1712,108 @@ async function askZipName(suggested) {
   return name;
 }
 
+
+function musicStartIndex(abc) {
+  const lines=abc.replace(/\r\n?/g,"\n").split("\n");
+  let off=0, sawK=false;
+  for(const line of lines){
+    if(sawK && !/^\s*(?:%|[A-Za-z]:)/.test(line) && line.trim()) return off;
+    if(/^\s*K\s*:/.test(line)) sawK=true;
+    off += line.length+1;
+  }
+  return 0;
+}
+
+function repeatControlTokens(abc) {
+  const out=[], start=musicStartIndex(abc);
+  let inQuote=false, inComment=false;
+  for(let i=start;i<abc.length;i++){
+    const c=abc[i];
+    if(inComment){if(c==="\n"||c==="\r")inComment=false;continue}
+    if(!inQuote && c==="%"){inComment=true;continue}
+    if(c==='"'){inQuote=!inQuote;continue}
+    if(inQuote)continue;
+    const rest=abc.slice(i);
+    let m;
+    if(rest.startsWith("|:")){out.push({type:"start",pos:i});i++;continue}
+    if((m=rest.match(/^:\|\s*([12])?/))){
+      out.push({type:"end",pos:i});
+      if(m[1]) out.push({type:m[1]==="1"?"first":"second",pos:i+2});
+      i+=m[0].length-1;continue;
+    }
+    if((m=rest.match(/^(?:\[\s*|\|\s*)([12])(?=\s|[A-Ga-g_^=])/))){
+      out.push({type:m[1]==="1"?"first":"second",pos:i});
+      i+=m[0].length-1;continue;
+    }
+  }
+  return out;
+}
+
+function expandSolutionForRepeats(abc, solution) {
+  if(!solution || !solution.length) return solution || [];
+  const controls=repeatControlTokens(abc);
+  if(!controls.length) return solution.slice();
+
+  const events=[];
+  solution.forEach((item,idx)=>events.push({type:"note",pos:item.abcIndex,item,idx}));
+  controls.forEach(x=>events.push(x));
+  const rank={start:0,first:0,end:1,second:2,note:3};
+  events.sort((a,b)=>a.pos-b.pos || (rank[a.type]||0)-(rank[b.type]||0));
+
+  const secondAfter=new Map();
+  for(let i=0;i<events.length;i++)if(events[i].type==="first"){
+    let j=i+1;
+    while(j<events.length && events[j].type!=="second")j++;
+    if(j<events.length)secondAfter.set(i,j);
+  }
+
+  const output=[];
+  let pc=0, repeatStart=0, pass=1, guard=0, activeFirst=-1;
+  const endVisits=new Map();
+  while(pc<events.length && guard++<events.length*10+200){
+    const e=events[pc];
+    if(e.type==="note"){output.push(e.item);pc++;continue}
+    if(e.type==="start"){repeatStart=pc+1;pass=1;activeFirst=-1;pc++;continue}
+    if(e.type==="first"){
+      if(pass===2){
+        const j=secondAfter.get(pc);
+        if(j!=null){pc=j;continue}
+      } else activeFirst=pc;
+      pc++;continue;
+    }
+    if(e.type==="second"){
+      // ABC also permits [1 ... [2 ... without an explicit :| between endings.
+      // In that form, [2 acts as the boundary that sends the first pass back.
+      if(pass===1 && activeFirst>=0){
+        pass=2;
+        pc=repeatStart;
+        continue;
+      }
+      pass=1;activeFirst=-1;pc++;continue;
+    }
+    if(e.type==="end"){
+      const n=endVisits.get(pc)||0;
+      if(n===0){
+        endVisits.set(pc,1);pass=2;pc=repeatStart;continue;
+      }
+      endVisits.set(pc,2);pass=1;activeFirst=-1;repeatStart=pc+1;pc++;continue;
+    }
+    pc++;
+  }
+  return output.length ? output : solution.slice();
+}
+
+function restoreRepeatPreference(){
+  let v=true;
+  try{const x=localStorage.getItem("abcAngloImageRespectRepeats");if(x!==null)v=x!=="false"}catch(_){}
+  $("respectRepeats").checked=v;
+}
+function saveRepeatPreference(){
+  try{localStorage.setItem("abcAngloImageRespectRepeats",$("respectRepeats").checked?"true":"false")}catch(_){}
+}
+restoreRepeatPreference();
+$("respectRepeats").addEventListener("change",saveRepeatPreference);
+
 $("generateBtn").addEventListener("click", async()=>{
   if (!loadedABC) return;
   if (typeof JSZip==="undefined") { setStatus("JSZip is not loaded."); return; }
@@ -1729,13 +1836,14 @@ $("generateBtn").addEventListener("click", async()=>{
         const tuneForSolver = stripChordSymbols(tune);
         solution = angloFingeringsGenerator(tuneForSolver);
         applyInjectedTabOverrides(tune, solution);
+        if ($("respectRepeats").checked) solution = expandSolutionForRepeats(tune, solution);
       }
       catch(err) { skipped.push(`${title}: ${err.message||err}`); continue; }
       const base=sanitize(title);
       for (let i=0;i<solution.length;i++) {
         const item=solution[i];
         setStatus(`Generating ${title}: image ${i+1} of ${solution.length}`);
-        const canvas=makeCanvas(title,solution,item,system,style);
+        const canvas=makeCanvas(title,solution,item,system,style,i+1);
         const blob=await canvasBlob(canvas);
         zip.file(`${base}_${String(i+1).padStart(3,"0")}.jpg`,blob);
         totalImages++;
