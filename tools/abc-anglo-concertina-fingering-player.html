@@ -374,7 +374,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.09</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.10</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -486,6 +486,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p>Click the <b>tempo percentage</b>
         box in the playback controls to open the tempo-setting dialog.
       </p>
+      <p>The tempo can be set from <b>10% to 200%</b> of the tune's notated tempo.</p>
       <p>
         The selected tempo is remembered in this browser and reused for every tune until you
         change it.
@@ -2845,17 +2846,17 @@ function moveTabOverrideToNote(direction){
 }
 
 function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style}catch(_){}}
-function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=15&&n<=200?n:100}catch(_){return 100}}
+function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function findTempoInput(){return $("audio").querySelector("input.abcjs-midi-tempo,input.abcjs-midi-current-tempo,.abcjs-midi-tempo input,.abcjs-midi-current-tempo input,.abcjs-midi-current-tempo-wrapper input,.abcjs-tempo-wrapper input,input[type='number'],input[type='text']")}
 function applyTempoToInput(input,n){if(!input)return;input.value=String(n);input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}))}
 async function openTempoDialog(input){
   if(!input||typeof DayPilot==="undefined"||!DayPilot.Modal)return;
   const current=Math.round(Number(input.value))||savedTempo();
-  const modal=await DayPilot.Modal.prompt("Tempo percentage (15–200%):",String(current),{top:150,width:460});
+  const modal=await DayPilot.Modal.prompt("Tempo percentage (10–200%):",String(current),{top:150,width:460});
   if(modal.canceled)return;
   const n=Math.round(Number(modal.result));
-  if(!Number.isFinite(n)||n<15||n>200){await DayPilot.Modal.alert("Please enter a tempo percentage from 15% to 200%.",{top:150,width:460});return openTempoDialog(input)}
+  if(!Number.isFinite(n)||n<10||n>200){await DayPilot.Modal.alert("Please enter a tempo percentage from 10% to 200%.",{top:150,width:460});return openTempoDialog(input)}
   saveTempo(n);applyTempoToInput(input,n);
 }
 function installTempoDialog(){
