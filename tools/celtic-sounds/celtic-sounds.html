@@ -1539,6 +1539,17 @@
 
           <hr class="instructions-divider"/>
 
+          <div class="instructions-subtitle">MIDI Input Transpose URL Parameter</div>
+          <div class="instructions-subbody">
+            For MIDI controllers that do not have the ability to transpose their MIDI output, you can transpose all incoming MIDI <b>Note On</b> and <b>Note Off</b> messages by adding the <b>miditranspose</b> query parameter to the page URL.
+            <div class="instructions-gap"></div>
+            The allowed range is <b>-24 to +24 semitones</b>. Positive values transpose incoming MIDI notes upward and negative values transpose them downward. For example, <b>celtic-sounds.html?miditranspose=2</b> transposes incoming notes up two semitones, while <b>celtic-sounds.html?miditranspose=-2</b> transposes them down two semitones.
+            <div class="instructions-gap"></div>
+            For the Fagerstrom GHB MIDI chanter use <b>celtic-sounds.html?miditranspose=1</b>
+          </div>
+
+          <hr class="instructions-divider"/>
+
           <div class="instructions-subtitle">Expression Source</div>
 					<div class="instructions-subbody">
 					  <b>Breath (CC2)</b> follows MIDI CC2.<br/>
@@ -4733,6 +4744,22 @@
       return { status, type, channel, data1, data2 };
     }
 
+    // Optional URL-based MIDI input transpose. Applies to all incoming Note On/Off
+    // note numbers before the tool's normal note processing. Values are limited to -24..+24.
+    const MIDI_INPUT_TRANSPOSE = (() => {
+      const raw = new URLSearchParams(window.location.search).get("miditranspose");
+      if (raw === null || raw.trim() === "") return 0;
+
+      const value = Number(raw);
+      if (!Number.isFinite(value)) return 0;
+
+      return clamp(Math.trunc(value), -24, 24);
+    })();
+
+    function transposeIncomingMidiNote(note) {
+      return clamp(note + MIDI_INPUT_TRANSPOSE, 0, 127);
+    }
+
     async function handleMidiMessage(event) {
       try {
 
@@ -4767,13 +4794,13 @@
           if (state.expressionMode === "velocity") {
             state.latestExpression = msg.data2;
           }
-          await noteOn(msg.data1, msg.data2);
+          await noteOn(transposeIncomingMidiNote(msg.data1), msg.data2);
           logLiveStatus();
           return;
         }
 
         if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
-          noteOff(msg.data1);
+          noteOff(transposeIncomingMidiNote(msg.data1));
           return;
         }
 
