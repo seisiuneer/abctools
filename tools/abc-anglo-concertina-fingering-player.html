@@ -40,10 +40,10 @@
 <script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 <style>
-:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#18e94e;--page:22px}
+:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
-.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(125px,.8fr) minmax(125px,.8fr) minmax(170px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(120px,.72fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
 .toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
 .abcWrap textarea.editorTextSmall{font-size:14px}
@@ -374,11 +374,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.10</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.16</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
  <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
+ <div class="control"><label for="fingeringDisplay">Fingering display</label><select id="fingeringDisplay"><option value="ring" selected>Button Ring</option><option value="half">Button Half</option></select></div>
  <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
@@ -435,8 +436,9 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
       <p>Select the <b>Concertina type</b> (Jeffries or Wheatstone) and
         <b>Fingering solution</b> (On-Row or Cross-Row).</p>
-      <p>These choices are
-        remembered in this browser.</p>
+      <p>Use <b>Fingering display</b> to choose how the active concertina button is highlighted. <b>Button Ring</b> draws a full colored circle around the button. <b>Button Half</b> highlights only the Push or Draw half of the button, so the bellows direction is indicated by both color and position.</p>
+      <p>The Push/Draw legend changes to match the selected Fingering display. <b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
+      <p>These choices are remembered in this browser.</p>
 
       <p>The fingering solution descriptions below are relative to C/G tuning.</p>
       <p><strong>On-Row:</strong></p>
@@ -506,11 +508,11 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Sharing Tunes</p>
       <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune,
         or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
-      <p>The link includes the current Concertina type and Fingering solution and is
+      <p>The link includes the current Concertina type, Fingering solution, and Fingering display and is
         copied to the clipboard.</p>
       <p>A share button
         is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
-      <p>Opening a share link restores its concertina style (Jeffries or Wheatstone) and fingering settings (Cross-Row or On-Row) and displays the
+      <p>Opening a share link restores its Concertina type (Jeffries or Wheatstone), Fingering solution (Cross-Row or On-Row), and Fingering display (Button Ring or Button Half), and displays the
         first tune encoded in the link.</p>
       <p>When tunes are opened from a share link or transferred directly from <b>ABC Transcription Tools</b>, click the
         <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
@@ -1830,7 +1832,7 @@ const $=id=>document.getElementById(id);
 // On iOS/iPadOS, omit the accept filter so the native file picker can select .abc as well as .txt files.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 if(IS_IOS)$("openFile").removeAttribute("accept");
-const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
+const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
@@ -1957,9 +1959,36 @@ function prepareDiagramBase(){
   const bm=mapFor(system);
   Object.keys(POS).forEach(id=>{const pair=bm[id]||["?","?"];drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]),false,null)});
   ctx.textAlign="center";
-  ctx.lineWidth=9;ctx.strokeStyle=PUSH_COLOR;ctx.beginPath();ctx.arc(575,603,34,0,Math.PI*2);ctx.stroke();
-  ctx.fillStyle="#444";ctx.font="400 23px Arial";ctx.fillText("Push",575,611);
-  ctx.strokeStyle=DRAW_COLOR;ctx.beginPath();ctx.arc(700,603,34,0,Math.PI*2);ctx.stroke();ctx.fillText("Draw",700,611);
+  ctx.textBaseline="middle";
+  const halfDisplay=$("fingeringDisplay").value==="half";
+  const legendR=46;
+  ctx.lineWidth=9;
+  ctx.lineJoin="round";
+  ctx.lineCap="round";
+  ctx.strokeStyle=PUSH_COLOR;ctx.beginPath();
+  if(halfDisplay){
+    // Keep the label fixed and move/enlarge the upper half so the text sits inside it.
+    const cy=628;
+    ctx.moveTo(575-legendR,cy);
+    ctx.arc(575,cy,legendR,Math.PI,Math.PI*2);
+    ctx.lineTo(575-legendR,cy);
+  }else{
+    // Full-circle legend is centered on the unchanged label position.
+    ctx.arc(575,611,legendR,0,Math.PI*2);
+  }
+  ctx.stroke();
+  ctx.fillStyle="#444";ctx.font="400 23px Arial";ctx.fillText("Push",575,halfDisplay?608:611);
+  ctx.strokeStyle=DRAW_COLOR;ctx.beginPath();
+  if(halfDisplay){
+    // Keep the label fixed and move/enlarge the lower half so the text sits inside it.
+    const cy=594;
+    ctx.moveTo(700+legendR,cy);
+    ctx.arc(700,cy,legendR,0,Math.PI);
+    ctx.lineTo(700+legendR,cy);
+  }else{
+    ctx.arc(700,611,legendR,0,Math.PI*2);
+  }
+  ctx.stroke();ctx.fillText("Draw",700,halfDisplay?614:611);
 
   $("diagramStack").hidden=false;$("emptyDiagram").hidden=true;$("fullBtn").disabled=false;
   $("diagramMeta").textContent=`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`;
@@ -1980,9 +2009,29 @@ function drawDiagram(item=null,force=false){
     const physical=item.button.replace(/^L9a$/,"L9").replace(/^R1x$/,"R1");
     const p=POS[physical];
     if(p){
+      const halfDisplay=$("fingeringDisplay").value==="half";
       ctx.lineWidth=10;
+      ctx.lineJoin="round";
+      ctx.lineCap="round";
       ctx.strokeStyle=item.direction==="push"?PUSH_COLOR:DRAW_COLOR;
-      ctx.beginPath();ctx.arc(p.x,p.y,58,0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();
+      if(halfDisplay){
+        // Draw each half as one continuous closed path. This gives the arc/divider
+        // junctions clean rounded joins while staying centered on the button outline.
+        const r=51;
+        if(item.direction==="push"){
+          ctx.moveTo(p.x-r,p.y);
+          ctx.arc(p.x,p.y,r,Math.PI,Math.PI*2);
+          ctx.lineTo(p.x-r,p.y);
+        }else{
+          ctx.moveTo(p.x+r,p.y);
+          ctx.arc(p.x,p.y,r,0,Math.PI);
+          ctx.lineTo(p.x+r,p.y);
+        }
+      }else{
+        ctx.arc(p.x,p.y,58,0,Math.PI*2);
+      }
+      ctx.stroke();
     }
   }
   lastDiagramIndex=itemIndex;
@@ -2139,6 +2188,7 @@ function generateShareLink(abc){
     params.set("def",compressABCDeflate(abc));
     params.set("system",$("system").value);
     params.set("style",$("style").value);
+    params.set("display",$("fingeringDisplay").value);
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
@@ -2364,9 +2414,10 @@ function loadShareLinkAfterStartup(){
   // share link and feed its ABC through the same post-read path used by File Open.
   setTimeout(()=>{
     try{
-      const system=params.get("system"),style=params.get("style");
+      const system=params.get("system"),style=params.get("style"),display=params.get("display");
       if(system==="jeffries"||system==="wheatstone")$("system").value=system;
       if(style==="onrow"||style==="cross")$("style").value=style;
+      if(display==="ring"||display==="half")$("fingeringDisplay").value=display;
       savePrefs();
       manualEntryCollection=false;currentSaveBaseName="shared-anglo-concertina-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
@@ -2378,7 +2429,7 @@ function loadShareLinkAfterStartup(){
 
 const PREFS_KEY="abcAngloConcertinaPrefs";
 const TEMPO_KEY="abcAngloConcertinaTempo";
-function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value}))}catch(_){}}
+function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
 
 const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
 function buildTabOverridePalette(){
@@ -2845,7 +2896,7 @@ function moveTabOverrideToNote(direction){
   showManualFingeringForNote(target,true);
 }
 
-function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style}catch(_){}}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style;if(p.display==="ring"||p.display==="half")$("fingeringDisplay").value=p.display}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function findTempoInput(){return $("audio").querySelector("input.abcjs-midi-tempo,input.abcjs-midi-current-tempo,.abcjs-midi-tempo input,.abcjs-midi-current-tempo input,.abcjs-midi-current-tempo-wrapper input,.abcjs-tempo-wrapper input,input[type='number'],input[type='text']")}
@@ -2991,7 +3042,7 @@ $("openFile").addEventListener("change",async e=>{
     alert("File load failed: "+(err.message||err));
   }
 });
-$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();prepareDiagramBase();drawDiagram(currentDiagramItem,true);updateShareButtons()});
 
 function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
 function beginManualTuneIfNeeded(){
