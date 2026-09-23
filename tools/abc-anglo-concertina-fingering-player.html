@@ -45,7 +45,11 @@
 .app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
 .toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.4fr) minmax(125px,.8fr) minmax(125px,.8fr) minmax(170px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
 .toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
-.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:14px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}.notationViewport{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}.notation{padding:7px;min-height:max-content}.notation svg{display:block;max-width:100%;height:auto}.notation .abcjs-cursor{stroke:#00c83c;stroke-width:12px;stroke-opacity:.28;transform:translate(7px,0);pointer-events:none}.audioRow{flex:0 0 auto;padding:7px 9px 9px;border-top:1px solid rgba(127,127,127,.18)}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
+.abcWrap textarea.editorTextSmall{font-size:14px}
+.abcWrap textarea.editorTextMedium{font-size:16px}
+.abcWrap textarea.editorTextLarge{font-size:17px}
+.abcWrap textarea.editorTextLargest{font-size:18px}.notationViewport{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}.notation{padding:7px;min-height:max-content}.notation svg{display:block;max-width:100%;height:auto}.notation .abcjs-cursor{stroke:#00c83c;stroke-width:12px;stroke-opacity:.28;transform:translate(7px,0);pointer-events:none}.audioRow{flex:0 0 auto;padding:7px 9px 9px;border-top:1px solid rgba(127,127,127,.18)}
 /* Make the abcjs Repeat/Loop button unmistakable when enabled. */
 #audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
 #audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
@@ -226,84 +230,21 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 }
 
 
-/* Tab Override entry palette */
+/* Tab Override entry palette: compact physical concertina layout. */
 .abcHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
 #tabOverrideBtn{padding:5px 10px;min-height:30px;font-size:.86rem;white-space:nowrap}
 .tabOverridePopover{
-  position:fixed;z-index:3600;width:min(430px,calc(100vw - 24px));
+  position:fixed;z-index:3600;width:min(590px,calc(100vw - 24px));
   padding:12px;border:1px solid #aebbb4;border-radius:10px;background:#fff;
   box-shadow:0 8px 28px rgba(0,0,0,.22)
 }
 .tabOverridePopover[hidden]{display:none}
-.tabOverrideTitle{font-weight:700;margin:0 0 9px}
-.tabOverrideGroup{display:grid;grid-template-columns:88px 1fr;gap:8px;align-items:start;margin-top:8px}
-.tabOverrideLabel{font-size:.84rem;font-weight:700;padding-top:6px}
-.tabOverrideKeys{display:flex;flex-wrap:wrap;gap:6px}
-.tabOverrideKey{
-  -webkit-appearance:none;appearance:none;min-width:34px;height:34px;padding:3px 8px;
-  border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;
-  -webkit-text-fill-color:#17251d;font:600 15px/1 inherit;text-align:center;cursor:pointer
-}
-.tabOverrideKey:hover{background:#e4efe8;border-color:#789b87}
-.tabOverrideKey:active{background:#d5e7dc}
-.tabOverrideHint{margin:10px 0 0;font-size:.78rem;line-height:1.35;color:#53635a}
-@media(max-width:760px){
-  .abcHeaderRight{gap:6px}
-  #tabOverrideBtn{padding:4px 8px;font-size:.8rem}
-  .tabOverridePopover{width:calc(100vw - 20px);padding:10px}
-  .tabOverrideGroup{grid-template-columns:76px 1fr}
-}
 
-
-#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px}
-#abcText.editorTextSmall{font-size:14px}
-#abcText.editorTextMedium{font-size:16px}
-#abcText.editorTextLarge{font-size:17px}
-#abcText.editorTextLargest{font-size:18px}
-.tabOverrideNav{display:flex;gap:8px;margin-left:auto}
-.tabOverrideNav button{min-width:72px;height:34px;padding:3px 10px;white-space:nowrap}
-
-
-.helpFingeringImageLink{display:block;margin:14px auto;text-align:center}
-.helpFingeringImage{display:block;max-width:100%;width:min(520px,100%);height:auto;margin:0 auto;border:1px solid #d7ddd9;border-radius:6px}
-
-
-.tabOverrideTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
-.tabOverrideTop .tabOverrideTitle{margin:0}
-#tabFingeringDiagramBtn{padding:4px 9px;min-height:30px;font-size:.8rem;white-space:nowrap}
-
-/* Match the Tab Override number-key styling for these controls on all platforms. */
-#tabOverrideBtn,
-#tabFingeringDiagramBtn,
-#tabPrevNote,
-#tabNextNote{
-  -webkit-appearance:none;
-  appearance:none;
-  box-sizing:border-box;
-  color:#17251d;
-  -webkit-text-fill-color:#17251d;
-  background:#f7faf8;
-  border:1px solid #aebbb4;
-  border-radius:7px;
-  box-shadow:none;
-  font-family:inherit;
-  font-weight:650;
-  line-height:1.2;
-  cursor:pointer;
-}
-#tabOverrideBtn:not(:disabled):hover,
-#tabFingeringDiagramBtn:not(:disabled):hover,
-#tabPrevNote:not(:disabled):hover,
-#tabNextNote:not(:disabled):hover{background:#e4efe8;border-color:#789b87}
-#tabOverrideBtn:not(:disabled):active,
-#tabFingeringDiagramBtn:not(:disabled):active,
-#tabPrevNote:not(:disabled):active,
-#tabNextNote:not(:disabled):active{background:#d5e7dc}
+#tabOverrideBtn{-webkit-appearance:none;appearance:none;box-sizing:border-box;color:#17251d;-webkit-text-fill-color:#17251d;background:#f7faf8;border:1px solid #aebbb4;border-radius:7px;box-shadow:none;font-family:inherit;font-weight:650;line-height:1.2;cursor:pointer}
+#tabOverrideBtn:not(:disabled):hover{background:#e4efe8;border-color:#789b87}
+#tabOverrideBtn:not(:disabled):active{background:#d5e7dc}
 #tabOverrideBtn:disabled{opacity:.45;cursor:default}
 
-.tabDiagramPopover{position:fixed;z-index:3700;width:min(544px,calc(100vw - 24px));padding:11px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
-.tabDiagramPopover[hidden]{display:none}
-.tabDiagramPopover img{display:block;width:100%;height:auto;border-radius:6px}
 
 .fileControlRow{display:flex;align-items:center;gap:8px;min-width:0}
 .fileControlRow #openFile{min-width:0;flex:1 1 auto}
@@ -376,28 +317,64 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 }
 
 
-/* Match the physical concertina layout: five numbered buttons per row. */
-.tabOverrideGroup .tabOverrideKeys{
-  display:grid;
-  grid-template-columns:repeat(5,auto);
-  justify-content:start;
-  gap:6px;
-}
-.tabOverrideGroup:last-of-type .tabOverrideKeys{
-  display:flex;
-  align-items:center;
-}
 
 
-/* Draggable Tab Override and fingering-diagram popovers. */
+/* Draggable Tab Override popover. */
 .tabOverrideTop{cursor:move;user-select:none;-webkit-user-select:none}
-.tabOverrideTop button{cursor:pointer}
-.tabDiagramPopover{cursor:move;touch-action:none}
-.tabDiagramPopover img{pointer-events:none;user-select:none;-webkit-user-drag:none}
 body.popoverDragging{user-select:none;-webkit-user-select:none}
 
+
+/* Version 2.01: compact v1.96-style palette with separated hands. */
+.tabOverridePopover{width:min(484px,calc(100vw - 24px));padding:12px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
+.tabOverrideTop{margin-bottom:12px}
+.tabOverrideTitle{font-size:inherit;font-weight:700;line-height:normal}
+.tabOverrideHands,.tabOverrideHand,.tabOverrideHandTitle{display:none}
+.tabOverrideRows{display:grid;gap:6px}
+.tabOverrideRow{display:grid;grid-template-columns:repeat(5,34px) 30px repeat(5,34px);gap:6px;justify-content:center}
+.tabOverrideRow .tabOverrideRight:nth-child(6){grid-column:7}
+.tabOverrideKey{-webkit-appearance:none;appearance:none;box-sizing:border-box;min-width:34px;width:34px;height:34px;padding:3px 5px;border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;-webkit-text-fill-color:#17251d;font:600 15px/1 inherit;text-align:center;cursor:pointer}
+.tabOverrideKey:hover{background:#e4efe8;border-color:#789b87}
+.tabOverrideKey:active{background:#d5e7dc}
+.tabOverrideActions{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:430px;margin:10px auto 0;padding-top:0;border-top:0}
+.tabOverrideDirection{grid-column:2;display:flex;justify-content:center;gap:6px}
+.tabOverrideDirection .tabOverrideKey{width:auto;min-width:72px;height:34px;padding:3px 8px;font:600 15px/1 inherit;white-space:nowrap}
+.tabOverrideNav{grid-column:3;justify-self:end;display:flex;gap:8px}
+.tabOverrideNav button{-webkit-appearance:none;appearance:none;box-sizing:border-box;min-width:42px;width:42px;height:34px;padding:3px 8px;border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;-webkit-text-fill-color:#17251d;box-shadow:none;font:600 18px/1 inherit;text-align:center;cursor:pointer}
+.tabOverrideNav button:hover{background:#e4efe8;border-color:#789b87}
+.tabOverrideNav button:active{background:#d5e7dc}
+.helpFingeringImageLink{display:block;max-width:100%;overflow:hidden}
+.helpFingeringImage{display:block;width:auto;max-width:100%;height:auto;margin:0 auto}
+@media(max-width:520px){
+ .tabOverridePopover{width:calc(100vw - 16px);padding:10px}
+ .tabOverrideRow{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(34px,1.35fr) repeat(5,minmax(0,1fr));gap:4px}
+ .tabOverrideKey{min-width:0;width:100%;height:32px;padding:2px;font-size:12px}
+ .tabOverrideDirection .tabOverrideKey{width:auto;min-width:64px;height:32px;padding:2px 5px;font-size:12px}
+ .tabOverrideNav{gap:4px}.tabOverrideNav button{min-width:36px;width:36px;height:32px;padding:2px 5px;font-size:16px}
+}
+
+#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px}
+
+/* Version 2.08: make all Tab Override popover buttons about 15% larger,
+   preserving the existing three-row and action-button layout. */
+.tabOverridePopover{width:min(548px,calc(100vw - 24px))}
+.tabOverrideRow{grid-template-columns:repeat(5,39px) 35px repeat(5,39px);gap:7px}
+.tabOverrideKey{min-width:39px;width:39px;height:39px;padding:3px 5px;font-size:17px}
+.tabOverrideActions{width:494px;margin-top:11px}
+.tabOverrideDirection{gap:7px}
+.tabOverrideDirection .tabOverrideKey{width:auto;min-width:83px;height:39px;padding:3px 9px;font-size:17px}
+.tabOverrideNav{gap:9px}
+.tabOverrideNav button{min-width:48px;width:48px;height:39px;padding:3px 9px;font-size:21px}
+@media(max-width:520px){
+  .tabOverridePopover{width:calc(100vw - 16px)}
+  .tabOverrideRow{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(39px,1.35fr) repeat(5,minmax(0,1fr));gap:4px}
+  .tabOverrideKey{min-width:0;width:100%;height:37px;padding:2px;font-size:14px}
+  .tabOverrideDirection .tabOverrideKey{width:auto;min-width:74px;height:37px;padding:2px 6px;font-size:14px}
+  .tabOverrideNav{gap:5px}
+  .tabOverrideNav button{min-width:41px;width:41px;height:37px;padding:2px 6px;font-size:18px}
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.88</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.08</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -418,21 +395,17 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 </div>
 
 <div id="tabOverridePopover" class="tabOverridePopover" hidden role="dialog" aria-label="Tab Override">
-  <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div><button type="button" id="tabFingeringDiagramBtn">Fingering Diagram</button></div>
-  <div class="tabOverrideGroup"><div class="tabOverrideLabel">Left Hand</div><div class="tabOverrideKeys" id="tabLeftKeys"></div></div>
-  <div class="tabOverrideGroup"><div class="tabOverrideLabel">Right Hand</div><div class="tabOverrideKeys" id="tabRightKeys"></div></div>
-  <div class="tabOverrideGroup"><div class="tabOverrideLabel">Other</div><div class="tabOverrideKeys">
-    <button type="button" class="tabOverrideKey" data-tab-char="*" title="Top-row accidental button">*</button>
-    <button type="button" class="tabOverrideKey" data-tab-char="↓" title="Push">↓</button>
-    <button type="button" class="tabOverrideKey" data-tab-char="↑" title="Draw">↑</button>
-    <span class="tabOverrideNav">
-      <button type="button" id="tabPrevNote">Previous</button>
-      <button type="button" id="tabNextNote">Next</button>
-    </span>
-  </div></div>
+  <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div></div>
+  <div class="tabOverrideRows" id="tabOverrideRows"></div>
+  <div class="tabOverrideActions">
+    <div class="tabOverrideDirection">
+      <button type="button" class="tabOverrideKey" data-tab-char="↓" title="Push">Push ↓</button>
+      <button type="button" class="tabOverrideKey" data-tab-char="↑" title="Draw">Draw ↑</button>
+    </div>
+    <span class="tabOverrideNav"><button type="button" id="tabPrevNote" aria-label="Previous note" title="Previous note">←</button><button type="button" id="tabNextNote" aria-label="Next note" title="Next note">→</button></span>
+  </div>
 </div>
 
-<div id="tabDiagramPopover" class="tabDiagramPopover" hidden role="dialog" aria-label="Anglo concertina fingering diagram"><img src="img/anglo-fingerings.jpg" alt="Anglo concertina button-number diagram showing left-hand and right-hand button numbers and Push and Draw directions"></div>
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Anglo Concertina Fingering Player Instructions</h2>
@@ -484,9 +457,9 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         the rendered notation and playback controls.</p>
       <p>Editing the ABC rebuilds the
         notation, audio, and fingering solution.</p>
-      <p>Click a note head in the rendered notation to highlight it in red and select its
-        associated note in the ABC editor.</p>
-      <p>The complete ABC note token is selected, making it easy to replace the complete note.</p>
+      <p>Click a note head in the rendered notation to highlight it in red, select its
+        associated note in the ABC editor, and immediately show that note's effective button and Push/Draw direction on the main Fingering Diagram without starting playback.</p>
+      <p>The complete ABC note token is selected, making it easy to replace the complete note or use Tab Override to change its fingering.</p>
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size.</p>
       <p>Medium is the default,
         and the selection is saved in this browser.</p>
@@ -549,61 +522,21 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       </p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Advanced: Manual Tablature Overrides</p>
-      <p>
-        ABC annotation-based Anglo concertina tablature using the default <b>ABC Transcription Tools</b>
-        syntax overrides the fingering solution calculated automatically by this tool.
-      </p>
-      <p>The tool first solves
-        the complete tune using the selected Concertina type and Fingering solution, then applies any valid
-        tablature annotations as overrides to the corresponding notes.</p>
-      <p>Notes without override annotations
-        continue to use the automatically calculated fingering.</p>
-      <p>Click <b>Tab Override</b> in the ABC panel header to add or edit these overrides manually at the current
-        ABC cursor position.</p>
-      <p>When the popover is opened, any ABC text selection is cleared while the cursor remains
-        at the start of that selection.</p>
-      <p>This makes it easy to click a note in the notation to locate it, then open
-        <b>Tab Override</b> and add a fingering annotation without replacing the note itself.</p>
-      <p>The popover remembers
-        that note location while you click its controls.</p>
-      <p>If that note already has a valid tab annotation, palette
-        choices modify the existing annotation rather than adding a second one.</p>
-      <p>If the cursor is in whitespace before a note on the same music line, the popover targets that note, including when that note already has a valid tablature annotation.</p>
-      <p>It does not move across a barline, other text, a line break, or an ABC header to find a note.</p>
-      <p>The palette provides
-        left-hand buttons <b>1–10</b>, right-hand buttons
-        <b>①–⑩</b>, <b>*</b> for the top accidental row, <b>↓</b> for Push, and <b>↑</b> for Draw.</p>
-      <p>Click <b>Fingering Diagram</b> in the popover to display the button-number reference.</p>
-      <p>Both the Tab Override
-        popover and its Fingering Diagram can be dragged to a convenient position.</p>
-      <p>Once moved, each popover remembers
-        its position while the tool remains open; the positions are reset when the page is reloaded.</p>
+      <p>Use <b>Tab Override</b> when you want a note to use a specific concertina button or bellows direction instead of its automatically calculated fingering.</p>
+      <p>Click a note in the notation, then click <b>Tab Override</b>.</p>
+      <p>The popover has three rows matching the concertina layout.</p>
+      <p>Each row has the five left-hand buttons on the left and the five right-hand buttons on the right, separated by a small gap. The top row contains the <b>*</b> buttons, the middle row contains buttons 1–5, and the bottom row contains buttons 6–10.</p>
+      <p>Click the button you want, then choose <b>Push ↓</b> or <b>Draw ↑</b> if you need to change the direction.</p>
+      <p>A newly selected button uses Push by default unless the note already has a Push or Draw override.</p>
+      <p>If the note already has a manual override, your choices change that override rather than adding another one.</p>
+      <p>Notes without overrides continue to use the automatically calculated fingering.</p>
+      <p>Use the <b>←</b> and <b>→</b> buttons to move through the notes while entering or reviewing fingerings.</p>
+      <p>The selected note is highlighted in the notation and its effective fingering is shown immediately on the main Fingering Diagram.</p>
+      <p>The Tab Override popover can be dragged to a convenient position and remembers that position while the tool remains open.</p>
+      <p>Manual overrides use the same ABC annotation format as <b>ABC Transcription Tools</b>, so existing valid tablature annotations are recognized automatically.</p>
       <a class="helpFingeringImageLink" href="img/anglo-fingerings.jpg" target="_blank" rel="noopener noreferrer" title="Open fingering button-number diagram in a new tab">
         <img class="helpFingeringImage" src="img/anglo-fingerings.jpg" alt="Anglo concertina button-number diagram showing left-hand and right-hand button numbers and Push and Draw directions">
       </a>
-      <p>If the cursor is already inside a valid tablature annotation, selecting a number replaces the existing
-        button number, and selecting Push or Draw replaces the existing direction.</p>
-      <p>The <b>*</b> control toggles
-        the top-row marker.</p>
-      <p>The syntax is always maintained as <b>number</b>, optional <b>*</b>, <b>;</b>,
-        then the <b>direction arrow</b>, for example <b>"_4;↓"</b> or <b>"_4*;↑"</b>.</p>
-      <p>If there is no existing valid annotation for the note, the tool creates one beginning with <b>_</b>
-        so the annotation is displayed below the rendered notation.</p>
-      <p>If a button number is entered without a
-        direction, Push is supplied by default.</p>
-      <p>Click <b>Previous</b> and <b>Next</b> to move through the notes while entering tablature.</p>
-      <p>If the destination
-        note already has a valid tab annotation, the next palette selection modifies it.</p>
-      <p>If it has no tab annotation,
-        the next palette selection creates one for that note.</p>
-      <p>When navigation begins inside an annotation, it is
-        relative to the note to which that annotation applies.</p>
-      <p>When a manual override is added, for best notation rendering, if the current tune does not already contain an
-        <b>%%annotationfont</b> command, the tool adds <b>%%annotationfont Palatino 12</b> immediately below
-        <b>X:</b>.</p>
-      <p>If it does not already contain <b>%%staffsep</b>, the tool adds <b>%%staffsep 70</b>
-        immediately after the annotation-font command.</p>
-      <p>Existing commands are left unchanged.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">About</p>
       <p>
@@ -1900,6 +1833,7 @@ const PUSH_COLOR="#d60062",DRAW_COLOR="#18e94e";let currentSaveBaseName="",manua
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false;
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
 function mapFor(system){return Object.assign({},BASE.common,system==="wheatstone"?BASE.wheatstoneRx:BASE.jeffriesRx)}
@@ -2071,6 +2005,70 @@ function fingeringForEvent(event){
   return null;
 }
 function keepCursorVisible(){if(!playbackCursor)return;const vp=$("notation").parentElement,c=playbackCursor.getBoundingClientRect(),v=vp.getBoundingClientRect(),m=28;if(c.top<v.top+m)vp.scrollBy({top:c.top-v.top-m,behavior:"smooth"});else if(c.bottom>v.bottom-m)vp.scrollBy({top:c.bottom-v.bottom+m,behavior:"smooth"})}
+
+function noteStartForEditorPosition(value,pos){
+  pos=Math.max(0,Math.min(Number(pos)||0,value.length));
+  const annotation=quotedAnnotationAtCursor(value,pos);
+  if(annotation){
+    const next=abcNoteStarts(value).find(n=>n>annotation.end);
+    if(next!==undefined)return next;
+  }
+  const token=noteTokenAtPosition(value,pos);
+  if(token)return token.start;
+  const next=nextNoteAfterHorizontalWhitespace(value,pos);
+  return next?next.start:null;
+}
+function keepManualNotationSelectionVisible(){
+  requestAnimationFrame(()=>{
+    const el=$("notation").querySelector(".abcjs-note_selected");
+    const vp=$("notation").parentElement;
+    if(!el||!vp)return;
+    const r=el.getBoundingClientRect(),v=vp.getBoundingClientRect(),m=28;
+    if(r.top<v.top+m)vp.scrollBy({top:r.top-v.top-m,behavior:"smooth"});
+    else if(r.bottom>v.bottom-m)vp.scrollBy({top:r.bottom-v.bottom+m,behavior:"smooth"});
+  });
+}
+function highlightRenderedNoteBySource(noteStart){
+  if(!currentVisual||!currentVisual.engraver||typeof currentVisual.engraver.rangeHighlight!=="function")return;
+  const token=abcNoteTokens($("abcText").value).find(t=>t.start===noteStart);
+  if(!token)return;
+  try{
+    currentVisual.engraver.rangeHighlight(token.start+prefixLength,token.end+prefixLength);
+    keepManualNotationSelectionVisible();
+  }catch(_){}
+}
+function showManualFingeringForNote(noteStart,highlightNotation=true){
+  if(!Number.isInteger(noteStart))return;
+  manualSelectedNoteStart=noteStart;
+  const item=solutionByIndex.get(noteStart);
+  if(item)drawDiagram(item,true);
+  if(highlightNotation)highlightRenderedNoteBySource(noteStart);
+}
+function restoreManualSelectionAfterRebuild(){
+  if(playbackActive)return;
+  const ta=$("abcText");
+  if(!ta)return;
+
+  // A rebuild of the notation/audio can cause abcjs/browser focus handling to
+  // move the textarea caret (commonly back to the start of the tune). When a
+  // note was explicitly selected by a notation click, Previous/Next, or a Tab
+  // Override edit, that saved musical-note position is authoritative. Do not
+  // rediscover the note from the textarea caret during the rebuild.
+  let noteStart=Number.isInteger(manualSelectedNoteStart)
+    ? manualSelectedNoteStart
+    : noteStartForEditorPosition(ta.value,ta.selectionStart??0);
+
+  // If an edit made the saved source position invalid, fall back to the caret.
+  if(noteStart!=null && !solutionByIndex.has(noteStart))
+    noteStart=noteStartForEditorPosition(ta.value,ta.selectionStart??0);
+
+  if(noteStart==null){
+    manualSelectedNoteStart=null;
+    return;
+  }
+  showManualFingeringForNote(noteStart,true);
+}
+
 const SPLIT_KEY="abcAngloConcertinaSplitters";
 function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
 function savedSplitters(){try{const p=JSON.parse(localStorage.getItem(SPLIT_KEY)||"{}");return {v:Number(p.v),h:Number(p.h)}}catch(_){return {v:NaN,h:NaN}}}
@@ -2383,11 +2381,16 @@ function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$
 
 const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
 function buildTabOverridePalette(){
-  const left=$("tabLeftKeys"),right=$("tabRightKeys");
-  for(let i=1;i<=10;i++){
-    const b=document.createElement("button");b.type="button";b.className="tabOverrideKey";b.dataset.tabChar=String(i);b.textContent=String(i);left.appendChild(b);
-    const r=document.createElement("button");r.type="button";r.className="tabOverrideKey";r.dataset.tabChar=TAB_CIRCLED[i-1];r.textContent=TAB_CIRCLED[i-1];right.appendChild(r);
-  }
+  const host=$("tabOverrideRows");
+  const addRow=(left,right,top)=>{
+    const row=document.createElement("div");row.className="tabOverrideRow";
+    left.forEach(i=>{const b=document.createElement("button");b.type="button";b.className="tabOverrideKey tabOverrideLeft";b.dataset.tabButton=String(i)+(top?"*":"");b.textContent=String(i)+(top?"*":"");b.title="Left hand button "+i+(top?" (top row)":"");row.appendChild(b)});
+    right.forEach(i=>{const b=document.createElement("button");b.type="button";b.className="tabOverrideKey tabOverrideRight";b.dataset.tabButton=TAB_CIRCLED[i-1]+(top?"*":"");b.textContent=TAB_CIRCLED[i-1]+(top?"*":"");b.title="Right hand button "+i+(top?" (top row)":"");row.appendChild(b)});
+    host.appendChild(row);
+  };
+  addRow([1,2,3,4,5],[1,2,3,4,5],true);
+  addRow([1,2,3,4,5],[1,2,3,4,5],false);
+  addRow([6,7,8,9,10],[6,7,8,9,10],false);
 }
 function validTabAnnotationText(s){
   const t=String(s||"").trim().replace(/^[_^]/,"").trim();
@@ -2463,6 +2466,9 @@ function normalizeTabOverrideContent(content){
 
 function insertTabOverrideCharacter(ch){
   const ta=$("abcText");if(!ta||ta.disabled)return;
+  const buttonChoice=/^((?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩]))(\*)?$/.exec(ch);
+  const chosenButton=buttonChoice?buttonChoice[1]:null;
+  const chosenTopRow=!!(buttonChoice&&buttonChoice[2]);
 
   // Restore the exact location captured when Tab Override was opened. This
   // avoids browser-dependent selection changes when a palette button gets focus.
@@ -2536,24 +2542,30 @@ function insertTabOverrideCharacter(ch){
 
     // Button identity is one semantic field. Clicking any plain or circled
     // number replaces an existing button number instead of accumulating one.
-    const isNumber=/^(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])$/.test(ch);
+    const isNumber=!!buttonChoice;
     const isArrow=ch==="↓"||ch==="↑";
     if(isNumber){
       const re=/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/g;
       const matches=[...content.matchAll(re)];
       if(matches.length){
         const hit=matches[0],a=hit.index,b=a+hit[0].length;
-        content=content.slice(0,a)+ch+content.slice(b);
-        rel=a+ch.length;
+        content=content.slice(0,a)+chosenButton+content.slice(b);
+        rel=a+chosenButton.length;
       }else{
-        content=content.slice(0,rel)+ch+content.slice(rel);
-        rel+=ch.length;
+        content=content.slice(0,rel)+chosenButton+content.slice(rel);
+        rel+=chosenButton.length;
       }
-      // A newly selected button defaults to Push when the annotation does
-      // not already specify a direction. Preserve an existing Push/Draw.
-      if(!/[↓↑]/.test(content)){
-        content+="↓";
+      // The physical top-row choice owns the * state: top-row buttons add it,
+      // normal-row buttons remove it.
+      content=content.replace(/\*/g,"");
+      const button=content.match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/);
+      if(chosenTopRow&&button){
+        const pos=button.index+button[0].length;
+        content=content.slice(0,pos)+"*"+content.slice(pos);
+        rel=pos+1;
       }
+      // A newly selected button defaults to Push when no direction exists.
+      if(!/[↓↑]/.test(content))content+="↓";
     }else if(isArrow){
       const idx=Math.max(content.indexOf("↓"),content.indexOf("↑"));
       if(idx>=0){
@@ -2596,13 +2608,12 @@ function insertTabOverrideCharacter(ch){
     const newPos=annotation.start+rel;
     ta.setSelectionRange(newPos,newPos);
   }else{
-    const isNumber=/^(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])$/.test(ch);
-    const initialContent=normalizeTabOverrideContent("_"+ch+(isNumber?";↓":""));
+    const isNumber=!!buttonChoice;
+    const initialContent=normalizeTabOverrideContent("_"+(isNumber?chosenButton+(chosenTopRow?"*":""):ch)+(isNumber?";↓":""));
     const insert='"'+initialContent+'"';
     ta.setRangeText(insert,start,end,"end");
-    // Leave the cursor inside the quotes. For a number, place it just before
-    // the default Push arrow so * can still be inserted naturally after it.
-    const newPos=start+2+ch.length;
+    const semicolon=initialContent.indexOf(";");
+    const newPos=start+1+(semicolon>=0?semicolon:initialContent.length);
     ta.setSelectionRange(newPos,newPos);
   }
 
@@ -2610,6 +2621,7 @@ function insertTabOverrideCharacter(ch){
   // After the first palette action, the cursor inside the annotation becomes
   // authoritative for subsequent palette actions.
   tabOverrideAnchorPos=null;
+  manualSelectedNoteStart=noteStartForEditorPosition(ta.value,ta.selectionStart??0);
   setAbcDirty(true);
   syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons();
 }
@@ -2651,26 +2663,20 @@ function makePopoverDraggable(pop,handle){
   handle.addEventListener("pointercancel",stop);
 }
 
-function positionTabDiagramPopover(){
-  const pop=$("tabDiagramPopover"),anchor=$("tabFingeringDiagramBtn");if(pop.hidden)return;
-  const r=anchor.getBoundingClientRect(),margin=8;pop.style.left="0px";pop.style.top="0px";
-  const w=pop.offsetWidth,h=pop.offsetHeight;
-  let left=Math.min(Math.max(margin,r.right-w),window.innerWidth-w-margin),top=r.bottom+6;
-  if(top+h>window.innerHeight-margin)top=Math.max(margin,r.top-h-6);
-  pop.style.left=left+"px";pop.style.top=top+"px";
-}
-function toggleTabDiagramPopover(){
-  const pop=$("tabDiagramPopover");pop.hidden=!pop.hidden;
-  // Once dragged, preserve this popover's position for the rest of this page use.
-  // No localStorage persistence is intentional.
-  if(!pop.hidden&&!pop.dataset.dragged)requestAnimationFrame(positionTabDiagramPopover);
-}
 function positionTabOverridePopover(){
   const pop=$("tabOverridePopover"),btn=$("tabOverrideBtn");if(pop.hidden)return;
   const r=btn.getBoundingClientRect(),margin=8;
   pop.style.left="0px";pop.style.top="0px";
   const w=pop.offsetWidth,h=pop.offsetHeight;
-  let left=Math.min(Math.max(margin,r.right-w),window.innerWidth-w-margin);
+  // Center the popover horizontally the first time it is shown. After that,
+  // retain the existing button-relative behavior unless the user has dragged it.
+  let left;
+  if(!pop.dataset.positioned){
+    left=Math.max(margin,(window.innerWidth-w)/2);
+    pop.dataset.positioned="1";
+  }else{
+    left=Math.min(Math.max(margin,r.right-w),window.innerWidth-w-margin);
+  }
   let top=r.bottom+6;
   if(top+h>window.innerHeight-margin)top=Math.max(margin,r.top-h-6);
   pop.style.left=left+"px";pop.style.top=top+"px";
@@ -2838,6 +2844,10 @@ function moveTabOverrideToNote(direction){
   const line=value.slice(0,target).split(/\r?\n/).length;
   const lh=parseFloat(getComputedStyle(ta).lineHeight)||18;
   ta.scrollTop=Math.max(0,(line-3)*lh);
+
+  // Previous/Next is also a manual fingering browser: highlight the destination
+  // note in the rendered notation and show its effective fingering immediately.
+  showManualFingeringForNote(target,true);
 }
 
 function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style}catch(_){}}
@@ -2942,22 +2952,35 @@ function selectClickedNotationNote(abcelem){
   const line=before.split("\n").length-1;
   const lineHeight=parseFloat(getComputedStyle(ta).lineHeight)||20;
   ta.scrollTop=Math.max(0,(line*lineHeight)-(ta.clientHeight/2)+(lineHeight/2));
+
+  // The notation click already supplies abcjs's red selection. Mirror the same
+  // note on the main concertina diagram without starting playback.
+  if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
 }
 
-async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
+  selectionColor:"#ff0000",
   clickListener:function(abcelem){
     selectClickedNotationNote(abcelem);
   }
-});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
+});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];restoreManualSelectionAfterRebuild();if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
     if(sharePlaybackNeedsGesture){
       showEnablePlaybackButton();
       return;
     }
-    const cursorControl={onStart(){removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible()}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){removeCursor();drawDiagram(null,true)}};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});await controller.setTune(visual[0],false,{});if(gen!==renderGeneration)return;installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
+    const cursorControl={onStart(){if(audioControllerInitializing)return;playbackActive=true;manualSelectedNoteStart=null;removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(audioControllerInitializing||!playbackActive)return;if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible()}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){
+      // SynthController.setTune() can emit playback-style callbacks while it
+      // prepares the tune. Ignore every such callback during initialization.
+      if(audioControllerInitializing||!playbackActive)return;
+      playbackActive=false;
+      manualSelectedNoteStart=null;
+      removeCursor();
+      drawDiagram(null,true);
+    }};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});audioControllerInitializing=true;try{await controller.setTune(visual[0],false,{})}finally{audioControllerInitializing=false}if(gen!==renderGeneration)return;restoreManualSelectionAfterRebuild();installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
 let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
-function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();manualSelectedNoteStart=null;playbackActive=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
   const input=e.target,f=input.files&&input.files[0];if(!f)return;
@@ -3018,22 +3041,20 @@ $("tabPrevNote").addEventListener("click",e=>{e.preventDefault();moveTabOverride
 $("tabNextNote").addEventListener("click",e=>{e.preventDefault();moveTabOverrideToNote(1)});
 
 makePopoverDraggable($("tabOverridePopover"),$("tabOverridePopover").querySelector(".tabOverrideTop"));
-makePopoverDraggable($("tabDiagramPopover"),$("tabDiagramPopover"));
-$("tabOverrideBtn").addEventListener("click",e=>{e.stopPropagation();$("tabDiagramPopover").hidden=true;toggleTabOverridePopover()});
-$("tabFingeringDiagramBtn").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();toggleTabDiagramPopover()});
+$("tabOverrideBtn").addEventListener("click",e=>{e.stopPropagation();toggleTabOverridePopover()});
 $("tabOverridePopover").addEventListener("click",e=>{
+  const button=e.target.closest("[data-tab-button]");
+  if(button){e.preventDefault();insertTabOverrideCharacter(button.dataset.tabButton);return}
   const key=e.target.closest("[data-tab-char]");
   if(key){e.preventDefault();insertTabOverrideCharacter(key.dataset.tabChar)}
 });
 document.addEventListener("pointerdown",e=>{
-  const pop=$("tabOverridePopover"),diagram=$("tabDiagramPopover");
-  if(!diagram.hidden&&!diagram.contains(e.target)&&e.target!==$("tabFingeringDiagramBtn"))diagram.hidden=true;
-  if(!pop.hidden&&!pop.contains(e.target)&&!diagram.contains(e.target)&&e.target!==$("tabOverrideBtn")){pop.hidden=true;diagram.hidden=true}
+  const pop=$("tabOverridePopover");
+  if(!pop.hidden&&!pop.contains(e.target)&&e.target!==$("tabOverrideBtn"))pop.hidden=true;
 });
 window.addEventListener("resize",()=>{
-  const p=$("tabOverridePopover"),d=$("tabDiagramPopover");
+  const p=$("tabOverridePopover");
   p.dataset.dragged?clampPopoverToViewport(p):positionTabOverridePopover();
-  d.dataset.dragged?clampPopoverToViewport(d):positionTabDiagramPopover();
 });
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
