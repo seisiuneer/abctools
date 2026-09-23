@@ -374,7 +374,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.08</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.09</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -2668,15 +2668,9 @@ function positionTabOverridePopover(){
   const r=btn.getBoundingClientRect(),margin=8;
   pop.style.left="0px";pop.style.top="0px";
   const w=pop.offsetWidth,h=pop.offsetHeight;
-  // Center the popover horizontally the first time it is shown. After that,
-  // retain the existing button-relative behavior unless the user has dragged it.
-  let left;
-  if(!pop.dataset.positioned){
-    left=Math.max(margin,(window.innerWidth-w)/2);
-    pop.dataset.positioned="1";
-  }else{
-    left=Math.min(Math.max(margin,r.right-w),window.innerWidth-w-margin);
-  }
+  // Keep the popover horizontally centered whenever it has not been dragged.
+  // A dragged popover bypasses this routine and retains its user-selected position.
+  const left=Math.max(margin,(window.innerWidth-w)/2);
   let top=r.bottom+6;
   if(top+h>window.innerHeight-margin)top=Math.max(margin,r.top-h-6);
   pop.style.left=left+"px";pop.style.top=top+"px";
@@ -3034,6 +3028,17 @@ function setFull(on){const audioRow=document.querySelector(".audioRow"),notation
 // enabled so a user can immediately type or paste a single tune.
 $("abcText").value="";
 $("abcText").disabled=false;
+// Firefox can restore form-control disabled states on a soft reload. Explicitly
+// establish the startup states, then establish them again on pageshow after any
+// browser form-state restoration has completed. Loaded/entered tunes enable these
+// controls through the normal load paths.
+function initializeActionButtonStates(){
+  const hasTunes=tunes.length>0;
+  $("saveAbcBtn").disabled=!hasTunes;
+  $("tabOverrideBtn").disabled=!hasTunes;
+}
+initializeActionButtonStates();
+window.addEventListener("pageshow",initializeActionButtonStates);
 buildTabOverridePalette();
 restoreEditorTextSize();
 $("editorTextSize").addEventListener("change",e=>applyEditorTextSize(e.target.value,true));
