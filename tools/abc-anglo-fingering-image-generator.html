@@ -174,7 +174,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.29</div>
+<header class="app-header"><div class="version">Version 1.30</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -184,7 +184,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
     <div class="grid">
       <div><label for="system">Fingering system</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
       <div><label for="style">Fingering style</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
-      <div><label for="fingeringDisplay">Fingering display</label><select id="fingeringDisplay"><option value="ring">Button Ring</option><option value="half">Button Half</option></select></div>
+      <div><label for="fingeringDisplay">Fingering display</label><select id="fingeringDisplay"><option value="ring">Button Ring</option><option value="half">Button Half</option><option value="ring-arrows">Button Ring with Arrows</option><option value="half-arrows">Button Half with Arrows</option></select></div>
     </div>
     <label style="display:flex;align-items:center;gap:9px;margin-top:14px;font-weight:600;cursor:pointer">
       <input id="respectRepeats" type="checkbox" checked style="width:auto;margin:0">
@@ -193,7 +193,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
   </section>
   <section class="card">
     <button id="generateBtn" disabled>Generate JPEG Images and Save ZIP</button>
-    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. Compatible Anglo concertina tab annotations override the automatic fingering used for the exported note images. When <b>Respect repeats and first/second endings</b> is enabled, the JPEG sequence follows normal repeat playback order. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Blue-Green</b>. <b>Button Ring</b> highlights the entire button; <b>Button Half</b> highlights the upper half for Push and lower half for Draw.</p>
+    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. Compatible Anglo concertina tab annotations override the automatic fingering used for the exported note images. When <b>Respect repeats and first/second endings</b> is enabled, the JPEG sequence follows normal repeat playback order. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Blue-Green</b>. <b>Button Ring</b> highlights the entire button; <b>Button Half</b> highlights the upper half for Push and lower half for Draw. The <b>with Arrows</b> display options also add a centered bellows-direction arrow: down for Push and up for Draw.</p>
   </section>
   <section class="card"><h2>Status</h2><div id="status" class="status">Ready. Open an ABC file.</div></section>
   <button id="instructionsBtn" type="button">Instructions</button>
@@ -1493,7 +1493,7 @@ function restoreFingeringPreferences() {
     const savedDisplay = localStorage.getItem(PREF_DISPLAY_KEY);
     if (savedSystem === "jeffries" || savedSystem === "wheatstone") system = savedSystem;
     if (savedStyle === "onrow" || savedStyle === "cross") style = savedStyle;
-    if (savedDisplay === "ring" || savedDisplay === "half") display = savedDisplay;
+    if (["ring","half","ring-arrows","half-arrows"].includes(savedDisplay)) display = savedDisplay;
   } catch (_) {}
   $("system").value = system;
   $("style").value = style;
@@ -1542,7 +1542,12 @@ async function showInstructions() {
     <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
 
     <h3>4. Choose the fingering display</h3>
-    <p>Select <b>Button Ring</b> to highlight the entire button, or <b>Button Half</b> to highlight only the half corresponding to the bellows direction. In Button Half mode, <b>Push</b> highlights the upper half and <b>Draw</b> highlights the lower half, so direction is indicated by both color and position. Push is red and Draw uses a color-blind-friendly blue-green. The tool remembers your most recent display choice in this browser. The default is <b>Button Ring</b>.</p>
+    <p>Select <b>Button Ring</b> to highlight the entire button, or <b>Button Half</b> to highlight only the half corresponding to the bellows direction.</p> 
+    <p><b>Button Ring with Arrows</b> and <b>Button Half with Arrows</b> use the same button highlighting and also display a large bellows-direction arrow centered between the left- and right-hand button groups.</p> 
+    <p>A red downward arrow indicates Push; a blue-green upward arrow indicates Draw.</p>
+    <p>In Button Half modes, <b>Push</b> highlights the upper half and <b>Draw</b> highlights the lower half, so direction is indicated by both color and position.</p>
+    <p>The tool remembers your most recent display choice in this browser.</p>
+    <p>The default is <b>Button Ring</b>.</p>
 
     <h3>5. Generate the images</h3>
     <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the default button and bellows direction for each note.</p>
@@ -1551,7 +1556,7 @@ async function showInstructions() {
 
     <h3>6. File names and ZIP file</h3>
     <p>JPEGs are named from the tune title followed by the three-digit note index, beginning with <b>001</b>, for example <b>Kesh_001.jpg</b>.</p>
-    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, and fingering style, for example <b>Kesh_Jeffries_Cross-Row.zip</b>. For a file containing multiple tunes, the first part is <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row.zip</b>.</p>
+    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, fingering style, and fingering display, for example <b>Kesh_Jeffries_Cross-Row_Full.zip</b>. For a file containing multiple tunes, the first part is <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row_Full.zip</b>. The fingering display suffix is <b>Full</b>, <b>Half</b>, <b>Full-Arrows</b>, or <b>Half-Arrows</b>, depending on the selected Fingering display.</p>
     <p>The ZIP filename is shown before saving and may be edited.</p>
 
     <h3>ABC Anglo Concertina Fingering Player</h3>
@@ -1574,19 +1579,17 @@ async function showInstructions() {
       <a href="https://www.youtube.com/@ephraimschafli3763" target="_blank" rel="noopener noreferrer">Ephraim Schafli's Play Along Anglo Concertina Videos</a>.
     </p>    
 
-    <h3>About</h3>
-    <p>This tool was created by
-      <p style="text-align: center">
-        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
-      </p>   
-    </p>
-
-    <p>If you find it useful, please consider making a contribution via my online tip jars:</p>
-
-    <p style="text-align:center">
+    <hr>
+    <h3 style="text-align: center">About</h3>
+    <p style="text-align: center">
+      <br/>This tool was created by
+      <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
+      <br/><br/>
+      If you find it useful, please consider a contribution via<br/><br/>
       <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
-    </p>
-
+      <br/><br/>
+    </p>    
+    <hr>
   `;
 
   await DayPilot.Modal.alert(html, {
@@ -1689,7 +1692,8 @@ function drawButton(ctx,x,y,push,draw,highlight,direction) {
   ctx.fillStyle="#111"; ctx.font="600 25px Arial, Helvetica, sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
   ctx.fillText(push,x,y-22); ctx.fillText(draw,x,y+23);
   if (highlight) {
-    const halfDisplay=$("fingeringDisplay").value==="half";
+    const displayMode=$("fingeringDisplay").value;
+    const halfDisplay=displayMode==="half"||displayMode==="half-arrows";
     ctx.lineWidth=10;
     ctx.lineJoin="round";
     ctx.lineCap="round";
@@ -1710,6 +1714,35 @@ function drawButton(ctx,x,y,push,draw,highlight,direction) {
     }
     ctx.stroke();
   }
+  ctx.restore();
+}
+
+function drawBellowsDirectionArrow(ctx,direction){
+  // Match the Fingering Player: centered in the gap between the button groups.
+  // Push points down; Draw points up.
+  const x=640, top=282, bottom=408, stemHalf=10, headHalf=32, headHeight=41;
+  ctx.save();
+  ctx.fillStyle=direction==="push"?PUSH_COLOR:DRAW_COLOR;
+  ctx.beginPath();
+  if(direction==="push"){
+    ctx.moveTo(x-stemHalf,top);
+    ctx.lineTo(x+stemHalf,top);
+    ctx.lineTo(x+stemHalf,bottom-headHeight);
+    ctx.lineTo(x+headHalf,bottom-headHeight);
+    ctx.lineTo(x,bottom);
+    ctx.lineTo(x-headHalf,bottom-headHeight);
+    ctx.lineTo(x-stemHalf,bottom-headHeight);
+  }else{
+    ctx.moveTo(x,top);
+    ctx.lineTo(x+headHalf,top+headHeight);
+    ctx.lineTo(x+stemHalf,top+headHeight);
+    ctx.lineTo(x+stemHalf,bottom);
+    ctx.lineTo(x-stemHalf,bottom);
+    ctx.lineTo(x-stemHalf,top+headHeight);
+    ctx.lineTo(x-headHalf,top+headHeight);
+  }
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 }
 
@@ -1744,10 +1777,14 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
       id===item.button,item.direction);
   });
 
+  const displayMode=$("fingeringDisplay").value;
+  const arrowDisplay=displayMode==="ring-arrows"||displayMode==="half-arrows";
+  if(arrowDisplay) drawBellowsDirectionArrow(ctx,item.direction);
+
   // Legend: match the Fingering Player's Button Ring / Button Half display.
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  const halfDisplay=$("fingeringDisplay").value==="half";
+  const halfDisplay=displayMode==="half"||displayMode==="half-arrows";
   const legendR=46;
   ctx.lineWidth=9;
   ctx.lineJoin="round";
@@ -1945,7 +1982,8 @@ $("generateBtn").addEventListener("click", async()=>{
     const zipFirst = exportTunes.length > 1 ? "Multiple" : sanitize(firstTitle(exportTunes[0], 1)).replace(/\s+/g, "_");
     const zipSystem = system === "jeffries" ? "Jeffries" : "Wheatstone";
     const zipStyle = style === "cross" ? "Cross-Row" : "On-Row";
-    const zipDisplay = $("fingeringDisplay").value === "half" ? "Half" : "Full";
+    const displayValue = $("fingeringDisplay").value;
+    const zipDisplay = displayValue === "half" ? "Half" : displayValue === "ring-arrows" ? "Full-Arrows" : displayValue === "half-arrows" ? "Half-Arrows" : "Full";
     const suggested = `${zipFirst}_${zipSystem}_${zipStyle}_${zipDisplay}.zip`;
     const zipName=await askZipName(suggested);
     if (!zipName) { setStatus("Save canceled."); return; }

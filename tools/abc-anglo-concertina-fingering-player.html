@@ -374,12 +374,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.17</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.19</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
  <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
- <div class="control"><label for="fingeringDisplay">Fingering display</label><select id="fingeringDisplay"><option value="ring" selected>Button Ring</option><option value="half">Button Half</option></select></div>
+ <div class="control"><label for="fingeringDisplay">Fingering display</label><select id="fingeringDisplay"><option value="ring" selected>Button Ring</option><option value="half">Button Half</option><option value="ring-arrows">Button Ring with Arrows</option><option value="half-arrows">Button Half with Arrows</option></select></div>
  <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
@@ -418,7 +418,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align: center">
         <a href="https://www.youtube.com/@ephraimschafli3763" target="_blank" rel="noopener noreferrer">Ephraim Schafli's Play Along Anglo Concertina Videos</a>.
       </p>    
-      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Anglo concertina fingerings.</p>
       <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or Cross-Row fingering solutions.</p>
       <p>Play tunes with synchronized notation highlighting and a fingering diagram that shows the required button and Push or Draw direction.</p>
@@ -442,8 +442,10 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
       <p>Select the <b>Concertina type</b> (Jeffries or Wheatstone) and
         <b>Fingering solution</b> (On-Row or Cross-Row).</p>
-      <p>Use <b>Fingering display</b> to choose how the active concertina button is highlighted. <b>Button Ring</b> draws a full colored circle around the button. <b>Button Half</b> highlights only the Push or Draw half of the button, so the bellows direction is indicated by both color and position.</p>
-      <p>The Push/Draw legend changes to match the selected Fingering display. <b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
+      <p>Use <b>Fingering display</b> to choose how the active concertina button and bellows direction are shown.</p>
+      <p><b>Button Ring</b> draws a full colored circle around the active button. <b>Button Half</b> highlights only the Push or Draw half of the button, so the bellows direction is indicated by both color and position.</p>
+      <p><b>Button Ring with Arrows</b> and <b>Button Half with Arrows</b> use the same button highlighting and also display a large bellows-direction arrow centered between the left- and right-hand button groups. A red downward arrow indicates Push; a green upward arrow indicates Draw.</p>
+      <p>The Push/Draw legend changes to match the selected Ring or Half display style. <b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
       <p>These choices are remembered in this browser.</p>
 
       <p>The fingering solution descriptions below are relative to C/G tuning.</p>
@@ -518,7 +520,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         copied to the clipboard.</p>
       <p>A share button
         is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
-      <p>Opening a share link restores its Concertina type (Jeffries or Wheatstone), Fingering solution (Cross-Row or On-Row), and Fingering display (Button Ring or Button Half), and displays the
+      <p>Opening a share link restores its Concertina type (Jeffries or Wheatstone), Fingering solution (Cross-Row or On-Row), and Fingering display (Button Ring, Button Half, Button Ring with Arrows, or Button Half with Arrows), and displays the
         first tune encoded in the link.</p>
       <p>When tunes are opened from a share link or transferred directly from <b>ABC Transcription Tools</b>, click the
         <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
@@ -560,21 +562,17 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align: center">
         <a href="https://michaeleskin.com/tools/abc-anglo-fingering-image-generator.html" target="_blank" rel="noopener noreferrer">ABC Anglo Concertina Fingering Image Generator</a>
       </p>    
-
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">About</p>
-      <p>
-        This tool was created by
-        <p style="text-align: center">
-          <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
-        </p>    
-      </p>
-      <p>
-        If you find it useful, please consider a contribution via
-      </p>
+      <hr>
+      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align: center">
-        <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>.
+        This tool was created by
+        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
+        <br/><br/>
+        If you find it useful, please consider a contribution via<br/><br/>
+        <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
+        <br/><br/>
       </p>    
-
+      <hr>
 
     </div>
 
@@ -1985,7 +1983,8 @@ function prepareDiagramBase(){
   Object.keys(POS).forEach(id=>{const pair=bm[id]||["?","?"];drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]),false,null)});
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  const halfDisplay=$("fingeringDisplay").value==="half";
+  const displayMode=$("fingeringDisplay").value;
+  const halfDisplay=displayMode==="half"||displayMode==="half-arrows";
   const legendR=46;
   ctx.lineWidth=9;
   ctx.lineJoin="round";
@@ -2019,6 +2018,34 @@ function prepareDiagramBase(){
   $("diagramMeta").textContent=`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`;
   lastDiagramIndex=-2;
 }
+function drawBellowsDirectionArrow(ctx,direction){
+  // Large bellows-direction arrow centered in the gap between the two button groups.
+  // Push points down; Draw points up.
+  const x=640, top=282, bottom=408, stemHalf=10, headHalf=32, headHeight=41;
+  ctx.save();
+  ctx.fillStyle=direction==="push"?PUSH_COLOR:DRAW_COLOR;
+  ctx.beginPath();
+  if(direction==="push"){
+    ctx.moveTo(x-stemHalf,top);
+    ctx.lineTo(x+stemHalf,top);
+    ctx.lineTo(x+stemHalf,bottom-headHeight);
+    ctx.lineTo(x+headHalf,bottom-headHeight);
+    ctx.lineTo(x,bottom);
+    ctx.lineTo(x-headHalf,bottom-headHeight);
+    ctx.lineTo(x-stemHalf,bottom-headHeight);
+  }else{
+    ctx.moveTo(x,top);
+    ctx.lineTo(x+headHalf,top+headHeight);
+    ctx.lineTo(x+stemHalf,top+headHeight);
+    ctx.lineTo(x+stemHalf,bottom);
+    ctx.lineTo(x-stemHalf,bottom);
+    ctx.lineTo(x-stemHalf,top+headHeight);
+    ctx.lineTo(x-headHalf,top+headHeight);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
 function drawDiagram(item=null,force=false){
   const itemIndex=item?item.index:-1;
   if(!force&&itemIndex===lastDiagramIndex)return;
@@ -2034,7 +2061,9 @@ function drawDiagram(item=null,force=false){
     const physical=item.button.replace(/^L9a$/,"L9").replace(/^R1x$/,"R1");
     const p=POS[physical];
     if(p){
-      const halfDisplay=$("fingeringDisplay").value==="half";
+      const displayMode=$("fingeringDisplay").value;
+      const halfDisplay=displayMode==="half"||displayMode==="half-arrows";
+      const arrowDisplay=displayMode==="ring-arrows"||displayMode==="half-arrows";
       ctx.lineWidth=10;
       ctx.lineJoin="round";
       ctx.lineCap="round";
@@ -2057,6 +2086,7 @@ function drawDiagram(item=null,force=false){
         ctx.arc(p.x,p.y,58,0,Math.PI*2);
       }
       ctx.stroke();
+      if(arrowDisplay)drawBellowsDirectionArrow(ctx,item.direction);
     }
   }
   lastDiagramIndex=itemIndex;
@@ -2445,7 +2475,7 @@ function loadShareLinkAfterStartup(){
       const system=params.get("system"),style=params.get("style"),display=params.get("display");
       if(system==="jeffries"||system==="wheatstone")$("system").value=system;
       if(style==="onrow"||style==="cross")$("style").value=style;
-      if(display==="ring"||display==="half")$("fingeringDisplay").value=display;
+      if(["ring","half","ring-arrows","half-arrows"].includes(display))$("fingeringDisplay").value=display;
       savePrefs();
       manualEntryCollection=false;currentSaveBaseName="shared-anglo-concertina-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
@@ -2924,7 +2954,7 @@ function moveTabOverrideToNote(direction){
   showManualFingeringForNote(target,true);
 }
 
-function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style;if(p.display==="ring"||p.display==="half")$("fingeringDisplay").value=p.display}catch(_){}}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style;if(["ring","half","ring-arrows","half-arrows"].includes(p.display))$("fingeringDisplay").value=p.display}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function findTempoInput(){return $("audio").querySelector("input.abcjs-midi-tempo,input.abcjs-midi-current-tempo,.abcjs-midi-tempo input,.abcjs-midi-current-tempo input,.abcjs-midi-current-tempo-wrapper input,.abcjs-tempo-wrapper input,input[type='number'],input[type='text']")}
