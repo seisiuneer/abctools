@@ -322,7 +322,7 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
 @media(max-width:1050px){.whistleToolbar{grid-template-columns:1fr 1fr}.whistleToolbar .fileControl{grid-column:1 / -1}.whistleLive{min-height:500px}.whistleLargeGlyph{font-size:clamp(190px,34vw,350px)}}
 @media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleLiveNote{font-size:48px;margin-left:10px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.21</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.23</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -377,7 +377,7 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Whistle Fingering pane updates to that note.</p>
-      <p>Playback forces the FatBoy soundfont, <b>MIDI program 78</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+      <p>Irish-style roll playback is enabled by default for <b>~</b> ornaments. Add <b>%irish_rolls_off</b> to a tune to disable it. Playback also forces the FatBoy soundfont, <b>MIDI program 78</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Click the <b>tempo percentage</b> in the playback controls to set playback from <b>10% to 200%</b>. The setting is remembered in this browser.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
@@ -471,7 +471,30 @@ function escapeHTML(value){
   }[ch]));
 }
 
+function configureIrishRollsForTune(abc){
+  const source=String(abc||"");
+  const irishRollsOff=/^[ \t]*%irish_rolls_off\b/im.test(source);
+
+  if(!ABCJS||!ABCJS.eskinConfig||typeof ABCJS.eskinConfig.setIrishRolls!=="function"){
+    throw new Error("Portable abcjs Irish-roll configuration API is unavailable.");
+  }
+
+  // The portable abcjs parser uses this setting while parsing '~' ornaments.
+  // Enable custom Irish-roll playback by default and disable it only when the
+  // tune explicitly contains %irish_rolls_off.
+  ABCJS.eskinConfig.setIrishRolls(!irishRollsOff);
+
+  // Do not allow a stale force override to defeat the per-tune choice.
+  if(typeof ABCJS.eskinConfig.setIrishRollOverrides==="function"){
+    ABCJS.eskinConfig.setIrishRollOverrides({
+      forceEnable:false,
+      forceDisable:false
+    });
+  }
+}
+
 function buildPlaybackABC(abc){
+  const source=String(abc||"");
   const forced=[
     "%soundfont fatboy",
     "%%MIDI program 78",
@@ -479,7 +502,7 @@ function buildPlaybackABC(abc){
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
-  let cleaned=String(abc||"").replace(
+  let cleaned=source.replace(
     /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
     m=>" ".repeat(m.length)
   );
@@ -1342,11 +1365,13 @@ async function rebuild(){
     showWhistleLive(null);
 
     const tune=$("abcText").value;
-    const playbackABC=buildPlaybackABC(tune);
 
     if(typeof ABCJS==="undefined"||!ABCJS.renderAbc){
       throw new Error("Portable abcjs library did not load.");
     }
+
+    configureIrishRollsForTune(tune);
+    const playbackABC=buildPlaybackABC(tune);
 
     const showWhistleTab=$("notationDisplay").value==="whistle-tab";
     const renderParams={
