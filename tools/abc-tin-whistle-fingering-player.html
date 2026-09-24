@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABC Tin Whistle Fingering Player</title>
+<meta name="description" content="Play ABC tunes with synchronized standard notation, D tin whistle tablature, audio playback, and a large live whistle fingering display." />
+<meta name="keywords" content="ABC notation, tin whistle, whistle fingering, tin whistle tablature, whistle playback, Irish traditional music, ABC Transcription Tools" />
+<meta name="author" content="Michael Eskin" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ABC Tin Whistle Fingering Player" />
+<meta property="og:description" content="Play ABC tunes with synchronized notation, D tin whistle tablature, audio playback, and a large live whistle fingering display." />
+<meta property="og:site_name" content="ABC Tin Whistle Fingering Player" />
+<meta property="og:url" content="https://michaeleskin.com/tools/abc-tin-whistle-fingering-player.html" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tin-whistle-fingering-player-1.jpg"/>
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet">
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+<style>
+:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
+.app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(120px,.72fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
+.abcWrap textarea.editorTextSmall{font-size:14px}
+.abcWrap textarea.editorTextMedium{font-size:16px}
+.abcWrap textarea.editorTextLarge{font-size:17px}
+.abcWrap textarea.editorTextLargest{font-size:18px}.notationViewport{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}.notation{padding:7px;min-height:max-content}.notation svg{display:block;max-width:100%;height:auto}.notation .abcjs-cursor{stroke:#00c83c;stroke-width:12px;stroke-opacity:.28;transform:translate(7px,0);pointer-events:none}.audioRow{flex:0 0 auto;padding:7px 9px 9px;border-top:1px solid rgba(127,127,127,.18)}
+/* Make the abcjs Repeat/Loop button unmistakable when enabled. */
+#audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
+#audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
+.splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
+.diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}
+.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
+body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
+@media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
+@media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
+
+.modal_default_main{max-width:460px !important;width:calc(100vw - 32px) !important}
+/* Larger file/status text and a more compact, larger-type DayPilot tempo dialog. */
+.control input[type=file]{font-size:1.12rem;min-height:38px;height:38px;line-height:38px}
+.control input[type=file]::file-selector-button{min-width:118px;margin-right:8px}
+.control:has(#openFile){align-self:end}
+.control:has(#openFile) label{font-size:.82rem;margin:0 0 4px}
+.modal_default_main{font-size:18px !important}
+.modal_default_main .modal_default_content{font-size:18px !important}
+.modal_default_main input{font-size:20px !important}
+.modal_default_main button,.modal_default_main input[type=button],.modal_default_main input[type=submit]{font-size:18px !important}
+
+/* Normalize toolbar controls on Safari/iOS. */
+.control select{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  border-color:#b8c7bd;
+}
+.toolbar button,.bottomBar button,.diagramHeader button{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+
+/* Give the native file picker a consistent button treatment where supported.
+   The input remains native so iOS can still choose .abc and .txt files. */
+.control input[type=file]{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+.control input[type=file]::file-selector-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+.control input[type=file]::-webkit-file-upload-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+
+/* Normalize modal action buttons on Safari/iOS. */
+#helpClose {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:650 !important;
+  line-height:1.2 !important;
+  width:180px !important;
+  padding:10px 18px !important;
+}
+
+/* DayPilot prompt/alert buttons are inserted outside the app markup. */
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_main button,
+.modal_default_button {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+  min-width:88px !important;
+  width:auto !important;
+  padding:8px 18px !important;
+}
+
+/* Improve DayPilot alert readability and center its content/actions. */
+.modal_default_main .modal_default_content {
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons {
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons table {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Slightly taller, consistent panel headers with compact Fingering Diagram actions. */
+.panelHeader,
+.diagramHeader {
+  min-height: 42px;
+  box-sizing: border-box;
+}
+.diagramHeader .fullBtn,
+.diagramHeader .exitFull {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
+
+
+
+/* Explicit cross-platform styling for the share-link Enable Playback control. */
+#enablePlaybackBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid #7fb99a;
+  border-radius: 8px;
+  background: #e6f4ec;
+  color: #17251d;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 1;
+  -webkit-text-fill-color: #17251d;
+}
+#enablePlaybackBtn:hover:not(:disabled) {
+  background: #d3ebde;
+}
+#enablePlaybackBtn:active:not(:disabled) {
+  background: #c3e2d1;
+}
+#enablePlaybackBtn:focus-visible {
+  outline: 2px solid #1769ff;
+  outline-offset: 2px;
+}
+#enablePlaybackBtn:disabled {
+  cursor: default;
+  opacity: .65;
+  color: #17251d;
+  -webkit-text-fill-color: #17251d;
+}
+
+
+.fileControlRow{display:flex;align-items:center;gap:8px;min-width:0}
+.fileControlRow #openFile{min-width:0;flex:1 1 auto}
+.fileControlRow #saveAbcBtn{flex:0 0 auto}
+
+
+/* Save filename prompt: left-align its title while preserving centered share alerts. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  text-align:left !important;
+}
+
+
+/* Refined DayPilot prompt/alert styling: lighter scale and simple border. */
+.modal_default_main{
+  border:1px solid #17241c !important;
+  box-shadow:0 8px 28px rgba(0,0,0,.18) !important;
+  font-size:16px !important;
+}
+.modal_default_main .modal_default_content{
+  font-size:16px !important;
+  line-height:1.45 !important;
+}
+.modal_default_main input{
+  font-size:18px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:16px !important;
+  min-width:82px !important;
+  padding:7px 16px !important;
+}
+.modal_default_main,
+.modal_default_main > div,
+.modal_default_main .modal_default_content,
+.modal_default_main .modal_default_buttons{
+  outline:0 !important;
+}
+
+
+/* DayPilot dialog typography refinement. */
+.modal_default_main input{
+  font-size:16px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:14px !important;
+  min-width:78px !important;
+  padding:6px 14px !important;
+}
+
+
+/* Final DayPilot spacing refinements. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  line-height:1.4 !important;
+}
+body.save-name-prompt-open .modal_default_main input{
+  padding:7px 9px !important;
+}
+/* Pull the save prompt slightly closer to its filename field. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  padding-bottom:8px !important;
+}
+/* Give share-confirmation copy just a touch more breathing room. */
+body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
+  line-height:1.55 !important;
+}
+
+
+
+
+#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;margin-left:-6px;margin-right:8px}
+
+@font-face { font-family: 'TinWhistleFingering'; src: url(data:font/ttf;base64,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) format('truetype'); font-weight: normal; font-style: normal; }
+    .whistle { font-family:'TinWhistleFingering'; font-size:50px; }
+    .whistle_small { font-family:'TinWhistleFingering'; font-size:32px; }
+    .hiddentabline { display:none; }
+
+/* Tin Whistle player overrides */
+.whistleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(125px,.64fr) minmax(185px,.94fr) minmax(220px,1.12fr) auto}
+.whistleToolbar .fileControl{grid-column:auto}
+.whistleDiagramWrap{overflow:auto}
+.whistleLive{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:clamp(18px,3vw,42px)}
+.whistleLive[hidden]{display:none}
+.whistleTuneTitle{width:100%;text-align:center;font-weight:750;font-size:clamp(24px,3.2vw,44px);line-height:1.15;margin:0 0 clamp(22px,4vh,48px);color:#17241c}
+.whistleLiveRow{flex:1;width:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+.whistleGlyphGroup{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.whistleLargeGlyph{font-family:'TinWhistleFingering';font-weight:normal;font-style:normal;font-size:clamp(220px,32vw,460px);line-height:.9;color:#111;display:block;min-width:0}
+.whistleLiveNote{position:absolute;left:100%;top:50%;margin-left:clamp(12px,2vw,30px);transform:translateY(-77%);font-weight:800;font-size:clamp(48px,7vw,100px);line-height:1;color:#17241c;white-space:nowrap;text-align:left}
+body.diagram-full .whistleLargeGlyph{font-size:clamp(240px,34vw,500px)}
+body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
+@media(max-width:1050px){.whistleToolbar{grid-template-columns:1fr 1fr}.whistleToolbar .fileControl{grid-column:1 / -1}.whistleLive{min-height:500px}.whistleLargeGlyph{font-size:clamp(190px,34vw,350px)}}
+@media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleLiveNote{font-size:48px;margin-left:10px}}
+</style></head><body><div class="app">
+<header class="app-header"><div class="version">Version 1.21</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<div class="toolbar whistleToolbar">
+ <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
+ <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
+ <div class="control"><label for="octaveDisplay">Octave Display</label><select id="octaveDisplay"><option value="upper-prime">Uppercase + ' marks</option><option value="lower-upper">Lowercase / Uppercase</option><option value="color-upper-prime" selected>Color + Uppercase + '</option><option value="color-lower-upper">Color + Lower/Upper</option></select></div>
+ <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
+ <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
+</div>
+<div class="workspace" id="workspace">
+ <div class="leftPane" id="leftPane">
+  <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+ </div>
+ <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Whistle Fingering</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">D Whistle</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div>
+  <div class="diagramWrap whistleDiagramWrap">
+   <div id="whistleLive" class="whistleLive" hidden>
+    <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
+    <div class="whistleLiveRow"><div class="whistleGlyphGroup"><div id="whistleLargeGlyph" class="whistleLargeGlyph" role="img" aria-label="Tin whistle fingering"></div><div id="whistleLiveNote" class="whistleLiveNote"></div></div></div>
+   </div>
+   <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
+  </div>
+ </section>
+</div>
+<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
+</div>
+
+<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
+  <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
+    <h2 style="text-align:center;margin:0 0 24px">ABC Tin Whistle Fingering Player Instructions</h2>
+    <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and an optional <b>D tin whistle tablature</b> display.</p>
+      <p>The Whistle Fingering pane shows the current tune title and, during playback, a large fingering diagram for the note being played with its note name to the right.</p>
+      <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with D-whistle tablature. The default is <b>Notation + Whistle Tab</b>.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
+      <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or text file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
+      <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play. Edits are retained when changing tunes.</p>
+      <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <p>The upper-left panel contains editable ABC. The lower-left panel shows abcjs notation and playback controls. The <b>Notation display</b> selector chooses whether D-whistle tablature is also shown.</p>
+      <p>Editing the ABC rebuilds the notation and audio. When whistle tablature is enabled it is rebuilt at the same time. Click a rendered note to select its corresponding ABC text.</p>
+      <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
+      <p>The display uses standard D-whistle fingering. The note name appears to the right of the fingering symbol.</p>
+      <p>Use <b>Octave Display</b> to choose uppercase note names with ' marks, lowercase/uppercase note names by octave, or color-coded versions of either style.</p>
+      <p>The two <b>Color-coded</b> choices draw the fingering glyph black below D5, dark red from D5 through C#6, and orange from D6 upward.</p>
+      <p>The <b>Notation display</b> and <b>Octave Display</b> choices are remembered in this browser and are also included in generated share links.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>As each melody note plays, the notation cursor follows the tune and the Whistle Fingering pane updates to that note.</p>
+      <p>Playback forces the FatBoy soundfont, <b>MIDI program 78</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+      <p>Click the <b>tempo percentage</b> in the playback controls to set playback from <b>10% to 200%</b>. The setting is remembered in this browser.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+      <p>On wide screens, drag the vertical divider to resize the left and whistle-fingering panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
+      <p>Click <b>Full-Page View</b> to enlarge the whistle fingering pane while keeping playback controls available at the bottom. Click <b>Exit Full Page</b> or press <b>Escape</b> to return.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
+      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied in a share URL.</p>
+      <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+
+      <hr>
+      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
+      <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>based on a suggestion by Ephraim Schafli.<br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
+      <hr>
+    </div>
+    <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
+  (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(IS_IOS)$("openFile").removeAttribute("accept");
+
+let currentSaveBaseName="";
+let manualEntryCollection=false;
+let loadedABC="";
+let tunes=[];
+let currentTune=0;
+let abcDirty=false;
+let controller=null;
+let renderGeneration=0;
+let prefixLength=0;
+let playbackCursor=null;
+let playbackActive=false;
+let audioControllerInitializing=false;
+let rebuildTimer=0;
+let sharePlaybackNeedsGesture=false;
+let currentLiveMidi=null;
+
+const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-tin-whistle-fingering-player.html";
+const SHARE_LINK_MAX_LEN=8100;
+const SPLIT_KEY="abcTinWhistleSplitters";
+const EDITOR_SIZE_KEY="abcTinWhistleEditorTextSize";
+const TEMPO_KEY="abcTinWhistleTempo";
+const WHISTLE_PREFS_KEY="abcTinWhistlePlayerPrefs";
+
+const WHISTLE_RENDER_TAB=[{
+  instrument:"violin",
+  label:" ",
+  tuning:["G,"],
+  highestNote:"^a'",
+  hideTabSymbol:true
+}];
+
+const WHISTLE_GLYPH_MAP=[
+  "g","m","a","i","b","c","j","d","k","e","f","l",
+  "g","m","a","i","b","c","j","D","K","E","F","L",
+  "G","M","A","I","B","n","J","D","K","E","F","L",
+  "G","M","A"
+];
+
+function splitTunes(abc){
+  const lines=String(abc||"").replace(/\r\n?/g,"\n").split("\n");
+  const out=[];
+  let pre=[],cur=null;
+  for(const line of lines){
+    if(/^X\s*:/.test(line)){
+      if(cur)out.push(cur.join("\n").trim());
+      cur=[...pre,line];
+      pre=[];
+    }else if(cur)cur.push(line);
+    else pre.push(line);
+  }
+  if(cur)out.push(cur.join("\n").trim());
+  if(!out.length&&String(abc||"").trim())out.push(String(abc).trim());
+  return out.filter(Boolean);
+}
+
+function firstTitle(tune,n){
+  const m=String(tune||"").match(/^T:\s*(.*?)\s*$/m);
+  return m&&m[1].trim()||`Tune ${n}`;
+}
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function buildPlaybackABC(abc){
+  const forced=[
+    "%soundfont fatboy",
+    "%%MIDI program 78",
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0"
+  ].join("\n")+"\n";
+
+  let cleaned=String(abc||"").replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+    m=>" ".repeat(m.length)
+  );
+
+  const kMatch=/^K\s*:.*$/mi.exec(cleaned);
+  prefixLength=forced.length;
+  return kMatch
+    ? cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index)
+    : forced+cleaned;
+}
+
+function removeCursor(){
+  if(playbackCursor){
+    playbackCursor.remove();
+    playbackCursor=null;
+  }
+}
+
+function keepCursorVisible(){
+  if(!playbackCursor)return;
+  const vp=$("notation").parentElement;
+  const c=playbackCursor.getBoundingClientRect();
+  const v=vp.getBoundingClientRect();
+  const m=28;
+  if(c.top<v.top+m)vp.scrollBy({top:c.top-v.top-m,behavior:"smooth"});
+  else if(c.bottom>v.bottom-m)vp.scrollBy({top:c.bottom-v.bottom+m,behavior:"smooth"});
+}
+
+function whistleGlyphForMidi(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return "";
+  const index=n-55;
+  return index>=0&&index<WHISTLE_GLYPH_MAP.length?WHISTLE_GLYPH_MAP[index]:"x";
+}
+
+function midiPitchClassName(midi){
+  const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return "";
+  return names[(n%12+12)%12];
+}
+
+function formattedWhistleNoteName(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return "";
+  const base=midiPitchClassName(n);
+  const mode=$("octaveDisplay").value;
+  const lowerUpper=mode==="lower-upper"||mode==="color-lower-upper";
+
+  if(lowerUpper){
+    if(n<74)return base.toLowerCase();
+    if(n<86)return base;
+    return base+"'";
+  }
+
+  if(n<74)return base;
+  if(n<86)return base+"'";
+  return base+"''";
+}
+
+function whistleGlyphColor(midi){
+  const n=Math.round(Number(midi));
+  const mode=$("octaveDisplay").value;
+  const useColor=mode==="color-upper-prime"||mode==="color-lower-upper";
+  if(!useColor)return "#111";
+  if(n<74)return "#111";
+  if(n<86)return "#b00000";
+  return "#e67e00";
+}
+
+function showWhistleLive(midi){
+  currentLiveMidi=midi==null?null:Math.round(Number(midi));
+  const live=$("whistleLive");
+  const empty=$("emptyDiagram");
+  if(!tunes.length){
+    live.hidden=true;
+    empty.hidden=false;
+    $("fullBtn").disabled=true;
+    return;
+  }
+
+  $("whistleTuneTitle").textContent=firstTitle($("abcText").value,currentTune+1);
+  live.hidden=false;
+  empty.hidden=true;
+  $("fullBtn").disabled=false;
+
+  const glyph=$("whistleLargeGlyph");
+  const note=$("whistleLiveNote");
+  if(midi==null){
+    glyph.textContent="";
+    glyph.style.color="#111";
+    note.textContent="";
+    return;
+  }
+
+  const n=currentLiveMidi;
+  glyph.textContent=whistleGlyphForMidi(n);
+  glyph.style.color=whistleGlyphColor(n);
+  note.textContent=formattedWhistleNoteName(n);
+}
+
+function getNextSiblings(element){
+  const siblings=[];
+  let current=element;
+  while(current=current.nextSibling)siblings.push(current);
+  return siblings;
+}
+
+function postProcessWhistleTab(visualObj,renderDivID){
+  if(!visualObj||!visualObj.length)return;
+  const allTopLines=document.querySelectorAll(
+    'div[id="'+renderDivID+'"] > svg > g > g > [class="abcjs-top-line"]'
+  );
+  const visual=visualObj[0];
+  if(!visual||!visual.lines||!visual.lines.length)return;
+
+  const linesToCheck=[];
+  visual.lines.forEach(line=>{
+    if(line&&line.staff)linesToCheck.push(line);
+  });
+
+  const tabTopLines=[];
+  linesToCheck.forEach(line=>{
+    const staffCount=line.staff?line.staff.length:0;
+    const tabStaffIndex=staffCount/2;
+    for(let index=0;index<staffCount;index++)tabTopLines.push(index>=tabStaffIndex);
+  });
+
+  allTopLines.forEach((line,index)=>{
+    if(!tabTopLines[index])return;
+    line.setAttribute("class","hiddentabline");
+    getNextSiblings(line).forEach(sibling=>{
+      if(sibling&&sibling.setAttribute)sibling.setAttribute("class","hiddentabline");
+    });
+  });
+
+  const selector='div[id="'+renderDivID+'"] > svg > g > g[data-name="tabNumber"] > text > tspan';
+  document.querySelectorAll(selector).forEach(tspan=>{
+    tspan.setAttribute("class","whistle");
+    tspan.setAttribute("dy","-7");
+    const index=parseInt(tspan.textContent,10);
+    if(!Number.isNaN(index)&&index>=0&&index<WHISTLE_GLYPH_MAP.length){
+      tspan.textContent=WHISTLE_GLYPH_MAP[index];
+    }else{
+      tspan.setAttribute("class","whistle_small");
+      tspan.setAttribute("dy","-23");
+      tspan.textContent="x";
+    }
+  });
+}
+
+function eventMidi(event){
+  const arr=event&&event.midiPitches;
+  if(arr&&arr.length){
+    const p=arr[0];
+    if(typeof p==="number")return p;
+    if(p&&Number.isFinite(Number(p.pitch)))return Number(p.pitch);
+  }
+  if(event&&Number.isFinite(Number(event.midiPitch)))return Number(event.midiPitch);
+  return null;
+}
+
+function abcNoteTokens(value){
+  const tokens=[];
+  let inQuote=false,inGrace=false,lineStart=true,headerLine=false;
+
+  for(let i=0;i<value.length;){
+    const c=value[i];
+    if(lineStart){
+      headerLine=/^[A-Za-z]:/.test(value.slice(i,i+2))||c==="%";
+      lineStart=false;
+    }
+    if(c==="\n"||c==="\r"){
+      lineStart=true;headerLine=false;i++;continue;
+    }
+    if(headerLine){i++;continue}
+    if(c==='"'){inQuote=!inQuote;i++;continue}
+    if(inQuote){i++;continue}
+    if(c==="{"){inGrace=true;i++;continue}
+    if(c==="}"){inGrace=false;i++;continue}
+    if(inGrace){i++;continue}
+    if(c==="!"){
+      const e=value.indexOf("!",i+1);
+      i=e>=0?e+1:i+1;
+      continue;
+    }
+    if(c==="+"){
+      const e=value.indexOf("+",i+1);
+      i=e>=0?e+1:i+1;
+      continue;
+    }
+
+    const start=i;
+    let j=i;
+    if(value[j]==="=")j++;
+    else if(value[j]==="^"||value[j]==="_"){
+      const accidental=value[j++];
+      if(value[j]===accidental)j++;
+    }
+
+    if(/[A-Ga-g]/.test(value[j]||"")){
+      const pitch=j;
+      j++;
+      while(value[j]==="'"||value[j]===",")j++;
+      while(/[0-9/]/.test(value[j]||""))j++;
+      tokens.push({start,end:j,pitch});
+      i=j;
+      continue;
+    }
+    i++;
+  }
+  return tokens;
+}
+
+function selectClickedNotationNote(abcelem){
+  if(!abcelem||!Number.isInteger(abcelem.startChar)||!Number.isInteger(abcelem.endChar))return;
+
+  let start=abcelem.startChar-prefixLength;
+  let end=abcelem.endChar-prefixLength;
+  const ta=$("abcText");
+  if(start<0||end<=start)return;
+
+  start=Math.min(start,ta.value.length);
+  end=Math.min(end,ta.value.length);
+
+  const clickedToken=abcNoteTokens(ta.value).find(t=>
+    (t.pitch>=start&&t.pitch<end)||(t.start<end&&t.end>start)
+  );
+  if(clickedToken){
+    start=clickedToken.start;
+    end=clickedToken.end;
+  }else{
+    while(start<end&&/\s/.test(ta.value[start]))start++;
+    while(end>start&&/\s/.test(ta.value[end-1]))end--;
+  }
+  if(end<=start)return;
+
+  ta.focus({preventScroll:true});
+  ta.setSelectionRange(start,end);
+  const line=ta.value.slice(0,start).split(/\r?\n/).length;
+  const lineHeight=parseFloat(getComputedStyle(ta).lineHeight)||20;
+  ta.scrollTop=Math.max(0,((line-1)*lineHeight)-(ta.clientHeight/2)+(lineHeight/2));
+}
+
+function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
+
+function savedSplitters(){
+  try{
+    const p=JSON.parse(localStorage.getItem(SPLIT_KEY)||"{}");
+    return {v:Number(p.v),h:Number(p.h)};
+  }catch(_){
+    return {v:NaN,h:NaN};
+  }
+}
+
+const DEFAULT_SPLIT_V=52.5,DEFAULT_SPLIT_H=45;
+let splitVPercent=DEFAULT_SPLIT_V,splitHPercent=DEFAULT_SPLIT_H;
+
+function saveSplitterPercents(){
+  try{
+    localStorage.setItem(SPLIT_KEY,JSON.stringify({v:splitVPercent,h:splitHPercent}));
+  }catch(_){}
+}
+
+function setVerticalSplit(percent){
+  splitVPercent=clamp(percent,25,75);
+  const avail=Math.max(1,$("workspace").clientWidth-15);
+  $("workspace").style.gridTemplateColumns=`${avail*splitVPercent/100}px 5px minmax(0,1fr)`;
+}
+
+function setHorizontalSplit(percent){
+  splitHPercent=clamp(percent,25,75);
+  const avail=Math.max(1,$("leftPane").clientHeight-15);
+  $("leftPane").style.gridTemplateRows=`${avail*splitHPercent/100}px 5px minmax(180px,1fr)`;
+}
+
+function restoreSplitters(){
+  if(window.matchMedia("(max-width:1050px)").matches)return;
+  const p=savedSplitters();
+  if(Number.isFinite(p.v))splitVPercent=clamp(p.v,25,75);
+  if(Number.isFinite(p.h))splitHPercent=clamp(p.h,25,75);
+  setVerticalSplit(splitVPercent);
+  setHorizontalSplit(splitHPercent);
+}
+
+function installSplitters(){
+  const sv=$("splitV"),sh=$("splitH");
+
+  function begin(e,kind){
+    if(e.button!==undefined&&e.button!==0)return;
+    if(window.matchMedia("(max-width:1050px)").matches)return;
+    e.preventDefault();
+    document.body.classList.add("resizing");
+
+    const startX=e.clientX,startY=e.clientY;
+    const startV=splitVPercent,startH=splitHPercent;
+    const r=kind==="v"?$("workspace").getBoundingClientRect():$("leftPane").getBoundingClientRect();
+    const avail=Math.max(1,(kind==="v"?r.width:r.height)-15);
+
+    const move=ev=>{
+      if(kind==="v"){
+        setVerticalSplit(startV+100*(ev.clientX-startX)/avail);
+      }else{
+        setHorizontalSplit(startH+100*(ev.clientY-startY)/avail);
+      }
+    };
+    const end=()=>{
+      document.removeEventListener("pointermove",move);
+      document.removeEventListener("pointerup",end);
+      document.removeEventListener("pointercancel",end);
+      document.body.classList.remove("resizing");
+      saveSplitterPercents();
+    };
+    document.addEventListener("pointermove",move);
+    document.addEventListener("pointerup",end);
+    document.addEventListener("pointercancel",end);
+  }
+
+  sv.addEventListener("pointerdown",e=>begin(e,"v"));
+  sh.addEventListener("pointerdown",e=>begin(e,"h"));
+  sv.addEventListener("dblclick",()=>{
+    if(window.matchMedia("(max-width:1050px)").matches)return;
+    setVerticalSplit(DEFAULT_SPLIT_V);
+    saveSplitterPercents();
+  });
+  sh.addEventListener("dblclick",()=>{
+    if(window.matchMedia("(max-width:1050px)").matches)return;
+    setHorizontalSplit(DEFAULT_SPLIT_H);
+    saveSplitterPercents();
+  });
+  window.addEventListener("resize",()=>{
+    if(!window.matchMedia("(max-width:1050px)").matches){
+      setVerticalSplit(splitVPercent);
+      setHorizontalSplit(splitHPercent);
+    }
+  });
+}
+
+function bytesToBase64URL(bytes){
+  let binary="";
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+
+function base64URLToBytes(value){
+  let s=String(value||"").replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  const binary=atob(s);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return bytes;
+}
+
+function compressABCDeflate(abc){
+  if(typeof pako==="undefined"||!pako.deflate)throw new Error("pako.js did not load.");
+  return bytesToBase64URL(pako.deflate(new TextEncoder().encode(abc),{level:6}));
+}
+
+function decompressABCDeflate(payload){
+  if(typeof pako==="undefined"||!pako.inflate)throw new Error("pako.js did not load.");
+  return new TextDecoder().decode(pako.inflate(base64URLToBytes(payload)));
+}
+
+function syncCurrentTuneFromEditor(){
+  if(tunes.length&&currentTune>=0&&currentTune<tunes.length&&!$("abcText").disabled){
+    tunes[currentTune]=$("abcText").value;
+    loadedABC=tunes.join("\n\n");
+  }
+}
+
+function generateShareLink(abc){
+  if(!abc||!abc.trim())return "";
+  try{
+    const params=new URLSearchParams();
+    params.set("def",compressABCDeflate(abc));
+    params.set("notation",$("notationDisplay").value);
+    params.set("octave",$("octaveDisplay").value);
+    return `${SHARE_BASE_URL}?${params.toString()}`;
+  }catch(_){
+    return "";
+  }
+}
+
+function updateShareButtons(){
+  const tuneBtn=$("shareTuneBtn"),allBtn=$("shareAllBtn");
+  if(!tunes.length){
+    tuneBtn.disabled=true;
+    allBtn.disabled=true;
+    tuneBtn.title=allBtn.title="Open or enter ABC first.";
+    return;
+  }
+
+  syncCurrentTuneFromEditor();
+  const tuneURL=generateShareLink($("abcText").value);
+  const allURL=generateShareLink(tunes.join("\n\n"));
+
+  tuneBtn.disabled=!tuneURL||tuneURL.length>SHARE_LINK_MAX_LEN;
+  allBtn.disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;
+  tuneBtn.title=tuneBtn.disabled
+    ?"Current tune share link exceeds 8100 characters."
+    :"Create a share link for the current tune and copy it to the clipboard.";
+  allBtn.title=allBtn.disabled
+    ?"All-tunes share link exceeds 8100 characters."
+    :"Create a share link for all loaded tunes and copy it to the clipboard.";
+}
+
+async function copyShareLink(allTunes){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
+  const url=generateShareLink(abc);
+  if(!url||url.length>SHARE_LINK_MAX_LEN)return;
+
+  let copied=false;
+  try{
+    await navigator.clipboard.writeText(url);
+    copied=true;
+  }catch(_){
+    const ta=document.createElement("textarea");
+    ta.value=url;
+    ta.setAttribute("readonly","");
+    ta.style.position="fixed";
+    ta.style.opacity="0";
+    try{
+      document.body.appendChild(ta);
+      ta.select();
+      copied=document.execCommand("copy");
+    }catch(_){
+      copied=false;
+    }finally{
+      ta.remove();
+    }
+  }
+
+  if(copied){
+    const tuneName=firstTitle($("abcText").value,currentTune+1);
+    const message=allTunes
+      ?"Share link for all tunes copied to the clipboard."
+      :`Share link for the current tune <b>${escapeHTML(tuneName)}</b> copied to the clipboard.`;
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(allTunes
+        ?"Share link for all tunes copied to the clipboard."
+        :`Share link for the current tune ${tuneName} copied to the clipboard.`);
+    }
+  }else{
+    const message="Unable to copy the share link to the clipboard.";
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(message);
+    }
+  }
+}
+
+function populateTuneSelector(label){
+  $("fileLabel").textContent=`${label} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
+  $("tuneSelect").innerHTML=tunes.map((t,i)=>
+    `<option value="${i}">${escapeHTML(firstTitle(t,i+1))}</option>`
+  ).join("");
+  $("tuneSelect").disabled=false;
+}
+
+function setAbcDirty(dirty=true){abcDirty=!!dirty}
+
+async function confirmDiscardDirtyForOpen(){
+  if(!abcDirty||!tunes.length)return true;
+  const message="You have unsaved changes to the current ABC tunes.<br><br>Opening a new ABC file will discard those changes. Do you want to continue?";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.confirm==="function"){
+    const r=await DayPilot.Modal.confirm(message,{top:100,width:460});
+    return !!(r&&!r.canceled&&r.result);
+  }
+  return window.confirm(
+    "You have unsaved changes to the current ABC tunes.\n\nOpening a new ABC file will discard those changes. Do you want to continue?"
+  );
+}
+
+function baseNameForSave(name){
+  const s=String(name||"").trim().replace(/^.*[\\/]/,"").replace(/\.(?:abc|txt)$/i,"");
+  return s||"tin-whistle-tunes";
+}
+
+function syncAllTunesForSave(){
+  syncCurrentTuneFromEditor();
+  return tunes.join("\n\n").replace(/\s+$/,"")+"\n";
+}
+
+function mobileSavePlatform(){
+  const ua=navigator.userAgent||"";
+  return /iPhone|iPad|iPod|Android/i.test(ua)||
+    (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+}
+
+function manualTuneTitleBaseName(){
+  if(!manualEntryCollection||tunes.length!==1)return "";
+  syncCurrentTuneFromEditor();
+  const m=(tunes[0]||"").match(/^T:\s*(.*?)\s*$/m);
+  return m&&m[1].trim()?baseNameForSave(m[1].trim()):"";
+}
+
+async function askSaveBaseName(){
+  const mobile=mobileSavePlatform();
+  const ext=mobile?".txt":".abc";
+  const def=baseNameForSave(
+    currentSaveBaseName||manualTuneTitleBaseName()||"tin-whistle-tune"
+  )+ext;
+
+  let v=null;
+  document.body.classList.add("save-name-prompt-open");
+  try{
+    if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){
+      const r=await DayPilot.Modal.prompt("Save ABC file name:",def,{top:100});
+      if(!r||r.canceled)return null;
+      v=r.result;
+    }else{
+      v=window.prompt("Save ABC file name:",def);
+      if(v===null)return null;
+    }
+  }finally{
+    document.body.classList.remove("save-name-prompt-open");
+  }
+
+  v=baseNameForSave(v);
+  currentSaveBaseName=v;
+  return v;
+}
+
+async function saveCurrentCollection(){
+  if(!tunes.length)return;
+  const base=await askSaveBaseName();
+  if(!base)return;
+
+  const data=syncAllTunesForSave();
+  const mobile=mobileSavePlatform();
+  const filename=base+(mobile?".txt":".abc");
+  const blob=new Blob([data],{type:"text/plain;charset=utf-8"});
+
+  if(mobile&&navigator.share){
+    try{
+      const file=new File([blob],filename,{type:"text/plain"});
+      if(!navigator.canShare||navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:filename});
+        setAbcDirty(false);
+        return;
+      }
+    }catch(e){
+      if(e&&e.name==="AbortError")return;
+    }
+  }
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setAbcDirty(false);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function processLoadedABC(abc,label){
+  loadedABC=abc;
+  tunes=splitTunes(loadedABC);
+  if(!tunes.length)throw new Error("No ABC tunes found.");
+  setAbcDirty(false);
+  if(NEEDS_INITIAL_AUDIO_RETRY)initialAudioRetry=true;
+  $("saveAbcBtn").disabled=false;
+  populateTuneSelector(label);
+  loadTune(0,false);
+}
+
+function trustedABCTranscriptionToolsMessage(event){
+  const expectedSources=[];
+  if(window.opener)expectedSources.push(window.opener);
+  if(window.parent&&window.parent!==window)expectedSources.push(window.parent);
+  if(expectedSources.length&&!expectedSources.includes(event.source))return false;
+  if(window.location.protocol==="file:")return true;
+  return event.origin===window.location.origin||event.origin==="https://michaeleskin.com";
+}
+
+function acknowledgeABCTranscriptionToolsLoad(event,messageId,tuneCount){
+  if(!event.source||typeof event.source.postMessage!=="function")return;
+  try{
+    event.source.postMessage({
+      type:"abcjsEskinWebsiteBuilderABCLoaded",
+      messageId:messageId||"",
+      tuneCount
+    },event.origin&&event.origin!=="null"?event.origin:"*");
+  }catch(error){
+    console.warn("Unable to acknowledge ABC Transcription Tools load message.",error);
+  }
+}
+
+function loadABCFromABCTranscriptionTools(data,event){
+  const abcText=typeof data.abc==="string"?data.abc:"";
+  const sourceName=String(data.sourceName||"ABC Transcription Tools").trim()||
+    "ABC Transcription Tools";
+  if(!abcText.trim())return;
+
+  try{
+    $("openFile").value="";
+    sharePlaybackNeedsGesture=true;
+    manualEntryCollection=false;
+    currentSaveBaseName="transferred-tin-whistle-tunes";
+    processLoadedABC(abcText,sourceName);
+    acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
+  }catch(error){
+    console.error(error);
+    alert("Unable to load ABC from "+sourceName+": "+(error&&error.message||error));
+  }
+}
+
+function handleABCTranscriptionToolsMessage(event){
+  if(!trustedABCTranscriptionToolsMessage(event))return;
+  const data=event.data||{};
+  if(data.type!=="abcjsEskinWebsiteBuilderLoadABC")return;
+  loadABCFromABCTranscriptionTools(data,event);
+}
+
+function notifyABCTranscriptionToolsReady(){
+  const message={type:"abcjsEskinWebsiteBuilderReady"};
+  const targets=[];
+  if(window.opener)targets.push(window.opener);
+  if(window.parent&&window.parent!==window)targets.push(window.parent);
+  targets.forEach(target=>{
+    try{
+      target.postMessage(message,"*");
+    }catch(error){
+      console.warn(
+        "Unable to notify ABC Transcription Tools that the Tin Whistle fingering player is ready.",
+        error
+      );
+    }
+  });
+}
+
+let gABCTranscriptionToolsHandshakeStarted=false;
+function startABCTranscriptionToolsHandshake(){
+  if(gABCTranscriptionToolsHandshakeStarted)return;
+  gABCTranscriptionToolsHandshakeStarted=true;
+  window.addEventListener("message",handleABCTranscriptionToolsMessage);
+  [0,250,750,1500].forEach(delay=>setTimeout(notifyABCTranscriptionToolsReady,delay));
+}
+
+function saveWhistleDisplayPrefs(){
+  try{
+    localStorage.setItem(WHISTLE_PREFS_KEY,JSON.stringify({
+      notation:$("notationDisplay").value,
+      octave:$("octaveDisplay").value
+    }));
+  }catch(_){}
+}
+
+function restoreWhistleDisplayPrefs(){
+  try{
+    const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
+    if(prefs.notation==="notation"||prefs.notation==="whistle-tab"){
+      $("notationDisplay").value=prefs.notation;
+    }
+    if(["upper-prime","lower-upper","color-upper-prime","color-lower-upper"].includes(prefs.octave)){
+      $("octaveDisplay").value=prefs.octave;
+    }
+  }catch(_){}
+}
+
+function applyWhistleShareSettings(){
+  const params=new URLSearchParams(location.search);
+  const notation=params.get("notation");
+  const octave=params.get("octave");
+
+  if(notation==="notation"||notation==="whistle-tab"){
+    $("notationDisplay").value=notation;
+  }
+  if(["upper-prime","lower-upper","color-upper-prime","color-lower-upper"].includes(octave)){
+    $("octaveDisplay").value=octave;
+  }
+  saveWhistleDisplayPrefs();
+}
+
+function loadShareLinkAfterStartup(){
+  const params=new URLSearchParams(location.search);
+  const payload=params.get("def");
+  if(!payload){
+    updateShareButtons();
+    return;
+  }
+
+  setTimeout(()=>{
+    try{
+      manualEntryCollection=false;
+      currentSaveBaseName="shared-tin-whistle-tunes";
+      sharePlaybackNeedsGesture=true;
+      processLoadedABC(decompressABCDeflate(payload),"Share link");
+    }catch(err){
+      alert("Unable to open share link: "+(err&&err.message||err));
+    }
+  },750);
+}
+
+function applyEditorTextSize(size,save=false){
+  if(!["small","medium","large","largest"].includes(size))size="medium";
+  const ta=$("abcText");
+  ta.classList.remove(
+    "editorTextSmall","editorTextMedium","editorTextLarge","editorTextLargest"
+  );
+  ta.classList.add("editorText"+size[0].toUpperCase()+size.slice(1));
+  $("editorTextSize").value=size;
+  if(save){
+    try{localStorage.setItem(EDITOR_SIZE_KEY,size)}catch(_){}
+  }
+}
+
+function restoreEditorTextSize(){
+  let size="medium";
+  try{size=localStorage.getItem(EDITOR_SIZE_KEY)||"medium"}catch(_){}
+  applyEditorTextSize(size,false);
+}
+
+function savedTempo(){
+  try{
+    const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));
+    return Number.isFinite(n)&&n>=10&&n<=200?n:100;
+  }catch(_){
+    return 100;
+  }
+}
+
+function saveTempo(n){
+  try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}
+}
+
+function findTempoInput(){
+  return $("audio").querySelector(
+    "input.abcjs-midi-tempo,input.abcjs-midi-current-tempo,"+
+    ".abcjs-midi-tempo input,.abcjs-midi-current-tempo input,"+
+    ".abcjs-midi-current-tempo-wrapper input,.abcjs-tempo-wrapper input,"+
+    "input[type='number'],input[type='text']"
+  );
+}
+
+function applyTempoToInput(input,n){
+  if(!input)return;
+  input.value=String(n);
+  input.dispatchEvent(new Event("input",{bubbles:true}));
+  input.dispatchEvent(new Event("change",{bubbles:true}));
+}
+
+async function openTempoDialog(input){
+  if(!input||typeof DayPilot==="undefined"||!DayPilot.Modal)return;
+  const current=Math.round(Number(input.value))||savedTempo();
+  const modal=await DayPilot.Modal.prompt(
+    "Tempo percentage (10–200%):",
+    String(current),
+    {top:150,width:460}
+  );
+  if(modal.canceled)return;
+
+  const n=Math.round(Number(modal.result));
+  if(!Number.isFinite(n)||n<10||n>200){
+    await DayPilot.Modal.alert(
+      "Please enter a tempo percentage from 10% to 200%.",
+      {top:150,width:460}
+    );
+    return openTempoDialog(input);
+  }
+  saveTempo(n);
+  applyTempoToInput(input,n);
+}
+
+function installTempoDialog(){
+  const input=findTempoInput();
+  if(!input)return false;
+
+  applyTempoToInput(input,savedTempo());
+  if(input.dataset.tempoDialogInstalled==="true")return true;
+
+  input.dataset.tempoDialogInstalled="true";
+  input.readOnly=true;
+  input.setAttribute("readonly","readonly");
+  input.title="Click to set tempo percentage";
+  input.setAttribute("aria-label","Open tempo percentage dialog");
+  input.style.cursor="pointer";
+
+  const open=e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    openTempoDialog(input);
+  };
+  input.addEventListener("pointerdown",open);
+  input.addEventListener("focus",open);
+  input.addEventListener("click",e=>{
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" ")open(e);
+    else if(e.key.length===1||e.key==="Backspace"||e.key==="Delete")e.preventDefault();
+  });
+  return true;
+}
+
+function installTempoDialogWhenReady(){
+  if(installTempoDialog())return;
+  let tries=0;
+  const retry=()=>{
+    if(installTempoDialog()||++tries>=20)return;
+    setTimeout(retry,50);
+  };
+  requestAnimationFrame(retry);
+}
+
+const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.test(
+  navigator.userAgent
+);
+const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
+let initialAudioRetry=false;
+
+function showEnablePlaybackButton(){
+  const audio=$("audio");
+  audio.innerHTML="";
+
+  const btn=document.createElement("button");
+  btn.type="button";
+  btn.id="enablePlaybackBtn";
+  btn.className="primary";
+  btn.textContent="Click to Enable Playback";
+
+  btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    btn.textContent="Enabling Playback…";
+    try{
+      const ctx=window.abcjsAudioContext;
+      if(ctx&&ctx.state==="suspended")await ctx.resume();
+      sharePlaybackNeedsGesture=false;
+      await rebuild();
+    }catch(e){
+      sharePlaybackNeedsGesture=true;
+      btn.disabled=false;
+      btn.textContent="Click to Enable Playback";
+      alert("Unable to enable playback: "+(e&&e.message||e));
+    }
+  },{once:true});
+
+  audio.appendChild(btn);
+}
+
+async function rebuild(){
+  const gen=++renderGeneration;
+  if(!tunes.length)return;
+
+  try{
+    playbackActive=false;
+    if(controller&&controller.pause){
+      try{controller.pause()}catch(_){}
+    }
+    removeCursor();
+    $("notation").innerHTML="";
+    $("audio").innerHTML="";
+    showWhistleLive(null);
+
+    const tune=$("abcText").value;
+    const playbackABC=buildPlaybackABC(tune);
+
+    if(typeof ABCJS==="undefined"||!ABCJS.renderAbc){
+      throw new Error("Portable abcjs library did not load.");
+    }
+
+    const showWhistleTab=$("notationDisplay").value==="whistle-tab";
+    const renderParams={
+      responsive:"resize",
+      expandToWidest:true,
+      selectTypes:false,
+      add_classes:true,
+      selectionColor:"#ff0000",
+      clickListener:selectClickedNotationNote
+    };
+    if(showWhistleTab){
+      renderParams.paddingbottom=16;
+      renderParams.disallowTablatureOnly=true;
+      renderParams.tablature=WHISTLE_RENDER_TAB;
+    }
+
+    const visual=ABCJS.renderAbc("notation",playbackABC,renderParams);
+    if(gen!==renderGeneration)return;
+    if(!visual||!visual.length)throw new Error("No notation was rendered.");
+
+    if(showWhistleTab)postProcessWhistleTab(visual,"notation");
+
+    if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function"){
+      throw new Error("abcjs audio is unavailable.");
+    }
+    if(sharePlaybackNeedsGesture){
+      showEnablePlaybackButton();
+      return;
+    }
+
+    const cursorControl={
+      onStart(){
+        if(audioControllerInitializing)return;
+        playbackActive=true;
+        removeCursor();
+        const svg=$("notation").querySelector("svg");
+        if(svg){
+          playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");
+          playbackCursor.setAttribute("class","abcjs-cursor");
+          svg.appendChild(playbackCursor);
+        }
+      },
+      onEvent(event){
+        if(audioControllerInitializing||!playbackActive)return;
+        if(playbackCursor&&event&&event.left!=null){
+          playbackCursor.setAttribute("x1",String(event.left-2));
+          playbackCursor.setAttribute("x2",String(event.left-2));
+          playbackCursor.setAttribute("y1",String(event.top));
+          playbackCursor.setAttribute("y2",String(event.top+event.height));
+          keepCursorVisible();
+        }
+        const midi=eventMidi(event);
+        if(midi!=null)showWhistleLive(midi);
+      },
+      onFinished(){
+        if(audioControllerInitializing||!playbackActive)return;
+        playbackActive=false;
+        removeCursor();
+        showWhistleLive(null);
+      }
+    };
+
+    controller=new ABCJS.synth.SynthController(playbackABC);
+    controller.load("#audio",cursorControl,{
+      displayLoop:true,
+      displayRestart:true,
+      displayPlay:true,
+      displayProgress:true,
+      displayWarp:true
+    });
+
+    audioControllerInitializing=true;
+    try{
+      await controller.setTune(visual[0],false,{});
+    }finally{
+      audioControllerInitializing=false;
+    }
+    if(gen!==renderGeneration)return;
+
+    installTempoDialogWhenReady();
+
+    if(initialAudioRetry){
+      initialAudioRetry=false;
+      requestAnimationFrame(()=>setTimeout(()=>{
+        if(gen===renderGeneration)rebuild();
+      },0));
+    }
+  }catch(e){
+    alert("Unable to prepare tune: "+(e&&e.message||e));
+    $("audio").innerHTML="";
+  }
+}
+
+function scheduleRebuild(){
+  clearTimeout(rebuildTimer);
+  rebuildTimer=setTimeout(rebuild,180);
+}
+
+function loadTune(index,syncEditor=true){
+  if(syncEditor)syncCurrentTuneFromEditor();
+  playbackActive=false;
+  currentTune=index;
+  $("abcText").value=tunes[index]||"";
+  $("abcText").disabled=false;
+  $("tuneSelect").value=String(index);
+  scheduleRebuild();
+  updateShareButtons();
+}
+
+function hasMinimumABCForRender(abc){
+  return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc);
+}
+
+function beginManualTuneIfNeeded(){
+  const text=$("abcText").value;
+  if(tunes.length||!text.trim())return;
+
+  tunes=[text];
+  loadedABC=text;
+  currentTune=0;
+  manualEntryCollection=true;
+  currentSaveBaseName="";
+  $("saveAbcBtn").disabled=false;
+  populateTuneSelector("Entered ABC");
+  $("tuneSelect").value="0";
+}
+
+async function showMultiplePasteAlert(){
+  const message=
+    "Pasting multiple tunes into the ABC editor is not allowed.<br><br>"+
+    "Please save the multiple tunes to a <b>.abc</b> file and then load the file into the tool.";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function"){
+    await DayPilot.Modal.alert(message,{top:100,width:460});
+  }else{
+    alert(
+      "Pasting multiple tunes into the ABC editor is not allowed.\n\n"+
+      "Please save the multiple tunes to a .abc file and then load the file into the tool."
+    );
+  }
+}
+
+function setFull(on){
+  const audioRow=document.querySelector(".audioRow");
+  const notationPanel=$("notation").closest(".panel");
+  if(on){
+    if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);
+    document.body.classList.add("diagram-full");
+  }else{
+    document.body.classList.remove("diagram-full");
+    if(audioRow&&notationPanel)notationPanel.appendChild(audioRow);
+  }
+}
+
+function initializeActionButtonStates(){
+  $("saveAbcBtn").disabled=!tunes.length;
+}
+
+$("saveAbcBtn").addEventListener("click",saveCurrentCollection);
+
+$("openFile").addEventListener("change",async e=>{
+  const input=e.target;
+  const f=input.files&&input.files[0];
+  if(!f)return;
+
+  if(!(await confirmDiscardDirtyForOpen())){
+    input.value="";
+    return;
+  }
+
+  try{
+    const abc=await f.text();
+    sharePlaybackNeedsGesture=false;
+    manualEntryCollection=false;
+    currentSaveBaseName=baseNameForSave(f.name);
+    processLoadedABC(abc,f.name);
+  }catch(err){
+    input.value="";
+    alert("File load failed: "+(err.message||err));
+  }
+});
+
+$("tuneSelect").addEventListener("change",()=>{
+  loadTune(Number($("tuneSelect").value));
+});
+
+$("abcText").addEventListener("paste",e=>{
+  const pasted=(e.clipboardData||window.clipboardData)?.getData("text")||"";
+  const ta=e.currentTarget;
+  const start=ta.selectionStart??ta.value.length;
+  const end=ta.selectionEnd??start;
+  const resulting=ta.value.slice(0,start)+pasted+ta.value.slice(end);
+  if(splitTunes(resulting).length>1){
+    e.preventDefault();
+    showMultiplePasteAlert();
+  }
+});
+
+$("abcText").addEventListener("input",()=>{
+  setAbcDirty(true);
+  beginManualTuneIfNeeded();
+  syncCurrentTuneFromEditor();
+  const value=$("abcText").value;
+
+  if(!value.trim()){
+    if(manualEntryCollection){
+      tunes=[];
+      loadedABC="";
+      manualEntryCollection=false;
+      currentTune=0;
+      $("tuneSelect").innerHTML="<option>No tune loaded</option>";
+      $("tuneSelect").disabled=true;
+      $("fileLabel").textContent="No file loaded";
+      $("saveAbcBtn").disabled=true;
+      $("notation").innerHTML="";
+      $("audio").innerHTML="";
+      showWhistleLive(null);
+    }
+  }else if(hasMinimumABCForRender(value)){
+    scheduleRebuild();
+  }
+  updateShareButtons();
+});
+
+$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));
+$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+
+$("fullBtn").addEventListener("click",()=>setFull(true));
+$("exitFull").addEventListener("click",()=>setFull(false));
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false);
+});
+
+$("instructionsBtn").addEventListener("click",()=>{
+  $("helpOverlay").style.display="block";
+});
+$("helpClose").addEventListener("click",()=>{
+  $("helpOverlay").style.display="none";
+});
+$("helpOverlay").addEventListener("click",e=>{
+  if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none";
+});
+
+$("editorTextSize").addEventListener("change",e=>{
+  applyEditorTextSize(e.target.value,true);
+});
+
+$("notationDisplay").addEventListener("change",()=>{
+  saveWhistleDisplayPrefs();
+  if(tunes.length)scheduleRebuild();
+  updateShareButtons();
+});
+
+$("octaveDisplay").addEventListener("change",()=>{
+  saveWhistleDisplayPrefs();
+  if(currentLiveMidi!=null)showWhistleLive(currentLiveMidi);
+  updateShareButtons();
+});
+
+$("abcText").value="";
+$("abcText").disabled=false;
+
+restoreEditorTextSize();
+restoreWhistleDisplayPrefs();
+applyWhistleShareSettings();
+restoreSplitters();
+installSplitters();
+initializeActionButtonStates();
+window.addEventListener("pageshow",initializeActionButtonStates);
+updateShareButtons();
+startABCTranscriptionToolsHandshake();
+
+if(document.readyState==="complete"){
+  loadShareLinkAfterStartup();
+}else{
+  window.addEventListener("load",loadShareLinkAfterStartup,{once:true});
+}
+</script></body></html>
