@@ -174,7 +174,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.28</div>
+<header class="app-header"><div class="version">Version 1.29</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -1473,6 +1473,7 @@ var angloFingeringsGenerator = function (theABC, callback){
 <script>
 
 const $ = id => document.getElementById(id);
+const SUPPRESS_WATERMARK = new URLSearchParams(location.search).get("nowatermark") === "1";
 let loadedABC = "";
 let loadedFileName = "";
 const PUSH_COLOR = "#d60062";
@@ -1515,6 +1516,7 @@ $("fingeringDisplay").addEventListener("change", saveFingeringPreferences);
 async function showInstructions() {
   const html = `
     <h2>Instructions</h2>
+
     <p>This tool creates a sequence of JPEG fingering diagrams from one or more ABC tunes for a 30-button Anglo concertina.</p>
 
     <h3>1. Open an ABC file</h3>
@@ -1559,10 +1561,24 @@ async function showInstructions() {
     <p style="text-align: center">
       <a href="https://michaeleskin.com/tools/abc-anglo-concertina-fingering-player.html" target="_blank" rel="noopener noreferrer">ABC Anglo Concertina Fingering Player</a>
     </p>    
-
+    
+    <h3>Removing the Visual Design Watermark</h3>
+    <p>By default, each exported fingering diagram displays a small <i>Visual design by Ephraim Schafli</i> watermark in the lower-right corner.</p>
+    <p>To suppress the watermark, add <b>nowatermark=1</b> to the tool URL.</p>
+    <p>For example, use <b>?nowatermark=1</b> when it is the first URL parameter, or <b>&amp;nowatermark=1</b> when other URL parameters are already present.</p>
+    
     <h3>Credits</h3>
-    <p>This <strong>ABC Anglo Concertina Fingering Image Generator</strong> tool was created by
-      <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
+    <p>The visual design of the exported fingering diagrams was inspired by several Anglo Concertina "Play Along" instructional videos by Ephraim Schafli.</p>
+    <p>You can see them here on his YouTube channel:</p>
+    <p style="text-align: center">
+      <a href="https://www.youtube.com/@ephraimschafli3763" target="_blank" rel="noopener noreferrer">Ephraim Schafli's Play Along Anglo Concertina Videos</a>.
+    </p>    
+
+    <h3>About</h3>
+    <p>This tool was created by
+      <p style="text-align: center">
+        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
+      </p>   
     </p>
 
     <p>If you find it useful, please consider making a contribution via my online tip jars:</p>
@@ -1570,6 +1586,7 @@ async function showInstructions() {
     <p style="text-align:center">
       <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
     </p>
+
   `;
 
   await DayPilot.Modal.alert(html, {
@@ -1756,6 +1773,19 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
     ctx.arc(700,611,legendR,0,Math.PI*2);
   }
   ctx.stroke(); ctx.fillText("Draw",700,halfDisplay?614:611);
+
+  // Match the Fingering Player visual-design watermark. It may be suppressed
+  // by opening the tool with nowatermark=1 in the URL.
+  if(!SUPPRESS_WATERMARK){
+    ctx.save();
+    ctx.globalAlpha=0.78;
+    ctx.fillStyle="#888";
+    ctx.textAlign="right";
+    ctx.textBaseline="bottom";
+    ctx.font="italic 400 15px Arial, Helvetica, sans-serif";
+    ctx.fillText("Visual design by Ephraim Schafli",1262,658);
+    ctx.restore();
+  }
   return c;
 }
 function canvasBlob(canvas) {

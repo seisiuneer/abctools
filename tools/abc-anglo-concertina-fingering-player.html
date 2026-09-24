@@ -54,7 +54,7 @@
 #audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
 #audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
 .splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
-.diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff}.diagramStack{position:relative;width:100%;max-height:100%;aspect-ratio:1280/670}.diagramStack canvas{display:block;width:100%;height:100%;object-fit:contain}.diagramStack #diagramOverlay{position:absolute;inset:0;pointer-events:none}
+.diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}.diagramWatermark{position:absolute;right:1.4%;bottom:1.8%;z-index:3;color:#888;font-style:italic;font-weight:400;font-size:clamp(9px,1.35cqw,15px);line-height:1;white-space:nowrap;pointer-events:none;user-select:none;-webkit-user-select:none;opacity:.78}.diagramWatermark[hidden]{display:none}.diagramStack{position:relative;width:100%;max-height:100%;aspect-ratio:1280/670}.diagramStack canvas{display:block;width:100%;height:100%;object-fit:contain}.diagramStack #diagramOverlay{position:absolute;inset:0;pointer-events:none}
 .liveNoteName{position:absolute;left:0;right:0;top:15.5%;text-align:center;font:700 clamp(28px,3.75vw,48px) Arial,Helvetica,sans-serif;color:#111;line-height:1;pointer-events:none}.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
 body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveNoteName{font-size:clamp(52px,6vw,86px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
 @media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.diagramStack{height:auto;max-height:none}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
@@ -374,7 +374,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.16</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.17</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -390,7 +390,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
   <section class="card panel"><div class="panelHeader"><span>Notation</span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -412,6 +412,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
     <h2 style="text-align:center;margin:0 0 24px">ABC Anglo Concertina Fingering Player Instructions</h2>
 
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Credits</p>
+      <p>The visual design of the player's layout was inspired by several Anglo Concertina "Play Along" instructional videos by Ephraim Schafli.</p>
+      <p>You can see them here on his YouTube channel:</p>
+      <p style="text-align: center">
+        <a href="https://www.youtube.com/@ephraimschafli3763" target="_blank" rel="noopener noreferrer">Ephraim Schafli's Play Along Anglo Concertina Videos</a>.
+      </p>    
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Anglo concertina fingerings.</p>
       <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or Cross-Row fingering solutions.</p>
@@ -541,6 +547,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         <img class="helpFingeringImage" src="img/anglo-fingerings.jpg" alt="Anglo concertina button-number diagram showing left-hand and right-hand button numbers and Push and Draw directions">
       </a>
 
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Removing the Visual Design Watermark</p>
+      <p>By default, the Fingering Diagram displays a small <i>Visual design by Ephraim Schafli</i> watermark in the lower-right corner.</p>
+      <p>To suppress the watermark, add <b>nowatermark=1</b> to the tool URL.</p>
+      <p>For example, use <b>?nowatermark=1</b> when it is the first URL parameter, or <b>&amp;nowatermark=1</b> when other URL parameters are already present.</p>
+      <p>If the tool is opened with <b>nowatermark=1</b>, Share Tune and Share All Tunes links created by the tool also include that setting.</p>
+
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Anglo Concertina Fingering Image Generator</p>
       <p>
         If you would like to export a sequence of JPEG images for each note in a tune with the same options and fingering graphics as this tool, check out the:
@@ -552,7 +564,9 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">About</p>
       <p>
         This tool was created by
-        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
+        <p style="text-align: center">
+          <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.
+        </p>    
       </p>
       <p>
         If you find it useful, please consider a contribution via
@@ -560,6 +574,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p style="text-align: center">
         <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>.
       </p>    
+
 
     </div>
 
@@ -2199,6 +2214,7 @@ function generateShareLink(abc){
     params.set("system",$("system").value);
     params.set("style",$("style").value);
     params.set("display",$("fingeringDisplay").value);
+    if(new URLSearchParams(location.search).get("nowatermark")==="1")params.set("nowatermark","1");
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
@@ -2418,6 +2434,8 @@ function startABCTranscriptionToolsHandshake(){
 
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
+  const watermark=$("diagramWatermark");
+  if(watermark)watermark.hidden=params.get("nowatermark")==="1";
   const payload=params.get("def");
   if(!payload){updateShareButtons();return;}
   // Let the page and abcjs finish their ordinary startup first. Then decode the
