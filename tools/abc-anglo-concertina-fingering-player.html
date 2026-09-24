@@ -9,7 +9,7 @@
 <meta property="og:description" content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted Jeffries or Wheatstone Anglo concertina fingerings using On-Row or Cross-Row solutions." />
 <meta property="og:site_name" content="ABC Anglo Concertina Fingering Player" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-anglo-concertina-fingering-player.html" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-anglo-concertina-fingering-player-1.jpg"/>
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-anglo-concertina-fingering-player-2.jpg"/>
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
 <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
@@ -414,10 +414,6 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Credits</p>
       <p>The visual design of the player's layout was inspired by several Anglo Concertina "Play Along" instructional videos by Ephraim Schafli.</p>
-      <p>You can see them here on his YouTube channel:</p>
-      <p style="text-align: center">
-        <a href="https://www.youtube.com/@ephraimschafli3763" target="_blank" rel="noopener noreferrer">Ephraim Schafli's Play Along Anglo Concertina Videos</a>.
-      </p>    
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Anglo concertina fingerings.</p>
       <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or Cross-Row fingering solutions.</p>
@@ -496,6 +492,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
       <p>Click the <b>tempo percentage</b>
         box in the playback controls to open the tempo-setting dialog.
       </p>
+      <p>Irish-style roll playback is enabled by default for <b>~</b> ornaments. Add <b>%irish_rolls_off</b> to a tune to disable it.</p>
       <p>The tempo can be set from <b>10% to 200%</b> of the tune's notated tempo.</p>
       <p>
         The selected tempo is remembered in this browser and reused for every tune until you
@@ -1924,6 +1921,27 @@ function applyInjectedTabOverrides(abc,automaticSolution){
  * Existing matching directives are blanked rather than deleted so abcjs source
  * character positions still line up with the fingering solver.
  */
+function configureIrishRollsForTune(abc){
+  const source=String(abc||"");
+  const irishRollsOff=/^[ \t]*%irish_rolls_off\b/im.test(source);
+
+  if(!ABCJS||!ABCJS.eskinConfig||typeof ABCJS.eskinConfig.setIrishRolls!=="function"){
+    throw new Error("Portable abcjs Irish-roll configuration API is unavailable.");
+  }
+
+  // Enable custom Irish-roll playback by default and disable it only when the
+  // tune explicitly contains %irish_rolls_off.
+  ABCJS.eskinConfig.setIrishRolls(!irishRollsOff);
+
+  // Do not allow a stale force override to defeat the per-tune choice.
+  if(typeof ABCJS.eskinConfig.setIrishRollOverrides==="function"){
+    ABCJS.eskinConfig.setIrishRollOverrides({
+      forceEnable:false,
+      forceDisable:false
+    });
+  }
+}
+
 function buildPlaybackABC(abc){
   const forced=[
     "%soundfont fatboy",
@@ -3062,7 +3080,7 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
 }
 
-async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;configureIrishRollsForTune(tune);gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
   selectionColor:"#ff0000",
