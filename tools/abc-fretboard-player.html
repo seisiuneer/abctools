@@ -702,7 +702,7 @@ body.diagram-full .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .not
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with tablature for the selected instrument. The default is <b>Notation + Tab</b>.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
-      <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or text file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
+      <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or <b>.txt</b> file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
       <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play. Edits are retained when changing tunes.</p>
       <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
 
@@ -1785,7 +1785,7 @@ function notifyABCTranscriptionToolsReady(){
       target.postMessage(message,"*");
     }catch(error){
       console.warn(
-        "Unable to notify ABC Transcription Tools that the Mandolin / Tenor Banjo fingering player is ready.",
+        "Unable to notify ABC Transcription Tools that the Fretboard player is ready.",
         error
       );
     }
