@@ -661,8 +661,20 @@ body.diagram-full .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .not
   body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-10px}
 }
 
+
+/* v1.46: full-page six-string guitar fretboard only — move the note-name/staff
+   column slightly right by changing the same margin that controls fretboard spacing.
+   These rules intentionally come last so they also override the container rules. */
+body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-31px}
+@container (max-width:560px){
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-6px}
+}
+@container (max-width:430px){
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:2px}
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.42</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.46</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
