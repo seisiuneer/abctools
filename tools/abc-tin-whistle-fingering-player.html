@@ -1746,6 +1746,15 @@ $("openFile").addEventListener("change",async e=>{
   const f=input.files&&input.files[0];
   if(!f)return;
 
+  if(IS_IOS&&!/\.(?:abc|txt)$/i.test(f.name)){
+    input.value="";
+    await DayPilot.Modal.alert(
+      'Only .abc and .txt files can be opened on iOS.<br><br>To learn more about ABC notation, please visit:<br><br><a href="https://michaeleskin.com/tools/abc-notation-tutor/abc-notation-tutor.html" target="_blank" rel="noopener noreferrer">ABC Notation Tutor</a>',
+      {top:150,width:460}
+    );
+    return;
+  }
+
   if(!(await confirmDiscardDirtyForOpen())){
     input.value="";
     return;

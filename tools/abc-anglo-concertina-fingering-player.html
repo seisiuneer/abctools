@@ -1863,8 +1863,11 @@ var angloFingeringsGenerator = function (theABC, callback){
 </script>
 <script>
 const $=id=>document.getElementById(id);
-// On iOS/iPadOS, omit the accept filter so the native file picker can select .abc as well as .txt files.
-const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+// On iOS/iPadOS, omit the accept filter so the native file picker can select
+// .abc as well as .txt files. Validate the selected filename after selection.
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
+  (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 if(IS_IOS)$("openFile").removeAttribute("accept");
 const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null;
 // Current rendered tune used by the playback controller.
@@ -3302,6 +3305,16 @@ $("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
   const input=e.target,f=input.files&&input.files[0];if(!f)return;
+
+  if(IS_IOS&&!/\.(?:abc|txt)$/i.test(f.name)){
+    input.value="";
+    await DayPilot.Modal.alert(
+      'Only .abc and .txt files can be opened on iOS.<br><br>To learn more about ABC notation, please visit:<br><br><a href="https://michaeleskin.com/tools/abc-notation-tutor/abc-notation-tutor.html" target="_blank" rel="noopener noreferrer">ABC Notation Tutor</a>',
+      {top:150,width:460}
+    );
+    return;
+  }
+
   if(!(await confirmDiscardDirtyForOpen())){input.value="";return}
   try{
     const abc=await f.text();
