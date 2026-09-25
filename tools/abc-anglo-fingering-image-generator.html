@@ -12,7 +12,7 @@
 <meta property="og:description" content="Generate a sequence of clearly labeled Anglo concertina fingering JPEG images from ABC tunes, with Jeffries and Wheatstone layouts, On-Row and Cross-Row styles, and Push/Draw guidance for every note." />
 <meta property="og:site_name" content="ABC Anglo Concertina Fingering Image Generator" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-anglo-fingering-image-generator.html" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-anglo-fingering-image-generator-1.jpg"/>
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-anglo-fingering-image-generator-2.jpg"/>
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
 <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
@@ -174,7 +174,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.30</div>
+<header class="app-header"><div class="version">Version 1.31</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -190,10 +190,13 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
       <input id="respectRepeats" type="checkbox" checked style="width:auto;margin:0">
       Respect repeats and first/second endings in image sequence
     </label>
+    <label style="display:flex;align-items:center;gap:9px;margin-top:10px;font-weight:600;cursor:pointer">
+      <input id="showNoteCheck" type="checkbox" style="width:auto;margin:0">
+      Show note on staff next to Push/Draw legend
+    </label>
   </section>
   <section class="card">
     <button id="generateBtn" disabled>Generate JPEG Images and Save ZIP</button>
-    <p class="note">Each tune uses its first <b>T:</b> tag as the image title. Compatible Anglo concertina tab annotations override the automatic fingering used for the exported note images. When <b>Respect repeats and first/second endings</b> is enabled, the JPEG sequence follows normal repeat playback order. On each note image the upper-left shows the note position, Anglo concertina system (Jeffries or Wheatstone), and On-Row/Cross-Row style; the current note name is shown prominently below the tune title. Files are named <b>Tune_Name_001.jpg</b>, <b>Tune_Name_002.jpg</b>, and so on with one file per note. <b>Push</b> is <b>Red</b>; <b>Draw</b> is <b>Blue-Green</b>. <b>Button Ring</b> highlights the entire button; <b>Button Half</b> highlights the upper half for Push and lower half for Draw. The <b>with Arrows</b> display options also add a centered bellows-direction arrow: down for Push and up for Draw.</p>
   </section>
   <section class="card"><h2>Status</h2><div id="status" class="status">Ready. Open an ABC file.</div></section>
   <button id="instructionsBtn" type="button">Instructions</button>
@@ -1482,22 +1485,27 @@ const DRAW_COLOR = "#009e73";
 const PREF_SYSTEM_KEY = "abcAngloFingeringSystem";
 const PREF_STYLE_KEY = "abcAngloFingeringStyle";
 const PREF_DISPLAY_KEY = "abcAngloFingeringDisplay";
+const PREF_SHOW_NOTE_KEY = "abcAngloImageShowNote";
 
 function restoreFingeringPreferences() {
   let system = "jeffries";
   let style = "cross";
   let display = "ring";
+  let showNote = false;
   try {
     const savedSystem = localStorage.getItem(PREF_SYSTEM_KEY);
     const savedStyle = localStorage.getItem(PREF_STYLE_KEY);
     const savedDisplay = localStorage.getItem(PREF_DISPLAY_KEY);
+    const savedShowNote = localStorage.getItem(PREF_SHOW_NOTE_KEY);
     if (savedSystem === "jeffries" || savedSystem === "wheatstone") system = savedSystem;
     if (savedStyle === "onrow" || savedStyle === "cross") style = savedStyle;
     if (["ring","half","ring-arrows","half-arrows"].includes(savedDisplay)) display = savedDisplay;
+    if (savedShowNote === "true") showNote = true;
   } catch (_) {}
   $("system").value = system;
   $("style").value = style;
   $("fingeringDisplay").value = display;
+  $("showNoteCheck").checked = showNote;
 }
 
 function saveFingeringPreferences() {
@@ -1505,6 +1513,7 @@ function saveFingeringPreferences() {
     localStorage.setItem(PREF_SYSTEM_KEY, $("system").value);
     localStorage.setItem(PREF_STYLE_KEY, $("style").value);
     localStorage.setItem(PREF_DISPLAY_KEY, $("fingeringDisplay").value);
+    localStorage.setItem(PREF_SHOW_NOTE_KEY, $("showNoteCheck").checked ? "true" : "false");
   } catch (_) {}
 }
 
@@ -1512,6 +1521,7 @@ restoreFingeringPreferences();
 $("system").addEventListener("change", saveFingeringPreferences);
 $("style").addEventListener("change", saveFingeringPreferences);
 $("fingeringDisplay").addEventListener("change", saveFingeringPreferences);
+$("showNoteCheck").addEventListener("change", saveFingeringPreferences);
 
 async function showInstructions() {
   const html = `
@@ -1548,6 +1558,7 @@ async function showInstructions() {
     <p>In Button Half modes, <b>Push</b> highlights the upper half and <b>Draw</b> highlights the lower half, so direction is indicated by both color and position.</p>
     <p>The tool remembers your most recent display choice in this browser.</p>
     <p>The default is <b>Button Ring</b>.</p>
+    <p>Check <b>Show note on staff next to Push/Draw legend</b> to also draw the current pitch as a quarter note on a staff to the right of the legend. The staff uses sharps for accidentals, matching the note names used by the tool. This setting is remembered in this browser and is off by default until you enable it.</p>
 
     <h3>5. Generate the images</h3>
     <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the default button and bellows direction for each note.</p>
@@ -1556,7 +1567,7 @@ async function showInstructions() {
 
     <h3>6. File names and ZIP file</h3>
     <p>JPEGs are named from the tune title followed by the three-digit note index, beginning with <b>001</b>, for example <b>Kesh_001.jpg</b>.</p>
-    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, fingering style, and fingering display, for example <b>Kesh_Jeffries_Cross-Row_Full.zip</b>. For a file containing multiple tunes, the first part is <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row_Full.zip</b>. The fingering display suffix is <b>Full</b>, <b>Half</b>, <b>Full-Arrows</b>, or <b>Half-Arrows</b>, depending on the selected Fingering display.</p>
+    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, fingering style, and fingering display, for example <b>Kesh_Jeffries_Cross-Row_Full.zip</b>. When <b>Show note on staff next to Push/Draw legend</b> is enabled, <b>_Notes</b> is added to the suggested name, for example <b>Kesh_Jeffries_Cross-Row_Full_Notes.zip</b>. For a file containing multiple tunes, the first part is <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row_Full.zip</b>. The fingering display suffix is <b>Full</b>, <b>Half</b>, <b>Full-Arrows</b>, or <b>Half-Arrows</b>, depending on the selected Fingering display.</p>
     <p>The ZIP filename is shown before saving and may be edited.</p>
 
     <h3>ABC Anglo Concertina Fingering Player</h3>
@@ -1574,10 +1585,6 @@ async function showInstructions() {
     
     <h3>Credits</h3>
     <p>The visual design of the exported fingering diagrams was inspired by several Anglo Concertina "Play Along" instructional videos by Ephraim Schafli.</p>
-    <p>You can see them here on his YouTube channel:</p>
-    <p style="text-align: center">
-      <a href="https://www.youtube.com/@ephraimschafli3763" target="_blank" rel="noopener noreferrer">Ephraim Schafli's Play Along Anglo Concertina Videos</a>.
-    </p>    
 
     <hr>
     <h3 style="text-align: center">About</h3>
@@ -1746,6 +1753,33 @@ function drawBellowsDirectionArrow(ctx,direction){
   ctx.restore();
 }
 
+function abcPitchToMidiForStaff(s){
+  if(!s||s==="x"||s==="z")return null;
+  const m=String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);if(!m)return null;
+  const acc=m[1],letter=m[2],marks=m[3];let octave=letter===letter.toLowerCase()?5:4;
+  for(const ch of marks)octave+=ch==="'"?1:-1;
+  const pc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[letter.toUpperCase()];
+  let delta=0;for(const ch of acc){if(ch==="^")delta++;else if(ch==="_")delta--;else if(ch==="=")delta=0}
+  return 12*(octave+1)+pc+delta;
+}
+function drawStaffNoteNextToLegend(ctx,item){
+  if(!$("showNoteCheck").checked||!item)return;
+  const midi=abcPitchToMidiForStaff(item.normalizedNote||item.abcNote);if(midi==null)return;
+  const n=Math.round(midi),pc=((n%12)+12)%12;
+  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const [letter,sharp]=spellings[pc],octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const steps=(octave*7+letterIndex)-(4*7+2),bottomY=626,gap=10.5,y=bottomY-steps*(gap/2),cx=860;
+  ctx.save();ctx.strokeStyle="#17241c";ctx.fillStyle="#17241c";ctx.lineCap="round";
+  ctx.lineWidth=1.05;
+  for(let i=0;i<5;i++){const ly=bottomY-i*gap;ctx.beginPath();ctx.moveTo(cx-45,ly);ctx.lineTo(cx+45,ly);ctx.stroke()}
+  if(y>=bottomY+gap/2){for(let ly=bottomY+gap;ly<=y+1;ly+=gap){ctx.beginPath();ctx.moveTo(cx-14,ly);ctx.lineTo(cx+14,ly);ctx.stroke()}}
+  else if(y<=bottomY-4*gap-gap/2){for(let ly=bottomY-5*gap;ly>=y-1;ly-=gap){ctx.beginPath();ctx.moveTo(cx-14,ly);ctx.lineTo(cx+14,ly);ctx.stroke()}}
+  ctx.save();ctx.translate(cx,y);ctx.rotate(-18*Math.PI/180);ctx.beginPath();ctx.ellipse(0,0,7.8,5.4,0,0,Math.PI*2);ctx.fill();ctx.restore();
+  if(sharp){const sx=cx-21,sy=y-1;ctx.lineWidth=1.3;[[sx-3,sy-10,sx-3,sy+10],[sx+3,sy-11,sx+3,sy+8],[sx-7,sy-3,sx+7,sy-5],[sx-7,sy+3,sx+7,sy+1]].forEach(a=>{ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[2],a[3]);ctx.stroke()})}
+  ctx.lineWidth=1.65;ctx.beginPath();if(steps>=4){ctx.moveTo(cx-7.1,y+1);ctx.lineTo(cx-7.1,y+31)}else{ctx.moveTo(cx+7.1,y-1);ctx.lineTo(cx+7.1,y-32)}ctx.stroke();
+  ctx.restore();
+}
+
 function makeCanvas(title, solution, item, system, style, playedIndex) {
   const c=document.createElement("canvas"); c.width=1280; c.height=670;
   const ctx=c.getContext("2d");
@@ -1762,13 +1796,13 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
   ctx.textAlign="center";
   ctx.font="400 54px Arial, Helvetica, sans-serif";
   ctx.fillStyle="#333";
-  ctx.fillText(title,640,78);
+  ctx.fillText(title,640,62);
 
   // Current note name prominently centered below the tune title.
   const shownNote = abcPitchToScientific(item.normalizedNote || item.abcNote);
   ctx.font="700 48px Arial, Helvetica, sans-serif";
   ctx.fillStyle="#111";
-  ctx.fillText(shownNote,640,137);
+  ctx.fillText(shownNote,640,128);
 
   const bm=mapFor(system);
   Object.keys(POS).forEach(id=>{
@@ -1810,6 +1844,7 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
     ctx.arc(700,611,legendR,0,Math.PI*2);
   }
   ctx.stroke(); ctx.fillText("Draw",700,halfDisplay?614:611);
+  drawStaffNoteNextToLegend(ctx,item);
 
   // Match the Fingering Player visual-design watermark. It may be suppressed
   // by opening the tool with nowatermark=1 in the URL.
@@ -1984,7 +2019,8 @@ $("generateBtn").addEventListener("click", async()=>{
     const zipStyle = style === "cross" ? "Cross-Row" : "On-Row";
     const displayValue = $("fingeringDisplay").value;
     const zipDisplay = displayValue === "half" ? "Half" : displayValue === "ring-arrows" ? "Full-Arrows" : displayValue === "half-arrows" ? "Half-Arrows" : "Full";
-    const suggested = `${zipFirst}_${zipSystem}_${zipStyle}_${zipDisplay}.zip`;
+    const zipNoteDisplay = $("showNoteCheck").checked ? "_Notes" : "";
+    const suggested = `${zipFirst}_${zipSystem}_${zipStyle}_${zipDisplay}${zipNoteDisplay}.zip`;
     const zipName=await askZipName(suggested);
     if (!zipName) { setStatus("Save canceled."); return; }
     setStatus("Building ZIP file…");
