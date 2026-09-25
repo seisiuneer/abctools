@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3347_092426_1400";
+var gVersionNumber = "3348_092526_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31391,13 +31391,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24sep2026;
+        var updatePresented = localStorage.sawUpdate_25sep2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24sep2026 = true;
+          localStorage.sawUpdate_25sep2026 = true;
 
         }
 
@@ -60898,21 +60898,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 25 September 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Tin Whistle Fingering Player</strong> to <strong>Open ABC in External Tool</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now send tunes directly to the <strong>ABC Tin Whistle Fingering Player</strong> from either the <strong>Sharing Controls</strong> dialog, <strong>Player</strong>, or <strong>Tune Trainer</strong></p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Anglo Concertina Fingering Player</strong> to <strong>Open ABC in External Tool</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now send tunes directly to the <strong>ABC Anglo Concertina Fingering Player</strong> from either the <strong>Sharing Controls</strong> dialog, <strong>Player</strong>, or <strong>Tune Trainer</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">New Tools on the <strong>Open ABC in External Tool</strong> dialog</p>';
+  modal_msg += '<p style="font-size:12pt;">You can now send tunes directly to the <strong>ABC Fretboard Player</strong>, <strong>ABC Tin Whistle Fingering Player</strong>, or <strong>ABC Anglo Concertina Fingering Player</strong> from either the <strong>Sharing Controls</strong> dialog, <strong>Player</strong>, or <strong>Tune Trainer</strong></p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67827,13 +67820,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24sep2026;
+    var updatePresented = localStorage.sawUpdate_25sep2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24sep2026 = true;
+      localStorage.sawUpdate_25sep2026 = true;
 
     }
 
@@ -70282,6 +70275,293 @@ function launchAbcTinWhistleFingeringPlayer(){
 
 
 //
+// Open in the ABC Fretboard Player
+//
+
+function OpenInABCFretboardPlayer(abcText,isFromPlayer){
+
+  sendGoogleAnalytics("action", "OpenInABCFretboardPlayer");
+
+  if (isFromPlayer){
+    abcText = AggregateABCFileHeaderForShare(abcText);
+
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var theDef = def_bytesToBase64URL(deflated);
+
+    var theURL = "https://michaeleskin.com/tools/abc-fretboard-player.html?def="+theDef;
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Fretboard Player.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+  }
+  else{
+    launchAbcFretboardPlayer();
+  }
+}
+
+//
+// Launch the standalone ABC Fretboard Player in a new window and
+// transfer the full ABC editor contents after the player reports that it is ready.
+//
+var gAbcFretboardPlayerURL = "https://michaeleskin.com/tools/abc-fretboard-player.html";
+
+function getAbcFretboardPlayerLaunchURL() {
+
+    var separator = (gAbcFretboardPlayerURL.indexOf("?") === -1) ? "?" : "&";
+
+    return gAbcFretboardPlayerURL +
+        separator +
+        "cb=" + encodeURIComponent(String(Date.now()));
+}
+
+function getAbcFretboardPlayerTargetOrigin(url) {
+
+    try {
+        var parsedURL = new URL(url, window.location.href);
+        return parsedURL.origin && parsedURL.origin !== "null" ? parsedURL.origin : "*";
+    }
+    catch (error) {
+        return "*";
+    }
+}
+
+function showAbcFretboardPlayerMessage(message, width){
+
+    DayPilot.Modal.alert(
+        '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>',
+        { theme: "modal_flat", top: 150, width: (width || 560), scrollWithPage: (AllowDialogsToScroll()) }
+    );
+}
+
+function showAbcFretboardPlayerOfflineMessage(){
+
+    showAbcFretboardPlayerMessage(
+        "The ABC Fretboard Player is not available while offline. Please reconnect to the internet and try again.",
+        560
+    );
+}
+
+function showAbcFretboardPlayerOfficialVersionMessage(){
+
+    showAbcFretboardPlayerMessage(
+        "Direct ABC transfer to the ABC Fretboard Player is only available from the official online version at https://michaeleskin.com.<br/><br/>Please run the official online version of the ABC Transcription Tools to use direct ABC transfer.<br/><br/>As a workaround, save the ABC file and manually open that ABC file in the ABC Fretboard Player with its Open ABC file control.",
+        560
+    );
+}
+
+function launchAbcFretboardPlayer(){
+
+    if (!gAllowWebExport){
+        return;
+    }
+
+    var abcText = "";
+
+    try {
+        abcText = (typeof getABCEditorText === "function") ? getABCEditorText() : "";
+    }
+    catch (error) {
+        abcText = "";
+    }
+
+    if (!abcText || !/^\s*X\s*:/m.test(abcText)){
+        showAbcFretboardPlayerMessage(
+            "There are no ABC tunes in the editor to send to the ABC Fretboard Player.",
+            520
+        );
+        return;
+    }
+
+    if (!isRunningFromOfficialMichaeleskinDomain()){
+        showAbcFretboardPlayerOfficialVersionMessage();
+        return;
+    }
+
+    if (!navigator.onLine){
+        showAbcFretboardPlayerOfflineMessage();
+        return;
+    }
+
+    var generatorURL = gAbcFretboardPlayerURL;
+    var targetOrigin = getAbcFretboardPlayerTargetOrigin(generatorURL);
+    var messageId = "abctools-fretboard-player-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    var generatorWindow = null;
+    var generatorReadyReceived = false;
+    var loadMessageAttempted = false;
+    var loadMessageAcknowledged = false;
+    var failureMessageShown = false;
+    var cleanupTimer = null;
+    var closedCheckTimer = null;
+    var fallbackTimers = [];
+
+    var sourceName = "ABC Transcription Tools";
+    if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
+        sourceName += " - " + gDisplayedName.trim();
+    }
+
+    var loadMessage = {
+        type: "abcjsEskinWebsiteBuilderLoadABC",
+        messageId: messageId,
+        abc: abcText,
+        sourceName: sourceName,
+        replaceExisting: true
+    };
+
+    function cleanupFretboardPlayerLaunchHandlers(){
+        window.removeEventListener("message", handleFretboardPlayerLaunchMessage);
+        if (cleanupTimer){
+            clearTimeout(cleanupTimer);
+            cleanupTimer = null;
+        }
+        if (closedCheckTimer){
+            clearInterval(closedCheckTimer);
+            closedCheckTimer = null;
+        }
+        fallbackTimers.forEach(function(timer){
+            clearTimeout(timer);
+        });
+        fallbackTimers = [];
+    }
+
+    function showFretboardPlayerLaunchFailure(message, width){
+        if (loadMessageAcknowledged || failureMessageShown){
+            cleanupFretboardPlayerLaunchHandlers();
+            return;
+        }
+
+        failureMessageShown = true;
+        cleanupFretboardPlayerLaunchHandlers();
+        showAbcFretboardPlayerMessage(message, width || 620);
+    }
+
+    function postABCToFretboardPlayer(){
+        if (!generatorWindow || generatorWindow.closed){
+            showFretboardPlayerLaunchFailure(
+                "The ABC Fretboard Player window was closed before the tunes could be transferred.",
+                600
+            );
+            return;
+        }
+
+        if (loadMessageAcknowledged || failureMessageShown){
+            return;
+        }
+
+        try {
+            loadMessageAttempted = true;
+            generatorWindow.postMessage(loadMessage, targetOrigin);
+        }
+        catch (error) {
+            console.error("Unable to send ABC to the ABC Fretboard Player:", error);
+            showFretboardPlayerLaunchFailure(
+                "ABC Transcription Tools could not send the tunes to the ABC Fretboard Player. Browser security settings may have blocked the transfer.",
+                650
+            );
+        }
+    }
+
+    function handleFretboardPlayerLaunchMessage(event){
+        if (!generatorWindow || event.source !== generatorWindow){
+            return;
+        }
+
+        if (targetOrigin !== "*" && event.origin !== targetOrigin){
+            return;
+        }
+
+        var data = event.data || {};
+
+        if (data.type === "abcjsEskinWebsiteBuilderReady"){
+            generatorReadyReceived = true;
+            postABCToFretboardPlayer();
+            return;
+        }
+
+        if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
+            loadMessageAcknowledged = true;
+            cleanupFretboardPlayerLaunchHandlers();
+        }
+    }
+
+    window.addEventListener("message", handleFretboardPlayerLaunchMessage);
+
+    generatorWindow = window.open(getAbcFretboardPlayerLaunchURL(), "_blank");
+
+    if (!generatorWindow){
+        cleanupFretboardPlayerLaunchHandlers();
+        showAbcFretboardPlayerMessage(
+            "The ABC Fretboard Player window was blocked by the browser. Please allow popups for this site and try again.",
+            560
+        );
+        return;
+    }
+
+    closedCheckTimer = setInterval(function(){
+        if (generatorWindow && generatorWindow.closed && !loadMessageAcknowledged){
+            showFretboardPlayerLaunchFailure(
+                "The ABC Fretboard Player window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+                650
+            );
+        }
+    }, 1000);
+
+    // The player sends a ready message when its listener has been installed.
+    // These delayed fallback sends are harmless if the ready handshake succeeds,
+    // and make the launch more forgiving if a browser drops an early ready message.
+    [1200, 2400, 4200].forEach(function(delay){
+        fallbackTimers.push(setTimeout(function(){
+            if (!loadMessageAcknowledged && !failureMessageShown){
+                postABCToFretboardPlayer();
+            }
+        }, delay));
+    });
+
+    cleanupTimer = setTimeout(function(){
+        if (loadMessageAcknowledged){
+            cleanupFretboardPlayerLaunchHandlers();
+            return;
+        }
+
+        if (!generatorReadyReceived){
+            showFretboardPlayerLaunchFailure(
+                "The ABC Fretboard Player opened, but ABC Transcription Tools did not receive a ready message from it. If the tunes are not visible in the ABC Fretboard Player, use its Open ABC file control instead.",
+                680
+            );
+            return;
+        }
+
+        if (loadMessageAttempted){
+            showFretboardPlayerLaunchFailure(
+                "ABC Transcription Tools sent the tunes to the ABC Fretboard Player, but did not receive confirmation that they loaded. If the tunes are not visible in the ABC Fretboard Player, use its Open ABC file control instead.",
+                700
+            );
+            return;
+        }
+
+        showFretboardPlayerLaunchFailure(
+            "ABC Transcription Tools could not complete the transfer to the ABC Fretboard Player. If the tunes are not visible in the ABC Fretboard Player, use its Open ABC file control instead.",
+            700
+        );
+    }, 15000);
+}
+
+
+
+
+
+//
 // Hidden direct transfer to the MusicXML to ABC Optimizer.
 // Launched only by Alt/Option+Shift-clicking the ABC Chord Chart Generator image
 // in the Open ABC in External Tool dialog.
@@ -70537,19 +70817,19 @@ function openInExternalTool(theABC, isFromPlayer){
 
   modal_msg +=
     '<p style="text-align:center;">' +
-
       '<span class="external-tool" style="display:inline-block;margin-right:48px;margin-bottom:12px;text-align:center;">' +
-        '<img style="height:128px;width:auto;" id="external_abcjs_eskin_website" src="img/abcjs-eskin-portable-website_1.jpg" ' +
-             'title="Open the ABC in the abcjs-eskin Website Builder" alt="abcjs-eskin Website Builder" style="cursor:pointer;">' +
-        '<br>' +
-        '<span style="font-size:1.2em;">abcjs-eskin Website Builder</span>' +
-      '</span>' +
-
-      '<span class="external-tool" style="display:inline-block;margin-bottom:12px;text-align:center;">' +
         '<img style="height:128px;width:auto;" id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
              'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
         '<br>' +
         '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
+      '</span>' +
+
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px;text-align:center;">' +
+        '<img style="height:128px;width:auto;" id="external_fretboard_player" src="img/tool-abc-fretboard-player-1.jpg" ' +
+             'title="Open the ABC in the ABC Fretboard Player" alt="ABC Fretboard Player" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">ABC Fretboard Player</span>' +
       '</span>' +
 
     '</p>' +
@@ -70622,9 +70902,9 @@ function openInExternalTool(theABC, isFromPlayer){
     OpenInABCEncoder(theABC);
   };
 
-  elem = document.getElementById("external_abcjs_eskin_website");
+  elem = document.getElementById("external_fretboard_player");
   if (elem) elem.onclick = function(){
-    OpenInABCJSEskinWebsiteBuilder(theABC, isFromPlayer);
+    OpenInABCFretboardPlayer(theABC, isFromPlayer);
   };
 
 }
