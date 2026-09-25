@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABC Fretboard Player</title>
+<meta name="description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, and guitar." />
+<meta name="keywords" content="ABC notation, fretboard player, mandolin, tenor banjo, bouzouki, guitar, DADGAD, GDAE, GDAD, tablature, fingering, Irish traditional music, ABC Transcription Tools" />
+<meta name="author" content="Michael Eskin" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ABC Fretboard Player" />
+<meta property="og:description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, and guitar." />
+<meta property="og:site_name" content="ABC Fretboard Player" />
+<meta property="og:url" content="https://michaeleskin.com/tools/abc-fretboard-player.html" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-fretboard-player-1.jpg"/>
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet">
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+<style>
+:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
+.app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(120px,.72fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
+.abcWrap textarea.editorTextSmall{font-size:14px}
+.abcWrap textarea.editorTextMedium{font-size:16px}
+.abcWrap textarea.editorTextLarge{font-size:17px}
+.abcWrap textarea.editorTextLargest{font-size:18px}.notationViewport{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}.notation{padding:7px;min-height:max-content}.notation svg{display:block;max-width:100%;height:auto}.notation .abcjs-cursor{stroke:#00c83c;stroke-width:12px;stroke-opacity:.28;transform:translate(7px,0);pointer-events:none}.audioRow{flex:0 0 auto;padding:7px 9px 9px;border-top:1px solid rgba(127,127,127,.18)}
+/* Make the abcjs Repeat/Loop button unmistakable when enabled. */
+#audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
+#audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
+.notationHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:650;line-height:1.2;cursor:pointer;color:#17241c;-webkit-text-fill-color:#17241c}
+.notationHeaderBtn:disabled{opacity:.45;cursor:default}.notationHeaderBtn:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
+.countInLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.countInLabel input{margin:0}
+.countInOverlay{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);font:500 clamp(64px,15vw,150px)/1 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#fff;pointer-events:none}.countInOverlay #countInNumber{transform:translateY(-0.5em)}.countInOverlay[hidden]{display:none}
+.splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
+.diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}
+.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
+body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
+@media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
+@media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
+
+.modal_default_main{max-width:460px !important;width:calc(100vw - 32px) !important}
+/* Larger file/status text and a more compact, larger-type DayPilot tempo dialog. */
+.control input[type=file]{font-size:1.12rem;min-height:38px;height:38px;line-height:38px}
+.control input[type=file]::file-selector-button{min-width:118px;margin-right:8px}
+.control:has(#openFile){align-self:end}
+.control:has(#openFile) label{font-size:.82rem;margin:0 0 4px}
+.modal_default_main{font-size:18px !important}
+.modal_default_main .modal_default_content{font-size:18px !important}
+.modal_default_main input{font-size:20px !important}
+.modal_default_main button,.modal_default_main input[type=button],.modal_default_main input[type=submit]{font-size:18px !important}
+
+/* Normalize toolbar controls on Safari/iOS. */
+.control select{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  border-color:#b8c7bd;
+}
+.toolbar button,.bottomBar button,.diagramHeader button{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+
+/* Give the native file picker a consistent button treatment where supported.
+   The input remains native so iOS can still choose .abc and .txt files. */
+.control input[type=file]{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+.control input[type=file]::file-selector-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+.control input[type=file]::-webkit-file-upload-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+
+/* Normalize modal action buttons on Safari/iOS. */
+#helpClose {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:650 !important;
+  line-height:1.2 !important;
+  width:180px !important;
+  padding:10px 18px !important;
+}
+
+/* DayPilot prompt/alert buttons are inserted outside the app markup. */
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_main button,
+.modal_default_button {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+  min-width:88px !important;
+  width:auto !important;
+  padding:8px 18px !important;
+}
+
+/* Improve DayPilot alert readability and center its content/actions. */
+.modal_default_main .modal_default_content {
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons {
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons table {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Slightly taller, consistent panel headers with compact Fingering Diagram actions. */
+.panelHeader,
+.diagramHeader {
+  min-height: 42px;
+  box-sizing: border-box;
+}
+.diagramHeader .fullBtn,
+.diagramHeader .exitFull {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
+
+
+
+/* Explicit cross-platform styling for the share-link Enable Playback control. */
+#enablePlaybackBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid #7fb99a;
+  border-radius: 8px;
+  background: #e6f4ec;
+  color: #17251d;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 1;
+  -webkit-text-fill-color: #17251d;
+}
+#enablePlaybackBtn:hover:not(:disabled) {
+  background: #d3ebde;
+}
+#enablePlaybackBtn:active:not(:disabled) {
+  background: #c3e2d1;
+}
+#enablePlaybackBtn:focus-visible {
+  outline: 2px solid #1769ff;
+  outline-offset: 2px;
+}
+#enablePlaybackBtn:disabled {
+  cursor: default;
+  opacity: .65;
+  color: #17251d;
+  -webkit-text-fill-color: #17251d;
+}
+
+
+.fileControlRow{display:flex;align-items:center;gap:8px;min-width:0}
+.fileControlRow #openFile{min-width:0;flex:1 1 auto}
+.fileControlRow #saveAbcBtn{flex:0 0 auto}
+
+
+/* Save filename prompt: left-align its title while preserving centered share alerts. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  text-align:left !important;
+}
+
+
+/* Refined DayPilot prompt/alert styling: lighter scale and simple border. */
+.modal_default_main{
+  border:1px solid #17241c !important;
+  box-shadow:0 8px 28px rgba(0,0,0,.18) !important;
+  font-size:16px !important;
+}
+.modal_default_main .modal_default_content{
+  font-size:16px !important;
+  line-height:1.45 !important;
+}
+.modal_default_main input{
+  font-size:18px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:16px !important;
+  min-width:82px !important;
+  padding:7px 16px !important;
+}
+.modal_default_main,
+.modal_default_main > div,
+.modal_default_main .modal_default_content,
+.modal_default_main .modal_default_buttons{
+  outline:0 !important;
+}
+
+
+/* DayPilot dialog typography refinement. */
+.modal_default_main input{
+  font-size:16px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:14px !important;
+  min-width:78px !important;
+  padding:6px 14px !important;
+}
+
+
+/* Final DayPilot spacing refinements. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  line-height:1.4 !important;
+}
+body.save-name-prompt-open .modal_default_main input{
+  padding:7px 9px !important;
+}
+/* Pull the save prompt slightly closer to its filename field. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  padding-bottom:8px !important;
+}
+/* Give share-confirmation copy just a touch more breathing room. */
+body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
+  line-height:1.55 !important;
+}
+
+#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;margin-left:-6px;margin-right:8px}
+
+/* Mandolin / Tenor Banjo player overrides */
+.whistleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(150px,.72fr) minmax(145px,.7fr) minmax(220px,1.12fr) auto}
+.whistleToolbar .fileControl{grid-column:auto}
+.whistleDiagramWrap{overflow:auto}
+.whistleLive{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(18px,3vw,42px)}
+.whistleLive[hidden]{display:none}
+.whistleTuneTitle{width:100%;text-align:center;font-weight:750;font-size:clamp(24px,3.2vw,44px);line-height:1.15;margin:0 0 clamp(18px,3vh,34px);color:#17241c}
+.whistleLiveRow{width:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+.whistleGlyphGroup{display:flex;align-items:center;justify-content:center}
+.whistleNoteGroup{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(18px,3vw,42px)}
+.noteDisplayGroup{display:flex;flex-direction:column;align-items:center;justify-content:center;width:clamp(180px,18vw,260px)}
+.whistleLiveNote{font-weight:800;font-size:clamp(48px,7vw,100px);line-height:1;color:#17241c;white-space:nowrap;text-align:center}
+.whistleStaffNote{display:block;width:clamp(120px,15vw,190px);height:clamp(150px,18vw,220px);margin:0 auto;overflow:visible}
+.whistleStaffNote[hidden]{display:none !important}
+.showNoteLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.showNoteLabel input{margin:0}
+.mandolinFingering{width:clamp(230px,27vw,350px);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;color:#111}
+.tabString{display:grid;grid-template-columns:30px 1fr;align-items:center;gap:7px;height:clamp(42px,5vw,58px);font-size:clamp(18px,2.4vw,28px);font-weight:700}
+.tabStringName{text-align:right}.tabLine{position:relative;height:2px;background:#222}.tabFret{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:1.15em;padding:.08em .08em;background:#fff;text-align:center;font-size:clamp(28px,4.2vw,52px);line-height:1;font-weight:800}
+.tabFret.inactive{display:none}
+.tabCaption{text-align:center;margin-top:12px;font-size:clamp(16px,1.9vw,23px);font-weight:700;color:#4d5c54}
+body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
+body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(175px,20vw,250px)}
+body.diagram-full .mandolinFingering{width:clamp(270px,30vw,400px)}
+body.diagram-full .tabString{height:clamp(48px,5.5vw,66px)}
+@media(max-width:1050px){.whistleToolbar{grid-template-columns:1fr 1fr}.whistleToolbar .fileControl{grid-column:1 / -1}.whistleLive{min-height:500px}}
+@media(max-width:760px){.whistleStaffNote{width:100px;height:130px}.whistleNoteGroup{gap:16px}.mandolinFingering{width:260px}}
+@media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:18px}.whistleNoteGroup{gap:10px}.noteDisplayGroup{width:150px}.whistleLiveNote{font-size:48px}.mandolinFingering{width:min(230px,55vw)}.tabString{height:42px}}
+.whistleGlyphGroup{display:flex;align-items:center;justify-content:center;width:100%;min-width:0}
+.whistleNoteGroup{display:grid;grid-template-columns:minmax(0,clamp(230px,27vw,350px)) minmax(120px,clamp(150px,15vw,220px));align-items:center;justify-content:center;column-gap:clamp(6px,1vw,14px);width:max-content;max-width:100%;margin:0 auto}
+.mandolinFingering{width:100%;margin:0;min-width:0}
+.noteDisplayGroup{position:static;width:100%;min-width:0;transform:none}
+@media(max-width:760px){.whistleNoteGroup{grid-template-columns:minmax(0,240px) minmax(105px,135px);column-gap:6px}.mandolinFingering{width:100%}.noteDisplayGroup{width:100%}}
+@media(max-width:650px){.whistleNoteGroup{grid-template-columns:minmax(0,min(210px,55vw)) minmax(95px,125px);column-gap:4px}.mandolinFingering{width:100%}.noteDisplayGroup{width:100%}.whistleLiveNote{font-size:clamp(40px,11vw,48px)}.whistleStaffNote{width:min(100px,100%);height:130px}}
+
+/* v1.4 live fingering layout: keep the tab centered under the title; note display floats beside it. */
+.whistleGlyphGroup{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-width:0;overflow:visible}
+.whistleNoteGroup{display:block;width:clamp(210px,24vw,300px);max-width:calc(100% - 190px);margin:0 auto;position:relative}
+.mandolinFingering{width:100%;margin:0;min-width:0}
+.noteDisplayGroup{position:absolute;left:calc(100% + clamp(10px,1.4vw,20px));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;width:clamp(145px,15vw,210px);min-width:0}
+.noteDisplayGroup.withStaffNote{transform:translateY(-43%)}
+body.diagram-full .whistleNoteGroup{width:clamp(230px,25vw,320px);max-width:calc(100% - 220px)}
+@media(max-width:760px){.whistleNoteGroup{width:min(230px,52vw);max-width:calc(100% - 135px)}.noteDisplayGroup{left:calc(100% + 7px);width:125px}.noteDisplayGroup.withStaffNote{transform:translateY(-42%)}}
+@media(max-width:650px){.whistleNoteGroup{width:min(205px,50vw);max-width:calc(100% - 112px)}.noteDisplayGroup{left:calc(100% + 5px);width:105px}.noteDisplayGroup.withStaffNote{transform:translateY(-41%)}.whistleLiveNote{font-size:clamp(40px,10vw,48px)}.whistleStaffNote{width:min(96px,100%);height:125px}}
+
+/* v1.5 live fingering layout: center the complete title/grid/note composition. */
+.whistleGlyphGroup{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;overflow:visible}
+.whistleNoteGroup{display:grid;grid-template-columns:minmax(0,clamp(205px,22vw,280px)) minmax(125px,clamp(145px,14vw,195px));align-items:center;justify-content:center;column-gap:clamp(5px,.8vw,11px);width:max-content;max-width:100%;margin:0 auto;position:relative}
+.mandolinFingering{width:100%;margin:0;min-width:0}
+.noteDisplayGroup{position:static;left:auto;top:auto;transform:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-width:0}
+.noteDisplayGroup.withStaffNote{transform:translateY(7%)}
+body.diagram-full .whistleNoteGroup{width:max-content;max-width:100%;grid-template-columns:minmax(0,clamp(230px,24vw,310px)) minmax(145px,clamp(165px,16vw,220px));column-gap:clamp(6px,.9vw,12px)}
+@media(max-width:760px){.whistleNoteGroup{grid-template-columns:minmax(0,min(215px,52vw)) minmax(105px,130px);column-gap:5px;width:max-content;max-width:100%}.noteDisplayGroup{position:static;width:100%;transform:none}.noteDisplayGroup.withStaffNote{transform:translateY(7%)}}
+@media(max-width:650px){.whistleNoteGroup{grid-template-columns:minmax(0,min(190px,50vw)) minmax(95px,115px);column-gap:4px;width:max-content;max-width:100%}.noteDisplayGroup{position:static;width:100%;transform:none}.noteDisplayGroup.withStaffNote{transform:translateY(7%)}.whistleLiveNote{font-size:clamp(40px,10vw,48px)}.whistleStaffNote{width:min(96px,100%);height:125px}}
+
+/* v1.6 fingering composition refinements. */
+.whistleNoteGroup{grid-template-columns:minmax(0,clamp(180px,19vw,245px)) minmax(120px,clamp(140px,13vw,190px));column-gap:clamp(5px,.7vw,10px)}
+body.diagram-full .whistleNoteGroup{grid-template-columns:minmax(0,clamp(200px,21vw,270px)) minmax(140px,clamp(160px,15vw,210px));column-gap:clamp(6px,.8vw,11px)}
+.noteDisplayGroup.withStaffNote{transform:translateY(14%)}
+.tabCaption{width:100%;text-align:center}
+@media(max-width:760px){.whistleNoteGroup{grid-template-columns:minmax(0,min(195px,47vw)) minmax(105px,130px)}.noteDisplayGroup.withStaffNote{transform:translateY(13%)}}
+@media(max-width:650px){.whistleNoteGroup{grid-template-columns:minmax(0,min(175px,45vw)) minmax(95px,115px)}.noteDisplayGroup.withStaffNote{transform:translateY(12%)}}
+
+/* v1.7 live fingering layout refinements. */
+.whistleNoteGroup{
+  grid-template-columns:minmax(0,clamp(175px,18vw,230px)) minmax(120px,clamp(135px,12vw,180px));
+  column-gap:clamp(7px,.8vw,12px);
+}
+/* Keep full-page geometry identical to the normal fingering composition. */
+body.diagram-full .whistleNoteGroup{
+  width:max-content;max-width:100%;
+  grid-template-columns:minmax(0,clamp(175px,18vw,230px)) minmax(120px,clamp(135px,12vw,180px));
+  column-gap:clamp(7px,.8vw,12px);
+}
+body.diagram-full .mandolinFingering{width:100%}
+/* The status belongs to the whole centered composition, not just the tab column. */
+.whistleNoteGroup>.tabCaption{grid-column:1 / -1;width:100%;margin-top:10px;text-align:center}
+/* On four-string instruments, lower the note display when staff notation is shown. */
+.whistleNoteGroup.fourString .noteDisplayGroup.withStaffNote{transform:translateY(20%)}
+.whistleNoteGroup.fourString .noteDisplayGroup.withStaffNote .whistleLiveNote{transform:translateY(8px)}
+@media(max-width:760px){
+  .whistleNoteGroup.fourString .noteDisplayGroup.withStaffNote{transform:translateY(18%)}
+}
+@media(max-width:650px){
+  .whistleNoteGroup.fourString .noteDisplayGroup.withStaffNote{transform:translateY(16%)}
+}
+
+/* v1.8: align the center staff line with the String/Fret status text. */
+.noteDisplayGroup.withStaffNote{transform:none !important}
+.noteDisplayGroup.withStaffNote .whistleLiveNote{transform:none !important}
+
+/* v1.9: center the String/Fret status under the complete live display and
+   lower only the note name when staff notation is visible. */
+.noteDisplayGroup.withStaffNote .whistleLiveNote{transform:translateY(28px) !important}
+
+/* v1.10: slightly lower the String/Fret caption. With the staff hidden,
+   vertically center the note name on the four-/six-string tab grid itself. */
+.tabCaption{transform:translateY(10px)}
+
+/* v1.21: visibly raise the note-name-only display. Apply the offset directly
+   to the note-name element so it is not cancelled by the group alignment code. */
+.whistleNoteGroup:not(.showStaffNote) .whistleLiveNote{transform:translateY(-28px) !important}
+
+/* v1.23: rotate the live string/fret grid 90 degrees clockwise.
+   Strings are vertical, with each string name centered above its line. */
+.mandolinFingering{
+  display:flex;
+  flex-direction:row-reverse;
+  justify-content:center;
+  align-items:flex-start;
+  gap:clamp(24px,3.2vw,42px);
+  height:clamp(190px,22vw,270px);
+  width:auto;
+}
+.tabString{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:7px;
+  width:clamp(28px,3vw,38px);
+  height:100%;
+  font-size:clamp(18px,2.4vw,28px);
+  font-weight:700;
+}
+.tabStringName{width:100%;text-align:center;line-height:1}
+.tabLine{position:relative;width:2px;height:100%;background:#222;flex:1}
+.tabFret{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  min-width:1.15em;padding:.08em .04em;
+  background:#fff;text-align:center;
+  font-size:clamp(28px,4.2vw,52px);line-height:1;font-weight:800;
+}
+body.diagram-full .mandolinFingering{width:auto;height:clamp(210px,24vw,300px)}
+body.diagram-full .tabString{height:100%}
+@media(max-width:760px){.mandolinFingering{height:220px;gap:clamp(18px,3vw,30px)}}
+@media(max-width:650px){.mandolinFingering{height:190px;gap:clamp(14px,2.5vw,24px)}.tabString{height:100%;width:26px}}
+
+/* v1.24: center the vertical string grid under the tune title while keeping
+   the note display to its right; slightly tighten string spacing. */
+.whistleNoteGroup{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  width:100%;
+  max-width:100%;
+  margin:0 auto;
+  column-gap:0;
+}
+.mandolinFingering{
+  grid-column:2;
+  justify-self:center;
+  gap:clamp(14px,1.8vw,24px);
+}
+.noteDisplayGroup{
+  grid-column:3;
+  justify-self:start;
+  width:clamp(120px,15vw,220px);
+  margin-left:clamp(6px,1vw,14px);
+}
+@media(max-width:760px){
+  .mandolinFingering{gap:clamp(11px,1.7vw,19px)}
+  .noteDisplayGroup{margin-left:8px}
+}
+@media(max-width:650px){
+  .mandolinFingering{gap:clamp(8px,1.5vw,14px)}
+  .noteDisplayGroup{width:130px;margin-left:6px}
+}
+
+/* v1.26: six-string guitar needs additional clearance between the centered
+   string grid and the note display. Keep the string grid centered under the
+   title; move only the note display farther right. */
+.whistleNoteGroup.sixString .noteDisplayGroup{margin-left:clamp(42px,4vw,62px)}
+body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:clamp(52px,4.5vw,72px)}
+@media(max-width:760px){.whistleNoteGroup.sixString .noteDisplayGroup{margin-left:32px}}
+@media(max-width:650px){.whistleNoteGroup.sixString .noteDisplayGroup{margin-left:24px}}
+
+/* v1.27: keep guitar fret numbers visually consistent with the four-string instruments. */
+.whistleNoteGroup.sixString .tabFret{font-size:clamp(32px,4.6vw,56px)}
+/* v1.28: keep the vertical string grid geometrically centered beneath the tune
+   title in both normal and full-page views. The side tracks may shrink to zero,
+   so the note display cannot push the centered grid left. Keep the note display
+   close to the strings for both four- and six-string instruments. */
+.whistleNoteGroup,
+body.diagram-full .whistleNoteGroup{
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  width:100%;
+  max-width:100%;
+  column-gap:0;
+}
+.whistleNoteGroup .mandolinFingering,
+body.diagram-full .whistleNoteGroup .mandolinFingering{
+  grid-column:2;
+  justify-self:center;
+}
+.whistleNoteGroup .noteDisplayGroup,
+.whistleNoteGroup.sixString .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{
+  grid-column:3;
+  justify-self:start;
+  margin-left:clamp(6px,.8vw,12px);
+}
+@media(max-width:760px){
+  .whistleNoteGroup .noteDisplayGroup,
+  .whistleNoteGroup.sixString .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:6px}
+}
+@media(max-width:650px){
+  .whistleNoteGroup .noteDisplayGroup,
+  .whistleNoteGroup.sixString .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:4px}
+}
+
+/* v1.30: bring the note-name/staff column back toward the vertical string grid
+   in both normal and full-page views, without moving the centered grid. */
+.whistleNoteGroup .noteDisplayGroup,
+.whistleNoteGroup.sixString .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{
+  margin-left:-27px;
+}
+@media(max-width:760px){
+  .whistleNoteGroup .noteDisplayGroup,
+  .whistleNoteGroup.sixString .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:-19px}
+}
+@media(max-width:650px){
+  .whistleNoteGroup .noteDisplayGroup,
+  .whistleNoteGroup.sixString .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:-14px}
+}
+
+/* v1.31: Full-page mode needs a protected horizontal gap between the vertical
+   string grid and the note-name/staff column. In normal mode retain the v1.30
+   spacing. In full-page mode remove the negative overlap and reserve a modest
+   positive gap; this also prevents the note display from crossing the strings
+   as the full-page window is narrowed. */
+body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{
+  margin-left:clamp(6px,1vw,14px);
+}
+@media(max-width:760px){
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:8px}
+}
+@media(max-width:650px){
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{margin-left:6px}
+}
+
+/* v1.32: make the live fingering composition respond to the diagram pane itself,
+   not just the browser viewport. This prevents the right-hand note column from
+   being clipped when the split pane is narrowed while preserving grid centering. */
+.whistleGlyphGroup{container-type:inline-size}
+@container (max-width: 560px){
+  .mandolinFingering{gap:clamp(8px,2.6cqw,14px)}
+  .tabString{width:clamp(22px,6cqw,28px)}
+  .tabStringName{font-size:clamp(16px,5cqw,22px)}
+  .tabFret,.whistleNoteGroup.sixString .tabFret{font-size:clamp(28px,9cqw,42px)}
+  .noteDisplayGroup,
+  .whistleNoteGroup.sixString .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{
+    width:clamp(82px,25cqw,118px);
+    margin-left:clamp(3px,1.5cqw,7px);
+  }
+  .whistleLiveNote{font-size:clamp(42px,15cqw,62px)}
+  .whistleStaffNote,body.diagram-full .whistleStaffNote{width:min(100%,110px);height:135px}
+}
+@container (max-width: 430px){
+  .mandolinFingering{gap:clamp(5px,2cqw,9px)}
+  .tabString{width:clamp(18px,5.5cqw,23px)}
+  .tabStringName{font-size:clamp(14px,4.8cqw,19px)}
+  .tabFret,.whistleNoteGroup.sixString .tabFret{font-size:clamp(24px,8.5cqw,34px)}
+  .noteDisplayGroup,
+  .whistleNoteGroup.sixString .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{
+    width:clamp(68px,23cqw,92px);
+    margin-left:2px;
+  }
+  .whistleLiveNote{font-size:clamp(36px,14cqw,50px)}
+  .whistleStaffNote,body.diagram-full .whistleStaffNote{width:min(100%,88px);height:112px}
+}
+
+/* v1.34: optional full fretboard display. */
+.showFretboardLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.showFretboardLabel input{margin:0}
+.mandolinFingering.fullFretboardMode{display:block;width:clamp(230px,27vw,350px);height:clamp(300px,34vw,430px);overflow:visible}
+.fullFretboardSvg{display:block;width:100%;height:100%;overflow:visible}
+body.diagram-full .mandolinFingering.fullFretboardMode{width:clamp(250px,29vw,380px);height:clamp(330px,38vw,470px)}
+@container (max-width:560px){.mandolinFingering.fullFretboardMode{width:clamp(190px,54cqw,250px);height:clamp(280px,78cqw,360px)}}
+@container (max-width:430px){.mandolinFingering.fullFretboardMode{width:clamp(165px,52cqw,220px);height:clamp(250px,76cqw,325px)}}
+
+/* v1.35: the full-fretboard SVG intentionally has side padding around the
+   actual strings. Pull the note column into that unused SVG space so its visual
+   gap is measured from the outermost string, not from the SVG box. The
+   four-string board has more internal side padding than the six-string board. */
+.whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{
+  margin-left:-72px;
+}
+.whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{
+  margin-left:-43px;
+}
+@container (max-width:560px){
+  .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-30px}
+  .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-18px}
+}
+@container (max-width:430px){
+  .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-20px}
+  .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-10px}
+}
+
+/* v1.36: give the compact (non-full-fretboard) note column a little more
+   breathing room to the right of the vertical strings. Full-fretboard spacing
+   remains governed by the v1.35 rules above. */
+.whistleNoteGroup:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+.whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .noteDisplayGroup{margin-left:-10px}
+body.diagram-full .whistleNoteGroup:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .noteDisplayGroup{margin-left:20px}
+@container (max-width:560px){
+  .whistleNoteGroup:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+  .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .noteDisplayGroup{margin-left:10px}
+}
+@container (max-width:430px){
+  .whistleNoteGroup:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+  .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup:not(:has(.fullFretboardMode)) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:not(:has(.fullFretboardMode)) .noteDisplayGroup{margin-left:7px}
+}
+
+/* v1.37: on narrow panes, keep extra separation between a full fretboard and
+   the note column so resizing cannot make them visually crowd each other. */
+@container (max-width:560px){
+  .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-30px}
+  .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-18px}
+}
+@container (max-width:430px){
+  .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-20px}
+  .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-10px}
+}
+
+</style></head><body><div class="app">
+<header class="app-header"><div class="version">Version 1.42</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<div class="toolbar whistleToolbar">
+ <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
+ <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
+ <div class="control"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="mandolin" selected>Mandolin</option><option value="tenor-banjo">Tenor Banjo</option><option value="bouzouki-gdae">Bouzouki (GDAE)</option><option value="bouzouki-gdad">Bouzouki (GDAD)</option><option value="guitar">Guitar (Standard)</option><option value="guitar-dadgad">Guitar (DADGAD)</option></select></div>
+ <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
+ <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
+</div>
+<div class="workspace" id="workspace">
+ <div class="leftPane" id="leftPane">
+  <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox">Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+ </div>
+ <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">GDAE Fingering</span><span class="diagramHeaderRight"><label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked>Show Fretboard</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div>
+  <div class="diagramWrap whistleDiagramWrap">
+   <div id="whistleLive" class="whistleLive" hidden>
+    <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
+    <div class="whistleLiveRow"><div class="whistleGlyphGroup"><div id="whistleNoteGroup" class="whistleNoteGroup"><div id="mandolinFingering" class="mandolinFingering" role="img" aria-label="GDAE fingering"></div><div id="noteDisplayGroup" class="noteDisplayGroup"><div id="whistleLiveNote" class="whistleLiveNote"></div><svg id="whistleStaffNote" class="whistleStaffNote" viewBox="0 0 160 220" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img" style="display:none"></svg></div></div></div></div>
+   </div>
+   <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
+  </div>
+ </section>
+</div>
+<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
+</div>
+<div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
+
+<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
+  <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
+    <h2 style="text-align:center;margin:0 0 24px">ABC Fretboard Player Instructions</h2>
+    <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and optional tablature for the selected fretted instrument.</p>
+      <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to its right.</p>
+      <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), or Guitar (DADGAD). The instrument selection is saved and restored.</p>
+      <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with tablature for the selected instrument. The default is <b>Notation + Tab</b>.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
+      <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or text file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
+      <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play. Edits are retained when changing tunes.</p>
+      <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <p>The upper-left panel contains editable ABC. The lower-left panel shows abcjs notation and playback controls. The <b>Notation display</b> selector chooses whether tablature for the selected instrument is also shown.</p>
+      <p>Editing the ABC rebuilds the notation and audio. When tablature is enabled it is rebuilt at the same time. Click a rendered note to select its corresponding ABC text.</p>
+      <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
+      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and hollow circles show open strings. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display. This setting is remembered in this browser and is not included in share links.</p>
+      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
+      <p>Note names use sharps only and a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes. When <b>Show note</b> is enabled, the staff display also uses sharps for accidentals rather than flats.</p>
+      <p>The <b>Notation display</b> and <b>Instrument</b> choices are remembered in this browser and are also included in generated share links.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>As each melody note plays, the notation cursor follows the tune and the fretboard pane updates to that note.</p>
+      <p>Irish-style roll playback is enabled by default for <b>~</b> ornaments. Add <b>%irish_rolls_off</b> to a tune to disable it. Playback also forces the FatBoy soundfont and uses <b>MIDI program 141</b> for Mandolin, <b>MIDI program 105</b> for Tenor Banjo, or <b>MIDI program 140</b> for either Bouzouki tuning, or <b>MIDI program 25</b> for either Guitar tuning, with program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+      <p>Click <b>Mute Melody</b> in the Notation header to mute the melody. This is available for every tune, including tunes without chord symbols, so you can practice with the metronome alone. If the tune contains chord symbols, chord and bass accompaniment remain audible.</p>
+      <p>Toggling <b>Mute Melody</b> or <b>Unmute Melody</b> stops and rewinds the tune. If it was playing, playback restarts from the beginning after the five-second count-in when <b>Count in?</b> is enabled, or immediately when Count in is disabled. If the tune was stopped, it remains stopped.</p>
+      <p>The button changes to <b>Unmute Melody</b>; click it again to restore the melody.</p>
+      <p>The melody always starts unmuted when the tool is opened, and the mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
+      <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
+      <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
+      <p>The Count in setting is remembered in this browser.</p>
+      <p>Click the <b>tempo percentage</b> in the playback controls to set playback from <b>10% to 200%</b>. The setting is remembered in this browser.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+      <p>On wide screens, drag the vertical divider to resize the left and fretboard panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
+      <p>Click <b>Full-Page View</b> to enlarge the fretboard pane while keeping playback controls available at the bottom. Click <b>Exit Full Page</b> or press <b>Escape</b> to return.</p>
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
+      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied in a share URL.</p>
+      <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+
+      <hr>
+      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
+      <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>based on a suggestion by Ephraim Schafli.<br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
+      <hr>
+    </div>
+    <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
+  (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(IS_IOS)$("openFile").removeAttribute("accept");
+
+let currentSaveBaseName="";
+let manualEntryCollection=false;
+let loadedABC="";
+let tunes=[];
+let currentTune=0;
+let abcDirty=false;
+let controller=null;
+let renderGeneration=0;
+let prefixLength=0;
+let playbackCursor=null;
+let playbackActive=false;
+let audioControllerInitializing=false;
+let melodyMuted=false;
+let metronomeEnabled=false;
+let countInEnabled=false;
+let countInTimer=null;
+let countInToken=0;
+let rebuildTimer=0;
+let sharePlaybackNeedsGesture=false;
+let currentLiveMidi=null;
+let showNoteEnabled=false;
+let showFretboardEnabled=true;
+
+const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-fretboard-player.html";
+const SHARE_LINK_MAX_LEN=8100;
+const SPLIT_KEY="abcGDAEPlayerSplitters";
+const EDITOR_SIZE_KEY="abcGDAEPlayerEditorTextSize";
+const TEMPO_KEY="abcGDAEPlayerTempo";
+const COUNT_IN_KEY="abcGDAEPlayerCountIn";
+const METRONOME_KEY="abcGDAEPlayerMetronome";
+const SHOW_NOTE_KEY="abcGDAEPlayerShowNote";
+const SHOW_FRETBOARD_KEY="abcFretboardPlayerShowFretboard";
+const WHISTLE_PREFS_KEY="abcGDAEPlayerPrefs";
+
+const GDAE_RENDER_TAB=[{
+  instrument:"mandolin",
+  label:"",
+  tuning:["G,","D","A","e"]
+}];
+const GDAD_RENDER_TAB=[{
+  instrument:"mandolin",
+  label:"",
+  tuning:["G,","D","A","d"]
+}];
+const GUITAR_RENDER_TAB=[{
+  instrument:"guitar",
+  label:"",
+  tuning:["E,","A,","D","G","B","e"]
+}];
+const GUITAR_DADGAD_RENDER_TAB=[{
+  instrument:"guitar",
+  label:"",
+  tuning:["D,","A,","D","G","A","d"]
+}];
+
+const GDAE_STRINGS=[
+  {name:"E",midi:76}, {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}
+];
+const GDAD_STRINGS=[
+  {name:"D",midi:74}, {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}
+];
+const GUITAR_STRINGS=[
+  {name:"E",midi:64}, {name:"B",midi:59}, {name:"G",midi:55}, {name:"D",midi:50}, {name:"A",midi:45}, {name:"E",midi:40}
+];
+const GUITAR_DADGAD_STRINGS=[
+  {name:"D",midi:62}, {name:"A",midi:57}, {name:"G",midi:55}, {name:"D",midi:50}, {name:"A",midi:45}, {name:"D",midi:38}
+];
+function selectedStrings(){const v=$("instrumentSelect").value; return v==="guitar"?GUITAR_STRINGS:(v==="guitar-dadgad"?GUITAR_DADGAD_STRINGS:(v==="bouzouki-gdad"?GDAD_STRINGS:GDAE_STRINGS));}
+function selectedRenderTab(){const v=$("instrumentSelect").value; return v==="guitar"?GUITAR_RENDER_TAB:(v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB:(v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB));}
+function selectedMelodyProgram(){const v=$("instrumentSelect").value; return (v==="guitar"||v==="guitar-dadgad")?25:(v==="tenor-banjo"?105:(v.startsWith("bouzouki-")?140:141));}
+function updateInstrumentUI(){
+  const v=$("instrumentSelect").value;
+  const labels={mandolin:"Mandolin (GDAE)","tenor-banjo":"Tenor Banjo (GDAE)","bouzouki-gdae":"Bouzouki (GDAE)","bouzouki-gdad":"Bouzouki (GDAD)",guitar:"Guitar (Standard)","guitar-dadgad":"Guitar (DADGAD)"};
+  $("fingeringPanelLabel").textContent=labels[v]||"Mandolin (GDAE)";
+  $("mandolinFingering").setAttribute("aria-label",(labels[v]||"Instrument")+" fingering");
+}
+
+function splitTunes(abc){
+  const lines=String(abc||"").replace(/\r\n?/g,"\n").split("\n");
+  const out=[];
+  let pre=[],cur=null;
+  for(const line of lines){
+    if(/^X\s*:/.test(line)){
+      if(cur)out.push(cur.join("\n").trim());
+      cur=[...pre,line];
+      pre=[];
+    }else if(cur)cur.push(line);
+    else pre.push(line);
+  }
+  if(cur)out.push(cur.join("\n").trim());
+  if(!out.length&&String(abc||"").trim())out.push(String(abc).trim());
+  return out.filter(Boolean);
+}
+
+function firstTitle(tune,n){
+  const m=String(tune||"").match(/^T:\s*(.*?)\s*$/m);
+  return m&&m[1].trim()||`Tune ${n}`;
+}
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function configureIrishRollsForTune(abc){
+  const source=String(abc||"");
+  const irishRollsOff=/^[ \t]*%irish_rolls_off\b/im.test(source);
+
+  if(!ABCJS||!ABCJS.eskinConfig||typeof ABCJS.eskinConfig.setIrishRolls!=="function"){
+    throw new Error("Portable abcjs Irish-roll configuration API is unavailable.");
+  }
+
+  // The portable abcjs parser uses this setting while parsing '~' ornaments.
+  // Enable custom Irish-roll playback by default and disable it only when the
+  // tune explicitly contains %irish_rolls_off.
+  ABCJS.eskinConfig.setIrishRolls(!irishRollsOff);
+
+  // Do not allow a stale force override to defeat the per-tune choice.
+  if(typeof ABCJS.eskinConfig.setIrishRollOverrides==="function"){
+    ABCJS.eskinConfig.setIrishRollOverrides({
+      forceEnable:false,
+      forceDisable:false
+    });
+  }
+}
+
+function hasABCSyntaxChords(abc){
+  const source=String(abc||"");
+  const re=/"([^"\r\n]*)"/g;
+  let m;
+  while((m=re.exec(source))){
+    const text=m[1].trim();
+    if(text && !/^[\^_<>@]/.test(text))return true;
+  }
+  return false;
+}
+
+// Meter patterns and MIDI drum settings match the ABC Transcription Tools Player/Tune Trainer metronome.
+const METRONOME_LIST=[
+  {name:"C|",pattern:"dd A B C D"},
+  {name:"C",pattern:"dddd A B B B C D D D"},
+  {name:"2/2",pattern:"dd A B C D"},
+  {name:"3/2",pattern:"ddd A B B C D D"},
+  {name:"2/4",pattern:"dd A B C D"},
+  {name:"3/4",pattern:"ddd A B B C D D"},
+  {name:"4/4",pattern:"dddd A B B B C D D D"},
+  {name:"5/4",pattern:"ddddd A B B B B C D D D D"},
+  {name:"6/4",pattern:"dddddd A B B B B B C D D D D"},
+  {name:"7/4",pattern:"ddddddd A B B B B B B C D D D D D"},
+  {name:"2/8",pattern:"dz A C"},
+  {name:"3/8",pattern:"dzz A C"},
+  {name:"5/8",pattern:"dzzdz A B C D"},
+  {name:"6/8",pattern:"dzzdzz A B C D"},
+  {name:"7/8",pattern:"dzdzdzz A B B C D D"},
+  {name:"9/8",pattern:"dzzdzzdzz A B B C D D"},
+  {name:"10/8",pattern:"dzzdzzdzdz A B B B C D D D"},
+  {name:"11/8",pattern:"dzzdzzdzdzz A B B B C D D D"},
+  {name:"12/8",pattern:"dzzdzzdzzdzz A B B B C D D D"}
+];
+const METRONOME_HIGH_SOUND=76;
+const METRONOME_LOW_SOUND=77;
+const METRONOME_HIGH_VOLUME=56;
+const METRONOME_LOW_VOLUME=40;
+
+function metronomePatternForABC(abc){
+  const meterMatch=/^M:\s*(.*?)\s*$/mi.exec(String(abc||""));
+  if(!meterMatch)return null;
+  const meter=meterMatch[1].trim();
+  const entry=METRONOME_LIST.find(item=>item.name===meter);
+  if(!entry)return null;
+  return entry.pattern
+    .replaceAll("A",String(METRONOME_HIGH_SOUND))
+    .replaceAll("B",String(METRONOME_LOW_SOUND))
+    .replaceAll("C",String(METRONOME_HIGH_VOLUME))
+    .replaceAll("D",String(METRONOME_LOW_VOLUME));
+}
+
+function metronomeInjectionForABC(abc){
+  const pattern=metronomePatternForABC(abc);
+  if(!pattern)return null;
+  return "%\n% Metronome sounds and volumes\n%\n%%MIDI drum "+pattern+"\n%%MIDI drumon\n%\n";
+}
+
+function restoreMetronomePreference(){
+  try{metronomeEnabled=localStorage.getItem(METRONOME_KEY)==="true"}catch(_){metronomeEnabled=false}
+  const cb=$("metronomeCheck");
+  if(cb)cb.checked=metronomeEnabled;
+}
+function saveMetronomePreference(){
+  try{localStorage.setItem(METRONOME_KEY,String(metronomeEnabled))}catch(_){}
+}
+async function toggleMetronome(){
+  const cb=$("metronomeCheck");
+  const requested=!!(cb&&cb.checked);
+  cancelCountIn();
+  playbackActive=false;
+
+  if(requested&&tunes.length&&!metronomePatternForABC($("abcText").value)){
+    metronomeEnabled=false;
+    if(cb)cb.checked=false;
+    saveMetronomePreference();
+    await rebuild();
+    await DayPilot.Modal.alert(
+      "Metronome Not Available for this Meter<br><br>No metronome pattern is available for the meter of this tune.",
+      {top:150,width:460}
+    );
+    return;
+  }
+
+  metronomeEnabled=requested;
+  saveMetronomePreference();
+  if(tunes.length)await rebuild();
+}
+
+function buildPlaybackABC(abc){
+  const source=String(abc||"");
+  const forced=[
+    "%soundfont fatboy",
+    melodyMuted?"%%MIDI program mute":(`%%MIDI program ${selectedMelodyProgram()}`),
+    ...((["guitar","guitar-dadgad"].includes($("instrumentSelect").value))?["%%MIDI transpose -12"]:[]),
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0"
+  ].join("\n")+"\n";
+
+  let cleaned=source.replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+    m=>" ".repeat(m.length)
+  );
+
+  const kMatch=/^K\s*:.*$/mi.exec(cleaned);
+  let playback=kMatch
+    ? cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index)
+    : forced+cleaned;
+
+  let metronome="";
+  if(metronomeEnabled)metronome=metronomeInjectionForABC(source)||"";
+  if(metronome){
+    const playbackK=/^K\s*:.*$/mi.exec(playback);
+    if(playbackK){
+      const lineEnd=playback.indexOf("\n",playbackK.index);
+      const insertAt=lineEnd>=0?lineEnd+1:playback.length;
+      playback=playback.slice(0,insertAt)+metronome+playback.slice(insertAt);
+    }else{
+      playback=forced+metronome+cleaned;
+    }
+  }
+
+  prefixLength=forced.length+metronome.length;
+  return playback;
+}
+
+function removeCursor(){
+  if(playbackCursor){
+    playbackCursor.remove();
+    playbackCursor=null;
+  }
+}
+
+function keepCursorVisible(){
+  if(!playbackCursor)return;
+  const vp=$("notation").parentElement;
+  const c=playbackCursor.getBoundingClientRect();
+  const v=vp.getBoundingClientRect();
+  const m=28;
+  if(c.top<v.top+m)vp.scrollBy({top:c.top-v.top-m,behavior:"smooth"});
+  else if(c.bottom>v.bottom-m)vp.scrollBy({top:c.bottom-v.bottom+m,behavior:"smooth"});
+}
+
+function gdaePositionForMidi(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return null;
+  const strings=selectedStrings();
+  let best=null;
+  for(let i=0;i<strings.length;i++){
+    const fret=n-strings[i].midi;
+    if(fret<0||fret>24)continue;
+    if(!best||fret<best.fret||(fret===best.fret&&i<best.stringIndex))best={stringIndex:i,fret};
+  }
+  return best;
+}
+
+function midiPitchClassName(midi){
+  const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return "";
+  return names[(n%12+12)%12];
+}
+
+function formattedWhistleNoteName(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return "";
+  const base=midiPitchClassName(n);
+  const octave=Math.floor(n/12)-1;
+  if(octave===3)return base+",";
+  if(octave===4)return base;
+  if(octave===5)return base+"'";
+  if(octave===6)return base+"''";
+  return base+(octave<3?",":"''");
+}
+
+function renderGDAEFingering(midi){
+  const host=$("mandolinFingering");
+  if(!host)return;
+  host.innerHTML="";
+  host.classList.toggle("fullFretboardMode",!!showFretboardEnabled);
+  if(midi==null)return;
+  const pos=gdaePositionForMidi(midi);
+  const strings=selectedStrings();
+  const group=$("whistleNoteGroup");
+  if(group){
+    group.classList.toggle("fourString", strings.length===4);
+    group.classList.toggle("sixString", strings.length===6);
+  }
+
+  if(!showFretboardEnabled){
+    strings.forEach((str,i)=>{
+      const row=document.createElement("div"); row.className="tabString";
+      const name=document.createElement("div"); name.className="tabStringName"; name.textContent=str.name;
+      const line=document.createElement("div"); line.className="tabLine";
+      const fret=document.createElement("span"); fret.className="tabFret"+(pos&&pos.stringIndex===i?"":" inactive");
+      if(pos&&pos.stringIndex===i)fret.textContent=String(pos.fret);
+      line.appendChild(fret); row.append(name,line); host.appendChild(row);
+    });
+    return;
+  }
+
+  const NS="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("class","fullFretboardSvg");
+  svg.setAttribute("viewBox","0 0 300 390");
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label",host.getAttribute("aria-label")||"Instrument fretboard");
+  const add=(name,attrs,text)=>{
+    const el=document.createElementNS(NS,name);
+    for(const [k,v] of Object.entries(attrs||{}))el.setAttribute(k,String(v));
+    if(text!=null)el.textContent=text;
+    svg.appendChild(el);
+    return el;
+  };
+
+  // Keep the string field centered on the SVG/title. Four-string instruments use
+  // a tighter field so their string spacing is visually similar to six-string guitar.
+  const boardCenter=150;
+  const boardWidth=strings.length===4?156:222;
+  const left=boardCenter-boardWidth/2,right=boardCenter+boardWidth/2,top=42,bottom=326;
+  const displayStrings=[...strings].reverse();
+  const xs=displayStrings.map((_,i)=>displayStrings.length===1?(left+right)/2:left+i*(right-left)/(displayStrings.length-1));
+  const fretY=f=>top+(bottom-top)*(f/9);
+
+  // String names and strings. Low string is at the left, matching the compact display.
+  displayStrings.forEach((str,i)=>{
+    add("text",{x:xs[i],y:22,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":17,"font-weight":700,fill:"#111"},str.name);
+    add("line",{x1:xs[i],y1:top,x2:xs[i],y2:bottom,stroke:"#222","stroke-width":1.8,"vector-effect":"non-scaling-stroke"});
+  });
+
+  // Nut/fret 0 and frets 1-9.
+  for(let f=0;f<=9;f++){
+    const y=fretY(f);
+    if(f===0){
+      // Draw the nut as a filled rectangle instead of a thick stroked line.
+      // Its ends align with the outside edges of the two outer string strokes,
+      // producing clean square corners without anti-aliased line-cap artifacts.
+      const stringHalf=0.9; // half of the 1.8px string stroke
+      add("rect",{x:left-stringHalf,y:y-2,width:(right-left)+(stringHalf*2),height:4,fill:"#222"});
+    }else{
+      add("line",{x1:left,y1:y,x2:right,y2:y,stroke:"#222","stroke-width":1.25,"stroke-linecap":"butt","vector-effect":"non-scaling-stroke"});
+    }
+    add("text",{x:left-13,y:y+5,"text-anchor":"end","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":700,fill:"#111"},String(f));
+  }
+
+  if(pos){
+    const displayIndex=strings.length-1-pos.stringIndex;
+    const x=xs[displayIndex];
+    if(pos.fret<=9){
+      const y=pos.fret===0?fretY(0):(fretY(pos.fret-1)+fretY(pos.fret))/2;
+      if(pos.fret===0){
+        // Open strings use the conventional hollow marker at the nut.
+        add("circle",{cx:x,cy:y,r:10,fill:"#fff",stroke:"#111","stroke-width":3,"vector-effect":"non-scaling-stroke"});
+      }else{
+        add("circle",{cx:x,cy:y,r:12,fill:"#111"});
+        add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(pos.fret));
+      }
+    }else{
+      const y=bottom+24;
+      add("circle",{cx:x,cy:y,r:12,fill:"#111"});
+      add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(pos.fret));
+    }
+  }
+  host.appendChild(svg);
+}
+function centerFretStatus(){
+  // String/fret status text was intentionally removed in v1.21.
+}
+
+function alignStaffCenterToFretStatus(){
+  centerFretStatus();
+  const noteDisplay=$("noteDisplayGroup");
+  const svg=$("whistleStaffNote");
+  const caption=$("mandolinFingering")?.querySelector(".tabCaption");
+  if(!noteDisplay||!caption)return;
+  if(!svg||svg.style.display==="none"){
+    // With only the note name showing, center it on the string grid itself,
+    // ignoring the caption below the grid.
+    noteDisplay.style.transform="translateY(0px)";
+    const grid=$("mandolinFingering");
+    if(grid){
+      const gr=grid.getBoundingClientRect();
+      const nr=noteDisplay.getBoundingClientRect();
+      const gridCenter=gr.top+gr.height/2;
+      const noteCenter=nr.top+nr.height/2;
+      noteDisplay.style.transform=`translateY(${gridCenter-noteCenter-48}px)`;
+    }
+    return;
+  }
+  // The five staff lines are drawn at SVG y=132,122,112,102,92, so y=112
+  // is the center staff line. Align that line with the visual center of the
+  // String/Fret status text, regardless of panel/full-page size.
+  noteDisplay.style.transform="translateY(0px)";
+  const sr=svg.getBoundingClientRect();
+  const cr=caption.getBoundingClientRect();
+  const centerStaffY=sr.top+(112/220)*sr.height;
+  // The caption is visually lowered 10px in v1.10; compensate here so the
+  // staff stays at its established v1.9 position when Show note is enabled.
+  const captionY=cr.top+cr.height/2-10;
+  noteDisplay.style.transform=`translateY(${captionY-centerStaffY}px)`;
+}
+window.addEventListener("resize",()=>requestAnimationFrame(()=>{centerFretStatus();alignStaffCenterToFretStatus();}));
+
+function renderWhistleStaffNote(midi){
+  const svg=$("whistleStaffNote");
+  const group=$("whistleNoteGroup");
+  if(!svg)return;
+
+  const visible=!!showNoteEnabled&&midi!=null;
+  if(group)group.classList.toggle("showStaffNote",visible);
+  const noteDisplay=$("noteDisplayGroup");
+  if(noteDisplay)noteDisplay.classList.toggle("withStaffNote",visible);
+
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  if(!visible){
+    svg.style.display="none";
+    // Recalculate after the staff is removed. Otherwise the previous staff-on
+    // transform can remain until another note event or resize occurs.
+    requestAnimationFrame(alignStaffCenterToFretStatus);
+    return;
+  }
+
+  // Set display explicitly rather than relying on the hidden attribute. This
+  // avoids Safari/iOS and competing-CSS visibility problems.
+  svg.style.display="block";
+
+  const NS="http://www.w3.org/2000/svg";
+  const add=(name,attrs,text)=>{
+    const el=document.createElementNS(NS,name);
+    for(const [key,value] of Object.entries(attrs||{}))el.setAttribute(key,String(value));
+    if(text!=null)el.textContent=text;
+    svg.appendChild(el);
+    return el;
+  };
+
+  const n=Math.round(Number(midi));
+  const pc=((n%12)+12)%12;
+  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const [letter,sharp]=spellings[pc];
+  const octave=Math.floor(n/12)-1;
+  const letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const steps=(octave*7+letterIndex)-(4*7+2); // E4 = bottom staff line
+
+  // Center the staff vertically with generous room above and below for ledger
+  // lines and stems across the full test range.
+  const bottomY=132,gap=10;
+  const y=bottomY-steps*(gap/2);
+
+  for(let i=0;i<5;i++){
+    const ly=bottomY-i*gap;
+    add("line",{x1:20,y1:ly,x2:140,y2:ly,stroke:"#17241c","stroke-width":1.35,"vector-effect":"non-scaling-stroke"});
+  }
+
+  if(steps<0){
+    for(let st=-2;st>=steps;st-=2){
+      const ly=bottomY-st*(gap/2);
+      add("line",{x1:60,y1:ly,x2:102,y2:ly,stroke:"#17241c","stroke-width":1.35,"vector-effect":"non-scaling-stroke"});
+    }
+  }
+  if(steps>8){
+    for(let st=10;st<=steps;st+=2){
+      const ly=bottomY-st*(gap/2);
+      add("line",{x1:60,y1:ly,x2:102,y2:ly,stroke:"#17241c","stroke-width":1.35,"vector-effect":"non-scaling-stroke"});
+    }
+  }
+
+  if(sharp){
+    add("text",{x:51,y:y+1,"font-family":"Georgia, 'Times New Roman', serif","font-size":25,
+      "text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},"♯");
+  }
+
+  add("ellipse",{cx:81,cy:y,rx:8.5,ry:5.8,transform:`rotate(-18 81 ${y})`,fill:"#17241c"});
+
+  if(steps>=4){
+    add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":2.4,
+      "stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+  }else{
+    add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":2.4,
+      "stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+  }
+  requestAnimationFrame(alignStaffCenterToFretStatus);
+}
+function showWhistleLive(midi){
+  // Playback is already transposed down an octave for Guitar mode by the
+  // injected %%MIDI transpose -12 directive. The playback callback therefore
+  // supplies the sounding MIDI pitch; do not transpose it a second time here.
+  const liveMidi=midi==null?null:Math.round(Number(midi));
+  currentLiveMidi=liveMidi;
+  const live=$("whistleLive");
+  const empty=$("emptyDiagram");
+  if(!tunes.length){
+    live.hidden=true;
+    empty.hidden=false;
+    $("fullBtn").disabled=true;
+    return;
+  }
+
+  $("whistleTuneTitle").textContent=firstTitle($("abcText").value,currentTune+1);
+  live.hidden=false;
+  empty.hidden=true;
+  $("fullBtn").disabled=false;
+
+  const note=$("whistleLiveNote");
+  if(liveMidi==null){
+    note.textContent="";
+    renderWhistleStaffNote(null);
+    renderGDAEFingering(null);
+    return;
+  }
+
+  const n=currentLiveMidi;
+  // Guitar sounds one octave below written pitch. Keep the live fret display
+  // on the sounding pitch, but show the note name/staff at written pitch so
+  // they agree with the notation and guitar tablature.
+  const displayMidi = ["guitar","guitar-dadgad"].includes($("instrumentSelect").value) ? n + 12 : n;
+  note.textContent=formattedWhistleNoteName(displayMidi);
+  renderWhistleStaffNote(displayMidi);
+  renderGDAEFingering(n);
+  requestAnimationFrame(alignStaffCenterToFretStatus);
+}
+
+function postProcessWhistleTab(){ /* Standard mandolin tablature needs no whistle-glyph post-processing. */ }
+
+function eventMidi(event){
+  const arr=event&&event.midiPitches;
+  if(arr&&arr.length){
+    const p=arr[0];
+    if(typeof p==="number")return p;
+    if(p&&Number.isFinite(Number(p.pitch)))return Number(p.pitch);
+  }
+  if(event&&Number.isFinite(Number(event.midiPitch)))return Number(event.midiPitch);
+  return null;
+}
+
+function abcNoteTokens(value){
+  const tokens=[];
+  let inQuote=false,inGrace=false,lineStart=true,headerLine=false;
+
+  for(let i=0;i<value.length;){
+    const c=value[i];
+    if(lineStart){
+      headerLine=/^[A-Za-z]:/.test(value.slice(i,i+2))||c==="%";
+      lineStart=false;
+    }
+    if(c==="\n"||c==="\r"){
+      lineStart=true;headerLine=false;i++;continue;
+    }
+    if(headerLine){i++;continue}
+    if(c==='"'){inQuote=!inQuote;i++;continue}
+    if(inQuote){i++;continue}
+    if(c==="{"){inGrace=true;i++;continue}
+    if(c==="}"){inGrace=false;i++;continue}
+    if(inGrace){i++;continue}
+    if(c==="!"){
+      const e=value.indexOf("!",i+1);
+      i=e>=0?e+1:i+1;
+      continue;
+    }
+    if(c==="+"){
+      const e=value.indexOf("+",i+1);
+      i=e>=0?e+1:i+1;
+      continue;
+    }
+
+    const start=i;
+    let j=i;
+    if(value[j]==="=")j++;
+    else if(value[j]==="^"||value[j]==="_"){
+      const accidental=value[j++];
+      if(value[j]===accidental)j++;
+    }
+
+    if(/[A-Ga-g]/.test(value[j]||"")){
+      const pitch=j;
+      j++;
+      while(value[j]==="'"||value[j]===",")j++;
+      while(/[0-9/]/.test(value[j]||""))j++;
+      tokens.push({start,end:j,pitch});
+      i=j;
+      continue;
+    }
+    i++;
+  }
+  return tokens;
+}
+
+function selectClickedNotationNote(abcelem){
+  if(!abcelem||!Number.isInteger(abcelem.startChar)||!Number.isInteger(abcelem.endChar))return;
+
+  let start=abcelem.startChar-prefixLength;
+  let end=abcelem.endChar-prefixLength;
+  const ta=$("abcText");
+  if(start<0||end<=start)return;
+
+  start=Math.min(start,ta.value.length);
+  end=Math.min(end,ta.value.length);
+
+  const clickedToken=abcNoteTokens(ta.value).find(t=>
+    (t.pitch>=start&&t.pitch<end)||(t.start<end&&t.end>start)
+  );
+  if(clickedToken){
+    start=clickedToken.start;
+    end=clickedToken.end;
+  }else{
+    while(start<end&&/\s/.test(ta.value[start]))start++;
+    while(end>start&&/\s/.test(ta.value[end-1]))end--;
+  }
+  if(end<=start)return;
+
+  ta.focus({preventScroll:true});
+  ta.setSelectionRange(start,end);
+  const line=ta.value.slice(0,start).split(/\r?\n/).length;
+  const lineHeight=parseFloat(getComputedStyle(ta).lineHeight)||20;
+  ta.scrollTop=Math.max(0,((line-1)*lineHeight)-(ta.clientHeight/2)+(lineHeight/2));
+}
+
+function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
+
+function savedSplitters(){
+  try{
+    const p=JSON.parse(localStorage.getItem(SPLIT_KEY)||"{}");
+    return {v:Number(p.v),h:Number(p.h)};
+  }catch(_){
+    return {v:NaN,h:NaN};
+  }
+}
+
+const DEFAULT_SPLIT_V=52.5,DEFAULT_SPLIT_H=45;
+let splitVPercent=DEFAULT_SPLIT_V,splitHPercent=DEFAULT_SPLIT_H;
+
+function saveSplitterPercents(){
+  try{
+    localStorage.setItem(SPLIT_KEY,JSON.stringify({v:splitVPercent,h:splitHPercent}));
+  }catch(_){}
+}
+
+function setVerticalSplit(percent){
+  splitVPercent=clamp(percent,25,75);
+  const avail=Math.max(1,$("workspace").clientWidth-15);
+  $("workspace").style.gridTemplateColumns=`${avail*splitVPercent/100}px 5px minmax(0,1fr)`;
+}
+
+function setHorizontalSplit(percent){
+  splitHPercent=clamp(percent,25,75);
+  const avail=Math.max(1,$("leftPane").clientHeight-15);
+  $("leftPane").style.gridTemplateRows=`${avail*splitHPercent/100}px 5px minmax(180px,1fr)`;
+}
+
+function restoreSplitters(){
+  if(window.matchMedia("(max-width:1050px)").matches)return;
+  const p=savedSplitters();
+  if(Number.isFinite(p.v))splitVPercent=clamp(p.v,25,75);
+  if(Number.isFinite(p.h))splitHPercent=clamp(p.h,25,75);
+  setVerticalSplit(splitVPercent);
+  setHorizontalSplit(splitHPercent);
+}
+
+function installSplitters(){
+  const sv=$("splitV"),sh=$("splitH");
+
+  function begin(e,kind){
+    if(e.button!==undefined&&e.button!==0)return;
+    if(window.matchMedia("(max-width:1050px)").matches)return;
+    e.preventDefault();
+    document.body.classList.add("resizing");
+
+    const startX=e.clientX,startY=e.clientY;
+    const startV=splitVPercent,startH=splitHPercent;
+    const r=kind==="v"?$("workspace").getBoundingClientRect():$("leftPane").getBoundingClientRect();
+    const avail=Math.max(1,(kind==="v"?r.width:r.height)-15);
+
+    const move=ev=>{
+      if(kind==="v"){
+        setVerticalSplit(startV+100*(ev.clientX-startX)/avail);
+      }else{
+        setHorizontalSplit(startH+100*(ev.clientY-startY)/avail);
+      }
+    };
+    const end=()=>{
+      document.removeEventListener("pointermove",move);
+      document.removeEventListener("pointerup",end);
+      document.removeEventListener("pointercancel",end);
+      document.body.classList.remove("resizing");
+      saveSplitterPercents();
+    };
+    document.addEventListener("pointermove",move);
+    document.addEventListener("pointerup",end);
+    document.addEventListener("pointercancel",end);
+  }
+
+  sv.addEventListener("pointerdown",e=>begin(e,"v"));
+  sh.addEventListener("pointerdown",e=>begin(e,"h"));
+  sv.addEventListener("dblclick",()=>{
+    if(window.matchMedia("(max-width:1050px)").matches)return;
+    setVerticalSplit(DEFAULT_SPLIT_V);
+    saveSplitterPercents();
+  });
+  sh.addEventListener("dblclick",()=>{
+    if(window.matchMedia("(max-width:1050px)").matches)return;
+    setHorizontalSplit(DEFAULT_SPLIT_H);
+    saveSplitterPercents();
+  });
+  window.addEventListener("resize",()=>{
+    if(!window.matchMedia("(max-width:1050px)").matches){
+      setVerticalSplit(splitVPercent);
+      setHorizontalSplit(splitHPercent);
+    }
+  });
+}
+
+function bytesToBase64URL(bytes){
+  let binary="";
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+
+function base64URLToBytes(value){
+  let s=String(value||"").replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  const binary=atob(s);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return bytes;
+}
+
+function compressABCDeflate(abc){
+  if(typeof pako==="undefined"||!pako.deflate)throw new Error("pako.js did not load.");
+  return bytesToBase64URL(pako.deflate(new TextEncoder().encode(abc),{level:6}));
+}
+
+function decompressABCDeflate(payload){
+  if(typeof pako==="undefined"||!pako.inflate)throw new Error("pako.js did not load.");
+  return new TextDecoder().decode(pako.inflate(base64URLToBytes(payload)));
+}
+
+function syncCurrentTuneFromEditor(){
+  if(tunes.length&&currentTune>=0&&currentTune<tunes.length&&!$("abcText").disabled){
+    tunes[currentTune]=$("abcText").value;
+    loadedABC=tunes.join("\n\n");
+  }
+}
+
+function generateShareLink(abc){
+  if(!abc||!abc.trim())return "";
+  try{
+    const params=new URLSearchParams();
+    params.set("def",compressABCDeflate(abc));
+    params.set("notation",$("notationDisplay").value);
+    params.set("instrument",$("instrumentSelect").value);
+    return `${SHARE_BASE_URL}?${params.toString()}`;
+  }catch(_){
+    return "";
+  }
+}
+
+function updateShareButtons(){
+  const tuneBtn=$("shareTuneBtn"),allBtn=$("shareAllBtn");
+  if(!tunes.length){
+    tuneBtn.disabled=true;
+    allBtn.disabled=true;
+    tuneBtn.title=allBtn.title="Open or enter ABC first.";
+    return;
+  }
+
+  syncCurrentTuneFromEditor();
+  const tuneURL=generateShareLink($("abcText").value);
+  const allURL=generateShareLink(tunes.join("\n\n"));
+
+  tuneBtn.disabled=!tuneURL||tuneURL.length>SHARE_LINK_MAX_LEN;
+  allBtn.disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;
+  tuneBtn.title=tuneBtn.disabled
+    ?"Current tune share link exceeds 8100 characters."
+    :"Create a share link for the current tune and copy it to the clipboard.";
+  allBtn.title=allBtn.disabled
+    ?"All-tunes share link exceeds 8100 characters."
+    :"Create a share link for all loaded tunes and copy it to the clipboard.";
+}
+
+async function copyShareLink(allTunes){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
+  const url=generateShareLink(abc);
+  if(!url||url.length>SHARE_LINK_MAX_LEN)return;
+
+  let copied=false;
+  try{
+    await navigator.clipboard.writeText(url);
+    copied=true;
+  }catch(_){
+    const ta=document.createElement("textarea");
+    ta.value=url;
+    ta.setAttribute("readonly","");
+    ta.style.position="fixed";
+    ta.style.opacity="0";
+    try{
+      document.body.appendChild(ta);
+      ta.select();
+      copied=document.execCommand("copy");
+    }catch(_){
+      copied=false;
+    }finally{
+      ta.remove();
+    }
+  }
+
+  if(copied){
+    const tuneName=firstTitle($("abcText").value,currentTune+1);
+    const message=allTunes
+      ?"Share link for all tunes copied to the clipboard."
+      :`Share link for the current tune <b>${escapeHTML(tuneName)}</b> copied to the clipboard.`;
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(allTunes
+        ?"Share link for all tunes copied to the clipboard."
+        :`Share link for the current tune ${tuneName} copied to the clipboard.`);
+    }
+  }else{
+    const message="Unable to copy the share link to the clipboard.";
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(message);
+    }
+  }
+}
+
+function populateTuneSelector(label){
+  $("fileLabel").textContent=`${label} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
+  $("tuneSelect").innerHTML=tunes.map((t,i)=>
+    `<option value="${i}">${escapeHTML(firstTitle(t,i+1))}</option>`
+  ).join("");
+  $("tuneSelect").disabled=false;
+}
+
+function setAbcDirty(dirty=true){abcDirty=!!dirty}
+
+async function confirmDiscardDirtyForOpen(){
+  if(!abcDirty||!tunes.length)return true;
+  const message="You have unsaved changes to the current ABC tunes.<br><br>Opening a new ABC file will discard those changes. Do you want to continue?";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.confirm==="function"){
+    const r=await DayPilot.Modal.confirm(message,{top:100,width:460});
+    return !!(r&&!r.canceled&&r.result);
+  }
+  return window.confirm(
+    "You have unsaved changes to the current ABC tunes.\n\nOpening a new ABC file will discard those changes. Do you want to continue?"
+  );
+}
+
+function baseNameForSave(name){
+  const s=String(name||"").trim().replace(/^.*[\\/]/,"").replace(/\.(?:abc|txt)$/i,"");
+  return s||"fretboard-tunes";
+}
+
+function syncAllTunesForSave(){
+  syncCurrentTuneFromEditor();
+  return tunes.join("\n\n").replace(/\s+$/,"")+"\n";
+}
+
+function mobileSavePlatform(){
+  const ua=navigator.userAgent||"";
+  return /iPhone|iPad|iPod|Android/i.test(ua)||
+    (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+}
+
+function manualTuneTitleBaseName(){
+  if(!manualEntryCollection||tunes.length!==1)return "";
+  syncCurrentTuneFromEditor();
+  const m=(tunes[0]||"").match(/^T:\s*(.*?)\s*$/m);
+  return m&&m[1].trim()?baseNameForSave(m[1].trim()):"";
+}
+
+async function askSaveBaseName(){
+  const mobile=mobileSavePlatform();
+  const ext=mobile?".txt":".abc";
+  const def=baseNameForSave(
+    currentSaveBaseName||manualTuneTitleBaseName()||"fretboard-tune"
+  )+ext;
+
+  let v=null;
+  document.body.classList.add("save-name-prompt-open");
+  try{
+    if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){
+      const r=await DayPilot.Modal.prompt("Save ABC file name:",def,{top:100});
+      if(!r||r.canceled)return null;
+      v=r.result;
+    }else{
+      v=window.prompt("Save ABC file name:",def);
+      if(v===null)return null;
+    }
+  }finally{
+    document.body.classList.remove("save-name-prompt-open");
+  }
+
+  v=baseNameForSave(v);
+  currentSaveBaseName=v;
+  return v;
+}
+
+async function saveCurrentCollection(){
+  if(!tunes.length)return;
+  const base=await askSaveBaseName();
+  if(!base)return;
+
+  const data=syncAllTunesForSave();
+  const mobile=mobileSavePlatform();
+  const filename=base+(mobile?".txt":".abc");
+  const blob=new Blob([data],{type:"text/plain;charset=utf-8"});
+
+  if(mobile&&navigator.share){
+    try{
+      const file=new File([blob],filename,{type:"text/plain"});
+      if(!navigator.canShare||navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:filename});
+        setAbcDirty(false);
+        return;
+      }
+    }catch(e){
+      if(e&&e.name==="AbortError")return;
+    }
+  }
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setAbcDirty(false);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function processLoadedABC(abc,label){
+  melodyMuted=false;
+  updateMuteMelodyButton();
+  loadedABC=abc;
+  tunes=splitTunes(loadedABC);
+  if(!tunes.length)throw new Error("No ABC tunes found.");
+  setAbcDirty(false);
+  if(NEEDS_INITIAL_AUDIO_RETRY)initialAudioRetry=true;
+  $("saveAbcBtn").disabled=false;
+  populateTuneSelector(label);
+  loadTune(0,false);
+}
+
+function trustedABCTranscriptionToolsMessage(event){
+  const expectedSources=[];
+  if(window.opener)expectedSources.push(window.opener);
+  if(window.parent&&window.parent!==window)expectedSources.push(window.parent);
+  if(expectedSources.length&&!expectedSources.includes(event.source))return false;
+  if(window.location.protocol==="file:")return true;
+  return event.origin===window.location.origin||event.origin==="https://michaeleskin.com";
+}
+
+function acknowledgeABCTranscriptionToolsLoad(event,messageId,tuneCount){
+  if(!event.source||typeof event.source.postMessage!=="function")return;
+  try{
+    event.source.postMessage({
+      type:"abcjsEskinWebsiteBuilderABCLoaded",
+      messageId:messageId||"",
+      tuneCount
+    },event.origin&&event.origin!=="null"?event.origin:"*");
+  }catch(error){
+    console.warn("Unable to acknowledge ABC Transcription Tools load message.",error);
+  }
+}
+
+function loadABCFromABCTranscriptionTools(data,event){
+  const abcText=typeof data.abc==="string"?data.abc:"";
+  const sourceName=String(data.sourceName||"ABC Transcription Tools").trim()||
+    "ABC Transcription Tools";
+  if(!abcText.trim())return;
+
+  try{
+    $("openFile").value="";
+    sharePlaybackNeedsGesture=true;
+    manualEntryCollection=false;
+    currentSaveBaseName="transferred-fretboard-tunes";
+    processLoadedABC(abcText,sourceName);
+    acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
+  }catch(error){
+    console.error(error);
+    alert("Unable to load ABC from "+sourceName+": "+(error&&error.message||error));
+  }
+}
+
+function handleABCTranscriptionToolsMessage(event){
+  if(!trustedABCTranscriptionToolsMessage(event))return;
+  const data=event.data||{};
+  if(data.type!=="abcjsEskinWebsiteBuilderLoadABC")return;
+  loadABCFromABCTranscriptionTools(data,event);
+}
+
+function notifyABCTranscriptionToolsReady(){
+  const message={type:"abcjsEskinWebsiteBuilderReady"};
+  const targets=[];
+  if(window.opener)targets.push(window.opener);
+  if(window.parent&&window.parent!==window)targets.push(window.parent);
+  targets.forEach(target=>{
+    try{
+      target.postMessage(message,"*");
+    }catch(error){
+      console.warn(
+        "Unable to notify ABC Transcription Tools that the Mandolin / Tenor Banjo fingering player is ready.",
+        error
+      );
+    }
+  });
+}
+
+let gABCTranscriptionToolsHandshakeStarted=false;
+function startABCTranscriptionToolsHandshake(){
+  if(gABCTranscriptionToolsHandshakeStarted)return;
+  gABCTranscriptionToolsHandshakeStarted=true;
+  window.addEventListener("message",handleABCTranscriptionToolsMessage);
+  [0,250,750,1500].forEach(delay=>setTimeout(notifyABCTranscriptionToolsReady,delay));
+}
+
+function restoreShowNotePreference(){
+  try{showNoteEnabled=localStorage.getItem(SHOW_NOTE_KEY)==="true"}catch(_){showNoteEnabled=false}
+  $("showNoteCheck").checked=showNoteEnabled;
+}
+function saveShowNotePreference(){
+  try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}
+}
+function restoreShowFretboardPreference(){
+  try{
+    const saved=localStorage.getItem(SHOW_FRETBOARD_KEY);
+    showFretboardEnabled=saved===null?true:saved==="true";
+  }catch(_){showFretboardEnabled=true}
+  $("showFretboardCheck").checked=showFretboardEnabled;
+}
+function saveShowFretboardPreference(){
+  try{localStorage.setItem(SHOW_FRETBOARD_KEY,String(showFretboardEnabled))}catch(_){}
+}
+
+function saveWhistleDisplayPrefs(){
+  try{
+    localStorage.setItem(WHISTLE_PREFS_KEY,JSON.stringify({
+      notation:$("notationDisplay").value,
+      instrument:$("instrumentSelect").value
+    }));
+  }catch(_){}
+}
+
+function restoreWhistleDisplayPrefs(){
+  try{
+    const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
+    if(prefs.notation==="notation"||prefs.notation==="mandolin-tab")$("notationDisplay").value=prefs.notation;
+    if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
+  }catch(_){}
+}
+
+function applyWhistleShareSettings(){
+  const params=new URLSearchParams(location.search);
+  const notation=params.get("notation");
+  const instrument=params.get("instrument");
+
+  if(notation==="notation"||notation==="mandolin-tab")$("notationDisplay").value=notation;
+  if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
+  saveWhistleDisplayPrefs();
+}
+
+function loadShareLinkAfterStartup(){
+  const params=new URLSearchParams(location.search);
+  const payload=params.get("def");
+  if(!payload){
+    updateShareButtons();
+    return;
+  }
+
+  setTimeout(()=>{
+    try{
+      manualEntryCollection=false;
+      currentSaveBaseName="shared-fretboard-tunes";
+      sharePlaybackNeedsGesture=true;
+      processLoadedABC(decompressABCDeflate(payload),"Share link");
+    }catch(err){
+      alert("Unable to open share link: "+(err&&err.message||err));
+    }
+  },750);
+}
+
+function applyEditorTextSize(size,save=false){
+  if(!["small","medium","large","largest"].includes(size))size="medium";
+  const ta=$("abcText");
+  ta.classList.remove(
+    "editorTextSmall","editorTextMedium","editorTextLarge","editorTextLargest"
+  );
+  ta.classList.add("editorText"+size[0].toUpperCase()+size.slice(1));
+  $("editorTextSize").value=size;
+  if(save){
+    try{localStorage.setItem(EDITOR_SIZE_KEY,size)}catch(_){}
+  }
+}
+
+function restoreEditorTextSize(){
+  let size="medium";
+  try{size=localStorage.getItem(EDITOR_SIZE_KEY)||"medium"}catch(_){}
+  applyEditorTextSize(size,false);
+}
+
+function savedTempo(){
+  try{
+    const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));
+    return Number.isFinite(n)&&n>=10&&n<=200?n:100;
+  }catch(_){
+    return 100;
+  }
+}
+
+function saveTempo(n){
+  try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}
+}
+
+function findTempoInput(){
+  return $("audio").querySelector(
+    "input.abcjs-midi-tempo,input.abcjs-midi-current-tempo,"+
+    ".abcjs-midi-tempo input,.abcjs-midi-current-tempo input,"+
+    ".abcjs-midi-current-tempo-wrapper input,.abcjs-tempo-wrapper input,"+
+    "input[type='number'],input[type='text']"
+  );
+}
+
+function applyTempoToInput(input,n){
+  if(!input)return;
+  input.value=String(n);
+  input.dispatchEvent(new Event("input",{bubbles:true}));
+  input.dispatchEvent(new Event("change",{bubbles:true}));
+}
+
+async function openTempoDialog(input){
+  if(!input||typeof DayPilot==="undefined"||!DayPilot.Modal)return;
+  const current=Math.round(Number(input.value))||savedTempo();
+  const modal=await DayPilot.Modal.prompt(
+    "Tempo percentage (10–200%):",
+    String(current),
+    {top:150,width:460}
+  );
+  if(modal.canceled)return;
+
+  const n=Math.round(Number(modal.result));
+  if(!Number.isFinite(n)||n<10||n>200){
+    await DayPilot.Modal.alert(
+      "Please enter a tempo percentage from 10% to 200%.",
+      {top:150,width:460}
+    );
+    return openTempoDialog(input);
+  }
+  saveTempo(n);
+  applyTempoToInput(input,n);
+}
+
+function installTempoDialog(){
+  const input=findTempoInput();
+  if(!input)return false;
+
+  applyTempoToInput(input,savedTempo());
+  if(input.dataset.tempoDialogInstalled==="true")return true;
+
+  input.dataset.tempoDialogInstalled="true";
+  input.readOnly=true;
+  input.setAttribute("readonly","readonly");
+  input.title="Click to set tempo percentage";
+  input.setAttribute("aria-label","Open tempo percentage dialog");
+  input.style.cursor="pointer";
+
+  const open=e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    openTempoDialog(input);
+  };
+  input.addEventListener("pointerdown",open);
+  input.addEventListener("focus",open);
+  input.addEventListener("click",e=>{
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" ")open(e);
+    else if(e.key.length===1||e.key==="Backspace"||e.key==="Delete")e.preventDefault();
+  });
+  return true;
+}
+
+function installTempoDialogWhenReady(){
+  if(installTempoDialog())return;
+  let tries=0;
+  const retry=()=>{
+    if(installTempoDialog()||++tries>=20)return;
+    setTimeout(retry,50);
+  };
+  requestAnimationFrame(retry);
+}
+
+const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.test(
+  navigator.userAgent
+);
+const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
+let initialAudioRetry=false;
+
+function showEnablePlaybackButton(){
+  const audio=$("audio");
+  audio.innerHTML="";
+
+  const btn=document.createElement("button");
+  btn.type="button";
+  btn.id="enablePlaybackBtn";
+  btn.className="primary";
+  btn.textContent="Click to Enable Playback";
+
+  btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    btn.textContent="Enabling Playback…";
+    try{
+      const ctx=window.abcjsAudioContext;
+      if(ctx&&ctx.state==="suspended")await ctx.resume();
+      sharePlaybackNeedsGesture=false;
+      await rebuild();
+    }catch(e){
+      sharePlaybackNeedsGesture=true;
+      btn.disabled=false;
+      btn.textContent="Click to Enable Playback";
+      alert("Unable to enable playback: "+(e&&e.message||e));
+    }
+  },{once:true});
+
+  audio.appendChild(btn);
+}
+
+async function rebuild(){
+  cancelCountIn();
+  const gen=++renderGeneration;
+  if(!tunes.length)return;
+
+  try{
+    playbackActive=false;
+    if(controller&&controller.pause){
+      try{controller.pause()}catch(_){}
+    }
+    removeCursor();
+    $("notation").innerHTML="";
+    $("audio").innerHTML="";
+    showWhistleLive(null);
+
+    const tune=$("abcText").value;
+
+    if(typeof ABCJS==="undefined"||!ABCJS.renderAbc){
+      throw new Error("Portable abcjs library did not load.");
+    }
+
+    configureIrishRollsForTune(tune);
+    const playbackABC=buildPlaybackABC(tune);
+
+    const showWhistleTab=$("notationDisplay").value==="mandolin-tab";
+    const renderParams={
+      responsive:"resize",
+      expandToWidest:true,
+      selectTypes:false,
+      add_classes:true,
+      selectionColor:"#ff0000",
+      clickListener:selectClickedNotationNote
+    };
+    if(showWhistleTab){
+      renderParams.paddingbottom=16;
+      renderParams.disallowTablatureOnly=true;
+      renderParams.tablature=selectedRenderTab();
+    }
+
+    const visual=ABCJS.renderAbc("notation",playbackABC,renderParams);
+    if(gen!==renderGeneration)return;
+    if(!visual||!visual.length)throw new Error("No notation was rendered.");
+
+    if(showWhistleTab)postProcessWhistleTab(visual,"notation");
+
+    if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function"){
+      throw new Error("abcjs audio is unavailable.");
+    }
+    if(sharePlaybackNeedsGesture){
+      showEnablePlaybackButton();
+      return;
+    }
+
+    const cursorControl={
+      onStart(){
+        if(audioControllerInitializing)return;
+        playbackActive=true;
+        removeCursor();
+        const svg=$("notation").querySelector("svg");
+        if(svg){
+          playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");
+          playbackCursor.setAttribute("class","abcjs-cursor");
+          svg.appendChild(playbackCursor);
+        }
+      },
+      onEvent(event){
+        if(audioControllerInitializing||!playbackActive)return;
+        if(playbackCursor&&event&&event.left!=null){
+          playbackCursor.setAttribute("x1",String(event.left-2));
+          playbackCursor.setAttribute("x2",String(event.left-2));
+          playbackCursor.setAttribute("y1",String(event.top));
+          playbackCursor.setAttribute("y2",String(event.top+event.height));
+          keepCursorVisible();
+        }
+        const midi=eventMidi(event);
+        if(midi!=null)showWhistleLive(midi);
+      },
+      onFinished(){
+        if(audioControllerInitializing||!playbackActive)return;
+        playbackActive=false;
+        removeCursor();
+        showWhistleLive(null);
+      }
+    };
+
+    controller=new ABCJS.synth.SynthController(playbackABC);
+    controller.load("#audio",cursorControl,{
+      displayLoop:true,
+      displayRestart:true,
+      displayPlay:true,
+      displayProgress:true,
+      displayWarp:true
+    });
+
+    audioControllerInitializing=true;
+    try{
+      await controller.setTune(visual[0],false,{});
+    }finally{
+      audioControllerInitializing=false;
+    }
+    if(gen!==renderGeneration)return;
+
+    installTempoDialogWhenReady();
+
+    if(initialAudioRetry){
+      initialAudioRetry=false;
+      requestAnimationFrame(()=>setTimeout(()=>{
+        if(gen===renderGeneration)rebuild();
+      },0));
+    }
+  }catch(e){
+    alert("Unable to prepare tune: "+(e&&e.message||e));
+    $("audio").innerHTML="";
+  }
+}
+
+function scheduleRebuild(){
+  clearTimeout(rebuildTimer);
+  rebuildTimer=setTimeout(rebuild,180);
+}
+
+function loadTune(index,syncEditor=true){
+  if(syncEditor)syncCurrentTuneFromEditor();
+  cancelCountIn();
+  playbackActive=false;
+  melodyMuted=false;
+  currentTune=index;
+  $("abcText").value=tunes[index]||"";
+  $("abcText").disabled=false;
+  $("tuneSelect").value=String(index);
+  updateMuteMelodyButton();
+  scheduleRebuild();
+  updateShareButtons();
+}
+function updateMuteMelodyButton(){
+  const btn=$("muteMelodyBtn");
+  if(!btn)return;
+  btn.hidden=false;
+  btn.disabled=!tunes.length;
+  btn.textContent=melodyMuted?"Unmute Melody":"Mute Melody";
+}
+async function toggleMelodyMute(){
+  if(!tunes.length)return;
+  const wasPlaying=playbackActive;
+  melodyMuted=!melodyMuted;
+  updateMuteMelodyButton();
+  await rebuild();
+  if(!controller)return;
+  try{
+    if(typeof controller.seek==="function")controller.seek(0);
+    if(wasPlaying){
+      if(countInEnabled)startFiveSecondCountIn();
+      else if(typeof controller.play==="function")await controller.play();
+    }
+  }catch(e){
+    alert("Unable to restart playback: "+(e&&e.message||e));
+  }
+}
+function restoreCountInPreference(){
+  try{countInEnabled=localStorage.getItem(COUNT_IN_KEY)==="true"}catch(_){countInEnabled=false}
+  const cb=$("countInCheck");
+  if(cb)cb.checked=countInEnabled;
+}
+function saveCountInPreference(){
+  const cb=$("countInCheck");
+  countInEnabled=!!(cb&&cb.checked);
+  try{localStorage.setItem(COUNT_IN_KEY,String(countInEnabled))}catch(_){}
+}
+function cancelCountIn(){
+  countInToken++;
+  if(countInTimer){clearTimeout(countInTimer);countInTimer=null}
+  const overlay=$("countInOverlay");
+  if(overlay)overlay.hidden=true;
+}
+function startFiveSecondCountIn(){
+  cancelCountIn();
+  const token=countInToken;
+  const overlay=$("countInOverlay"),number=$("countInNumber");
+  if(!overlay||!number||!controller)return;
+  let count=5;
+  number.textContent=String(count);
+  overlay.hidden=false;
+  const tick=()=>{
+    if(token!==countInToken)return;
+    count--;
+    if(count<=0){
+      overlay.hidden=true;
+      countInTimer=null;
+      if(controller&&typeof controller.play==="function")controller.play();
+      return;
+    }
+    number.textContent=String(count);
+    countInTimer=setTimeout(tick,1000);
+  };
+  countInTimer=setTimeout(tick,1000);
+}
+function installCountInPlayHandler(){
+  const audio=$("audio");
+  if(!audio||audio.dataset.countInHandler)return;
+  audio.dataset.countInHandler="1";
+  audio.addEventListener("click",e=>{
+    const play=e.target.closest&&e.target.closest("button.abcjs-midi-start");
+    if(!play)return;
+    const wasPlaying=playbackActive;
+    if(countInEnabled&&!wasPlaying){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      startFiveSecondCountIn();
+      return;
+    }
+    if(wasPlaying)setTimeout(()=>{playbackActive=false},0);
+  },true);
+}
+
+function hasMinimumABCForRender(abc){
+  return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc);
+}
+
+function beginManualTuneIfNeeded(){
+  const text=$("abcText").value;
+  if(tunes.length||!text.trim())return;
+
+  tunes=[text];
+  loadedABC=text;
+  currentTune=0;
+  manualEntryCollection=true;
+  currentSaveBaseName="";
+  melodyMuted=false;
+  updateMuteMelodyButton();
+  $("saveAbcBtn").disabled=false;
+  populateTuneSelector("Entered ABC");
+  $("tuneSelect").value="0";
+}
+
+async function showMultiplePasteAlert(){
+  const message=
+    "Pasting multiple tunes into the ABC editor is not allowed.<br><br>"+
+    "Please save the multiple tunes to a <b>.abc</b> file and then load the file into the tool.";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function"){
+    await DayPilot.Modal.alert(message,{top:100,width:460});
+  }else{
+    alert(
+      "Pasting multiple tunes into the ABC editor is not allowed.\n\n"+
+      "Please save the multiple tunes to a .abc file and then load the file into the tool."
+    );
+  }
+}
+
+function setFull(on){
+  const audioRow=document.querySelector(".audioRow");
+  const notationPanel=$("notation").closest(".panel");
+  if(on){
+    if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);
+    document.body.classList.add("diagram-full");
+  }else{
+    document.body.classList.remove("diagram-full");
+    if(audioRow&&notationPanel)notationPanel.appendChild(audioRow);
+  }
+}
+
+function initializeActionButtonStates(){
+  $("saveAbcBtn").disabled=!tunes.length;
+}
+
+$("saveAbcBtn").addEventListener("click",saveCurrentCollection);
+
+$("openFile").addEventListener("change",async e=>{
+  const input=e.target;
+  const f=input.files&&input.files[0];
+  if(!f)return;
+
+  if(IS_IOS&&!/\.(?:abc|txt)$/i.test(f.name)){
+    input.value="";
+    await DayPilot.Modal.alert(
+      'Only .abc and .txt files can be opened on iOS.<br><br>To learn more about ABC notation, please visit:<br><br><a href="https://michaeleskin.com/tools/abc-notation-tutor/abc-notation-tutor.html" target="_blank" rel="noopener noreferrer">ABC Notation Tutor</a>',
+      {top:150,width:460}
+    );
+    return;
+  }
+
+  if(!(await confirmDiscardDirtyForOpen())){
+    input.value="";
+    return;
+  }
+
+  try{
+    const abc=await f.text();
+    sharePlaybackNeedsGesture=false;
+    manualEntryCollection=false;
+    currentSaveBaseName=baseNameForSave(f.name);
+    processLoadedABC(abc,f.name);
+  }catch(err){
+    input.value="";
+    alert("File load failed: "+(err.message||err));
+  }
+});
+
+$("tuneSelect").addEventListener("change",()=>{
+  loadTune(Number($("tuneSelect").value));
+});
+
+$("abcText").addEventListener("paste",e=>{
+  const pasted=(e.clipboardData||window.clipboardData)?.getData("text")||"";
+  const ta=e.currentTarget;
+  const start=ta.selectionStart??ta.value.length;
+  const end=ta.selectionEnd??start;
+  const resulting=ta.value.slice(0,start)+pasted+ta.value.slice(end);
+  if(splitTunes(resulting).length>1){
+    e.preventDefault();
+    showMultiplePasteAlert();
+  }
+});
+
+$("abcText").addEventListener("input",()=>{
+  setAbcDirty(true);
+  updateMuteMelodyButton();
+  beginManualTuneIfNeeded();
+  syncCurrentTuneFromEditor();
+  const value=$("abcText").value;
+
+  if(!value.trim()){
+    if(manualEntryCollection){
+      tunes=[];
+      loadedABC="";
+      manualEntryCollection=false;
+      currentTune=0;
+      $("tuneSelect").innerHTML="<option>No tune loaded</option>";
+      $("tuneSelect").disabled=true;
+      $("fileLabel").textContent="No file loaded";
+      $("saveAbcBtn").disabled=true;
+      $("notation").innerHTML="";
+      $("audio").innerHTML="";
+      showWhistleLive(null);
+    }
+  }else if(hasMinimumABCForRender(value)){
+    scheduleRebuild();
+  }
+  updateShareButtons();
+});
+
+$("metronomeCheck").addEventListener("change",toggleMetronome);
+$("countInCheck").addEventListener("change",saveCountInPreference);
+$("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
+
+$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));
+$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+
+$("fullBtn").addEventListener("click",()=>setFull(true));
+$("exitFull").addEventListener("click",()=>setFull(false));
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false);
+});
+
+$("instructionsBtn").addEventListener("click",()=>{
+  $("helpOverlay").style.display="block";
+});
+$("helpClose").addEventListener("click",()=>{
+  $("helpOverlay").style.display="none";
+});
+$("helpOverlay").addEventListener("click",e=>{
+  if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none";
+});
+
+$("showFretboardCheck").addEventListener("change",e=>{
+  showFretboardEnabled=!!e.target.checked;
+  saveShowFretboardPreference();
+  renderGDAEFingering(currentLiveMidi);
+  requestAnimationFrame(alignStaffCenterToFretStatus);
+});
+
+$("showNoteCheck").addEventListener("change",e=>{
+  showNoteEnabled=!!e.target.checked;
+  saveShowNotePreference();
+  {
+    const staffMidi = currentLiveMidi==null ? null : ((["guitar","guitar-dadgad"].includes($("instrumentSelect").value)) ? currentLiveMidi+12 : currentLiveMidi);
+    renderWhistleStaffNote(staffMidi);
+  }
+});
+
+$("editorTextSize").addEventListener("change",e=>{
+  applyEditorTextSize(e.target.value,true);
+});
+
+$("notationDisplay").addEventListener("change",()=>{
+  saveWhistleDisplayPrefs();
+  if(tunes.length)scheduleRebuild();
+  updateShareButtons();
+});
+
+$("instrumentSelect").addEventListener("change",()=>{
+  updateInstrumentUI();
+  saveWhistleDisplayPrefs();
+  if(currentLiveMidi!=null)showWhistleLive(currentLiveMidi);
+  if(tunes.length)scheduleRebuild();
+  updateShareButtons();
+});
+
+$("abcText").value="";
+$("abcText").disabled=false;
+
+restoreEditorTextSize();
+restoreWhistleDisplayPrefs();
+updateInstrumentUI();
+restoreShowFretboardPreference();
+restoreShowNotePreference();
+restoreMetronomePreference();
+restoreCountInPreference();
+installCountInPlayHandler();
+applyWhistleShareSettings();
+restoreSplitters();
+installSplitters();
+initializeActionButtonStates();
+window.addEventListener("pageshow",initializeActionButtonStates);
+updateShareButtons();
+startABCTranscriptionToolsHandshake();
+
+if(document.readyState==="complete"){
+  loadShareLinkAfterStartup();
+}else{
+  window.addEventListener("load",loadShareLinkAfterStartup,{once:true});
+}
+</script></body></html>
