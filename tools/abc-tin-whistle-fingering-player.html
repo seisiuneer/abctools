@@ -321,13 +321,20 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 .whistleLiveRow{flex:1;width:100%;min-height:0;display:flex;align-items:center;justify-content:center}
 .whistleGlyphGroup{position:relative;display:inline-flex;align-items:center;justify-content:center}
 .whistleLargeGlyph{font-family:'TinWhistleFingering';font-weight:normal;font-style:normal;font-size:clamp(220px,32vw,460px);line-height:.9;color:#111;display:block;min-width:0}
-.whistleLiveNote{position:absolute;left:100%;top:50%;margin-left:clamp(12px,2vw,30px);transform:translateY(-77%);font-weight:800;font-size:clamp(48px,7vw,100px);line-height:1;color:#17241c;white-space:nowrap;text-align:left}
+.whistleNoteGroup{position:absolute;left:100%;top:50%;margin-left:clamp(12px,2vw,30px);transform:translateX(calc((clamp(180px,18vw,260px) - clamp(70px,9vw,120px)) / -2)) translateY(-58%);display:flex;flex-direction:column;align-items:center;justify-content:center;width:clamp(180px,18vw,260px)}
+.whistleNoteGroup.showStaffNote{transform:translateX(calc((clamp(180px,18vw,260px) - clamp(70px,9vw,120px)) / -2)) translateY(-58%) translateY(-1em)}
+.whistleLiveNote{font-weight:800;font-size:clamp(48px,7vw,100px);line-height:1;color:#17241c;white-space:nowrap;text-align:center}
+.whistleStaffNote{position:absolute;top:88%;left:50%;transform:translate(-50%,clamp(-18px,-1.4vw,-10px)) scaleX(.94);display:block;width:clamp(120px,15vw,190px);height:clamp(150px,18vw,220px);margin:0 auto;overflow:visible}
+.whistleStaffNote[hidden]{display:none !important}
+.showNoteLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.showNoteLabel input{margin:0}
 body.diagram-full .whistleLargeGlyph{font-size:clamp(240px,34vw,500px)}
 body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
+body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(175px,20vw,250px)}
 @media(max-width:1050px){.whistleToolbar{grid-template-columns:1fr 1fr}.whistleToolbar .fileControl{grid-column:1 / -1}.whistleLive{min-height:500px}.whistleLargeGlyph{font-size:clamp(190px,34vw,350px)}}
-@media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleLiveNote{font-size:48px;margin-left:10px}}
+@media(max-width:760px){.whistleStaffNote{width:100px;height:130px;transform:translate(-50%,-10px) scaleX(.94)}}
+@media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleNoteGroup{margin-left:10px;width:150px;transform:translateX(-40px) translateY(-58%)}.whistleNoteGroup.showStaffNote{transform:translateX(-40px) translateY(-58%) translateY(-1em)}.whistleLiveNote{font-size:48px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.26</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.27</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -342,11 +349,11 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
   <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox">Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Whistle Fingering</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">D Whistle</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Whistle Fingering</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div>
   <div class="diagramWrap whistleDiagramWrap">
    <div id="whistleLive" class="whistleLive" hidden>
     <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
-    <div class="whistleLiveRow"><div class="whistleGlyphGroup"><div id="whistleLargeGlyph" class="whistleLargeGlyph" role="img" aria-label="Tin whistle fingering"></div><div id="whistleLiveNote" class="whistleLiveNote"></div></div></div>
+    <div class="whistleLiveRow"><div class="whistleGlyphGroup"><div id="whistleLargeGlyph" class="whistleLargeGlyph" role="img" aria-label="Tin whistle fingering"></div><div id="whistleNoteGroup" class="whistleNoteGroup"><div id="whistleLiveNote" class="whistleLiveNote"></div><svg id="whistleStaffNote" class="whistleStaffNote" viewBox="0 0 160 220" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img" style="display:none"></svg></div></div></div>
    </div>
    <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
   </div>
@@ -377,6 +384,8 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
       <p>The display uses standard D-whistle fingering. The note name appears to the right of the fingering symbol.</p>
+      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
+      <p>Note names are displayed using sharps only. When <b>Show note</b> is enabled, the notation below the note name also uses sharps for accidentals rather than flats.</p>
       <p>Use <b>Octave Display</b> to choose uppercase note names with ' marks, lowercase/uppercase note names by octave, or color-coded versions of either style.</p>
       <p>The two <b>Color-coded</b> choices draw the fingering glyph black below D5, dark red from D5 through C#6, and orange from D6 upward.</p>
       <p>The <b>Notation display</b> and <b>Octave Display</b> choices are remembered in this browser and are also included in generated share links.</p>
@@ -438,6 +447,7 @@ let countInToken=0;
 let rebuildTimer=0;
 let sharePlaybackNeedsGesture=false;
 let currentLiveMidi=null;
+let showNoteEnabled=false;
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-tin-whistle-fingering-player.html";
 const SHARE_LINK_MAX_LEN=8100;
@@ -446,6 +456,7 @@ const EDITOR_SIZE_KEY="abcTinWhistleEditorTextSize";
 const TEMPO_KEY="abcTinWhistleTempo";
 const COUNT_IN_KEY="abcTinWhistleCountIn";
 const METRONOME_KEY="abcTinWhistleMetronome";
+const SHOW_NOTE_KEY="abcTinWhistleShowNote";
 const WHISTLE_PREFS_KEY="abcTinWhistlePlayerPrefs";
 
 const WHISTLE_RENDER_TAB=[{
@@ -696,6 +707,79 @@ function whistleGlyphColor(midi){
   return "#e67e00";
 }
 
+function renderWhistleStaffNote(midi){
+  const svg=$("whistleStaffNote");
+  const group=$("whistleNoteGroup");
+  if(!svg)return;
+
+  const visible=!!showNoteEnabled&&midi!=null;
+  if(group)group.classList.toggle("showStaffNote",visible);
+
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  if(!visible){
+    svg.style.display="none";
+    return;
+  }
+
+  // Set display explicitly rather than relying on the hidden attribute. This
+  // avoids Safari/iOS and competing-CSS visibility problems.
+  svg.style.display="block";
+
+  const NS="http://www.w3.org/2000/svg";
+  const add=(name,attrs,text)=>{
+    const el=document.createElementNS(NS,name);
+    for(const [key,value] of Object.entries(attrs||{}))el.setAttribute(key,String(value));
+    if(text!=null)el.textContent=text;
+    svg.appendChild(el);
+    return el;
+  };
+
+  const n=Math.round(Number(midi));
+  const pc=((n%12)+12)%12;
+  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const [letter,sharp]=spellings[pc];
+  const octave=Math.floor(n/12)-1;
+  const letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const steps=(octave*7+letterIndex)-(4*7+2); // E4 = bottom staff line
+
+  // Center the staff vertically with generous room above and below for ledger
+  // lines and stems across the full test range.
+  const bottomY=132,gap=10;
+  const y=bottomY-steps*(gap/2);
+
+  for(let i=0;i<5;i++){
+    const ly=bottomY-i*gap;
+    add("line",{x1:20,y1:ly,x2:140,y2:ly,stroke:"#17241c","stroke-width":1.35,"vector-effect":"non-scaling-stroke"});
+  }
+
+  if(steps<0){
+    for(let st=-2;st>=steps;st-=2){
+      const ly=bottomY-st*(gap/2);
+      add("line",{x1:60,y1:ly,x2:102,y2:ly,stroke:"#17241c","stroke-width":1.35,"vector-effect":"non-scaling-stroke"});
+    }
+  }
+  if(steps>8){
+    for(let st=10;st<=steps;st+=2){
+      const ly=bottomY-st*(gap/2);
+      add("line",{x1:60,y1:ly,x2:102,y2:ly,stroke:"#17241c","stroke-width":1.35,"vector-effect":"non-scaling-stroke"});
+    }
+  }
+
+  if(sharp){
+    add("text",{x:51,y:y+1,"font-family":"Georgia, 'Times New Roman', serif","font-size":25,
+      "text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},"♯");
+  }
+
+  add("ellipse",{cx:81,cy:y,rx:8.5,ry:5.8,transform:`rotate(-18 81 ${y})`,fill:"#17241c"});
+
+  if(steps>=4){
+    add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":2.4,
+      "stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+  }else{
+    add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":2.4,
+      "stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+  }
+}
 function showWhistleLive(midi){
   currentLiveMidi=midi==null?null:Math.round(Number(midi));
   const live=$("whistleLive");
@@ -718,6 +802,7 @@ function showWhistleLive(midi){
     glyph.textContent="";
     glyph.style.color="#111";
     note.textContent="";
+    renderWhistleStaffNote(null);
     return;
   }
 
@@ -725,6 +810,7 @@ function showWhistleLive(midi){
   glyph.textContent=whistleGlyphForMidi(n);
   glyph.style.color=whistleGlyphColor(n);
   note.textContent=formattedWhistleNoteName(n);
+  renderWhistleStaffNote(n);
 }
 
 function getNextSiblings(element){
@@ -1271,6 +1357,14 @@ function startABCTranscriptionToolsHandshake(){
   gABCTranscriptionToolsHandshakeStarted=true;
   window.addEventListener("message",handleABCTranscriptionToolsMessage);
   [0,250,750,1500].forEach(delay=>setTimeout(notifyABCTranscriptionToolsReady,delay));
+}
+
+function restoreShowNotePreference(){
+  try{showNoteEnabled=localStorage.getItem(SHOW_NOTE_KEY)==="true"}catch(_){showNoteEnabled=false}
+  $("showNoteCheck").checked=showNoteEnabled;
+}
+function saveShowNotePreference(){
+  try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}
 }
 
 function saveWhistleDisplayPrefs(){
@@ -1838,6 +1932,12 @@ $("helpOverlay").addEventListener("click",e=>{
   if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none";
 });
 
+$("showNoteCheck").addEventListener("change",e=>{
+  showNoteEnabled=!!e.target.checked;
+  saveShowNotePreference();
+  renderWhistleStaffNote(currentLiveMidi);
+});
+
 $("editorTextSize").addEventListener("change",e=>{
   applyEditorTextSize(e.target.value,true);
 });
@@ -1859,6 +1959,7 @@ $("abcText").disabled=false;
 
 restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
+restoreShowNotePreference();
 restoreMetronomePreference();
 restoreCountInPreference();
 installCountInPlayHandler();
