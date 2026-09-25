@@ -53,6 +53,11 @@
 /* Make the abcjs Repeat/Loop button unmistakable when enabled. */
 #audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
 #audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
+.notationHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:650;line-height:1.2;cursor:pointer;color:#17241c;-webkit-text-fill-color:#17241c}
+.notationHeaderBtn:disabled{opacity:.45;cursor:default}.notationHeaderBtn:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
+.countInLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.countInLabel input{margin:0}
+.countInOverlay{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);font:500 clamp(64px,15vw,150px)/1 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#fff;pointer-events:none}.countInOverlay #countInNumber{transform:translateY(-0.5em)}.countInOverlay[hidden]{display:none}
 .splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
 .diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}
 .emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
@@ -322,7 +327,7 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
 @media(max-width:1050px){.whistleToolbar{grid-template-columns:1fr 1fr}.whistleToolbar .fileControl{grid-column:1 / -1}.whistleLive{min-height:500px}.whistleLargeGlyph{font-size:clamp(190px,34vw,350px)}}
 @media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleLiveNote{font-size:48px;margin-left:10px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.23</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.24</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -334,7 +339,7 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
  <div class="leftPane" id="leftPane">
   <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel"><div class="panelHeader"><span>Notation</span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Whistle Fingering</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">D Whistle</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div>
@@ -349,6 +354,7 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
+<div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
@@ -378,6 +384,12 @@ body.diagram-full .whistleLiveNote{font-size:clamp(64px,9vw,128px)}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Whistle Fingering pane updates to that note.</p>
       <p>Irish-style roll playback is enabled by default for <b>~</b> ornaments. Add <b>%irish_rolls_off</b> to a tune to disable it. Playback also forces the FatBoy soundfont, <b>MIDI program 78</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+      <p>For tunes containing ABC chord symbols, click <b>Mute Melody</b> in the Notation header to mute the whistle melody while leaving chord and bass accompaniment unchanged.</p>
+      <p>The tune rewinds; if it was playing, playback restarts from the beginning. If it was stopped, it remains stopped.</p>
+      <p>The button changes to <b>Unmute Melody</b>; click it again to restore the whistle melody.</p>
+      <p>The mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
+      <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
+      <p>The setting is remembered in this browser.</p>
       <p>Click the <b>tempo percentage</b> in the playback controls to set playback from <b>10% to 200%</b>. The setting is remembered in this browser.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
@@ -417,6 +429,10 @@ let prefixLength=0;
 let playbackCursor=null;
 let playbackActive=false;
 let audioControllerInitializing=false;
+let melodyMuted=false;
+let countInEnabled=false;
+let countInTimer=null;
+let countInToken=0;
 let rebuildTimer=0;
 let sharePlaybackNeedsGesture=false;
 let currentLiveMidi=null;
@@ -426,6 +442,7 @@ const SHARE_LINK_MAX_LEN=8100;
 const SPLIT_KEY="abcTinWhistleSplitters";
 const EDITOR_SIZE_KEY="abcTinWhistleEditorTextSize";
 const TEMPO_KEY="abcTinWhistleTempo";
+const COUNT_IN_KEY="abcTinWhistleCountIn";
 const WHISTLE_PREFS_KEY="abcTinWhistlePlayerPrefs";
 
 const WHISTLE_RENDER_TAB=[{
@@ -493,11 +510,22 @@ function configureIrishRollsForTune(abc){
   }
 }
 
+function hasABCSyntaxChords(abc){
+  const source=String(abc||"");
+  const re=/"([^"\r\n]*)"/g;
+  let m;
+  while((m=re.exec(source))){
+    const text=m[1].trim();
+    if(text && !/^[\^_<>@]/.test(text))return true;
+  }
+  return false;
+}
+
 function buildPlaybackABC(abc){
   const source=String(abc||"");
   const forced=[
     "%soundfont fatboy",
-    "%%MIDI program 78",
+    melodyMuted?"%%MIDI program mute":"%%MIDI program 78",
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
@@ -1065,6 +1093,8 @@ async function saveCurrentCollection(){
 }
 
 function processLoadedABC(abc,label){
+  melodyMuted=false;
+  updateMuteMelodyButton();
   loadedABC=abc;
   tunes=splitTunes(loadedABC);
   if(!tunes.length)throw new Error("No ABC tunes found.");
@@ -1351,6 +1381,7 @@ function showEnablePlaybackButton(){
 }
 
 async function rebuild(){
+  cancelCountIn();
   const gen=++renderGeneration;
   if(!tunes.length)return;
 
@@ -1472,13 +1503,97 @@ function scheduleRebuild(){
 
 function loadTune(index,syncEditor=true){
   if(syncEditor)syncCurrentTuneFromEditor();
+  cancelCountIn();
   playbackActive=false;
+  melodyMuted=false;
   currentTune=index;
   $("abcText").value=tunes[index]||"";
   $("abcText").disabled=false;
   $("tuneSelect").value=String(index);
+  updateMuteMelodyButton();
   scheduleRebuild();
   updateShareButtons();
+}
+function updateMuteMelodyButton(){
+  const btn=$("muteMelodyBtn");
+  if(!btn)return;
+  const tune=$("abcText")?.value||"";
+  const hasChords=hasABCSyntaxChords(tune);
+  btn.hidden=!hasChords;
+  btn.disabled=!tunes.length||!hasChords;
+  btn.textContent=melodyMuted?"Unmute Melody":"Mute Melody";
+}
+async function toggleMelodyMute(){
+  if(!tunes.length)return;
+  const wasPlaying=playbackActive;
+  melodyMuted=!melodyMuted;
+  updateMuteMelodyButton();
+  await rebuild();
+  if(!controller)return;
+  try{
+    if(typeof controller.seek==="function")controller.seek(0);
+    if(wasPlaying){
+      if(countInEnabled)startFiveSecondCountIn();
+      else if(typeof controller.play==="function")await controller.play();
+    }
+  }catch(e){
+    alert("Unable to restart playback: "+(e&&e.message||e));
+  }
+}
+function restoreCountInPreference(){
+  try{countInEnabled=localStorage.getItem(COUNT_IN_KEY)==="true"}catch(_){countInEnabled=false}
+  const cb=$("countInCheck");
+  if(cb)cb.checked=countInEnabled;
+}
+function saveCountInPreference(){
+  const cb=$("countInCheck");
+  countInEnabled=!!(cb&&cb.checked);
+  try{localStorage.setItem(COUNT_IN_KEY,String(countInEnabled))}catch(_){}
+}
+function cancelCountIn(){
+  countInToken++;
+  if(countInTimer){clearTimeout(countInTimer);countInTimer=null}
+  const overlay=$("countInOverlay");
+  if(overlay)overlay.hidden=true;
+}
+function startFiveSecondCountIn(){
+  cancelCountIn();
+  const token=countInToken;
+  const overlay=$("countInOverlay"),number=$("countInNumber");
+  if(!overlay||!number||!controller)return;
+  let count=5;
+  number.textContent=String(count);
+  overlay.hidden=false;
+  const tick=()=>{
+    if(token!==countInToken)return;
+    count--;
+    if(count<=0){
+      overlay.hidden=true;
+      countInTimer=null;
+      if(controller&&typeof controller.play==="function")controller.play();
+      return;
+    }
+    number.textContent=String(count);
+    countInTimer=setTimeout(tick,1000);
+  };
+  countInTimer=setTimeout(tick,1000);
+}
+function installCountInPlayHandler(){
+  const audio=$("audio");
+  if(!audio||audio.dataset.countInHandler)return;
+  audio.dataset.countInHandler="1";
+  audio.addEventListener("click",e=>{
+    const play=e.target.closest&&e.target.closest("button.abcjs-midi-start");
+    if(!play)return;
+    const wasPlaying=playbackActive;
+    if(countInEnabled&&!wasPlaying){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      startFiveSecondCountIn();
+      return;
+    }
+    if(wasPlaying)setTimeout(()=>{playbackActive=false},0);
+  },true);
 }
 
 function hasMinimumABCForRender(abc){
@@ -1494,6 +1609,8 @@ function beginManualTuneIfNeeded(){
   currentTune=0;
   manualEntryCollection=true;
   currentSaveBaseName="";
+  melodyMuted=false;
+  updateMuteMelodyButton();
   $("saveAbcBtn").disabled=false;
   populateTuneSelector("Entered ABC");
   $("tuneSelect").value="0";
@@ -1571,6 +1688,7 @@ $("abcText").addEventListener("paste",e=>{
 
 $("abcText").addEventListener("input",()=>{
   setAbcDirty(true);
+  updateMuteMelodyButton();
   beginManualTuneIfNeeded();
   syncCurrentTuneFromEditor();
   const value=$("abcText").value;
@@ -1594,6 +1712,9 @@ $("abcText").addEventListener("input",()=>{
   }
   updateShareButtons();
 });
+
+$("countInCheck").addEventListener("change",saveCountInPreference);
+$("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
 
 $("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));
 $("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
@@ -1635,6 +1756,8 @@ $("abcText").disabled=false;
 
 restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
+restoreCountInPreference();
+installCountInPlayHandler();
 applyWhistleShareSettings();
 restoreSplitters();
 installSplitters();

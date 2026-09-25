@@ -43,8 +43,8 @@
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
-.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(120px,.72fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
-.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(120px,.72fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
 .abcWrap textarea.editorTextSmall{font-size:14px}
 .abcWrap textarea.editorTextMedium{font-size:16px}
@@ -77,7 +77,7 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   -webkit-text-fill-color:#17241c;
   border-color:#b8c7bd;
 }
-.toolbar button,.bottomBar button,.diagramHeader button{
+.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{
   color:#17241c;
   -webkit-text-fill-color:#17241c;
 }
@@ -173,7 +173,8 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   box-sizing: border-box;
 }
 .diagramHeader .fullBtn,
-.diagramHeader .exitFull {
+.diagramHeader .exitFull,
+.notationHeaderBtn {
   min-height: 0 !important;
   height: auto !important;
   padding: 5px 10px !important;
@@ -182,6 +183,11 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   border-radius: 6px !important;
   margin: 0 !important;
 }
+.notationHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.countInLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}
+.countInLabel input{margin:0}
+.countInOverlay{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);font:500 clamp(64px,15vw,150px)/1 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#fff;pointer-events:none}.countInOverlay #countInNumber{transform:translateY(-0.5em)}
+.countInOverlay[hidden]{display:none}
 
 /* The portable controller uses the same SVG node for the temporary loading
    spinner and the normal Play glyph. Do not hide that SVG. Instead, after
@@ -374,7 +380,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.19</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.23</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -387,13 +393,14 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
  <div class="leftPane" id="leftPane">
   <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel"><div class="panelHeader"><span>Notation</span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
+<div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
 <div id="tabOverridePopover" class="tabOverridePopover" hidden role="dialog" aria-label="Tab Override">
   <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div></div>
@@ -493,6 +500,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         box in the playback controls to open the tempo-setting dialog.
       </p>
       <p>Irish-style roll playback is enabled by default for <b>~</b> ornaments. Add <b>%irish_rolls_off</b> to a tune to disable it.</p>
+      <p>For tunes containing ABC chord symbols, click <b>Mute Melody</b> in the Notation header to mute the concertina melody while leaving chord and bass accompaniment unchanged.</p>
+      <p>The tune rewinds; if it was playing, playback restarts from the beginning. If it was stopped, it remains stopped.</p>
+      <p>The button changes to <b>Unmute Melody</b>; click it again to restore the concertina melody.</p>
+      <p>The mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
+      <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
+      <p>The setting is remembered in this browser.</p>
       <p>The tempo can be set from <b>10% to 200%</b> of the tune's notated tempo.</p>
       <p>
         The selected tempo is remembered in this browser and reused for every tune until you
@@ -1856,7 +1869,7 @@ const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manua
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
-let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false;
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,countInEnabled=false,countInTimer=null,countInToken=0;
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
 function mapFor(system){return Object.assign({},BASE.common,system==="wheatstone"?BASE.wheatstoneRx:BASE.jeffriesRx)}
@@ -1942,10 +1955,23 @@ function configureIrishRollsForTune(abc){
   }
 }
 
+function hasABCSyntaxChords(abc){
+  // In ABC, quoted strings with no placement prefix are chord symbols.
+  // Quoted annotations beginning ^, _, <, >, or @ are not chords.
+  const source=String(abc||"");
+  const re=/"([^"\r\n]*)"/g;
+  let m;
+  while((m=re.exec(source))){
+    const text=m[1].trim();
+    if(text && !/^[\^_<>@]/.test(text))return true;
+  }
+  return false;
+}
+
 function buildPlaybackABC(abc){
   const forced=[
     "%soundfont fatboy",
-    "%%MIDI program 133",
+    melodyMuted?"%%MIDI program mute":"%%MIDI program 133",
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
@@ -2408,6 +2434,8 @@ async function saveCurrentCollection(){
 }
 
 function processLoadedABC(abc,label){$("saveAbcBtn").disabled=false;
+  melodyMuted=false;
+  updateMuteMelodyButton();
   loadedABC=abc;
   tunes=splitTunes(loadedABC);
   if(!tunes.length)throw new Error("No ABC tunes found.");
@@ -2505,6 +2533,7 @@ function loadShareLinkAfterStartup(){
 
 const PREFS_KEY="abcAngloConcertinaPrefs";
 const TEMPO_KEY="abcAngloConcertinaTempo";
+const COUNT_IN_KEY="abcAngloConcertinaCountIn";
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
 
 const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
@@ -3080,7 +3109,7 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
 }
 
-async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;configureIrishRollsForTune(tune);gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";const tune=$("abcText").value;configureIrishRollsForTune(tune);gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
   selectionColor:"#ff0000",
@@ -3102,7 +3131,90 @@ async function rebuild(){const gen=++renderGeneration;if(!tunes.length)return;tr
       drawDiagram(null,true);
     }};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});audioControllerInitializing=true;try{await controller.setTune(visual[0],false,{})}finally{audioControllerInitializing=false}if(gen!==renderGeneration)return;restoreManualSelectionAfterRebuild();installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
 let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
-function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();manualSelectedNoteStart=null;playbackActive=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();cancelCountIn();manualSelectedNoteStart=null;playbackActive=false;melodyMuted=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;updateMuteMelodyButton();$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+function updateMuteMelodyButton(){
+  const btn=$("muteMelodyBtn");
+  if(!btn)return;
+  const tune=$("abcText")?.value||"";
+  const hasChords=hasABCSyntaxChords(tune);
+  btn.hidden=!hasChords;
+  btn.disabled=!tunes.length||!hasChords;
+  btn.textContent=melodyMuted?"Unmute Melody":"Mute Melody";
+}
+async function toggleMelodyMute(){
+  if(!tunes.length)return;
+  const wasPlaying=playbackActive;
+  melodyMuted=!melodyMuted;
+  updateMuteMelodyButton();
+  await rebuild();
+  if(!controller)return;
+  try{
+    if(typeof controller.seek==="function")controller.seek(0);
+    if(wasPlaying){
+      if(countInEnabled)startFiveSecondCountIn();
+      else if(typeof controller.play==="function")await controller.play();
+    }
+  }catch(e){
+    alert("Unable to restart playback: "+(e&&e.message||e));
+  }
+}
+function restoreCountInPreference(){
+  try{countInEnabled=localStorage.getItem(COUNT_IN_KEY)==="true"}catch(_){countInEnabled=false}
+  const cb=$("countInCheck");
+  if(cb)cb.checked=countInEnabled;
+}
+function saveCountInPreference(){
+  const cb=$("countInCheck");
+  countInEnabled=!!(cb&&cb.checked);
+  try{localStorage.setItem(COUNT_IN_KEY,String(countInEnabled))}catch(_){}
+}
+function cancelCountIn(){
+  countInToken++;
+  if(countInTimer){clearTimeout(countInTimer);countInTimer=null}
+  const overlay=$("countInOverlay");
+  if(overlay)overlay.hidden=true;
+}
+function startFiveSecondCountIn(){
+  cancelCountIn();
+  const token=countInToken;
+  const overlay=$("countInOverlay"),number=$("countInNumber");
+  if(!overlay||!number||!controller)return;
+  let count=5;
+  number.textContent=String(count);
+  overlay.hidden=false;
+  const tick=()=>{
+    if(token!==countInToken)return;
+    count--;
+    if(count<=0){
+      overlay.hidden=true;
+      countInTimer=null;
+      if(controller&&typeof controller.play==="function")controller.play();
+      return;
+    }
+    number.textContent=String(count);
+    countInTimer=setTimeout(tick,1000);
+  };
+  countInTimer=setTimeout(tick,1000);
+}
+function installCountInPlayHandler(){
+  const audio=$("audio");
+  if(!audio||audio.dataset.countInHandler)return;
+  audio.dataset.countInHandler="1";
+  audio.addEventListener("click",e=>{
+    const play=e.target.closest&&e.target.closest("button.abcjs-midi-start");
+    if(!play)return;
+    const wasPlaying=playbackActive;
+    if(countInEnabled&&!wasPlaying){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      startFiveSecondCountIn();
+      return;
+    }
+    if(wasPlaying)setTimeout(()=>{playbackActive=false},0);
+  },true);
+}
+$("countInCheck").addEventListener("change",saveCountInPreference);
+$("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
   const input=e.target,f=input.files&&input.files[0];if(!f)return;
@@ -3124,11 +3236,12 @@ function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m
 function beginManualTuneIfNeeded(){
   const text=$("abcText").value;
   if(tunes.length||!text.trim())return;
-  tunes=[text];loadedABC=text;currentTune=0;manualEntryCollection=true;currentSaveBaseName="";
+  tunes=[text];loadedABC=text;currentTune=0;manualEntryCollection=true;currentSaveBaseName="";melodyMuted=false;updateMuteMelodyButton();
   $("saveAbcBtn").disabled=false;
   populateTuneSelector("Entered ABC");
   $("tuneSelect").value="0";
   $("tabOverrideBtn").disabled=false;
+  updateMuteMelodyButton();
 }
 async function showMultiplePasteAlert(){
   const message="Pasting multiple tunes into the ABC editor is not allowed.<br><br>Please save the multiple tunes to a <b>.abc</b> file and then load the file into the tool.";
@@ -3144,6 +3257,7 @@ $("abcText").addEventListener("paste",e=>{
 $("abcText").addEventListener("input",()=>{
   setAbcDirty(true);
   beginManualTuneIfNeeded();
+  updateMuteMelodyButton();
   syncCurrentTuneFromEditor();
   const text=$("abcText").value;
   if(hasMinimumABCForRender(text))scheduleRebuild();
@@ -3189,7 +3303,7 @@ window.addEventListener("resize",()=>{
   const p=$("tabOverridePopover");
   p.dataset.dragged?clampPopoverToViewport(p):positionTabOverridePopover();
 });
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
 // installed. Handle both states so share links are always consumed.
