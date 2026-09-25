@@ -55,7 +55,11 @@
 #audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
 .splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
 .diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}.diagramWatermark{position:absolute;right:1.4%;bottom:1.8%;z-index:3;color:#888;font-style:italic;font-weight:400;font-size:clamp(9px,1.35cqw,15px);line-height:1;white-space:nowrap;pointer-events:none;user-select:none;-webkit-user-select:none;opacity:.78}.diagramWatermark[hidden]{display:none}.diagramStack{position:relative;width:100%;max-height:100%;aspect-ratio:1280/670}.diagramStack canvas{display:block;width:100%;height:100%;object-fit:contain}.diagramStack #diagramOverlay{position:absolute;inset:0;pointer-events:none}
-.liveNoteName{position:absolute;left:0;right:0;top:15.5%;text-align:center;font:700 clamp(28px,3.75vw,48px) Arial,Helvetica,sans-serif;color:#111;line-height:1;pointer-events:none}.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
+.liveNoteName{position:absolute;left:0;right:0;top:13.5%;text-align:center;font:700 clamp(28px,3.75vw,48px) Arial,Helvetica,sans-serif;color:#111;line-height:1;pointer-events:none}
+.showNoteLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.showNoteLabel input{margin:0}
+.concertinaStaffNote{position:absolute;left:67.2%;top:90.2%;transform:translate(-50%,-50%);display:none;width:clamp(230px,20.5cqw,305px);height:26%;overflow:visible;pointer-events:none}
+body.diagram-full .concertinaStaffNote{left:67.2%;top:90.2%;width:clamp(240px,20.5vw,325px);height:26%}
+.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
 body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveNoteName{font-size:clamp(52px,6vw,86px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
 @media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.diagramStack{height:auto;max-height:none}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
 @media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
@@ -380,7 +384,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.24</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.25</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -396,7 +400,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
   <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox">Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -496,6 +500,9 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         fingering diagram highlights the required concertina button.</p>
       <p><b>Red</b>
         indicates Push and <b>green</b> indicates Draw.</p>
+      <p>Note names throughout the tool are displayed using sharps rather than flats.</p>
+      <p>Check <b>Show note</b> in the Fingering Diagram header to also show the current pitch as a quarter note on a staff positioned to the right of the Push/Draw legend. The Show note setting is remembered in this browser and is off by default until you enable it.</p>
+      <p>The staff notation uses sharps for accidentals, matching the note names used by the tool.</p>
       <p>Click the <b>tempo percentage</b>
         box in the playback controls to open the tempo-setting dialog.
       </p>
@@ -1873,11 +1880,22 @@ const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manua
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
-let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0;
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false;
+const SHOW_NOTE_KEY="abcAngloShowNote";
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
 function mapFor(system){return Object.assign({},BASE.common,system==="wheatstone"?BASE.wheatstoneRx:BASE.jeffriesRx)}
-function abcPitchToScientific(s){if(!s||s==="x"||s==="z")return"—";const m=String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);if(!m)return s;const acc=m[1],letter=m[2],marks=m[3];let octave=letter===letter.toLowerCase()?5:4;for(const ch of marks)octave+=ch==="'"?1:-1;const accidental=acc.includes("^")?"#":acc.includes("_")?"b":"";return letter.toUpperCase()+accidental+octave}
+function abcPitchToMidi(s){
+  if(!s||s==="x"||s==="z")return null;
+  const m=String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);if(!m)return null;
+  const acc=m[1],letter=m[2],marks=m[3];let octave=letter===letter.toLowerCase()?5:4;
+  for(const ch of marks)octave+=ch==="'"?1:-1;
+  const pc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[letter.toUpperCase()];
+  let delta=0;for(const ch of acc){if(ch==="^")delta++;else if(ch==="_")delta--;else if(ch==="=")delta=0}
+  return 12*(octave+1)+pc+delta;
+}
+function midiToSharpScientific(midi){const n=Math.round(Number(midi));if(!Number.isFinite(n))return"—";const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];return names[((n%12)+12)%12]+(Math.floor(n/12)-1)}
+function abcPitchToScientific(s){const midi=abcPitchToMidi(s);return midi==null?(s&&s!=="x"&&s!=="z"?String(s):"—"):midiToSharpScientific(midi)}
 function stripChordSymbols(abc){return abc.replace(/"[^"\r\n]*"/g,m=>" ".repeat(m.length))}
 
 /*
@@ -2104,7 +2122,7 @@ function prepareDiagramBase(){
   ctx.clearRect(0,0,c.width,c.height);
   ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);
   ctx.textAlign="center";ctx.textBaseline="alphabetic";
-  ctx.font="400 54px Arial";ctx.fillStyle="#333";ctx.fillText(title,640,78);
+  ctx.font="400 54px Arial";ctx.fillStyle="#333";ctx.fillText(title,640,62);
 
   // Static system/style information. Note numbering is intentionally omitted.
   ctx.textAlign="left";ctx.font="400 18px Arial";ctx.fillStyle="#555";
@@ -2177,6 +2195,29 @@ function drawBellowsDirectionArrow(ctx,direction){
   ctx.fill();
   ctx.restore();
 }
+function renderConcertinaStaffNote(item){
+  const svg=$("concertinaStaffNote"),stack=$("diagramStack");if(!svg||!stack)return;
+  const midi=item?abcPitchToMidi(item.normalizedNote||item.abcNote):null;
+  const visible=!!showNoteEnabled&&midi!=null;
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  if(!visible){svg.style.display="none";return}
+  svg.style.display="block";
+  const NS="http://www.w3.org/2000/svg";
+  const add=(name,attrs)=>{const el=document.createElementNS(NS,name);for(const [key,value] of Object.entries(attrs||{}))el.setAttribute(key,String(value));svg.appendChild(el);return el};
+  const n=Math.round(midi),pc=((n%12)+12)%12;
+  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const [letter,sharp]=spellings[pc],octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const steps=(octave*7+letterIndex)-(4*7+2),bottomY=142,gap=12,y=bottomY-steps*(gap/2);
+  for(let i=0;i<5;i++){const ly=bottomY-i*gap;add("line",{x1:28,y1:ly,x2:132,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"})}
+  const ledgerYs=[];if(y>=bottomY+gap/2){for(let ly=bottomY+gap;ly<=y+1;ly+=gap)ledgerYs.push(ly)}else if(y<=bottomY-4*gap-gap/2){for(let ly=bottomY-5*gap;ly>=y-1;ly-=gap)ledgerYs.push(ly)}
+  ledgerYs.forEach(ly=>add("line",{x1:65,y1:ly,x2:97,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"}));
+  add("ellipse",{cx:81,cy:y,rx:9,ry:6.2,fill:"#17241c",transform:`rotate(-18 81 ${y})`});
+  if(sharp){const sy=y-1;add("line",{x1:57,y1:sy-11,x2:57,y2:sy+11,stroke:"#17241c","stroke-width":1.45,"vector-effect":"non-scaling-stroke"});add("line",{x1:63,y1:sy-13,x2:63,y2:sy+9,stroke:"#17241c","stroke-width":1.45,"vector-effect":"non-scaling-stroke"});add("line",{x1:53,y1:sy-4,x2:67,y2:sy-6,stroke:"#17241c","stroke-width":1.7,"vector-effect":"non-scaling-stroke"});add("line",{x1:53,y1:sy+3,x2:67,y2:sy+1,stroke:"#17241c","stroke-width":1.7,"vector-effect":"non-scaling-stroke"})}
+  if(steps>=4)add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+  else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+}
+function restoreShowNotePreference(){try{showNoteEnabled=localStorage.getItem(SHOW_NOTE_KEY)==="true"}catch(_){showNoteEnabled=false}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
+function saveShowNotePreference(){try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}}
 function drawDiagram(item=null,force=false){
   const itemIndex=item?item.index:-1;
   if(!force&&itemIndex===lastDiagramIndex)return;
@@ -2187,6 +2228,7 @@ function drawDiagram(item=null,force=false){
   const c=$("diagramOverlay"),ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
   $("liveNoteName").textContent=item?abcPitchToScientific(item.normalizedNote||item.abcNote):"";
+  renderConcertinaStaffNote(item);
 
   if(item){
     const physical=item.button.replace(/^L9a$/,"L9").replace(/^R1x$/,"R1");
@@ -3302,6 +3344,7 @@ function installCountInPlayHandler(){
 $("metronomeCheck").addEventListener("change",toggleMetronome);
 $("countInCheck").addEventListener("change",saveCountInPreference);
 $("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
+$("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderConcertinaStaffNote(currentDiagramItem)});
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
   const input=e.target,f=input.files&&input.files[0];if(!f)return;
@@ -3402,7 +3445,7 @@ window.addEventListener("resize",()=>{
   const p=$("tabOverridePopover");
   p.dataset.dragged?clampPopoverToViewport(p):positionTabOverridePopover();
 });
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreMetronomePreference();
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreShowNotePreference();restoreMetronomePreference();
 restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
