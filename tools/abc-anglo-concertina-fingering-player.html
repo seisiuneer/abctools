@@ -380,7 +380,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.23</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.24</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -393,7 +393,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
  <div class="leftPane" id="leftPane">
   <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox">Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
@@ -500,12 +500,13 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         box in the playback controls to open the tempo-setting dialog.
       </p>
       <p>Irish-style roll playback is enabled by default for <b>~</b> ornaments. Add <b>%irish_rolls_off</b> to a tune to disable it.</p>
-      <p>For tunes containing ABC chord symbols, click <b>Mute Melody</b> in the Notation header to mute the concertina melody while leaving chord and bass accompaniment unchanged.</p>
-      <p>The tune rewinds; if it was playing, playback restarts from the beginning. If it was stopped, it remains stopped.</p>
+      <p>Click <b>Mute Melody</b> in the Notation header to mute the concertina melody. This is available for every tune, including tunes without chord symbols, so you can practice with the metronome alone. If the tune contains chord symbols, chord and bass accompaniment remain audible.</p>
+      <p>Toggling <b>Mute Melody</b> or <b>Unmute Melody</b> stops and rewinds the tune. If it was playing, playback restarts from the beginning after the five-second count-in when <b>Count in?</b> is enabled, or immediately when Count in is disabled. If the tune was stopped, it remains stopped.</p>
       <p>The button changes to <b>Unmute Melody</b>; click it again to restore the concertina melody.</p>
-      <p>The mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
+      <p>The melody always starts unmuted when the tool is opened, and the mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
+      <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
       <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
-      <p>The setting is remembered in this browser.</p>
+      <p>The Count in setting is remembered in this browser.</p>
       <p>The tempo can be set from <b>10% to 200%</b> of the tune's notated tempo.</p>
       <p>
         The selected tempo is remembered in this browser and reused for every tune until you
@@ -1869,7 +1870,7 @@ const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manua
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
-let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,countInEnabled=false,countInTimer=null,countInToken=0;
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0;
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
 function mapFor(system){return Object.assign({},BASE.common,system==="wheatstone"?BASE.wheatstoneRx:BASE.jeffriesRx)}
@@ -1968,7 +1969,84 @@ function hasABCSyntaxChords(abc){
   return false;
 }
 
+const METRONOME_LIST=[
+  {name:"C|",pattern:"dd A B C D"},
+  {name:"C",pattern:"dddd A B B B C D D D"},
+  {name:"2/2",pattern:"dd A B C D"},
+  {name:"3/2",pattern:"ddd A B B C D D"},
+  {name:"2/4",pattern:"dd A B C D"},
+  {name:"3/4",pattern:"ddd A B B C D D"},
+  {name:"4/4",pattern:"dddd A B B B C D D D"},
+  {name:"5/4",pattern:"ddddd A B B B B C D D D D"},
+  {name:"6/4",pattern:"dddddd A B B B B B C D D D D"},
+  {name:"7/4",pattern:"ddddddd A B B B B B B C D D D D D"},
+  {name:"2/8",pattern:"dz A C"},
+  {name:"3/8",pattern:"dzz A C"},
+  {name:"5/8",pattern:"dzzdz A B C D"},
+  {name:"6/8",pattern:"dzzdzz A B C D"},
+  {name:"7/8",pattern:"dzdzdzz A B B C D D"},
+  {name:"9/8",pattern:"dzzdzzdzz A B B C D D"},
+  {name:"10/8",pattern:"dzzdzzdzdz A B B B C D D D"},
+  {name:"11/8",pattern:"dzzdzzdzdzz A B B B C D D D"},
+  {name:"12/8",pattern:"dzzdzzdzzdzz A B B B C D D D"}
+];
+const METRONOME_HIGH_SOUND=76;
+const METRONOME_LOW_SOUND=77;
+const METRONOME_HIGH_VOLUME=56;
+const METRONOME_LOW_VOLUME=40;
+
+function metronomePatternForABC(abc){
+  const meterMatch=/^M:\s*(.*?)\s*$/mi.exec(String(abc||""));
+  if(!meterMatch)return null;
+  const meter=meterMatch[1].trim();
+  const entry=METRONOME_LIST.find(item=>item.name===meter);
+  if(!entry)return null;
+  return entry.pattern
+    .replaceAll("A",String(METRONOME_HIGH_SOUND))
+    .replaceAll("B",String(METRONOME_LOW_SOUND))
+    .replaceAll("C",String(METRONOME_HIGH_VOLUME))
+    .replaceAll("D",String(METRONOME_LOW_VOLUME));
+}
+
+function metronomeInjectionForABC(abc){
+  const pattern=metronomePatternForABC(abc);
+  if(!pattern)return null;
+  return "%\n% Metronome sounds and volumes\n%\n%%MIDI drum "+pattern+"\n%%MIDI drumon\n%\n";
+}
+
+function restoreMetronomePreference(){
+  try{metronomeEnabled=localStorage.getItem(METRONOME_KEY)==="true"}catch(_){metronomeEnabled=false}
+  const cb=$("metronomeCheck");
+  if(cb)cb.checked=metronomeEnabled;
+}
+function saveMetronomePreference(){
+  try{localStorage.setItem(METRONOME_KEY,String(metronomeEnabled))}catch(_){}
+}
+async function toggleMetronome(){
+  const cb=$("metronomeCheck");
+  const requested=!!(cb&&cb.checked);
+  cancelCountIn();
+  playbackActive=false;
+
+  if(requested&&tunes.length&&!metronomePatternForABC($("abcText").value)){
+    metronomeEnabled=false;
+    if(cb)cb.checked=false;
+    saveMetronomePreference();
+    await rebuild();
+    await DayPilot.Modal.alert(
+      "Metronome Not Available for this Meter<br><br>No metronome pattern is available for the meter of this tune.",
+      {top:150,width:460}
+    );
+    return;
+  }
+
+  metronomeEnabled=requested;
+  saveMetronomePreference();
+  if(tunes.length)await rebuild();
+}
+
 function buildPlaybackABC(abc){
+  const source=String(abc||"");
   const forced=[
     "%soundfont fatboy",
     melodyMuted?"%%MIDI program mute":"%%MIDI program 133",
@@ -1976,27 +2054,33 @@ function buildPlaybackABC(abc){
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
-  // Remove the effect of every source playback directive while preserving
-  // its character count. %abcjs_soundfont is included because the portable
-  // player accepts it as an alias for %soundfont.
-  let cleaned=abc.replace(
+  let cleaned=source.replace(
     /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
     m=>" ".repeat(m.length)
   );
 
-  // Put the forced settings in the tune header, immediately before K:.
-  // All playable notes occur after K:, so abcjs note source offsets differ
-  // from the solver offsets by exactly this one constant.
   const kMatch=/^K\s*:.*$/mi.exec(cleaned);
-  if(kMatch){
-    prefixLength=forced.length;
-    cleaned=cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index);
-  }else{
-    prefixLength=forced.length;
-    cleaned=forced+cleaned;
+  let playback=kMatch
+    ? cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index)
+    : forced+cleaned;
+
+  let metronome="";
+  if(metronomeEnabled)metronome=metronomeInjectionForABC(source)||"";
+  if(metronome){
+    const playbackK=/^K\s*:.*$/mi.exec(playback);
+    if(playbackK){
+      const lineEnd=playback.indexOf("\n",playbackK.index);
+      const insertAt=lineEnd>=0?lineEnd+1:playback.length;
+      playback=playback.slice(0,insertAt)+metronome+playback.slice(insertAt);
+    }else{
+      playback=forced+metronome+cleaned;
+    }
   }
-  return cleaned;
+
+  prefixLength=forced.length+metronome.length;
+  return playback;
 }
+
 function splitTunes(abc){const lines=abc.replace(/\r\n?/g,"\n").split("\n"),out=[];let pre=[],cur=null;for(const line of lines){if(/^X\s*:/.test(line)){if(cur)out.push(cur.join("\n").trim());cur=[...pre,line];pre=[]}else if(cur)cur.push(line);else pre.push(line)}if(cur)out.push(cur.join("\n").trim());if(!out.length&&abc.trim())out.push(abc.trim());return out.filter(Boolean)}
 function firstTitle(tune,n){const m=tune.match(/^T:\s*(.*?)\s*$/m);return m&&m[1].trim()||`Tune ${n}`}
 function escapeHTML(value){
@@ -2534,6 +2618,7 @@ function loadShareLinkAfterStartup(){
 const PREFS_KEY="abcAngloConcertinaPrefs";
 const TEMPO_KEY="abcAngloConcertinaTempo";
 const COUNT_IN_KEY="abcAngloConcertinaCountIn";
+const METRONOME_KEY="abcAngloConcertinaMetronome";
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
 
 const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
@@ -3135,10 +3220,8 @@ function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor
 function updateMuteMelodyButton(){
   const btn=$("muteMelodyBtn");
   if(!btn)return;
-  const tune=$("abcText")?.value||"";
-  const hasChords=hasABCSyntaxChords(tune);
-  btn.hidden=!hasChords;
-  btn.disabled=!tunes.length||!hasChords;
+  btn.hidden=false;
+  btn.disabled=!tunes.length;
   btn.textContent=melodyMuted?"Unmute Melody":"Mute Melody";
 }
 async function toggleMelodyMute(){
@@ -3213,6 +3296,7 @@ function installCountInPlayHandler(){
     if(wasPlaying)setTimeout(()=>{playbackActive=false},0);
   },true);
 }
+$("metronomeCheck").addEventListener("change",toggleMetronome);
 $("countInCheck").addEventListener("change",saveCountInPreference);
 $("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
@@ -3276,8 +3360,10 @@ $("abcText").disabled=false;
 // controls through the normal load paths.
 function initializeActionButtonStates(){
   const hasTunes=tunes.length>0;
+  if(!hasTunes)melodyMuted=false;
   $("saveAbcBtn").disabled=!hasTunes;
   $("tabOverrideBtn").disabled=!hasTunes;
+  updateMuteMelodyButton();
 }
 initializeActionButtonStates();
 window.addEventListener("pageshow",initializeActionButtonStates);
@@ -3303,7 +3389,8 @@ window.addEventListener("resize",()=>{
   const p=$("tabOverridePopover");
   p.dataset.dragged?clampPopoverToViewport(p):positionTabOverridePopover();
 });
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreMetronomePreference();
+restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
 // installed. Handle both states so share links are always consumed.
