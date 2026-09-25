@@ -334,7 +334,7 @@ body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
 @media(max-width:760px){.whistleStaffNote{width:100px;height:130px;transform:translate(-50%,-10px) scaleX(.94)}}
 @media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleNoteGroup{margin-left:10px;width:150px;transform:translateX(-40px) translateY(-58%)}.whistleNoteGroup.showStaffNote{transform:translateX(-40px) translateY(-58%) translateY(-1em)}.whistleLiveNote{font-size:48px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.27</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.28</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -1043,6 +1043,10 @@ function installSplitters(){
     saveSplitterPercents();
   });
   window.addEventListener("resize",()=>{
+    // While Full-Page View is active the left pane is display:none, so its
+    // measured height is zero. Do not recalculate splitter pixel sizes until
+    // the normal layout has been restored.
+    if(document.body.classList.contains("diagram-full"))return;
     if(!window.matchMedia("(max-width:1050px)").matches){
       setVerticalSplit(splitVPercent);
       setHorizontalSplit(splitHPercent);
@@ -1826,6 +1830,15 @@ function setFull(on){
   }else{
     document.body.classList.remove("diagram-full");
     if(audioRow&&notationPanel)notationPanel.appendChild(audioRow);
+    // Full-page resizing intentionally skips splitter recalculation because
+    // leftPane is hidden there. Once the normal layout is visible again,
+    // rebuild the pixel dimensions from the saved percentages.
+    requestAnimationFrame(()=>{
+      if(!window.matchMedia("(max-width:1050px)").matches){
+        setVerticalSplit(splitVPercent);
+        setHorizontalSplit(splitHPercent);
+      }
+    });
   }
 }
 

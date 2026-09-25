@@ -384,7 +384,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.25</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.26</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -2377,7 +2377,7 @@ function installSplitters(){
  sv.addEventListener("pointerdown",e=>begin(e,"v"));sh.addEventListener("pointerdown",e=>begin(e,"h"));
  sv.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setVerticalSplit(DEFAULT_SPLIT_V);saveSplitterPercents()});
  sh.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setHorizontalSplit(DEFAULT_SPLIT_H);saveSplitterPercents()});
- window.addEventListener("resize",()=>{if(!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}});
+ window.addEventListener("resize",()=>{if(!document.body.classList.contains("diagram-full")&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}});
 }
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-anglo-concertina-fingering-player.html";
@@ -3404,7 +3404,7 @@ $("abcText").addEventListener("input",()=>{
   updateShareButtons();
 });
 $("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
-function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>drawDiagram(currentDiagramItem,true))}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false)});
+function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>{if(!on&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}drawDiagram(currentDiagramItem,true)})}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false)});
 // Firefox may restore textarea/form state across a reload. Clear the ABC editor
 // synchronously at startup so stale ABC is never visible. Keep the empty editor
 // enabled so a user can immediately type or paste a single tune.

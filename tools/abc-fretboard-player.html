@@ -674,7 +674,7 @@ body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDispl
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.46</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.47</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1496,6 +1496,10 @@ function installSplitters(){
     saveSplitterPercents();
   });
   window.addEventListener("resize",()=>{
+    // While Full-Page View is active the left pane is display:none, so its
+    // measured height is zero. Do not recalculate splitter pixel sizes until
+    // the normal layout has been restored.
+    if(document.body.classList.contains("diagram-full"))return;
     if(!window.matchMedia("(max-width:1050px)").matches){
       setVerticalSplit(splitVPercent);
       setHorizontalSplit(splitHPercent);
@@ -2281,6 +2285,15 @@ function setFull(on){
   }else{
     document.body.classList.remove("diagram-full");
     if(audioRow&&notationPanel)notationPanel.appendChild(audioRow);
+    // Full-page resizing intentionally skips splitter recalculation because
+    // leftPane is hidden there. Once the normal layout is visible again,
+    // rebuild the pixel dimensions from the saved percentages.
+    requestAnimationFrame(()=>{
+      if(!window.matchMedia("(max-width:1050px)").matches){
+        setVerticalSplit(splitVPercent);
+        setHorizontalSplit(splitHPercent);
+      }
+    });
   }
 }
 
