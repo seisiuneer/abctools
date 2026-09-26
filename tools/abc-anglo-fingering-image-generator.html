@@ -174,7 +174,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.31</div>
+<header class="app-header"><div class="version">Version 1.32</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -1558,7 +1558,7 @@ async function showInstructions() {
     <p>In Button Half modes, <b>Push</b> highlights the upper half and <b>Draw</b> highlights the lower half, so direction is indicated by both color and position.</p>
     <p>The tool remembers your most recent display choice in this browser.</p>
     <p>The default is <b>Button Ring</b>.</p>
-    <p>Check <b>Show note on staff next to Push/Draw legend</b> to also draw the current pitch as a quarter note on a staff to the right of the legend. The staff uses sharps for accidentals, matching the note names used by the tool. This setting is remembered in this browser and is off by default until you enable it.</p>
+    <p>Check <b>Show note on staff next to Push/Draw legend</b> to also draw the current pitch as a quarter note on a staff to the right of the legend. Note names and the staff use sharps or flats according to the tune's <b>K:</b> key and mode. Major, Minor, Mixolydian, and Dorian mode spellings are recognized, including common forms such as <b>K:Ddor</b>, <b>K:D Dorian</b>, and <b>K:D dor</b>. This setting is remembered in this browser and is off by default until you enable it.</p>
 
     <h3>5. Generate the images</h3>
     <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the default button and bellows direction for each note.</p>
@@ -1626,15 +1626,51 @@ const BASE = {
   }
 };
 
-function abcPitchToScientific(s) {
-  if (!s || s === "x" || s === "z") return "—";
-  let m = String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);
-  if (!m) return s;
-  const acc = m[1], letter = m[2], marks = m[3];
-  let octave = letter === letter.toLowerCase() ? 5 : 4;
-  for (const ch of marks) octave += ch === "'" ? 1 : -1;
-  let accidental = acc.includes("^") ? "#" : acc.includes("_") ? "b" : "";
-  return letter.toUpperCase() + accidental + octave;
+function abcPitchToMidi(s){
+  if(!s||s==="x"||s==="z")return null;
+  const m=String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);if(!m)return null;
+  const acc=m[1],letter=m[2],marks=m[3];let octave=letter===letter.toLowerCase()?5:4;
+  for(const ch of marks)octave+=ch==="'"?1:-1;
+  const pc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[letter.toUpperCase()];
+  let delta=0;for(const ch of acc){if(ch==="^")delta++;else if(ch==="_")delta--;else if(ch==="=")delta=0}
+  return 12*(octave+1)+pc+delta;
+}
+
+// Choose enharmonic spelling from this tune's K: field only, matching the player.
+function keyTagPrefersFlats(abc){
+  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);
+  if(!m)return false;
+  const tonic=m[1].toUpperCase()+m[2];
+  const rest=String(m[3]||"").trim().toLowerCase();
+  const modeToken=(rest.match(/^([a-z]+)/)||["",""])[1];
+  let mode="major";
+  if(modeToken==="m"||modeToken.startsWith("min")||modeToken.startsWith("aeo"))mode="minor";
+  else if(modeToken.startsWith("dor"))mode="dorian";
+  else if(modeToken.startsWith("mix"))mode="mixolydian";
+  else if(modeToken===""||modeToken.startsWith("maj")||modeToken.startsWith("ion"))mode="major";
+  const majorFifths={"Cb":-7,"Gb":-6,"Db":-5,"Ab":-4,"Eb":-3,"Bb":-2,"F":-1,"C":0,"G":1,"D":2,"A":3,"E":4,"B":5,"F#":6,"C#":7};
+  if(!(tonic in majorFifths))return false;
+  const modalOffset={major:0,mixolydian:-1,dorian:-2,minor:-3}[mode]??0;
+  return majorFifths[tonic]+modalOffset<0;
+}
+function displayPitchClassName(midi,abc){
+  const n=Math.round(Number(midi));if(!Number.isFinite(n))return "";
+  const sharpNames=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const flatNames=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+  return (keyTagPrefersFlats(abc)?flatNames:sharpNames)[(n%12+12)%12];
+}
+function displayStaffSpelling(midi,abc){
+  const n=Math.round(Number(midi)),pc=((n%12)+12)%12;
+  const sharp={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const flat={0:["C",0],1:["D",-1],2:["D",0],3:["E",-1],4:["E",0],5:["F",0],6:["G",-1],7:["G",0],8:["A",-1],9:["A",0],10:["B",-1],11:["B",0]};
+  return (keyTagPrefersFlats(abc)?flat:sharp)[pc];
+}
+function abcPitchToScientific(s,abc,useGlyphs=false){
+  const midi=abcPitchToMidi(s);
+  if(midi==null)return s&&s!=="x"&&s!=="z"?String(s):"—";
+  let name=displayPitchClassName(midi,abc);
+  if(useGlyphs)name=name.replace(/#/g,"♯").replace(/b/g,"♭");
+  return name+(Math.floor(Math.round(midi)/12)-1);
 }
 
 function mapFor(system) {
@@ -1762,12 +1798,11 @@ function abcPitchToMidiForStaff(s){
   let delta=0;for(const ch of acc){if(ch==="^")delta++;else if(ch==="_")delta--;else if(ch==="=")delta=0}
   return 12*(octave+1)+pc+delta;
 }
-function drawStaffNoteNextToLegend(ctx,item){
+function drawStaffNoteNextToLegend(ctx,item,tune){
   if(!$("showNoteCheck").checked||!item)return;
   const midi=abcPitchToMidiForStaff(item.normalizedNote||item.abcNote);if(midi==null)return;
-  const n=Math.round(midi),pc=((n%12)+12)%12;
-  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
-  const [letter,sharp]=spellings[pc],octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const n=Math.round(midi);
+  const [letter,accidental]=displayStaffSpelling(n,tune),octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
   const steps=(octave*7+letterIndex)-(4*7+2),bottomY=626,gap=10.5,y=bottomY-steps*(gap/2),cx=860;
   ctx.save();ctx.strokeStyle="#17241c";ctx.fillStyle="#17241c";ctx.lineCap="round";
   ctx.lineWidth=1.05;
@@ -1775,12 +1810,17 @@ function drawStaffNoteNextToLegend(ctx,item){
   if(y>=bottomY+gap/2){for(let ly=bottomY+gap;ly<=y+1;ly+=gap){ctx.beginPath();ctx.moveTo(cx-14,ly);ctx.lineTo(cx+14,ly);ctx.stroke()}}
   else if(y<=bottomY-4*gap-gap/2){for(let ly=bottomY-5*gap;ly>=y-1;ly-=gap){ctx.beginPath();ctx.moveTo(cx-14,ly);ctx.lineTo(cx+14,ly);ctx.stroke()}}
   ctx.save();ctx.translate(cx,y);ctx.rotate(-18*Math.PI/180);ctx.beginPath();ctx.ellipse(0,0,7.8,5.4,0,0,Math.PI*2);ctx.fill();ctx.restore();
-  if(sharp){const sx=cx-21,sy=y-1;ctx.lineWidth=1.3;[[sx-3,sy-10,sx-3,sy+10],[sx+3,sy-11,sx+3,sy+8],[sx-7,sy-3,sx+7,sy-5],[sx-7,sy+3,sx+7,sy+1]].forEach(a=>{ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[2],a[3]);ctx.stroke()})}
+  if(accidental>0){const sx=cx-21,sy=y-1;ctx.lineWidth=1.3;[[sx-3,sy-10,sx-3,sy+10],[sx+3,sy-11,sx+3,sy+8],[sx-7,sy-3,sx+7,sy-5],[sx-7,sy+3,sx+7,sy+1]].forEach(a=>{ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[2],a[3]);ctx.stroke()})}
+  else if(accidental<0){
+    // Draw the flat as geometry so browser/font glyph metrics cannot shift it.
+    const fx=cx-23,fy=y;ctx.lineWidth=2.1;ctx.lineCap="round";ctx.lineJoin="round";
+    ctx.beginPath();ctx.moveTo(fx,fy-16);ctx.lineTo(fx,fy+9);ctx.moveTo(fx,fy-3);ctx.bezierCurveTo(fx+11,fy-9,fx+13,fy+1,fx,fy+8);ctx.stroke();
+  }
   ctx.lineWidth=1.65;ctx.beginPath();if(steps>=4){ctx.moveTo(cx-7.1,y+1);ctx.lineTo(cx-7.1,y+31)}else{ctx.moveTo(cx+7.1,y-1);ctx.lineTo(cx+7.1,y-32)}ctx.stroke();
   ctx.restore();
 }
 
-function makeCanvas(title, solution, item, system, style, playedIndex) {
+function makeCanvas(title, solution, item, system, style, playedIndex, tune) {
   const c=document.createElement("canvas"); c.width=1280; c.height=670;
   const ctx=c.getContext("2d");
   ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
@@ -1799,7 +1839,7 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
   ctx.fillText(title,640,62);
 
   // Current note name prominently centered below the tune title.
-  const shownNote = abcPitchToScientific(item.normalizedNote || item.abcNote);
+  const shownNote = abcPitchToScientific(item.normalizedNote || item.abcNote,tune,true);
   ctx.font="700 48px Arial, Helvetica, sans-serif";
   ctx.fillStyle="#111";
   ctx.fillText(shownNote,640,128);
@@ -1807,7 +1847,7 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
   const bm=mapFor(system);
   Object.keys(POS).forEach(id=>{
     const pair=bm[id]||["?","?"];
-    drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]),
+    drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0],tune,false),abcPitchToScientific(pair[1],tune,false),
       id===item.button,item.direction);
   });
 
@@ -1844,7 +1884,7 @@ function makeCanvas(title, solution, item, system, style, playedIndex) {
     ctx.arc(700,611,legendR,0,Math.PI*2);
   }
   ctx.stroke(); ctx.fillText("Draw",700,halfDisplay?614:611);
-  drawStaffNoteNextToLegend(ctx,item);
+  drawStaffNoteNextToLegend(ctx,item,tune);
 
   // Match the Fingering Player visual-design watermark. It may be suppressed
   // by opening the tool with nowatermark=1 in the URL.
@@ -2006,7 +2046,7 @@ $("generateBtn").addEventListener("click", async()=>{
       for (let i=0;i<solution.length;i++) {
         const item=solution[i];
         setStatus(`Generating ${title}: image ${i+1} of ${solution.length}`);
-        const canvas=makeCanvas(title,solution,item,system,style,i+1);
+        const canvas=makeCanvas(title,solution,item,system,style,i+1,tune);
         const blob=await canvasBlob(canvas);
         zip.file(`${base}_${String(i+1).padStart(3,"0")}.jpg`,blob);
         totalImages++;
