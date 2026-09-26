@@ -673,8 +673,33 @@ body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDispl
   body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:2px}
 }
 
+/* v1.48: iPad/tablet portrait full-fretboard spacing. Add a little more
+   clearance between the visible fretboard and note-name/staff column without
+   changing the compact strings-only view or tablet landscape layout. */
+@media (orientation:portrait) and (min-width:761px) and (max-width:1050px){
+  .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-56px}
+  .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:-27px}
+}
+
+/* v1.49: phone refinements. In landscape, give full-fretboard note/staff displays
+   more clearance from the visible fretboard. In portrait, let the diagram header
+   controls wrap so Full-Page View remains fully visible. */
+@media (orientation:landscape) and (max-height:650px){
+  .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.fourString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:2px}
+  .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup,
+  body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDisplayGroup{margin-left:10px}
+}
+@media (orientation:portrait) and (max-width:650px){
+  .diagramHeader{align-items:flex-start;flex-wrap:wrap}
+  .diagramHeaderRight{flex:1 1 100%;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+  .diagramHeader .fullBtn,.diagramHeader .exitFull{flex:0 0 auto}
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.47</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.49</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
