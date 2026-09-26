@@ -340,8 +340,14 @@ body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
   .notationHeaderBtn{flex:0 0 auto;padding:5px 9px}
   .countInLabel{font-size:12px}
 }
+
+/* Grey Metronome and Count-in labels whenever their checkboxes are disabled. */
+.countInLabel:has(input:disabled){
+  color:#8a8a8a;
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.29</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.31</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -353,7 +359,7 @@ body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
  <div class="leftPane" id="leftPane">
   <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox">Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Whistle Fingering</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div>
@@ -1868,7 +1874,16 @@ function setFull(on){
 }
 
 function initializeActionButtonStates(){
-  $("saveAbcBtn").disabled=!tunes.length;
+  const hasTunes=tunes.length>0;
+  // Explicitly establish startup state; Firefox can restore stale form-control
+  // disabled states across reloads/pageshow.
+  $("metronomeCheck").disabled=!hasTunes;
+  $("countInCheck").disabled=!hasTunes;
+  $("saveAbcBtn").disabled=!hasTunes;
+  // Firefox may restore a stale enabled state on reload. With no tune loaded,
+  // force Tempo back to its true startup state after form-state restoration.
+  if(!hasTunes)$("tempoBtn").disabled=true;
+  else updateTempoButtonState();
 }
 
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
@@ -2019,4 +2034,37 @@ if(document.readyState==="complete"){
 }else{
   window.addEventListener("load",loadShareLinkAfterStartup,{once:true});
 }
+
+
+/* UI-only playback-permission synchronization for notation-header controls.
+   The Tempo implementation and audio/playback code are intentionally untouched. */
+function syncPlaybackPermissionHeaderControls(){
+  const permissionPending=!!$("enablePlaybackBtn");
+  const hasTunes=tunes.length>0;
+  const muteBtn=$("muteMelodyBtn");
+  const metronome=$("metronomeCheck");
+  const countIn=$("countInCheck");
+
+  // These controls are unavailable with no loaded tune, and remain unavailable
+  // while the browser is waiting for the user's playback-permission gesture.
+  if(metronome)metronome.disabled=!hasTunes||permissionPending;
+  if(countIn)countIn.disabled=!hasTunes||permissionPending;
+
+  if(permissionPending){
+    if(muteBtn)muteBtn.disabled=true;
+    return;
+  }
+
+  if(muteBtn)updateMuteMelodyButton();
+}
+
+function installPlaybackPermissionHeaderControlSync(){
+  const audio=$("audio");
+  if(!audio)return;
+  const observer=new MutationObserver(syncPlaybackPermissionHeaderControls);
+  observer.observe(audio,{childList:true,subtree:true});
+  syncPlaybackPermissionHeaderControls();
+}
+
+installPlaybackPermissionHeaderControlSync();
 </script></body></html>

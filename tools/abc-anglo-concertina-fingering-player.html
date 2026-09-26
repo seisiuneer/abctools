@@ -390,8 +390,14 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
   .tabOverrideNav button{min-width:41px;width:41px;height:37px;padding:2px 6px;font-size:18px}
 }
 
+
+/* Grey Metronome and Count-in labels whenever their checkboxes are disabled. */
+.countInLabel:has(input:disabled){
+  color:#8a8a8a;
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.27</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.29</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -404,7 +410,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
  <div class="leftPane" id="leftPane">
   <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox">Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox">Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
@@ -3435,10 +3441,18 @@ $("abcText").disabled=false;
 // controls through the normal load paths.
 function initializeActionButtonStates(){
   const hasTunes=tunes.length>0;
+  // Explicitly establish startup state; Firefox can restore stale form-control
+  // disabled states across reloads/pageshow.
+  $("metronomeCheck").disabled=!hasTunes;
+  $("countInCheck").disabled=!hasTunes;
   if(!hasTunes)melodyMuted=false;
   $("saveAbcBtn").disabled=!hasTunes;
   $("tabOverrideBtn").disabled=!hasTunes;
   updateMuteMelodyButton();
+  // Firefox may restore a stale enabled state on reload. With no tune loaded,
+  // force Tempo back to its true startup state after form-state restoration.
+  if(!hasTunes)$("tempoBtn").disabled=true;
+  else updateTempoButtonState();
 }
 initializeActionButtonStates();
 window.addEventListener("pageshow",initializeActionButtonStates);
@@ -3474,4 +3488,37 @@ if(document.readyState==="complete"){
 }else{
   window.addEventListener("load",loadShareLinkAfterStartup,{once:true});
 }
+
+
+/* UI-only playback-permission synchronization for notation-header controls.
+   The Tempo implementation and audio/playback code are intentionally untouched. */
+function syncPlaybackPermissionHeaderControls(){
+  const permissionPending=!!$("enablePlaybackBtn");
+  const hasTunes=tunes.length>0;
+  const muteBtn=$("muteMelodyBtn");
+  const metronome=$("metronomeCheck");
+  const countIn=$("countInCheck");
+
+  // These controls are unavailable with no loaded tune, and remain unavailable
+  // while the browser is waiting for the user's playback-permission gesture.
+  if(metronome)metronome.disabled=!hasTunes||permissionPending;
+  if(countIn)countIn.disabled=!hasTunes||permissionPending;
+
+  if(permissionPending){
+    if(muteBtn)muteBtn.disabled=true;
+    return;
+  }
+
+  if(muteBtn)updateMuteMelodyButton();
+}
+
+function installPlaybackPermissionHeaderControlSync(){
+  const audio=$("audio");
+  if(!audio)return;
+  const observer=new MutationObserver(syncPlaybackPermissionHeaderControls);
+  observer.observe(audio,{childList:true,subtree:true});
+  syncPlaybackPermissionHeaderControls();
+}
+
+installPlaybackPermissionHeaderControlSync();
 </script></body></html>
