@@ -827,8 +827,16 @@ function renderWhistleStaffNote(midi){
   }
 
   if(accidental){
-    add("text",{x:57,y:(accidental>0?y+2:y-3),"font-family":"Georgia, 'Times New Roman', serif","font-size":34,
-      "text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},accidental>0?"♯":"♭");
+    if(accidental>0){
+      add("text",{x:57,y:y+2,"font-family":"Georgia, 'Times New Roman', serif","font-size":34,
+        "text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},"♯");
+    }else{
+      // Draw the flat as SVG geometry instead of a font glyph. WebKit/Blink and
+      // Firefox use different vertical metrics for ♭ with dominant-baseline.
+      add("path",{d:`M 55 ${y-18} L 55 ${y+10} M 55 ${y-4} C 67 ${y-10}, 69 ${y+1}, 55 ${y+9}`,
+        fill:"none",stroke:"#17241c","stroke-width":2.4,"stroke-linecap":"round","stroke-linejoin":"round",
+        "vector-effect":"non-scaling-stroke"});
+    }
   }
 
   add("ellipse",{cx:81,cy:y,rx:8.5,ry:5.8,transform:`rotate(-18 81 ${y})`,fill:"#17241c"});

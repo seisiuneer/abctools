@@ -2275,7 +2275,17 @@ function renderConcertinaStaffNote(item){
   const ledgerYs=[];if(y>=bottomY+gap/2){for(let ly=bottomY+gap;ly<=y+1;ly+=gap)ledgerYs.push(ly)}else if(y<=bottomY-4*gap-gap/2){for(let ly=bottomY-5*gap;ly>=y-1;ly-=gap)ledgerYs.push(ly)}
   ledgerYs.forEach(ly=>add("line",{x1:65,y1:ly,x2:97,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"}));
   add("ellipse",{cx:81,cy:y,rx:9,ry:6.2,fill:"#17241c",transform:`rotate(-18 81 ${y})`});
-  if(accidental){add("text",{x:59,y:(accidental>0?y+2:y-3),"font-family":"Georgia, 'Times New Roman', serif","font-size":36,"text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},accidental>0?"♯":"♭")}
+  if(accidental){
+    if(accidental>0){
+      add("text",{x:59,y:y+2,"font-family":"Georgia, 'Times New Roman', serif","font-size":36,"text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},"♯")
+    }else{
+      // Draw the flat as SVG geometry instead of a font glyph. WebKit/Blink and
+      // Firefox use different vertical metrics for ♭ with dominant-baseline.
+      add("path",{d:`M 57 ${y-19} L 57 ${y+11} M 57 ${y-4} C 70 ${y-11}, 72 ${y+1}, 57 ${y+10}`,
+        fill:"none",stroke:"#17241c","stroke-width":2.5,"stroke-linecap":"round","stroke-linejoin":"round",
+        "vector-effect":"non-scaling-stroke"})
+    }
+  }
   if(steps>=4)add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
   else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
 }
