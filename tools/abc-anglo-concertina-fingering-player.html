@@ -397,7 +397,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.29</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.30</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -513,9 +513,9 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
         fingering diagram highlights the required concertina button.</p>
       <p><b>Red</b>
         indicates Push and <b>green</b> indicates Draw.</p>
-      <p>Note names throughout the tool are displayed using sharps rather than flats.</p>
+      <p>Note names throughout the tool use sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>Check <b>Show note</b> in the Fingering Diagram header to also show the current pitch as a quarter note on a staff positioned to the right of the Push/Draw legend. The Show note setting is remembered in this browser and is off by default until you enable it.</p>
-      <p>The staff notation uses sharps for accidentals, matching the note names used by the tool.</p>
+      <p>The staff notation uses the same sharp or flat naming as the displayed note name.</p>
       <p>Playback uses the ABC Transcription Tools custom concertina <b>MIDI program 133</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
       <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
@@ -1905,8 +1905,55 @@ function abcPitchToMidi(s){
   let delta=0;for(const ch of acc){if(ch==="^")delta++;else if(ch==="_")delta--;else if(ch==="=")delta=0}
   return 12*(octave+1)+pc+delta;
 }
-function midiToSharpScientific(midi){const n=Math.round(Number(midi));if(!Number.isFinite(n))return"—";const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];return names[((n%12)+12)%12]+(Math.floor(n/12)-1)}
-function abcPitchToScientific(s){const midi=abcPitchToMidi(s);return midi==null?(s&&s!=="x"&&s!=="z"?String(s):"—"):midiToSharpScientific(midi)}
+
+// Choose enharmonic note-name spelling from the tune's K: field only.
+// Supported mode spellings include Major/maj, Minor/min/m, Mixolydian/mix,
+// and Dorian/dor, with or without a space after the tonic (for example
+// K:Ddor, K:D Dorian, K:D dor, K:D Dor, K:D dorian).
+function keyTagPrefersFlats(abc){
+  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);
+  if(!m)return false;
+
+  const tonic=m[1].toUpperCase()+m[2];
+  const rest=String(m[3]||"").trim().toLowerCase();
+  const modeToken=(rest.match(/^([a-z]+)/)||["",""])[1];
+
+  let mode="major";
+  if(modeToken==="m"||modeToken.startsWith("min")||modeToken.startsWith("aeo"))mode="minor";
+  else if(modeToken.startsWith("dor"))mode="dorian";
+  else if(modeToken.startsWith("mix"))mode="mixolydian";
+  else if(modeToken===""||modeToken.startsWith("maj")||modeToken.startsWith("ion"))mode="major";
+
+  const majorFifths={
+    "Cb":-7,"Gb":-6,"Db":-5,"Ab":-4,"Eb":-3,"Bb":-2,"F":-1,
+    "C":0,"G":1,"D":2,"A":3,"E":4,"B":5,"F#":6,"C#":7
+  };
+  if(!(tonic in majorFifths))return false;
+
+  const modalOffset={major:0,mixolydian:-1,dorian:-2,minor:-3}[mode]??0;
+  return majorFifths[tonic]+modalOffset<0;
+}
+
+function displayPitchClassName(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n))return "";
+  const sharpNames=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const flatNames =["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+  const names=keyTagPrefersFlats($("abcText")?.value)?flatNames:sharpNames;
+  return names[(n%12+12)%12];
+}
+
+function displayStaffSpelling(midi){
+  const n=Math.round(Number(midi));
+  const pc=((n%12)+12)%12;
+  const useFlats=keyTagPrefersFlats($("abcText")?.value);
+  const sharp={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const flat ={0:["C",0],1:["D",-1],2:["D",0],3:["E",-1],4:["E",0],5:["F",0],6:["G",-1],7:["G",0],8:["A",-1],9:["A",0],10:["B",-1],11:["B",0]};
+  return (useFlats?flat:sharp)[pc];
+}
+
+function midiToDisplayScientific(midi){const n=Math.round(Number(midi));if(!Number.isFinite(n))return"—";return displayPitchClassName(n).replace("#","♯").replace("b","♭")+(Math.floor(n/12)-1)}
+function abcPitchToScientific(s){const midi=abcPitchToMidi(s);return midi==null?(s&&s!=="x"&&s!=="z"?String(s):"—"):midiToDisplayScientific(midi)}
 function stripChordSymbols(abc){return abc.replace(/"[^"\r\n]*"/g,m=>" ".repeat(m.length))}
 
 /*
@@ -2214,16 +2261,15 @@ function renderConcertinaStaffNote(item){
   if(!visible){svg.style.display="none";return}
   svg.style.display="block";
   const NS="http://www.w3.org/2000/svg";
-  const add=(name,attrs)=>{const el=document.createElementNS(NS,name);for(const [key,value] of Object.entries(attrs||{}))el.setAttribute(key,String(value));svg.appendChild(el);return el};
+  const add=(name,attrs,text)=>{const el=document.createElementNS(NS,name);for(const [key,value] of Object.entries(attrs||{}))el.setAttribute(key,String(value));if(text!=null)el.textContent=text;svg.appendChild(el);return el};
   const n=Math.round(midi),pc=((n%12)+12)%12;
-  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
-  const [letter,sharp]=spellings[pc],octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const [letter,accidental]=displayStaffSpelling(n),octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
   const steps=(octave*7+letterIndex)-(4*7+2),bottomY=142,gap=12,y=bottomY-steps*(gap/2);
   for(let i=0;i<5;i++){const ly=bottomY-i*gap;add("line",{x1:28,y1:ly,x2:132,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"})}
   const ledgerYs=[];if(y>=bottomY+gap/2){for(let ly=bottomY+gap;ly<=y+1;ly+=gap)ledgerYs.push(ly)}else if(y<=bottomY-4*gap-gap/2){for(let ly=bottomY-5*gap;ly>=y-1;ly-=gap)ledgerYs.push(ly)}
   ledgerYs.forEach(ly=>add("line",{x1:65,y1:ly,x2:97,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"}));
   add("ellipse",{cx:81,cy:y,rx:9,ry:6.2,fill:"#17241c",transform:`rotate(-18 81 ${y})`});
-  if(sharp){const sy=y-1;add("line",{x1:57,y1:sy-11,x2:57,y2:sy+11,stroke:"#17241c","stroke-width":1.45,"vector-effect":"non-scaling-stroke"});add("line",{x1:63,y1:sy-13,x2:63,y2:sy+9,stroke:"#17241c","stroke-width":1.45,"vector-effect":"non-scaling-stroke"});add("line",{x1:53,y1:sy-4,x2:67,y2:sy-6,stroke:"#17241c","stroke-width":1.7,"vector-effect":"non-scaling-stroke"});add("line",{x1:53,y1:sy+3,x2:67,y2:sy+1,stroke:"#17241c","stroke-width":1.7,"vector-effect":"non-scaling-stroke"})}
+  if(accidental){add("text",{x:59,y:(accidental>0?y+2:y-3),"font-family":"Georgia, 'Times New Roman', serif","font-size":36,"text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},accidental>0?"♯":"♭")}
   if(steps>=4)add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
   else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
 }
@@ -2238,7 +2284,7 @@ function drawDiagram(item=null,force=false){
   // and change one DOM text node. No full diagram/text canvas rendering.
   const c=$("diagramOverlay"),ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
-  $("liveNoteName").textContent=item?abcPitchToScientific(item.normalizedNote||item.abcNote):"";
+  $("liveNoteName").textContent=item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
   renderConcertinaStaffNote(item);
 
   if(item){

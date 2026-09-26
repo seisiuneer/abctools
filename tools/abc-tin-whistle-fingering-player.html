@@ -347,7 +347,7 @@ body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.31</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.32</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -398,7 +398,7 @@ body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
       <p>The display uses standard D-whistle fingering. The note name appears to the right of the fingering symbol.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
-      <p>Note names are displayed using sharps only. When <b>Show note</b> is enabled, the notation below the note name also uses sharps for accidentals rather than flats.</p>
+      <p>Note names are displayed using sharps or flats according to the tune's <b>K:</b> key and mode. When <b>Show note</b> is enabled, the notation below the note name uses the same sharp or flat naming.</p>
       <p>Use <b>Octave Display</b> to choose uppercase note names with ' marks, lowercase/uppercase note names by octave, or color-coded versions of either style.</p>
       <p>The two <b>Color-coded</b> choices draw the fingering glyph black below D5, dark red from D5 through C#6, and orange from D6 upward.</p>
       <p>The <b>Notation display</b> and <b>Octave Display</b> choices are remembered in this browser and are also included in generated share links.</p>
@@ -690,11 +690,55 @@ function whistleGlyphForMidi(midi){
   return index>=0&&index<WHISTLE_GLYPH_MAP.length?WHISTLE_GLYPH_MAP[index]:"x";
 }
 
-function midiPitchClassName(midi){
-  const names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+
+// Choose enharmonic note-name spelling from the tune's K: field only.
+// Supported mode spellings include Major/maj, Minor/min/m, Mixolydian/mix,
+// and Dorian/dor, with or without a space after the tonic (for example
+// K:Ddor, K:D Dorian, K:D dor, K:D Dor, K:D dorian).
+function keyTagPrefersFlats(abc){
+  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);
+  if(!m)return false;
+
+  const tonic=m[1].toUpperCase()+m[2];
+  const rest=String(m[3]||"").trim().toLowerCase();
+  const modeToken=(rest.match(/^([a-z]+)/)||["",""])[1];
+
+  let mode="major";
+  if(modeToken==="m"||modeToken.startsWith("min")||modeToken.startsWith("aeo"))mode="minor";
+  else if(modeToken.startsWith("dor"))mode="dorian";
+  else if(modeToken.startsWith("mix"))mode="mixolydian";
+  else if(modeToken===""||modeToken.startsWith("maj")||modeToken.startsWith("ion"))mode="major";
+
+  const majorFifths={
+    "Cb":-7,"Gb":-6,"Db":-5,"Ab":-4,"Eb":-3,"Bb":-2,"F":-1,
+    "C":0,"G":1,"D":2,"A":3,"E":4,"B":5,"F#":6,"C#":7
+  };
+  if(!(tonic in majorFifths))return false;
+
+  const modalOffset={major:0,mixolydian:-1,dorian:-2,minor:-3}[mode]??0;
+  return majorFifths[tonic]+modalOffset<0;
+}
+
+function displayPitchClassName(midi){
   const n=Math.round(Number(midi));
   if(!Number.isFinite(n))return "";
+  const sharpNames=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const flatNames =["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+  const names=keyTagPrefersFlats($("abcText")?.value)?flatNames:sharpNames;
   return names[(n%12+12)%12];
+}
+
+function displayStaffSpelling(midi){
+  const n=Math.round(Number(midi));
+  const pc=((n%12)+12)%12;
+  const useFlats=keyTagPrefersFlats($("abcText")?.value);
+  const sharp={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const flat ={0:["C",0],1:["D",-1],2:["D",0],3:["E",-1],4:["E",0],5:["F",0],6:["G",-1],7:["G",0],8:["A",-1],9:["A",0],10:["B",-1],11:["B",0]};
+  return (useFlats?flat:sharp)[pc];
+}
+
+function midiPitchClassName(midi){
+  return displayPitchClassName(midi);
 }
 
 function formattedWhistleNoteName(midi){
@@ -754,8 +798,7 @@ function renderWhistleStaffNote(midi){
 
   const n=Math.round(Number(midi));
   const pc=((n%12)+12)%12;
-  const spellings={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
-  const [letter,sharp]=spellings[pc];
+  const [letter,accidental]=displayStaffSpelling(n);
   const octave=Math.floor(n/12)-1;
   const letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
   const steps=(octave*7+letterIndex)-(4*7+2); // E4 = bottom staff line
@@ -783,9 +826,9 @@ function renderWhistleStaffNote(midi){
     }
   }
 
-  if(sharp){
-    add("text",{x:51,y:y+1,"font-family":"Georgia, 'Times New Roman', serif","font-size":25,
-      "text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},"♯");
+  if(accidental){
+    add("text",{x:57,y:(accidental>0?y+2:y-3),"font-family":"Georgia, 'Times New Roman', serif","font-size":34,
+      "text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},accidental>0?"♯":"♭");
   }
 
   add("ellipse",{cx:81,cy:y,rx:8.5,ry:5.8,transform:`rotate(-18 81 ${y})`,fill:"#17241c"});
@@ -827,7 +870,7 @@ function showWhistleLive(midi){
   const n=currentLiveMidi;
   glyph.textContent=whistleGlyphForMidi(n);
   glyph.style.color=whistleGlyphColor(n);
-  note.textContent=formattedWhistleNoteName(n);
+  note.textContent=formattedWhistleNoteName(n).replace(/#/g,"♯").replace(/b/g,"♭");
   renderWhistleStaffNote(n);
 }
 
