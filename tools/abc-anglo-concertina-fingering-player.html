@@ -403,7 +403,7 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.30</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.31</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -2355,7 +2355,19 @@ function fingeringForEvent(event){
   }
   return null;
 }
-function keepCursorVisible(){if(!playbackCursor)return;const vp=$("notation").parentElement,c=playbackCursor.getBoundingClientRect(),v=vp.getBoundingClientRect(),m=28;if(c.top<v.top+m)vp.scrollBy({top:c.top-v.top-m,behavior:"smooth"});else if(c.bottom>v.bottom-m)vp.scrollBy({top:c.bottom-v.bottom+m,behavior:"smooth"})}
+function keepCursorVisible(){
+  if(!playbackCursor)return;
+  const vp=$("notation").parentElement;
+  const c=playbackCursor.getBoundingClientRect();
+  const v=vp.getBoundingClientRect();
+
+  // Keep the top of the current staff one-third of the way down the
+  // notation pane. Both values are screen coordinates, so responsive
+  // notation scaling is handled automatically.
+  const delta=(c.top-v.top)-(v.height/3);
+  if(Math.abs(delta)>0.5)
+    vp.scrollBy({top:delta,behavior:"smooth"});
+}
 
 function noteStartForEditorPosition(value,pos){
   pos=Math.max(0,Math.min(Number(pos)||0,value.length));
@@ -3343,7 +3355,9 @@ async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.
       drawDiagram(null,true);
     }};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});audioControllerInitializing=true;try{await controller.setTune(visual[0],false,{})}finally{audioControllerInitializing=false}if(gen!==renderGeneration)return;restoreManualSelectionAfterRebuild();installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
 let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
-function loadTune(index,syncEditor=true){if(syncEditor)syncCurrentTuneFromEditor();cancelCountIn();manualSelectedNoteStart=null;playbackActive=false;melodyMuted=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;updateMuteMelodyButton();$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+function loadTune(index,syncEditor=true){
+  const notationViewport=$("notation").parentElement;
+  if(notationViewport)notationViewport.scrollTop=0;if(syncEditor)syncCurrentTuneFromEditor();cancelCountIn();manualSelectedNoteStart=null;playbackActive=false;melodyMuted=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;updateMuteMelodyButton();$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
 function updateMuteMelodyButton(){
   const btn=$("muteMelodyBtn");
   if(!btn)return;
