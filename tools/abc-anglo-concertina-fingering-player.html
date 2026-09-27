@@ -402,8 +402,53 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
   body.diagram-full .liveNoteName{top:12.5%;}
 }
 
+
+#fileLabel{margin-right:10px}
+.paneFullBtn:disabled{opacity:.45;cursor:default}
+/* Full-page ABC editor and notation panes. */
+.paneFullBtn{
+  font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:6px;
+  padding:5px 10px;font-size:13px;font-weight:650;line-height:1.2;cursor:pointer;
+  color:#17241c;-webkit-text-fill-color:#17241c;white-space:nowrap
+}
+.paneFullBtn:hover{background:#d6e6ff;border-color:#6f99e8}
+
+/* Full-page editor: only the ABC panel remains visible. */
+body.abc-full{overflow:hidden}
+body.abc-full .app-header,
+body.abc-full .toolbar,
+body.abc-full #notationPanel,
+body.abc-full #splitH,
+body.abc-full .diagramCard,
+body.abc-full .splitV,
+body.abc-full .bottomBar{display:none !important}
+body.abc-full .workspace{display:block !important;padding:0 !important;height:100vh !important}
+body.abc-full .leftPane{display:block !important;height:100vh !important;margin:0 !important}
+body.abc-full #abcPanel{
+  position:fixed;inset:0;z-index:3000;border:0;border-radius:0;
+  display:flex !important;flex-direction:column
+}
+body.abc-full #abcPanel .panelHeader{padding:10px 14px}
+
+/* Full-page notation: keep its playback controls in the pane. */
+body.notation-full{overflow:hidden}
+body.notation-full .app-header,
+body.notation-full .toolbar,
+body.notation-full #abcPanel,
+body.notation-full #splitH,
+body.notation-full .diagramCard,
+body.notation-full .splitV,
+body.notation-full .bottomBar{display:none !important}
+body.notation-full .workspace{display:block !important;padding:0 !important;height:100vh !important}
+body.notation-full .leftPane{display:block !important;height:100vh !important;margin:0 !important}
+body.notation-full #notationPanel{
+  position:fixed;inset:0;z-index:3000;border:0;border-radius:0;
+  display:flex !important;flex-direction:column
+}
+body.notation-full #notationPanel .panelHeader{padding:10px 14px}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.31</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.32</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -414,12 +459,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -537,11 +582,9 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
              alt="Tempo control"
              style="max-width: 100%; height: auto;">
       </div>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Full-Page Fingering Diagram</p>
-      <p>Click <b>Full-Page View</b> in the Fingering Diagram header when you want the
-        diagram to occupy the main browser view while keeping the playback controls
-        across the bottom.</p>
-      <p>Click <b>Exit Full Page</b> or press <b>Escape</b> to return.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+      <p>On wide screens, drag the vertical divider to resize the left and fingering-diagram panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
+      <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Fingering Diagram</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving the ABC</p>
       <p>Click <b>Save</b> to save the entire currently loaded tune collection, including edits made to any tune.</p>
@@ -2443,7 +2486,7 @@ function setHorizontalSplit(percent){splitHPercent=clamp(percent,25,75);const av
 function restoreSplitters(){if(window.matchMedia("(max-width:1050px)").matches)return;const p=savedSplitters();if(Number.isFinite(p.v))splitVPercent=clamp(p.v,25,75);if(Number.isFinite(p.h))splitHPercent=clamp(p.h,25,75);setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}
 function installSplitters(){
  const sv=$("splitV"),sh=$("splitH");
- function begin(e,kind){if(e.button!==undefined&&e.button!==0)return;if(window.matchMedia("(max-width:1050px)").matches)return;e.preventDefault();document.body.classList.add("resizing");
+ function begin(e,kind){if(e.button!==undefined&&e.button!==0)return;if(anyFullPageMode()||window.matchMedia("(max-width:1050px)").matches)return;e.preventDefault();document.body.classList.add("resizing");
   const startX=e.clientX,startY=e.clientY,startV=splitVPercent,startH=splitHPercent;
   const r=kind==="v"?$("workspace").getBoundingClientRect():$("leftPane").getBoundingClientRect();
   const avail=Math.max(1,(kind==="v"?r.width:r.height)-15);
@@ -2462,7 +2505,7 @@ function installSplitters(){
  sv.addEventListener("pointerdown",e=>begin(e,"v"));sh.addEventListener("pointerdown",e=>begin(e,"h"));
  sv.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setVerticalSplit(DEFAULT_SPLIT_V);saveSplitterPercents()});
  sh.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setHorizontalSplit(DEFAULT_SPLIT_H);saveSplitterPercents()});
- window.addEventListener("resize",()=>{if(!document.body.classList.contains("diagram-full")&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}});
+ window.addEventListener("resize",()=>{if(!anyFullPageMode()&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}});
 }
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-anglo-concertina-fingering-player.html";
@@ -3505,7 +3548,39 @@ $("abcText").addEventListener("input",()=>{
   updateShareButtons();
 });
 $("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
-function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>{if(!on&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}drawDiagram(currentDiagramItem,true)})}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false)});
+
+function anyFullPageMode(){
+  return document.body.classList.contains("diagram-full") ||
+         document.body.classList.contains("abc-full") ||
+         document.body.classList.contains("notation-full");
+}
+function setPaneFull(kind,on){
+  const cls=kind==="abc"?"abc-full":"notation-full";
+  const btn=$(kind==="abc"?"abcFullBtn":"notationFullBtn");
+  if(on){
+    document.body.classList.remove("abc-full","notation-full");
+    document.body.classList.add(cls);
+  }else{
+    document.body.classList.remove(cls);
+  }
+  if(btn)btn.textContent=on?"Exit Full-Page":"Full-Page View";
+  requestAnimationFrame(()=>{
+    if(!on&&!window.matchMedia("(max-width:1050px)").matches){
+      setVerticalSplit(splitVPercent);
+      setHorizontalSplit(splitHPercent);
+    }
+  });
+}
+$("abcFullBtn").addEventListener("click",()=>{
+  if($("abcFullBtn").disabled)return;
+  setPaneFull("abc",!document.body.classList.contains("abc-full"));
+});
+$("notationFullBtn").addEventListener("click",()=>{
+  if($("notationFullBtn").disabled)return;
+  setPaneFull("notation",!document.body.classList.contains("notation-full"));
+});
+
+function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>{if(!on&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}drawDiagram(currentDiagramItem,true)})}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(document.body.classList.contains("diagram-full"))setFull(false);else if(document.body.classList.contains("abc-full"))setPaneFull("abc",false);else if(document.body.classList.contains("notation-full"))setPaneFull("notation",false)});
 // Firefox may restore textarea/form state across a reload. Clear the ABC editor
 // synchronously at startup so stale ABC is never visible. Keep the empty editor
 // enabled so a user can immediately type or paste a single tune.
@@ -3579,6 +3654,12 @@ function syncPlaybackPermissionHeaderControls(){
   // while the browser is waiting for the user's playback-permission gesture.
   if(metronome)metronome.disabled=!hasTunes||permissionPending;
   if(countIn)countIn.disabled=!hasTunes||permissionPending;
+
+  const paneFullDisabled=!hasTunes||permissionPending;
+  const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn");
+  if(abcFullBtn)abcFullBtn.disabled=paneFullDisabled;
+  if(notationFullBtn)notationFullBtn.disabled=paneFullDisabled;
+  if(fullBtn)fullBtn.disabled=paneFullDisabled;
 
   if(permissionPending){
     if(muteBtn)muteBtn.disabled=true;
