@@ -335,6 +335,41 @@ body.diagram-full .whistleStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
 @media(max-width:1050px){.whistleToolbar{grid-template-columns:1fr 1fr}.whistleToolbar .fileControl{grid-column:1 / -1}.whistleLive{min-height:500px}.whistleLargeGlyph{font-size:clamp(190px,34vw,350px)}}
 @media(max-width:760px){.whistleStaffNote{width:100px;height:130px;transform:translate(-50%,-10px) scaleX(.94)}}
 @media(max-width:650px){.whistleToolbar{grid-template-columns:1fr}.whistleToolbar .fileControl{grid-column:auto}.whistleLive{min-height:365px;padding:22px 12px}.whistleTuneTitle{font-size:26px;margin-bottom:22px}.whistleLargeGlyph{font-size:clamp(180px,55vw,300px)}.whistleNoteGroup{margin-left:10px;width:150px;transform:translateX(-65px) translateY(-58%) translateY(-1em)}.whistleNoteGroup.showStaffNote{transform:translateX(-65px) translateY(-58%) translateY(-2em)}.whistleLiveNote{font-size:48px}}
+
+/* Targeted live-diagram spacing fixes: iPhone portrait and iPad landscape only. */
+@media (orientation:portrait) and (max-width:650px){
+  .whistleLive{padding-top:8px}
+  .whistleTuneTitle{margin-bottom:38px}
+}
+@media (orientation:landscape) and (min-width:651px) and (max-width:1050px){
+  .whistleLive{padding-top:10px}
+  .whistleTuneTitle{margin-bottom:72px}
+  .whistleLiveRow{flex:0 0 auto}
+  body.diagram-full .whistleTuneTitle{margin-bottom:90px}
+}
+/* v1.45: live recorder diagram spacing for iPad landscape and wide/short desktop windows. */
+/* Modern iPads report landscape CSS widths above the old 1050px tablet breakpoint.
+   Coarse pointer + no hover keeps these changes off desktop Safari and iPhone. */
+@media (orientation:landscape) and (min-width:651px) and (max-width:1366px) and (hover:none) and (pointer:coarse){
+  .whistleLive{padding-top:12px}
+  .whistleTuneTitle{margin-bottom:38px}
+  .whistleLiveRow{flex:0 0 auto}
+  .whistleGlyphGroup{margin-top:42px}
+  body.diagram-full .whistleTuneTitle{margin-bottom:46px}
+  body.diagram-full .whistleGlyphGroup{margin-top:56px}
+}
+
+/* On wide but vertically short desktop windows, size the live fingering primarily
+   from available height rather than width so the glyph cannot crowd the title. */
+@media (min-width:1051px) and (max-height:900px) and (hover:hover) and (pointer:fine){
+  body:not(.diagram-full) .whistleLive{padding:10px 18px}
+  body:not(.diagram-full) .whistleTuneTitle{font-size:clamp(24px,4.5vh,38px);margin-bottom:14px}
+  body:not(.diagram-full) .whistleGlyphGroup{margin-top:18px}
+  body:not(.diagram-full) .whistleLargeGlyph{font-size:clamp(190px,38vh,330px)}
+  body:not(.diagram-full) .whistleLiveNote{font-size:clamp(44px,8vh,78px)}
+  body:not(.diagram-full) .whistleStaffNote{width:clamp(105px,14vh,150px);height:clamp(130px,18vh,180px)}
+}
+
 /* v1.29: header Tempo button; allow notation actions to wrap on phone portrait. */
 @media (orientation:portrait) and (max-width:650px){
   .panelHeader:has(.notationHeaderRight){align-items:flex-start;flex-wrap:wrap}
@@ -394,7 +429,7 @@ body.notation-full #notationPanel{
 body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.42</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.46</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="recorder-tab" selected>Notation + Recorder Tab</option></select></div>
@@ -1379,7 +1414,7 @@ async function confirmDiscardDirtyForOpen(){
 
 function baseNameForSave(name){
   const s=String(name||"").trim().replace(/^.*[\\/]/,"").replace(/\.(?:abc|txt)$/i,"");
-  return s||"tin-whistle-tunes";
+  return s||"recorder-tunes";
 }
 
 function syncAllTunesForSave(){
@@ -1404,7 +1439,7 @@ async function askSaveBaseName(){
   const mobile=mobileSavePlatform();
   const ext=mobile?".txt":".abc";
   const def=baseNameForSave(
-    currentSaveBaseName||manualTuneTitleBaseName()||"tin-whistle-tune"
+    currentSaveBaseName||manualTuneTitleBaseName()||"recorder-tune"
   )+ext;
 
   let v=null;
