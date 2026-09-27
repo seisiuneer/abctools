@@ -248,7 +248,8 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 
 
 /* Tab Override entry palette: compact physical concertina layout. */
-.abcHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.abcHeaderRight{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0;flex:1 1 auto;flex-wrap:wrap}
+#abcPanel .panelHeader{flex-wrap:wrap}
 #tabOverrideBtn{padding:5px 10px;min-height:30px;font-size:.86rem;white-space:nowrap}
 .tabOverridePopover{
   position:fixed;z-index:3600;width:min(590px,calc(100vw - 24px));
