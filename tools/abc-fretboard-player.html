@@ -868,6 +868,7 @@ let controller=null;
 let renderGeneration=0;
 let prefixLength=0;
 let playbackCursor=null;
+let lastAutoscrollSystemTop=null;
 let playbackActive=false;
 let audioControllerInitializing=false;
 let melodyMuted=false;
@@ -1111,26 +1112,55 @@ function buildPlaybackABC(abc){
 }
 
 function removeCursor(){
+  lastAutoscrollSystemTop=null;
   if(playbackCursor){
     playbackCursor.remove();
     playbackCursor=null;
   }
 }
 
-function keepCursorVisible(){
+function keepCursorVisible(event){
   if(!playbackCursor)return;
   const vp=$("notation").parentElement;
   const c=playbackCursor.getBoundingClientRect();
   const v=vp.getBoundingClientRect();
+  if(!vp||v.height<=0)return;
 
-  // Keep the top of the current staff one-third of the way down the
-  // notation pane. Both values are screen coordinates, so responsive
-  // notation scaling is handled automatically.
-  const delta=(c.top-v.top)-(v.height/3);
-  if(Math.abs(delta)>0.5)
-    vp.scrollBy({top:delta,behavior:"smooth"});
+  // Hybrid autoscroll:
+  // - Short panes: scroll only when playback moves to a different staff/system.
+  // - Taller panes: leave the cursor alone inside a generous safe zone and
+  //   smooth-scroll only when it moves outside that zone.
+  // event.top is the abcjs system-relative Y position and is stable while a
+  // smooth scroll is in progress, so it is safe to use as the system identity.
+  const shortPane=v.height < Math.max(150,c.height*2.2);
+  if(shortPane){
+    const systemTop=event&&Number.isFinite(Number(event.top))?Number(event.top):null;
+    if(systemTop===null)return;
+    if(lastAutoscrollSystemTop!==null&&Math.abs(systemTop-lastAutoscrollSystemTop)<1)return;
+    lastAutoscrollSystemTop=systemTop;
+
+    // Put the current staff close to the top of a short pane. Clamp the
+    // destination so the first and last systems cannot cause oscillation.
+    const maxScroll=Math.max(0,vp.scrollHeight-vp.clientHeight);
+    const target=Math.max(0,Math.min(maxScroll,vp.scrollTop+(c.top-v.top)-8));
+    if(Math.abs(target-vp.scrollTop)>1)
+      vp.scrollTo({top:target,behavior:"smooth"});
+    return;
+  }
+
+  lastAutoscrollSystemTop=null;
+  const topLimit=v.top+v.height*.22;
+  const bottomLimit=v.top+v.height*.78;
+  let delta=0;
+  if(c.top<topLimit)delta=c.top-topLimit;
+  else if(c.bottom>bottomLimit)delta=c.bottom-bottomLimit;
+  if(Math.abs(delta)>1){
+    const maxScroll=Math.max(0,vp.scrollHeight-vp.clientHeight);
+    const target=Math.max(0,Math.min(maxScroll,vp.scrollTop+delta));
+    if(Math.abs(target-vp.scrollTop)>1)
+      vp.scrollTo({top:target,behavior:"smooth"});
+  }
 }
-
 function gdaePositionForMidi(midi){
   const n=Math.round(Number(midi));
   if(!Number.isFinite(n))return null;
@@ -2260,7 +2290,7 @@ async function rebuild(){
           playbackCursor.setAttribute("x2",String(event.left-2));
           playbackCursor.setAttribute("y1",String(event.top));
           playbackCursor.setAttribute("y2",String(event.top+event.height));
-          keepCursorVisible();
+          keepCursorVisible(event);
         }
         const midi=eventMidi(event);
         if(midi!=null)showWhistleLive(midi);
