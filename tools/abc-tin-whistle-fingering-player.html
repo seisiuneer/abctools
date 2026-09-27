@@ -392,7 +392,7 @@ body.notation-full #notationPanel{
 body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.34</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.35</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -1762,7 +1762,6 @@ async function rebuild(){
     const renderParams={
       responsive:"resize",
       expandToWidest:true,
-      selectTypes:false,
       add_classes:true,
       selectionColor:"#ff0000",
       clickListener:selectClickedNotationNote
