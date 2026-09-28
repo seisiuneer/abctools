@@ -454,7 +454,7 @@ body.notation-full #notationPanel{
 body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.49</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.50</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="recorder-tab" selected>Notation + Recorder Tab</option></select></div>
@@ -870,7 +870,7 @@ function whistleGlyphForMidi(midi){
 // and Dorian/dor, with or without a space after the tonic (for example
 // K:Ddor, K:D Dorian, K:D dor, K:D Dor, K:D dorian).
 function keyTagPrefersFlats(abc){
-  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);
+  const m=String(abc||"").match(/^K:[ \t]*([A-Ga-g])([#b]?)([^\r\n]*)$/m);
   if(!m)return false;
 
   const tonic=m[1].toUpperCase()+m[2];
@@ -1209,7 +1209,7 @@ function clickedNotationMidi(clickedToken){
   function keyAccidentalsAt(pos){
     let fifths=0;
     const before=abc.slice(0,pos);
-    const keyMatches=[...before.matchAll(/^K:\s*([A-Ga-g])([#b]?)([^\r\n]*)/gm)];
+    const keyMatches=[...before.matchAll(/^K:[ \t]*([A-Ga-g])([#b]?)([^\r\n]*)/gm)];
     const km=keyMatches.length?keyMatches[keyMatches.length-1]:null;
     if(!km)return {};
     const tonic=km[1].toUpperCase()+km[2];

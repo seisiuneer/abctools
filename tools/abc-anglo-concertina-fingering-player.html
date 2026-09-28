@@ -342,7 +342,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 body.popoverDragging{user-select:none;-webkit-user-select:none}
 
 
-/* Version 2.01: compact v1.96-style palette with separated hands. */
+/* Version 2.02: compact v1.96-style palette with separated hands. */
 .tabOverridePopover{width:min(484px,calc(100vw - 24px));padding:12px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
 .tabOverrideTop{margin-bottom:12px}
 .tabOverrideTitle{font-size:inherit;font-weight:700;line-height:normal}
@@ -1961,7 +1961,7 @@ function abcPitchToMidi(s){
 // and Dorian/dor, with or without a space after the tonic (for example
 // K:Ddor, K:D Dorian, K:D dor, K:D Dor, K:D dorian).
 function keyTagPrefersFlats(abc){
-  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);
+  const m=String(abc||"").match(/^K:[ \t]*([A-Ga-g])([#b]?)([^\r\n]*)$/m);
   if(!m)return false;
 
   const tonic=m[1].toUpperCase()+m[2];

@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ABC Harmonica Player</title>
+<meta name="description" content="Play ABC tunes while following synchronized harmonica diagrams for 10-hole diatonic and 12- or 16-hole chromatic harmonicas, with blow, draw, bend, slide, and overblow indications." />
+<meta name="keywords" content="ABC notation, harmonica, diatonic harmonica, chromatic harmonica, harmonica tablature, harmonica fingering, Richter tuning, harmonica playback, Irish traditional music, ABC Transcription Tools" />
+<meta name="author" content="Michael Eskin" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="ABC Harmonica Player" />
+<meta property="og:description" content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows for 10-hole diatonic and 12- or 16-hole chromatic harmonicas." />
+<meta property="og:site_name" content="ABC Harmonica Player" />
+<meta property="og:url" content="https://michaeleskin.com/tools/abc-harmonica-player.html" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-harmonica-player-1.jpg"/>
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet">
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+<style>
+:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
+.app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(170px,1.15fr) auto minmax(150px,1fr) minmax(72px,.42fr) minmax(78px,.46fr) minmax(190px,1.35fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}.diagramHeaderRight .meta{margin-right:.6em}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
+.abcWrap textarea.editorTextSmall{font-size:14px}
+.abcWrap textarea.editorTextMedium{font-size:16px}
+.abcWrap textarea.editorTextLarge{font-size:17px}
+.abcWrap textarea.editorTextLargest{font-size:18px}.notationViewport{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff}.notation{padding:7px;min-height:max-content}.notation svg{display:block;max-width:100%;height:auto}.notation .abcjs-cursor{stroke:#00c83c;stroke-width:12px;stroke-opacity:.28;transform:translate(7px,0);pointer-events:none}.audioRow{flex:0 0 auto;padding:7px 9px 9px;border-top:1px solid rgba(127,127,127,.18)}
+/* Make the abcjs Repeat/Loop button unmistakable when enabled. */
+#audio .abcjs-midi-loop.abcjs-pushed{background:#176b43 !important;border-color:#0d4c2f !important;color:#fff !important;box-shadow:0 0 0 3px rgba(23,107,67,.24),inset 0 0 0 1px rgba(255,255,255,.22) !important}
+#audio .abcjs-midi-loop.abcjs-pushed svg,#audio .abcjs-midi-loop.abcjs-pushed svg *{fill:#fff !important;stroke:#fff !important}
+.splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
+.diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}.diagramStack{position:relative;width:100%;max-height:100%;aspect-ratio:1280/760}.diagramStack canvas{display:block;width:100%;height:100%;object-fit:contain}.diagramStack #diagramOverlay{position:absolute;inset:0;pointer-events:none}
+.liveTuneTitle{position:absolute;left:0;right:0;top:-9%;text-align:center;font:400 clamp(44px,4.2vw,58px) Arial,sans-serif;color:#333;line-height:1;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 20px}
+.liveNoteName{position:absolute;left:0;right:0;top:7.0%;text-align:center;font:700 clamp(58px,7.0vw,98px) system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111;line-height:1;pointer-events:none}
+.showNoteLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.showNoteLabel input{margin:0}
+.harmonicaStaffNote{position:absolute;left:50%;top:33.5%;transform:translate(-50%,-50%);display:none;width:clamp(340px,32cqw,470px);height:28%;overflow:visible;pointer-events:none}
+body.diagram-full .harmonicaStaffNote{left:50%;top:32.5%;width:clamp(390px,30vw,520px);height:28%}
+.emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
+body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveTuneTitle{top:-8%;font-size:clamp(52px,4.8vw,68px)}body.diagram-full .liveNoteName{top:6.0%;font-size:clamp(90px,9.6vw,136px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
+@media (min-width:1051px) and (max-width:1320px){
+  .toolbar{
+    grid-template-columns:minmax(155px,1fr) auto minmax(145px,.95fr) minmax(64px,.34fr) minmax(70px,.38fr) minmax(210px,1.5fr) auto;
+    gap:8px;
+  }
+}
+@media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.toolbar .saveControl{grid-column:auto}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.diagramStack{height:auto;max-height:none}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
+@media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
+/* v2.27: header Tempo button; allow notation actions to wrap on phone portrait. */
+@media (orientation:portrait) and (max-width:650px){
+  .panelHeader:has(.notationHeaderRight){align-items:flex-start;flex-wrap:wrap}
+  .notationHeaderRight{flex:1 1 100%;justify-content:flex-end;flex-wrap:wrap;gap:7px}
+  .notationHeaderBtn{flex:0 0 auto;padding:5px 9px}
+  .countInLabel{font-size:12px}
+}
+
+.modal_default_main{max-width:460px !important;width:calc(100vw - 32px) !important}
+/* Larger file/status text and a more compact, larger-type DayPilot tempo dialog. */
+.control input[type=file]{font-size:1.12rem;min-height:38px;height:38px;line-height:38px}
+.control input[type=file]::file-selector-button{min-width:118px;margin-right:8px}
+.control:has(#openFile){align-self:end}
+.control:has(#openFile) label{font-size:.82rem;margin:0 0 4px}
+.modal_default_main{font-size:18px !important}
+.modal_default_main .modal_default_content{font-size:18px !important}
+.modal_default_main input{font-size:20px !important}
+.modal_default_main button,.modal_default_main input[type=button],.modal_default_main input[type=submit]{font-size:18px !important}
+
+/* Normalize toolbar controls on Safari/iOS. */
+.control select{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  border-color:#b8c7bd;
+}
+.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+
+/* Give the native file picker a consistent button treatment where supported.
+   The input remains native so iOS can still choose .abc and .txt files. */
+.control input[type=file]{
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+}
+.control input[type=file]::file-selector-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+.control input[type=file]::-webkit-file-upload-button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f2f2f4;
+  border:1px solid #9a9aa3;
+  border-radius:6px;
+  padding:5px 10px;
+  font:inherit;
+  line-height:1.2;
+  cursor:pointer;
+}
+
+/* Normalize modal action buttons on Safari/iOS. */
+#helpClose {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:650 !important;
+  line-height:1.2 !important;
+  width:180px !important;
+  padding:10px 18px !important;
+}
+
+/* DayPilot prompt/alert buttons are inserted outside the app markup. */
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_main button,
+.modal_default_button {
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  background:#f5f6f5 !important;
+  border:1px solid #aebbb3 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  font:inherit !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+  min-width:88px !important;
+  width:auto !important;
+  padding:8px 18px !important;
+}
+
+/* Improve DayPilot alert readability and center its content/actions. */
+.modal_default_main .modal_default_content {
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons {
+  text-align: center !important;
+}
+.modal_default_main .modal_default_buttons table {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Slightly taller, consistent panel headers with compact Harmonica Diagram actions. */
+.panelHeader,
+.diagramHeader {
+  min-height: 42px;
+  box-sizing: border-box;
+}
+.diagramHeader .fullBtn,
+.diagramHeader .exitFull,
+.diagramHeader .legendBtn,
+.notationHeaderBtn {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
+.notationHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.countInLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}
+.countInLabel input{margin:0}
+.countInOverlay{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);font:500 clamp(64px,15vw,150px)/1 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#fff;pointer-events:none}.countInOverlay #countInNumber{transform:translateY(-0.5em)}
+.countInOverlay[hidden]{display:none}
+
+/* The portable controller uses the same SVG node for the temporary loading
+   spinner and the normal Play glyph. Do not hide that SVG. Instead, after
+   setTune() has completed, the host clears abcjs-loading from the SVG so the
+   library's normal Play presentation is restored. */
+
+
+/* Explicit cross-platform styling for the share-link Enable Playback control. */
+#enablePlaybackBtn {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid #7fb99a;
+  border-radius: 8px;
+  background: #e6f4ec;
+  color: #17251d;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 1;
+  -webkit-text-fill-color: #17251d;
+}
+#enablePlaybackBtn:hover:not(:disabled) {
+  background: #d3ebde;
+}
+#enablePlaybackBtn:active:not(:disabled) {
+  background: #c3e2d1;
+}
+#enablePlaybackBtn:focus-visible {
+  outline: 2px solid #1769ff;
+  outline-offset: 2px;
+}
+#enablePlaybackBtn:disabled {
+  cursor: default;
+  opacity: .65;
+  color: #17251d;
+  -webkit-text-fill-color: #17251d;
+}
+
+
+.abcHeaderRight{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0;flex:1 1 auto;flex-wrap:wrap}
+#abcPanel .panelHeader{flex-wrap:wrap}
+
+
+
+.fileControlRow{display:flex;align-items:center;gap:8px;min-width:0}
+.fileControlRow #openFile{width:auto!important;min-width:0;flex:1 1 auto}
+.saveControl{align-self:end}.saveControl #saveAbcBtn{white-space:nowrap}
+
+
+/* Save filename prompt: left-align its title while preserving centered share alerts. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  text-align:left !important;
+}
+
+
+/* Refined DayPilot prompt/alert styling: lighter scale and simple border. */
+.modal_default_main{
+  border:1px solid #17241c !important;
+  box-shadow:0 8px 28px rgba(0,0,0,.18) !important;
+  font-size:16px !important;
+}
+.modal_default_main .modal_default_content{
+  font-size:16px !important;
+  line-height:1.45 !important;
+}
+.modal_default_main input{
+  font-size:18px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:16px !important;
+  min-width:82px !important;
+  padding:7px 16px !important;
+}
+.modal_default_main,
+.modal_default_main > div,
+.modal_default_main .modal_default_content,
+.modal_default_main .modal_default_buttons{
+  outline:0 !important;
+}
+
+
+/* DayPilot dialog typography refinement. */
+.modal_default_main input{
+  font-size:16px !important;
+}
+.modal_default_main button,
+.modal_default_main input[type="button"],
+.modal_default_main input[type="submit"],
+.modal_default_button{
+  font-size:14px !important;
+  min-width:78px !important;
+  padding:6px 14px !important;
+}
+
+
+/* Final DayPilot spacing refinements. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  line-height:1.4 !important;
+}
+body.save-name-prompt-open .modal_default_main input{
+  padding:7px 9px !important;
+}
+/* Pull the save prompt slightly closer to its filename field. */
+body.save-name-prompt-open .modal_default_main .modal_default_content{
+  padding-bottom:8px !important;
+}
+/* Give share-confirmation copy just a touch more breathing room. */
+body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
+  line-height:1.55 !important;
+}
+
+
+
+
+
+
+/* Version 2.01: compact v1.96-style palette with separated hands. */
+.helpFingeringImageLink{display:block;max-width:100%;overflow:hidden}
+.helpFingeringImage{display:block;width:auto;max-width:100%;height:auto;margin:0 auto}
+@media(max-width:520px){
+}
+
+#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px}
+
+   preserving the existing three-row and action-button layout. */
+@media(max-width:520px){
+}
+
+
+/* Grey Metronome and Count-in labels whenever their checkboxes are disabled. */
+.countInLabel:has(input:disabled){
+  color:#8a8a8a;
+}
+
+
+/* iPad full-page: add a little more space below the live note name. */
+@media (pointer:coarse) and (min-width:700px) and (min-height:700px){
+  body.diagram-full .liveNoteName{top:5.0%;}
+}
+
+
+#fileLabel{margin-right:10px}
+.paneFullBtn:disabled{opacity:.45;cursor:default}
+/* Full-page ABC editor and notation panes. */
+.paneFullBtn{
+  font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:6px;
+  padding:5px 10px;font-size:13px;font-weight:650;line-height:1.2;cursor:pointer;
+  color:#17241c;-webkit-text-fill-color:#17241c;white-space:nowrap
+}
+.paneFullBtn:hover{background:#d6e6ff;border-color:#6f99e8}
+
+/* Full-page editor: only the ABC panel remains visible. */
+body.abc-full{overflow:hidden}
+body.abc-full .app-header,
+body.abc-full .toolbar,
+body.abc-full #notationPanel,
+body.abc-full #splitH,
+body.abc-full .diagramCard,
+body.abc-full .splitV,
+body.abc-full .bottomBar{display:none !important}
+body.abc-full .workspace{display:block !important;padding:0 !important;height:100vh !important}
+body.abc-full .leftPane{display:block !important;height:100vh !important;margin:0 !important}
+body.abc-full #abcPanel{
+  position:fixed;inset:0;z-index:3000;border:0;border-radius:0;
+  display:flex !important;flex-direction:column
+}
+body.abc-full #abcPanel .panelHeader{padding:10px 14px}
+
+/* Full-page notation: keep its playback controls in the pane. */
+body.notation-full{overflow:hidden}
+body.notation-full .app-header,
+body.notation-full .toolbar,
+body.notation-full #abcPanel,
+body.notation-full #splitH,
+body.notation-full .diagramCard,
+body.notation-full .splitV,
+body.notation-full .bottomBar{display:none !important}
+body.notation-full .workspace{display:block !important;padding:0 !important;height:100vh !important}
+body.notation-full .leftPane{display:block !important;height:100vh !important;margin:0 !important}
+body.notation-full #notationPanel{
+  position:fixed;inset:0;z-index:3000;border:0;border-radius:0;
+  display:flex !important;flex-direction:column
+}
+body.notation-full #notationPanel .panelHeader{padding:10px 14px}
+
+
+/* Responsive live title/note layout: keep title clear of header and separate note/staff. */
+.liveTuneTitle{top:-3.5%;}
+.liveNoteName{top:9.0%;}
+.harmonicaStaffNote{top:34.5%;}
+body.diagram-full .liveTuneTitle{top:-2.0%;}
+body.diagram-full .liveNoteName{top:10.0%;}
+body.diagram-full .harmonicaStaffNote{top:35.0%;}
+
+/* Narrow harmonica pane: use extra vertical separation so large note names never collide with staff. */
+@container (max-width: 620px){
+  .liveTuneTitle{top:-1.0%;font-size:clamp(38px,8.0cqw,52px);}
+  .liveNoteName{top:11.5%;font-size:clamp(64px,14cqw,92px);}
+  .harmonicaStaffNote{top:38.5%;width:clamp(300px,68cqw,410px);height:25%;}
+}
+
+/* Very narrow panes need a little more title/note separation. */
+@container (max-width: 480px){
+  .liveTuneTitle{top:0%;font-size:clamp(34px,8.5cqw,46px);}
+  .liveNoteName{top:13.5%;font-size:clamp(60px,15cqw,84px);}
+  .harmonicaStaffNote{top:40.5%;}
+}
+
+/* Short desktop/tablet screens: begin reducing the live note name earlier as vertical room decreases. */
+@media (max-height: 1000px) and (min-width: 651px){
+  .liveNoteName{font-size:clamp(50px,6.0vw,80px);}
+}
+@media (max-height: 850px) and (min-width: 651px){
+  .liveNoteName{font-size:clamp(44px,5.2vw,70px);}
+}
+@media (max-height: 700px) and (min-width: 651px){
+  .liveNoteName{font-size:clamp(38px,4.5vw,60px);}
+}
+
+/* Device-specific diagram composition: balance title, note name, staff and harmonica. */
+/* iPad/tablet, portrait and landscape (normal pane). */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .liveTuneTitle{top:1.5%;font-size:clamp(38px,4.6vw,54px);}
+  .liveNoteName{top:13.0%;font-size:clamp(54px,6.3vw,76px);}
+  .harmonicaStaffNote{top:39.0%;width:clamp(300px,29vw,410px);height:23%;}
+}
+/* iPad/tablet full-page: use the available height more evenly. */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  body.diagram-full .liveTuneTitle{top:1.0%;font-size:clamp(42px,5.0vw,62px);}
+  body.diagram-full .liveNoteName{top:14.0%;font-size:clamp(66px,7.4vw,94px);}
+  body.diagram-full .harmonicaStaffNote{top:40.0%;width:clamp(330px,31vw,450px);height:23%;}
+}
+/* iPhone portrait, including full-page: compact the top group so title/note/staff do not collide. */
+@media (orientation:portrait) and (max-width:650px){
+  .liveTuneTitle{top:2.0%;font-size:clamp(30px,10.5vw,43px);padding:0 10px;}
+  .liveNoteName{top:16.0%;font-size:clamp(50px,17vw,70px);}
+  .harmonicaStaffNote{top:43.0%;width:clamp(235px,72cqw,320px);height:21%;}
+  body.diagram-full .liveTuneTitle{top:1.0%;font-size:clamp(34px,11vw,46px);padding:0 10px;}
+  body.diagram-full .liveNoteName{top:17.0%;font-size:clamp(54px,18vw,76px);}
+  body.diagram-full .harmonicaStaffNote{top:44.0%;width:clamp(240px,74vw,330px);height:20%;}
+}
+/* iPhone portrait full-page has a tall canvas; keep the visual cluster near the top without overlap. */
+@media (orientation:portrait) and (max-width:650px) and (min-height:700px){
+  body.diagram-full .liveTuneTitle{top:0.5%;}
+  body.diagram-full .liveNoteName{top:14.5%;}
+  body.diagram-full .harmonicaStaffNote{top:38.5%;}
+}
+
+
+/* Mobile/tablet diagram overlay alignment.
+   Keep overlays in the same 1280x760 coordinate proportions as the canvas. */
+@media (pointer:coarse) and (max-width:1400px){
+  .liveTuneTitle{top:5% !important;line-height:1 !important}
+  .liveNoteName{top:18% !important;line-height:1 !important}
+  .harmonicaStaffNote{top:37% !important;transform:translate(-50%,-50%) !important}
+  body.diagram-full .liveTuneTitle{top:5% !important}
+  body.diagram-full .liveNoteName{top:18% !important}
+  body.diagram-full .harmonicaStaffNote{top:37% !important}
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .liveTuneTitle,body.diagram-full .liveTuneTitle{font-size:clamp(32px,10vw,42px) !important;padding:0 12px !important}
+  .liveNoteName,body.diagram-full .liveNoteName{font-size:clamp(54px,16vw,68px) !important}
+  .harmonicaStaffNote,body.diagram-full .harmonicaStaffNote{width:clamp(220px,62cqw,270px) !important;height:20% !important}
+}
+@media (pointer:coarse) and (orientation:portrait) and (min-width:700px) and (max-width:1400px){
+  .liveTuneTitle,body.diagram-full .liveTuneTitle{font-size:clamp(42px,5vw,52px) !important}
+  .liveNoteName,body.diagram-full .liveNoteName{font-size:clamp(64px,7vw,78px) !important}
+  .harmonicaStaffNote,body.diagram-full .harmonicaStaffNote{width:clamp(280px,30vw,330px) !important;height:22% !important}
+}
+@media (pointer:coarse) and (orientation:landscape) and (min-width:700px) and (max-width:1400px){
+  .liveTuneTitle,body.diagram-full .liveTuneTitle{top:5% !important;font-size:clamp(40px,4.2vw,50px) !important}
+  .liveNoteName,body.diagram-full .liveNoteName{top:17% !important;font-size:clamp(60px,6vw,76px) !important}
+  .harmonicaStaffNote,body.diagram-full .harmonicaStaffNote{top:29% !important;width:clamp(260px,27vw,320px) !important;height:20% !important}
+}
+
+/* Mobile/tablet composition v3: final override.
+   The harmonica body begins at y=350 on a 760-high canvas (46.05%).
+   Keep all HTML overlays entirely above that boundary and size typography
+   from the diagram container width, not the browser viewport. */
+@media (pointer:coarse) and (max-width:1400px){
+  .liveTuneTitle, body.diagram-full .liveTuneTitle{
+    top:3.5% !important;
+    font-size:clamp(30px,4.2cqw,52px) !important;
+    line-height:1 !important;
+    padding:0 10px !important;
+  }
+  .liveNoteName, body.diagram-full .liveNoteName{
+    top:14.5% !important;
+    font-size:clamp(44px,6.4cqw,76px) !important;
+    line-height:1 !important;
+  }
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:25.0% !important;
+    width:clamp(180px,23cqw,285px) !important;
+    height:15% !important;
+    transform:translate(-50%,0) !important;
+  }
+}
+/* Phone portrait needs a genuinely smaller composition because the 1280:760
+   diagram is only about 230px tall even when the page itself is very tall. */
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .liveTuneTitle, body.diagram-full .liveTuneTitle{
+    top:3.5% !important;
+    font-size:clamp(28px,9.0cqw,36px) !important;
+  }
+  .liveNoteName, body.diagram-full .liveNoteName{
+    top:16.0% !important;
+    font-size:clamp(40px,12.0cqw,50px) !important;
+  }
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:27.0% !important;
+    width:clamp(150px,43cqw,185px) !important;
+    height:13% !important;
+  }
+}
+/* iPad landscape: preserve a clear staff-to-harmonica gap in both normal and full-page views. */
+@media (pointer:coarse) and (orientation:landscape) and (min-width:700px) and (max-width:1400px){
+  .liveTuneTitle, body.diagram-full .liveTuneTitle{top:3.0% !important}
+  .liveNoteName, body.diagram-full .liveNoteName{top:14.0% !important}
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{top:24.0% !important;height:14% !important}
+}
+
+/* Mobile/tablet composition v4: separate note name and staff more aggressively on iPhone,
+   and enlarge/lower the staff slightly on iPad. */
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .liveNoteName, body.diagram-full .liveNoteName{
+    top:13.5% !important;
+    font-size:clamp(38px,11.0cqw,46px) !important;
+  }
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:30.5% !important;
+    width:clamp(155px,45cqw,190px) !important;
+    height:13% !important;
+  }
+}
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:26.0% !important;
+    width:clamp(200px,25cqw,310px) !important;
+    height:16% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:landscape) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:26.5% !important;
+    width:clamp(210px,26cqw,320px) !important;
+    height:16% !important;
+  }
+}
+
+/* Mobile/tablet composition v5: slightly larger iPad staff; smaller, better-spaced iPhone title/note. */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    width:clamp(215px,27cqw,335px) !important;
+    height:17.5% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .liveTuneTitle, body.diagram-full .liveTuneTitle{
+    top:2.5% !important;
+    font-size:clamp(25px,8.0cqw,32px) !important;
+  }
+  .liveNoteName, body.diagram-full .liveNoteName{
+    top:16.5% !important;
+    font-size:clamp(34px,10.0cqw,42px) !important;
+  }
+}
+
+
+/* v1.05: unified live note row. Keep the note name centered on the diagram
+   and place the optional staff note immediately to its right at the same height. */
+.liveNoteName, body.diagram-full .liveNoteName{
+  top:12.5% !important;
+}
+.harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+  left:calc(50% + clamp(58px,6.8cqw,108px)) !important;
+  top:11.0% !important;
+  width:clamp(120px,14cqw,210px) !important;
+  height:18% !important;
+  transform:none !important;
+}
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(52px,6.2cqw,86px)) !important;
+    top:10.5% !important;
+    width:clamp(130px,15cqw,195px) !important;
+    height:19% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .liveTuneTitle, body.diagram-full .liveTuneTitle{
+    top:2.5% !important;
+    font-size:clamp(25px,8cqw,32px) !important;
+  }
+  .liveNoteName, body.diagram-full .liveNoteName{
+    top:17.0% !important;
+    font-size:clamp(34px,10cqw,42px) !important;
+  }
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(38px,11cqw,48px)) !important;
+    top:15.0% !important;
+    width:clamp(88px,25cqw,112px) !important;
+    height:17% !important;
+  }
+}
+
+/* v1.06: enlarge the staff-note display and align it tightly beside the centered note name.
+   Position the SVG by its center rather than its left edge so spacing stays balanced. */
+.harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+  left:calc(50% + clamp(78px,8.2cqw,112px)) !important;
+  top:3.0% !important;
+  width:clamp(155px,18cqw,235px) !important;
+  height:27% !important;
+  transform:translateX(-50%) !important;
+}
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(72px,7.8cqw,102px)) !important;
+    top:2.5% !important;
+    width:clamp(165px,19cqw,240px) !important;
+    height:28% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(48px,13cqw,58px)) !important;
+    top:6.5% !important;
+    width:clamp(105px,30cqw,130px) !important;
+    height:24% !important;
+  }
+}
+
+/* v1.07: give the staff note a little more horizontal breathing room and align
+   the middle staff line with the visual center of the note-name glyph. */
+.harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+  left:calc(50% + clamp(94px,9.6cqw,130px)) !important;
+  top:5.4% !important;
+}
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(88px,9.1cqw,118px)) !important;
+    top:5.0% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(58px,15cqw,68px)) !important;
+    top:9.0% !important;
+  }
+}
+
+/* v1.08: lower the staff-note graphic so the center staff line aligns with
+   the visual vertical center of the note-name glyph. */
+.harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+  top:7.4% !important;
+}
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:7.0% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:11.0% !important;
+  }
+}
+
+/* v1.09: mobile/tablet staff-note refinement. Desktop values above remain unchanged.
+   iPad: enlarge slightly and raise the SVG so the middle staff line meets the note-name center.
+   iPhone: enlarge more and lower slightly for the same visual-center alignment. */
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:4.5% !important;
+    width:clamp(185px,21.5cqw,270px) !important;
+    height:30% !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    top:12.5% !important;
+    width:clamp(135px,36cqw,160px) !important;
+    height:27% !important;
+  }
+}
+
+
+/* Harmonica technique Legend: floating, draggable, session-only position. */
+.legendBtn{white-space:nowrap}
+.legendPopup{
+  display:none;
+  position:fixed;
+  left:50%;
+  top:90px;
+  transform:translateX(-50%);
+  z-index:5200;
+  width:min(560px,calc(100vw - 28px));
+  max-height:calc(100vh - 120px);
+  background:#fff;
+  border:1px solid rgba(70,80,75,.45);
+  border-radius:10px;
+  box-shadow:0 12px 34px rgba(0,0,0,.28);
+  overflow:hidden;
+}
+.legendPopup.open{display:block}
+.legendPopupHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 10px 8px 14px;
+  background:#f4f6f5;
+  border-bottom:1px solid var(--border);
+  font-weight:700;
+  cursor:move;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.legendPopupClose{
+  width:32px;
+  height:32px;
+  padding:0 !important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  border-radius:6px;
+  font-size:22px;
+  line-height:1;
+}
+.legendPopupBody{
+  padding:12px;
+  overflow:auto;
+  max-height:calc(100vh - 175px);
+}
+.legendPopupBody img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  margin:0 auto;
+}
+@media(max-width:650px){
+  .diagramHeaderRight{gap:7px}
+  .diagramHeader .legendBtn{padding:5px 8px !important}
+  .legendPopup{width:calc(100vw - 20px);top:76px}
+  .legendPopupBody{padding:8px}
+}
+
+</style></head><body><div class="app">
+<header class="app-header"><div class="version">Version 1.15</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
+<div class="toolbar">
+ <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
+ <div class="saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
+ <div class="control"><label for="system">Harmonica tuning</label><select id="system"><option value="0">Standard Richter</option><option value="1">Paddy Richter</option><option value="2">Easy Thirds</option><option value="3">Melody Maker</option><option value="4">Country (Major 7th)</option><option value="5">Natural Minor</option><option value="6">Chromatic (12-Hole)</option><option value="7">Chromatic (16-Hole)</option></select></div>
+ <div class="control"><label for="style">Harmonica key</label><select id="style"><option>G</option><option>G#</option><option>A</option><option>Bb</option><option>B</option><option selected>C</option><option>C#</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F#</option></select></div>
+ <div class="control"><label for="fingeringDisplay">Octave shift</label><select id="fingeringDisplay"><option value="-3">-3</option><option value="-2">-2</option><option value="-1">-1</option><option value="0" selected>0</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option></select></div>
+ <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
+ <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
+</div>
+<div class="workspace" id="workspace">
+ <div class="leftPane" id="leftPane">
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+ </div>
+ <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and harmonica panels; double-click to reset"></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Harmonica</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Standard Richter • C</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="legendBtn" class="legendBtn" type="button">Legend</button><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="760"></canvas><canvas id="diagramOverlay" width="1280" height="760"></canvas><div id="liveTuneTitle" class="liveTuneTitle"></div><div id="liveNoteName" class="liveNoteName"></div><svg id="harmonicaStaffNote" class="harmonicaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div></div></section>
+</div>
+<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
+</div>
+<div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
+
+<div id="legendPopup" class="legendPopup" role="dialog" aria-modal="false" aria-labelledby="legendPopupTitle">
+  <div id="legendPopupHeader" class="legendPopupHeader">
+    <span id="legendPopupTitle">Harmonica Technique Symbols</span>
+    <button id="legendPopupClose" class="legendPopupClose" type="button" aria-label="Close legend" title="Close">×</button>
+  </div>
+  <div class="legendPopupBody">
+    <img src="img/harmonica_player_symbols_1.jpg" alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws">
+  </div>
+</div>
+
+<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
+  <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
+    <h2 style="text-align:center;margin:0 0 24px">ABC Harmonica Player Instructions</h2>
+    <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for 10-hole diatonic or 12- and 16-hole chromatic styles.</p>
+      <p>The active hole is highlighted while the symbol below it shows the required breath direction or technique.</p>
+      <p>The player supports <b>Standard Richter</b>, <b>Paddy Richter</b>, <b>Easy Thirds</b>, <b>Melody Maker</b>, <b>Country (Major 7th)</b>, <b>Natural Minor</b>, and <b>12- and 16-hole Chromatic</b> harmonicas.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Harmonica Settings</p>
+      <p><b>Harmonica tuning</b> chooses the note layout: the first six options are 10-hole diatonic tunings, and the last two are 12-hole and 16-hole chromatic layouts. <b>Harmonica key</b> chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#. <b>Octave shift</b> applies a -3 through +3 mapping.</p>
+      <p>The selected harmonica tuning, key, and octave shift are saved in this browser and are also included in share links.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Harmonica Technique Symbols</p>
+      <p>Each diagram shows the correct number of holes for the selected harmonica. The symbols used for blow, draw, bends, overblows, and overdraws are shown below. For chromatic harmonicas, <b>S</b> indicates to press the slide in.</p>
+      <p>Click <b>Legend</b> to display the technique symbols in a floating window while using the player. Drag the window by its title bar to reposition it and click × to close it. Its position resets when the tool is restarted or the browser window is resized.</p>
+      <img src="img/harmonica_player_symbols_1.jpg" alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" style="display:block;width:100%;max-width:100%;height:auto;object-fit:contain;margin:10px auto 12px">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <p>Editing the ABC rebuilds the notation and harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the harmonica display to that note.</p>
+      <p>Use the editor text-size menu to change the ABC editor text size.</p>
+      <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
+      <p>The <b>Full-Page View</b> buttons expand the ABC editor, notation, or harmonica display to fill the page. Press Escape to leave a full-page view; the harmonica view also provides an <b>Exit Full-Page</b> button.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
+      <p>Playback follows the notation cursor and harmonica display. Playback uses the Fluid soundfont by default. Melody playback uses <b>%%MIDI program 22</b>; bass and chords use program 0. Mute Melody, Metronome, Count in, Tempo, looping, restart, progress, and playback speed work as in the other instrument-specific players.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <p>Save writes the current ABC collection to a file.</p>
+      <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune,
+        or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
+      <p>The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.</p>
+      <p>A share button is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
+      <p>Opening a share link restores its harmonica tuning, key, and octave shift and displays the first tune encoded in the link.</p>
+      <p>When tunes are opened from a share link, click the <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
+      <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Soundfont URL Parameter</p>
+      <p>The default Fluid playback soundfont can be overridden when opening the tool by adding a <b>soundfont</b> URL parameter. Valid values are <b>fluid</b>, <b>fatboy</b>, <b>musyng</b>, <b>canvas</b>, <b>mscore</b>, <b>arachno</b>, and <b>fluidhq</b>. Any other value uses the default <b>fluid</b> soundfont.</p>
+      <p>For example, use <b>?soundfont=fatboy</b> when it is the first URL parameter, or <b>&amp;soundfont=mscore</b> when adding it after another parameter.</p>
+      <hr>
+      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
+      <p style="text-align: center">
+        This tool was created by
+        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
+        <br/><br/>
+        If you find it useful, please consider a contribution via<br/><br/>
+        <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
+        <br/><br/>
+      </p>    
+      <hr>
+    </div>
+    <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
+  </div>
+</div>
+<script>
+const VALID_SOUNDFONTS=new Set(["fluid","fatboy","musyng","canvas","mscore","arachno","fluidhq"]);
+const requestedSoundfont=(new URLSearchParams(window.location.search).get("soundfont")||"").trim().toLowerCase();
+const playbackSoundfont=VALID_SOUNDFONTS.has(requestedSoundfont)?requestedSoundfont:"fluid";
+
+// Generic ABC pitch helpers used by the harmonica solver and note display.
+function abcPitchToMidi(s){
+  if(!s||s==="x"||s==="z")return null;
+  const m=String(s).match(/^([_=^]*)([A-Ga-g])([,']*)$/);if(!m)return null;
+  const acc=m[1],letter=m[2],marks=m[3];let octave=letter===letter.toLowerCase()?5:4;
+  for(const ch of marks)octave+=ch==="'"?1:-1;
+  const pc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[letter.toUpperCase()];
+  let delta=0;for(const ch of acc){if(ch==="^")delta++;else if(ch==="_")delta--;else if(ch==="=")delta=0}
+  return 12*(octave+1)+pc+delta;
+}
+function keyTagPrefersFlats(abc){
+  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);if(!m)return false;
+  const tonic=m[1].toUpperCase()+m[2],rest=String(m[3]||"").trim().toLowerCase();
+  const modeToken=(rest.match(/^([a-z]+)/)||["",""])[1];let mode="major";
+  if(modeToken==="m"||modeToken.startsWith("min")||modeToken.startsWith("aeo"))mode="minor";
+  else if(modeToken.startsWith("dor"))mode="dorian";else if(modeToken.startsWith("mix"))mode="mixolydian";
+  const majorFifths={"Cb":-7,"Gb":-6,"Db":-5,"Ab":-4,"Eb":-3,"Bb":-2,"F":-1,"C":0,"G":1,"D":2,"A":3,"E":4,"B":5,"F#":6,"C#":7};
+  if(!(tonic in majorFifths))return false;
+  return majorFifths[tonic]+({major:0,mixolydian:-1,dorian:-2,minor:-3}[mode]??0)<0;
+}
+function displayPitchClassName(midi){
+  const n=Math.round(Number(midi));if(!Number.isFinite(n))return "";
+  const names=keyTagPrefersFlats(document.getElementById("abcText")?.value)?["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"]:["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  return names[(n%12+12)%12];
+}
+function displayStaffSpelling(midi){
+  const n=Math.round(Number(midi)),pc=((n%12)+12)%12,useFlats=keyTagPrefersFlats(document.getElementById("abcText")?.value);
+  const sharp={0:["C",0],1:["C",1],2:["D",0],3:["D",1],4:["E",0],5:["F",0],6:["F",1],7:["G",0],8:["G",1],9:["A",0],10:["A",1],11:["B",0]};
+  const flat={0:["C",0],1:["D",-1],2:["D",0],3:["E",-1],4:["E",0],5:["F",0],6:["G",-1],7:["G",0],8:["A",-1],9:["A",0],10:["B",-1],11:["B",0]};
+  return (useFlats?flat:sharp)[pc];
+}
+function midiToDisplayNoteName(midi){
+  const n=Math.round(Number(midi));if(!Number.isFinite(n))return "—";const octave=Math.floor(n/12)-1;
+  const suffix=octave===1?",,,":octave===2?",,":octave===3?",":octave===4?"":octave===5?"'":octave===6?"''":octave===7?"'''":"";
+  return displayPitchClassName(n).replace("#","♯").replace("b","♭")+suffix;
+}
+function abcPitchToDisplayNoteName(s){const midi=abcPitchToMidi(s);return midi==null?(s&&s!=="x"&&s!=="z"?String(s):"—"):midiToDisplayNoteName(midi)}
+function stripChordSymbols(abc){return String(abc||"").replace(/"[^"\r\n]*"/g,m=>" ".repeat(m.length))}
+
+// Harmonica fingering solver. Uses the same tablature maps as the ABC Transcription Tools harmonica injector.
+const HARMONICA_TAB_MAPS={
+      "0":["1","-1'","-1","1o","2","-2''","-2'","3","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "1":["1","-1'","-1","1o","2","-2''","-2'","-2","-3'''","3","-3'","-3","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "2":["1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","x","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "3":["1","-1'","-1","1o","2","-2''","-2'","-2","2o","3","-3'","-3","4","-4'","-4","4o","5","-5'","-5","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-8o","-9","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "4":["1","-1'","-1","1o","2","-2''","-2'","-2","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5'","-5","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "5":["1","-1'","-1","2","-2'''","-2''","-2'","-2","-3''","-3'","-3","3o","4","-4'","-4","5","-5'","-5","5o","6","-6'","-6","-7","7'","7","-7o","-8","8","-8o","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "6":["x","x","x","x","x","x","x","x","x","x","x","x","1","1s","-1","-1s","2","-2","-2s","3","3s","-3","-3s","-4","5","5s","-5","-5s","6","-6","-6s","7","7s","-7","-7s","-8","9","9s","-9","-9s","10","-10","-10s","11","11s","-11","-11s","-12","12","12s","-12s","x","x","x","x","x","x","x","x","x"],
+      "7":["1","1s","-1","-1s","2","-2","-2s","3","3s","-3","-3s","-4","5","5s","-5","-5s","6","-6","-6s","7","7s","-7","-7s","-8","9","9s","-9","-9s","10","-10","-10s","11","11s","-11","-11s","-12","13","13s","-13","-13s","14","-14","-14s","15","15s","-15","-15s","-16","16","16s","-16s","x","x","x","x","x","x","x","x","x"]
+    };
+const HARMONICA_KEY_OFFSETS={"G":5,"G#":4,"A":3,"Bb":2,"B":1,"C":0,"C#":-1,"D":-2,"Eb":-3,"E":-4,"F":-5,"F#":-6};
+
+
+function harmonicaKeySignatureMap(tonic, modeFlatness){
+  const circle="FCGDAEB";
+  const signature={sharps:"",flats:"",accidentalSharps:"",accidentalFlats:"",accidentalNaturals:""};
+  let sharpness=circle.indexOf(tonic[0])-1;
+  if(sharpness===-2)return null;
+  if(tonic.slice(1)==="b")sharpness-=7; else if(tonic.slice(1)==="#")sharpness+=7;
+  sharpness-=modeFlatness;
+  if(sharpness>7||sharpness< -7)return null;
+  if(sharpness>0)signature.sharps=circle.slice(0,sharpness);
+  else if(sharpness<0)signature.flats=circle.slice(sharpness);
+  return signature;
+}
+function getHarmonicaKeySignature(abc){
+  // Parse the ABC K: field without treating unrelated key-field modifiers
+  // (for example clef=treble, octave=, transpose=, stafflines=, etc.) as modes.
+  // The old concertina-derived parser tolerated these modifiers; the first
+  // harmonica-only replacement did not, which caused valid tunes to fail with
+  // "Unknown or unsupported key signature."
+  const m=String(abc||"").match(/^K:[ \t]*([A-Ga-g])([b#])?[ \t]*(.*?)$/m);
+  if(!m)return null;
+  const tonic=m[1].toUpperCase()+(m[2]||"");
+  const extra=(m[3]||"").replace(/%.*/,"").trim();
+  const lower=extra.toLowerCase();
+
+  // Only the leading token immediately following the tonic can be the mode.
+  // Everything else in K: is an ABC key-field modifier or explicit accidental.
+  const first=(lower.match(/^([^\s]+)(?:\s|$)/)||["",""])[1];
+  let flatness=0; // bare key, or a key followed directly by clef/etc. => major
+  if(first==="m"||first.startsWith("min")||first.startsWith("aeo"))flatness=3;
+  else if(first.startsWith("mix"))flatness=1;
+  else if(first.startsWith("dor"))flatness=2;
+  else if(first.startsWith("phr"))flatness=4;
+  else if(first.startsWith("loc"))flatness=5;
+  else if(first.startsWith("lyd"))flatness=-1;
+  else if(first.startsWith("maj")||first.startsWith("ion"))flatness=0;
+  else if(first.startsWith("exp"))return harmonicaKeySignatureMap("C",0);
+
+  const sig=harmonicaKeySignatureMap(tonic,flatness);
+  if(!sig)return null;
+  for(const a of extra.match(/_[A-Ga-g]/g)||[])sig.flats+=a[1].toUpperCase();
+  for(const a of extra.match(/\^[A-Ga-g]/g)||[])sig.sharps+=a[1].toUpperCase();
+  return sig;
+}
+function normalizeHarmonicaNote(value,keySignature){
+  const m=String(value).match(/[A-G]/i); if(!m)return value;
+  const base=m[0].toUpperCase();
+  if(value[0]==="="){keySignature.accidentalFlats=keySignature.accidentalFlats.replaceAll(base,"");keySignature.accidentalSharps=keySignature.accidentalSharps.replaceAll(base,"");if(!keySignature.accidentalNaturals.includes(base))keySignature.accidentalNaturals+=base;return value.slice(1)}
+  if(value[0]==="_"){if(!keySignature.accidentalFlats.includes(base))keySignature.accidentalFlats+=base;keySignature.accidentalSharps=keySignature.accidentalSharps.replaceAll(base,"");keySignature.accidentalNaturals=keySignature.accidentalNaturals.replaceAll(base,"");return value}
+  if(value[0]==="^"){if(!keySignature.accidentalSharps.includes(base))keySignature.accidentalSharps+=base;keySignature.accidentalFlats=keySignature.accidentalFlats.replaceAll(base,"");keySignature.accidentalNaturals=keySignature.accidentalNaturals.replaceAll(base,"");return value}
+  if(keySignature.accidentalNaturals.includes(base))return value;
+  if(keySignature.sharps.includes(base)||keySignature.accidentalSharps.includes(base))return "^"+value;
+  if(keySignature.flats.includes(base)||keySignature.accidentalFlats.includes(base))return "_"+value;
+  return value;
+}
+function getHarmonicaAbcNotes(input,keySignature){
+  const chars=String(input||"").split("");
+  const mask=(a,b)=>{for(let q=a;q<b;q++)if(chars[q]!=="\n"&&chars[q]!=="\r")chars[q]="*"};
+  let i=0,lineStart=true;
+  while(i<input.length){const c=input[i];if(c==="\n"||c==="\r"){lineStart=true;i++;continue}if(lineStart){let e=input.indexOf("\n",i);if(e<0)e=input.length;if(/^[A-Za-z]:/.test(input.slice(i,i+2))||c==="%"){mask(i,e);i=e;continue}lineStart=false}if(c==='"'||c==='!'||c==='+'){const close=c;let e=input.indexOf(close,i+1);if(e<0)e=input.length-1;mask(i,e+1);i=e+1;continue}if(c==='['){const e=input.indexOf(']',i+1);const bar=input.indexOf('|',i+1);if(e>=0&&(bar<0||e<bar)){mask(i,e+1);i=e+1;continue}}i++}
+  const sanitized=chars.join("");
+  const notes=[]; const re=/([=^_]?[a-gA-G][,']?|\|)/g; let m;
+  while((m=re.exec(sanitized))){if(m[1]==="|"){keySignature.accidentalFlats="";keySignature.accidentalSharps="";keySignature.accidentalNaturals="";continue}notes.push({index:m.index,unNormalizedValue:m[1],normalizedValue:normalizeHarmonicaNote(m[1],keySignature)})}
+  return notes;
+}
+function parseHarmonicaGlyph(glyph){
+  if(!glyph||glyph==="x")return null;
+  const draw=glyph.startsWith("-"); const clean=draw?glyph.slice(1):glyph; const m=clean.match(/^(1[0-6]|[1-9])(.*)$/); if(!m)return null;
+  const suffix=m[2]||""; return {glyph,hole:parseInt(m[1],10),direction:draw?"draw":"blow",bend:(suffix.match(/'/g)||[]).length,overblow:suffix.includes("o"),slide:suffix.includes("s")};
+}
+function harmonicaFingeringsGenerator(abc){
+  const keySignature=getHarmonicaKeySignature(abc);
+  if(!keySignature)throw new Error("Unknown or unsupported key signature.");
+  const notes=getHarmonicaAbcNotes(abc,keySignature);
+  const tuning=document.getElementById("system")?.value||"0";
+  const harpKey=document.getElementById("style")?.value||"C";
+  const octaveShift=document.getElementById("fingeringDisplay")?.value||"0";
+  const tabMap=HARMONICA_TAB_MAPS[String(tuning)]||HARMONICA_TAB_MAPS["0"];
+  const keyOffset=HARMONICA_KEY_OFFSETS[harpKey]??0; const octaveOffset=(parseInt(octaveShift,10)||0)*12;
+  return notes.map((note,index)=>{const midi=abcPitchToMidi(note.normalizedValue);const noteIndex=midi==null?NaN:(midi-48+keyOffset+octaveOffset);const glyph=Number.isFinite(noteIndex)&&noteIndex>=0&&noteIndex<tabMap.length?tabMap[noteIndex]:"x";const parsed=parseHarmonicaGlyph(glyph);return {index:index+1,abcIndex:note.index,abcNote:note.unNormalizedValue,normalizedNote:note.normalizedValue,glyph,hole:parsed?parsed.hole:null,direction:parsed?parsed.direction:null,bend:parsed?parsed.bend:0,overblow:parsed?parsed.overblow:false,slide:parsed?parsed.slide:false,playable:!!parsed}});
+}
+</script>
+<script>
+const $=id=>document.getElementById(id);
+
+// On iOS/iPadOS, omit the accept filter so the native file picker can select
+// .abc as well as .txt files. Validate the selected filename after selection.
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
+  (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(IS_IOS)$("openFile").removeAttribute("accept");
+const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null,lastAutoscrollSystemTop=null;
+// Current rendered tune used by the playback controller.
+let currentVisual=null;
+let lastDiagramIndex=-2,currentDiagramItem=null;
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false;
+const SHOW_NOTE_KEY="abcHarmonicaShowNote";
+const PREF_SYSTEM_KEY="abcHarmonicaTuning",PREF_STYLE_KEY="abcHarmonicaKey";
+
+/*
+ * Playback always uses these settings, regardless of directives in the source.
+ * Existing matching directives are blanked rather than deleted so abcjs source
+ * character positions still line up with the fingering solver.
+ */
+function configureIrishRollsForTune(abc){
+  const source=String(abc||"");
+  const irishRollsOff=/^[ \t]*%irish_rolls_off\b/im.test(source);
+
+  if(!ABCJS||!ABCJS.eskinConfig||typeof ABCJS.eskinConfig.setIrishRolls!=="function"){
+    throw new Error("Portable abcjs Irish-roll configuration API is unavailable.");
+  }
+
+  // Enable custom Irish-roll playback by default and disable it only when the
+  // tune explicitly contains %irish_rolls_off.
+  ABCJS.eskinConfig.setIrishRolls(!irishRollsOff);
+
+  // Do not allow a stale force override to defeat the per-tune choice.
+  if(typeof ABCJS.eskinConfig.setIrishRollOverrides==="function"){
+    ABCJS.eskinConfig.setIrishRollOverrides({
+      forceEnable:false,
+      forceDisable:false
+    });
+  }
+}
+
+function hasABCSyntaxChords(abc){
+  // In ABC, quoted strings with no placement prefix are chord symbols.
+  // Quoted annotations beginning ^, _, <, >, or @ are not chords.
+  const source=String(abc||"");
+  const re=/"([^"\r\n]*)"/g;
+  let m;
+  while((m=re.exec(source))){
+    const text=m[1].trim();
+    if(text && !/^[\^_<>@]/.test(text))return true;
+  }
+  return false;
+}
+
+const METRONOME_LIST=[
+  {name:"C|",pattern:"dd A B C D"},
+  {name:"C",pattern:"dddd A B B B C D D D"},
+  {name:"2/2",pattern:"dd A B C D"},
+  {name:"3/2",pattern:"ddd A B B C D D"},
+  {name:"2/4",pattern:"dd A B C D"},
+  {name:"3/4",pattern:"ddd A B B C D D"},
+  {name:"4/4",pattern:"dddd A B B B C D D D"},
+  {name:"5/4",pattern:"ddddd A B B B B C D D D D"},
+  {name:"6/4",pattern:"dddddd A B B B B B C D D D D"},
+  {name:"7/4",pattern:"ddddddd A B B B B B B C D D D D D"},
+  {name:"2/8",pattern:"dz A C"},
+  {name:"3/8",pattern:"dzz A C"},
+  {name:"5/8",pattern:"dzzdz A B C D"},
+  {name:"6/8",pattern:"dzzdzz A B C D"},
+  {name:"7/8",pattern:"dzdzdzz A B B C D D"},
+  {name:"9/8",pattern:"dzzdzzdzz A B B C D D"},
+  {name:"10/8",pattern:"dzzdzzdzdz A B B B C D D D"},
+  {name:"11/8",pattern:"dzzdzzdzdzz A B B B C D D D"},
+  {name:"12/8",pattern:"dzzdzzdzzdzz A B B B C D D D"}
+];
+const METRONOME_HIGH_SOUND=76;
+const METRONOME_LOW_SOUND=77;
+const METRONOME_HIGH_VOLUME=60;
+const METRONOME_LOW_VOLUME=44;
+
+function metronomePatternForABC(abc){
+  const meterMatch=/^M:\s*(.*?)\s*$/mi.exec(String(abc||""));
+  if(!meterMatch)return null;
+  const meter=meterMatch[1].trim();
+  const entry=METRONOME_LIST.find(item=>item.name===meter);
+  if(!entry)return null;
+  return entry.pattern
+    .replaceAll("A",String(METRONOME_HIGH_SOUND))
+    .replaceAll("B",String(METRONOME_LOW_SOUND))
+    .replaceAll("C",String(METRONOME_HIGH_VOLUME))
+    .replaceAll("D",String(METRONOME_LOW_VOLUME));
+}
+
+function metronomeInjectionForABC(abc){
+  const pattern=metronomePatternForABC(abc);
+  if(!pattern)return null;
+  return "%\n% Metronome sounds and volumes\n%\n%%MIDI drum "+pattern+"\n%%MIDI drumon\n%\n";
+}
+
+function restoreMetronomePreference(){
+  try{metronomeEnabled=localStorage.getItem(METRONOME_KEY)==="true"}catch(_){metronomeEnabled=false}
+  const cb=$("metronomeCheck");
+  if(cb)cb.checked=metronomeEnabled;
+}
+function saveMetronomePreference(){
+  try{localStorage.setItem(METRONOME_KEY,String(metronomeEnabled))}catch(_){}
+}
+async function toggleMetronome(){
+  const cb=$("metronomeCheck");
+  const requested=!!(cb&&cb.checked);
+  cancelCountIn();
+  playbackActive=false;
+
+  if(requested&&tunes.length&&!metronomePatternForABC($("abcText").value)){
+    metronomeEnabled=false;
+    if(cb)cb.checked=false;
+    saveMetronomePreference();
+    await rebuild();
+    await DayPilot.Modal.alert(
+      "Metronome Not Available for this Meter<br><br>No metronome pattern is available for the meter of this tune.",
+      {top:150,width:460}
+    );
+    return;
+  }
+
+  metronomeEnabled=requested;
+  saveMetronomePreference();
+  if(tunes.length)await rebuild();
+}
+
+function buildPlaybackABC(abc){
+  const source=String(abc||"");
+  const forced=[
+    `%soundfont ${playbackSoundfont}`,
+    melodyMuted?"%%MIDI program mute":"%%MIDI program 22",
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0"
+  ].join("\n")+"\n";
+
+  let cleaned=source.replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+    m=>" ".repeat(m.length)
+  );
+
+  const kMatch=/^K\s*:.*$/mi.exec(cleaned);
+  let playback=kMatch
+    ? cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index)
+    : forced+cleaned;
+
+  let metronome="";
+  if(metronomeEnabled)metronome=metronomeInjectionForABC(source)||"";
+  if(metronome){
+    const playbackK=/^K\s*:.*$/mi.exec(playback);
+    if(playbackK){
+      const lineEnd=playback.indexOf("\n",playbackK.index);
+      const insertAt=lineEnd>=0?lineEnd+1:playback.length;
+      playback=playback.slice(0,insertAt)+metronome+playback.slice(insertAt);
+    }else{
+      playback=forced+metronome+cleaned;
+    }
+  }
+
+  prefixLength=forced.length+metronome.length;
+  return playback;
+}
+
+function splitTunes(abc){const lines=abc.replace(/\r\n?/g,"\n").split("\n"),out=[];let pre=[],cur=null;for(const line of lines){if(/^X\s*:/.test(line)){if(cur)out.push(cur.join("\n").trim());cur=[...pre,line];pre=[]}else if(cur)cur.push(line);else pre.push(line)}if(cur)out.push(cur.join("\n").trim());if(!out.length&&abc.trim())out.push(abc.trim());return out.filter(Boolean)}
+function firstTitle(tune,n){const m=tune.match(/^T:\s*(.*?)\s*$/m);return m&&m[1].trim()||`Tune ${n}`}
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+
+/*
+ * The complete unhighlighted harmonica is expensive to redraw for every
+ * playback event. Build it once whenever the tune/system changes, then each
+ * playback update only copies that prepared bitmap and paints the one
+ * highlight plus the two changing text fields.
+ */
+const HARMONICA_TUNING_NAMES={"0":"Standard Richter","1":"Paddy Richter","2":"Easy Thirds","3":"Melody Maker","4":"Country (Major 7th)","5":"Natural Minor","6":"Chromatic (12-Hole)","7":"Chromatic (16-Hole)"};
+const HARMONICA_TUNING_HOLES={"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":12,"7":16};
+let currentHarmonicaLayout=null;
+function getHarmonicaHoleCount(tuning){return HARMONICA_TUNING_HOLES[String(tuning)]||10}
+function getHarmonicaLayout(tuning){
+  const count=getHarmonicaHoleCount(tuning),bodyX=48,bodyY=350,bodyW=1184,bodyH=190,innerPad=64;
+  const left=bodyX+innerPad,right=bodyX+bodyW-innerPad;
+  const step=count>1?(right-left)/(count-1):0;
+  const positions=Array.from({length:count},(_,i)=>Math.round(left+i*step));
+  const slotW=Math.max(44,Math.min(82,Math.floor((bodyW-innerPad*2)/count)-8));
+  const slotH=count>=16?84:(count>=12?94:108);
+  const numberFont=count>=16?24:(count>=12?26:30);
+  return {count,bodyX,bodyY,bodyW,bodyH,holeY:bodyY+bodyH/2,slotW,slotH,numberFont,positions};
+}
+function drawHarmonicaArrow(ctx,x,y,direction,bend,overblow,slide){
+  ctx.save();
+  const color=direction==="blow"?PUSH_COLOR:DRAW_COLOR;
+  ctx.strokeStyle=color;ctx.fillStyle=color;
+  ctx.lineWidth=8;ctx.lineCap="round";ctx.lineJoin="round";
+
+  // Every play-method symbol occupies the same centered box beneath its hole.
+  // Keeping a common top edge also prevents the bend symbols from wandering
+  // left/right or vertically as the active hole changes.
+  const top=y-45;
+  const bottom=top+64;
+  const head=14;
+  const arrowHead=(tx,ty,ang)=>{
+    ctx.beginPath();
+    ctx.moveTo(tx,ty);
+    ctx.lineTo(tx-head*Math.cos(ang-.55),ty-head*Math.sin(ang-.55));
+    ctx.moveTo(tx,ty);
+    ctx.lineTo(tx-head*Math.cos(ang+.55),ty-head*Math.sin(ang+.55));
+    ctx.stroke();
+  };
+
+  if(!bend){
+    // Blow and Draw use exactly the same 64 px tip-to-tail length.
+    const sy=direction==="blow"?bottom:top;
+    const ey=direction==="blow"?top:bottom;
+    ctx.beginPath();ctx.moveTo(x,sy);ctx.lineTo(x,ey);ctx.stroke();
+    arrowHead(x,ey,direction==="blow"?-Math.PI/2:Math.PI/2);
+  }else if(bend===1){
+    // Half-step bend: centered diagonal within the common symbol box.
+    const x1=direction==="blow"?x-25:x+25;
+    const x2=direction==="blow"?x+25:x-25;
+    const y1=direction==="blow"?bottom:top;
+    const y2=direction==="blow"?top:bottom;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    arrowHead(x2,y2,Math.atan2(y2-y1,x2-x1));
+  }else if(bend===2){
+    // Whole-step bend: the L-shaped symbol is centered on the active hole.
+    const dir=direction==="blow"?1:-1;
+    const cornerX=x-dir*25;
+    const endX=x+dir*25;
+    const verticalEnd=direction==="blow"?top:bottom;
+    const verticalStart=direction==="blow"?bottom:top;
+    ctx.beginPath();
+    ctx.moveTo(cornerX,verticalStart);
+    ctx.lineTo(cornerX,verticalEnd);
+    ctx.lineTo(endX,verticalEnd);
+    ctx.stroke();
+    arrowHead(endX,verticalEnd,dir>0?0:Math.PI);
+  }else{
+    // Whole-and-a-half-step draw bend: centered diagonal, same top edge.
+    const x1=x+27,y1=bottom,x2=x-27,y2=top;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    arrowHead(x2,y2,Math.atan2(y2-y1,x2-x1));
+  }
+
+  if(overblow){
+    // Larger and tucked close to the direction/bend symbol.
+    ctx.font="700 38px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("o",x+38,top+18);
+  }
+  if(slide){
+    ctx.font="700 30px Arial";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillStyle="#333";ctx.fillText("S",x,bottom+32);
+  }
+  ctx.restore();
+}
+function prepareDiagramBase(){
+  const c=$("diagram"),ctx=c.getContext("2d"),tuning=$("system").value,key=$("style").value,oct=$("fingeringDisplay").value;
+  const title=tunes.length?firstTitle(tunes[currentTune],currentTune+1):"";
+  currentHarmonicaLayout=getHarmonicaLayout(tuning);
+  const layout=currentHarmonicaLayout;
+  ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);
+  $("liveTuneTitle").textContent=title;
+  const grad=ctx.createLinearGradient(0,layout.bodyY,0,layout.bodyY+layout.bodyH);
+  grad.addColorStop(0,"#f1f1f1");grad.addColorStop(.48,"#cfcfcf");grad.addColorStop(1,"#9e9e9e");
+  ctx.fillStyle=grad;ctx.strokeStyle="#555";ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(layout.bodyX,layout.bodyY,layout.bodyW,layout.bodyH,28);ctx.fill();ctx.stroke();
+  ctx.fillStyle="#aaa";ctx.fillRect(layout.bodyX+18,layout.bodyY+layout.bodyH-34,layout.bodyW-36,10);
+  layout.positions.forEach((x,i)=>{const y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.fillStyle="#232323";ctx.strokeStyle="#050505";ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(x-w/2,y-h/2,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle="#f8f8f8";ctx.font=`700 ${layout.numberFont}px Arial`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(i+1),x,y)});
+  const octNum=parseInt(oct,10)||0;const octLabel=(octNum>0?"+":"")+octNum;const footerParts=[HARMONICA_TUNING_NAMES[tuning]||"Standard Richter",key];if(octNum!==0)footerParts.push(`Octave ${octLabel}`);ctx.fillStyle="#555";ctx.font="500 22px Arial";ctx.textAlign="center";ctx.fillText(footerParts.join(" • "),640,720);
+  $("diagramMeta").textContent=[HARMONICA_TUNING_NAMES[tuning]||"Standard Richter",key,...(octNum!==0?[`Octave ${octLabel}`]:[])].join(" • ");
+  $("diagramStack").hidden=false;$("emptyDiagram").hidden=true;$("fullBtn").disabled=false;lastDiagramIndex=-2;
+}
+function renderHarmonicaStaffNote(item){
+  const svg=$("harmonicaStaffNote"),stack=$("diagramStack");if(!svg||!stack)return;
+  const midi=item?abcPitchToMidi(item.normalizedNote||item.abcNote):null;
+  const visible=!!showNoteEnabled&&midi!=null;
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  if(!visible){svg.style.display="none";return}
+  svg.style.display="block";
+  const NS="http://www.w3.org/2000/svg";
+  const add=(name,attrs,text)=>{const el=document.createElementNS(NS,name);for(const [key,value] of Object.entries(attrs||{}))el.setAttribute(key,String(value));if(text!=null)el.textContent=text;svg.appendChild(el);return el};
+  const n=Math.round(midi),pc=((n%12)+12)%12;
+  const [letter,accidental]=displayStaffSpelling(n),octave=Math.floor(n/12)-1,letterIndex={C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter];
+  const steps=(octave*7+letterIndex)-(4*7+2),bottomY=142,gap=12,y=bottomY-steps*(gap/2);
+  for(let i=0;i<5;i++){const ly=bottomY-i*gap;add("line",{x1:28,y1:ly,x2:132,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"})}
+  const ledgerYs=[];if(y>=bottomY+gap/2){for(let ly=bottomY+gap;ly<=y+1;ly+=gap)ledgerYs.push(ly)}else if(y<=bottomY-4*gap-gap/2){for(let ly=bottomY-5*gap;ly>=y-1;ly-=gap)ledgerYs.push(ly)}
+  ledgerYs.forEach(ly=>add("line",{x1:65,y1:ly,x2:97,y2:ly,stroke:"#17241c","stroke-width":1.05,"vector-effect":"non-scaling-stroke"}));
+  add("ellipse",{cx:81,cy:y,rx:9,ry:6.2,fill:"#17241c",transform:`rotate(-18 81 ${y})`});
+  if(accidental){
+    if(accidental>0){
+      add("text",{x:59,y:y+2,"font-family":"Georgia, 'Times New Roman', serif","font-size":36,"text-anchor":"middle","dominant-baseline":"middle",fill:"#17241c"},"♯")
+    }else{
+      // Draw the flat as SVG geometry instead of a font glyph. WebKit/Blink and
+      // Firefox use different vertical metrics for ♭ with dominant-baseline.
+      add("path",{d:`M 57 ${y-19} L 57 ${y+11} M 57 ${y-4} C 70 ${y-11}, 72 ${y+1}, 57 ${y+10}`,
+        fill:"none",stroke:"#17241c","stroke-width":2.5,"stroke-linecap":"round","stroke-linejoin":"round",
+        "vector-effect":"non-scaling-stroke"})
+    }
+  }
+  if(steps>=4)add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+  else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
+}
+function restoreShowNotePreference(){try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
+function saveShowNotePreference(){try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){} }
+function drawDiagram(item=null,force=false){
+  const itemIndex=item?item.index:-1;if(!force&&itemIndex===lastDiagramIndex)return;currentDiagramItem=item;
+  const c=$("diagramOverlay"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
+  const layout=currentHarmonicaLayout||getHarmonicaLayout($("system").value);
+  $("liveNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderHarmonicaStaffNote(item);
+  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
+  lastDiagramIndex=itemIndex;
+}
+function removeCursor(){
+  lastAutoscrollSystemTop=null;if(playbackCursor){playbackCursor.remove();playbackCursor=null}}
+function recursiveStartChar(x){if(!x)return null;if(typeof x.startChar==="number")return x.startChar;if(x.dataset&&x.dataset.startChar&&!isNaN(+x.dataset.startChar))return +x.dataset.startChar;if(Array.isArray(x)){for(const y of x){const v=recursiveStartChar(y);if(v!=null)return v}}else if(typeof x==="object"){for(const k of ["elements","abselem","elemset","sourceElement"]){if(x[k]){const v=recursiveStartChar(x[k]);if(v!=null)return v}}}return null}
+function fingeringForEvent(event){
+  if(!event)return null;
+  // Use the source position from the exact same abcjs playback event that
+  // positions the notation cursor. There is no independent note counter.
+  let source=recursiveStartChar(event);
+  if(source==null)return null;
+  source-=prefixLength;
+  let item=solutionByIndex.get(source);
+  if(item)return item;
+  // abcjs can anchor the event on an accidental/decorator just before a note.
+  for(let d=1;d<=8;d++){
+    item=solutionByIndex.get(source+d);
+    if(item)return item;
+  }
+  return null;
+}
+function keepCursorVisible(event){
+  if(!playbackCursor)return;
+  const vp=$("notation").parentElement;
+  const c=playbackCursor.getBoundingClientRect();
+  const v=vp.getBoundingClientRect();
+  if(!vp||v.height<=0)return;
+
+  // Hybrid autoscroll:
+  // - Short panes: scroll only when playback moves to a different staff/system.
+  // - Taller panes: leave the cursor alone inside a generous safe zone and
+  //   smooth-scroll only when it moves outside that zone.
+  // event.top is the abcjs system-relative Y position and is stable while a
+  // smooth scroll is in progress, so it is safe to use as the system identity.
+  const shortPane=v.height < Math.max(150,c.height*2.2);
+  if(shortPane){
+    const systemTop=event&&Number.isFinite(Number(event.top))?Number(event.top):null;
+    if(systemTop===null)return;
+    if(lastAutoscrollSystemTop!==null&&Math.abs(systemTop-lastAutoscrollSystemTop)<1)return;
+    lastAutoscrollSystemTop=systemTop;
+
+    // Put the current staff close to the top of a short pane. Clamp the
+    // destination so the first and last systems cannot cause oscillation.
+    const maxScroll=Math.max(0,vp.scrollHeight-vp.clientHeight);
+    const target=Math.max(0,Math.min(maxScroll,vp.scrollTop+(c.top-v.top)-8));
+    if(Math.abs(target-vp.scrollTop)>1)
+      vp.scrollTo({top:target,behavior:"smooth"});
+    return;
+  }
+
+  lastAutoscrollSystemTop=null;
+  const topLimit=v.top+v.height*.22;
+  const bottomLimit=v.top+v.height*.78;
+  let delta=0;
+  if(c.top<topLimit)delta=c.top-topLimit;
+  else if(c.bottom>bottomLimit)delta=c.bottom-bottomLimit;
+  if(Math.abs(delta)>1){
+    const maxScroll=Math.max(0,vp.scrollHeight-vp.clientHeight);
+    const target=Math.max(0,Math.min(maxScroll,vp.scrollTop+delta));
+    if(Math.abs(target-vp.scrollTop)>1)
+      vp.scrollTo({top:target,behavior:"smooth"});
+  }
+}
+function quotedAnnotationAtCursor(value,pos){
+  pos=Math.max(0,Math.min(Number(pos)||0,value.length));
+  const lineStart=Math.max(value.lastIndexOf("\n",Math.max(0,pos-1)),value.lastIndexOf("\r",Math.max(0,pos-1)))+1;
+  const ends=[value.indexOf("\n",pos),value.indexOf("\r",pos)].filter(n=>n>=0);
+  const lineEnd=ends.length?Math.min(...ends):value.length;
+  const line=value.slice(lineStart,lineEnd),rel=pos-lineStart;
+  let open=-1;
+  for(let i=0;i<rel;i++)if(line[i]==='"')open=open<0?i:-1;
+  if(open<0)return null;
+  const close=line.indexOf('"',rel);
+  if(close<0)return null;
+  return {start:lineStart+open+1,end:lineStart+close};
+}
+function abcNoteStarts(value){return abcNoteTokens(value).map(t=>t.start)}
+function nextNoteAfterHorizontalWhitespace(value,pos){
+  const next=abcNoteTokens(value).find(t=>t.start>pos);
+  if(!next)return null;
+  return /^[ \t]*$/.test(value.slice(pos,next.start))?next:null;
+}
+function noteTokenAtPosition(value,pos){
+  const tokens=abcNoteTokens(value);
+  return tokens.find(t=>pos===t.start)||tokens.find(t=>pos>t.start&&pos<t.end)||tokens.find(t=>pos===t.end)||null;
+}
+function noteStartForEditorPosition(value,pos){
+  pos=Math.max(0,Math.min(Number(pos)||0,value.length));
+  const annotation=quotedAnnotationAtCursor(value,pos);
+  if(annotation){
+    const next=abcNoteStarts(value).find(n=>n>annotation.end);
+    if(next!==undefined)return next;
+  }
+  const token=noteTokenAtPosition(value,pos);
+  if(token)return token.start;
+  const next=nextNoteAfterHorizontalWhitespace(value,pos);
+  return next?next.start:null;
+}
+function keepManualNotationSelectionVisible(){
+  requestAnimationFrame(()=>{
+    const el=$("notation").querySelector(".abcjs-note_selected");
+    const vp=$("notation").parentElement;
+    if(!el||!vp)return;
+    const r=el.getBoundingClientRect(),v=vp.getBoundingClientRect(),m=28;
+    if(r.top<v.top+m)vp.scrollBy({top:r.top-v.top-m,behavior:"smooth"});
+    else if(r.bottom>v.bottom-m)vp.scrollBy({top:r.bottom-v.bottom+m,behavior:"smooth"});
+  });
+}
+function highlightRenderedNoteBySource(noteStart){
+  if(!currentVisual||!currentVisual.engraver||typeof currentVisual.engraver.rangeHighlight!=="function")return;
+  const token=abcNoteTokens($("abcText").value).find(t=>t.start===noteStart);
+  if(!token)return;
+  try{
+    currentVisual.engraver.rangeHighlight(token.start+prefixLength,token.end+prefixLength);
+    keepManualNotationSelectionVisible();
+  }catch(_){}
+}
+function showManualFingeringForNote(noteStart,highlightNotation=true){
+  if(!Number.isInteger(noteStart))return;
+  manualSelectedNoteStart=noteStart;
+  const item=solutionByIndex.get(noteStart);
+  if(item)drawDiagram(item,true);
+  if(highlightNotation)highlightRenderedNoteBySource(noteStart);
+}
+function restoreManualSelectionAfterRebuild(){
+  if(playbackActive)return;
+  const ta=$("abcText");
+  if(!ta)return;
+
+  // A rebuild of the notation/audio can cause abcjs/browser focus handling to
+  // move the textarea caret (commonly back to the start of the tune). When a
+  // note was explicitly selected by a notation click, Previous/Next, or a Tab
+  // Override edit, that saved musical-note position is authoritative. Do not
+  // rediscover the note from the textarea caret during the rebuild.
+  let noteStart=Number.isInteger(manualSelectedNoteStart)
+    ? manualSelectedNoteStart
+    : noteStartForEditorPosition(ta.value,ta.selectionStart??0);
+
+  // If an edit made the saved source position invalid, fall back to the caret.
+  if(noteStart!=null && !solutionByIndex.has(noteStart))
+    noteStart=noteStartForEditorPosition(ta.value,ta.selectionStart??0);
+
+  if(noteStart==null){
+    manualSelectedNoteStart=null;
+    return;
+  }
+  showManualFingeringForNote(noteStart,true);
+}
+
+const SPLIT_KEY="abcHarmonicaSplitters";
+function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
+function savedSplitters(){try{const p=JSON.parse(localStorage.getItem(SPLIT_KEY)||"{}");return {v:Number(p.v),h:Number(p.h)}}catch(_){return {v:NaN,h:NaN}}}
+const DEFAULT_SPLIT_V=52.5,DEFAULT_SPLIT_H=45;
+let splitVPercent=DEFAULT_SPLIT_V,splitHPercent=DEFAULT_SPLIT_H;
+function saveSplitterPercents(){try{localStorage.setItem(SPLIT_KEY,JSON.stringify({v:splitVPercent,h:splitHPercent}))}catch(_){}}
+function setVerticalSplit(percent){splitVPercent=clamp(percent,25,75);const avail=Math.max(1,$("workspace").clientWidth-15);$("workspace").style.gridTemplateColumns=`${avail*splitVPercent/100}px 5px minmax(0,1fr)`}
+function setHorizontalSplit(percent){splitHPercent=clamp(percent,25,75);const avail=Math.max(1,$("leftPane").clientHeight-15);$("leftPane").style.gridTemplateRows=`${avail*splitHPercent/100}px 5px minmax(180px,1fr)`}
+function restoreSplitters(){if(window.matchMedia("(max-width:1050px)").matches)return;const p=savedSplitters();if(Number.isFinite(p.v))splitVPercent=clamp(p.v,25,75);if(Number.isFinite(p.h))splitHPercent=clamp(p.h,25,75);setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}
+function installSplitters(){
+ const sv=$("splitV"),sh=$("splitH");
+ function begin(e,kind){if(e.button!==undefined&&e.button!==0)return;if(anyFullPageMode()||window.matchMedia("(max-width:1050px)").matches)return;e.preventDefault();document.body.classList.add("resizing");
+  const startX=e.clientX,startY=e.clientY,startV=splitVPercent,startH=splitHPercent;
+  const r=kind==="v"?$("workspace").getBoundingClientRect():$("leftPane").getBoundingClientRect();
+  const avail=Math.max(1,(kind==="v"?r.width:r.height)-15);
+  const move=ev=>{
+   if(kind==="v"){
+    const delta=100*(ev.clientX-startX)/avail;
+    setVerticalSplit(startV+delta);
+   }else{
+    const delta=100*(ev.clientY-startY)/avail;
+    setHorizontalSplit(startH+delta);
+   }
+  };
+  const end=()=>{document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",end);document.removeEventListener("pointercancel",end);document.body.classList.remove("resizing");saveSplitterPercents()};
+  document.addEventListener("pointermove",move);document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
+ }
+ sv.addEventListener("pointerdown",e=>begin(e,"v"));sh.addEventListener("pointerdown",e=>begin(e,"h"));
+ sv.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setVerticalSplit(DEFAULT_SPLIT_V);saveSplitterPercents()});
+ sh.addEventListener("dblclick",()=>{if(window.matchMedia("(max-width:1050px)").matches)return;setHorizontalSplit(DEFAULT_SPLIT_H);saveSplitterPercents()});
+ window.addEventListener("resize",()=>{if(!anyFullPageMode()&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}});
+}
+
+const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-harmonica-fingering-player.html";
+const SHARE_LINK_MAX_LEN=8100;
+
+function bytesToBase64URL(bytes){
+  let binary="";
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function base64URLToBytes(value){
+  let s=String(value||"").replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  const binary=atob(s),bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return bytes;
+}
+function compressABCDeflate(abc){
+  if(typeof pako==="undefined"||!pako.deflate)throw new Error("pako.js did not load.");
+  return bytesToBase64URL(pako.deflate(new TextEncoder().encode(abc),{level:6}));
+}
+function decompressABCDeflate(payload){
+  if(typeof pako==="undefined"||!pako.inflate)throw new Error("pako.js did not load.");
+  return new TextDecoder().decode(pako.inflate(base64URLToBytes(payload)));
+}
+function syncCurrentTuneFromEditor(){
+  if(tunes.length&&currentTune>=0&&currentTune<tunes.length&&!$("abcText").disabled){
+    tunes[currentTune]=$("abcText").value;
+    loadedABC=tunes.join("\n\n");
+  }
+}
+function generateShareLink(abc){
+  if(!abc||!abc.trim())return "";
+  try{
+    const params=new URLSearchParams();
+    params.set("def",compressABCDeflate(abc));
+    params.set("system",$("system").value);
+    params.set("style",$("style").value);
+    params.set("display",$("fingeringDisplay").value);
+    return `${SHARE_BASE_URL}?${params.toString()}`;
+  }catch(_){
+    return "";
+  }
+}
+function updateShareButtons(){
+  const tuneBtn=$("shareTuneBtn"),allBtn=$("shareAllBtn");
+  if(!tuneBtn||!allBtn)return;
+  if(!tunes.length){
+    tuneBtn.disabled=true;allBtn.disabled=true;
+    tuneBtn.title=allBtn.title="Open an ABC file first.";
+    return;
+  }
+  syncCurrentTuneFromEditor();
+  const tuneURL=generateShareLink($("abcText").value);
+  const allURL=generateShareLink(tunes.join("\n\n"));
+  tuneBtn.disabled=!tuneURL||tuneURL.length>SHARE_LINK_MAX_LEN;
+  allBtn.disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;
+  tuneBtn.title=tuneBtn.disabled?"Current tune share link exceeds 8100 characters.":"Create a share link for the current tune and copy it to the clipboard.";
+  allBtn.title=allBtn.disabled?"All-tunes share link exceeds 8100 characters.":"Create a share link for all loaded tunes and copy it to the clipboard.";
+}
+async function copyShareLink(allTunes){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
+  const url=generateShareLink(abc);
+  if(!url||url.length>SHARE_LINK_MAX_LEN)return;
+  let copied=false;
+  try{
+    await navigator.clipboard.writeText(url);
+    copied=true;
+  }catch(_){
+    const ta=document.createElement("textarea");
+    ta.value=url;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";
+    try{
+      document.body.appendChild(ta);
+      ta.select();
+      copied=document.execCommand("copy");
+    }catch(_){
+      copied=false;
+    }finally{
+      ta.remove();
+    }
+  }
+  if(copied){
+    const tuneName=firstTitle($("abcText").value,currentTune+1);
+    const message=allTunes
+      ? "Share link for all tunes copied to the clipboard."
+      : `Share link for the current tune <b>${escapeHTML(tuneName)}</b> copied to the clipboard.`;
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(allTunes
+        ? "Share link for all tunes copied to the clipboard."
+        : `Share link for the current tune ${tuneName} copied to the clipboard.`);
+    }
+  }else{
+    const message="Unable to copy the share link to the clipboard.";
+    if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
+      await DayPilot.Modal.alert(message,{top:100,width:460});
+    }else{
+      alert(message);
+    }
+  }
+}
+function populateTuneSelector(label){
+  $("fileLabel").textContent=`${label} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
+  $("tuneSelect").innerHTML=tunes.map((t,i)=>`<option value="${i}">${firstTitle(t,i+1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</option>`).join("");
+  $("tuneSelect").disabled=false;
+  $("fullBtn").disabled=true;
+}
+
+function setAbcDirty(dirty=true){abcDirty=!!dirty}
+async function confirmDiscardDirtyForOpen(){
+  if(!abcDirty||!tunes.length)return true;
+  const message="You have unsaved changes to the current ABC tunes.<br><br>Opening a new ABC file will discard those changes. Do you want to continue?";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.confirm==="function"){
+    const r=await DayPilot.Modal.confirm(message,{top:100,width:460});
+    return !!(r&&!r.canceled&&r.result);
+  }
+  return window.confirm("You have unsaved changes to the current ABC tunes.\n\nOpening a new ABC file will discard those changes. Do you want to continue?");
+}
+
+function baseNameForSave(name){
+  const s=String(name||"").trim().replace(/^.*[\\/]/,"").replace(/\.(?:abc|txt)$/i,"");
+  return s||"harmonica-tunes";
+}
+function syncAllTunesForSave(){
+  syncCurrentTuneFromEditor();
+  return tunes.join("\n\n").replace(/\s+$/,"")+"\n";
+}
+function mobileSavePlatform(){
+  const ua=navigator.userAgent||"";
+  return /iPhone|iPad|iPod|Android/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+}
+function manualTuneTitleBaseName(){
+  if(!manualEntryCollection||tunes.length!==1)return "";
+  syncCurrentTuneFromEditor();
+  const m=(tunes[0]||"").match(/^T:\s*(.*?)\s*$/m);
+  return m&&m[1].trim()?baseNameForSave(m[1].trim()):"";
+}
+async function askSaveBaseName(){
+  const mobile=mobileSavePlatform();
+  const ext=mobile?".txt":".abc";
+  const def=baseNameForSave(currentSaveBaseName||manualTuneTitleBaseName()||"harmonica-tune")+ext;
+  let v=null;
+  document.body.classList.add("save-name-prompt-open");
+  try{
+    if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){
+      const r=await DayPilot.Modal.prompt("Save ABC file name:",def,{top:100});
+      if(!r||r.canceled)return null;
+      v=r.result;
+    }else{
+      v=window.prompt("Save ABC file name:",def);
+      if(v===null)return null;
+    }
+  }finally{
+    document.body.classList.remove("save-name-prompt-open");
+  }
+  v=baseNameForSave(v);
+  currentSaveBaseName=v;
+  return v;
+}
+async function saveCurrentCollection(){
+  if(!tunes.length)return;
+  const base=await askSaveBaseName();if(!base)return;
+  const data=syncAllTunesForSave(),mobile=mobileSavePlatform();
+  const filename=base+(mobile?".txt":".abc");
+  const blob=new Blob([data],{type:"text/plain;charset=utf-8"});
+  if(mobile&&navigator.share){
+    try{
+      const file=new File([blob],filename,{type:"text/plain"});
+      if(!navigator.canShare||navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:filename});
+        setAbcDirty(false);
+        return;
+      }
+    }catch(e){if(e&&e.name==="AbortError")return}
+  }
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setAbcDirty(false);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function processLoadedABC(abc,label){$("saveAbcBtn").disabled=false;
+  melodyMuted=false;
+  updateMuteMelodyButton();
+  loadedABC=abc;
+  tunes=splitTunes(loadedABC);
+  if(!tunes.length)throw new Error("No ABC tunes found.");
+  setAbcDirty(false);
+  if(NEEDS_INITIAL_AUDIO_RETRY)initialAudioRetry=true;
+  populateTuneSelector(label);
+  loadTune(0,false);
+}
+
+/* ============================================================
+   ABC Transcription Tools direct-transfer message support.
+   Uses the same startup handshake as the ABC Chord Chart Generator.
+   ============================================================ */
+function trustedABCTranscriptionToolsMessage(event){
+  const expectedSources=[];
+  if(window.opener)expectedSources.push(window.opener);
+  if(window.parent&&window.parent!==window)expectedSources.push(window.parent);
+  if(expectedSources.length&&!expectedSources.includes(event.source))return false;
+  if(window.location.protocol==="file:")return true;
+  return event.origin===window.location.origin||event.origin==="https://michaeleskin.com";
+}
+function acknowledgeABCTranscriptionToolsLoad(event,messageId,tuneCount){
+  if(!event.source||typeof event.source.postMessage!=="function")return;
+  try{
+    event.source.postMessage({
+      type:"abcjsEskinWebsiteBuilderABCLoaded",
+      messageId:messageId||"",
+      tuneCount
+    },event.origin&&event.origin!=="null"?event.origin:"*");
+  }catch(error){
+    console.warn("Unable to acknowledge ABC Transcription Tools load message.",error);
+  }
+}
+function loadABCFromABCTranscriptionTools(data,event){
+  const abcText=typeof data.abc==="string"?data.abc:"";
+  const sourceName=String(data.sourceName||"ABC Transcription Tools").trim()||"ABC Transcription Tools";
+  if(!abcText.trim())return;
+  try{
+    if($("openFile"))$("openFile").value="";
+    sharePlaybackNeedsGesture=true;
+    manualEntryCollection=false;currentSaveBaseName="transferred-harmonica-tunes";processLoadedABC(abcText,sourceName);
+    acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
+  }catch(error){
+    console.error(error);
+    alert("Unable to load ABC from "+sourceName+": "+(error&&error.message||error));
+  }
+}
+function handleABCTranscriptionToolsMessage(event){
+  if(!trustedABCTranscriptionToolsMessage(event))return;
+  const data=event.data||{};
+  if(data.type!=="abcjsEskinWebsiteBuilderLoadABC")return;
+  loadABCFromABCTranscriptionTools(data,event);
+}
+function notifyABCTranscriptionToolsReady(){
+  const message={type:"abcjsEskinWebsiteBuilderReady"};
+  const targets=[];
+  if(window.opener)targets.push(window.opener);
+  if(window.parent&&window.parent!==window)targets.push(window.parent);
+  targets.forEach(target=>{
+    try{target.postMessage(message,"*")}catch(error){
+      console.warn("Unable to notify ABC Transcription Tools that the harmonica fingering player is ready.",error);
+    }
+  });
+}
+let gABCTranscriptionToolsHandshakeStarted=false;
+function startABCTranscriptionToolsHandshake(){
+  if(gABCTranscriptionToolsHandshakeStarted)return;
+  gABCTranscriptionToolsHandshakeStarted=true;
+  window.addEventListener("message",handleABCTranscriptionToolsMessage);
+  [0,250,750,1500].forEach(delay=>setTimeout(notifyABCTranscriptionToolsReady,delay));
+}
+
+function loadShareLinkAfterStartup(){
+  const params=new URLSearchParams(location.search);
+  const payload=params.get("def");
+  if(!payload){updateShareButtons();return;}
+  // Let the page and abcjs finish their ordinary startup first. Then decode the
+  // share link and feed its ABC through the same post-read path used by File Open.
+  setTimeout(()=>{
+    try{
+      const system=params.get("system"),style=params.get("style"),display=params.get("display");
+      if(["0","1","2","3","4","5","6","7"].includes(system))$("system").value=system;
+      if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(style))$("style").value=style;
+      if(["-3","-2","-1","0","1","2","3"].includes(display))$("fingeringDisplay").value=display;
+      savePrefs();
+      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
+    }catch(err){
+      alert("Unable to open share link: "+(err&&err.message||err));
+    }
+  },750);
+}
+
+
+const PREFS_KEY="abcHarmonicaPrefs";
+const TEMPO_KEY="abcHarmonicaTempo";
+const COUNT_IN_KEY="abcHarmonicaCountIn";
+const METRONOME_KEY="abcHarmonicaMetronome";
+function updateHarmonicaHeaderStatus(){
+  const tuning=HARMONICA_TUNING_NAMES[$("system").value]||"Standard Richter";
+  const key=$("style").value;
+  const octNum=parseInt($("fingeringDisplay").value,10)||0;
+  const parts=[tuning,key];
+  if(octNum!==0)parts.push(`Octave ${octNum>0?"+":""}${octNum}`);
+  $("diagramMeta").textContent=parts.join(" • ");
+}
+function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
+
+const EDITOR_SIZE_KEY="abcHarmonicaEditorTextSize";
+function applyEditorTextSize(size,save=false){
+  if(!["small","medium","large","largest"].includes(size))size="medium";
+  const ta=$("abcText");
+  ta.classList.remove("editorTextSmall","editorTextMedium","editorTextLarge","editorTextLargest");
+  ta.classList.add("editorText"+size[0].toUpperCase()+size.slice(1));
+  $("editorTextSize").value=size;
+  if(save)try{localStorage.setItem(EDITOR_SIZE_KEY,size)}catch(_){}
+}
+function restoreEditorTextSize(){
+  let size="medium";
+  try{size=localStorage.getItem(EDITOR_SIZE_KEY)||"medium"}catch(_){}
+  applyEditorTextSize(size,false);
+}
+function abcNoteTokens(value){
+  // Return complete ABC note-token ranges. A token starts with any accidental
+  // prefix (^, ^^, _, __, =) and ends after octave marks and/or duration.
+  // Quoted text, headers/comments, decorations and grace groups are ignored.
+  const tokens=[]; let inQuote=false,inGrace=false,lineStart=true,headerLine=false;
+  for(let i=0;i<value.length;){
+    const c=value[i];
+    if(lineStart){
+      headerLine=/^[A-Za-z]:/.test(value.slice(i,i+2)) || c==="%";
+      lineStart=false;
+    }
+    if(c==="\n"||c==="\r"){lineStart=true;headerLine=false;i++;continue}
+    if(headerLine){i++;continue}
+    if(c==='"'){inQuote=!inQuote;i++;continue}
+    if(inQuote){i++;continue}
+    if(c==="{"){inGrace=true;i++;continue}
+    if(c==="}"){inGrace=false;i++;continue}
+    if(inGrace){i++;continue}
+    if(c==="!"){const e=value.indexOf("!",i+1);i=e>=0?e+1:i+1;continue}
+    if(c==="+"){const e=value.indexOf("+",i+1);i=e>=0?e+1:i+1;continue}
+
+    const start=i;
+    let j=i;
+    // ABC accidentals: ^, ^^, _, __, or =.
+    if(value[j]==="=")j++;
+    else if(value[j]==="^"||value[j]==="_"){
+      const accidental=value[j++];
+      if(value[j]===accidental)j++;
+    }
+
+    if(/[A-Ga-g]/.test(value[j]||"")){
+      const pitch=j;
+      j++;
+      // Octave markers belong to the note token.
+      while(value[j]==="'"||value[j]===",")j++;
+      // ABC length suffix: digits and slash forms such as 2, /, /2, //, 3/2.
+      while(/[0-9/]/.test(value[j]||""))j++;
+      tokens.push({start,end:j,pitch});
+      i=j;
+      continue;
+    }
+    i++;
+  }
+  return tokens;
+}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display}catch(_){}}
+function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
+function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
+function updateTempoButtonState(){
+  const btn=$("tempoBtn");
+  if(!btn)return;
+  const enablePlaybackShown=!!$("enablePlaybackBtn");
+  btn.disabled=!tunes.length||sharePlaybackNeedsGesture||enablePlaybackShown||!findTempoInput();
+}
+function findTempoInput(){return $("audio").querySelector("input.abcjs-midi-tempo,input.abcjs-midi-current-tempo,.abcjs-midi-tempo input,.abcjs-midi-current-tempo input,.abcjs-midi-current-tempo-wrapper input,.abcjs-tempo-wrapper input,input[type='number'],input[type='text']")}
+function applyTempoToInput(input,n){if(!input)return;input.value=String(n);input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}))}
+async function openTempoDialog(input){
+  if(!input||typeof DayPilot==="undefined"||!DayPilot.Modal)return;
+  const current=Math.round(Number(input.value))||savedTempo();
+  const modal=await DayPilot.Modal.prompt("Tempo percentage (10–200%):",String(current),{top:150,width:460});
+  if(modal.canceled)return;
+  const n=Math.round(Number(modal.result));
+  if(!Number.isFinite(n)||n<10||n>200){await DayPilot.Modal.alert("Please enter a tempo percentage from 10% to 200%.",{top:150,width:460});return openTempoDialog(input)}
+  saveTempo(n);applyTempoToInput(input,n);
+}
+function installTempoDialog(){
+  const input=findTempoInput();
+  if(!input){updateTempoButtonState();return false;}
+  applyTempoToInput(input,savedTempo());
+  updateTempoButtonState();
+  if(input.dataset.tempoDialogInstalled==="true")return true;
+  input.dataset.tempoDialogInstalled="true";input.readOnly=true;input.setAttribute("readonly","readonly");input.title="Click to set tempo percentage";input.setAttribute("aria-label","Open tempo percentage dialog");input.style.cursor="pointer";
+  const open=e=>{e.preventDefault();e.stopPropagation();openTempoDialog(input)};
+  input.addEventListener("pointerdown",open);input.addEventListener("focus",open);input.addEventListener("click",e=>{e.preventDefault();e.stopPropagation()});
+  input.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")open(e);else if(e.key.length===1||e.key==="Backspace"||e.key==="Delete")e.preventDefault()});
+  return true;
+}
+
+
+
+function installTempoDialogWhenReady(){if(installTempoDialog())return;let tries=0;const retry=()=>{if(installTempoDialog()||++tries>=20)return;setTimeout(retry,50)};requestAnimationFrame(retry)}
+// File-open and share-link ABC use the same post-read loading path and audio preparation.
+const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.test(navigator.userAgent);
+const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
+let initialAudioRetry=false;
+
+let sharePlaybackNeedsGesture=false;
+
+function showEnablePlaybackButton(){
+  const audio=$("audio");
+  audio.innerHTML="";
+  const btn=document.createElement("button");
+  btn.type="button";
+  btn.id="enablePlaybackBtn";
+  btn.className="primary";
+  btn.textContent="Click to Enable Playback";
+  btn.style.width="100%";
+  btn.style.minHeight="44px";
+  btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    btn.textContent="Enabling Playback…";
+    try{
+      // This is a genuine user gesture, satisfying browsers that prohibit
+      // automatic AudioContext startup.
+      const ctx=window.abcjsAudioContext;
+      if(ctx&&ctx.state==="suspended")await ctx.resume();
+      sharePlaybackNeedsGesture=false;
+      await rebuild();
+    }catch(e){
+      sharePlaybackNeedsGesture=true;
+      btn.disabled=false;
+      btn.textContent="Click to Enable Playback";
+      alert("Unable to enable playback: "+(e&&e.message||e));
+    }
+  },{once:true});
+  audio.appendChild(btn);
+  updateTempoButtonState();
+}
+
+function selectClickedNotationNote(abcelem){
+  if(!abcelem||!Number.isInteger(abcelem.startChar)||!Number.isInteger(abcelem.endChar))return;
+
+  // renderAbc() receives playbackABC, which has a fixed block inserted before K:.
+  // Melody-note source offsets therefore need that prefix removed to map back to
+  // the editable ABC.
+  let start=abcelem.startChar-prefixLength;
+  let end=abcelem.endChar-prefixLength;
+  const ta=$("abcText");
+  if(!ta||start<0||end<=start)return;
+  start=Math.min(start,ta.value.length);
+  end=Math.min(end,ta.value.length);
+
+  // abcjs source ranges are not guaranteed to cover the whole ABC note token:
+  // they may begin at the pitch letter (omitting an accidental) or end before
+  // octave/length suffixes. Find the complete musical token whose pitch/range
+  // overlaps the clicked source range, then select that whole token.
+  const clickedToken=abcNoteTokens(ta.value).find(t=>
+    (t.pitch>=start&&t.pitch<end) || (t.start<end&&t.end>start)
+  );
+  if(clickedToken){
+    start=clickedToken.start;
+    end=clickedToken.end;
+  }else{
+    while(start<end && /\s/.test(ta.value[start]))start++;
+    while(end>start && /\s/.test(ta.value[end-1]))end--;
+  }
+  if(end<=start)return;
+
+  ta.focus({preventScroll:true});
+  ta.setSelectionRange(start,end);
+
+  // Keep the selected ABC visible without moving the notation pane.
+  const before=ta.value.slice(0,start);
+  const line=before.split("\n").length-1;
+  const lineHeight=parseFloat(getComputedStyle(ta).lineHeight)||20;
+  ta.scrollTop=Math.max(0,(line*lineHeight)-(ta.clientHeight/2)+(lineHeight/2));
+
+  // The notation click already supplies abcjs's red selection. Mirror the same
+  // note on the main harmonica diagram without starting playback.
+  if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
+}
+
+async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=harmonicaFingeringsGenerator(stripChordSymbols(tune));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+  responsive:"resize",
+  add_classes:true,
+  selectionColor:"#ff0000",
+  clickListener:function(abcelem){
+    selectClickedNotationNote(abcelem);
+  }
+});if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];restoreManualSelectionAfterRebuild();if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
+    if(sharePlaybackNeedsGesture){
+      showEnablePlaybackButton();
+      return;
+    }
+    const cursorControl={onStart(){if(audioControllerInitializing)return;playbackActive=true;manualSelectedNoteStart=null;removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(audioControllerInitializing||!playbackActive)return;if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible(event)}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){
+      // SynthController.setTune() can emit playback-style callbacks while it
+      // prepares the tune. Ignore every such callback during initialization.
+      if(audioControllerInitializing||!playbackActive)return;
+      playbackActive=false;
+      manualSelectedNoteStart=null;
+      removeCursor();
+      drawDiagram(null,true);
+    }};controller=new ABCJS.synth.SynthController(playbackABC);controller.load("#audio",cursorControl,{displayLoop:true,displayRestart:true,displayPlay:true,displayProgress:true,displayWarp:true});audioControllerInitializing=true;try{await controller.setTune(visual[0],false,{})}finally{audioControllerInitializing=false}if(gen!==renderGeneration)return;restoreManualSelectionAfterRebuild();installTempoDialogWhenReady();if(initialAudioRetry){initialAudioRetry=false;requestAnimationFrame(()=>setTimeout(()=>{if(gen===renderGeneration)rebuild()},0))}}catch(e){alert("Unable to prepare tune: "+(e&&e.message||e));$("audio").innerHTML=""}}
+let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
+function loadTune(index,syncEditor=true){
+  const notationViewport=$("notation").parentElement;
+  if(notationViewport)notationViewport.scrollTop=0;if(syncEditor)syncCurrentTuneFromEditor();cancelCountIn();manualSelectedNoteStart=null;playbackActive=false;melodyMuted=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;updateMuteMelodyButton();$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+function updateMuteMelodyButton(){
+  const btn=$("muteMelodyBtn");
+  if(!btn)return;
+  btn.hidden=false;
+  btn.disabled=!tunes.length;
+  btn.textContent=melodyMuted?"Unmute Melody":"Mute Melody";
+}
+async function toggleMelodyMute(){
+  if(!tunes.length)return;
+  const wasPlaying=playbackActive;
+  melodyMuted=!melodyMuted;
+  updateMuteMelodyButton();
+  await rebuild();
+  if(!controller)return;
+  try{
+    if(typeof controller.seek==="function")controller.seek(0);
+    if(wasPlaying){
+      if(countInEnabled)startFiveSecondCountIn();
+      else if(typeof controller.play==="function")await controller.play();
+    }
+  }catch(e){
+    alert("Unable to restart playback: "+(e&&e.message||e));
+  }
+}
+function restoreCountInPreference(){
+  try{countInEnabled=localStorage.getItem(COUNT_IN_KEY)==="true"}catch(_){countInEnabled=false}
+  const cb=$("countInCheck");
+  if(cb)cb.checked=countInEnabled;
+}
+function saveCountInPreference(){
+  const cb=$("countInCheck");
+  countInEnabled=!!(cb&&cb.checked);
+  try{localStorage.setItem(COUNT_IN_KEY,String(countInEnabled))}catch(_){}
+}
+function cancelCountIn(){
+  countInToken++;
+  if(countInTimer){clearTimeout(countInTimer);countInTimer=null}
+  const overlay=$("countInOverlay");
+  if(overlay)overlay.hidden=true;
+}
+function startFiveSecondCountIn(){
+  cancelCountIn();
+  const token=countInToken;
+  const overlay=$("countInOverlay"),number=$("countInNumber");
+  if(!overlay||!number||!controller)return;
+  let count=5;
+  number.textContent=String(count);
+  overlay.hidden=false;
+  const tick=()=>{
+    if(token!==countInToken)return;
+    count--;
+    if(count<=0){
+      overlay.hidden=true;
+      countInTimer=null;
+      if(controller&&typeof controller.play==="function")controller.play();
+      return;
+    }
+    number.textContent=String(count);
+    countInTimer=setTimeout(tick,1000);
+  };
+  countInTimer=setTimeout(tick,1000);
+}
+function installCountInPlayHandler(){
+  const audio=$("audio");
+  if(!audio||audio.dataset.countInHandler)return;
+  audio.dataset.countInHandler="1";
+  audio.addEventListener("click",e=>{
+    const play=e.target.closest&&e.target.closest("button.abcjs-midi-start");
+    if(!play)return;
+    const wasPlaying=playbackActive;
+    if(countInEnabled&&!wasPlaying){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      startFiveSecondCountIn();
+      return;
+    }
+    if(wasPlaying)setTimeout(()=>{playbackActive=false},0);
+  },true);
+}
+$("metronomeCheck").addEventListener("change",toggleMetronome);
+$("countInCheck").addEventListener("change",saveCountInPreference);
+$("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
+$("tempoBtn").addEventListener("click",()=>{
+  const input=findTempoInput();
+  if(!input||$("tempoBtn").disabled)return;
+  openTempoDialog(input);
+});
+$("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderHarmonicaStaffNote(currentDiagramItem)});
+$("saveAbcBtn").addEventListener("click",saveCurrentCollection);
+$("openFile").addEventListener("change",async e=>{
+  const input=e.target,f=input.files&&input.files[0];if(!f)return;
+
+  if(IS_IOS&&!/\.(?:abc|txt)$/i.test(f.name)){
+    input.value="";
+    await DayPilot.Modal.alert(
+      'Only .abc and .txt files can be opened on iOS.<br><br>To learn more about ABC notation, please visit:<br><br><a href="https://michaeleskin.com/tools/abc-notation-tutor/abc-notation-tutor.html" target="_blank" rel="noopener noreferrer">ABC Notation Tutor</a>',
+      {top:150,width:460}
+    );
+    return;
+  }
+
+  if(!(await confirmDiscardDirtyForOpen())){input.value="";return}
+  try{
+    const abc=await f.text();
+    sharePlaybackNeedsGesture=false;
+    manualEntryCollection=false;
+    currentSaveBaseName=baseNameForSave(f.name);
+    processLoadedABC(abc,f.name);
+  }catch(err){
+    input.value="";
+    alert("File load failed: "+(err.message||err));
+  }
+});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+
+function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
+function beginManualTuneIfNeeded(){
+  const text=$("abcText").value;
+  if(tunes.length||!text.trim())return;
+  tunes=[text];loadedABC=text;currentTune=0;manualEntryCollection=true;currentSaveBaseName="";melodyMuted=false;updateMuteMelodyButton();
+  $("saveAbcBtn").disabled=false;
+  populateTuneSelector("Entered ABC");
+  $("tuneSelect").value="0";
+  
+  updateMuteMelodyButton();
+}
+async function showMultiplePasteAlert(){
+  const message="Pasting multiple tunes into the ABC editor is not allowed.<br><br>Please save the multiple tunes to a <b>.abc</b> file and then load the file into the tool.";
+  if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function")await DayPilot.Modal.alert(message,{top:100,width:460});
+  else alert("Pasting multiple tunes into the ABC editor is not allowed.\n\nPlease save the multiple tunes to a .abc file and then load the file into the tool.");
+}
+$("abcText").addEventListener("paste",e=>{
+  const pasted=(e.clipboardData||window.clipboardData)?.getData("text")||"";
+  const ta=e.currentTarget,start=ta.selectionStart??ta.value.length,end=ta.selectionEnd??start;
+  const resulting=ta.value.slice(0,start)+pasted+ta.value.slice(end);
+  if(splitTunes(resulting).length>1){e.preventDefault();showMultiplePasteAlert()}
+});
+$("abcText").addEventListener("input",()=>{
+  setAbcDirty(true);
+  beginManualTuneIfNeeded();
+  updateMuteMelodyButton();
+  syncCurrentTuneFromEditor();
+  const text=$("abcText").value;
+  if(hasMinimumABCForRender(text))scheduleRebuild();
+  updateShareButtons();
+});
+$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+
+function anyFullPageMode(){
+  return document.body.classList.contains("diagram-full") ||
+         document.body.classList.contains("abc-full") ||
+         document.body.classList.contains("notation-full");
+}
+function setPaneFull(kind,on){
+  const cls=kind==="abc"?"abc-full":"notation-full";
+  const btn=$(kind==="abc"?"abcFullBtn":"notationFullBtn");
+  if(on){
+    document.body.classList.remove("abc-full","notation-full");
+    document.body.classList.add(cls);
+  }else{
+    document.body.classList.remove(cls);
+  }
+  if(btn)btn.textContent=on?"Exit Full-Page":"Full-Page View";
+  requestAnimationFrame(()=>{
+    if(!on&&!window.matchMedia("(max-width:1050px)").matches){
+      setVerticalSplit(splitVPercent);
+      setHorizontalSplit(splitHPercent);
+    }
+  });
+}
+$("abcFullBtn").addEventListener("click",()=>{
+  if($("abcFullBtn").disabled)return;
+  setPaneFull("abc",!document.body.classList.contains("abc-full"));
+});
+$("notationFullBtn").addEventListener("click",()=>{
+  if($("notationFullBtn").disabled)return;
+  setPaneFull("notation",!document.body.classList.contains("notation-full"));
+});
+
+function setFull(on){const audioRow=document.querySelector(".audioRow"),notationPanel=$("notation").closest(".panel");if(on){if(audioRow&&audioRow.parentElement!==document.body)document.body.appendChild(audioRow);document.body.classList.add("diagram-full")}else{document.body.classList.remove("diagram-full");if(audioRow&&notationPanel)notationPanel.appendChild(audioRow)}requestAnimationFrame(()=>{if(!on&&!window.matchMedia("(max-width:1050px)").matches){setVerticalSplit(splitVPercent);setHorizontalSplit(splitHPercent)}drawDiagram(currentDiagramItem,true)})}$("fullBtn").addEventListener("click",()=>setFull(true));$("exitFull").addEventListener("click",()=>setFull(false));document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("legendPopup")?.classList.contains("open"))closeLegend();else if(document.body.classList.contains("diagram-full"))setFull(false);else if(document.body.classList.contains("abc-full"))setPaneFull("abc",false);else if(document.body.classList.contains("notation-full"))setPaneFull("notation",false)});
+// Firefox may restore textarea/form state across a reload. Clear the ABC editor
+// synchronously at startup so stale ABC is never visible. Keep the empty editor
+// enabled so a user can immediately type or paste a single tune.
+$("abcText").value="";
+$("abcText").disabled=false;
+// Firefox can restore form-control disabled states on a soft reload. Explicitly
+// establish the startup states, then establish them again on pageshow after any
+// browser form-state restoration has completed. Loaded/entered tunes enable these
+// controls through the normal load paths.
+function initializeActionButtonStates(){
+  const hasTunes=tunes.length>0;
+  // Explicitly establish startup state; Firefox can restore stale form-control
+  // disabled states across reloads/pageshow.
+  $("metronomeCheck").disabled=!hasTunes;
+  $("countInCheck").disabled=!hasTunes;
+  if(!hasTunes)melodyMuted=false;
+  $("saveAbcBtn").disabled=!hasTunes;
+  
+  updateMuteMelodyButton();
+  // Firefox may restore a stale enabled state on reload. With no tune loaded,
+  // force Tempo back to its true startup state after form-state restoration.
+  if(!hasTunes)$("tempoBtn").disabled=true;
+  else updateTempoButtonState();
+}
+initializeActionButtonStates();
+window.addEventListener("pageshow",initializeActionButtonStates);
+restoreEditorTextSize();
+$("editorTextSize").addEventListener("change",e=>applyEditorTextSize(e.target.value,true));
+
+/* Floating Harmonica Legend.
+   Position is kept only in the current page session. Resizing the window resets
+   it to the default centered position, as does starting/reloading the tool. */
+const legendPopup=$("legendPopup");
+const legendPopupHeader=$("legendPopupHeader");
+let legendDrag=null;
+
+function resetLegendPosition(){
+  if(!legendPopup)return;
+  legendPopup.style.left="50%";
+  legendPopup.style.top=window.matchMedia("(max-width:650px)").matches?"76px":"90px";
+  legendPopup.style.transform="translateX(-50%)";
+}
+function openLegend(){
+  if(!legendPopup)return;
+  legendPopup.classList.add("open");
+  $("legendBtn")?.setAttribute("aria-expanded","true");
+}
+function closeLegend(){
+  if(!legendPopup)return;
+  legendPopup.classList.remove("open");
+  $("legendBtn")?.setAttribute("aria-expanded","false");
+}
+$("legendBtn")?.setAttribute("aria-expanded","false");
+$("legendBtn")?.setAttribute("aria-controls","legendPopup");
+$("legendBtn")?.addEventListener("click",openLegend);
+
+$("legendBtn").disabled=$("fullBtn").disabled;
+new MutationObserver(()=>{
+  $("legendBtn").disabled=$("fullBtn").disabled;
+  if($("legendBtn").disabled)closeLegend();
+}).observe($("fullBtn"),{attributes:true,attributeFilter:["disabled"]});
+$("legendPopupClose")?.addEventListener("click",closeLegend);
+
+legendPopupHeader?.addEventListener("pointerdown",e=>{
+  if(e.button!==undefined && e.button!==0)return;
+  if(e.target.closest("button"))return;
+  const r=legendPopup.getBoundingClientRect();
+  legendPopup.style.left=r.left+"px";
+  legendPopup.style.top=r.top+"px";
+  legendPopup.style.transform="none";
+  legendDrag={pointerId:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};
+  try{legendPopupHeader.setPointerCapture(e.pointerId)}catch(_){}
+  e.preventDefault();
+});
+legendPopupHeader?.addEventListener("pointermove",e=>{
+  if(!legendDrag || e.pointerId!==legendDrag.pointerId)return;
+  const w=legendPopup.offsetWidth,h=legendPopup.offsetHeight;
+  const margin=6;
+  const maxLeft=Math.max(margin,window.innerWidth-w-margin);
+  const maxTop=Math.max(margin,window.innerHeight-h-margin);
+  const left=Math.min(maxLeft,Math.max(margin,e.clientX-legendDrag.dx));
+  const top=Math.min(maxTop,Math.max(margin,e.clientY-legendDrag.dy));
+  legendPopup.style.left=left+"px";
+  legendPopup.style.top=top+"px";
+  e.preventDefault();
+});
+function endLegendDrag(e){
+  if(!legendDrag || (e.pointerId!==undefined && e.pointerId!==legendDrag.pointerId))return;
+  try{legendPopupHeader.releasePointerCapture(legendDrag.pointerId)}catch(_){}
+  legendDrag=null;
+}
+legendPopupHeader?.addEventListener("pointerup",endLegendDrag);
+legendPopupHeader?.addEventListener("pointercancel",endLegendDrag);
+
+resetLegendPosition();
+window.addEventListener("resize",()=>{
+  legendDrag=null;
+  resetLegendPosition();
+});
+
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();
+["system","style","fingeringDisplay"].forEach(id=>{
+  $(id).addEventListener("change",updateHarmonicaHeaderStatus);
+});
+updateHarmonicaHeaderStatus();
+restoreShowNotePreference();restoreMetronomePreference();
+restoreCountInPreference();installCountInPlayHandler();{const octNum=parseInt($("fingeringDisplay").value,10)||0;const octLabel=(octNum>0?"+":"")+octNum;$("diagramMeta").textContent=[HARMONICA_TUNING_NAMES[$("system").value]||"Standard Richter",$("style").value,...(octNum!==0?[`Octave ${octLabel}`]:[])].join(" • ")}updateShareButtons();startABCTranscriptionToolsHandshake();
+// This script is at the end of the document and the portable abcjs library may
+// already be cached. In that case window.load can fire before this listener is
+// installed. Handle both states so share links are always consumed.
+if(document.readyState==="complete"){
+  loadShareLinkAfterStartup();
+}else{
+  window.addEventListener("load",loadShareLinkAfterStartup,{once:true});
+}
+
+
+/* UI-only playback-permission synchronization for notation-header controls.
+   The Tempo implementation and audio/playback code are intentionally untouched. */
+function syncPlaybackPermissionHeaderControls(){
+  const permissionPending=!!$("enablePlaybackBtn");
+  const hasTunes=tunes.length>0;
+  const muteBtn=$("muteMelodyBtn");
+  const metronome=$("metronomeCheck");
+  const countIn=$("countInCheck");
+
+  // These controls are unavailable with no loaded tune, and remain unavailable
+  // while the browser is waiting for the user's playback-permission gesture.
+  if(metronome)metronome.disabled=!hasTunes||permissionPending;
+  if(countIn)countIn.disabled=!hasTunes||permissionPending;
+
+  const paneFullDisabled=!hasTunes||permissionPending;
+  const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn");
+  if(abcFullBtn)abcFullBtn.disabled=paneFullDisabled;
+  if(notationFullBtn)notationFullBtn.disabled=paneFullDisabled;
+  if(fullBtn)fullBtn.disabled=paneFullDisabled;
+
+  if(permissionPending){
+    if(muteBtn)muteBtn.disabled=true;
+    return;
+  }
+
+  if(muteBtn)updateMuteMelodyButton();
+}
+
+function installPlaybackPermissionHeaderControlSync(){
+  const audio=$("audio");
+  if(!audio)return;
+  const observer=new MutationObserver(syncPlaybackPermissionHeaderControls);
+  observer.observe(audio,{childList:true,subtree:true});
+  syncPlaybackPermissionHeaderControls();
+}
+
+installPlaybackPermissionHeaderControlSync();
+</script></body></html>

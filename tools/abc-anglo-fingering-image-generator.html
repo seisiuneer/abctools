@@ -174,7 +174,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.32</div>
+<header class="app-header"><div class="version">Version 1.33</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -1638,7 +1638,7 @@ function abcPitchToMidi(s){
 
 // Choose enharmonic spelling from this tune's K: field only, matching the player.
 function keyTagPrefersFlats(abc){
-  const m=String(abc||"").match(/^K:\s*([A-Ga-g])([#b]?)(.*)$/m);
+  const m=String(abc||"").match(/^K:[ \t]*([A-Ga-g])([#b]?)([^\r\n]*)$/m);
   if(!m)return false;
   const tonic=m[1].toUpperCase()+m[2];
   const rest=String(m[3]||"").trim().toLowerCase();
