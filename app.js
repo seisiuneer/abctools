@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3348_092526_1500";
+var gVersionNumber = "3349_092826_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26600,7 +26600,9 @@ function InjectStringBelowTuneHeader(theTune, theString) {
 
   // Remove the ABC headers
   var theNotes = removeABCTuneHeaders(theTune);
-  theNotes = theNotes.trim();
+  // Preserve leading whitespace on the first music line so the injection
+  // point can be located exactly in the original tune.
+  theNotes = theNotes.trimEnd();
 
   var theLines = theNotes.split("\n");
   var nLines = theLines.length;
@@ -26669,8 +26671,9 @@ function InjectStringBelowTuneHeader(theTune, theString) {
     return theOriginalTune;
   }
 
-  // Find the offset into the original tune
-  var theNotesIndex = theTune.indexOf(firstLine);
+  // Find the offset into the original tune using the exact first music text.
+  // Using the trimmed firstLine can place the injection after leading spaces.
+  var theNotesIndex = theTune.indexOf(theNotes);
   theTune = theTune.substring(0, theNotesIndex);
   theTune += theString;
   theTune += "\n" + theNotes + "\n\n";
@@ -60898,7 +60901,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 25 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 September 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
