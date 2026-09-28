@@ -705,6 +705,23 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 }
 
 
+/* v1.16: move the optional staff-note display farther right so accidental
+   note names (for example G# or Bb) have comfortable clearance on all platforms. */
+.harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+  left:calc(50% + clamp(112px,11.2cqw,150px)) !important;
+}
+@media (pointer:coarse) and (min-width:700px) and (max-width:1400px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(104px,10.6cqw,138px)) !important;
+  }
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .harmonicaStaffNote, body.diagram-full .harmonicaStaffNote{
+    left:calc(50% + clamp(70px,18cqw,82px)) !important;
+  }
+}
+
+
 /* Harmonica technique Legend: floating, draggable, session-only position. */
 .legendBtn{white-space:nowrap}
 .legendPopup{
@@ -769,7 +786,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.15</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.17</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -823,7 +840,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
       <p>The <b>Full-Page View</b> buttons expand the ABC editor, notation, or harmonica display to fill the page. Press Escape to leave a full-page view; the harmonica view also provides an <b>Exit Full-Page</b> button.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
-      <p>Playback follows the notation cursor and harmonica display. Playback uses the Fluid soundfont by default. Melody playback uses <b>%%MIDI program 22</b>; bass and chords use program 0. Mute Melody, Metronome, Count in, Tempo, looping, restart, progress, and playback speed work as in the other instrument-specific players.</p>
+      <p>Playback follows the notation cursor and harmonica display. Playback uses the MScore soundfont by default. Melody playback uses <b>%%MIDI program 22</b>; bass and chords use program 0. Mute Melody, Metronome, Count in, Tempo, looping, restart, progress, and playback speed work as in the other instrument-specific players.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Save writes the current ABC collection to a file.</p>
       <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune,
@@ -834,7 +851,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       <p>When tunes are opened from a share link, click the <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
       <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Soundfont URL Parameter</p>
-      <p>The default Fluid playback soundfont can be overridden when opening the tool by adding a <b>soundfont</b> URL parameter. Valid values are <b>fluid</b>, <b>fatboy</b>, <b>musyng</b>, <b>canvas</b>, <b>mscore</b>, <b>arachno</b>, and <b>fluidhq</b>. Any other value uses the default <b>fluid</b> soundfont.</p>
+      <p>The default MScore playback soundfont can be overridden when opening the tool by adding a <b>soundfont</b> URL parameter. Valid values are <b>fluid</b>, <b>fatboy</b>, <b>musyng</b>, <b>canvas</b>, <b>mscore</b>, <b>arachno</b>, and <b>fluidhq</b>. Any other value uses the default <b>mscore</b> soundfont.</p>
       <p>For example, use <b>?soundfont=fatboy</b> when it is the first URL parameter, or <b>&amp;soundfont=mscore</b> when adding it after another parameter.</p>
       <hr>
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
@@ -854,7 +871,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <script>
 const VALID_SOUNDFONTS=new Set(["fluid","fatboy","musyng","canvas","mscore","arachno","fluidhq"]);
 const requestedSoundfont=(new URLSearchParams(window.location.search).get("soundfont")||"").trim().toLowerCase();
-const playbackSoundfont=VALID_SOUNDFONTS.has(requestedSoundfont)?requestedSoundfont:"fluid";
+const playbackSoundfont=VALID_SOUNDFONTS.has(requestedSoundfont)?requestedSoundfont:"mscore";
 
 // Generic ABC pitch helpers used by the harmonica solver and note display.
 function abcPitchToMidi(s){
