@@ -787,7 +787,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.18</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.19</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -884,7 +884,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <script>
 const playbackSoundfont="mscore";
 
-const SUPER64_SAMPLE_BASE="https://michaeleskin.com/abctools/soundfonts/super64_1/mp3/";
+const SUPER64_SAMPLE_BASE="https://michaeleskin.com/abctools/soundfonts/super64_3/mp3/";
 const SUPER64_MIN_MIDI=48; // C3
 const SUPER64_MAX_MIDI=96; // C7
 let super64LoadPromise=null;
@@ -1246,9 +1246,11 @@ async function toggleMetronome(){
 function buildPlaybackABC(abc){
   const source=String(abc||"");
   const useSuper64=super64Ready&&tuneFitsSuper64Range();
+  const octaveShift=parseInt($("fingeringDisplay").value,10)||0;
   const forced=[
     `%soundfont ${playbackSoundfont}`,
     melodyMuted?"%%MIDI program mute":(useSuper64?"%%MIDI program custom1":"%%MIDI program 22"),
+    ...(octaveShift!==0?[`%%MIDI transpose ${octaveShift*12}`]:[]),
     ...(useSuper64?[
       `%custom_instrument_1_volume_scale ${super64VolumeScale}`,
       `%custom_instrument_1_fade ${super64FadeTimeMs}`
