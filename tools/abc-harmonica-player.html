@@ -859,7 +859,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Volume Override URL Parameters</p>
       <p>Three optional URL parameters can override playback volume settings:</p>
-      <p><b>volume=</b> sets the harmonica volume using a decimal value from 0 to 1.0. The default is 0.4.</p>
+      <p><b>volume=</b> sets the harmonica volume using a decimal value from 0 to 1.0. The default is 0.5.</p>
       <p><b>bassvol=</b> sets the MIDI bass accompaniment volume using an integer value from 0 to 127. The default is 64.</p>
       <p><b>chordvol=</b> sets the MIDI chord accompaniment volume using an integer value from 0 to 127. The default is 64.</p>
       <p>For example:</p>
@@ -889,7 +889,7 @@ const SUPER64_MIN_MIDI=48; // C3
 const SUPER64_MAX_MIDI=96; // C7
 let super64LoadPromise=null;
 let super64Ready=false;
-const SUPER64_DEFAULT_VOLUME_SCALE=0.4;
+const SUPER64_DEFAULT_VOLUME_SCALE=0.5;
 const MIDI_ACCOMPANIMENT_DEFAULT_VOLUME=64;
 const startupURLParams=new URLSearchParams(window.location.search);
 function hasValidNumericURLParam(name){
@@ -940,7 +940,7 @@ async function loadSuper64Samples(){
       // Match the settings supplied with the original ABC Transcription Tools
       // Hohner Super 64 custom-instrument bundle.
       // super64VolumeScale is initialized from the optional ?volume= URL parameter
-      // (clamped to 0..1), or defaults to 0.4 when absent/invalid.
+      // (clamped to 0..1), or defaults to 0.5 when absent/invalid.
       super64FadeTimeMs=100;
 
       const samples=await Promise.all(
@@ -969,11 +969,13 @@ async function loadSuper64Samples(){
   return super64LoadPromise;
 }
 
-function tuneFitsSuper64Range(){
+function tuneFitsSuper64Range(octaveShift=0){
   if(!solution||!solution.length)return true;
+  const transpose=(parseInt(octaveShift,10)||0)*12;
   for(const item of solution){
     const midi=abcPitchToMidi(item.normalizedNote||item.abcNote);
-    if(midi!=null&&(midi<SUPER64_MIN_MIDI||midi>SUPER64_MAX_MIDI))return false;
+    const playbackMidi=midi==null?null:midi+transpose;
+    if(playbackMidi!=null&&(playbackMidi<SUPER64_MIN_MIDI||playbackMidi>SUPER64_MAX_MIDI))return false;
   }
   return true;
 }
@@ -1245,8 +1247,8 @@ async function toggleMetronome(){
 
 function buildPlaybackABC(abc){
   const source=String(abc||"");
-  const useSuper64=super64Ready&&tuneFitsSuper64Range();
   const octaveShift=parseInt($("fingeringDisplay").value,10)||0;
+  const useSuper64=super64Ready&&tuneFitsSuper64Range(octaveShift);
   const forced=[
     `%soundfont ${playbackSoundfont}`,
     melodyMuted?"%%MIDI program mute":(useSuper64?"%%MIDI program custom1":"%%MIDI program 22"),
