@@ -786,6 +786,25 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   transform:translateY(-0.10em);
 }
 
+
+/* iPhone portrait: keep all Harmonica header controls visible by allowing the
+   right-side controls to wrap onto additional rows within the panel width. */
+@media (orientation:portrait) and (max-width:650px){
+  .diagramHeader{align-items:flex-start;flex-wrap:wrap}
+  .diagramHeaderRight{
+    flex:1 1 100%;
+    width:100%;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    gap:7px;
+    min-width:0;
+  }
+  .diagramHeaderRight .meta{margin-right:0}
+  .diagramHeader .fullBtn,
+  .diagramHeader .exitFull,
+  .diagramHeader .legendBtn{flex:0 0 auto}
+}
+
 </style></head><body><div class="app">
 <header class="app-header"><div class="version">Version 1.19</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
 <div class="toolbar">
