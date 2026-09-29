@@ -1381,7 +1381,31 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       .
      </p>
      <p>
-      These volume settings are not saved in this browser. When a volume override is present in the current URL, it is included in generated share links.
+      The volume settings are not saved in this browser. If a volume override is present in the current URL, it is included in generated share links and restored when those links are opened.
+     </p>
+     <p>
+      <b>
+       fadems=
+      </b>
+      sets the harmonica sample fade time in milliseconds using an integer value from 10 to 200. The default is 60 milliseconds.
+     </p>
+     <p>
+      For example: 
+     </p>
+     <p>
+      <b>
+       ?fadems=60
+      </b>
+     </p>
+     <p>
+      If the URL already contains other parameters, after the other parameters, append the fadems parameter using
+      <b>
+       &amp;
+      </b>
+      .
+     </p>
+     <p>
+      The fadems setting is not saved in this browser. If a fade-time override is present in the current URL, it is included in generated share links and restored when those links are opened.
      </p>
      <hr/>
      <p style="text-align:center;font-weight:700;margin:18px 0 6px">
@@ -1413,7 +1437,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <script>
    const playbackSoundfont="mscore";
 
-const SUPER64_SAMPLE_BASE="https://michaeleskin.com/abctools/soundfonts/super64_4/mp3/";
+const SUPER64_SAMPLE_BASE="https://michaeleskin.com/abctools/soundfonts/super64_6/mp3/";
 const SUPER64_MIN_MIDI=48; // C3
 const SUPER64_MAX_MIDI=96; // C7
 let super64LoadPromise=null;
@@ -1429,12 +1453,20 @@ function hasValidNumericURLParam(name){
 const volumeURLParamPresent=hasValidNumericURLParam("volume");
 const bassvolURLParamPresent=hasValidNumericURLParam("bassvol");
 const chordvolURLParamPresent=hasValidNumericURLParam("chordvol");
+const fadeMsURLParamPresent=hasValidNumericURLParam("fadems");
 function getSuper64VolumeScaleFromURL(){
   const raw=startupURLParams.get("volume");
   if(raw===null||raw.trim()==="")return SUPER64_DEFAULT_VOLUME_SCALE;
   const value=Number(raw);
   if(!Number.isFinite(value))return SUPER64_DEFAULT_VOLUME_SCALE;
   return Math.min(1,Math.max(0,value));
+}
+function getSuper64FadeTimeMsFromURL(){
+  const raw=startupURLParams.get("fadems");
+  if(raw===null||raw.trim()==="")return 60;
+  const value=Number(raw);
+  if(!Number.isFinite(value))return 60;
+  return Math.min(200,Math.max(10,Math.trunc(value)));
 }
 function getMIDIVolumeFromURL(name){
   const raw=startupURLParams.get(name);
@@ -1446,7 +1478,7 @@ function getMIDIVolumeFromURL(name){
 let super64VolumeScale=getSuper64VolumeScaleFromURL();
 const midiBassVolume=getMIDIVolumeFromURL("bassvol");
 const midiChordVolume=getMIDIVolumeFromURL("chordvol");
-let super64FadeTimeMs=100;
+let super64FadeTimeMs=getSuper64FadeTimeMsFromURL(); // Optional ?fadems= override, clamped to 10..200 ms; default 60
 
 function midiToSuper64SampleName(midi){
   const names=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
@@ -1470,7 +1502,6 @@ async function loadSuper64Samples(){
       // Hohner Super 64 custom-instrument bundle.
       // super64VolumeScale is initialized from the optional ?volume= URL parameter
       // (clamped to 0..1), or defaults to 0.5 when absent/invalid.
-      super64FadeTimeMs=100;
 
       const samples=await Promise.all(
         Array.from({length:SUPER64_MAX_MIDI-SUPER64_MIN_MIDI+1},async(_,i)=>{
@@ -2188,11 +2219,12 @@ function generateShareLink(abc){
     params.set("system",$("system").value);
     params.set("style",$("style").value);
     params.set("display",$("fingeringDisplay").value);
-    // Preserve URL-only volume overrides in generated share links without
+    // Preserve URL-only overrides in generated share links without
     // persisting any of them in localStorage.
     if(volumeURLParamPresent)params.set("volume",String(super64VolumeScale));
     if(bassvolURLParamPresent)params.set("bassvol",String(midiBassVolume));
     if(chordvolURLParamPresent)params.set("chordvol",String(midiChordVolume));
+    if(fadeMsURLParamPresent)params.set("fadems",String(super64FadeTimeMs));
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
