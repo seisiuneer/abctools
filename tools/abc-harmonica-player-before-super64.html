@@ -330,6 +330,11 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
   line-height:1.55 !important;
 }
 
+
+
+
+
+
 /* Version 2.01: compact v1.96-style palette with separated hands. */
 .helpFingeringImageLink{display:block;max-width:100%;overflow:hidden}
 .helpFingeringImage{display:block;width:auto;max-width:100%;height:auto;margin:0 auto}
@@ -780,14 +785,8 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   .legendPopupBody{padding:8px}
 }
 
-/* Keep descenders clear in long tune titles and lift the title slightly on all layouts. */
-.liveTuneTitle, body.diagram-full .liveTuneTitle{
-  line-height:1.15 !important;
-  transform:translateY(-0.10em);
-}
-
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.18</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
+<header class="app-header"><div class="version">Version 1.17</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -829,9 +828,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       <p>The active hole is highlighted while the symbol below it shows the required breath direction or technique.</p>
       <p>The player supports <b>Standard Richter</b>, <b>Paddy Richter</b>, <b>Easy Thirds</b>, <b>Melody Maker</b>, <b>Country (Major 7th)</b>, <b>Natural Minor</b>, and <b>12- and 16-hole Chromatic</b> harmonicas.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Harmonica Settings</p>
-      <p><b>Harmonica tuning</b> chooses the note layout: the first six options are 10-hole diatonic tunings, and the last two are 12-hole and 16-hole chromatic layouts.</p>
-      <p><b>Harmonica key</b> chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#.</p>
-      <p><b>Octave shift</b> shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.</p>
+      <p><b>Harmonica tuning</b> chooses the note layout: the first six options are 10-hole diatonic tunings, and the last two are 12-hole and 16-hole chromatic layouts. <b>Harmonica key</b> chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#. <b>Octave shift</b> applies a -3 through +3 mapping.</p>
       <p>The selected harmonica tuning, key, and octave shift are saved in this browser and are also included in share links.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Harmonica Technique Symbols</p>
       <p>Each diagram shows the correct number of holes for the selected harmonica. The symbols used for blow, draw, bends, overblows, and overdraws are shown below. For chromatic harmonicas, <b>S</b> indicates to press the slide in.</p>
@@ -843,29 +840,19 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
       <p>The <b>Full-Page View</b> buttons expand the ABC editor, notation, or harmonica display to fill the page. Press Escape to leave a full-page view; the harmonica view also provides an <b>Exit Full-Page</b> button.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
-      <p>Playback follows the notation cursor and harmonica display, highlighting the current harmonica hole and technique as the tune plays.</p>
-      <p>Use the playback controls below the notation to start or pause the tune, restart from the beginning, turn looping on or off, move to a different position in the tune, and change the playback speed.</p>
-      <p><b>Mute Melody</b> turns the melody sound off or back on. This is useful when you want to play the melody yourself while keeping any accompaniment or metronome.</p>
-      <p><b>Metronome</b> adds a click during playback. If the selected tune uses a meter for which a metronome pattern is not available, the tool will let you know and leave the metronome off.</p>
-      <p><b>Count in?</b> adds a five-second on-screen countdown before playback begins.</p>
-      <p>Click <b>Tempo</b> to set the playback speed from 10% to 200% of the tune's normal tempo. The playback speed control below the notation shows and changes the same percentage.</p>
+      <p>Playback follows the notation cursor and harmonica display. Playback uses the MScore soundfont by default. Melody playback uses <b>%%MIDI program 22</b>; bass and chords use program 0. Mute Melody, Metronome, Count in, Tempo, looping, restart, progress, and playback speed work as in the other instrument-specific players.</p>
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Save writes the current ABC collection to a file.</p>
-      <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune, or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
+      <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune,
+        or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
       <p>The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.</p>
       <p>A share button is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
       <p>Opening a share link restores its harmonica tuning, key, and octave shift and displays the first tune encoded in the link.</p>
       <p>When tunes are opened from a share link, click the <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
       <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Volume Override URL Parameters</p>
-      <p>Three optional URL parameters can override playback volume settings:</p>
-      <p><b>volume=</b> sets the harmonica volume using a decimal value from 0 to 1.0. The default is 0.4.</p>
-      <p><b>bassvol=</b> sets the MIDI bass accompaniment volume using an integer value from 0 to 127. The default is 64.</p>
-      <p><b>chordvol=</b> sets the MIDI chord accompaniment volume using an integer value from 0 to 127. The default is 64.</p>
-      <p>For example:</p>
-      <p><b>?volume=0.6&amp;bassvol=72&amp;chordvol=56</b></p>
-      <p>If the URL already contains other parameters, append the volume parameters using <b>&amp;</b>.</p>
-      <p>These volume settings are not saved in this browser. When a volume override is present in the current URL, it is included in generated share links.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Soundfont URL Parameter</p>
+      <p>The default MScore playback soundfont can be overridden when opening the tool by adding a <b>soundfont</b> URL parameter. Valid values are <b>fluid</b>, <b>fatboy</b>, <b>musyng</b>, <b>canvas</b>, <b>mscore</b>, <b>arachno</b>, and <b>fluidhq</b>. Any other value uses the default <b>mscore</b> soundfont.</p>
+      <p>For example, use <b>?soundfont=fatboy</b> when it is the first URL parameter, or <b>&amp;soundfont=mscore</b> when adding it after another parameter.</p>
       <hr>
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align: center">
@@ -882,101 +869,9 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   </div>
 </div>
 <script>
-const playbackSoundfont="mscore";
-
-const SUPER64_SAMPLE_BASE="https://michaeleskin.com/abctools/soundfonts/super64_1/mp3/";
-const SUPER64_MIN_MIDI=48; // C3
-const SUPER64_MAX_MIDI=96; // C7
-let super64LoadPromise=null;
-let super64Ready=false;
-const SUPER64_DEFAULT_VOLUME_SCALE=0.4;
-const MIDI_ACCOMPANIMENT_DEFAULT_VOLUME=64;
-const startupURLParams=new URLSearchParams(window.location.search);
-function hasValidNumericURLParam(name){
-  const raw=startupURLParams.get(name);
-  if(raw===null||raw.trim()==="")return false;
-  return Number.isFinite(Number(raw));
-}
-const volumeURLParamPresent=hasValidNumericURLParam("volume");
-const bassvolURLParamPresent=hasValidNumericURLParam("bassvol");
-const chordvolURLParamPresent=hasValidNumericURLParam("chordvol");
-function getSuper64VolumeScaleFromURL(){
-  const raw=startupURLParams.get("volume");
-  if(raw===null||raw.trim()==="")return SUPER64_DEFAULT_VOLUME_SCALE;
-  const value=Number(raw);
-  if(!Number.isFinite(value))return SUPER64_DEFAULT_VOLUME_SCALE;
-  return Math.min(1,Math.max(0,value));
-}
-function getMIDIVolumeFromURL(name){
-  const raw=startupURLParams.get(name);
-  if(raw===null||raw.trim()==="")return MIDI_ACCOMPANIMENT_DEFAULT_VOLUME;
-  const value=Number(raw);
-  if(!Number.isFinite(value))return MIDI_ACCOMPANIMENT_DEFAULT_VOLUME;
-  return Math.min(127,Math.max(0,Math.trunc(value)));
-}
-let super64VolumeScale=getSuper64VolumeScaleFromURL();
-const midiBassVolume=getMIDIVolumeFromURL("bassvol");
-const midiChordVolume=getMIDIVolumeFromURL("chordvol");
-let super64FadeTimeMs=100;
-
-function midiToSuper64SampleName(midi){
-  const names=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
-  return names[midi%12]+(Math.floor(midi/12)-1);
-}
-
-async function loadSuper64Samples(){
-  if(super64Ready)return true;
-  if(super64LoadPromise)return super64LoadPromise;
-  super64LoadPromise=(async()=>{
-    try{
-      // The portable abcjs custom-instrument implementation uses these globals.
-      if(typeof window.gCustomInstrumentSamples==="undefined")window.gCustomInstrumentSamples=[];
-      if(typeof window.gSoundsCacheABCJS==="undefined")window.gSoundsCacheABCJS={};
-      if(typeof window.gCustomInstrumentVolumeScaleOriginal==="undefined")
-        window.gCustomInstrumentVolumeScaleOriginal=[1,1,1,1,1,1,1,1];
-      if(typeof window.gCustomInstrumentFadeOriginal==="undefined")
-        window.gCustomInstrumentFadeOriginal=[100,100,100,100,100,100,100,100];
-
-      // Match the settings supplied with the original ABC Transcription Tools
-      // Hohner Super 64 custom-instrument bundle.
-      // super64VolumeScale is initialized from the optional ?volume= URL parameter
-      // (clamped to 0..1), or defaults to 0.4 when absent/invalid.
-      super64FadeTimeMs=100;
-
-      const samples=await Promise.all(
-        Array.from({length:SUPER64_MAX_MIDI-SUPER64_MIN_MIDI+1},async(_,i)=>{
-          const midi=SUPER64_MIN_MIDI+i;
-          const name=midiToSuper64SampleName(midi);
-          const response=await fetch(SUPER64_SAMPLE_BASE+encodeURIComponent(name)+".mp3",{cache:"force-cache"});
-          if(!response.ok)throw new Error("Unable to load "+name+".mp3 ("+response.status+")");
-          return {name,samples:await response.arrayBuffer()};
-        })
-      );
-
-      // ABC Transcription Tools uses one-based custom instrument slots.
-      window.gCustomInstrumentSamples[1]=samples;
-      window.gCustomInstrumentVolumeScaleOriginal[0]=super64VolumeScale;
-      window.gCustomInstrumentFadeOriginal[0]=super64FadeTimeMs;
-      window.gSoundsCacheABCJS.custom1={};
-      super64Ready=true;
-      return true;
-    }catch(err){
-      console.warn("Super 64 samples unavailable; using "+playbackSoundfont+" fallback.",err);
-      super64Ready=false;
-      return false;
-    }
-  })();
-  return super64LoadPromise;
-}
-
-function tuneFitsSuper64Range(){
-  if(!solution||!solution.length)return true;
-  for(const item of solution){
-    const midi=abcPitchToMidi(item.normalizedNote||item.abcNote);
-    if(midi!=null&&(midi<SUPER64_MIN_MIDI||midi>SUPER64_MAX_MIDI))return false;
-  }
-  return true;
-}
+const VALID_SOUNDFONTS=new Set(["fluid","fatboy","musyng","canvas","mscore","arachno","fluidhq"]);
+const requestedSoundfont=(new URLSearchParams(window.location.search).get("soundfont")||"").trim().toLowerCase();
+const playbackSoundfont=VALID_SOUNDFONTS.has(requestedSoundfont)?requestedSoundfont:"mscore";
 
 // Generic ABC pitch helpers used by the harmonica solver and note display.
 function abcPitchToMidi(s){
@@ -1245,22 +1140,15 @@ async function toggleMetronome(){
 
 function buildPlaybackABC(abc){
   const source=String(abc||"");
-  const useSuper64=super64Ready&&tuneFitsSuper64Range();
   const forced=[
     `%soundfont ${playbackSoundfont}`,
-    melodyMuted?"%%MIDI program mute":(useSuper64?"%%MIDI program custom1":"%%MIDI program 22"),
-    ...(useSuper64?[
-      `%custom_instrument_1_volume_scale ${super64VolumeScale}`,
-      `%custom_instrument_1_fade ${super64FadeTimeMs}`
-    ]:[]),
+    melodyMuted?"%%MIDI program mute":"%%MIDI program 22",
     "%%MIDI bassprog 0",
-    "%%MIDI chordprog 0",
-    `%%MIDI bassvol ${midiBassVolume}`,
-    `%%MIDI chordvol ${midiChordVolume}`
+    "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
   let cleaned=source.replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
     m=>" ".repeat(m.length)
   );
 
@@ -1651,11 +1539,6 @@ function generateShareLink(abc){
     params.set("system",$("system").value);
     params.set("style",$("style").value);
     params.set("display",$("fingeringDisplay").value);
-    // Preserve URL-only volume overrides in generated share links without
-    // persisting any of them in localStorage.
-    if(volumeURLParamPresent)params.set("volume",String(super64VolumeScale));
-    if(bassvolURLParamPresent)params.set("bassvol",String(midiBassVolume));
-    if(chordvolURLParamPresent)params.set("chordvol",String(midiChordVolume));
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
@@ -2086,7 +1969,7 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
 }
 
-async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=harmonicaFingeringsGenerator(stripChordSymbols(tune));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);await loadSuper64Samples();if(gen!==renderGeneration)return;const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=harmonicaFingeringsGenerator(stripChordSymbols(tune));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
   selectionColor:"#ff0000",
