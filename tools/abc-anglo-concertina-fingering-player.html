@@ -448,8 +448,23 @@ body.notation-full #notationPanel{
 }
 body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
+
+/* Unified header-control idling: match Harmonica Player disabled appearance. */
+#editorTextSize:disabled{
+  color:#8a8a8a;
+  -webkit-text-fill-color:#8a8a8a;
+  background-color:#f2f2f2;
+  border-color:#c8c8c8;
+  opacity:1;
+}
+.countInLabel:has(input:disabled),
+.showNoteLabel:has(input:disabled),
+.showFretboardLabel:has(input:disabled){
+  color:#8a8a8a;
+}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.32</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.33</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -460,12 +475,12 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -3680,23 +3695,39 @@ function syncPlaybackPermissionHeaderControls(){
   const metronome=$("metronomeCheck");
   const countIn=$("countInCheck");
 
-  // These controls are unavailable with no loaded tune, and remain unavailable
-  // while the browser is waiting for the user's playback-permission gesture.
-  if(metronome)metronome.disabled=!hasTunes||permissionPending;
-  if(countIn)countIn.disabled=!hasTunes||permissionPending;
+  const editorTextSize=$("editorTextSize");
+  const showNote=$("showNoteCheck");
+  const showFretboard=$("showFretboardCheck");
+  const tabOverride=$("tabOverrideBtn");
+  const foldOctaves=$("foldOctavesCheck");
 
-  const paneFullDisabled=!hasTunes||permissionPending;
-  const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn");
-  if(abcFullBtn)abcFullBtn.disabled=paneFullDisabled;
-  if(notationFullBtn)notationFullBtn.disabled=paneFullDisabled;
-  if(fullBtn)fullBtn.disabled=paneFullDisabled;
+  // Every interactive control located in a pane header idles until ABC is
+  // loaded. Share/direct-transfer playback also keeps them idle until the
+  // browser's explicit Enable Playback gesture has been completed.
+  const headerDisabled=!hasTunes||permissionPending;
+  if(editorTextSize)editorTextSize.disabled=headerDisabled;
+  if(showNote)showNote.disabled=headerDisabled;
+  if(showFretboard)showFretboard.disabled=headerDisabled;
+  if(tabOverride)tabOverride.disabled=headerDisabled;
+  if(metronome)metronome.disabled=headerDisabled;
+  if(countIn)countIn.disabled=headerDisabled;
+  if(foldOctaves)foldOctaves.disabled=headerDisabled;
+
+  const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn"),exitFull=$("exitFull");
+  if(abcFullBtn)abcFullBtn.disabled=headerDisabled;
+  if(notationFullBtn)notationFullBtn.disabled=headerDisabled;
+  if(fullBtn)fullBtn.disabled=headerDisabled;
+  if(exitFull)exitFull.disabled=headerDisabled;
+
+  // Tempo has an additional dependency on the abcjs tempo input.
+  updateTempoButtonState();
 
   if(permissionPending){
     if(muteBtn)muteBtn.disabled=true;
     return;
   }
-
   if(muteBtn)updateMuteMelodyButton();
+
 }
 
 function installPlaybackPermissionHeaderControlSync(){
