@@ -1,46 +1,54 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ABC Harmonica Player</title>
-<meta name="description" content="Play ABC tunes while following synchronized harmonica diagrams for 10-hole diatonic and 12- or 16-hole chromatic harmonicas, with blow, draw, bend, slide, and overblow indications." />
-<meta name="keywords" content="ABC notation, harmonica, diatonic harmonica, chromatic harmonica, harmonica tablature, harmonica fingering, Richter tuning, harmonica playback, Irish traditional music, ABC Transcription Tools" />
-<meta name="author" content="Michael Eskin" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="ABC Harmonica Player" />
-<meta property="og:description" content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows for 10-hole diatonic and 12- or 16-hole chromatic harmonicas." />
-<meta property="og:site_name" content="ABC Harmonica Player" />
-<meta property="og:url" content="https://michaeleskin.com/tools/abc-harmonica-player.html" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-harmonica-player-1.jpg"/>
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   ABC Harmonica Player
+  </title>
+  <meta content="Play ABC tunes while following synchronized harmonica diagrams for 10-hole diatonic and 12- or 16-hole chromatic harmonicas, with blow, draw, bend, slide, and overblow indications." name="description">
+   <meta content="ABC notation, harmonica, diatonic harmonica, chromatic harmonica, harmonica tablature, harmonica fingering, Richter tuning, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords">
+    <meta content="Michael Eskin" name="author"/>
+    <meta content="website" property="og:type"/>
+    <meta content="ABC Harmonica Player" property="og:title"/>
+    <meta content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows for 10-hole diatonic and 12- or 16-hole chromatic harmonicas." property="og:description"/>
+    <meta content="ABC Harmonica Player" property="og:site_name"/>
+    <meta content="https://michaeleskin.com/tools/abc-harmonica-player.html" property="og:url"/>
+    <meta content="https://michaeleskin.com/tools/img/abc-harmonica-player-1.jpg" property="og:image"/>
+    <meta content="#ffffff" name="msapplication-TileColor"/>
+    <meta content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png" name="msapplication-TileImage"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png" rel="apple-touch-icon" sizes="72x72"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png" rel="apple-touch-icon" sizes="76x76"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png" rel="apple-touch-icon" sizes="114x114"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png" rel="apple-touch-icon" sizes="120x120"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png" rel="apple-touch-icon" sizes="144x144"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png" rel="apple-touch-icon" sizes="152x152"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png" rel="apple-touch-icon" sizes="180x180"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png" rel="icon" sizes="192x192" type="image/png"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png" rel="icon" sizes="96x96" type="image/png"/>
+    <link href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK">
+    </script>
+    <script>
+     window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-VM0N9HL3MK');
-</script>
-
-<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet">
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125"></script>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125"></script>
-<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
-<style>
-:root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
+    </script>
+    <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet"/>
+    <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125">
+    </script>
+    <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20260920_1125">
+    </script>
+    <script src="pako.min.js?cb=20260920_1125" type="text/javascript">
+    </script>
+    <script src="daypilot-modal.min-3.10.1.js?cb=20260920_1125" type="text/javascript">
+    </script>
+    <style>
+     :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
 .toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(170px,1.15fr) auto minmax(150px,1fr) minmax(72px,.42fr) minmax(78px,.46fr) minmax(190px,1.35fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
@@ -336,24 +344,21 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 @media(max-width:520px){
 }
 
-#editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px}
-
-   preserving the existing three-row and action-button layout. */
-@media(max-width:520px){
-}
-
+#editorTextSize,#harmonicaDisplayMode{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px}
+.harmonicaDisplayControl{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap}
+#harmonicaDisplayMode{width:auto;min-width:92px;appearance:none;-webkit-appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 9px center}
+#editorTextSize:disabled,#harmonicaDisplayMode:disabled{color:#8a8a8a;-webkit-text-fill-color:#8a8a8a;background-color:#f2f2f2;border-color:#c8c8c8;opacity:1}
 
 /* Grey Metronome and Count-in labels whenever their checkboxes are disabled. */
-.countInLabel:has(input:disabled){
+.countInLabel:has(input:disabled),
+.showNoteLabel:has(input:disabled){
   color:#8a8a8a;
 }
-
 
 /* iPad full-page: add a little more space below the live note name. */
 @media (pointer:coarse) and (min-width:700px) and (min-height:700px){
   body.diagram-full .liveNoteName{top:5.0%;}
 }
-
 
 #fileLabel{margin-right:10px}
 .paneFullBtn:disabled{opacity:.45;cursor:default}
@@ -461,7 +466,6 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   body.diagram-full .liveNoteName{top:14.5%;}
   body.diagram-full .harmonicaStaffNote{top:38.5%;}
 }
-
 
 /* Mobile/tablet diagram overlay alignment.
    Keep overlays in the same 1280x760 coordinate proportions as the canvas. */
@@ -716,7 +720,6 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   }
 }
 
-
 /* Harmonica technique Legend: floating, draggable, session-only position. */
 .legendBtn{white-space:nowrap}
 .legendPopup{
@@ -791,117 +794,621 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
    right-side controls to wrap onto additional rows within the panel width. */
 @media (orientation:portrait) and (max-width:650px){
   .diagramHeader{align-items:flex-start;flex-wrap:wrap}
-  .diagramHeaderRight{
-    flex:1 1 100%;
-    width:100%;
-    justify-content:flex-end;
-    flex-wrap:wrap;
-    gap:7px;
-    min-width:0;
-  }
-  .diagramHeaderRight .meta{margin-right:0}
-  .diagramHeader .fullBtn,
-  .diagramHeader .exitFull,
-  .diagramHeader .legendBtn{flex:0 0 auto}
+  .diagramHeaderRight{flex:1 1 100%;width:100%;justify-content:flex-start;flex-wrap:wrap;gap:7px 10px;min-width:0}
+  .diagramHeaderRight .meta{flex:1 1 100%;margin-right:0;text-align:left}
+  .diagramHeader .fullBtn,.diagramHeader .exitFull,.diagramHeader .legendBtn,.harmonicaDisplayControl,.showNoteLabel{flex:0 0 auto}
+  #harmonicaDisplayMode{min-width:88px}
 }
 
-</style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.19</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Harmonica Player</h1><p>Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.</p></header>
-<div class="toolbar">
- <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
- <div class="saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
- <div class="control"><label for="system">Harmonica tuning</label><select id="system"><option value="0">Standard Richter</option><option value="1">Paddy Richter</option><option value="2">Easy Thirds</option><option value="3">Melody Maker</option><option value="4">Country (Major 7th)</option><option value="5">Natural Minor</option><option value="6">Chromatic (12-Hole)</option><option value="7">Chromatic (16-Hole)</option></select></div>
- <div class="control"><label for="style">Harmonica key</label><select id="style"><option>G</option><option>G#</option><option>A</option><option>Bb</option><option>B</option><option selected>C</option><option>C#</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F#</option></select></div>
- <div class="control"><label for="fingeringDisplay">Octave shift</label><select id="fingeringDisplay"><option value="-3">-3</option><option value="-2">-2</option><option value="-1">-1</option><option value="0" selected>0</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option></select></div>
- <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
- <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
-</div>
-<div class="workspace" id="workspace">
- <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
-  <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
- </div>
- <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and harmonica panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Harmonica</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Standard Richter • C</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox">Show note</label><button id="legendBtn" class="legendBtn" type="button">Legend</button><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="760"></canvas><canvas id="diagramOverlay" width="1280" height="760"></canvas><div id="liveTuneTitle" class="liveTuneTitle"></div><div id="liveNoteName" class="liveNoteName"></div><svg id="harmonicaStaffNote" class="harmonicaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div></div></section>
-</div>
-<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
-</div>
-<div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
+/* Harmonica header: allow the added Display control and actions to wrap cleanly on tablets as well as phones. */
+@media (pointer:coarse) and (min-width:651px) and (max-width:1100px){
+  .diagramHeader{align-items:flex-start;flex-wrap:wrap}
+  .diagramHeaderRight{flex:1 1 100%;width:100%;justify-content:flex-start;flex-wrap:wrap;gap:7px 10px;min-width:0}
+  .diagramHeaderRight .meta{margin-right:4px}
+}
 
-<div id="legendPopup" class="legendPopup" role="dialog" aria-modal="false" aria-labelledby="legendPopupTitle">
-  <div id="legendPopupHeader" class="legendPopupHeader">
-    <span id="legendPopupTitle">Harmonica Technique Symbols</span>
-    <button id="legendPopupClose" class="legendPopupClose" type="button" aria-label="Close legend" title="Close">×</button>
-  </div>
-  <div class="legendPopupBody">
-    <img src="img/harmonica_player_symbols_1.jpg" alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws">
-  </div>
-</div>
+/* Harmonica pane-width responsive header. The desktop splitter can make this
+   pane narrow even when the browser viewport itself is wide, so respond to the
+   pane width rather than only to viewport/mobile media queries. */
+.diagramCard{container-type:inline-size}
+@container (max-width: 700px){
+  .diagramHeader{align-items:flex-start;flex-wrap:wrap}
+  .diagramHeaderRight{flex:1 1 100%;width:100%;min-width:0;justify-content:flex-start;flex-wrap:wrap;gap:7px 10px}
+  .diagramHeaderRight .meta{flex:1 1 100%;margin-right:0;text-align:left}
+  .diagramHeader .fullBtn,.diagramHeader .exitFull,.diagramHeader .legendBtn,.harmonicaDisplayControl,.showNoteLabel{flex:0 0 auto}
+}
+@container (max-width: 560px){
+  .diagramHeaderRight{gap:7px 8px}
+  #harmonicaDisplayMode{min-width:88px}
+}
 
-<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
-  <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
-    <h2 style="text-align:center;margin:0 0 24px">ABC Harmonica Player Instructions</h2>
-    <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
-      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
-      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for 10-hole diatonic or 12- and 16-hole chromatic styles.</p>
-      <p>The active hole is highlighted while the symbol below it shows the required breath direction or technique.</p>
-      <p>The player supports <b>Standard Richter</b>, <b>Paddy Richter</b>, <b>Easy Thirds</b>, <b>Melody Maker</b>, <b>Country (Major 7th)</b>, <b>Natural Minor</b>, and <b>12- and 16-hole Chromatic</b> harmonicas.</p>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Harmonica Settings</p>
-      <p><b>Harmonica tuning</b> chooses the note layout: the first six options are 10-hole diatonic tunings, and the last two are 12-hole and 16-hole chromatic layouts.</p>
-      <p><b>Harmonica key</b> chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#.</p>
-      <p><b>Octave shift</b> shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.</p>
-      <p>The selected harmonica tuning, key, and octave shift are saved in this browser and are also included in share links.</p>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Harmonica Technique Symbols</p>
-      <p>Each diagram shows the correct number of holes for the selected harmonica. The symbols used for blow, draw, bends, overblows, and overdraws are shown below. For chromatic harmonicas, <b>S</b> indicates to press the slide in.</p>
-      <p>Click <b>Legend</b> to display the technique symbols in a floating window while using the player. Drag the window by its title bar to reposition it and click × to close it. Its position resets when the tool is restarted or the browser window is resized.</p>
-      <img src="img/harmonica_player_symbols_1.jpg" alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" style="display:block;width:100%;max-width:100%;height:auto;object-fit:contain;margin:10px auto 12px">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
-      <p>Editing the ABC rebuilds the notation and harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the harmonica display to that note.</p>
-      <p>Use the editor text-size menu to change the ABC editor text size.</p>
-      <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
-      <p>The <b>Full-Page View</b> buttons expand the ABC editor, notation, or harmonica display to fill the page. Press Escape to leave a full-page view; the harmonica view also provides an <b>Exit Full-Page</b> button.</p>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
-      <p>Playback follows the notation cursor and harmonica display, highlighting the current harmonica hole and technique as the tune plays.</p>
-      <p>Use the playback controls below the notation to start or pause the tune, restart from the beginning, turn looping on or off, move to a different position in the tune, and change the playback speed.</p>
-      <p><b>Mute Melody</b> turns the melody sound off or back on. This is useful when you want to play the melody yourself while keeping any accompaniment or metronome.</p>
-      <p><b>Metronome</b> adds a click during playback. If the selected tune uses a meter for which a metronome pattern is not available, the tool will let you know and leave the metronome off.</p>
-      <p><b>Count in?</b> adds a five-second on-screen countdown before playback begins.</p>
-      <p>Click <b>Tempo</b> to set the playback speed from 10% to 200% of the tune's normal tempo. The playback speed control below the notation shows and changes the same percentage.</p>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
-      <p>Save writes the current ABC collection to a file.</p>
-      <p>Click <b>Share Tune</b> to create a share link for the currently displayed tune, or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
-      <p>The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.</p>
-      <p>A share button is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
-      <p>Opening a share link restores its harmonica tuning, key, and octave shift and displays the first tune encoded in the link.</p>
-      <p>When tunes are opened from a share link, click the <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
-      <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Volume Override URL Parameters</p>
-      <p>Three optional URL parameters can override playback volume settings:</p>
-      <p><b>volume=</b> sets the harmonica volume using a decimal value from 0 to 1.0. The default is 0.5.</p>
-      <p><b>bassvol=</b> sets the MIDI bass accompaniment volume using an integer value from 0 to 127. The default is 64.</p>
-      <p><b>chordvol=</b> sets the MIDI chord accompaniment volume using an integer value from 0 to 127. The default is 64.</p>
-      <p>For example:</p>
-      <p><b>?volume=0.6&amp;bassvol=72&amp;chordvol=56</b></p>
-      <p>If the URL already contains other parameters, append the volume parameters using <b>&amp;</b>.</p>
-      <p>These volume settings are not saved in this browser. When a volume override is present in the current URL, it is included in generated share links.</p>
-      <hr>
-      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
-      <p style="text-align: center">
-        This tool was created by
-        <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
-        <br/><br/>
-        If you find it useful, please consider a contribution via<br/><br/>
-        <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
-        <br/><br/>
-      </p>    
-      <hr>
+/* v1.25: keep the live tune title below the Harmonica header on very large displays.
+   In full-page mode the 1280:760 diagram stack can become tall enough that the
+   percentage-based title position otherwise rises into the header. */
+@media (min-width:1401px){
+  body.diagram-full .liveTuneTitle{
+    top:0 !important;
+    transform:translateY(0) !important;
+  }
+}
+    </style>
+   </meta>
+  </meta>
+ </head>
+ <body>
+  <div class="app">
+   <header class="app-header">
+    <div class="version">
+     Version 1.25
     </div>
-    <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
+    <a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
+     Tip Jars
+    </a>
+    <h1>
+     ABC Harmonica Player
+    </h1>
+    <p>
+     Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.
+    </p>
+   </header>
+   <div class="toolbar">
+    <div class="control fileControl">
+     <label>
+      ABC file
+     </label>
+     <div class="fileControlRow">
+      <input accept=".abc,.txt,text/plain" id="openFile" type="file"/>
+     </div>
+    </div>
+    <div class="saveControl">
+     <button disabled="" id="saveAbcBtn" type="button">
+      Save
+     </button>
+    </div>
+    <div class="control">
+     <label for="system">
+      Harmonica tuning
+     </label>
+     <select id="system">
+      <option value="0">
+       Standard Richter
+      </option>
+      <option value="1">
+       Paddy Richter
+      </option>
+      <option value="2">
+       Easy Thirds
+      </option>
+      <option value="3">
+       Melody Maker
+      </option>
+      <option value="4">
+       Country (Major 7th)
+      </option>
+      <option value="5">
+       Natural Minor
+      </option>
+      <option value="6">
+       Chromatic (12-Hole)
+      </option>
+      <option value="7">
+       Chromatic (16-Hole)
+      </option>
+     </select>
+    </div>
+    <div class="control">
+     <label for="style">
+      Harmonica key
+     </label>
+     <select id="style">
+      <option>
+       G
+      </option>
+      <option>
+       G#
+      </option>
+      <option>
+       A
+      </option>
+      <option>
+       Bb
+      </option>
+      <option>
+       B
+      </option>
+      <option selected="">
+       C
+      </option>
+      <option>
+       C#
+      </option>
+      <option>
+       D
+      </option>
+      <option>
+       Eb
+      </option>
+      <option>
+       E
+      </option>
+      <option>
+       F
+      </option>
+      <option>
+       F#
+      </option>
+     </select>
+    </div>
+    <div class="control">
+     <label for="fingeringDisplay">
+      Octave shift
+     </label>
+     <select id="fingeringDisplay">
+      <option value="-3">
+       -3
+      </option>
+      <option value="-2">
+       -2
+      </option>
+      <option value="-1">
+       -1
+      </option>
+      <option selected="" value="0">
+       0
+      </option>
+      <option value="1">
+       +1
+      </option>
+      <option value="2">
+       +2
+      </option>
+      <option value="3">
+       +3
+      </option>
+     </select>
+    </div>
+    <div class="control">
+     <label for="tuneSelect">
+      Tune
+     </label>
+     <select disabled="" id="tuneSelect">
+      <option>
+       No tune loaded
+      </option>
+     </select>
+    </div>
+    <div class="shareButtons">
+     <button disabled="" id="shareTuneBtn">
+      Share Tune
+     </button>
+     <button disabled="" id="shareAllBtn">
+      Share All Tunes
+     </button>
+    </div>
+   </div>
+   <div class="workspace" id="workspace">
+    <div class="leftPane" id="leftPane">
+     <section class="card panel" id="abcPanel">
+      <div class="panelHeader">
+       <span>
+        ABC
+       </span>
+       <span class="abcHeaderRight">
+        <span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">
+         No file loaded
+        </span>
+        <select aria-label="Editor text size" id="editorTextSize" title="Editor text size">
+         <option value="small">
+          Small
+         </option>
+         <option selected="" value="medium">
+          Medium
+         </option>
+         <option value="large">
+          Large
+         </option>
+         <option value="largest">
+          Largest
+         </option>
+        </select>
+        <button class="paneFullBtn" disabled="" id="abcFullBtn" type="button">
+         Full-Page View
+        </button>
+       </span>
+      </div>
+      <div class="abcWrap">
+       <textarea id="abcText" spellcheck="false"></textarea>
+      </div>
+     </section>
+     <div aria-orientation="horizontal" class="splitH" id="splitH" role="separator" title="Drag to resize ABC and notation panels; double-click to reset">
+     </div>
+     <section class="card panel" id="notationPanel">
+      <div class="panelHeader">
+       <span>
+        Notation
+       </span>
+       <span class="notationHeaderRight">
+        <label class="countInLabel" for="metronomeCheck">
+         <input disabled="" id="metronomeCheck" type="checkbox"/>
+         Metronome
+        </label>
+        <label class="countInLabel" for="countInCheck">
+         <input disabled="" id="countInCheck" type="checkbox"/>
+         Count in?
+        </label>
+        <button class="notationHeaderBtn" disabled="" hidden="" id="muteMelodyBtn" type="button">
+         Mute Melody
+        </button>
+        <button class="notationHeaderBtn" disabled="" id="tempoBtn" type="button">
+         Tempo
+        </button>
+        <button class="paneFullBtn" disabled="" id="notationFullBtn" type="button">
+         Full-Page View
+        </button>
+       </span>
+      </div>
+      <div class="notationViewport">
+       <div class="notation" id="notation">
+       </div>
+      </div>
+      <div class="audioRow">
+       <div id="audio">
+       </div>
+      </div>
+     </section>
+    </div>
+    <div aria-orientation="vertical" class="splitV" id="splitV" role="separator" title="Drag to resize left and harmonica panels; double-click to reset">
+    </div>
+    <section class="card diagramCard">
+     <div class="diagramHeader">
+      <span>
+       Harmonica
+      </span>
+      <span class="diagramHeaderRight">
+       <span class="meta" id="diagramMeta">
+        Standard Richter • C
+       </span>
+       <label class="harmonicaDisplayControl" for="harmonicaDisplayMode">
+        Display:
+        <select aria-label="Harmonica display style" id="harmonicaDisplayMode">
+         <option selected="" value="graphic">
+          Graphic
+         </option>
+         <option value="text">
+          Text
+         </option>
+        </select>
+       </label>
+       <button class="legendBtn" id="legendBtn" type="button">
+        Legend
+       </button>
+       <label class="showNoteLabel" for="showNoteCheck">
+        <input id="showNoteCheck" type="checkbox"/>
+        Show note
+       </label>
+       <button class="fullBtn" disabled="" id="fullBtn">
+        Full-Page View
+       </button>
+       <button class="exitFull" id="exitFull">
+        Exit Full-Page
+       </button>
+      </span>
+     </div>
+     <div class="diagramWrap">
+      <div class="diagramStack" hidden="" id="diagramStack">
+       <canvas height="760" id="diagram" width="1280">
+       </canvas>
+       <canvas height="760" id="diagramOverlay" width="1280">
+       </canvas>
+       <div class="liveTuneTitle" id="liveTuneTitle">
+       </div>
+       <div class="liveNoteName" id="liveNoteName">
+       </div>
+       <svg aria-label="Current note on staff" class="harmonicaStaffNote" id="harmonicaStaffNote" preserveaspectratio="xMidYMid meet" role="img" viewbox="0 15 160 200">
+       </svg>
+      </div>
+      <div class="emptyDiagram" id="emptyDiagram">
+       Enter or paste a single ABC tune, or open an ABC file to begin.
+      </div>
+     </div>
+    </section>
+   </div>
+   <div class="bottomBar">
+    <button id="instructionsBtn">
+     Instructions
+    </button>
+   </div>
   </div>
-</div>
-<script>
-const playbackSoundfont="mscore";
+  <div aria-live="polite" class="countInOverlay" hidden="" id="countInOverlay">
+   <span id="countInNumber">
+    5
+   </span>
+  </div>
+  <div aria-labelledby="legendPopupTitle" aria-modal="false" class="legendPopup" id="legendPopup" role="dialog">
+   <div class="legendPopupHeader" id="legendPopupHeader">
+    <span id="legendPopupTitle">
+     Harmonica Technique Symbols
+    </span>
+    <button aria-label="Close legend" class="legendPopupClose" id="legendPopupClose" title="Close" type="button">
+     ×
+    </button>
+   </div>
+   <div class="legendPopupBody">
+    <img alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" src="img/harmonica_player_symbols_1.jpg"/>
+   </div>
+  </div>
+  <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
+   <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
+    <h2 style="text-align:center;margin:0 0 24px">
+     ABC Harmonica Player Instructions
+    </h2>
+    <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+     <p style="text-align:left;font-weight:700;margin:0 0 6px">
+      Overview
+     </p>
+     <p>
+      Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for 10-hole diatonic or 12- and 16-hole chromatic styles.
+     </p>
+     <p>
+      The active hole is highlighted while the symbol below it shows the required breath direction or technique.
+     </p>
+     <p>
+      The player supports
+      <b>
+       Standard Richter
+      </b>
+      ,
+      <b>
+       Paddy Richter
+      </b>
+      ,
+      <b>
+       Easy Thirds
+      </b>
+      ,
+      <b>
+       Melody Maker
+      </b>
+      ,
+      <b>
+       Country (Major 7th)
+      </b>
+      ,
+      <b>
+       Natural Minor
+      </b>
+      , and
+      <b>
+       12- and 16-hole Chromatic
+      </b>
+      harmonicas.
+     </p>
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Harmonica Settings
+     </p>
+     <p>
+      <b>
+       Harmonica tuning
+      </b>
+      chooses the note layout: the first six options are 10-hole diatonic tunings, and the last two are 12-hole and 16-hole chromatic layouts.
+     </p>
+     <p>
+      <b>
+       Harmonica key
+      </b>
+      chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#.
+     </p>
+     <p>
+      <b>
+       Octave shift
+      </b>
+      shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.
+     </p>
+     <p>
+      The selected harmonica tuning, key, and octave shift are saved in this browser and are also included in share links.
+     </p>
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Harmonica Technique Symbols
+     </p>
+     <p>
+      Each diagram shows the correct number of holes for the selected harmonica.
+     </p>
+     <p>
+      <b>
+       Display
+      </b>
+      selects how the current harmonica technique is shown.
+     </p>
+     <p>
+      <b>
+       Graphic
+      </b>
+      (the default) uses the graphical breath-direction and technique symbols shown below.
+     </p>
+     <p>
+      <b>
+       Text
+      </b>
+      uses the original ABC Transcription Tools harmonica tablature text, including the hole number and its blow, draw, bend, overblow, overdraw, or slide notation.
+     </p>
+     <p>
+      The Display setting is remembered in this browser.
+     </p>
+     <p>
+      In Graphic display mode, click
+      <b>
+       Legend
+      </b>
+      to display the technique symbols in a floating window while using the player. Drag the window by its title bar to reposition it and click × to close it. The Legend button is hidden in Text display mode.
+     </p>
+     <img alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" src="img/harmonica_player_symbols_1.jpg" style="display:block;width:100%;max-width:100%;height:auto;object-fit:contain;margin:10px auto 12px"/>
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      ABC Editing and Notation
+     </p>
+     <p>
+      Editing the ABC rebuilds the notation and harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the harmonica display to that note.
+     </p>
+     <p>
+      Use the editor text-size menu to change the ABC editor text size.
+     </p>
+     <p>
+      <b>
+       Show note
+      </b>
+      displays the current note on a staff beside the note name and is remembered in this browser.
+     </p>
+     <p>
+      The
+      <b>
+       Full-Page View
+      </b>
+      buttons expand the ABC editor, notation, or harmonica display to fill the page. Press Escape to leave a full-page view; the harmonica view also provides an
+      <b>
+       Exit Full-Page
+      </b>
+      button.
+     </p>
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Playback
+     </p>
+     <p>
+      Playback follows the notation cursor and harmonica display, highlighting the current harmonica hole and technique as the tune plays.
+     </p>
+     <p>
+      Use the playback controls below the notation to start or pause the tune, restart from the beginning, turn looping on or off, move to a different position in the tune, and change the playback speed.
+     </p>
+     <p>
+      <b>
+       Mute Melody
+      </b>
+      turns the melody sound off or back on. This is useful when you want to play the melody yourself while keeping any accompaniment or metronome.
+     </p>
+     <p>
+      <b>
+       Metronome
+      </b>
+      adds a click during playback. If the selected tune uses a meter for which a metronome pattern is not available, the tool will let you know and leave the metronome off.
+     </p>
+     <p>
+      <b>
+       Count in?
+      </b>
+      adds a five-second on-screen countdown before playback begins.
+     </p>
+     <p>
+      Click
+      <b>
+       Tempo
+      </b>
+      to set the playback speed from 10% to 200% of the tune's normal tempo. The playback speed control below the notation shows and changes the same percentage.
+     </p>
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Saving and Sharing
+     </p>
+     <p>
+      Save writes the current ABC collection to a file.
+     </p>
+     <p>
+      Click
+      <b>
+       Share Tune
+      </b>
+      to create a share link for the currently displayed tune, or
+      <b>
+       Share All Tunes
+      </b>
+      to create a share link containing all loaded tunes.
+     </p>
+     <p>
+      The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.
+     </p>
+     <p>
+      A share button is disabled when its resulting link would exceed the maximum allowed of 8100 characters.
+     </p>
+     <p>
+      Opening a share link restores its harmonica tuning, key, and octave shift and displays the first tune encoded in the link.
+     </p>
+     <p>
+      When tunes are opened from a share link, click the
+      <b>
+       Click to Enable Playback
+      </b>
+      button in the playback area before using the normal playback controls.
+     </p>
+     <p>
+      This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.
+     </p>
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Volume Override URL Parameters
+     </p>
+     <p>
+      Three optional URL parameters can override playback volume settings:
+     </p>
+     <p>
+      <b>
+       volume=
+      </b>
+      sets the harmonica volume using a decimal value from 0 to 1.0. The default is 0.5.
+     </p>
+     <p>
+      <b>
+       bassvol=
+      </b>
+      sets the MIDI bass accompaniment volume using an integer value from 0 to 127. The default is 64.
+     </p>
+     <p>
+      <b>
+       chordvol=
+      </b>
+      sets the MIDI chord accompaniment volume using an integer value from 0 to 127. The default is 64.
+     </p>
+     <p>
+      For example:
+     </p>
+     <p>
+      <b>
+       ?volume=0.6&amp;bassvol=72&amp;chordvol=56
+      </b>
+     </p>
+     <p>
+      If the URL already contains other parameters, after the other parameters, append the volume parameters using
+      <b>
+       &amp;
+      </b>
+      .
+     </p>
+     <p>
+      These volume settings are not saved in this browser. When a volume override is present in the current URL, it is included in generated share links.
+     </p>
+     <hr/>
+     <p style="text-align:center;font-weight:700;margin:18px 0 6px">
+      About
+     </p>
+     <p style="text-align: center">
+      This tool was created by
+      <a href="https://michaeleskin.com" rel="noopener noreferrer" target="_blank">
+       Michael Eskin
+      </a>
+      <br/>
+      <br/>
+      If you find it useful, please consider a contribution via
+      <br/>
+      <br/>
+      <a href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
+       Michael Eskin's Tip Jars
+      </a>
+      <br/>
+      <br/>
+     </p>
+     <hr/>
+    </div>
+    <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">
+     Close
+    </button>
+   </div>
+  </div>
+  <script>
+   const playbackSoundfont="mscore";
 
 const SUPER64_SAMPLE_BASE="https://michaeleskin.com/abctools/soundfonts/super64_4/mp3/";
 const SUPER64_MIN_MIDI=48; // C3
@@ -1132,9 +1639,9 @@ function harmonicaFingeringsGenerator(abc){
   const keyOffset=HARMONICA_KEY_OFFSETS[harpKey]??0; const octaveOffset=(parseInt(octaveShift,10)||0)*12;
   return notes.map((note,index)=>{const midi=abcPitchToMidi(note.normalizedValue);const noteIndex=midi==null?NaN:(midi-48+keyOffset+octaveOffset);const glyph=Number.isFinite(noteIndex)&&noteIndex>=0&&noteIndex<tabMap.length?tabMap[noteIndex]:"x";const parsed=parseHarmonicaGlyph(glyph);return {index:index+1,abcIndex:note.index,abcNote:note.unNormalizedValue,normalizedNote:note.normalizedValue,glyph,hole:parsed?parsed.hole:null,direction:parsed?parsed.direction:null,bend:parsed?parsed.bend:0,overblow:parsed?parsed.overblow:false,slide:parsed?parsed.slide:false,playable:!!parsed}});
 }
-</script>
-<script>
-const $=id=>document.getElementById(id);
+  </script>
+  <script>
+   const $=id=>document.getElementById(id);
 
 // On iOS/iPadOS, omit the accept filter so the native file picker can select
 // .abc as well as .txt files. Validate the selected filename after selection.
@@ -1145,8 +1652,9 @@ const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manua
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
-let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false;
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false,harmonicaDisplayMode="graphic";
 const SHOW_NOTE_KEY="abcHarmonicaShowNote";
+const HARMONICA_DISPLAY_KEY="abcHarmonicaDisplayMode";
 const PREF_SYSTEM_KEY="abcHarmonicaTuning",PREF_STYLE_KEY="abcHarmonicaKey";
 
 /*
@@ -1449,12 +1957,15 @@ function renderHarmonicaStaffNote(item){
 }
 function restoreShowNotePreference(){try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
 function saveShowNotePreference(){try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){} }
+function updateHarmonicaDisplayUI(){const select=$("harmonicaDisplayMode"),legend=$("legendBtn");if(select)select.value=harmonicaDisplayMode;if(legend){legend.hidden=harmonicaDisplayMode!=="graphic";if(legend.hidden)closeLegend()}drawDiagram(currentDiagramItem,true)}
+function restoreHarmonicaDisplayPreference(){try{const saved=localStorage.getItem(HARMONICA_DISPLAY_KEY);harmonicaDisplayMode=saved==="text"?"text":"graphic"}catch(_){harmonicaDisplayMode="graphic"}updateHarmonicaDisplayUI()}
+function saveHarmonicaDisplayPreference(){try{localStorage.setItem(HARMONICA_DISPLAY_KEY,harmonicaDisplayMode)}catch(_){}}
 function drawDiagram(item=null,force=false){
   const itemIndex=item?item.index:-1;if(!force&&itemIndex===lastDiagramIndex)return;currentDiagramItem=item;
   const c=$("diagramOverlay"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
   const layout=currentHarmonicaLayout||getHarmonicaLayout($("system").value);
   $("liveNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderHarmonicaStaffNote(item);
-  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
+  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();if(harmonicaDisplayMode==="text"){ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#222";const textTabFontSize=(parseInt($("system").value,10)<6)?48:42;ctx.font=`700 ${textTabFontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;ctx.fillText(item.glyph||"",x,595);ctx.restore()}else{drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
   lastDiagramIndex=itemIndex;
 }
 function removeCursor(){
@@ -2222,6 +2733,7 @@ $("tempoBtn").addEventListener("click",()=>{
   openTempoDialog(input);
 });
 $("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderHarmonicaStaffNote(currentDiagramItem)});
+$("harmonicaDisplayMode").addEventListener("change",e=>{harmonicaDisplayMode=e.target.value==="text"?"text":"graphic";saveHarmonicaDisplayPreference();updateHarmonicaDisplayUI()});
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
   const input=e.target,f=input.files&&input.files[0];if(!f)return;
@@ -2370,11 +2882,14 @@ $("legendBtn")?.setAttribute("aria-expanded","false");
 $("legendBtn")?.setAttribute("aria-controls","legendPopup");
 $("legendBtn")?.addEventListener("click",openLegend);
 
-$("legendBtn").disabled=$("fullBtn").disabled;
-new MutationObserver(()=>{
-  $("legendBtn").disabled=$("fullBtn").disabled;
-  if($("legendBtn").disabled)closeLegend();
-}).observe($("fullBtn"),{attributes:true,attributeFilter:["disabled"]});
+function syncHarmonicaHeaderIdleState(){
+  const disabled=$("fullBtn").disabled;
+  $("legendBtn").disabled=disabled;
+  $("harmonicaDisplayMode").disabled=disabled;
+  if(disabled)closeLegend();
+}
+syncHarmonicaHeaderIdleState();
+new MutationObserver(syncHarmonicaHeaderIdleState).observe($("fullBtn"),{attributes:true,attributeFilter:["disabled"]});
 $("legendPopupClose")?.addEventListener("click",closeLegend);
 
 legendPopupHeader?.addEventListener("pointerdown",e=>{
@@ -2419,7 +2934,8 @@ $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display
   $(id).addEventListener("change",updateHarmonicaHeaderStatus);
 });
 updateHarmonicaHeaderStatus();
-restoreShowNotePreference();restoreMetronomePreference();
+restoreShowNotePreference();
+restoreHarmonicaDisplayPreference();restoreMetronomePreference();
 restoreCountInPreference();installCountInPlayHandler();{const octNum=parseInt($("fingeringDisplay").value,10)||0;const octLabel=(octNum>0?"+":"")+octNum;$("diagramMeta").textContent=[HARMONICA_TUNING_NAMES[$("system").value]||"Standard Richter",$("style").value,...(octNum!==0?[`Octave ${octLabel}`]:[])].join(" • ")}updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
@@ -2439,15 +2955,21 @@ function syncPlaybackPermissionHeaderControls(){
   const muteBtn=$("muteMelodyBtn");
   const metronome=$("metronomeCheck");
   const countIn=$("countInCheck");
+  const showNote=$("showNoteCheck");
+  const harmonicaDisplay=$("harmonicaDisplayMode");
 
   // These controls are unavailable with no loaded tune, and remain unavailable
   // while the browser is waiting for the user's playback-permission gesture.
   if(metronome)metronome.disabled=!hasTunes||permissionPending;
   if(countIn)countIn.disabled=!hasTunes||permissionPending;
+  if(showNote)showNote.disabled=!hasTunes||permissionPending;
+  if(harmonicaDisplay)harmonicaDisplay.disabled=!hasTunes||permissionPending;
 
   const paneFullDisabled=!hasTunes||permissionPending;
   const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn");
   if(abcFullBtn)abcFullBtn.disabled=paneFullDisabled;
+  const editorTextSize=$("editorTextSize");
+  if(editorTextSize)editorTextSize.disabled=paneFullDisabled;
   if(notationFullBtn)notationFullBtn.disabled=paneFullDisabled;
   if(fullBtn)fullBtn.disabled=paneFullDisabled;
 
@@ -2468,4 +2990,7 @@ function installPlaybackPermissionHeaderControlSync(){
 }
 
 installPlaybackPermissionHeaderControlSync();
-</script></body></html>
+  </script>
+ </body>
+</html>
+\n
