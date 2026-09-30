@@ -917,7 +917,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 2.03
+     Version 2.1
     </div>
     <a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -2440,10 +2440,36 @@ function drawDiagram(item=null,force=false){
 function removeCursor(){
   lastAutoscrollSystemTop=null;if(playbackCursor){playbackCursor.remove();playbackCursor=null}}
 function recursiveStartChar(x){if(!x)return null;if(typeof x.startChar==="number")return x.startChar;if(x.dataset&&x.dataset.startChar&&!isNaN(+x.dataset.startChar))return +x.dataset.startChar;if(Array.isArray(x)){for(const y of x){const v=recursiveStartChar(y);if(v!=null)return v}}else if(typeof x==="object"){for(const k of ["elements","abselem","elemset","sourceElement"]){if(x[k]){const v=recursiveStartChar(x[k]);if(v!=null)return v}}}return null}
+function eventMidi(event){
+  const arr=event&&event.midiPitches;
+  if(arr&&arr.length){
+    const p=arr[0];
+    if(typeof p==="number")return p;
+    if(p&&Number.isFinite(Number(p.pitch)))return Number(p.pitch);
+  }
+  if(event&&Number.isFinite(Number(event.midiPitch)))return Number(event.midiPitch);
+  return null;
+}
 function fingeringForEvent(event){
   if(!event)return null;
-  // Use the source position from the exact same abcjs playback event that
-  // positions the notation cursor. There is no independent note counter.
+
+  // During playback, use abcjs's actual sounding MIDI pitch as the authoritative
+  // note identity, just as the other instrument-specific players do. Playback
+  // is transposed by the selected octave shift, while solution[] stores the
+  // original written pitches, so remove that playback transpose before matching.
+  const midi=eventMidi(event);
+  if(midi!=null){
+    const octaveShift=parseInt($("fingeringDisplay").value,10)||0;
+    const writtenMidi=Math.round(Number(midi))-octaveShift*12;
+    const item=solution.find(candidate=>{
+      const candidateMidi=abcPitchToMidi(candidate.normalizedNote||candidate.abcNote);
+      return candidateMidi!=null&&Math.round(candidateMidi)===writtenMidi;
+    });
+    if(item)return item;
+  }
+
+  // Fallback for an unusual callback that does not contain a MIDI pitch. Keep
+  // the previous source-position lookup so existing behavior is preserved.
   let source=recursiveStartChar(event);
   if(source==null)return null;
   source-=prefixLength;
