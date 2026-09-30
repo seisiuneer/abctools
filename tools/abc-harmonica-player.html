@@ -6,12 +6,12 @@
   <title>
    ABC Harmonica Player
   </title>
-  <meta content="Play ABC tunes while following synchronized harmonica diagrams for 10-hole diatonic and 12- or 16-hole chromatic harmonicas, with blow, draw, bend, slide, and overblow indications." name="description">
+  <meta content="Play ABC tunes while following synchronized harmonica diagrams for 10-, 12-, or 16-hole diatonic or chromatic harmonicas, with blow, draw, bend, slide, and overblow indications." name="description">
    <meta content="ABC notation, harmonica, diatonic harmonica, chromatic harmonica, harmonica tablature, harmonica fingering, Richter tuning, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords">
     <meta content="Michael Eskin" name="author"/>
     <meta content="website" property="og:type"/>
     <meta content="ABC Harmonica Player" property="og:title"/>
-    <meta content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows for 10-hole diatonic and 12- or 16-hole chromatic harmonicas." property="og:description"/>
+    <meta content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows for 10-hole, 12-, or 16-hole diatonic or chromatic harmonicas." property="og:description"/>
     <meta content="ABC Harmonica Player" property="og:site_name"/>
     <meta content="https://michaeleskin.com/tools/abc-harmonica-player.html" property="og:url"/>
     <meta content="https://michaeleskin.com/tools/img/abc-harmonica-player-1.jpg" property="og:image"/>
@@ -926,7 +926,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      ABC Harmonica Player
     </h1>
     <p>
-     Play ABC tunes with synchronized 10-hole diatonic and 12- or 16-hole chromatic harmonica diagrams.
+     Play ABC tunes with synchronized 10-, 12-, or 16-hole diatonic or chromatic harmonica diagrams.
     </p>
    </header>
    <div class="toolbar">
@@ -1290,7 +1290,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       Overview
      </p>
      <p>
-      Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for 10-hole diatonic or 12- and 16-hole chromatic styles.
+      Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for 10-, 12-, or 16-hole diatonic or chromatic styles.
      </p>
      <p>
       The active hole is highlighted while the symbol below it shows the required breath direction or technique.
@@ -1364,6 +1364,9 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      </p>
      <p>
       <b>Use Arrows</b> (the default) uses directional arrow shapes for blow, draw, and bends, with <b>o</b> for overblow/overdraw and <b>S</b> for the chromatic slide.
+     </p>
+     <p>
+      If the current instrument definition contains an <b>s</b> on any note in its tablature map, the 10-, 12-, or 16-hole harmonica diagram also shows an animated physical slide. This applies to both built-in and custom instruments; the slide moves in for notes marked with <b>s</b> and remains out for other notes.
      </p>
      <p>
       In Use Arrows or Use Bars display mode, click
@@ -2357,6 +2360,36 @@ function drawHarmonicaArrow(ctx,x,y,direction,bend,overblow,slide){
   }
   ctx.restore();
 }
+function selectedHarmonicaHasSlide(tuning){
+  const key=String(tuning);
+  const tabMap=key==="8"?getCustomHarmonica().noteMap:(HARMONICA_TAB_MAPS[key]||HARMONICA_TAB_MAPS["0"]);
+  return Array.isArray(tabMap)&&tabMap.some(entry=>/s/i.test(String(entry||"")));
+}
+function drawHarmonicaSlide(ctx,pressed){
+  // Keep the harmonica body itself unchanged. The simulated chromatic slide is
+  // simply a stout metal shaft attached directly to the right side of the body
+  // with a tall, thin rectangular button. Only the shaft/button position moves.
+  const layout=currentHarmonicaLayout||getHarmonicaLayout($("system").value);
+  if(!selectedHarmonicaHasSlide($("system").value))return;
+  const bodyRight=layout.bodyX+layout.bodyW;
+  const cy=layout.holeY;
+  // Leave a small margin at the right edge of the 1280-wide diagram when out.
+  const buttonW=11,buttonH=46;
+  const buttonX=pressed?bodyRight+13:bodyRight+39;
+  const buttonLeft=buttonX-buttonW/2;
+  ctx.save();
+  // Thicker, longer chrome shaft; it begins right at the harmonica body.
+  ctx.strokeStyle="#777";ctx.lineWidth=11;ctx.lineCap="butt";
+  ctx.beginPath();ctx.moveTo(bodyRight,cy);ctx.lineTo(buttonLeft,cy);ctx.stroke();
+  ctx.strokeStyle="#dedede";ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(bodyRight,cy-2);ctx.lineTo(buttonLeft,cy-2);ctx.stroke();
+  // Tall, thin rectangular slide button.
+  const g=ctx.createLinearGradient(buttonLeft,0,buttonLeft+buttonW,0);
+  g.addColorStop(0,"#555");g.addColorStop(.35,"#bdbdbd");g.addColorStop(.62,"#eeeeee");g.addColorStop(1,"#666");
+  ctx.fillStyle=g;ctx.strokeStyle="#555";ctx.lineWidth=2;
+  ctx.beginPath();ctx.roundRect(buttonLeft,cy-buttonH/2,buttonW,buttonH,3);ctx.fill();ctx.stroke();
+  ctx.restore();
+}
 function drawHarmonicaArrowStyle2(ctx,x,y,direction,bend,overblow,slide){
   ctx.save();
   const color=direction==="blow"?PUSH_COLOR:DRAW_COLOR;
@@ -2435,6 +2468,9 @@ function drawDiagram(item=null,force=false){
   const layout=currentHarmonicaLayout||getHarmonicaLayout($("system").value);
   $("liveNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderHarmonicaStaffNote(item);
   if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();if(harmonicaDisplayMode==="text"){ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#222";const textTabFontSize=getHarmonicaHoleCount($("system").value)<=10?48:42;ctx.font=`700 ${textTabFontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;ctx.fillText(item.glyph||"",x,595);ctx.restore()}else if(harmonicaDisplayMode==="style2"){drawHarmonicaArrowStyle2(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}else{drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
+  // The physical slide is shown whenever the selected tuning contains any
+  // slide tablature. It rests out and moves inward only for an active S/s tab.
+  drawHarmonicaSlide(ctx,!!(item&&item.playable&&item.slide));
   lastDiagramIndex=itemIndex;
 }
 function removeCursor(){
@@ -2477,7 +2513,6 @@ function fingeringForEvent(event){
   // Fallback only for an unusual callback that does not provide MIDI-pitch
   // metadata at all. Keep the previous source-position lookup so compatibility
   // with older/nonstandard callback shapes is preserved.
-  // the previous source-position lookup so existing behavior is preserved.
   let source=recursiveStartChar(event);
   if(source==null)return null;
   source-=prefixLength;
