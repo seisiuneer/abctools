@@ -917,7 +917,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 2.01
+     Version 2.03
     </div>
     <a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1158,8 +1158,11 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
        <label class="harmonicaDisplayControl" for="harmonicaDisplayMode">
         Display:
         <select aria-label="Harmonica display style" id="harmonicaDisplayMode">
-         <option selected="" value="graphic">
-          Graphic
+         <option selected="" value="style1">
+          Use Arrows
+         </option>
+         <option value="style2">
+          Use Bars
          </option>
          <option value="text">
           Text
@@ -1221,7 +1224,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
     </button>
    </div>
    <div class="legendPopupBody">
-    <img alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" src="img/harmonica_player_symbols_1.jpg"/>
+    <img id="legendPopupImage" alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" src="img/harmonica_player_symbols_1.jpg"/>
    </div>
   </div>
   <div class="customTuningOverlay" id="customTuningOverlay" role="dialog" aria-modal="true" aria-labelledby="customTuningTitle">
@@ -1357,22 +1360,21 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       selects how the current harmonica technique is shown.
      </p>
      <p>
-       There are two options: <b>Graphic</b> and <b>Text</b>:
+       There are three options: <b>Use Arrows</b>, <b>Use Bars</b>, and <b>Text</b>.
      </p>
      <p>
-      <b>
-       Graphic
-      </b>
-      (the default) uses the graphical breath-direction and technique symbols shown below.
+      <b>Use Arrows</b> (the default) uses directional arrow shapes for blow, draw, and bends, with <b>o</b> for overblow/overdraw and <b>S</b> for the chromatic slide.
      </p>
      <p>
-      In Graphic display mode, click
+      In Use Arrows or Use Bars display mode, click
       <b>
        Legend
       </b>
-      to display the technique symbols in a floating window while using the player. Drag the window by its title bar to reposition it and click × to close it. The Legend button is hidden in Text display mode.
+      to display the technique symbols in a floating window while using the player. Drag the window by its title bar to reposition it and click × to close it. The Legend shows the symbols for the currently selected style. The Legend button is hidden in Text display mode.
      </p>
      <img alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" src="img/harmonica_player_symbols_1.jpg" style="display:block;width:100%;max-width:100%;height:auto;object-fit:contain;margin:10px auto 12px"/>
+      <p><b>Use Bars</b> uses straight up/down breath arrows, horizontal bars across the arrow for bend depth, a circle centered on the arrow shaft for overblow or overdraw, and <b>S</b> for the chromatic slide.</p>
+      <img alt="Harmonica Use Bars technique symbols for blow, draw, bends, overblows, overdraws, and chromatic slide" src="img/harmonica_player_symbols2_1.jpg" style="display:block;width:100%;max-width:100%;height:auto;object-fit:contain;margin:10px auto 12px"/>
      <p>
       <b>
        Text
@@ -1380,7 +1382,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       uses the original ABC Transcription Tools harmonica tablature text. Numbers correspond to the holes on the harmonica. A number alone indicates blow. Draw is indicated by – before the number. Bends are indicated by ', '', or ''' after the number. Overblow is indicated by o after the number. s indicates pressing the slide on Chromatic instruments.
      </p>
      <p>
-      The Display setting is remembered in this browser.
+      The Display setting is remembered in this browser, including the selected Use Arrows, Use Bars, or Text mode.
      </p>
      <p style="text-align:left;font-weight:700;margin:18px 0 6px">
       ABC Editing and Notation
@@ -2098,7 +2100,7 @@ const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manua
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
 let lastDiagramIndex=-2,currentDiagramItem=null;
-let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false,harmonicaDisplayMode="graphic";
+let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false,harmonicaDisplayMode="style1";
 const SHOW_NOTE_KEY="abcHarmonicaShowNote";
 const HARMONICA_DISPLAY_KEY="abcHarmonicaDisplayMode";
 const PREF_SYSTEM_KEY="abcHarmonicaTuning",PREF_STYLE_KEY="abcHarmonicaKey";
@@ -2355,6 +2357,27 @@ function drawHarmonicaArrow(ctx,x,y,direction,bend,overblow,slide){
   }
   ctx.restore();
 }
+function drawHarmonicaArrowStyle2(ctx,x,y,direction,bend,overblow,slide){
+  ctx.save();
+  const color=direction==="blow"?PUSH_COLOR:DRAW_COLOR;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=8;ctx.lineCap="round";ctx.lineJoin="round";
+  const top=y-45,bottom=top+72,head=14;
+  const arrowHead=(tx,ty,ang)=>{ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(tx-head*Math.cos(ang-.55),ty-head*Math.sin(ang-.55));ctx.moveTo(tx,ty);ctx.lineTo(tx-head*Math.cos(ang+.55),ty-head*Math.sin(ang+.55));ctx.stroke()};
+  const sy=direction==="blow"?bottom:top,ey=direction==="blow"?top:bottom;
+  ctx.beginPath();ctx.moveTo(x,sy);ctx.lineTo(x,ey);ctx.stroke();arrowHead(x,ey,direction==="blow"?-Math.PI/2:Math.PI/2);
+  // Center Use Bars technique marks on the straight, non-arrowhead portion of
+  // the shaft. For an up arrow this moves the marks slightly downward; for a
+  // down arrow it moves them slightly upward. This keeps bars/circles visually
+  // centered on the usable shaft instead of crowding the arrowhead.
+  const markCenter=direction==="blow"
+    ? (bottom+(top+head))/2
+    : (top+(bottom-head))/2;
+  const bendCount=Math.max(0,Math.min(3,Number(bend)||0));
+  if(bendCount){const spacing=14,start=markCenter-((bendCount-1)*spacing)/2;ctx.lineWidth=5;for(let i=0;i<bendCount;i++){const yy=start+i*spacing;ctx.beginPath();ctx.moveTo(x-23,yy);ctx.lineTo(x+23,yy);ctx.stroke()}}
+  if(overblow){ctx.lineWidth=5;ctx.beginPath();ctx.arc(x,markCenter,17,0,Math.PI*2);ctx.stroke()}
+  if(slide){ctx.font="700 30px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#333";ctx.fillText("S",x,bottom+32)}
+  ctx.restore();
+}
 function prepareDiagramBase(){
   const c=$("diagram"),ctx=c.getContext("2d"),tuning=$("system").value,key=$("style").value,oct=$("fingeringDisplay").value;
   const title=tunes.length?firstTitle(tunes[currentTune],currentTune+1):"";
@@ -2403,15 +2426,15 @@ function renderHarmonicaStaffNote(item){
 }
 function restoreShowNotePreference(){try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
 function saveShowNotePreference(){try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){} }
-function updateHarmonicaDisplayUI(){const select=$("harmonicaDisplayMode"),legend=$("legendBtn");if(select)select.value=harmonicaDisplayMode;if(legend){legend.hidden=harmonicaDisplayMode!=="graphic";if(legend.hidden)closeLegend()}drawDiagram(currentDiagramItem,true)}
-function restoreHarmonicaDisplayPreference(){try{const saved=localStorage.getItem(HARMONICA_DISPLAY_KEY);harmonicaDisplayMode=saved==="text"?"text":"graphic"}catch(_){harmonicaDisplayMode="graphic"}updateHarmonicaDisplayUI()}
+function updateHarmonicaDisplayUI(){const select=$("harmonicaDisplayMode"),legend=$("legendBtn"),legendImage=$("legendPopupImage");if(select)select.value=harmonicaDisplayMode;if(legend){legend.hidden=harmonicaDisplayMode==="text";if(legend.hidden)closeLegend()}if(legendImage)legendImage.src=harmonicaDisplayMode==="style2"?"img/harmonica_player_symbols2_1.jpg":"img/harmonica_player_symbols_1.jpg";drawDiagram(currentDiagramItem,true)}
+function restoreHarmonicaDisplayPreference(){try{const saved=localStorage.getItem(HARMONICA_DISPLAY_KEY);harmonicaDisplayMode=(saved==="text"||saved==="style2")?saved:"style1"}catch(_){harmonicaDisplayMode="style1"}updateHarmonicaDisplayUI()}
 function saveHarmonicaDisplayPreference(){try{localStorage.setItem(HARMONICA_DISPLAY_KEY,harmonicaDisplayMode)}catch(_){}}
 function drawDiagram(item=null,force=false){
   const itemIndex=item?item.index:-1;if(!force&&itemIndex===lastDiagramIndex)return;currentDiagramItem=item;
   const c=$("diagramOverlay"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
   const layout=currentHarmonicaLayout||getHarmonicaLayout($("system").value);
   $("liveNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderHarmonicaStaffNote(item);
-  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();if(harmonicaDisplayMode==="text"){ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#222";const textTabFontSize=getHarmonicaHoleCount($("system").value)<=10?48:42;ctx.font=`700 ${textTabFontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;ctx.fillText(item.glyph||"",x,595);ctx.restore()}else{drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
+  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();if(harmonicaDisplayMode==="text"){ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#222";const textTabFontSize=getHarmonicaHoleCount($("system").value)<=10?48:42;ctx.font=`700 ${textTabFontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;ctx.fillText(item.glyph||"",x,595);ctx.restore()}else if(harmonicaDisplayMode==="style2"){drawHarmonicaArrowStyle2(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}else{drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
   lastDiagramIndex=itemIndex;
 }
 function removeCursor(){
@@ -3247,7 +3270,7 @@ $("tempoBtn").addEventListener("click",()=>{
   openTempoDialog(input);
 });
 $("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderHarmonicaStaffNote(currentDiagramItem)});
-$("harmonicaDisplayMode").addEventListener("change",e=>{harmonicaDisplayMode=e.target.value==="text"?"text":"graphic";saveHarmonicaDisplayPreference();updateHarmonicaDisplayUI()});
+$("harmonicaDisplayMode").addEventListener("change",e=>{harmonicaDisplayMode=(e.target.value==="text"||e.target.value==="style2")?e.target.value:"style1";saveHarmonicaDisplayPreference();updateHarmonicaDisplayUI()});
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
   const input=e.target,f=input.files&&input.files[0];if(!f)return;
