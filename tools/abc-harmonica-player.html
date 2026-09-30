@@ -33,10 +33,10 @@
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK">
     </script>
     <script>
-     window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-VM0N9HL3MK');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VM0N9HL3MK');
     </script>
     <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20260920_1125" rel="stylesheet"/>
     <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20260920_1125">
@@ -307,7 +307,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
   outline:0 !important;
 }
 
-
 /* DayPilot dialog typography refinement. */
 .modal_default_main input{
   font-size:16px !important;
@@ -320,7 +319,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
   min-width:78px !important;
   padding:6px 14px !important;
 }
-
 
 /* Final DayPilot spacing refinements. */
 body.save-name-prompt-open .modal_default_main .modal_default_content{
@@ -831,7 +829,87 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
     transform:translateY(0) !important;
   }
 }
-    </style>
+    
+/* Custom harmonica tuning editor */
+.customTuningOverlay{display:none;position:fixed;inset:0;z-index:4500;background:rgba(0,0,0,.44);padding:12px}
+.customTuningDialog{width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px);margin:0 auto;background:#fff;box-shadow:0 15px 45px rgba(0,0,0,.3);display:flex;flex-direction:column}
+.customTuningHeader{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px;border-bottom:1px solid #ddd;flex:0 0 auto}
+.customTuningHeader h2{margin:0;font-size:21px}
+.customTuningClose{border:0;background:transparent;font-size:30px;line-height:1;cursor:pointer;padding:0 4px}
+.customTuningBody{padding:16px 20px;overflow:auto;-webkit-overflow-scrolling:touch;min-height:0;flex:1 1 auto}
+.customTuningTop{display:grid;grid-template-columns:minmax(220px,1fr) 170px;gap:12px;margin-bottom:12px}
+.customTuningTop label{display:flex;flex-direction:column;gap:5px;font-weight:700}
+.customTuningTop input,.customTuningTop select{font:inherit;padding:7px 8px;min-height:38px}
+.customTuningHelp{font-size:14px;line-height:1.42;background:#f5f5f5;border:1px solid #ddd;padding:10px 12px;margin:8px 0 16px}
+.customTuningHelp code{font-weight:700}
+.customTuningOctave{margin:14px 0 4px;font-weight:700}
+.customTuningGrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;min-width:0}
+.customTuningCell{text-align:center;min-width:0}
+.customTuningCell span{display:block;font-size:11px;white-space:nowrap;margin-bottom:3px}
+.customTuningCell input{box-sizing:border-box;width:100%;min-width:0;text-align:center;padding:6px 1px;font:600 13px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.customTuningActions{display:grid;grid-template-columns:max-content max-content minmax(0,1fr) max-content max-content;gap:8px;align-items:center;margin-top:18px}
+.customTuningActions .spacer{display:none}
+.customTuningActions button{min-height:38px;padding:7px 10px;white-space:nowrap}
+/* Normalize custom tuning editor controls across Safari/iOS and desktop browsers. */
+.customTuningTop input,.customTuningTop select,.customTuningCell input{
+  -webkit-appearance:none;appearance:none;color:#17241c;-webkit-text-fill-color:#17241c;
+  background:#fff;border:1px solid #b8c7bd;border-radius:7px;box-shadow:none;
+}
+.customTuningTop select{
+  padding:7px 36px 7px 10px;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;
+}
+.customTuningActions button{
+  -webkit-appearance:none;appearance:none;font:inherit;font-weight:650;line-height:1.2;
+  color:#17241c;-webkit-text-fill-color:#17241c;background:#e8f1ff;
+  border:1px solid #9dbaf2;border-radius:8px;box-shadow:none;cursor:pointer;
+}
+.customTuningActions button:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
+.customTuningActions button:disabled{opacity:.45;cursor:default}
+.customTuningClose{
+  -webkit-appearance:none;appearance:none;color:#17241c;-webkit-text-fill-color:#17241c;
+  box-shadow:none;font-family:inherit;
+}
+
+/* Preset initializer dialog: explicit cross-platform controls (no native select/button styling). */
+.presetInitOverlay{display:none;position:fixed;inset:0;z-index:4600;background:rgba(0,0,0,.38);padding:18px;align-items:center;justify-content:center}
+.presetInitDialog{width:min(430px,calc(100vw - 36px));background:#fff;border:1px solid #aebbb3;border-radius:10px;box-shadow:0 15px 45px rgba(0,0,0,.3);padding:18px 20px}
+.presetInitHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 15px}.presetInitDialog h3{margin:0;font-size:19px}
+.presetInitDialog label{display:flex;flex-direction:column;gap:6px;font-weight:700}
+#presetInitSelect{-webkit-appearance:none;appearance:none;width:100%;min-height:40px;padding:8px 38px 8px 10px;font:inherit;color:#17241c;-webkit-text-fill-color:#17241c;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid #b8c7bd;border-radius:7px;box-shadow:none}
+.presetInitActions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.presetInitActions button{-webkit-appearance:none;appearance:none;min-width:82px;min-height:38px;padding:7px 14px;font:inherit;font-weight:650;line-height:1.2;color:#17241c;-webkit-text-fill-color:#17241c;background:#e8f1ff;border:1px solid #9dbaf2;border-radius:8px;box-shadow:none;cursor:pointer}
+.presetInitActions button:hover{background:#d6e6ff;border-color:#6f99e8}
+.customTuningError{display:none;margin:12px 0 0;padding:9px 11px;background:#fff1f1;border:1px solid #b44;color:#7b1111;font-weight:600;white-space:pre-wrap}
+@media(max-width:650px){.customTuningGrid{grid-template-columns:repeat(4,minmax(0,1fr));min-width:0}.customTuningOverlay{padding:8px}.customTuningDialog{width:calc(100vw - 16px);max-height:calc(100vh - 16px)}.customTuningHeader{padding:12px 14px 8px}.customTuningHeader h2{font-size:18px}.customTuningBody{padding:12px 14px calc(45px + env(safe-area-inset-bottom))}.customTuningTop{grid-template-columns:1fr}.customTuningActions{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.customTuningActions button{white-space:normal}.customTuningActions #customApplyBtn{grid-column:1 / -1}.customTuningActions .spacer{display:none}}
+
+/* iPad/tablet landscape: keep the custom tuning dialog comfortably inside the
+   visible Safari viewport and make its body explicitly scrollable. Desktop is
+   intentionally excluded by requiring a coarse pointer. */
+@media (pointer:coarse) and (orientation:landscape) and (min-width:700px) and (max-width:1400px){
+  .customTuningOverlay{
+    padding:10px 12px;
+    align-items:flex-start;
+  }
+  .customTuningDialog{
+    height:calc(100dvh - 20px);
+    max-height:calc(100dvh - 20px);
+    overflow:hidden;
+  }
+  .customTuningBody{
+    flex:1 1 0;
+    min-height:0;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+  }
+  .customTuningActions{
+    padding-bottom:4px;
+  }
+}
+
+</style>
    </meta>
   </meta>
  </head>
@@ -893,6 +971,15 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       </option>
       <option value="7">
        Chromatic (16-Hole)
+      </option>
+      <option disabled="" value="__separator__">
+       ────────
+      </option>
+      <option id="customTuningOption" value="8">
+       Custom Tuning
+      </option>
+      <option value="configure">
+       Configure Custom Tuning...
       </option>
      </select>
     </div>
@@ -1137,6 +1224,59 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
     <img alt="Harmonica technique symbols for blow, draw, bends, overblows, and overdraws" src="img/harmonica_player_symbols_1.jpg"/>
    </div>
   </div>
+  <div class="customTuningOverlay" id="customTuningOverlay" role="dialog" aria-modal="true" aria-labelledby="customTuningTitle">
+   <div class="customTuningDialog">
+    <div class="customTuningHeader">
+     <h2 id="customTuningTitle">Configure Custom Harmonica Tuning</h2>
+     <button class="customTuningClose" id="customTuningClose" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="customTuningBody">
+     <div class="customTuningTop">
+      <label>Custom tuning name<input id="customTuningName" type="text" maxlength="40" autocomplete="off"></label>
+      <label>Harmonica<select id="customHoleCount"><option value="">Select hole count…</option><option value="10">10 Hole</option><option value="12">12 Hole</option><option value="16">16 Hole</option></select></label>
+     </div>
+     <div class="customTuningHelp">
+      Enter one tablature indication for each chromatic note:<br><code>4</code> = blow &nbsp; <code>-4</code> = draw &nbsp; <code>-3'</code> = 1-semitone bend &nbsp; <code>-3''</code> = 2-semitone bend &nbsp; <code>-3'''</code> = 3-semitone bend<br><code>6o</code> = overblow &nbsp; <code>-7o</code> = overdraw &nbsp; <code>1s</code> = slide-in &nbsp; <code>x</code> = note unavailable<br>Only hole numbers, <code>-</code>, <code>'</code>, <code>o</code>, <code>s</code>, and <code>x</code> are used. Hole numbers must fit the selected instrument.
+     </div>
+     <div id="customTuningMatrix"></div>
+     <div class="customTuningError" id="customTuningError"></div>
+     <div class="customTuningActions">
+      <button id="customLoadBtn" type="button">Load Tuning File</button>
+      <button id="customSaveFileBtn" type="button">Save Tuning File</button>
+      <button id="customResetBtn" type="button">Initialize from Preset</button>
+      <span class="spacer"></span>
+      <button id="customCancelBtn" type="button">Cancel</button>
+      <button id="customApplyBtn" type="button">Save</button>
+     </div>
+     <input id="customTuningFile" type="file" accept=".txt,text/plain" hidden>
+    </div>
+   </div>
+  </div>
+  <div class="presetInitOverlay" id="presetInitOverlay" role="dialog" aria-modal="true" aria-labelledby="presetInitTitle">
+   <div class="presetInitDialog">
+    <div class="presetInitHeader">
+     <h3 id="presetInitTitle">Initialize from Preset</h3>
+     <button class="customTuningClose" id="presetInitClose" type="button" aria-label="Close">×</button>
+    </div>
+    <label>Preset
+     <select id="presetInitSelect">
+      <option value="0">Standard Richter</option>
+      <option value="1">Paddy Richter</option>
+      <option value="2">Easy Thirds</option>
+      <option value="3">Melody Maker</option>
+      <option value="4">Country (Major 7th)</option>
+      <option value="5">Natural Minor</option>
+      <option value="6">Chromatic (12-Hole)</option>
+      <option value="7">Chromatic (16-Hole)</option>
+      <option value="reset-x">Reset All to x</option>
+     </select>
+    </label>
+    <div class="presetInitActions">
+     <button id="presetInitCancelBtn" type="button">Cancel</button>
+     <button id="presetInitApplyBtn" type="button">Apply</button>
+    </div>
+   </div>
+  </div>
   <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
    <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">
@@ -1187,22 +1327,19 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       Harmonica Settings
      </p>
      <p>
-      <b>
-       Harmonica tuning
-      </b>
-      chooses the note layout: the first six options are 10-hole diatonic tunings, and the last two are 12-hole and 16-hole chromatic layouts.
+      <b>Harmonica tuning</b> chooses the note layout: the first six options are 10-hole diatonic tunings, and the next two are 12-hole and 16-hole chromatic layouts.
      </p>
      <p>
-      <b>
-       Harmonica key
-      </b>
-      chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#.
+      The bottom of the <b>Harmonica tuning</b> menu also contains an option for using a custom tuning and <b>Configure Custom Tuning...</b>.
      </p>
      <p>
-      <b>
-       Octave shift
-      </b>
-      shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.
+      See <a href="#custom-tuning-instructions">Custom Harmonica Tuning</a> below for complete instructions on creating, saving and loading custom tunings.
+     </p>
+     <p>
+      <b>Harmonica key</b> chooses G, G#, A, Bb, B, C, C#, D, Eb, E, F, or F#.
+     </p>
+     <p>
+      <b>Octave shift</b> shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.
      </p>
      <p>
       The selected harmonica tuning, key, and octave shift are saved in this browser and are also included in share links.
@@ -1322,9 +1459,10 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       </b>
       to create a share link containing all loaded tunes.
      </p>
-     <p>
-      The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.
-     </p>
+     <p>The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.</p>
+     <p>When the selected harmonica tuning is a custom tuning, the complete custom tuning is included in the share link, including its name, hole count, and all 60 tablature note assignments.</p>
+     <p>Opening a share link that contains a custom tuning temporarily uses the custom tuning from the link without replacing the custom tuning already saved in that browser.</p>
+     <p>To keep a custom tuning received in a share link for future use, open the custom tuning dialog and click <b>Save</b>.</p>
      <p>
       A share button is disabled when its resulting link would exceed the maximum allowed of 8100 characters.
      </p>
@@ -1341,6 +1479,51 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      <p>
       This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.
      </p>
+     <p id="custom-tuning-instructions" style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Custom Harmonica Tuning
+     </p>
+     <p><b>Custom tuning is an advanced feature.</b></p>
+     <p>It works with custom harmonica tablature settings files saved from the <b>ABC Transcription Tools</b> if they contain only the allowed tablature syntax described below.</p>
+     <p>The custom tuning initially matches Standard Richter.</p>
+     <p>After you give the custom tuning a name and save it, that name is shown near the bottom of the <b>Harmonica tuning</b> menu.</p>
+     <p>Selecting that named custom tuning uses its tablature map.</p>
+     <p>Selecting <b>Configure Custom Tuning...</b> opens the custom tuning editor without changing the currently selected tuning.</p>
+     <p>The editor contains a five-octave, 60-note custom harmonica tablature map compatible with the custom harmonica tablature settings used by ABC Transcription Tools.</p>
+     <p>Enter a custom tuning name and choose whether the physical harmonica has 10, 12, or 16 holes.</p>
+     <p>Each note entry must use the ABC Transcription Tools harmonica tablature syntax described below. Examples of valid entries include:</p>
+     <p><b>4</b> = blow.</p>
+     <p><b>-4</b> = draw.</p>
+     <p><b>-3'</b> = 1-semitone bend.</p>
+     <p><b>-3''</b> = 2-semitone bend.</p>
+     <p><b>-3'''</b> = 3-semitone bend.</p>
+     <p><b>6o</b> = overblow.</p>
+     <p><b>-7o</b> = overdraw.</p>
+     <p><b>1s</b> = slide-in.</p>
+     <p><b>x</b> = note unavailable.</p>
+     <p>Only the supported blow, draw, bend, overblow/overdraw, and slide combinations are allowed.</p>
+     <p>Every referenced hole number must be within the selected 10-, 12-, or 16-hole instrument size before the tuning can be saved.</p>
+     <p><b>Load Tuning File</b> loads a <b>.txt</b> custom harmonica tuning file saved by ABC Transcription Tools or by this player.</p>
+      <p>Loading a tuning file places it in the editor for review; it does not replace your saved custom tuning until you click <b>Save</b>.</p>
+     <p><b>ABC Transcription Tools</b> custom tuning files do not contain a hole count, so the player infers an initial 10-, 12-, or 16-hole setting from the highest hole number referenced in the file.</p>
+     <p>After loading a file without a hole count, you may change the hole count to any of the three choices while editing, including a smaller size.</p>
+     <p>The selected hole count and all tablature entries are validated when you save the tuning to the player or save it to a file.</p>
+     <p>A tuning cannot be saved while it contains an invalid entry or an out-of-range hole reference.</p>
+     <p>Invalid files do not replace your previously saved custom tuning.</p>
+     <p>Files saved by this player include the hole count.</p>
+     <p>Those files can still be loaded by ABC Transcription Tools, which ignores the additional hole-count field.</p>
+     <p><b>Save Tuning File</b> validates the custom tuning name, selected hole count, and all 60 tablature entries before saving.</p>
+     <p>After validation, you are asked for a file name.</p>
+     <p>The suggested file name is based on the custom tuning name.</p>
+     <p><b>Initialize from Preset</b> opens a dialog where you can initialize the editor from any built-in tuning, or choose <b>Reset All to x</b>.</p>
+     <p>Applying a built-in preset copies its map into the editor, sets the name to <b>Custom</b> followed by the preset name, and selects the matching 10-, 12-, or 16-hole size.</p>
+     <p><b>Reset All to x</b> fills all 60 entries with <b>x</b>, names it <b>New Tuning Preset</b>, and selects <b>10 Hole</b>.</p>
+     <p>Initialization only changes the editor; it is not stored until you click <b>Save</b> in the main custom tuning dialog.</p>
+     <p>The dialog's <b>Save</b> button validates and stores the custom tuning name, hole count, and tablature map in this browser for reuse.</p>
+     <p>After a valid custom tuning is saved, the player automatically switches to that custom tuning.</p>
+     <p><b>Cancel</b> closes the editor without replacing the previously saved custom tuning.</p>
+     <p>When a share link uses the custom tuning, the complete custom tuning is embedded in the link, including its name, hole count, and all 60 tablature note assignments.</p>
+     <p>The custom tuning from the share link is used temporarily and does not replace the custom tuning already saved in the recipient's browser.</p>
+     <p>To keep the shared custom tuning for future use, open the custom tuning dialog and click <b>Save</b>.</p>
      <p style="text-align:left;font-weight:700;margin:18px 0 6px">
       Volume Override URL Parameters
      </p>
@@ -1669,7 +1852,7 @@ function harmonicaFingeringsGenerator(abc){
   const tuning=document.getElementById("system")?.value||"0";
   const harpKey=document.getElementById("style")?.value||"C";
   const octaveShift=document.getElementById("fingeringDisplay")?.value||"0";
-  const tabMap=HARMONICA_TAB_MAPS[String(tuning)]||HARMONICA_TAB_MAPS["0"];
+  const tabMap=String(tuning)==="8"?getCustomHarmonica().noteMap:(HARMONICA_TAB_MAPS[String(tuning)]||HARMONICA_TAB_MAPS["0"]);
   const keyOffset=HARMONICA_KEY_OFFSETS[harpKey]??0; const octaveOffset=(parseInt(octaveShift,10)||0)*12;
   return notes.map((note,index)=>{const midi=abcPitchToMidi(note.normalizedValue);const noteIndex=midi==null?NaN:(midi-48+keyOffset+octaveOffset);const glyph=Number.isFinite(noteIndex)&&noteIndex>=0&&noteIndex<tabMap.length?tabMap[noteIndex]:"x";const parsed=parseHarmonicaGlyph(glyph);return {index:index+1,abcIndex:note.index,abcNote:note.unNormalizedValue,normalizedNote:note.normalizedValue,glyph,hole:parsed?parsed.hole:null,direction:parsed?parsed.direction:null,bend:parsed?parsed.bend:0,overblow:parsed?parsed.overblow:false,slide:parsed?parsed.slide:false,playable:!!parsed}});
 }
@@ -1682,6 +1865,233 @@ function harmonicaFingeringsGenerator(abc){
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 if(IS_IOS)$("openFile").removeAttribute("accept");
+if(IS_IOS)$("customTuningFile")?.removeAttribute("accept");
+const CUSTOM_HARMONICA_KEY="abcHarmonicaCustomTuning";
+const CUSTOM_NOTE_NAMES=["C","C#/Db","D","D#/Eb","E","F","F#/Gb","G","G#/Ab","A","A#/Bb","B"];
+function defaultCustomHarmonica(){return {version:3,type:"CustomHarmonica",name:"Custom Tuning",holes:10,noteMap:[...HARMONICA_TAB_MAPS["0"]]}}
+let customHarmonica=defaultCustomHarmonica(),customEditorWorking=null,lastRealSystem="0";
+function normalizeLoadedCustom(obj){
+  if(!obj||obj.type!=="CustomHarmonica"||!Array.isArray(obj.noteMap))throw new Error("This is not a valid custom harmonica tuning file.");
+  const map=obj.noteMap.slice();
+  if(obj.version===1&&map.length===38)while(map.length<60)map.push("x");
+  if(obj.version===2&&map.length===48)while(map.length<60)map.push("x");
+  if(map.length!==60)throw new Error("The custom tuning must contain exactly 60 tablature entries.");
+  return {version:3,type:"CustomHarmonica",name:String(obj.name??"").trim(),holes:[10,12,16].includes(Number(obj.holes))?Number(obj.holes):null,noteMap:map.map(v=>String(v??"").trim())};
+}
+function validateCustomName(name){
+  const n=String(name||"").trim();
+  if(!n)throw new Error("Enter a custom tuning name.");
+  if(n.length>40)throw new Error("The custom tuning name must be 40 characters or fewer.");
+  if(/[<>\x00-\x1F\x7F]/.test(n))throw new Error("The custom tuning name contains characters that are not allowed.");
+  const reserved=Object.entries(HARMONICA_TUNING_NAMES).filter(([k])=>k!=="8").map(([,v])=>v).concat(["Configure Custom Tuning","Configure Custom Tuning..."]);
+  if(reserved.some(v=>v.toLowerCase()===n.toLowerCase()))throw new Error("Please choose a name different from the built-in tuning names.");
+  return n;
+}
+function parseValidatedCustomGlyph(value,holes){
+  const g=String(value||"").trim();
+  if(g==="x")return null;
+  // Canonical grammar: optional draw '-', hole, then either 1-3 bends with optional o,
+  // o followed by 0-3 bends, or slide-in s. This includes ATT forms such as -10o'.
+  const m=g.match(/^-?(1[0-6]|[1-9])(?:(?:'{1,3}o?)|(?:o'{0,3})|s)?$/);
+  if(!m)throw new Error(`“${g||"(blank)"}” is not a valid tablature indication.`);
+  const hole=Number(m[1]);
+  if(hole>holes)throw new Error(`“${g}” references hole ${hole}, but this is configured as a ${holes}-hole harmonica.`);
+  return true;
+}
+function validateCustomObject(obj,requireHoles=true){
+  const n=normalizeLoadedCustom(obj);n.name=validateCustomName(n.name);
+  if(requireHoles&&!n.holes)throw new Error("Select whether this is a 10-, 12-, or 16-hole harmonica.");
+  if(n.holes){n.noteMap.forEach((g,i)=>{try{parseValidatedCustomGlyph(g,n.holes)}catch(e){const oct=Math.floor(i/12)+1,note=CUSTOM_NOTE_NAMES[i%12];throw new Error(`Octave ${oct}, ${note}: ${e.message}`)}})}
+  return n;
+}
+function getCustomHarmonica(){return customHarmonica||defaultCustomHarmonica()}
+function updateCustomTuningOption(){
+  const opt=$("customTuningOption");if(!opt)return;
+  const name=(customHarmonica&&customHarmonica.name)||"Custom Tuning";opt.textContent=name;HARMONICA_TUNING_NAMES["8"]=name;
+}
+let sharedCustomTuningActive=false;
+function decodeSharedCustomTuning(value){
+  if(!value)throw new Error("The share link does not contain a custom tuning.");
+  const json=decompressABCDeflate(value);
+  return validateCustomObject(JSON.parse(json),true);
+}
+function restoreCustomHarmonica(){
+  // A custom tuning embedded in a share link is session-only. Use it instead of
+  // the browser's saved custom tuning, but never overwrite localStorage here.
+  const params=new URLSearchParams(location.search);
+  if(params.get("system")==="8"&&params.get("custom")){
+    try{
+      customHarmonica=decodeSharedCustomTuning(params.get("custom"));
+      sharedCustomTuningActive=true;
+      updateCustomTuningOption();
+      return;
+    }catch(e){
+      console.warn("Ignoring invalid custom harmonica tuning in share link:",e);
+      // Do not silently substitute the browser's saved custom tuning for a bad
+      // shared custom tuning. loadShareLinkAfterStartup() will reject the link.
+      updateCustomTuningOption();
+      return;
+    }
+  }
+  try{const raw=localStorage.getItem(CUSTOM_HARMONICA_KEY);if(raw)customHarmonica=validateCustomObject(JSON.parse(raw),true)}catch(e){console.warn("Ignoring invalid saved custom harmonica tuning:",e)}
+  updateCustomTuningOption();
+}
+function persistCustomHarmonica(obj){customHarmonica=validateCustomObject(obj,true);localStorage.setItem(CUSTOM_HARMONICA_KEY,JSON.stringify(customHarmonica));updateCustomTuningOption()}
+function buildCustomMatrix(){
+  const host=$("customTuningMatrix");if(!host||host.childElementCount)return;
+  for(let oct=0;oct<5;oct++){
+    const h=document.createElement("div");h.className="customTuningOctave";h.textContent=`Octave ${oct+1}:`;host.appendChild(h);
+    const grid=document.createElement("div");grid.className="customTuningGrid";
+    for(let n=0;n<12;n++){const cell=document.createElement("label");cell.className="customTuningCell";const lab=document.createElement("span");lab.textContent=CUSTOM_NOTE_NAMES[n];const input=document.createElement("input");input.type="text";input.maxLength=7;input.dataset.mapIndex=String(oct*12+n);input.autocomplete="off";cell.append(lab,input);grid.appendChild(cell)}
+    host.appendChild(grid);
+  }
+}
+function setCustomEditor(obj){
+  buildCustomMatrix();customEditorWorking={...obj,noteMap:[...obj.noteMap]};
+  $("customTuningName").value=obj.name||"";$("customHoleCount").value=obj.holes?String(obj.holes):"";
+  // An imported ATT file may suggest an initial hole count, but all three sizes
+  // remain selectable while editing. Grammar and hole ranges are enforced only
+  // when applying the tuning or saving it to a file.
+  [...$("customHoleCount").options].forEach(opt=>opt.disabled=false);
+  document.querySelectorAll("#customTuningMatrix input[data-map-index]").forEach(el=>el.value=obj.noteMap[Number(el.dataset.mapIndex)]??"x");
+  showCustomError("");
+}
+function readCustomEditor(){
+  return {version:3,type:"CustomHarmonica",name:$("customTuningName").value.trim(),holes:Number($("customHoleCount").value)||null,noteMap:[...document.querySelectorAll("#customTuningMatrix input[data-map-index]")].map(el=>el.value.trim())};
+}
+function showCustomError(msg){const e=$("customTuningError");e.textContent=msg||"";e.style.display=msg?"block":"none"}
+function openCustomTuningEditor(){setCustomEditor(getCustomHarmonica());$("customTuningOverlay").style.display="block"}
+function closeCustomTuningEditor(){closePresetInitializer();$("customTuningOverlay").style.display="none";showCustomError("")}
+function customTuningDefaultFileName(obj){
+  return (obj.name.replace(/[^a-z0-9._ -]+/gi,"_").trim()||"custom-harmonica")+".txt";
+}
+async function askCustomTuningFileName(defaultName){
+  let value=null;
+  document.body.classList.add("save-name-prompt-open");
+  try{
+    if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){
+      const result=await DayPilot.Modal.prompt("Save custom tuning file name:",defaultName,{top:100});
+      if(!result||result.canceled)return null;
+      value=result.result;
+    }else{
+      value=window.prompt("Save custom tuning file name:",defaultName);
+      if(value===null)return null;
+    }
+  }finally{
+    document.body.classList.remove("save-name-prompt-open");
+  }
+  value=String(value||"").trim();
+  if(!value)return null;
+  value=value.replace(/[\\/:*?"<>|]+/g,"_");
+  if(!/\.txt$/i.test(value))value+=".txt";
+  return value;
+}
+async function saveCustomTuningFile(){
+  try{
+    // Validate the complete editor state at the point of file save. This permits
+    // temporary hole-count/map mismatches while the user is still editing.
+    const obj=validateCustomObject(readCustomEditor(),true);
+    const fileName=await askCustomTuningFileName(customTuningDefaultFileName(obj));
+    if(!fileName)return;
+    const blob=new Blob([JSON.stringify(obj,null,2)],{type:"text/plain;charset=utf-8"});
+
+    // Match the ABC Save behavior on iOS/mobile: use the native Share Sheet
+    // when file sharing is supported, with the normal download as fallback.
+    if(mobileSavePlatform()&&navigator.share){
+      try{
+        const file=new File([blob],fileName,{type:"text/plain"});
+        if(!navigator.canShare||navigator.canShare({files:[file]})){
+          await navigator.share({files:[file],title:fileName});
+          showCustomError("");
+          return;
+        }
+      }catch(e){
+        if(e&&e.name==="AbortError")return;
+      }
+    }
+
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;
+    a.download=fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showCustomError("");
+  }catch(e){showCustomError(e.message)}
+}
+function loadCustomTuningFile(file){
+  if(!file||!/\.txt$/i.test(file.name||"")){showCustomError("Please select a .txt custom harmonica tuning file.");return}
+  const reader=new FileReader();reader.onload=()=>{try{const obj=normalizeLoadedCustom(JSON.parse(String(reader.result||"")));validateCustomName(obj.name); // grammar is checked once a hole count is known
+      if(obj.holes)validateCustomObject(obj,true);else{
+        let maxHole=0;
+        obj.noteMap.forEach((g,i)=>{
+          const text=String(g).trim();if(text==="x")return;
+          const m=text.match(/^-?(1[0-6]|[1-9])(?:(?:'{1,3}o?)|(?:o'{0,3})|s)?$/);
+          if(!m)throw new Error(`Octave ${Math.floor(i/12)+1}, ${CUSTOM_NOTE_NAMES[i%12]}: “${text||"(blank)"}” is not a valid tablature indication.`);
+          maxHole=Math.max(maxHole,Number(m[1]));
+        });
+        obj.holes=maxHole<=10?10:(maxHole<=12?12:16);obj.inferredMinHoles=obj.holes;
+      }
+      setCustomEditor(obj);showCustomError(obj.inferredMinHoles?`Hole count inferred as ${obj.holes} from the ATT tuning. You may choose 10, 12, or 16 holes while editing; the selected size and all hole references will be validated when you save or apply the tuning.`:"")
+    }catch(e){showCustomError(e.message||"This is not a valid custom harmonica tuning file.")}};reader.onerror=()=>showCustomError("Unable to read the selected tuning file.");reader.readAsText(file)
+}
+function applyCustomTuning(){
+  try{
+    const obj=validateCustomObject(readCustomEditor(),true);
+    persistCustomHarmonica(obj);
+
+    // A successfully saved custom configuration becomes the active tuning.
+    // Setting the selector first ensures the normal preference/rebuild paths
+    // operate on the newly saved custom map.
+    $("system").value="8";
+    lastRealSystem="8";
+
+    closeCustomTuningEditor();
+    savePrefs();
+    scheduleRebuild();
+    updateShareButtons();
+    updateHarmonicaHeaderStatus();
+  }catch(e){
+    showCustomError(e.message);
+  }
+}
+function positionPresetInitializer(){
+  const customDialog=document.querySelector(".customTuningDialog");
+  const presetDialog=document.querySelector(".presetInitDialog");
+  if(!customDialog||!presetDialog)return;
+  const rect=customDialog.getBoundingClientRect();
+  presetDialog.style.position="fixed";
+  presetDialog.style.left="50%";
+  presetDialog.style.top=`${rect.top + rect.height / 2}px`;
+  presetDialog.style.transform="translate(-50%,-50%)";
+}
+function openPresetInitializer(){
+  $("presetInitSelect").value="0";
+  $("presetInitOverlay").style.display="flex";
+  requestAnimationFrame(positionPresetInitializer);
+}
+function closePresetInitializer(){$("presetInitOverlay").style.display="none"}
+function applyPresetInitializer(){
+  const selected=$("presetInitSelect").value;
+  if(selected==="reset-x"){
+    setCustomEditor({version:3,type:"CustomHarmonica",name:"New Tuning Preset",holes:10,noteMap:Array(60).fill("x")});
+  }else{
+    const presetName=HARMONICA_TUNING_NAMES[selected]||"Standard Richter";
+    const holes=selected==="6"?12:selected==="7"?16:10;
+    setCustomEditor({version:3,type:"CustomHarmonica",name:`Custom ${presetName}`,holes,noteMap:[...(HARMONICA_TAB_MAPS[selected]||HARMONICA_TAB_MAPS["0"])]});
+  }
+  closePresetInitializer();
+}
+function installCustomTuningEditor(){
+  restoreCustomHarmonica();buildCustomMatrix();
+  $("customTuningClose").addEventListener("click",closeCustomTuningEditor);$("customCancelBtn").addEventListener("click",closeCustomTuningEditor);$("customApplyBtn").addEventListener("click",applyCustomTuning);
+  $("customResetBtn").addEventListener("click",openPresetInitializer);$("customSaveFileBtn").addEventListener("click",saveCustomTuningFile);$("customLoadBtn").addEventListener("click",()=>$("customTuningFile").click());
+  $("presetInitClose").addEventListener("click",closePresetInitializer);$("presetInitCancelBtn").addEventListener("click",closePresetInitializer);$("presetInitApplyBtn").addEventListener("click",applyPresetInitializer);
+  window.addEventListener("resize",()=>{if($("presetInitOverlay").style.display!=="none")positionPresetInitializer()});
+  $("customTuningFile").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];if(f)loadCustomTuningFile(f);e.target.value=""});
+}
+
 const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null,lastAutoscrollSystemTop=null;
 // Current rendered tune used by the playback controller.
 let currentVisual=null;
@@ -1863,10 +2273,10 @@ function escapeHTML(value){
  * playback update only copies that prepared bitmap and paints the one
  * highlight plus the two changing text fields.
  */
-const HARMONICA_TUNING_NAMES={"0":"Standard Richter","1":"Paddy Richter","2":"Easy Thirds","3":"Melody Maker","4":"Country (Major 7th)","5":"Natural Minor","6":"Chromatic (12-Hole)","7":"Chromatic (16-Hole)"};
+const HARMONICA_TUNING_NAMES={"0":"Standard Richter","1":"Paddy Richter","2":"Easy Thirds","3":"Melody Maker","4":"Country (Major 7th)","5":"Natural Minor","6":"Chromatic (12-Hole)","7":"Chromatic (16-Hole)","8":"Custom Tuning"};
 const HARMONICA_TUNING_HOLES={"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":12,"7":16};
 let currentHarmonicaLayout=null;
-function getHarmonicaHoleCount(tuning){return HARMONICA_TUNING_HOLES[String(tuning)]||10}
+function getHarmonicaHoleCount(tuning){return String(tuning)==="8"?getCustomHarmonica().holes:(HARMONICA_TUNING_HOLES[String(tuning)]||10)}
 function getHarmonicaLayout(tuning){
   const count=getHarmonicaHoleCount(tuning),bodyX=48,bodyY=350,bodyW=1184,bodyH=190,innerPad=64;
   const left=bodyX+innerPad,right=bodyX+bodyW-innerPad;
@@ -1999,7 +2409,7 @@ function drawDiagram(item=null,force=false){
   const c=$("diagramOverlay"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
   const layout=currentHarmonicaLayout||getHarmonicaLayout($("system").value);
   $("liveNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderHarmonicaStaffNote(item);
-  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();if(harmonicaDisplayMode==="text"){ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#222";const textTabFontSize=(parseInt($("system").value,10)<6)?48:42;ctx.font=`700 ${textTabFontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;ctx.fillText(item.glyph||"",x,595);ctx.restore()}else{drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
+  if(item){if(item.playable&&item.hole>=1&&item.hole<=layout.count){const x=layout.positions[item.hole-1],y=layout.holeY,w=layout.slotW,h=layout.slotH;ctx.save();ctx.strokeStyle=item.direction==="blow"?PUSH_COLOR:DRAW_COLOR;ctx.lineWidth=10;ctx.strokeRect(x-w/2-8,y-h/2-8,w+16,h+16);ctx.restore();if(harmonicaDisplayMode==="text"){ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#222";const textTabFontSize=getHarmonicaHoleCount($("system").value)<=10?48:42;ctx.font=`700 ${textTabFontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;ctx.fillText(item.glyph||"",x,595);ctx.restore()}else{drawHarmonicaArrow(ctx,x,625,item.direction,item.bend,item.overblow,item.slide)}}else{ctx.save();ctx.textAlign="center";ctx.fillStyle="#a02020";ctx.font="700 30px Arial";ctx.fillText("Note is outside this harmonica's range",640,625);ctx.restore()}}
   lastDiagramIndex=itemIndex;
 }
 function removeCursor(){
@@ -2219,6 +2629,13 @@ function generateShareLink(abc){
     params.set("system",$("system").value);
     params.set("style",$("style").value);
     params.set("display",$("fingeringDisplay").value);
+    if($("system").value==="8"){
+      // Embed the complete validated custom tuning so the recipient sees the
+      // sender's exact name, hole count, and 60-entry map without touching the
+      // recipient's saved custom tuning.
+      const custom=validateCustomObject(getCustomHarmonica(),true);
+      params.set("custom",compressABCDeflate(JSON.stringify(custom)));
+    }
     // Preserve URL-only overrides in generated share links without
     // persisting any of them in localStorage.
     if(volumeURLParamPresent)params.set("volume",String(super64VolumeScale));
@@ -2450,14 +2867,38 @@ function loadShareLinkAfterStartup(){
   if(!payload){updateShareButtons();return;}
   // Let the page and abcjs finish their ordinary startup first. Then decode the
   // share link and feed its ABC through the same post-read path used by File Open.
-  setTimeout(()=>{
+  setTimeout(async()=>{
     try{
       const system=params.get("system"),style=params.get("style"),display=params.get("display");
-      if(["0","1","2","3","4","5","6","7"].includes(system))$("system").value=system;
+      if(["0","1","2","3","4","5","6","7","8"].includes(system)){$("system").value=system;lastRealSystem=system;}
       if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(style))$("style").value=style;
       if(["-3","-2","-1","0","1","2","3"].includes(display))$("fingeringDisplay").value=display;
+      if(system==="8"){
+        const encodedCustom=params.get("custom");
+        if(!encodedCustom)throw new Error("This custom-tuning share link does not contain the custom tuning data.");
+        // Decode and validate again at consumption time so malformed/tampered
+        // links cannot proceed with a fallback custom tuning. This assignment is
+        // deliberately session-only; persistCustomHarmonica() is not called.
+        customHarmonica=decodeSharedCustomTuning(encodedCustom);
+        sharedCustomTuningActive=true;
+        updateCustomTuningOption();
+      }
       savePrefs();
       manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      if(system==="8"&&sharedCustomTuningActive){
+        const sharedTuningMessage =
+          `<div style="max-width:100%;overflow-wrap:break-word;word-break:normal">` +
+          `<p style="margin:0 0 8px">The custom tuning from the share link has been temporarily set to:</p>` +
+          `<p style="margin:0 0 18px;text-align:center;font-weight:700">${escapeHTML(customHarmonica.name)}</p>` +
+          `<p style="margin:0 0 18px">Your custom tuning saved in this browser has not been replaced by the one in the share link.</p>` +
+          `<p style="margin:0">To save this tuning as your own going forward, open the custom tuning dialog and click “Save”.</p>` +
+          `</div>`;
+        if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function"){
+          await DayPilot.Modal.alert(sharedTuningMessage,{top:100,width:520});
+        }else{
+          alert(`The custom tuning from the share link has been temporarily set to ${customHarmonica.name}.\n\nYour custom tuning saved in this browser has not been replaced with the one from the share link.\n\nTo save this tuning as your own going forward, open the custom tuning dialog and click “Save”.`);
+        }
+      }
     }catch(err){
       alert("Unable to open share link: "+(err&&err.message||err));
     }
@@ -2477,7 +2918,7 @@ function updateHarmonicaHeaderStatus(){
   if(octNum!==0)parts.push(`Octave ${octNum>0?"+":""}${octNum}`);
   $("diagramMeta").textContent=parts.join(" • ");
 }
-function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify({system:$("system").value,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
+function savePrefs(){try{const system=$("system").value==="configure"?lastRealSystem:$("system").value;localStorage.setItem(PREFS_KEY,JSON.stringify({system,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
 
 const EDITOR_SIZE_KEY="abcHarmonicaEditorTextSize";
 function applyEditorTextSize(size,save=false){
@@ -2538,7 +2979,7 @@ function abcNoteTokens(value){
   }
   return tokens;
 }
-function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display}catch(_){}}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7","8"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function updateTempoButtonState(){
@@ -2794,7 +3235,7 @@ $("openFile").addEventListener("change",async e=>{
     alert("File load failed: "+(err.message||err));
   }
 });
-$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{if($("system").value==="configure"){$("system").value=lastRealSystem;openCustomTuningEditor();updateHarmonicaHeaderStatus();return}lastRealSystem=$("system").value;savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
 
 function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
 function beginManualTuneIfNeeded(){
@@ -2964,7 +3405,7 @@ window.addEventListener("resize",()=>{
   resetLegendPosition();
 });
 
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});installCustomTuningEditor();restoreSplitters();installSplitters();restorePrefs();lastRealSystem=$("system").value;
 ["system","style","fingeringDisplay"].forEach(id=>{
   $(id).addEventListener("change",updateHarmonicaHeaderStatus);
 });
@@ -3028,4 +3469,3 @@ installPlaybackPermissionHeaderControlSync();
   </script>
  </body>
 </html>
-\n
