@@ -917,7 +917,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 2.00
+     Version 2.01
     </div>
     <a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1460,6 +1460,8 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       to create a share link containing all loaded tunes.
      </p>
      <p>The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.</p>
+      <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
+      <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
      <p>When the selected harmonica tuning is a custom tuning, the complete custom tuning is included in the share link, including its name, hole count, and all 60 tablature note assignments.</p>
      <p>Opening a share link that contains a custom tuning temporarily uses the custom tuning from the link without replacing the custom tuning already saved in that browser.</p>
      <p>To keep a custom tuning received in a share link for future use, open the custom tuning dialog and click <b>Save</b>.</p>
@@ -2593,6 +2595,7 @@ function installSplitters(){
 }
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-harmonica-player.html";
+const ABC_TOOLS_BASE_URL="https://michaeleskin.com/abctools/abctools.html";
 const SHARE_LINK_MAX_LEN=8100;
 
 function bytesToBase64URL(bytes){
@@ -2663,6 +2666,41 @@ function updateShareButtons(){
   tuneBtn.title=tuneBtn.disabled?"Current tune share link exceeds 8100 characters.":"Create a share link for the current tune and copy it to the clipboard.";
   allBtn.title=allBtn.disabled?"All-tunes share link exceeds 8100 characters.":"Create a share link for all loaded tunes and copy it to the clipboard.";
 }
+function openShareInABCTranscriptionTools(allTunes,mode){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
+  if(!abc||!abc.trim())return;
+  try{
+    const def=compressABCDeflate(abc);
+    const action=mode==="player"?"play=1":"editor=1";
+    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+    // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
+    // this feature is not inherited by window.open(). In browsers such as
+    // Safari, Shift+window.open() can explicitly request a new window.
+    const link=document.createElement("a");
+    link.href=url;
+    link.target="_blank";
+    link.rel="noopener";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }catch(err){
+    console.error("Unable to open ABC Transcription Tools:",err);
+  }
+}
+
+function handleShareButtonClick(event,allTunes){
+  if(event.shiftKey){
+    openShareInABCTranscriptionTools(allTunes,"editor");
+    return;
+  }
+  if(event.altKey){
+    openShareInABCTranscriptionTools(allTunes,"player");
+    return;
+  }
+  copyShareLink(allTunes);
+}
+
 async function copyShareLink(allTunes){
   syncCurrentTuneFromEditor();
   const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
@@ -3268,7 +3306,7 @@ $("abcText").addEventListener("input",()=>{
   if(hasMinimumABCForRender(text))scheduleRebuild();
   updateShareButtons();
 });
-$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+$("shareTuneBtn").addEventListener("click",event=>handleShareButtonClick(event,false));$("shareAllBtn").addEventListener("click",event=>handleShareButtonClick(event,true));
 
 function anyFullPageMode(){
   return document.body.classList.contains("diagram-full") ||

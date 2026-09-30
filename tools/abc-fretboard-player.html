@@ -775,7 +775,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.59</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.60</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -855,6 +855,8 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
       <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied in a share URL.</p>
+      <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
+      <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
 
       <hr>
@@ -898,6 +900,7 @@ let showNoteEnabled=false;
 let showFretboardEnabled=true;
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-fretboard-player.html";
+const ABC_TOOLS_BASE_URL="https://michaeleskin.com/abctools/abctools.html";
 const SHARE_LINK_MAX_LEN=8100;
 const SPLIT_KEY="abcGDAEPlayerSplitters";
 const EDITOR_SIZE_KEY="abcGDAEPlayerEditorTextSize";
@@ -1852,6 +1855,46 @@ function updateShareButtons(){
     :"Create a share link for all loaded tunes and copy it to the clipboard.";
 }
 
+function openShareInABCTranscriptionTools(allTunes,mode){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
+  if(!abc||!abc.trim())return;
+  try{
+    const def=compressABCDeflate(abc);
+    const action=mode==="player"?"play=1":"editor=1";
+    const instrument=$("instrumentSelect").value;
+    const attFormat = instrument === "bouzouki-gdad" ? "gdad"
+      : instrument === "guitar" ? "guitare"
+      : instrument === "guitar-dadgad" ? "guitard"
+      : "mandolin";
+    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10`;
+    // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
+    // this feature is not inherited by window.open(). In browsers such as
+    // Safari, Shift+window.open() can explicitly request a new window.
+    const link=document.createElement("a");
+    link.href=url;
+    link.target="_blank";
+    link.rel="noopener";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }catch(err){
+    console.error("Unable to open ABC Transcription Tools:",err);
+  }
+}
+
+function handleShareButtonClick(event,allTunes){
+  if(event.shiftKey){
+    openShareInABCTranscriptionTools(allTunes,"editor");
+    return;
+  }
+  if(event.altKey){
+    openShareInABCTranscriptionTools(allTunes,"player");
+    return;
+  }
+  copyShareLink(allTunes);
+}
+
 async function copyShareLink(allTunes){
   syncCurrentTuneFromEditor();
   const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
@@ -2718,8 +2761,8 @@ $("tempoBtn").addEventListener("click",()=>{
   openTempoDialog(input);
 });
 
-$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));
-$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+$("shareTuneBtn").addEventListener("click",event=>handleShareButtonClick(event,false));
+$("shareAllBtn").addEventListener("click",event=>handleShareButtonClick(event,true));
 
 $("fullBtn").addEventListener("click",()=>setFull(true));
 $("exitFull").addEventListener("click",()=>setFull(false));

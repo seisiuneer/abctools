@@ -464,7 +464,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.33</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.34</div><a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -612,6 +612,8 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
         or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
       <p>The link includes the current Concertina type, Fingering solution, and Fingering display and is
         copied to the clipboard.</p>
+      <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
+      <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
       <p>A share button
         is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
       <p>Opening a share link restores its Concertina type (Jeffries or Wheatstone), Fingering solution (Cross-Row or On-Row), and Fingering display (Button Ring, Button Half, Button Ring with Arrows, or Button Half with Arrows), and displays the
@@ -2554,6 +2556,7 @@ function installSplitters(){
 }
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-anglo-concertina-fingering-player.html";
+const ABC_TOOLS_BASE_URL="https://michaeleskin.com/abctools/abctools.html";
 const SHARE_LINK_MAX_LEN=8100;
 
 function bytesToBase64URL(bytes){
@@ -2612,6 +2615,41 @@ function updateShareButtons(){
   tuneBtn.title=tuneBtn.disabled?"Current tune share link exceeds 8100 characters.":"Create a share link for the current tune and copy it to the clipboard.";
   allBtn.title=allBtn.disabled?"All-tunes share link exceeds 8100 characters.":"Create a share link for all loaded tunes and copy it to the clipboard.";
 }
+function openShareInABCTranscriptionTools(allTunes,mode){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
+  if(!abc||!abc.trim())return;
+  try{
+    const def=compressABCDeflate(abc);
+    const action=mode==="player"?"play=1":"editor=1";
+    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+    // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
+    // this feature is not inherited by window.open(). In browsers such as
+    // Safari, Shift+window.open() can explicitly request a new window.
+    const link=document.createElement("a");
+    link.href=url;
+    link.target="_blank";
+    link.rel="noopener";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }catch(err){
+    console.error("Unable to open ABC Transcription Tools:",err);
+  }
+}
+
+function handleShareButtonClick(event,allTunes){
+  if(event.shiftKey){
+    openShareInABCTranscriptionTools(allTunes,"editor");
+    return;
+  }
+  if(event.altKey){
+    openShareInABCTranscriptionTools(allTunes,"player");
+    return;
+  }
+  copyShareLink(allTunes);
+}
+
 async function copyShareLink(allTunes){
   syncCurrentTuneFromEditor();
   const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
@@ -3592,7 +3630,7 @@ $("abcText").addEventListener("input",()=>{
   if(hasMinimumABCForRender(text))scheduleRebuild();
   updateShareButtons();
 });
-$("shareTuneBtn").addEventListener("click",()=>copyShareLink(false));$("shareAllBtn").addEventListener("click",()=>copyShareLink(true));
+$("shareTuneBtn").addEventListener("click",event=>handleShareButtonClick(event,false));$("shareAllBtn").addEventListener("click",event=>handleShareButtonClick(event,true));
 
 function anyFullPageMode(){
   return document.body.classList.contains("diagram-full") ||
