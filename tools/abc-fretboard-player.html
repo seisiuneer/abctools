@@ -2259,11 +2259,21 @@ function applyTempoToInput(input,n){
 async function openTempoDialog(input){
   if(!input||typeof DayPilot==="undefined"||!DayPilot.Modal)return;
   const current=Math.round(Number(input.value))||savedTempo();
-  const modal=await DayPilot.Modal.prompt(
+  const promptPromise=DayPilot.Modal.prompt(
     "Tempo percentage (10–200%):",
     String(current),
     {top:150,width:460}
   );
+  // Select the existing value as soon as the DayPilot prompt input appears.
+  let selectTries=0;
+  const selectPromptValue=()=>{
+    const fields=document.querySelectorAll('.modal_default_main input[type="text"],.modal_default_main input:not([type])');
+    const field=fields.length?fields[fields.length-1]:null;
+    if(field){field.focus();field.select();return;}
+    if(++selectTries<10)setTimeout(selectPromptValue,20);
+  };
+  setTimeout(selectPromptValue,0);
+  const modal=await promptPromise;
   if(modal.canceled)return;
 
   const n=Math.round(Number(modal.result));
