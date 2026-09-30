@@ -917,7 +917,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 2.1
+     Version 2.11
     </div>
     <a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -2468,7 +2468,15 @@ function fingeringForEvent(event){
     if(item)return item;
   }
 
-  // Fallback for an unusual callback that does not contain a MIDI pitch. Keep
+  // A normal abcjs rest callback explicitly carries an empty midiPitches array.
+  // Do not source-position-fallback for that event: the old forward scan can
+  // otherwise jump across the rest and display the following note's fingering
+  // before that note actually sounds. Leave the current diagram in place.
+  if(Array.isArray(event.midiPitches)&&event.midiPitches.length===0)return null;
+
+  // Fallback only for an unusual callback that does not provide MIDI-pitch
+  // metadata at all. Keep the previous source-position lookup so compatibility
+  // with older/nonstandard callback shapes is preserved.
   // the previous source-position lookup so existing behavior is preserved.
   let source=recursiveStartChar(event);
   if(source==null)return null;
