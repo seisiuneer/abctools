@@ -151,7 +151,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <body>
 <div class="app">
 <div class="card">
-<div class="versionLabel">Version 2.1</div>
+<div class="versionLabel">Version 2.2</div>
 <h1>Tremolo Reed Sample Converter</h1>
 <p class="sub">High-quality multi-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
 <div class="loadRow">
@@ -166,7 +166,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <div class="card">
 <div class="settingsGrid">
 <div class="settingsLeft">
- <div><label>Starting Beat Offset (lowest note) — <span id="startRateV">2.0 Hz</span></label><input id="startRate" type="range" min="1" max="20" step=".1" value="2"></div>
+ <div><label>Starting Beat Offset (lowest note) — <span id="startRateV">2.0 Hz</span></label><input id="startRate" type="range" min="0" max="30" step=".1" value="2"></div>
  <div>
   <label for="curve">Beat Offset Curve</label>
   <select id="curve">
@@ -188,7 +188,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
   <label>Ending Beat Offset (highest note) — <span id="endRateV">5.0 Hz</span></label>
   <button id="offsetReset" type="button" class="miniReset">Reset</button>
  </div>
- <input id="endRate" type="range" min="1" max="20" step=".1" value="5">
+ <input id="endRate" type="range" min="0" max="30" step=".1" value="5">
 </div>
  <div class="curvePlotWrap"><canvas id="curvePlot" width="800" height="190" aria-label="Beat offset curve preview"></canvas></div>
 </div>
