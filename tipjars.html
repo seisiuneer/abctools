@@ -22,7 +22,7 @@
         <meta name="theme-color" content="#ffffff">
         <meta name="apple-mobile-web-app-title" content="ABC Tools Tip Jars">
         <meta name="application-name" content="ABC Tools Tip Jars">
-        <meta name="viewport" content="width=860">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
         <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
@@ -62,13 +62,59 @@
         }
         
         #maindiv{
-        position: absolute;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, 0%);
+        margin: 0 auto;
         text-align: left;
-        width: 800px;
+        width: min(800px, 100%);
         background-color: white;
+        }
+
+        .support-box {
+        text-align: center;
+        padding: 30px 32px 24px 32px;
+        background-color: honeydew;
+        border-radius: 10px;
+        }
+
+        .support-heading {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 21pt;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        }
+
+        .support-lead {
+        font-size: 15pt;
+        line-height: 30px;
+        }
+
+        .tip-button {
+        display: inline-block;
+        margin: 6px 5px 12px 5px;
+        padding: 10px 22px;
+        border: 2px solid #5a189a;
+        border-radius: 8px;
+        color: #5a189a;
+        background: white;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 14pt;
+        font-weight: 700;
+        text-decoration: none;
+        }
+
+        .tip-button:hover {
+        background: #f5edff;
+        }
+
+        .thanks {
+        font-weight: 700;
+        margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+        body { padding: 8px; }
+        .support-box { padding: 24px 16px 18px 16px; }
+        .support-heading { font-size: 19pt; }
+        p { font-size: 13pt; line-height: 25px; }
         }
         
         .image_holder{
@@ -87,16 +133,32 @@
                         <img src="img/michael240.jpg" class=" size-full wp-image-22" style="margin-top:0px;" alt="Michael Eskin, headshot photo" style="margin-top: 20px" width="240" height="240" title="Click to visit Michael's Home Page">
                     </a>
                 </div>
-               <p>This ABC to notation converter was developed by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
-                <p>Full project source may be found on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
-                <p>Try it out here: <a href="https://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a>.</p>
+             </div>
+            <hr>
+            <div class="support-box">
+                <div class="support-heading">Help Keep My ABC Music Tools Free</div>
+
+                <p class="support-lead">I create and maintain the <strong>ABC Transcription Tools</strong> and all of my other<br/>ABC music utilities as free tools for the music community.</p>
+
+                <p>There are no subscriptions or paywalls. If one of my tools has saved you time, helped you learn a tune, create music, teach, or share music with others,<br/>please consider leaving a tip.</p>
+
+                <p>Your support helps me continue developing new features, fixing bugs,<br/>maintaining the tools, and keeping them freely available to everyone.</p>
+
+                <p><strong>Any support is genuinely appreciated.</strong></p>
+
+                <p class="notranslate">
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener">Tip with PayPal</a>
+                </p>
+
+                <p class="notranslate"><strong>Venmo</strong><br>@MichaelEskin</p>
+
+                <p class="thanks">Thank you for supporting my work!</p>
+                <p style="margin-top:0;">— Michael</p>
             </div>
             <hr>
-            <div style="text-align:center;padding:30px 10px 5px 10px;background-color:honeydew">
-                <p>My <a href="https://michaeleskin.com/abc" target="_blank">ABC Transcription Tools</a> and other ABC utilities are completely free to use.</p>
-                <p>If you find my ABC Transcription Tools useful, please support my ongoing<br/>development efforts by tossing a few bucks into one of my virtual tip jars:</p>
-                <p class="notranslate"><strong>PayPal</strong></br><a href="https://paypal.me/MichaelEskin" target="_blank">https://paypal.me/MichaelEskin</a></p>
-                <p class="notranslate"><strong>Venmo</strong></br>@MichaelEskin</p>
+            <div style="text-align: center;">
+                <p>The ABC Transcription Tools and related utilities were developed by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
+                <p>Full project source for all of the tools are available on: <a href="https://github.com/seisiuneer/abctools" target="_blank">GitHub</a>.</p>
             </div>
             <hr>
         </div>
