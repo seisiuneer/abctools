@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tremolo Reed Sample Converter</title>
-<meta name="description" content="Create two-reed tremolo WAV samples from single-note WAV or MP3 reed instrument samples with adjustable beat offsets, reed balance, LUFS normalization, preview, and batch ZIP export.">
+<meta name="description" content="Create two- or three-reed tremolo WAV samples from single-note WAV or MP3 reed instrument samples with adjustable beat offsets, reed balance, LUFS normalization, preview, and batch ZIP export.">
 <meta name="keywords" content="tremolo reed sample converter, tremolo samples, reed instrument samples, tremolo harmonica samples, WAV converter, MP3 converter, two-reed tremolo, beat frequency, beat offset, reed detuning, cents offset, LUFS normalization, audio sample converter, batch WAV converter">
 <meta name="author" content="Michael Eskin">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Tremolo Reed Sample Converter">
-<meta property="og:description" content="Create two-reed tremolo WAV samples from single-note WAV or MP3 reed instrument samples with adjustable beat offsets, reed balance, LUFS normalization, preview, and batch ZIP export.">
+<meta property="og:description" content="Create two- or three-reed tremolo WAV samples from single-note WAV or MP3 reed instrument samples with adjustable beat offsets, reed balance, LUFS normalization, preview, and batch ZIP export.">
 <meta property="og:site_name" content="Tremolo Reed Sample Converter">
 <meta property="og:url" content="https://michaeleskin.com/tools/tremolo-reed-sample-converter.html">
 <meta property="og:image" content="https://michaeleskin.com/tools/img/tremolo-reed-sample-converter-1.jpg">
@@ -49,6 +49,7 @@ h1{text-align:center;margin:4px 0 6px;font-size:28px}.sub{text-align:center;colo
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 label{display:block;font-weight:650;margin-bottom:6px}
 input[type=number],select{width:100%;padding:9px;border:1px solid #aaa;border-radius:6px;font:inherit}
+select{background:#f3f3f3}
 input[type=range]{width:100%}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .loadRow{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -60,11 +61,12 @@ input[type=range]{width:100%}
 .interpolatedRow.currentSampleRow td{background:#e8f1ff}
 .interpolatedBadge{display:inline-block;padding:1px 6px;border:1px solid #c49a31;border-radius:10px;background:#fff3bf;font-size:11px;font-weight:700;line-height:1.15;white-space:nowrap;vertical-align:middle}.sampleNameWrap{display:flex;align-items:center;gap:6px;white-space:nowrap}
 button{border:1px solid #888;border-radius:7px;background:#f8f8f8;padding:10px 15px;font-weight:600;cursor:pointer}
+#orig,#trem{min-width:118px}
 input[type=file]::file-selector-button{-webkit-appearance:none;appearance:none;border:1px solid #777;border-radius:8px;background:#f8f8f8;padding:10px 15px;margin-right:12px;font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
 input[type=file]::-webkit-file-upload-button{-webkit-appearance:none;border:1px solid #777;border-radius:8px;background:#f8f8f8;padding:10px 15px;margin-right:12px;font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
 button:disabled{opacity:.45;cursor:default}.primary{background:#222;color:#fff;border-color:#222}
 .small{font-size:13px;color:#555;line-height:1.4}.status{white-space:pre-wrap;background:#f7f7f7;border:1px solid #ddd;border-radius:6px;padding:10px;min-height:44px}
-table{width:100%;border-collapse:collapse;margin:0;font-size:14px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid #ddd;vertical-align:middle}th{background:#fafafa;position:sticky;top:0;z-index:2}
+table{width:100%;border-collapse:collapse;margin:0;font-size:14px}th,td{text-align:left;padding:11px 7px;border-bottom:1px solid #ddd;vertical-align:middle}th{background:#fafafa;position:sticky;top:0;z-index:2}
 .pitchInput{width:95px!important;padding:6px!important}.good{color:#176b2c}.warn{color:#9a5800}
 details{margin-top:10px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .previewCard{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
@@ -149,9 +151,9 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <body>
 <div class="app">
 <div class="card">
-<div class="versionLabel">Version 2.0</div>
+<div class="versionLabel">Version 2.1</div>
 <h1>Tremolo Reed Sample Converter</h1>
-<p class="sub">High-quality two-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
+<p class="sub">High-quality multi-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
 <div class="loadRow">
  <input id="files" type="file" accept=".wav,.mp3,audio/wav,audio/mpeg" multiple>
  <label class="interpolateOption" for="interpolateMissing">
@@ -174,6 +176,9 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
    <option value="1.6">Curve 3</option>
    <option value="1.8">Curve 4</option>
    <option value="2">Curve 5</option>
+   <option value="2.4">Curve 6</option>
+   <option value="2.8">Curve 7</option>
+   <option value="3.2">Curve 8</option>
   </select>
  </div>
 </div>
@@ -192,6 +197,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
  <select id="tuningMode">
   <option value="split">− / + Offset</option>
   <option value="originalPlus">Original / + Offset</option>
+  <option value="mmm">− Offset / Original / + Offset</option>
  </select>
 </div>
 <div class="balanceControl">
@@ -211,19 +217,18 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <label style="margin:0">Preview:</label>
 <select id="preview" style="width:auto;min-width:240px"></select>
 <button id="orig" disabled>Play Original</button>
+<button id="prev" disabled aria-label="Previous" title="Previous">←</button>
 <button id="trem" disabled>Play Tremolo</button>
-<button id="next" disabled>Next</button>
-<button id="prev" disabled>Previous</button>
+<button id="next" disabled aria-label="Next" title="Next">→</button>
 
 </div>
 <div id="analysis" class="sampleScroll"></div>
 <div class="actionFooter">
 <div class="row"><button class="primary" id="convert" disabled>Convert All &amp; Download ZIP</button></div>
-<div id="status" class="status">Select samples to begin.</div>
+<div id="status" class="status">Open one or more note sample files to begin.</div>
 <div id="results"></div>
 </div>
 </div>
-
 
 <div class="instructionsFooter">
  <button id="instructionsBtn">Instructions</button>
@@ -235,20 +240,24 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
   <h2>Tremolo Reed Sample Converter Instructions</h2>
   <div class="helpScroll">
    <p class="helpSection">Overview</p>
-   <p>Load a set of single-note <b>WAV</b> or <b>MP3</b> reed-instrument samples and create two-reed tremolo versions of them.</p><p>The converter analyzes the samples, sorts them from low pitch to high pitch, applies the selected tremolo settings, normalizes the finished samples, and exports them together in a ZIP file.</p>
+   <p>Load a set of single-note <b>WAV</b> or <b>MP3</b> reed-instrument samples and create two- or three-reed tremolo versions of them.</p><p>The converter analyzes the samples, sorts them from low pitch to high pitch, applies the selected tremolo settings, normalizes the finished samples, and exports them together in a ZIP file.</p>
    <p><b>Interpolate missing notes?</b> is enabled by default.</p><p>When enabled, missing semitones between the lowest and highest loaded notes are created from the closest available loaded sample in pitch.</p><p>Interpolated notes are identified in the sample list and are otherwise previewed, processed, and saved just like loaded samples.</p><p>If interpolation is disabled, the selected files must contain <b>every semitone</b> from the lowest note through the highest note.</p><p>Duplicate pitches are not allowed in either mode.</p>
 
    <p class="helpSection">Beat Offset</p>
    <p><b>Starting Beat Offset</b> sets the total frequency separation between the two reeds at the lowest note.</p><p><b>Ending Beat Offset</b> sets the total separation at the highest note.</p>
-   <p><b>Beat Offset Curve</b> controls how that separation changes across the chromatic sample range.</p><p><b>Linear</b> uses an even progression.</p><p><b>Curves 1–5</b> provide progressively stronger nonlinear curves.</p><p>The graph shows the selected progression from the starting value to the ending value.</p>
+   <p><b>Beat Offset Curve</b> controls how that separation changes across the chromatic sample range.</p><p><b>Linear</b> uses an even progression.</p><p><b>Curves 1–8</b> provide progressively stronger nonlinear curves.</p><p>The graph shows the selected progression from the starting value to the ending value.</p>
 
    <p class="helpSection">Reed Tuning and Volume</p>
    <p><b>Reed Tuning</b> selects how the two reed frequencies are created.</p><p><b>− / + Offset</b> splits the total beat offset equally below and above the original pitch.</p><p><b>Original / + Offset</b> leaves the first reed at the original frequency and shifts the second reed upward by the full offset.</p>
-   <p><b>Reed Volume Balance</b> controls the relative volume of the two generated reeds.</p><p>At 50 / 50, both reeds contribute equally.</p>
+   <p><b>− Offset / Original / + Offset</b> creates a three-reed MMM-style sound with the original pitch in the center and the total offset split equally below and above it.</p>
+   <p><b>Reed Volume Balance</b> controls the balance between the two sides of the selected tuning.</p>
+   <p>In two-reed modes, it balances the two reeds.</p>
+   <p>In three-reed mode, fully left plays only the original center reed and fully right plays only the combined lower and upper offset reeds.</p>
+   <p>At 50 / 50, the original reed and combined offset reeds contribute equally.</p>
 
    <p class="helpSection">Output Level</p>
-   <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample.</p><p>The default is <b>−15 LUFS</b>.</p><p>Normalization is applied after the two reeds are mixed.</p>
-   <p><b>Output Level Trim</b> applies an additional gain adjustment after normalization.</p>
+   <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample.</p><p>The default is <b>−15 LUFS</b>.</p><p>Normalization is applied after all reeds are mixed.</p>
+   <p><b>Output Level Trim</b> applies an additional gain adjustment after normalization.</p><p>If the requested level would cause digital clipping, peak protection automatically reduces the output level; the completion message reports when this occurs.</p>
    <p>Output samples are mono, <b>44.1 kHz IEEE 32-bit floating-point WAV</b> files.</p>
 
    <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
@@ -341,7 +350,15 @@ function drawCurvePlot(){
  }
  g.stroke();
 }
+function updateRateLimits(){
+ for(const id of ["startRate","endRate"]){
+  const el=$(id);
+  el.min=0;
+  el.max=30;
+ }
+}
 function updateRateLabels(){
+ updateRateLimits();
  $("startRateV").textContent=(+$("startRate").value).toFixed(1)+" Hz";
  $("endRateV").textContent=(+$("endRate").value).toFixed(1)+" Hz";
  updateOffsetDisplay();drawCurvePlot();
@@ -356,7 +373,7 @@ $("offsetReset").onclick=()=>{
  previewSettingChanged();
 };
 $("curve").onchange=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
-$("tuningMode").onchange=()=>{updateOffsetDisplay();renderAnalysis();saveSettings();previewSettingChanged()};
+$("tuningMode").onchange=()=>{updateRateLimits();updateRateLabels();renderAnalysis();saveSettings();previewSettingChanged()};
 $("balance").oninput=()=>{const v=+$("balance").value;$("balanceV").textContent=(100-v)+" / "+v;saveSettings();previewSettingChanged()};
 $("balanceReset").onclick=()=>{
  $("balance").value=50;
@@ -541,10 +558,9 @@ function interpolatedBeat(i){
  return start+(end-start)*curveProgress(i/(n-1));
 }
 function centsFor(i){
- const f=pitchForRaw(i),beat=interpolatedBeat(i),ro=reedOffsets(beat);
- const low=f+ro.low,high=f+ro.high;
- if(!(low>0&&high>0))return {low:0,high:0};
- return {low:1200*Math.log2(low/f),high:1200*Math.log2(high/f)};
+ const f=pitchForRaw(i),beat=interpolatedBeat(i),d=reedDisplay(f,beat);
+ if(d.hz.some(v=>!(v>0)))return {values:d.cents,total:0};
+ return {values:d.cents,total:d.totalCents};
 }
 function pitchForRaw(i){return analyses[i].hz}
 function rebuildPreviewOptions(){
@@ -556,29 +572,35 @@ function rebuildPreviewOptions(){
 }
 function renderAnalysis(){
  let rows=analyses.map((a,i)=>{
-  const ni=hzToInfo(a.hz),beat=interpolatedBeat(i);
-  const ro=reedOffsets(beat),lowHz=a.hz+ro.low,highHz=a.hz+ro.high;
-  const lo=1200*Math.log2(lowHz/a.hz),hi=1200*Math.log2(highHz/a.hz),totalCents=hi-lo;
+  const ni=hzToInfo(a.hz),beat=interpolatedBeat(i),d=reedDisplay(a.hz,beat);
   const badge=a.interpolated?`<span class="interpolatedBadge" title="Interpolated from ${esc(a.interpolatedFrom)}">Interpolated</span>`:"";
   const note=a.interpolated?midiToFlatName(a.midi):ni.name+(ni.cents?` ${ni.cents>0?"+":""}${ni.cents}¢`:"");
-  return `<tr${a.interpolated?' class="interpolatedRow"':""}><td><span class="sampleNameWrap"><span>${esc(a.file.name)}</span>${badge}</span></td><td>${isFinite(a.sourceLUFS)?a.sourceLUFS.toFixed(2):"—"} LUFS</td><td>${note}</td><td>${a.hz.toFixed(2)} Hz</td><td class="beatCell" data-i="${i}">${beat.toFixed(2)} Hz</td><td class="totalCentsCell" data-i="${i}">${totalCents.toFixed(2)}¢</td><td class="reedHzCell" data-i="${i}">${lowHz.toFixed(2)} / ${highHz.toFixed(2)} Hz</td><td class="centsCell" data-i="${i}">${lo.toFixed(2)}¢ / ${hi>=0?"+":""}${hi.toFixed(2)}¢</td></tr>`;
+  const hzText=d.hz.map(v=>v.toFixed(2)).join(" / ")+" Hz";
+  const centsText=d.cents.map(v=>`${v>=0?"+":""}${v.toFixed(2)}¢`).join(" / ");
+  return `<tr${a.interpolated?' class="interpolatedRow"':""}><td><span class="sampleNameWrap"><span>${esc(a.file.name)}</span>${badge}</span></td><td>${isFinite(a.sourceLUFS)?a.sourceLUFS.toFixed(2):"—"} LUFS</td><td>${note}</td><td>${a.hz.toFixed(2)} Hz</td><td class="beatCell" data-i="${i}">${beat.toFixed(2)} Hz</td><td class="totalCentsCell" data-i="${i}">${d.totalCents.toFixed(2)}¢</td><td class="reedHzCell" data-i="${i}">${hzText}</td><td class="centsCell" data-i="${i}">${centsText}</td></tr>`;
  }).join("");
- $("analysis").innerHTML=`<table><thead><tr><th>Sample</th><th>Source LUFS</th><th>Note</th><th>Fundamental</th><th>Total Hz Offset</th><th>Total Cents Offset</th><th>Reed Hz (low / high)</th><th>Reed Cents (low / high)</th></tr></thead><tbody>${rows}</tbody></table>`;
+ $("analysis").innerHTML=`<table><thead><tr><th>Sample</th><th>Source LUFS</th><th>Note</th><th>Fundamental</th><th>Total Hz Offset</th><th>Total Cents Offset</th><th>Reed Hz</th><th>Reed Cents</th></tr></thead><tbody>${rows}</tbody></table>`;
  highlightPreviewRow();
 }
 function reedOffsets(totalHz){
- if($("tuningMode").value==="originalPlus"){
-  return {low:0, high:totalHz};
- }
- return {low:-totalHz/2, high:totalHz/2};
+ const mode=$("tuningMode").value;
+ if(mode==="originalPlus")return {low:0,center:null,high:totalHz};
+ if(mode==="mmm")return {low:-totalHz/2,center:0,high:totalHz/2};
+ return {low:-totalHz/2,center:null,high:totalHz/2};
+}
+function reedDisplay(f,beat){
+ const ro=reedOffsets(beat),vals=[ro.low,ro.center,ro.high].filter(v=>v!==null);
+ const hz=vals.map(v=>f+v);
+ const cents=hz.map(v=>1200*Math.log2(v/f));
+ return {hz,cents,totalCents:cents[cents.length-1]-cents[0]};
 }
 
 function updateOffsetDisplay(){
  if(!analyses.length)return;
  document.querySelectorAll(".beatCell").forEach(el=>{const i=+el.dataset.i;el.textContent=interpolatedBeat(i).toFixed(2)+" Hz"});
- document.querySelectorAll(".totalCentsCell").forEach(el=>{const i=+el.dataset.i,c=centsFor(i);el.textContent=(c.high-c.low).toFixed(2)+"¢"});
- document.querySelectorAll(".reedHzCell").forEach(el=>{const i=+el.dataset.i,f=pitchForRaw(i),b=interpolatedBeat(i),ro=reedOffsets(b);el.textContent=`${(f+ro.low).toFixed(2)} / ${(f+ro.high).toFixed(2)} Hz`});
- document.querySelectorAll(".centsCell").forEach(el=>{const i=+el.dataset.i,c=centsFor(i);el.textContent=`${c.low.toFixed(2)}¢ / ${c.high>=0?"+":""}${c.high.toFixed(2)}¢`});
+ document.querySelectorAll(".totalCentsCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplay(pitchForRaw(i),interpolatedBeat(i));el.textContent=d.totalCents.toFixed(2)+"¢"});
+ document.querySelectorAll(".reedHzCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplay(pitchForRaw(i),interpolatedBeat(i));el.textContent=d.hz.map(v=>v.toFixed(2)).join(" / ")+" Hz"});
+ document.querySelectorAll(".centsCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplay(pitchForRaw(i),interpolatedBeat(i));el.textContent=d.cents.map(v=>`${v>=0?"+":""}${v.toFixed(2)}¢`).join(" / ")});
 }
 function updateNavButtons(){
  const i=+$("preview").value,n=analyses.length;
@@ -623,23 +645,40 @@ $("next").onclick=()=>{const i=+$("preview").value;if(i<analyses.length-1){$("pr
 function pitchFor(i){return pitchForRaw(i)}
 
 async function renderTremolo(index){
- const a=analyses[index], input=a.buffer, f=pitchFor(index), beat=interpolatedBeat(index), bal=+$("balance").value/100;
- const ro=reedOffsets(beat), low=f+ro.low, high=f+ro.high;
- if(!(low>0&&high>0))throw new Error("Fundamental frequency is too low for the selected tremolo rate.");
- const lowC=1200*Math.log2(low/f), highC=1200*Math.log2(high/f);
- const frames=input.length, off=new OfflineAudioContext(1,frames,44100);
- const master=off.createGain(), g1=off.createGain(),g2=off.createGain(),s1=off.createBufferSource(),s2=off.createBufferSource();
- s1.buffer=input;s2.buffer=input;s1.detune.value=lowC;s2.detune.value=highC;
- // Equal-power-ish normalization of the user balance, avoiding a large level jump at 50/50.
- let w1=1-bal,w2=bal,norm=Math.sqrt(w1*w1+w2*w2)||1;g1.gain.value=w1/norm;g2.gain.value=w2/norm;
- s1.connect(g1).connect(master);s2.connect(g2).connect(master);master.connect(off.destination);
- // Gentle final fade avoids a discontinuity when the differently-rate-rendered reeds reach the source boundary.
+ const a=analyses[index],input=a.buffer,f=pitchFor(index),beat=interpolatedBeat(index),bal=+$("balance").value/100;
+ const ro=reedOffsets(beat),offsets=[ro.low,ro.center,ro.high].filter(v=>v!==null);
+ const freqs=offsets.map(v=>f+v);
+ if(freqs.some(v=>!(v>0)))throw new Error("Fundamental frequency is too low for the selected tremolo rate.");
+ const cents=freqs.map(v=>1200*Math.log2(v/f));
+ const frames=input.length,off=new OfflineAudioContext(1,frames,44100),master=off.createGain();
+ const sources=[],gains=[];
+
+ if($("tuningMode").value==="mmm"){
+  // In MMM mode, left is the original center reed and right is the combined outer pair.
+  let center=1-bal,outer=bal;
+  let norm=Math.sqrt(outer*outer+center*center)||1;
+  outer/=norm;center/=norm;
+  const weights=[outer/Math.sqrt(2),center,outer/Math.sqrt(2)];
+  for(let j=0;j<3;j++){
+   const src=off.createBufferSource(),g=off.createGain();
+   src.buffer=input;src.detune.value=cents[j];g.gain.value=weights[j];
+   src.connect(g).connect(master);sources.push(src);gains.push(g);
+  }
+ }else{
+  let w1=1-bal,w2=bal,norm=Math.sqrt(w1*w1+w2*w2)||1;w1/=norm;w2/=norm;
+  for(let j=0;j<2;j++){
+   const src=off.createBufferSource(),g=off.createGain();
+   src.buffer=input;src.detune.value=cents[j];g.gain.value=j===0?w1:w2;
+   src.connect(g).connect(master);sources.push(src);gains.push(g);
+  }
+ }
+ master.connect(off.destination);
  const dur=frames/44100,fade=Math.min(.02,Math.max(.004,dur*.01));
  master.gain.setValueAtTime(1,0);
  if(dur>fade){master.gain.setValueAtTime(1,dur-fade);master.gain.linearRampToValueAtTime(0,dur)}
- s1.start(0);s2.start(0);
+ sources.forEach(src=>src.start(0));
  const rendered=await off.startRendering();
- return {data:new Float32Array(rendered.getChannelData(0)),fundamental:f,low,high,lowC,highC};
+ return {data:new Float32Array(rendered.getChannelData(0)),fundamental:f,freqs,cents};
 }
 
 /* BS.1770-style K weighting and gated integrated loudness. */
@@ -661,8 +700,8 @@ function normalize(x,target,trim){
  const before=lufs(x,44100);let gain=10**(((target-before)+trim)/20),out=new Float32Array(x.length),peak=0;
  for(let i=0;i<x.length;i++){out[i]=x[i]*gain;peak=Math.max(peak,Math.abs(out[i]))}
  // Avoid hard digital overs. Report if peak protection prevents exact LUFS target.
- let limited=false;if(peak>.999){limited=true;const g=.999/peak;for(let i=0;i<out.length;i++)out[i]*=g}
- return {data:out,before,after:lufs(out,44100),limited};
+ let limited=false,peakReductionDb=0;if(peak>.999){limited=true;const g=.999/peak;peakReductionDb=-20*Math.log10(g);for(let i=0;i<out.length;i++)out[i]*=g}
+ return {data:out,before,after:lufs(out,44100),limited,peakReductionDb};
 }
 function wav32(x){
  const ab=new ArrayBuffer(44+x.length*4),v=new DataView(ab);let p=0;
@@ -670,8 +709,15 @@ function wav32(x){
  str("RIFF");u32(36+x.length*4);str("WAVE");str("fmt ");u32(16);u16(3);u16(1);u32(44100);u32(176400);u16(4);u16(32);str("data");u32(x.length*4);
  for(const z of x){v.setFloat32(p,z,true);p+=4}return new Uint8Array(ab);
 }
+function validatedOutputSettings(){
+ const target=Number($("target").value),trim=Number($("trim").value);
+ if(!Number.isFinite(target)||target < -40||target > -5)throw new Error("LUFS Target must be a number from -40 to -5.");
+ if(!Number.isFinite(trim)||trim < -24||trim > 12)throw new Error("Output Level Trim must be a number from -24 to +12 dB.");
+ return {target,trim};
+}
 async function processOne(i){
- const t=await renderTremolo(i),n=normalize(t.data,+$("target").value,+$("trim").value);
+ const {target,trim}=validatedOutputSettings();
+ const t=await renderTremolo(i),n=normalize(t.data,target,trim);
  return {...t,...n,wav:wav32(n.data)};
 }
 
@@ -788,23 +834,26 @@ $("convert").onclick=async()=>{
  const zipName=await askZipFileName();if(!zipName)return;
  stop();$("convert").disabled=true;$("results").innerHTML="";
  try{
-  const entries=[],rows=[];
+  const entries=[];let limitedCount=0,maxPeakReductionDb=0;
   for(let i=0;i<analyses.length;i++){
    const f=analyses[i].file;$("status").textContent=`Rendering ${i+1} of ${analyses.length}: ${f.name}`;
    const r=await processOne(i),name=analyses[i].interpolated
      ? midiToFlatName(analyses[i].midi)+".wav"
      : f.name.replace(/\.(wav|mp3)$/i,"")+".wav";
    entries.push({name,data:r.wav});
-   rows.push(`<tr><td>${esc(f.name)}</td><td>${r.fundamental.toFixed(2)} Hz</td><td>${r.low.toFixed(2)} / ${r.high.toFixed(2)} Hz</td><td>${isFinite(r.before)?r.before.toFixed(2):"—"}</td><td>${r.after.toFixed(2)}${r.limited?' *':''}</td></tr>`);
+   if(r.limited){limitedCount++;maxPeakReductionDb=Math.max(maxPeakReductionDb,r.peakReductionDb||0)}
    await new Promise(q=>setTimeout(q,0));
   }
   const blob=zip(entries),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=zipName;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-  $("status").textContent=`Done. ${entries.length} mono 32-bit float, 44.1 kHz WAV sample${entries.length===1?"":"s"} written to ${zipName}.${rows.some(x=>x.includes(" *"))?" * Peak protection was required on one or more samples.":""}`;
+  const doneMessage=`Done. ${entries.length} mono 32-bit float, 44.1 kHz WAV sample${entries.length===1?"":"s"} written to ${zipName}.`;
+  const peakMessage=limitedCount?`\nPeak protection was applied to ${limitedCount} sample${limitedCount===1?"":"s"} (maximum reduction: ${maxPeakReductionDb.toFixed(1)} dB).`:"";
+  $("status").textContent=doneMessage+peakMessage;
   $("results").innerHTML="";
  }catch(e){console.error(e);$("status").textContent="Error: "+(e.message||e)}
  finally{$("convert").disabled=false}
 };
 restoreSettings();
+updateRateLimits();
 $("balanceV").textContent=(100-(+$("balance").value))+" / "+(+$("balance").value);
 updateRateLabels();
 window.addEventListener("resize",drawCurvePlot);
