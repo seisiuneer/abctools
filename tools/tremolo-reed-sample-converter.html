@@ -12,7 +12,6 @@
 <meta property="og:description" content="Create two-reed tremolo WAV samples from single-note WAV or MP3 reed instrument samples with adjustable beat offsets, reed balance, LUFS normalization, preview, and batch ZIP export.">
 <meta property="og:site_name" content="Tremolo Reed Sample Converter">
 <meta property="og:url" content="https://michaeleskin.com/tools/tremolo-reed-sample-converter.html">
-<!-- Replace with the final social-sharing image when available. -->
 <meta property="og:image" content="https://michaeleskin.com/tools/img/tremolo-reed-sample-converter-1.jpg">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
@@ -52,12 +51,20 @@ label{display:block;font-weight:650;margin-bottom:6px}
 input[type=number],select{width:100%;padding:9px;border:1px solid #aaa;border-radius:6px;font:inherit}
 input[type=range]{width:100%}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.loadRow{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.interpolateOption{display:flex;align-items:center;gap:8px;font-weight:650;margin:0;white-space:nowrap}
+.interpolateOption input{width:18px;height:18px;margin:0}
+.interpolatedRow td{background:#fff8dc}
+.currentSampleRow td{background:#e8f1ff;box-shadow:inset 0 1px #a9c7ef,inset 0 -1px #a9c7ef}
+#analysis tbody tr{cursor:pointer}
+.interpolatedRow.currentSampleRow td{background:#e8f1ff}
+.interpolatedBadge{display:inline-block;padding:1px 6px;border:1px solid #c49a31;border-radius:10px;background:#fff3bf;font-size:11px;font-weight:700;line-height:1.15;white-space:nowrap;vertical-align:middle}.sampleNameWrap{display:flex;align-items:center;gap:6px;white-space:nowrap}
 button{border:1px solid #888;border-radius:7px;background:#f8f8f8;padding:10px 15px;font-weight:600;cursor:pointer}
 input[type=file]::file-selector-button{-webkit-appearance:none;appearance:none;border:1px solid #777;border-radius:8px;background:#f8f8f8;padding:10px 15px;margin-right:12px;font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
 input[type=file]::-webkit-file-upload-button{-webkit-appearance:none;border:1px solid #777;border-radius:8px;background:#f8f8f8;padding:10px 15px;margin-right:12px;font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
 button:disabled{opacity:.45;cursor:default}.primary{background:#222;color:#fff;border-color:#222}
 .small{font-size:13px;color:#555;line-height:1.4}.status{white-space:pre-wrap;background:#f7f7f7;border:1px solid #ddd;border-radius:6px;padding:10px;min-height:44px}
-table{width:100%;border-collapse:collapse;margin:0;font-size:14px}th,td{text-align:left;padding:7px;border-bottom:1px solid #ddd;vertical-align:middle}th{background:#fafafa;position:sticky;top:0;z-index:2}
+table{width:100%;border-collapse:collapse;margin:0;font-size:14px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid #ddd;vertical-align:middle}th{background:#fafafa;position:sticky;top:0;z-index:2}
 .pitchInput{width:95px!important;padding:6px!important}.good{color:#176b2c}.warn{color:#9a5800}
 details{margin-top:10px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .previewCard{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
@@ -82,6 +89,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 .balanceControl>input[type="range"]{margin-top:18px}
 .balanceTop label{margin:0}
 .miniReset{padding:2px 8px;font-size:12px;font-weight:600;line-height:1.25;min-width:0;border-radius:5px}
+#endRate{margin-top:6px}
 .instructionsFooter{flex:0 0 auto;margin-top:auto;padding:0 0 4px}
 #instructionsBtn{width:100%;display:block;font:inherit}
 #helpOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px}
@@ -132,8 +140,12 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <div class="card">
 <h1>Tremolo Reed Sample Converter</h1>
 <p class="sub">High-quality two-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
-<div class="row">
-<input id="files" type="file" accept=".wav,.mp3,audio/wav,audio/mpeg" multiple>
+<div class="loadRow">
+ <input id="files" type="file" accept=".wav,.mp3,audio/wav,audio/mpeg" multiple>
+ <label class="interpolateOption" for="interpolateMissing">
+  <input id="interpolateMissing" type="checkbox" checked>
+  <span>Interpolate missing notes?</span>
+ </label>
 </div>
 </div>
 
@@ -154,7 +166,13 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
  </div>
 </div>
 <div class="settingsRight">
- <div><label>Ending Beat Offset (highest note) — <span id="endRateV">5.0 Hz</span></label><input id="endRate" type="range" min="1" max="20" step=".1" value="5"></div>
+ <div>
+ <div class="balanceTop">
+  <label>Ending Beat Offset (highest note) — <span id="endRateV">5.0 Hz</span></label>
+  <button id="offsetReset" type="button" class="miniReset">Reset</button>
+ </div>
+ <input id="endRate" type="range" min="1" max="20" step=".1" value="5">
+</div>
  <div class="curvePlotWrap"><canvas id="curvePlot" width="800" height="190" aria-label="Beat offset curve preview"></canvas></div>
 </div>
 <div>
@@ -205,33 +223,35 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
   <h2>Tremolo Reed Sample Converter Instructions</h2>
   <div class="helpScroll">
    <p class="helpSection">Overview</p>
-   <p>Load a complete chromatic set of single-note <b>WAV</b> or <b>MP3</b> reed-instrument samples and create two-reed tremolo versions of them. The converter analyzes the samples, sorts them from low pitch to high pitch, applies the selected tremolo settings, normalizes the finished samples, and exports them together in a ZIP file.</p>
-   <p>The selected files must contain <b>every semitone</b> from the lowest note through the highest note, with one sample per semitone. If a note is missing or duplicated, the files are not opened for processing and the converter reports the problem.</p>
+   <p>Load a set of single-note <b>WAV</b> or <b>MP3</b> reed-instrument samples and create two-reed tremolo versions of them.</p><p>The converter analyzes the samples, sorts them from low pitch to high pitch, applies the selected tremolo settings, normalizes the finished samples, and exports them together in a ZIP file.</p>
+   <p><b>Interpolate missing notes?</b> is enabled by default.</p><p>When enabled, missing semitones between the lowest and highest loaded notes are created from the closest available loaded sample in pitch.</p><p>Interpolated notes are identified in the sample list and are otherwise previewed, processed, and saved just like loaded samples.</p><p>If interpolation is disabled, the selected files must contain <b>every semitone</b> from the lowest note through the highest note.</p><p>Duplicate pitches are not allowed in either mode.</p>
 
    <p class="helpSection">Beat Offset</p>
-   <p><b>Starting Beat Offset</b> sets the total frequency separation between the two reeds at the lowest note. <b>Ending Beat Offset</b> sets the total separation at the highest note.</p>
-   <p><b>Beat Offset Curve</b> controls how that separation changes across the chromatic sample range. <b>Linear</b> uses an even progression. <b>Curves 1–5</b> provide progressively stronger nonlinear curves. The graph shows the selected progression from the starting value to the ending value.</p>
+   <p><b>Starting Beat Offset</b> sets the total frequency separation between the two reeds at the lowest note.</p><p><b>Ending Beat Offset</b> sets the total separation at the highest note.</p>
+   <p><b>Beat Offset Curve</b> controls how that separation changes across the chromatic sample range.</p><p><b>Linear</b> uses an even progression.</p><p><b>Curves 1–5</b> provide progressively stronger nonlinear curves.</p><p>The graph shows the selected progression from the starting value to the ending value.</p>
 
    <p class="helpSection">Reed Tuning and Volume</p>
-   <p><b>Reed Tuning</b> selects how the two reed frequencies are created. <b>− / + Offset</b> splits the total beat offset equally below and above the original pitch. <b>Original / + Offset</b> leaves the first reed at the original frequency and shifts the second reed upward by the full offset.</p>
-   <p><b>Reed Volume Balance</b> controls the relative volume of the two generated reeds. At 50 / 50, both reeds contribute equally.</p>
+   <p><b>Reed Tuning</b> selects how the two reed frequencies are created.</p><p><b>− / + Offset</b> splits the total beat offset equally below and above the original pitch.</p><p><b>Original / + Offset</b> leaves the first reed at the original frequency and shifts the second reed upward by the full offset.</p>
+   <p><b>Reed Volume Balance</b> controls the relative volume of the two generated reeds.</p><p>At 50 / 50, both reeds contribute equally.</p>
 
    <p class="helpSection">Output Level</p>
-   <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample. The default is <b>−15 LUFS</b>. Normalization is applied after the two reeds are mixed.</p>
+   <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample.</p><p>The default is <b>−15 LUFS</b>.</p><p>Normalization is applied after the two reeds are mixed.</p>
    <p><b>Output Level Trim</b> applies an additional gain adjustment after normalization.</p>
-   <p>Output samples are mono, <b>44.1 kHz IEEE 32-bit floating-point WAV</b> files. A short end fade is applied to help prevent boundary clicks.</p>
+   <p>Output samples are mono, <b>44.1 kHz IEEE 32-bit floating-point WAV</b> files.</p>
+
+   <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
 
    <p class="helpSection">Sample List and Pitch Detection</p>
-   <p>The sample list is shown in detected pitch order. It displays the source LUFS value, detected note and fundamental frequency, total Hz and cents offsets, and the individual reed frequencies and cents offsets used for that sample.</p>
-   <p>Pitch detection analyzes a relatively steady central portion of each sample. Recognizable filename note names such as <b>C4</b>, <b>F#4</b>, <b>Bb3</b>, and <b>A_440</b> are also used when available. If a detected pitch is wrong, enter the correct fundamental frequency in Hz before previewing or converting.</p>
+   <p>The sample list is shown in detected pitch order.</p><p>It displays the source LUFS value, detected note and fundamental frequency, total Hz and cents offsets, and the individual reed frequencies and cents offsets used for that sample.</p>
+   <p>Recognizable note names in filenames, such as <b>C4</b>, <b>F#4</b>, and <b>Bb3</b>, are used when available.</p>
 
    <p class="helpSection">Preview</p>
-   <p>Select a sample from the <b>Preview</b> menu, or use <b>Previous</b> and <b>Next</b> to move through the samples. <b>Play Original</b> plays the source sample and <b>Play Tremolo</b> previews the generated tremolo using the current Beat Offset Curve, Reed Tuning, Reed Volume Balance, and output settings.</p>
-   <p>Original and Tremolo previews automatically loop continuously until stopped. While a preview is playing, its Play button changes to <b>Stop Play</b>; click it again to stop. Starting Original while Tremolo is playing, or Tremolo while Original is playing, automatically stops the current preview first. Selecting a different note also stops playback.</p>
-   <p>If a tremolo preview is playing and you change a tremolo or output setting, the converter briefly debounces the change, regenerates the preview with the new setting, and restarts that tremolo note.</p>
+   <p>Select a sample from the <b>Preview</b> menu, or use <b>Previous</b> and <b>Next</b> to move through the samples.</p><p><b>Play Original</b> plays the source sample and <b>Play Tremolo</b> previews the generated tremolo using the current Beat Offset Curve, Reed Tuning, Reed Volume Balance, and output settings.</p>
+   <p>Original and Tremolo previews automatically loop continuously until stopped.</p><p>While a preview is playing, its Play button changes to <b>Stop Play</b>; click it again to stop.</p><p>Starting Original while Tremolo is playing, or Tremolo while Original is playing, automatically stops the current preview first.</p><p>Selecting a different note also stops playback.</p>
+   <p>If a tremolo preview is playing and you change a tremolo or output setting, the converter regenerates the preview with the new setting, and restarts that tremolo note.</p>
 
    <p class="helpSection">Converting and Saving</p>
-   <p>Click <b>Convert All &amp; Download ZIP</b> to process the complete sample set. Enter the ZIP filename when prompted. Each generated WAV keeps the same filename as its original sample, with a <b>.wav</b> extension.</p>
+   <p>Click <b>Convert All &amp; Download ZIP</b> to process the complete sample set.</p><p>Enter the ZIP filename when prompted.</p><p>Loaded samples keep the same filename as their original sample, with a <b>.wav</b> extension.</p><p>Interpolated samples use flat-based note names such as <b>Db3.wav</b> and <b>Gb4.wav</b>.</p>
 
    <hr style="width:100%;border:0;border-top:1px solid #d0d0d0;margin:18px 0;">
    <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
@@ -245,7 +265,8 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
     <br><br>
    </p>
    <hr style="width:100%;border:0;border-top:1px solid #d0d0d0;margin:18px 0;">
-  </div>
+ 
+ </div>
   <div class="helpActions">
    <button id="helpClose">Close</button>
   </div>
@@ -261,6 +282,31 @@ $("helpClose").addEventListener("click",()=>{$("helpOverlay").style.display="non
 
 let files=[], decoded=new Map(), analyses=[], ctx=null, currentSource=null;
 let currentPlayMode=null, previewRestartTimer=null, previewGeneration=0;
+
+const SETTINGS_KEY="tremoloReedSampleConverterSettingsV1";
+const settingIds=["startRate","endRate","curve","tuningMode","balance","target","trim","interpolateMissing"];
+
+function saveSettings(){
+ try{
+  const v={};
+  for(const id of settingIds){
+   const el=$(id);
+   v[id]=el.type==="checkbox"?el.checked:el.value;
+  }
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(v));
+ }catch(_){}
+}
+function restoreSettings(){
+ try{
+  const v=JSON.parse(localStorage.getItem(SETTINGS_KEY)||"null");
+  if(!v)return;
+  for(const id of settingIds){
+   const el=$(id);
+   if(!el||v[id]===undefined)continue;
+   if(el.type==="checkbox")el.checked=!!v[id]; else el.value=v[id];
+  }
+ }catch(_){}
+}
 
 function curveExponent(){return +$("curve").value||1}
 function curveProgress(x){return Math.pow(Math.max(0,Math.min(1,x)),curveExponent())}
@@ -288,18 +334,27 @@ function updateRateLabels(){
  $("endRateV").textContent=(+$("endRate").value).toFixed(1)+" Hz";
  updateOffsetDisplay();drawCurvePlot();
 }
-$("startRate").oninput=()=>{updateRateLabels();previewSettingChanged()};
-$("endRate").oninput=()=>{updateRateLabels();previewSettingChanged()};
-$("curve").onchange=()=>{updateRateLabels();previewSettingChanged()};
-$("tuningMode").onchange=()=>{updateOffsetDisplay();renderAnalysis();previewSettingChanged()};
-$("balance").oninput=()=>{const v=+$("balance").value;$("balanceV").textContent=(100-v)+" / "+v;previewSettingChanged()};
+$("startRate").oninput=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
+$("endRate").oninput=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
+$("offsetReset").onclick=()=>{
+ $("startRate").value=2;
+ $("endRate").value=5;
+ updateRateLabels();
+ saveSettings();
+ previewSettingChanged();
+};
+$("curve").onchange=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
+$("tuningMode").onchange=()=>{updateOffsetDisplay();renderAnalysis();saveSettings();previewSettingChanged()};
+$("balance").oninput=()=>{const v=+$("balance").value;$("balanceV").textContent=(100-v)+" / "+v;saveSettings();previewSettingChanged()};
 $("balanceReset").onclick=()=>{
  $("balance").value=50;
  $("balanceV").textContent="50 / 50";
+ saveSettings();
  previewSettingChanged();
 };
-$("target").addEventListener("input",previewSettingChanged);
-$("trim").addEventListener("input",previewSettingChanged);
+$("target").addEventListener("input",()=>{saveSettings();previewSettingChanged()});
+$("trim").addEventListener("input",()=>{saveSettings();previewSettingChanged()});
+$("interpolateMissing").addEventListener("change",saveSettings);
 
 function ac(){return ctx||(ctx=new (window.AudioContext||window.webkitAudioContext)())}
 async function decode(file){
@@ -320,6 +375,8 @@ async function resample44100(buf){
  return await off.startRendering();
 }
 function midiToName(m){const n=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];return n[(m%12+12)%12]+(Math.floor(m/12)-1)}
+function midiToFlatName(m){const n=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];return n[(m%12+12)%12]+(Math.floor(m/12)-1)}
+function midiToHz(m){return 440*Math.pow(2,(m-69)/12)}
 function hzToInfo(hz){const m=69+12*Math.log2(hz/440),mi=Math.round(m),cents=Math.round((m-mi)*100);return {midi:mi,name:midiToName(mi),cents}}
 function noteHz(name,oct){const pc={C:0,"C#":1,Db:1,D:2,"D#":3,Eb:3,E:4,F:5,"F#":6,Gb:6,G:7,"G#":8,Ab:8,A:9,"A#":10,Bb:10,B:11}[name];if(pc==null)return null;const m=(+oct+1)*12+pc;return 440*Math.pow(2,(m-69)/12)}
 function filenamePitch(name){
@@ -360,10 +417,54 @@ async function analyzeFile(file){
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
+function scrollBoxHtml(html){
+ return `<div style="max-height:50vh;overflow-y:auto;padding-right:8px;line-height:1.45">${html}</div>`;
+}
 async function modalAlert(message){
- if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function")await DayPilot.Modal.alert(message,{top:100,width:460});
+ if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function")await DayPilot.Modal.alert(message,{top:100,width:520});
  else alert(String(message).replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]+>/g,""));
 }
+async function pitchShiftBuffer(srcBuf,semitones){
+ const rate=Math.pow(2,semitones/12);
+ const outLength=Math.max(1,Math.ceil(srcBuf.length/rate));
+ const off=new OfflineAudioContext(srcBuf.numberOfChannels,outLength,srcBuf.sampleRate);
+ const src=off.createBufferSource();
+ src.buffer=srcBuf;src.playbackRate.value=rate;src.connect(off.destination);src.start();
+ return await off.startRendering();
+}
+function duplicatePitchMidis(){
+ const counts=new Map();
+ for(const a of analyses){const m=hzToInfo(a.hz).midi;counts.set(m,(counts.get(m)||0)+1)}
+ return [...counts].filter(([,n])=>n>1).map(([m])=>m);
+}
+async function interpolateMissingSamples(){
+ if(analyses.length<2)return [];
+ analyses.sort((a,b)=>a.hz-b.hz);
+ const loadedByMidi=new Map();
+ for(const a of analyses)loadedByMidi.set(hzToInfo(a.hz).midi,a);
+ const loadedMidis=[...loadedByMidi.keys()].sort((a,b)=>a-b);
+ const low=loadedMidis[0],high=loadedMidis[loadedMidis.length-1],created=[];
+
+ for(let m=low;m<=high;m++){
+  if(loadedByMidi.has(m))continue;
+  let sourceMidi=loadedMidis[0],bestDistance=Math.abs(m-loadedMidis[0]);
+  for(const candidate of loadedMidis){
+   const distance=Math.abs(m-candidate);
+   if(distance<bestDistance||(distance===bestDistance&&candidate<m&&sourceMidi>m)){
+    sourceMidi=candidate;bestDistance=distance;
+   }
+  }
+  const source=loadedByMidi.get(sourceMidi),semitones=m-sourceMidi;
+  const shifted=await pitchShiftBuffer(source.buffer,semitones);
+  const buffer=await resample44100(shifted),x=buffer.getChannelData(0),name=midiToFlatName(m)+".wav";
+  created.push({file:{name},buffer,hz:midiToHz(m),source:"interpolated",confidence:1,
+   sourceLUFS:lufs(new Float32Array(x),44100),interpolated:true,interpolatedFrom:source.file.name,
+   interpolatedSemitones:semitones,midi:m});
+ }
+ analyses.push(...created);analyses.sort((a,b)=>a.hz-b.hz);
+ return created;
+}
+
 function semitoneRangeProblem(){
  if(!analyses.length)return null;
  const midis=analyses.map(a=>hzToInfo(a.hz).midi).sort((a,b)=>a-b),counts=new Map();
@@ -382,7 +483,7 @@ async function rejectIncompleteSemitoneRange(p){
  if(p.missing.length)parts.push(`<br><br>Missing: <b>${p.missing.map(midiToName).join(", ")}</b>`);
  if(p.duplicates.length)parts.push(`<br><br>Duplicate pitch${p.duplicates.length===1?"":"es"}: <b>${p.duplicates.map(midiToName).join(", ")}</b>`);
  parts.push("<br><br>Please select a complete set of one sample per semitone.");
- clearLoadedSamples();await modalAlert(parts.join(""));
+ clearLoadedSamples();await modalAlert(scrollBoxHtml(parts.join("")));
 }
 
 $("files").addEventListener("change",async()=>{
@@ -397,13 +498,29 @@ $("files").addEventListener("change",async()=>{
    await new Promise(r=>setTimeout(r,0));
   }
   analyses.sort((a,b)=>a.hz-b.hz);
-  const rangeProblem=semitoneRangeProblem();
-  if(rangeProblem){await rejectIncompleteSemitoneRange(rangeProblem);return}
+  const duplicates=duplicatePitchMidis();
+  if(duplicates.length){
+   await rejectIncompleteSemitoneRange({low:hzToInfo(analyses[0].hz).midi,high:hzToInfo(analyses[analyses.length-1].hz).midi,missing:[],duplicates});
+   return;
+  }
+  let interpolated=[];
+  if($("interpolateMissing").checked){
+   interpolated=await interpolateMissingSamples();
+  }else{
+   const rangeProblem=semitoneRangeProblem();
+   if(rangeProblem){await rejectIncompleteSemitoneRange(rangeProblem);return}
+  }
   rebuildPreviewOptions();
   renderAnalysis();
-  $("status").textContent=`${files.length} sample${files.length===1?"":"s"} ready in low-to-high pitch order. Check the detected pitches before converting.`;
   $("convert").disabled=false;$("orig").disabled=false;$("trem").disabled=false;
   updateNavButtons();
+  if(interpolated.length){
+   const loadedCount=analyses.length-interpolated.length;
+   $("status").textContent=`${analyses.length} samples ready (${loadedCount} loaded, ${interpolated.length} interpolated).`;
+   await modalAlert(`${loadedCount} note sample${loadedCount===1?" was":"s were"} loaded and ${interpolated.length} missing note sample${interpolated.length===1?" was":"s were"} interpolated.`);
+  }else{
+   $("status").textContent=`${analyses.length} sample${analyses.length===1?"":"s"} ready in low-to-high pitch order.`;
+  }
  }catch(e){console.error(e);$("status").textContent="Analysis error: "+(e.message||e)}
 });
 function interpolatedBeat(i){
@@ -417,36 +534,25 @@ function centsFor(i){
  if(!(low>0&&high>0))return {low:0,high:0};
  return {low:1200*Math.log2(low/f),high:1200*Math.log2(high/f)};
 }
-function pitchForRaw(i){
- const el=document.querySelector(`.pitchInput[data-i="${i}"]`);
- return el&&+el.value>0?+el.value:analyses[i].hz;
-}
+function pitchForRaw(i){return analyses[i].hz}
 function rebuildPreviewOptions(){
  const old=+$("preview").value||0;
  $("preview").innerHTML="";
- analyses.forEach((a,i)=>{const o=document.createElement("option");o.value=i;o.textContent=a.file.name;$("preview").appendChild(o)});
+ analyses.forEach((a,i)=>{const o=document.createElement("option");o.value=i;o.textContent=a.file.name+(a.interpolated?" (Interpolated)":"");$("preview").appendChild(o)});
  $("preview").value=Math.min(old,Math.max(0,analyses.length-1));
  updateNavButtons();
 }
 function renderAnalysis(){
  let rows=analyses.map((a,i)=>{
-  const ni=hzToInfo(a.hz), cls=a.confidence>=.75?"good":"warn", beat=interpolatedBeat(i);
+  const ni=hzToInfo(a.hz),beat=interpolatedBeat(i);
   const ro=reedOffsets(beat),lowHz=a.hz+ro.low,highHz=a.hz+ro.high;
-  const lo=1200*Math.log2(lowHz/a.hz),hi=1200*Math.log2(highHz/a.hz);
-  const totalCents=hi-lo;
-  return `<tr><td>${esc(a.file.name)}</td><td>${isFinite(a.sourceLUFS)?a.sourceLUFS.toFixed(2):"—"} LUFS</td><td>${ni.name}${ni.cents?` ${ni.cents>0?"+":""}${ni.cents}¢`:""}</td><td><input class="pitchInput" data-i="${i}" type="number" min="20" max="5000" step=".01" value="${a.hz.toFixed(2)}"> Hz</td><td class="beatCell" data-i="${i}">${beat.toFixed(2)} Hz</td><td class="totalCentsCell" data-i="${i}">${totalCents.toFixed(2)}¢</td><td class="reedHzCell" data-i="${i}">${lowHz.toFixed(2)} / ${highHz.toFixed(2)} Hz</td><td class="centsCell" data-i="${i}">${lo.toFixed(2)}¢ / ${hi>=0?"+":""}${hi.toFixed(2)}¢</td></tr>`;
+  const lo=1200*Math.log2(lowHz/a.hz),hi=1200*Math.log2(highHz/a.hz),totalCents=hi-lo;
+  const badge=a.interpolated?`<span class="interpolatedBadge" title="Interpolated from ${esc(a.interpolatedFrom)}">Interpolated</span>`:"";
+  const note=a.interpolated?midiToFlatName(a.midi):ni.name+(ni.cents?` ${ni.cents>0?"+":""}${ni.cents}¢`:"");
+  return `<tr${a.interpolated?' class="interpolatedRow"':""}><td><span class="sampleNameWrap"><span>${esc(a.file.name)}</span>${badge}</span></td><td>${isFinite(a.sourceLUFS)?a.sourceLUFS.toFixed(2):"—"} LUFS</td><td>${note}</td><td>${a.hz.toFixed(2)} Hz</td><td class="beatCell" data-i="${i}">${beat.toFixed(2)} Hz</td><td class="totalCentsCell" data-i="${i}">${totalCents.toFixed(2)}¢</td><td class="reedHzCell" data-i="${i}">${lowHz.toFixed(2)} / ${highHz.toFixed(2)} Hz</td><td class="centsCell" data-i="${i}">${lo.toFixed(2)}¢ / ${hi>=0?"+":""}${hi.toFixed(2)}¢</td></tr>`;
  }).join("");
  $("analysis").innerHTML=`<table><thead><tr><th>Sample</th><th>Source LUFS</th><th>Note</th><th>Fundamental</th><th>Total Hz Offset</th><th>Total Cents Offset</th><th>Reed Hz (low / high)</th><th>Reed Cents (low / high)</th></tr></thead><tbody>${rows}</tbody></table>`;
- document.querySelectorAll(".pitchInput").forEach(el=>el.addEventListener("change",()=>{
-   const i=+el.dataset.i,v=+el.value;
-   if(v>=20&&v<=5000){
-     analyses[i].hz=v;
-     // A manual pitch edit can change pitch order, so re-sort and redraw.
-     analyses.sort((a,b)=>a.hz-b.hz);
-     rebuildPreviewOptions();
-     renderAnalysis();
-   }
- }));
+ highlightPreviewRow();
 }
 function reedOffsets(totalHz){
  if($("tuningMode").value==="originalPlus"){
@@ -468,6 +574,11 @@ function updateNavButtons(){
  $("next").disabled=!n||i>=n-1;
 }
 
+function highlightPreviewRow(){
+ const i=+$("preview").value;
+ document.querySelectorAll("#analysis tbody tr").forEach((row,j)=>row.classList.toggle("currentSampleRow",j===i));
+}
+
 function scrollPreviewRowIntoView(){
  const i=+$("preview").value;
  const cell=document.querySelector(`.beatCell[data-i="${i}"]`);
@@ -482,7 +593,18 @@ function scrollPreviewRowIntoView(){
   behavior:"smooth"
  });
 }
-$("preview").addEventListener("change",()=>{stopPlayback();updateNavButtons();scrollPreviewRowIntoView()});
+
+$("analysis").addEventListener("click",e=>{
+ const row=e.target.closest("tbody tr");
+ if(!row)return;
+ const rows=[...$("analysis").querySelectorAll("tbody tr")];
+ const i=rows.indexOf(row);
+ if(i<0)return;
+ $("preview").value=i;
+ $("preview").dispatchEvent(new Event("change"));
+});
+
+$("preview").addEventListener("change",()=>{stopPlayback();updateNavButtons();highlightPreviewRow();scrollPreviewRowIntoView()});
 $("prev").onclick=()=>{const i=+$("preview").value;if(i>0){$("preview").value=i-1;$("preview").dispatchEvent(new Event("change"))}};
 $("next").onclick=()=>{const i=+$("preview").value;if(i<analyses.length-1){$("preview").value=i+1;$("preview").dispatchEvent(new Event("change"))}};
 
@@ -566,19 +688,39 @@ function stop(){stopPlayback()}
 async function playArray(x,mode,generation){
  const c=ac();await c.resume();if(generation!==previewGeneration)return;
  const b=c.createBuffer(1,x.length,44100);b.copyToChannel(x,0);
- const source=c.createBufferSource();source.buffer=b;source.connect(c.destination);
- source.onended=()=>{
-  if(currentSource!==source)return;
-  currentSource=null;
-  if(currentPlayMode!==mode||generation!==previewGeneration){currentPlayMode=null;setPreviewButtonState();return}
-  try{
-   const next=c.createBufferSource();next.buffer=b;next.connect(c.destination);
-   next.onended=source.onended;
-   currentSource=next;
-   next.start();
-  }catch(_){currentPlayMode=null;setPreviewButtonState()}
+
+ const startLoopSource=()=>{
+  if(currentPlayMode!==mode||generation!==previewGeneration)return;
+
+  const source=c.createBufferSource();
+  source.buffer=b;
+  source.connect(c.destination);
+
+  source.onended=()=>{
+   if(currentSource!==source)return;
+   currentSource=null;
+
+   if(currentPlayMode!==mode||generation!==previewGeneration){
+    currentPlayMode=null;
+    setPreviewButtonState();
+    return;
+   }
+
+   try{
+    startLoopSource();
+   }catch(_){
+    currentPlayMode=null;
+    setPreviewButtonState();
+   }
+  };
+
+  currentSource=source;
+  source.start();
  };
- currentSource=source;currentPlayMode=mode;setPreviewButtonState();source.start();
+
+ currentPlayMode=mode;
+ setPreviewButtonState();
+ startLoopSource();
 }
 async function playOriginalPreview(){
  const generation=++previewGeneration,i=+$("preview").value;
@@ -637,7 +779,9 @@ $("convert").onclick=async()=>{
   const entries=[],rows=[];
   for(let i=0;i<analyses.length;i++){
    const f=analyses[i].file;$("status").textContent=`Rendering ${i+1} of ${analyses.length}: ${f.name}`;
-   const r=await processOne(i),name=f.name.replace(/\.(wav|mp3)$/i,"")+".wav";
+   const r=await processOne(i),name=analyses[i].interpolated
+     ? midiToFlatName(analyses[i].midi)+".wav"
+     : f.name.replace(/\.(wav|mp3)$/i,"")+".wav";
    entries.push({name,data:r.wav});
    rows.push(`<tr><td>${esc(f.name)}</td><td>${r.fundamental.toFixed(2)} Hz</td><td>${r.low.toFixed(2)} / ${r.high.toFixed(2)} Hz</td><td>${isFinite(r.before)?r.before.toFixed(2):"—"}</td><td>${r.after.toFixed(2)}${r.limited?' *':''}</td></tr>`);
    await new Promise(q=>setTimeout(q,0));
@@ -648,7 +792,9 @@ $("convert").onclick=async()=>{
  }catch(e){console.error(e);$("status").textContent="Error: "+(e.message||e)}
  finally{$("convert").disabled=false}
 };
-drawCurvePlot();
+restoreSettings();
+$("balanceV").textContent=(100-(+$("balance").value))+" / "+(+$("balance").value);
+updateRateLabels();
 window.addEventListener("resize",drawCurvePlot);
 </script>
 </body>
