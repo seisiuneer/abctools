@@ -151,7 +151,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <body>
 <div class="app">
 <div class="card">
-<div class="versionLabel">Version 2.2</div>
+<div class="versionLabel">Version 2.3</div>
 <h1>Tremolo Reed Sample Converter</h1>
 <p class="sub">High-quality multi-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
 <div class="loadRow">
@@ -186,7 +186,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
  <div>
  <div class="balanceTop">
   <label>Ending Beat Offset (highest note) — <span id="endRateV">5.0 Hz</span></label>
-  <button id="offsetReset" type="button" class="miniReset">Reset</button>
+  <button id="offsetReset" type="button" class="miniReset">Reset All</button>
  </div>
  <input id="endRate" type="range" min="0" max="30" step=".1" value="5">
 </div>
@@ -203,7 +203,6 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <div class="balanceControl">
  <div class="balanceTop">
   <label>Reed Volume Balance — <span id="balanceV">50 / 50</span></label>
-  <button id="balanceReset" type="button" class="miniReset">Reset</button>
  </div>
  <input id="balance" type="range" min="0" max="100" step="1" value="50">
 </div>
@@ -260,7 +259,8 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
    <p><b>Output Level Trim</b> applies an additional gain adjustment after normalization.</p><p>If the requested level would cause digital clipping, peak protection automatically reduces the output level; the completion message reports when this occurs.</p>
    <p>Output samples are mono, <b>44.1 kHz IEEE 32-bit floating-point WAV</b> files.</p>
 
-   <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
+   <p><b>Reset All</b> restores all converter settings to their original defaults.</p>
+    <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
 
    <p class="helpSection">Sample List and Pitch Detection</p>
    <p>The sample list is shown in detected pitch order.</p><p>It displays the source LUFS value, detected note and fundamental frequency, total Hz and cents offsets, and the individual reed frequencies and cents offsets used for that sample.</p>
@@ -365,22 +365,29 @@ function updateRateLabels(){
 }
 $("startRate").oninput=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
 $("endRate").oninput=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
-$("offsetReset").onclick=()=>{
+$("offsetReset").onclick=async()=>{
+ const confirmed=window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.confirm==="function"
+  ? (await DayPilot.Modal.confirm("Reset all converter settings to their defaults?",{top:100,width:460})).result
+  : confirm("Reset all converter settings to their defaults?");
+ if(!confirmed)return;
  $("startRate").value=2;
  $("endRate").value=5;
+ $("curve").value="1";
+ $("tuningMode").value="split";
+ $("balance").value=50;
+ $("balanceV").textContent="50 / 50";
+ $("target").value=-15;
+ $("trim").value=0;
+ $("interpolateMissing").checked=true;
+ updateRateLimits();
  updateRateLabels();
+ renderAnalysis();
  saveSettings();
  previewSettingChanged();
 };
 $("curve").onchange=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
 $("tuningMode").onchange=()=>{updateRateLimits();updateRateLabels();renderAnalysis();saveSettings();previewSettingChanged()};
 $("balance").oninput=()=>{const v=+$("balance").value;$("balanceV").textContent=(100-v)+" / "+v;saveSettings();previewSettingChanged()};
-$("balanceReset").onclick=()=>{
- $("balance").value=50;
- $("balanceV").textContent="50 / 50";
- saveSettings();
- previewSettingChanged();
-};
 $("target").addEventListener("input",()=>{saveSettings();previewSettingChanged()});
 $("trim").addEventListener("input",()=>{saveSettings();previewSettingChanged()});
 $("interpolateMissing").addEventListener("change",saveSettings);
