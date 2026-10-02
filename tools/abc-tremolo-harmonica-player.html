@@ -45,12 +45,12 @@
 <title>
    ABC Tremolo Harmonica Player
   </title>
-<meta content="Play ABC tunes with synchronized notation, audio playback, and fingering diagrams for supported Tombo 3116, 2116, 3121, and 3124 tremolo harmonica layouts." name="description"/>
-<meta content="ABC notation, tremolo harmonica, Tombo 3116, Tombo 2116, Tombo 3121, Tombo 3124, 16-hole tremolo harmonica, 21-hole tremolo harmonica, 24-hole tremolo harmonica, harmonica tablature, harmonica fingering, blow draw diagram, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords"/>
+<meta content="Play ABC tunes with synchronized notation, audio playback, and fingering diagrams for supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." name="description"/>
+<meta content="ABC notation, tremolo harmonica, Tombo 3116, Tombo 2116, Tombo 1521, Tombo 3121, Tombo 3124, 16-hole tremolo harmonica, 21-hole tremolo harmonica, 24-hole tremolo harmonica, harmonica tablature, harmonica fingering, blow draw diagram, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords"/>
 <meta content="Michael Eskin" name="author"/>
 <meta content="website" property="og:type"/>
 <meta content="ABC Tremolo Harmonica Player" property="og:title"/>
-<meta content="Play ABC tunes with synchronized notation, audio playback, and highlighted blow/draw fingering diagrams for supported Tombo 3116, 2116, 3121, and 3124 tremolo harmonica layouts." property="og:description"/>
+<meta content="Play ABC tunes with synchronized notation, audio playback, and highlighted blow/draw fingering diagrams for supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." property="og:description"/>
 <meta content="ABC Tremolo Harmonica Player" property="og:site_name"/>
 <meta content="https://michaeleskin.com/tools/abc-tremolo-harmonica-player.html" property="og:url"/>
 <meta content="https://michaeleskin.com/tools/img/abc-tremolo-harmonica-player-1.jpg" property="og:image"/>
@@ -877,7 +877,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 1.1
+     Version 1.2
     </div>
 <a class="tip" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -910,6 +910,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <select id="system" autocomplete="off" onchange="updateTremoloKeyChoices();">
 <option value="t16g">Tombo 3116: 16-Hole (Low G)</option>
 <option value="t16a">Tombo 2116: 16-Hole (Low A)</option>
+<option value="t1521">Tombo 1521: 21-Hole</option>
 <option selected="" value="t21">Tombo 3121: 21-Hole</option>
 <option value="t24">Tombo 3124: 24-Hole</option>
 </select>
@@ -1117,12 +1118,14 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <p>This player supports fixed layouts for the following Tombo tremolo harmonica models. Tremolo harmonicas use two reeds for each note, tuned slightly apart to produce the characteristic wavering sound.</p>
 <p><b>Tombo 3116: 16-Hole (Low G)</b> — Key of C only.</p>
 <p><b>Tombo 2116: 16-Hole (Low A)</b> — Key of C only.</p>
+<p><b>Tombo 1521: 21-Hole</b> — Major, harmonic minor, and natural minor layouts in all 12 chromatic keys.</p>
 <p><b>Tombo 3121: 21-Hole</b> — C, C#, Cm, G, G#, Gm, A, A#, and Am.</p>
 <p><b>Tombo 3124: 24-Hole</b> — C, C#, A, and A#.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Settings</p>
 <p><b>Tremolo model</b> selects one of the supported fixed model layouts. Each model uses a fixed note mapping rather than transposing a generic tuning.</p>
 <p><b>Tombo 3116: 16-Hole (Low G)</b> uses the Low G 16-hole layout and is available in C.</p>
 <p><b>Tombo 2116: 16-Hole (Low A)</b> uses the Low A 16-hole layout and is available in C.</p>
+<p><b>Tombo 1521: 21-Hole</b> provides all 12 major keys, all 12 harmonic minor keys, and all 12 natural minor keys. Natural minor tunings are labeled with <b>Nm</b> (for example, CNm).</p>
 <p><b>Tombo 3121: 21-Hole</b> is available in C, C#, Cm, G, G#, Gm, A, A#, and Am.</p>
 <p><b>Tombo 3124: 24-Hole</b> is available in C, C#, A, and A#.</p>
 <p><b>Key</b> shows only the mappings available for the selected model.</p>
@@ -1312,6 +1315,7 @@ function stripChordSymbols(abc){return String(abc||"").replace(/"[^"\r\n]*"/g,m=
 // position; paired reeds are drawn as two vertically aligned holes and sound
 // together to create the tremolo effect.
 const TREMOLO_MODEL_KEYS={
+  t1521:["E","F","F#","G","G#","A","A#","B","C","C#","D","D#","Em","Fm","F#m","Gm","G#m","Am","A#m","Bm","Cm","C#m","Dm","D#m","ENm","FNm","F#Nm","GNm","G#Nm","ANm","A#Nm","BNm","CNm","C#Nm","DNm","D#Nm"],
   t21:["C","C#","Cm","G","G#","Gm","A","A#","Am"],
   t24:["C","C#","A","A#"],
   t16g:["C"],
@@ -1320,6 +1324,7 @@ const TREMOLO_MODEL_KEYS={
 const TREMOLO_LAYOUTS={
   t16g:{name:"Tombo 3116: 16-Hole (Low G)",notes:[]},
   t16a:{name:"Tombo 2116: 16-Hole (Low A)",notes:[]},
+  t1521:{name:"Tombo 1521: 21-Hole",notes:[]},
   t21:{name:"Tombo 3121: 21-Hole",notes:[]},
   t24:{name:"Tombo 3124: 24-Hole",notes:[]}
 };
@@ -1327,6 +1332,42 @@ const TREMOLO_LAYOUTS={
 // These are deliberately model+key specific; selecting a key chooses a fixed
 // mapping rather than transposing a generic layout.
 const TOMBO_FIXED_LAYOUTS={
+  "t1521|E":[[54,"d"],[52,"b"],[57,"d"],[56,"b"],[61,"d"],[59,"b"],[63,"d"],[64,"b"],[66,"d"],[68,"b"],[69,"d"],[71,"b"],[73,"d"],[76,"b"],[75,"d"],[80,"b"],[78,"d"],[83,"b"],[81,"d"],[88,"b"],[85,"d"]],
+  "t1521|F":[[55,"d"],[53,"b"],[58,"d"],[57,"b"],[62,"d"],[60,"b"],[64,"d"],[65,"b"],[67,"d"],[69,"b"],[70,"d"],[72,"b"],[74,"d"],[77,"b"],[76,"d"],[81,"b"],[79,"d"],[84,"b"],[82,"d"],[89,"b"],[86,"d"]],
+  "t1521|F#":[[56,"d"],[54,"b"],[59,"d"],[58,"b"],[63,"d"],[61,"b"],[65,"d"],[66,"b"],[68,"d"],[70,"b"],[71,"d"],[73,"b"],[75,"d"],[78,"b"],[77,"d"],[82,"b"],[80,"d"],[85,"b"],[83,"d"],[90,"b"],[87,"d"]],
+  "t1521|G":[[57,"d"],[55,"b"],[60,"d"],[59,"b"],[64,"d"],[62,"b"],[66,"d"],[67,"b"],[69,"d"],[71,"b"],[72,"d"],[74,"b"],[76,"d"],[79,"b"],[78,"d"],[83,"b"],[81,"d"],[86,"b"],[84,"d"],[91,"b"],[88,"d"]],
+  "t1521|G#":[[58,"d"],[56,"b"],[61,"d"],[60,"b"],[65,"d"],[63,"b"],[67,"d"],[68,"b"],[70,"d"],[72,"b"],[73,"d"],[75,"b"],[77,"d"],[80,"b"],[79,"d"],[84,"b"],[82,"d"],[87,"b"],[85,"d"],[92,"b"],[89,"d"]],
+  "t1521|A":[[59,"d"],[57,"b"],[62,"d"],[61,"b"],[66,"d"],[64,"b"],[68,"d"],[69,"b"],[71,"d"],[73,"b"],[74,"d"],[76,"b"],[78,"d"],[81,"b"],[80,"d"],[85,"b"],[83,"d"],[88,"b"],[86,"d"],[93,"b"],[90,"d"]],
+  "t1521|A#":[[60,"d"],[58,"b"],[63,"d"],[62,"b"],[67,"d"],[65,"b"],[69,"d"],[70,"b"],[72,"d"],[74,"b"],[75,"d"],[77,"b"],[79,"d"],[82,"b"],[81,"d"],[86,"b"],[84,"d"],[89,"b"],[87,"d"],[94,"b"],[91,"d"]],
+  "t1521|B":[[61,"d"],[59,"b"],[64,"d"],[63,"b"],[68,"d"],[66,"b"],[70,"d"],[71,"b"],[73,"d"],[75,"b"],[76,"d"],[78,"b"],[80,"d"],[83,"b"],[82,"d"],[87,"b"],[85,"d"],[90,"b"],[88,"d"],[95,"b"],[92,"d"]],
+  "t1521|C":[[50,"d"],[48,"b"],[53,"d"],[52,"b"],[57,"d"],[55,"b"],[59,"d"],[60,"b"],[62,"d"],[64,"b"],[65,"d"],[67,"b"],[69,"d"],[72,"b"],[71,"d"],[76,"b"],[74,"d"],[79,"b"],[77,"d"],[84,"b"],[81,"d"]],
+  "t1521|C#":[[51,"d"],[49,"b"],[54,"d"],[53,"b"],[58,"d"],[56,"b"],[60,"d"],[61,"b"],[63,"d"],[65,"b"],[66,"d"],[68,"b"],[70,"d"],[73,"b"],[72,"d"],[77,"b"],[75,"d"],[80,"b"],[78,"d"],[85,"b"],[82,"d"]],
+  "t1521|D":[[52,"d"],[50,"b"],[55,"d"],[54,"b"],[59,"d"],[57,"b"],[61,"d"],[62,"b"],[64,"d"],[66,"b"],[67,"d"],[69,"b"],[71,"d"],[74,"b"],[73,"d"],[78,"b"],[76,"d"],[81,"b"],[79,"d"],[86,"b"],[83,"d"]],
+  "t1521|D#":[[53,"d"],[51,"b"],[56,"d"],[55,"b"],[60,"d"],[58,"b"],[62,"d"],[63,"b"],[65,"d"],[67,"b"],[68,"d"],[70,"b"],[72,"d"],[75,"b"],[74,"d"],[79,"b"],[77,"d"],[82,"b"],[80,"d"],[87,"b"],[84,"d"]],
+  "t1521|Em":[[54,"d"],[52,"b"],[57,"d"],[55,"b"],[60,"d"],[59,"b"],[63,"d"],[64,"b"],[66,"d"],[67,"b"],[69,"d"],[71,"b"],[72,"d"],[76,"b"],[75,"d"],[79,"b"],[78,"d"],[83,"b"],[81,"d"],[88,"b"],[84,"d"]],
+  "t1521|Fm":[[55,"d"],[53,"b"],[58,"d"],[56,"b"],[61,"d"],[60,"b"],[64,"d"],[65,"b"],[67,"d"],[68,"b"],[70,"d"],[72,"b"],[73,"d"],[77,"b"],[76,"d"],[80,"b"],[79,"d"],[84,"b"],[82,"d"],[89,"b"],[85,"d"]],
+  "t1521|F#m":[[56,"d"],[54,"b"],[59,"d"],[57,"b"],[62,"d"],[61,"b"],[65,"d"],[66,"b"],[68,"d"],[69,"b"],[71,"d"],[73,"b"],[74,"d"],[78,"b"],[77,"d"],[81,"b"],[80,"d"],[85,"b"],[83,"d"],[90,"b"],[86,"d"]],
+  "t1521|Gm":[[57,"d"],[55,"b"],[60,"d"],[58,"b"],[63,"d"],[62,"b"],[66,"d"],[67,"b"],[69,"d"],[70,"b"],[72,"d"],[74,"b"],[75,"d"],[79,"b"],[78,"d"],[82,"b"],[81,"d"],[86,"b"],[84,"d"],[91,"b"],[87,"d"]],
+  "t1521|G#m":[[58,"d"],[56,"b"],[61,"d"],[59,"b"],[64,"d"],[63,"b"],[67,"d"],[68,"b"],[70,"d"],[71,"b"],[73,"d"],[75,"b"],[76,"d"],[80,"b"],[79,"d"],[83,"b"],[82,"d"],[87,"b"],[85,"d"],[92,"b"],[88,"d"]],
+  "t1521|Am":[[59,"d"],[57,"b"],[62,"d"],[60,"b"],[65,"d"],[64,"b"],[68,"d"],[69,"b"],[71,"d"],[72,"b"],[74,"d"],[76,"b"],[77,"d"],[81,"b"],[80,"d"],[84,"b"],[83,"d"],[88,"b"],[86,"d"],[93,"b"],[89,"d"]],
+  "t1521|A#m":[[60,"d"],[58,"b"],[63,"d"],[61,"b"],[66,"d"],[65,"b"],[69,"d"],[70,"b"],[72,"d"],[73,"b"],[75,"d"],[77,"b"],[78,"d"],[82,"b"],[81,"d"],[85,"b"],[84,"d"],[89,"b"],[87,"d"],[94,"b"],[90,"d"]],
+  "t1521|Bm":[[61,"d"],[59,"b"],[64,"d"],[62,"b"],[67,"d"],[66,"b"],[70,"d"],[71,"b"],[73,"d"],[74,"b"],[76,"d"],[78,"b"],[79,"d"],[83,"b"],[82,"d"],[86,"b"],[85,"d"],[90,"b"],[88,"d"],[95,"b"],[91,"d"]],
+  "t1521|Cm":[[50,"d"],[48,"b"],[53,"d"],[51,"b"],[56,"d"],[55,"b"],[59,"d"],[60,"b"],[62,"d"],[63,"b"],[65,"d"],[67,"b"],[68,"d"],[72,"b"],[71,"d"],[75,"b"],[74,"d"],[79,"b"],[77,"d"],[84,"b"],[80,"d"]],
+  "t1521|C#m":[[51,"d"],[49,"b"],[54,"d"],[52,"b"],[57,"d"],[56,"b"],[60,"d"],[61,"b"],[63,"d"],[64,"b"],[66,"d"],[68,"b"],[69,"d"],[73,"b"],[72,"d"],[76,"b"],[75,"d"],[80,"b"],[78,"d"],[85,"b"],[81,"d"]],
+  "t1521|Dm":[[52,"d"],[50,"b"],[55,"d"],[53,"b"],[58,"d"],[57,"b"],[61,"d"],[62,"b"],[64,"d"],[65,"b"],[67,"d"],[69,"b"],[70,"d"],[74,"b"],[73,"d"],[77,"b"],[76,"d"],[81,"b"],[79,"d"],[86,"b"],[82,"d"]],
+  "t1521|D#m":[[53,"d"],[51,"b"],[56,"d"],[54,"b"],[59,"d"],[58,"b"],[62,"d"],[63,"b"],[65,"d"],[66,"b"],[68,"d"],[70,"b"],[71,"d"],[75,"b"],[74,"d"],[78,"b"],[77,"d"],[82,"b"],[80,"d"],[87,"b"],[83,"d"]],
+  "t1521|ENm":[[54,"d"],[52,"b"],[57,"d"],[55,"b"],[60,"d"],[59,"b"],[62,"d"],[64,"b"],[66,"d"],[67,"b"],[69,"d"],[71,"b"],[72,"d"],[76,"b"],[74,"d"],[79,"b"],[78,"d"],[83,"b"],[81,"d"],[88,"b"],[84,"d"]],
+  "t1521|FNm":[[55,"d"],[53,"b"],[58,"d"],[56,"b"],[61,"d"],[60,"b"],[63,"d"],[65,"b"],[67,"d"],[68,"b"],[70,"d"],[72,"b"],[73,"d"],[77,"b"],[75,"d"],[80,"b"],[79,"d"],[84,"b"],[82,"d"],[89,"b"],[85,"d"]],
+  "t1521|F#Nm":[[56,"d"],[54,"b"],[59,"d"],[57,"b"],[62,"d"],[61,"b"],[64,"d"],[66,"b"],[68,"d"],[69,"b"],[71,"d"],[73,"b"],[74,"d"],[78,"b"],[76,"d"],[81,"b"],[80,"d"],[85,"b"],[83,"d"],[90,"b"],[86,"d"]],
+  "t1521|GNm":[[57,"d"],[55,"b"],[60,"d"],[58,"b"],[63,"d"],[62,"b"],[65,"d"],[67,"b"],[69,"d"],[70,"b"],[72,"d"],[74,"b"],[75,"d"],[79,"b"],[77,"d"],[82,"b"],[81,"d"],[86,"b"],[84,"d"],[91,"b"],[87,"d"]],
+  "t1521|G#Nm":[[58,"d"],[56,"b"],[61,"d"],[59,"b"],[64,"d"],[63,"b"],[66,"d"],[68,"b"],[70,"d"],[71,"b"],[73,"d"],[75,"b"],[76,"d"],[80,"b"],[78,"d"],[83,"b"],[82,"d"],[87,"b"],[85,"d"],[92,"b"],[88,"d"]],
+  "t1521|ANm":[[59,"d"],[57,"b"],[62,"d"],[60,"b"],[65,"d"],[64,"b"],[67,"d"],[69,"b"],[71,"d"],[72,"b"],[74,"d"],[76,"b"],[77,"d"],[81,"b"],[79,"d"],[84,"b"],[83,"d"],[88,"b"],[86,"d"],[93,"b"],[89,"d"]],
+  "t1521|A#Nm":[[60,"d"],[58,"b"],[63,"d"],[61,"b"],[66,"d"],[65,"b"],[68,"d"],[70,"b"],[72,"d"],[73,"b"],[75,"d"],[77,"b"],[78,"d"],[82,"b"],[80,"d"],[85,"b"],[84,"d"],[89,"b"],[87,"d"],[94,"b"],[90,"d"]],
+  "t1521|BNm":[[61,"d"],[59,"b"],[64,"d"],[62,"b"],[67,"d"],[66,"b"],[69,"d"],[71,"b"],[73,"d"],[74,"b"],[76,"d"],[78,"b"],[79,"d"],[83,"b"],[81,"d"],[86,"b"],[85,"d"],[90,"b"],[88,"d"],[95,"b"],[91,"d"]],
+  "t1521|CNm":[[50,"d"],[48,"b"],[53,"d"],[51,"b"],[56,"d"],[55,"b"],[58,"d"],[60,"b"],[62,"d"],[63,"b"],[65,"d"],[67,"b"],[68,"d"],[72,"b"],[70,"d"],[75,"b"],[74,"d"],[79,"b"],[77,"d"],[84,"b"],[80,"d"]],
+  "t1521|C#Nm":[[51,"d"],[49,"b"],[54,"d"],[52,"b"],[57,"d"],[56,"b"],[59,"d"],[61,"b"],[63,"d"],[64,"b"],[66,"d"],[68,"b"],[69,"d"],[73,"b"],[71,"d"],[76,"b"],[75,"d"],[80,"b"],[78,"d"],[85,"b"],[81,"d"]],
+  "t1521|DNm":[[52,"d"],[50,"b"],[55,"d"],[53,"b"],[58,"d"],[57,"b"],[60,"d"],[62,"b"],[64,"d"],[65,"b"],[67,"d"],[69,"b"],[70,"d"],[74,"b"],[72,"d"],[77,"b"],[76,"d"],[81,"b"],[79,"d"],[86,"b"],[82,"d"]],
+  "t1521|D#Nm":[[53,"d"],[51,"b"],[56,"d"],[54,"b"],[59,"d"],[58,"b"],[61,"d"],[63,"b"],[65,"d"],[66,"b"],[68,"d"],[70,"b"],[71,"d"],[75,"b"],[73,"d"],[78,"b"],[77,"d"],[82,"b"],[80,"d"],[87,"b"],[83,"d"]],
   "t21|C":[[50,"d"],[48,"b"],[53,"d"],[52,"b"],[57,"d"],[55,"b"],[59,"d"],[60,"b"],[62,"d"],[64,"b"],[65,"d"],[67,"b"],[69,"d"],[72,"b"],[71,"d"],[76,"b"],[74,"d"],[79,"b"],[77,"d"],[84,"b"],[81,"d"]],
   "t21|C#":[[51,"d"],[49,"b"],[54,"d"],[53,"b"],[58,"d"],[56,"b"],[60,"d"],[61,"b"],[63,"d"],[65,"b"],[66,"d"],[68,"b"],[70,"d"],[73,"b"],[72,"d"],[77,"b"],[75,"d"],[80,"b"],[78,"d"],[85,"b"],[82,"d"]],
   "t21|Cm":[[50,"d"],[48,"b"],[53,"d"],[51,"b"],[56,"d"],[55,"b"],[59,"d"],[60,"b"],[62,"d"],[63,"b"],[65,"d"],[67,"b"],[68,"d"],[72,"b"],[71,"d"],[75,"b"],[74,"d"],[79,"b"],[77,"d"],[84,"b"],[80,"d"]],
@@ -1629,7 +1670,7 @@ function escapeHTML(value){
  * highlight plus the two changing text fields.
  */
 const HARMONICA_TUNING_NAMES=Object.fromEntries(Object.entries(TREMOLO_LAYOUTS).map(([k,v])=>[k,v.name]));
-const HARMONICA_TUNING_HOLES={t21:21,t24:24,t16g:16,t16a:16};
+const HARMONICA_TUNING_HOLES={t1521:21,t21:21,t24:24,t16g:16,t16a:16};
 let currentHarmonicaLayout=null;
 function getHarmonicaHoleCount(tuning){return HARMONICA_TUNING_HOLES[String(tuning)]||20}
 function getHarmonicaLayout(tuning){
