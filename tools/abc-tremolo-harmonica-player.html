@@ -45,12 +45,12 @@
 <title>
    ABC Tremolo Harmonica Player
   </title>
-<meta content="Play ABC tunes with synchronized notation, audio playback, and tablature diagrams for supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." name="description"/>
-<meta content="ABC notation, tremolo harmonica, Tombo 3116, Tombo 2116, Tombo 1521, Tombo 3121, Tombo 3124, 16-hole tremolo harmonica, 21-hole tremolo harmonica, 24-hole tremolo harmonica, harmonica tablature, harmonica tablature, blow draw diagram, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords"/>
+<meta content="Play ABC tunes with synchronized notation, audio playback, and tablature diagrams for supported Suzuki SU-13M and supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." name="description"/>
+<meta content="ABC notation, tremolo harmonica, Suzuki SU-13M, Tombo 3116, Tombo 2116, Tombo 1521, Tombo 3121, Tombo 3124, 13-hole tremolo harmonica, 16-hole tremolo harmonica, 21-hole tremolo harmonica, 24-hole tremolo harmonica, harmonica tablature, harmonica tablature, blow draw diagram, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords"/>
 <meta content="Michael Eskin" name="author"/>
 <meta content="website" property="og:type"/>
 <meta content="ABC Tremolo Harmonica Player" property="og:title"/>
-<meta content="Play ABC tunes with synchronized notation, audio playback, and highlighted blow/draw tablature diagrams for supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." property="og:description"/>
+<meta content="Play ABC tunes with synchronized notation, audio playback, and highlighted blow/draw tablature diagrams for supported Suzuki SU-13M and supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." property="og:description"/>
 <meta content="ABC Tremolo Harmonica Player" property="og:site_name"/>
 <meta content="https://michaeleskin.com/tools/abc-tremolo-harmonica-player.html" property="og:url"/>
 <meta content="https://michaeleskin.com/tools/img/abc-tremolo-harmonica-player-1.jpg" property="og:image"/>
@@ -877,7 +877,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 1.5
+     Version 1.6
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -886,7 +886,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      ABC Tremolo Harmonica Player
     </h1>
 <p>
-     Play ABC tunes with synchronized diagrams for 16-, 21-, and 24-hole tremolo harmonicas.
+     Play ABC tunes with synchronized diagrams for 13-, 16-, 21-, and 24-hole tremolo harmonicas.
     </p>
 </header>
 <div class="toolbar">
@@ -908,6 +908,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       Tremolo model
      </label>
 <select id="system" autocomplete="off" onchange="updateTremoloKeyChoices();">
+<option value="su13">Suzuki SU-13M: 13-Hole</option>
 <option value="t16g">Tombo 3116: 16-Hole (Low G)</option>
 <option value="t16a">Tombo 2116: 16-Hole (Low A)</option>
 <option value="t1521">Tombo 1521: 21-Hole</option>
@@ -1147,7 +1148,8 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
 <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
 <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
-<p>This player supports fixed layouts for the following Tombo tremolo harmonica models. Tremolo harmonicas use two reeds for each note, tuned slightly apart to produce the characteristic wavering sound.</p>
+<p>This player supports fixed layouts for the following Suzuki and Tombo tremolo harmonica models. Tremolo harmonicas use two reeds for each note, tuned slightly apart to produce the characteristic wavering sound.</p>
+<p><b>Suzuki SU-13M: 13-Hole</b> — C and Am.</p>
 <p><b>Tombo 3116: 16-Hole (Low G)</b> — Key of C only.</p>
 <p><b>Tombo 2116: 16-Hole (Low A)</b> — Key of C only.</p>
 <p><b>Tombo 1521: 21-Hole</b> — Major, harmonic minor, and natural minor layouts in all 12 chromatic keys.</p>
@@ -1155,6 +1157,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <p><b>Tombo 3124: 24-Hole</b> — C, C#, A, and A#.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Settings</p>
 <p><b>Tremolo model</b> selects one of the supported fixed model layouts. Each model uses a fixed note mapping rather than transposing a generic tuning.</p>
+<p><b>Suzuki SU-13M: 13-Hole</b> is available in C and Am.</p>
 <p><b>Tombo 3116: 16-Hole (Low G)</b> uses the Low G 16-hole layout and is available in C.</p>
 <p><b>Tombo 2116: 16-Hole (Low A)</b> uses the Low A 16-hole layout and is available in C.</p>
 <p><b>Tombo 1521: 21-Hole</b> provides all 12 major keys, all 12 harmonic minor keys, and all 12 natural minor keys. Natural minor tunings are labeled with <b>Nm</b> (for example, CNm).</p>
@@ -1185,7 +1188,10 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <p>When opening a share link, click <b>Click to Enable Playback</b> before using the normal playback controls if your browser requires a user gesture to initialize audio.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Files and Tune Selection</p>
 <p>Open an <b>.abc</b> or <b>.txt</b> file, or paste ABC directly into the editor. Multi-tune files are supported; use the <b>Tune</b> menu to select the tune to display and play.</p>
-<p>Tombo and the referenced Tombo model names are trademarks of their respective owner. This independent tool is not affiliated with or endorsed by Tombo Musical Instrument Co., Ltd. Model names are used solely to identify the harmonica layouts supported by the player.</p>
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Layout Compatibility</p>
+<p>Other Suzuki and Easttop 21- and 24-hole tremolo harmonica models should be compatible with the equivalent-key Tombo layouts in this player when they use the same note arrangement.</p>
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Trademarks</p>
+<p>Tombo, Suzuki, Easttop, and the referenced model names are trademarks of their respective owners. This independent tool is not affiliated with or endorsed by Tombo Musical Instrument Co., Ltd., Suzuki Musical Instrument Mfg. Co., Ltd., or Jiangsu East Musical Instrument Co., Ltd (Easttop). Brand and model names are used solely to identify supported or compatible harmonica layouts.</p>
 <hr style="width:100%;border:0;border-top:1px solid #d0d0d0;margin:18px 0;">
 <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
 <p style="text-align: center">
@@ -1353,6 +1359,7 @@ function stripChordSymbols(abc){return String(abc||"").replace(/"[^"\r\n]*"/g,m=
 // position; paired reeds are drawn as two vertically aligned holes and sound
 // together to create the tremolo effect.
 const TREMOLO_MODEL_KEYS={
+  su13:["C","Am"],
   t1521:["E","F","F#","G","G#","A","A#","B","C","C#","D","D#","Em","Fm","F#m","Gm","G#m","Am","A#m","Bm","Cm","C#m","Dm","D#m","ENm","FNm","F#Nm","GNm","G#Nm","ANm","A#Nm","BNm","CNm","C#Nm","DNm","D#Nm"],
   t21:["C","C#","Cm","G","G#","Gm","A","A#","Am"],
   t24:["C","C#","A","A#"],
@@ -1360,6 +1367,7 @@ const TREMOLO_MODEL_KEYS={
   t16a:["C"]
 };
 const TREMOLO_LAYOUTS={
+  su13:{name:"Suzuki SU-13M: 13-Hole",notes:[]},
   t16g:{name:"Tombo 3116: 16-Hole (Low G)",notes:[]},
   t16a:{name:"Tombo 2116: 16-Hole (Low A)",notes:[]},
   t1521:{name:"Tombo 1521: 21-Hole",notes:[]},
@@ -1370,6 +1378,8 @@ const TREMOLO_LAYOUTS={
 // These are deliberately model+key specific; selecting a key chooses a fixed
 // mapping rather than transposing a generic layout.
 const TOMBO_FIXED_LAYOUTS={
+  "su13|C":[[57,"d"],[55,"b"],[59,"d"],[60,"b"],[62,"d"],[64,"b"],[65,"d"],[67,"b"],[69,"d"],[72,"b"],[71,"d"],[76,"b"],[74,"d"]],
+  "su13|Am":[[65,"d"],[64,"b"],[68,"d"],[69,"b"],[71,"d"],[72,"b"],[74,"d"],[76,"b"],[77,"d"],[81,"b"],[80,"d"],[84,"b"],[83,"d"]],
   "t1521|E":[[54,"d"],[52,"b"],[57,"d"],[56,"b"],[61,"d"],[59,"b"],[63,"d"],[64,"b"],[66,"d"],[68,"b"],[69,"d"],[71,"b"],[73,"d"],[76,"b"],[75,"d"],[80,"b"],[78,"d"],[83,"b"],[81,"d"],[88,"b"],[85,"d"]],
   "t1521|F":[[55,"d"],[53,"b"],[58,"d"],[57,"b"],[62,"d"],[60,"b"],[64,"d"],[65,"b"],[67,"d"],[69,"b"],[70,"d"],[72,"b"],[74,"d"],[77,"b"],[76,"d"],[81,"b"],[79,"d"],[84,"b"],[82,"d"],[89,"b"],[86,"d"]],
   "t1521|F#":[[56,"d"],[54,"b"],[59,"d"],[58,"b"],[63,"d"],[61,"b"],[65,"d"],[66,"b"],[68,"d"],[70,"b"],[71,"d"],[73,"b"],[75,"d"],[78,"b"],[77,"d"],[82,"b"],[80,"d"],[85,"b"],[83,"d"],[90,"b"],[87,"d"]],
@@ -1710,7 +1720,7 @@ function escapeHTML(value){
  * highlight plus the two changing text fields.
  */
 const HARMONICA_TUNING_NAMES=Object.fromEntries(Object.entries(TREMOLO_LAYOUTS).map(([k,v])=>[k,v.name]));
-const HARMONICA_TUNING_HOLES={t1521:21,t21:21,t24:24,t16g:16,t16a:16};
+const HARMONICA_TUNING_HOLES={su13:13,t1521:21,t21:21,t24:24,t16g:16,t16a:16};
 let currentHarmonicaLayout=null;
 function getHarmonicaHoleCount(tuning){return HARMONICA_TUNING_HOLES[String(tuning)]||20}
 function getHarmonicaLayout(tuning){
