@@ -89,7 +89,7 @@
      :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
-.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(170px,1.15fr) auto minmax(150px,1fr) minmax(72px,.42fr) minmax(78px,.46fr) minmax(190px,1.35fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
+.toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(170px,1.15fr) auto minmax(150px,1fr) minmax(72px,.42fr) minmax(86px,.50fr) minmax(86px,.50fr) minmax(190px,1.35fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
 .toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}.diagramHeaderRight .meta{margin-right:.6em}
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
 .abcWrap textarea.editorTextSmall{font-size:14px}
@@ -110,7 +110,7 @@ body.diagram-full .harmonicaStaffNote{left:50%;top:32.5%;width:clamp(390px,30vw,
 body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .liveTuneTitle{top:-8%;font-size:clamp(52px,4.8vw,68px)}body.diagram-full .liveNoteName{top:6.0%;font-size:clamp(90px,9.6vw,136px)}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
 @media (min-width:1051px) and (max-width:1320px){
   .toolbar{
-    grid-template-columns:minmax(155px,1fr) auto minmax(145px,.95fr) minmax(64px,.34fr) minmax(70px,.38fr) minmax(210px,1.5fr) auto;
+    grid-template-columns:minmax(155px,1fr) auto minmax(145px,.95fr) minmax(64px,.34fr) minmax(78px,.42fr) minmax(78px,.42fr) minmax(190px,1.35fr) auto;
     gap:8px;
   }
 }
@@ -955,7 +955,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 2.3
+     Version 2.4
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1093,6 +1093,38 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      </select>
     </div>
     <div class="control">
+<label for="playbackTranspose">
+      Playback transpose
+     </label>
+<select id="playbackTranspose" autocomplete="off">
+<option value="-12">-12</option>
+<option value="-11">-11</option>
+<option value="-10">-10</option>
+<option value="-9">-9</option>
+<option value="-8">-8</option>
+<option value="-7">-7</option>
+<option value="-6">-6</option>
+<option value="-5">-5</option>
+<option value="-4">-4</option>
+<option value="-3">-3</option>
+<option value="-2">-2</option>
+<option value="-1">-1</option>
+<option selected="" value="0">0</option>
+<option value="1">+1</option>
+<option value="2">+2</option>
+<option value="3">+3</option>
+<option value="4">+4</option>
+<option value="5">+5</option>
+<option value="6">+6</option>
+<option value="7">+7</option>
+<option value="8">+8</option>
+<option value="9">+9</option>
+<option value="10">+10</option>
+<option value="11">+11</option>
+<option value="12">+12</option>
+</select>
+</div>
+<div class="control">
      <label for="tuneSelect">
       Tune
      </label>
@@ -1383,7 +1415,10 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       <b>Octave shift</b> shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.
      </p>
      <p>
-      The selected harmonica tuning, key, and octave shift are saved in this browser and are also included in share links.
+      <b>Playback transpose</b> shifts the playback pitch from -12 through +12 semitones without changing the written ABC notes or the displayed harmonica holes and technique indications.</p>
+      <p>This can make it possible and simple to play tunes on a harmonica in a key different from the tune.</p>
+      <p>If the ABC contains a %%MIDI transpose directive, the Playback transpose setting takes precedence during playback; the original ABC is not changed.</p>
+      <p>Harmonica tuning, key, octave shift, and playback transpose are remembered in this browser and included in share links.
      </p>
      <p style="text-align:left;font-weight:700;margin:18px 0 6px">
       Harmonica Technique Symbols
@@ -1512,7 +1547,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       A share button is disabled when its resulting link would exceed the maximum allowed of 8100 characters.
      </p>
      <p>
-      Opening a share link restores its harmonica tuning, key, and octave shift and displays the first tune encoded in the link.
+      Opening a share link restores its harmonica tuning, key, octave shift, and playback transpose and displays the first tune encoded in the link.
      </p>
      <p>
       When tunes are opened from a share link, click the
@@ -1757,9 +1792,9 @@ async function loadSuper64Samples(){
   return super64LoadPromise;
 }
 
-function tuneFitsSuper64Range(octaveShift=0){
+function tuneFitsSuper64Range(playbackTransposeSemitones=0){
   if(!solution||!solution.length)return true;
-  const transpose=(parseInt(octaveShift,10)||0)*12;
+  const transpose=parseInt(playbackTransposeSemitones,10)||0;
   for(const item of solution){
     const midi=abcPitchToMidi(item.normalizedNote||item.abcNote);
     const playbackMidi=midi==null?null:midi+transpose;
@@ -2264,11 +2299,13 @@ async function toggleMetronome(){
 function buildPlaybackABC(abc){
   const source=String(abc||"");
   const octaveShift=parseInt($("fingeringDisplay").value,10)||0;
-  const useSuper64=super64Ready&&tuneFitsSuper64Range(octaveShift);
+  const playbackTranspose=parseInt($("playbackTranspose").value,10)||0;
+  const effectivePlaybackTranspose=octaveShift*12+playbackTranspose;
+  const useSuper64=super64Ready&&tuneFitsSuper64Range(effectivePlaybackTranspose);
   const forced=[
     `%soundfont ${playbackSoundfont}`,
     melodyMuted?"%%MIDI program mute":(useSuper64?"%%MIDI program custom1":"%%MIDI program 22"),
-    ...(octaveShift!==0?[`%%MIDI transpose ${octaveShift*12}`]:[]),
+    ...(effectivePlaybackTranspose!==0?[`%%MIDI transpose ${effectivePlaybackTranspose}`]:[]),
     ...(useSuper64?[
       `%custom_instrument_1_volume_scale ${super64VolumeScale}`,
       `%custom_instrument_1_fade ${super64FadeTimeMs}`
@@ -2280,7 +2317,7 @@ function buildPlaybackABC(abc){
   ].join("\n")+"\n";
 
   let cleaned=source.replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|transpose|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
     m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
   );
 
@@ -2529,12 +2566,15 @@ function fingeringForEvent(event){
 
   // During playback, use abcjs's actual sounding MIDI pitch as the authoritative
   // note identity, just as the other instrument-specific players do. Playback
-  // is transposed by the selected octave shift, while solution[] stores the
-  // original written pitches, so remove that playback transpose before matching.
+  // is transposed by the selected octave shift plus Playback transpose, while
+  // solution[] stores the original written pitches, so remove both playback
+  // pitch shifts before matching. Playback transpose must never change the
+  // displayed hole or technique solution.
   const midi=eventMidi(event);
   if(midi!=null){
     const octaveShift=parseInt($("fingeringDisplay").value,10)||0;
-    const writtenMidi=Math.round(Number(midi))-octaveShift*12;
+    const playbackTranspose=parseInt($("playbackTranspose").value,10)||0;
+    const writtenMidi=Math.round(Number(midi))-(octaveShift*12+playbackTranspose);
     const item=solution.find(candidate=>{
       const candidateMidi=abcPitchToMidi(candidate.normalizedNote||candidate.abcNote);
       return candidateMidi!=null&&Math.round(candidateMidi)===writtenMidi;
@@ -2762,6 +2802,7 @@ function generateShareLink(abc){
     params.set("system",$("system").value);
     params.set("style",$("style").value);
     params.set("display",$("fingeringDisplay").value);
+    params.set("transpose",$("playbackTranspose").value);
     if($("system").value==="8"){
       // Embed the complete validated custom tuning so the recipient sees the
       // sender's exact name, hole count, and 60-entry map without touching the
@@ -3037,10 +3078,12 @@ function loadShareLinkAfterStartup(){
   // share link and feed its ABC through the same post-read path used by File Open.
   setTimeout(async()=>{
     try{
-      const system=params.get("system"),style=params.get("style"),display=params.get("display");
+      const system=params.get("system"),style=params.get("style"),display=params.get("display"),transpose=params.get("transpose");
       if(["0","1","2","3","4","5","6","7","8"].includes(system)){$("system").value=system;lastRealSystem=system;}
       if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(style))$("style").value=style;
       if(["-3","-2","-1","0","1","2","3"].includes(display))$("fingeringDisplay").value=display;
+       const sharedTranspose=Number(transpose);
+       if(Number.isInteger(sharedTranspose)&&sharedTranspose>=-12&&sharedTranspose<=12)$("playbackTranspose").value=String(sharedTranspose);
       if(system==="8"){
         const encodedCustom=params.get("custom");
         if(!encodedCustom)throw new Error("This custom-tuning share link does not contain the custom tuning data.");
@@ -3086,7 +3129,7 @@ function updateHarmonicaHeaderStatus(){
   if(octNum!==0)parts.push(`Octave ${octNum>0?"+":""}${octNum}`);
   $("diagramMeta").textContent=parts.join(" • ");
 }
-function savePrefs(){try{const system=$("system").value==="configure"?lastRealSystem:$("system").value;localStorage.setItem(PREFS_KEY,JSON.stringify({system,style:$("style").value,display:$("fingeringDisplay").value}))}catch(_){}}
+function savePrefs(){try{const system=$("system").value==="configure"?lastRealSystem:$("system").value;localStorage.setItem(PREFS_KEY,JSON.stringify({system,style:$("style").value,display:$("fingeringDisplay").value,playbackTranspose:$("playbackTranspose").value}))}catch(_){}}
 
 const EDITOR_SIZE_KEY="abcHarmonicaEditorTextSize";
 function applyEditorTextSize(size,save=false){
@@ -3147,7 +3190,7 @@ function abcNoteTokens(value){
   }
   return tokens;
 }
-function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7","8"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display}catch(_){}}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7","8"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display;const transpose=Number(p.playbackTranspose);if(Number.isInteger(transpose)&&transpose>=-12&&transpose<=12)$("playbackTranspose").value=String(transpose)}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function updateTempoButtonState(){
@@ -3414,6 +3457,7 @@ $("openFile").addEventListener("change",async e=>{
   }
 });
 $("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{if($("system").value==="configure"){$("system").value=lastRealSystem;openCustomTuningEditor();updateHarmonicaHeaderStatus();return}lastRealSystem=$("system").value;savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+$("playbackTranspose").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons();});
 
 function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
 function beginManualTuneIfNeeded(){
