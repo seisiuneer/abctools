@@ -877,7 +877,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 1.6
+     Version 1.7
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1682,7 +1682,7 @@ function buildPlaybackABC(abc){
 
   let cleaned=source.replace(
     /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|transpose|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
-    m=>" ".repeat(m.length)
+    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
   );
 
   const kMatch=/^K\s*:.*$/mi.exec(cleaned);

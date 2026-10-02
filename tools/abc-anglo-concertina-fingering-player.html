@@ -502,7 +502,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.34</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 2.35</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -2240,7 +2240,7 @@ function buildPlaybackABC(abc){
 
   let cleaned=source.replace(
     /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
-    m=>" ".repeat(m.length)
+    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
   );
 
   const kMatch=/^K\s*:.*$/mi.exec(cleaned);
