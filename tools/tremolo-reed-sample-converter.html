@@ -117,7 +117,7 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{text-align
 body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 
 .balanceTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.balanceControl>input[type="range"]{margin-top:18px}
+.balanceControl>input[type="range"]{margin-top:12px}
 .balanceTop label{margin:0}
 .miniReset{padding:2px 8px;font-size:12px;font-weight:600;line-height:1.25;min-width:0;border-radius:5px}
 #endRate{margin-top:6px}
@@ -232,6 +232,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <div class="balanceControl">
  <div class="balanceTop">
   <label>Reed Volume Balance — <span id="balanceV">50 / 50</span></label>
+  <button id="balanceReset" type="button" class="miniReset">Reset</button>
  </div>
  <input id="balance" type="range" min="0" max="100" step="1" value="50">
 </div>
@@ -282,13 +283,14 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
    <p>In two-reed modes, it balances the two reeds.</p>
    <p>In three-reed mode, fully left plays only the original center reed and fully right plays only the combined lower and upper offset reeds.</p>
    <p>At 50 / 50, the original reed and combined offset reeds contribute equally.</p>
+    <p><b>Reset</b> beside Reed Volume Balance restores the balance to <b>50 / 50</b>.</p>
 
    <p class="helpSection">Output Level</p>
    <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample.</p><p>The default is <b>−15 LUFS</b>.</p><p>Normalization is applied after all reeds are mixed.</p>
    <p><b>Output Level Trim</b> applies an additional gain adjustment after normalization.</p><p>If the requested level would cause digital clipping, peak protection automatically reduces the output level; the completion message reports when this occurs.</p>
    <p>Output samples are mono, <b>44.1 kHz IEEE 32-bit floating-point WAV</b> files.</p>
 
-   <p><b>Reset All</b> restores all converter settings to their original defaults.</p>
+   <p><b>Reset All</b> restores all converter settings to their original defaults, including Reed Volume Balance to <b>50 / 50</b>.</p>
     <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
 
    <p class="helpSection">Sample List and Pitch Detection</p>
@@ -416,6 +418,12 @@ $("offsetReset").onclick=async()=>{
 };
 $("curve").onchange=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
 $("tuningMode").onchange=()=>{updateRateLimits();updateRateLabels();renderAnalysis();saveSettings();previewSettingChanged()};
+$("balanceReset").onclick=()=>{
+ $("balance").value=50;
+ $("balanceV").textContent="50 / 50";
+ saveSettings();
+ previewSettingChanged();
+};
 $("balance").oninput=()=>{const v=+$("balance").value;$("balanceV").textContent=(100-v)+" / "+v;saveSettings();previewSettingChanged()};
 $("target").addEventListener("input",()=>{saveSettings();previewSettingChanged()});
 $("trim").addEventListener("input",()=>{saveSettings();previewSettingChanged()});
