@@ -35,12 +35,12 @@
 <title>
    ABC Tremolo Harmonica Player
 </title>
-<meta content="Play ABC tunes with synchronized notation, audio playback, and tablature diagrams for supported Suzuki SU-13M and supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." name="description"/>
+<meta content="Play ABC tunes with synchronized notation, audio playback, and tablature diagrams for supported Suzuki SU-13M and supported Tombo 3116, 2116, 1521, 3121, and 3124 as well as custom tremolo harmonica layouts." name="description"/>
 <meta content="ABC notation, tremolo harmonica, Suzuki SU-13M, Tombo 3116, Tombo 2116, Tombo 1521, Tombo 3121, Tombo 3124, 13-hole tremolo harmonica, 16-hole tremolo harmonica, 21-hole tremolo harmonica, 24-hole tremolo harmonica, harmonica tablature, harmonica tablature, blow draw diagram, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords"/>
 <meta content="Michael Eskin" name="author"/>
 <meta content="website" property="og:type"/>
 <meta content="ABC Tremolo Harmonica Player" property="og:title"/>
-<meta content="Play ABC tunes with synchronized notation, audio playback, and highlighted blow/draw tablature diagrams for supported Suzuki SU-13M and supported Tombo 3116, 2116, 1521, 3121, and 3124 tremolo harmonica layouts." property="og:description"/>
+<meta content="Play ABC tunes with synchronized notation, audio playback, and highlighted blow/draw tablature diagrams for supported Suzuki SU-13M and supported Tombo 3116, 2116, 1521, 3121, and 3124 as well as custom tremolo harmonica layouts." property="og:description"/>
 <meta content="ABC Tremolo Harmonica Player" property="og:site_name"/>
 <meta content="https://michaeleskin.com/tools/abc-tremolo-harmonica-player.html" property="og:url"/>
 <meta content="https://michaeleskin.com/tools/img/abc-tremolo-harmonica-player-2.jpg" property="og:image"/>
@@ -861,13 +861,18 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   }
 }
     
+
+/* Custom tremolo tuning editor */
+.customTuningOverlay{display:none;position:fixed;inset:0;z-index:4500;background:rgba(0,0,0,.44);padding:12px}.customTuningDialog{width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px);margin:0 auto;background:#fff;box-shadow:0 15px 45px rgba(0,0,0,.3);display:flex;flex-direction:column}.customTuningHeader{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px;border-bottom:1px solid #ddd;flex:0 0 auto}.customTuningHeader h2{margin:0;font-size:21px}.customTuningClose{border:0;background:transparent;font-size:30px;line-height:1;cursor:pointer;padding:0 4px}.customTuningBody{padding:16px 20px;overflow:auto;-webkit-overflow-scrolling:touch;min-height:0;flex:1 1 auto}.customTuningTop{display:grid;grid-template-columns:minmax(220px,1fr) 170px;gap:12px;margin-bottom:12px}.customTuningTop label,.presetInitDialog label{display:flex;flex-direction:column;gap:5px;font-weight:700}.customTuningTop input,.customTuningTop select,.presetInitDialog select{font:inherit;padding:7px 8px;min-height:38px}.customTuningHelp{font-size:14px;line-height:1.42;background:#f5f5f5;border:1px solid #ddd;padding:10px 12px;margin:8px 0 16px}.customTuningHelp code{font-weight:700}.customTuningOctave{margin:14px 0 4px;font-weight:700}.customTuningGrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;min-width:0}.customTuningCell{text-align:center;min-width:0}.customTuningCell span{display:block;font-size:11px;white-space:nowrap;margin-bottom:3px}.customTuningCell input{box-sizing:border-box;width:100%;min-width:0;text-align:center;padding:6px 1px;font:600 13px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}.customTuningActions{display:grid;grid-template-columns:max-content max-content minmax(0,1fr) max-content max-content;gap:8px;align-items:center;margin-top:18px}.customTuningActions .spacer{display:none}.customTuningActions button{min-height:38px;padding:7px 10px;white-space:nowrap}.customTuningTop input,.customTuningTop select,.customTuningCell input,.presetInitDialog select{-webkit-appearance:none;appearance:none;color:#17241c;-webkit-text-fill-color:#17241c;background:#fff;border:1px solid #b8c7bd;border-radius:7px;box-shadow:none}.customTuningTop select,.presetInitDialog select{padding:7px 36px 7px 10px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.customTuningActions button,.presetInitActions button{-webkit-appearance:none;appearance:none;font:inherit;font-weight:650;line-height:1.2;color:#17241c;-webkit-text-fill-color:#17241c;background:#e8f1ff;border:1px solid #9dbaf2;border-radius:8px;box-shadow:none;cursor:pointer}.customTuningActions button:not(:disabled):hover,.presetInitActions button:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}.customTuningActions button:disabled,.presetInitActions button:disabled{opacity:.45;cursor:default}.customTuningClose{-webkit-appearance:none;appearance:none;color:#17241c;-webkit-text-fill-color:#17241c;box-shadow:none;font-family:inherit}.presetInitOverlay{display:none;position:fixed;inset:0;z-index:4600;background:rgba(0,0,0,.38);padding:18px;align-items:center;justify-content:center}.presetInitDialog{width:min(430px,calc(100vw - 36px));background:#fff;border:1px solid #aebbb3;border-radius:10px;box-shadow:0 15px 45px rgba(0,0,0,.3);padding:18px 20px}.presetInitHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 15px}.presetInitDialog h3{margin:0;font-size:19px}.presetInitActions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.presetInitActions button{min-width:82px;min-height:38px;padding:7px 14px}.customTuningError{display:none;margin:12px 0 0;padding:9px 11px;background:#fff1f1;border:1px solid #b44;color:#7b1111;font-weight:600;white-space:pre-wrap}.presetInitFields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.presetInitAllX{margin-top:12px;width:100%;min-height:44px;padding:8px 14px}@media(max-width:650px){.customTuningGrid{grid-template-columns:repeat(4,minmax(0,1fr));min-width:0}.customTuningOverlay{padding:8px}.customTuningDialog{width:calc(100vw - 16px);max-height:calc(100vh - 16px)}.customTuningHeader{padding:12px 14px 8px}.customTuningHeader h2{font-size:18px}.customTuningBody{padding:12px 14px calc(45px + env(safe-area-inset-bottom))}.customTuningTop{grid-template-columns:1fr}.customTuningActions{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.customTuningActions button{white-space:normal}.customTuningActions #customApplyBtn{grid-column:1 / -1}.customTuningActions .spacer{display:none}.presetInitFields{grid-template-columns:1fr}}
+/* iPad/tablet landscape: parity with the standard Harmonica custom editor. */
+@media (pointer:coarse) and (orientation:landscape) and (min-width:700px) and (max-width:1400px){.customTuningOverlay{padding:10px 12px;align-items:flex-start}.customTuningDialog{height:calc(100dvh - 20px);max-height:calc(100dvh - 20px);overflow:hidden}.customTuningBody{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(24px + env(safe-area-inset-bottom))}.customTuningActions{padding-bottom:4px}}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 1.8
+     Version 1.9
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -876,7 +881,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      ABC Tremolo Harmonica Player
     </h1>
 <p>
-     Play ABC tunes with synchronized diagrams for 13-, 16-, 21-, and 24-hole tremolo harmonicas.
+     Play ABC tunes with synchronized diagrams for tremolo harmonicas.
     </p>
 </header>
 <div class="toolbar">
@@ -901,9 +906,12 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <option value="su13">Suzuki SU-13M: 13-Hole</option>
 <option value="t16g">Tombo 3116: 16-Hole (Low G)</option>
 <option value="t16a">Tombo 2116: 16-Hole (Low A)</option>
-<option value="t1521">Tombo 1521: 21-Hole</option>
-<option selected="" value="t21">Tombo 3121: 21-Hole</option>
+<option selected="" value="t1521">Tombo 1521: 21-Hole</option>
+<option value="t21">Tombo 3121: 21-Hole</option>
 <option value="t24">Tombo 3124: 24-Hole</option>
+<option disabled="" value="__separator__">────────</option>
+<option id="customTuningOption" value="custom">Custom Tremolo</option>
+<option value="configure">Configure Custom Tremolo...</option>
 </select>
 </div>
 <div class="control">
@@ -1133,18 +1141,15 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
     5
    </span>
 </div>
+
+<div class="customTuningOverlay" id="customTuningOverlay" role="dialog" aria-modal="true" aria-labelledby="customTuningTitle"><div class="customTuningDialog"><div class="customTuningHeader"><h2 id="customTuningTitle">Configure Custom Tremolo Harmonica</h2><button class="customTuningClose" id="customTuningClose" type="button" aria-label="Close">×</button></div><div class="customTuningBody"><div class="customTuningTop"><label>Custom tuning name<input id="customTuningName" type="text" maxlength="40" autocomplete="off"></label><label>Harmonica<select id="customHoleCount"><option value="">Select hole count…</option><option value="12">12 Hole</option><option value="13">13 Hole</option><option value="16">16 Hole</option><option value="20">20 Hole</option><option value="21">21 Hole</option><option value="23">23 Hole</option><option value="24">24 Hole</option></select></label></div><div class="customTuningHelp">Enter one tablature indication for each chromatic note:<br><code>4</code> = blow &nbsp; <code>-4</code> = draw &nbsp; <code>x</code> = note unavailable<br>Only blow, draw, and <code>x</code> are valid. Hole numbers must fit the selected instrument.</div><div id="customTuningMatrix"></div><div class="customTuningError" id="customTuningError"></div><div class="customTuningActions"><button id="customLoadBtn" type="button">Load Tuning File</button><button id="customSaveFileBtn" type="button">Save Tuning File</button><button id="customResetBtn" type="button">Initialize from Preset</button><span class="spacer"></span><button id="customCancelBtn" type="button">Cancel</button><button id="customApplyBtn" type="button">Save</button></div><input id="customTuningFile" type="file" accept=".txt,text/plain" hidden></div></div></div>
+<div class="presetInitOverlay" id="presetInitOverlay" role="dialog" aria-modal="true" aria-labelledby="presetInitTitle"><div class="presetInitDialog"><div class="presetInitHeader"><h3 id="presetInitTitle">Initialize from Preset</h3><button class="customTuningClose" id="presetInitClose" type="button" aria-label="Close">×</button></div><div class="presetInitFields"><label>Model<select id="presetInitModel"></select></label><label>Key<select id="presetInitKey"></select></label></div><div class="presetInitActions"><button id="presetInitCancelBtn" type="button">Cancel</button><button id="presetInitApplyBtn" type="button">Apply</button></div></div></div>
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
 <div style="max-width:680px;height:calc(100vh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.3)"><h2 style="flex:0 0 auto;text-align:center;margin:0;padding:20px 28px 24px">ABC Tremolo Harmonica Player Instructions</h2>
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
 <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
 <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
-<p>This player supports fixed layouts for the following Suzuki and Tombo tremolo harmonica models. Tremolo harmonicas use two reeds for each note, tuned slightly apart to produce the characteristic wavering sound.</p>
-<p><b>Suzuki SU-13M: 13-Hole</b> — C and Am.</p>
-<p><b>Tombo 3116: 16-Hole (Low G)</b> — Key of C only.</p>
-<p><b>Tombo 2116: 16-Hole (Low A)</b> — Key of C only.</p>
-<p><b>Tombo 1521: 21-Hole</b> — Major, harmonic minor, and natural minor layouts in all 12 chromatic keys.</p>
-<p><b>Tombo 3121: 21-Hole</b> — C, C#, Cm, G, G#, Gm, A, A#, and Am.</p>
-<p><b>Tombo 3124: 24-Hole</b> — C, C#, A, and A#.</p>
+<p>It supports many common standard tremolo harmonica models and tunings, as well as the option to define a custom tremolo harmonica.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Settings</p>
 <p><b>Tremolo model</b> selects one of the supported fixed model layouts. Each model uses a fixed note mapping rather than transposing a generic tuning.</p>
 <p><b>Suzuki SU-13M: 13-Hole</b> is available in C and Am.</p>
@@ -1161,7 +1166,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <p>Tuning, key, octave shift, and playback transpose are remembered in this browser and included in share links.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Diagram</p>
 <p>The diagram represents the two rows of a tremolo harmonica. Each playable note uses a vertically aligned pair of reeds; both holes in the pair are highlighted together. Green indicates <b>blow</b> and magenta indicates <b>draw</b>.</p>
-<p><b>Display</b> chooses <b>Arrows</b> or <b>Text</b>. Arrows show breath direction. Text shows the position number, with a leading – for draw. Tremolo layouts in this player do not use bends, overblows, custom tuning, or a chromatic slide.</p>
+<p><b>Display</b> chooses <b>Arrows</b> or <b>Text</b>. Arrows show breath direction. Text shows the position number, with a leading – for draw. Tremolo layouts in this player use only blow and draw; bends, overblows, and chromatic-slide techniques are not supported.</p>
 <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
 <p>Editing the ABC rebuilds the notation and tremolo harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the tremolo display to that note. Use the editor text-size menu to change the ABC editor text size.</p>
@@ -1174,13 +1179,24 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
 <p><b>Save</b> writes the current ABC collection to a file.</p>
 <p><b>Share Tune</b> creates a share link for the displayed tune and copies it to the system clipboard to paste into other locations; <b>Share All Tunes</b> includes all loaded tunes.</p>
 <p>The link includes the selected tremolo model, key, octave shift, and playback transpose.</p>
+<p>Settings received from a share link are temporary and do not replace your saved preferences.</p>
 <p><b>Shift-click</b> a Share button to open the selected ABC in the ABC Transcription Tools ABC Editor. <b>Alt-click</b> to open it in the ABC Transcription Tools Player. Share buttons are disabled when the resulting link would exceed 8100 characters.</p>
 <p>When opening a share link, click <b>Click to Enable Playback</b> before using the normal playback controls if your browser requires a user gesture to initialize audio.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Files and Tune Selection</p>
 <p>Open an <b>.abc</b> or <b>.txt</b> file, or paste ABC directly into the editor. Multi-tune files are supported; use the <b>Tune</b> menu to select the tune to display and play.</p>
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">Layout Compatibility</p>
 <p>Other Suzuki and Easttop 21- and 24-hole tremolo harmonica models should be compatible with the equivalent-key Tombo layouts in this player when they use the same note arrangement.</p>
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Using Playback Transpose</p>
+<p id="custom-tuning-instructions" style="text-align:left;font-weight:700;margin:18px 0 6px">Custom Tremolo Harmonica</p>
+<p>The <b>Custom Tremolo</b> option lets you create and save a 12-, 13-, 16-, 20-, 21-, 23-, or 24-hole tremolo layout. Choose <b>Configure Custom Tremolo...</b> in the Tremolo model menu to edit it.</p>
+<p>The custom editor uses a five-octave, 60-note map.</p>
+<p>The custom tuning initially matches the Tombo 1521 21-hole in C.</p>
+<p>Each entry may be a hole number for blow (for example <b>4</b>), a hole number preceded by <b>-</b> for draw (for example <b>-4</b>), or <b>x</b> for an unavailable note. Other harmonica technique indications as used in the diatonic harmonica player, for example bends and overblows, are invalid.</p>
+<p><b>Initialize from Preset</b> can start from any built-in model and any key available for that model, within the custom editor's five-octave range, or choose <b>Reset All to x</b> from the Model menu to reset every entry to <b>x</b>. When that option is selected, Key is set to <b>None</b>. The key choices change with the selected source model.</p>
+<p><b>Load Tuning File</b> accepts compatible custom harmonica settings from this player, the standard <b>ABC Harmonica Player</b>, or <b>ABC Transcription Tools</b> when all assigned notes use only blow and draw.</p>
+<p>If the file has no usable tremolo hole count, the player infers the smallest suitable choice from 12, 13, 16, 20, 21, 23, or 24 holes; you may change it before saving.</p>
+<p>The name, hole count, tablature entries, and every hole reference are validated when you save the custom tuning to the player or save a tuning file.</p>
+<p><b>Save</b> stores the custom tuning in this browser and makes it the active Custom Tremolo. <b>Save Tuning File</b> exports the tuning to a <b>.txt</b> file without changing the tuning saved in the browser. Changes made in the custom editor are not applied to the player or stored in this browser unless you click <b>Save</b>.</p>
+<p>When a share link uses a custom tremolo, the complete custom definition is included temporarily in the link. Opening the link does not replace the recipient's saved custom tuning unless they explicitly open the editor and click <b>Save</b>.</p><p style="text-align:left;font-weight:700;margin:18px 0 6px">Using Playback Transpose</p>
 <p><b>Playback Transpose</b> can be useful in many situations where you want the playback pitch to match the tremolo harmonica you actually have while keeping the displayed blow/draw positions appropriate for the tune. The following example uses a <b>C tremolo harmonica</b> because it is a straightforward way to see how the feature works.</p>
 <p>It's especially useful if the only tremolo harmonica you have is in <b>C</b>, but you want to play along with tunes in other common keys.</p>
 <p>Unlike a diatonic, you can't bend your way to missing notes on a tremolo, so choosing the appropriate instrument layout is particularly important.</p>
@@ -1450,8 +1466,8 @@ for(const [id,notes] of Object.entries(TOMBO_FIXED_LAYOUTS)){
   HARMONICA_TAB_MAPS[id]=map;
 }
 function updateTremoloKeyChoices(preferred){
-  const model=document.getElementById("system")?.value||"t21",sel=document.getElementById("style");if(!sel)return;
-  const keys=TREMOLO_MODEL_KEYS[model]||["C"],want=preferred||sel.value;sel.innerHTML="";
+  const model=document.getElementById("system")?.value||"t1521",sel=document.getElementById("style");if(!sel)return;
+  const keys=model==="custom"?["Custom"]:(TREMOLO_MODEL_KEYS[model]||["C"]),want=preferred||sel.value;sel.innerHTML="";
   for(const key of keys){const o=document.createElement("option");o.value=key;o.textContent=key;sel.appendChild(o)}
   sel.value=keys.includes(want)?want:keys[0];
 }
@@ -1530,10 +1546,10 @@ function harmonicaFingeringsGenerator(abc){
   const keySignature=getHarmonicaKeySignature(abc);
   if(!keySignature)throw new Error("Unknown or unsupported key signature.");
   const notes=getHarmonicaAbcNotes(abc,keySignature);
-  const tuning=document.getElementById("system")?.value||"t21";
+  const tuning=document.getElementById("system")?.value||"t1521";
   const harpKey=document.getElementById("style")?.value||"C";
   const octaveShift=document.getElementById("fingeringDisplay")?.value||"0";
-  const tabMap=HARMONICA_TAB_MAPS[`${tuning}|${harpKey}`]||HARMONICA_TAB_MAPS["t21|C"];
+  const tabMap=tuning==="custom"?getCustomHarmonica().noteMap:(HARMONICA_TAB_MAPS[`${tuning}|${harpKey}`]||HARMONICA_TAB_MAPS["t1521|C"]);
   const octaveOffset=(parseInt(octaveShift,10)||0)*12;
   return notes.map((note,index)=>{const midi=abcPitchToMidi(note.normalizedValue);
     const noteIndex=midi==null?NaN:(midi-36+octaveOffset);const glyph=Number.isFinite(noteIndex)&&noteIndex>=0&&noteIndex<tabMap.length?tabMap[noteIndex]:"x";const parsed=parseHarmonicaGlyph(glyph);return {index:index+1,abcIndex:note.index,abcNote:note.unNormalizedValue,normalizedNote:note.normalizedValue,glyph,hole:parsed?parsed.hole:null,direction:parsed?parsed.direction:null,playable:!!parsed}});
@@ -1541,6 +1557,41 @@ function harmonicaFingeringsGenerator(abc){
   </script>
 <script>
    const $=id=>document.getElementById(id);
+const CUSTOM_HARMONICA_KEY="abcTremoloHarmonicaCustomTuning";
+const CUSTOM_NOTE_NAMES=["C","C#/Db","D","D#/Eb","E","F","F#/Gb","G","G#/Ab","A","A#/Bb","B"];
+const CUSTOM_HOLE_COUNTS=[12,13,16,20,21,23,24];
+function defaultCustomHarmonica(){return {version:3,type:"CustomHarmonica",name:"Custom Tremolo",holes:21,noteMap:[...(HARMONICA_TAB_MAPS["t1521|C"]||Array(60).fill("x")).slice(0,60)]}}
+let customHarmonica=defaultCustomHarmonica(),customEditorWorking=null,lastRealSystem="t1521",sharedCustomTuningActive=false;
+function inferTremoloHoleCount(noteMap){let maxHole=0;for(let i=0;i<noteMap.length;i++){const g=String(noteMap[i]??"").trim();if(g==="x")continue;const m=g.match(/^-?(2[0-4]|1[0-9]|[1-9])$/);if(!m)throw new Error(`Octave ${Math.floor(i/12)+1}, ${CUSTOM_NOTE_NAMES[i%12]}: “${g||"(blank)"}” is not valid for a tremolo harmonica. Only blow, draw, and x are allowed.`);maxHole=Math.max(maxHole,Number(m[1]))}const found=CUSTOM_HOLE_COUNTS.find(n=>n>=maxHole);if(!found)throw new Error(`The tuning references hole ${maxHole}, which exceeds the 24-hole maximum.`);return found}
+function normalizeLoadedCustom(obj){if(!obj||obj.type!=="CustomHarmonica"||!Array.isArray(obj.noteMap))throw new Error("This is not a valid custom harmonica tuning file.");const map=obj.noteMap.slice();if(obj.version===1&&map.length===38)while(map.length<60)map.push("x");if(obj.version===2&&map.length===48)while(map.length<60)map.push("x");if(map.length!==60)throw new Error("The custom tuning must contain exactly 60 tablature entries.");const clean=map.map(v=>String(v??"").trim());const inferred=inferTremoloHoleCount(clean);const supplied=Number(obj.holes);return {version:3,type:"CustomHarmonica",name:String(obj.name??"").trim(),holes:CUSTOM_HOLE_COUNTS.includes(supplied)?supplied:inferred,noteMap:clean,inferredHoleCount:!CUSTOM_HOLE_COUNTS.includes(supplied)} }
+function validateCustomName(name){const n=String(name||"").trim();if(!n)throw new Error("Enter a custom tuning name.");if(n.length>40)throw new Error("The custom tuning name must be 40 characters or fewer.");if(/[<>\x00-\x1F\x7F]/.test(n))throw new Error("The custom tuning name contains characters that are not allowed.");const reserved=Object.values(TREMOLO_LAYOUTS).map(v=>v.name).concat(["Configure Custom Tremolo","Configure Custom Tremolo..."]);if(reserved.some(v=>v.toLowerCase()===n.toLowerCase()))throw new Error("Please choose a name different from the built-in model names.");return n}
+function parseValidatedCustomGlyph(value,holes){const g=String(value||"").trim();if(g==="x")return null;const m=g.match(/^-?(2[0-4]|1[0-9]|[1-9])$/);if(!m)throw new Error(`“${g||"(blank)"}” is not valid. Tremolo custom tunings allow only blow, draw, and x.`);const hole=Number(m[1]);if(hole>holes)throw new Error(`“${g}” references hole ${hole}, but this is configured as a ${holes}-hole harmonica.`);return true}
+function validateCustomObject(obj,requireHoles=true){const n=normalizeLoadedCustom(obj);n.name=validateCustomName(n.name);if(requireHoles&&!CUSTOM_HOLE_COUNTS.includes(Number(n.holes)))throw new Error("Select a 12-, 13-, 16-, 20-, 21-, 23-, or 24-hole harmonica.");if(n.holes)n.noteMap.forEach((g,i)=>{try{parseValidatedCustomGlyph(g,n.holes)}catch(e){throw new Error(`Octave ${Math.floor(i/12)+1}, ${CUSTOM_NOTE_NAMES[i%12]}: ${e.message}`)}});delete n.inferredHoleCount;return n}
+function getCustomHarmonica(){return customHarmonica||defaultCustomHarmonica()}
+function updateCustomTuningOption(){const opt=$("customTuningOption");if(!opt)return;const name=(customHarmonica&&customHarmonica.name)||"Custom Tremolo";opt.textContent=name;HARMONICA_TUNING_NAMES.custom=name}
+function decodeSharedCustomTuning(value){if(!value)throw new Error("The share link does not contain a custom tuning.");return validateCustomObject(JSON.parse(decompressABCDeflate(value)),true)}
+function restoreCustomHarmonica(){const params=new URLSearchParams(location.search);if(params.get("system")==="custom"&&params.get("custom")){try{customHarmonica=decodeSharedCustomTuning(params.get("custom"));sharedCustomTuningActive=true;updateCustomTuningOption();return}catch(e){console.warn("Ignoring invalid custom tremolo tuning in share link:",e);updateCustomTuningOption();return}}try{const raw=localStorage.getItem(CUSTOM_HARMONICA_KEY);if(raw)customHarmonica=validateCustomObject(JSON.parse(raw),true)}catch(e){console.warn("Ignoring invalid saved custom tremolo tuning:",e)}updateCustomTuningOption()}
+function persistCustomHarmonica(obj){customHarmonica=validateCustomObject(obj,true);localStorage.setItem(CUSTOM_HARMONICA_KEY,JSON.stringify(customHarmonica));sharedCustomTuningActive=false;updateCustomTuningOption()}
+function buildCustomMatrix(){const host=$("customTuningMatrix");if(!host||host.childElementCount)return;for(let oct=0;oct<5;oct++){const h=document.createElement("div");h.className="customTuningOctave";h.textContent=`Octave ${oct+1}:`;host.appendChild(h);const grid=document.createElement("div");grid.className="customTuningGrid";for(let n=0;n<12;n++){const cell=document.createElement("label");cell.className="customTuningCell";const lab=document.createElement("span");lab.textContent=CUSTOM_NOTE_NAMES[n];const input=document.createElement("input");input.type="text";input.maxLength=3;input.dataset.mapIndex=String(oct*12+n);input.autocomplete="off";cell.append(lab,input);grid.appendChild(cell)}host.appendChild(grid)}}
+function setCustomEditor(obj){buildCustomMatrix();customEditorWorking={...obj,noteMap:[...obj.noteMap]};$("customTuningName").value=obj.name||"";$("customHoleCount").value=obj.holes?String(obj.holes):"";[...$("customHoleCount").options].forEach(opt=>opt.disabled=false);document.querySelectorAll("#customTuningMatrix input[data-map-index]").forEach(el=>el.value=obj.noteMap[Number(el.dataset.mapIndex)]??"x");showCustomError("")}
+function readCustomEditor(){return {version:3,type:"CustomHarmonica",name:$("customTuningName").value.trim(),holes:Number($("customHoleCount").value)||null,noteMap:[...document.querySelectorAll("#customTuningMatrix input[data-map-index]")].map(el=>el.value.trim())}}
+function showCustomError(msg){const e=$("customTuningError");e.textContent=msg||"";e.style.display=msg?"block":"none"}
+function openCustomTuningEditor(){setCustomEditor(getCustomHarmonica());$("customTuningOverlay").style.display="block"}
+function closeCustomTuningEditor(){closePresetInitializer();$("customTuningOverlay").style.display="none";showCustomError("")}
+function customTuningDefaultFileName(obj){return (obj.name.replace(/[^a-z0-9._ -]+/gi,"_").trim()||"custom-tremolo-harmonica")+".txt"}
+async function askCustomTuningFileName(defaultName){let value=null;document.body.classList.add("save-name-prompt-open");try{if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){const result=await DayPilot.Modal.prompt("Save custom tuning file name:",defaultName,{top:100});if(!result||result.canceled)return null;value=result.result}else{value=window.prompt("Save custom tuning file name:",defaultName);if(value===null)return null}}finally{document.body.classList.remove("save-name-prompt-open")}value=String(value||"").trim();if(!value)return null;value=value.replace(/[\\/:*?"<>|]+/g,"_");if(!/\.txt$/i.test(value))value+=".txt";return value}
+async function saveCustomTuningFile(){try{const obj=validateCustomObject(readCustomEditor(),true);const fileName=await askCustomTuningFileName(customTuningDefaultFileName(obj));if(!fileName)return;const blob=new Blob([JSON.stringify(obj,null,2)],{type:"text/plain;charset=utf-8"});if(mobileSavePlatform()&&navigator.share){try{const file=new File([blob],fileName,{type:"text/plain"});if(!navigator.canShare||navigator.canShare({files:[file]})){await navigator.share({files:[file],title:fileName});showCustomError("");return}}catch(e){if(e&&e.name==="AbortError")return}}const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=fileName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showCustomError("")}catch(e){showCustomError(e.message)}}
+function loadCustomTuningFile(file){if(!file||!/\.txt$/i.test(file.name||"")){showCustomError("Please select a .txt custom harmonica tuning file.");return}const reader=new FileReader();reader.onload=()=>{try{const raw=JSON.parse(String(reader.result||""));const supplied=Number(raw&&raw.holes);const obj=normalizeLoadedCustom(raw);validateCustomName(obj.name);const inferred=obj.inferredHoleCount;setCustomEditor(obj);showCustomError(inferred?`Hole count inferred as ${obj.holes}. You may choose 12, 13, 16, 20, 21, 23, or 24 holes while editing; the selected size and all hole references will be validated when you save or apply the tuning.`:"")}catch(e){showCustomError(e.message||"This is not a valid custom harmonica tuning file.")}};reader.onerror=()=>showCustomError("Unable to read the selected tuning file.");reader.readAsText(file)}
+function applyCustomTuning(){try{const obj=validateCustomObject(readCustomEditor(),true);persistCustomHarmonica(obj);$("system").value="custom";lastRealSystem="custom";updateTremoloKeyChoices("Custom");closeCustomTuningEditor();savePrefs();scheduleRebuild();updateShareButtons();updateHarmonicaHeaderStatus()}catch(e){showCustomError(e.message)}}
+function positionPresetInitializer(){const d=document.querySelector(".customTuningDialog"),p=document.querySelector(".presetInitDialog");if(!d||!p)return;const r=d.getBoundingClientRect();p.style.position="fixed";p.style.left="50%";p.style.top=`${r.top+r.height/2}px`;p.style.transform="translate(-50%,-50%)"}
+function populatePresetModels(){const sel=$("presetInitModel");sel.innerHTML="";for(const [id,v] of Object.entries(TREMOLO_LAYOUTS)){const o=document.createElement("option");o.value=id;o.textContent=v.name;sel.appendChild(o)}const reset=document.createElement("option");reset.value="allx";reset.textContent="Reset All to x";sel.appendChild(reset);sel.value="t1521";updatePresetKeys("C")}
+function updatePresetKeys(preferred){const model=$("presetInitModel").value||"t1521",sel=$("presetInitKey");sel.innerHTML="";if(model==="allx"){const o=document.createElement("option");o.value="none";o.textContent="None";sel.appendChild(o);sel.value="none";sel.disabled=true;return}sel.disabled=false;const keys=TREMOLO_MODEL_KEYS[model]||["C"],want=preferred||sel.value;for(const key of keys){const o=document.createElement("option");o.value=key;o.textContent=key;sel.appendChild(o)}sel.value=keys.includes(want)?want:keys[0]}
+function openPresetInitializer(){populatePresetModels();$("presetInitOverlay").style.display="flex";requestAnimationFrame(positionPresetInitializer)}
+function closePresetInitializer(){$("presetInitOverlay").style.display="none"}
+function applyPresetInitializer(){const model=$("presetInitModel").value;if(model==="allx"){resetCustomAllX();return}const key=$("presetInitKey").value,id=`${model}|${key}`,presetName=TREMOLO_LAYOUTS[model]?.name||"Tremolo",holes=HARMONICA_TUNING_HOLES[model]||21;setCustomEditor({version:3,type:"CustomHarmonica",name:`Custom ${presetName} ${key}`,holes,noteMap:[...(HARMONICA_TAB_MAPS[id]||Array(60).fill("x")).slice(0,60)]});closePresetInitializer()}
+function resetCustomAllX(){const holes=Number($("customHoleCount").value)||21;setCustomEditor({version:3,type:"CustomHarmonica",name:"New Tremolo Preset",holes,noteMap:Array(60).fill("x")});closePresetInitializer()}
+function installCustomTuningEditor(){restoreCustomHarmonica();buildCustomMatrix();if(IS_IOS)$("customTuningFile")?.removeAttribute("accept");$("customTuningClose").addEventListener("click",closeCustomTuningEditor);$("customCancelBtn").addEventListener("click",closeCustomTuningEditor);$("customApplyBtn").addEventListener("click",applyCustomTuning);$("customResetBtn").addEventListener("click",openPresetInitializer);$("customSaveFileBtn").addEventListener("click",saveCustomTuningFile);$("customLoadBtn").addEventListener("click",()=>$("customTuningFile").click());$("presetInitClose").addEventListener("click",closePresetInitializer);$("presetInitCancelBtn").addEventListener("click",closePresetInitializer);$("presetInitApplyBtn").addEventListener("click",applyPresetInitializer);$("presetInitModel").addEventListener("change",()=>updatePresetKeys());window.addEventListener("resize",()=>{if($("presetInitOverlay").style.display!=="none")positionPresetInitializer()});$("customTuningFile").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];if(f)loadCustomTuningFile(f);e.target.value=""})}
+
 
 // On iOS/iPadOS, omit the accept filter so the native file picker can select
 // .abc as well as .txt files. Validate the selected filename after selection.
@@ -1733,7 +1784,7 @@ function escapeHTML(value){
 const HARMONICA_TUNING_NAMES=Object.fromEntries(Object.entries(TREMOLO_LAYOUTS).map(([k,v])=>[k,v.name]));
 const HARMONICA_TUNING_HOLES={su13:13,t1521:21,t21:21,t24:24,t16g:16,t16a:16};
 let currentHarmonicaLayout=null;
-function getHarmonicaHoleCount(tuning){return HARMONICA_TUNING_HOLES[String(tuning)]||20}
+function getHarmonicaHoleCount(tuning){return String(tuning)==="custom"?getCustomHarmonica().holes:(HARMONICA_TUNING_HOLES[String(tuning)]||20)}
 function getHarmonicaLayout(tuning){
   const count=getHarmonicaHoleCount(tuning),bodyX=48,bodyY=350,bodyW=1184,bodyH=190,innerPad=64;
   const left=bodyX+innerPad,right=bodyX+bodyW-innerPad;
@@ -2076,6 +2127,7 @@ function generateShareLink(abc){
     params.set("style",$("style").value);
     params.set("display",$("fingeringDisplay").value);
     params.set("transpose",$("playbackTranspose").value);
+    if($("system").value==="custom"){const custom=validateCustomObject(getCustomHarmonica(),true);params.set("custom",compressABCDeflate(JSON.stringify(custom)));}
     // Preserve URL-only overrides in generated share links without
     // persisting any of them in localStorage.
     if(volumeURLParamPresent)params.set("volume",String(super64VolumeScale));
@@ -2345,17 +2397,23 @@ function loadShareLinkAfterStartup(){
   setTimeout(async()=>{
     try{
       const system=params.get("system"),style=params.get("style"),display=params.get("display"),transpose=params.get("transpose");
-      if(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,system)){
-        $("system").value=system;
-        updateTremoloKeyChoices();
+      if(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,system)||system==="custom"){
+        if(system==="custom"){
+          const encodedCustom=params.get("custom");
+          if(!encodedCustom)throw new Error("This custom-tuning share link does not contain the custom tuning data.");
+          customHarmonica=decodeSharedCustomTuning(encodedCustom);sharedCustomTuningActive=true;updateCustomTuningOption();
+        }
+        $("system").value=system;lastRealSystem=system;updateTremoloKeyChoices();
       }
-      const availableKeys=TREMOLO_MODEL_KEYS[$("system").value]||["C"];
+      const availableKeys=system==="custom"?["Custom"]:(TREMOLO_MODEL_KEYS[$("system").value]||["C"]);
       if(availableKeys.includes(style))$("style").value=style;
       if(["-3","-2","-1","0","1","2","3"].includes(display))$("fingeringDisplay").value=display;
       const sharedTranspose=Number(transpose);
       if(Number.isInteger(sharedTranspose)&&sharedTranspose>=-12&&sharedTranspose<=12)$("playbackTranspose").value=String(sharedTranspose);
-      savePrefs();
+      // Share-link settings are temporary for this session. Do not overwrite the
+      // recipient's saved model/key/display/playback-transpose preferences.
       manualEntryCollection=false;currentSaveBaseName="shared-tremolo-harmonica-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      if(system==="custom"&&sharedCustomTuningActive){const msg=`The custom tuning from the share link has been temporarily set to ${customHarmonica.name}.\n\nYour custom tuning saved in this browser has not been replaced.\n\nTo save this tuning, open the custom tuning dialog and click Save.`;alert(msg)}
     }catch(err){
       alert("Unable to open share link: "+(err&&err.message||err));
     }
@@ -2368,14 +2426,14 @@ const TEMPO_KEY="abcTremoloHarmonicaTempo";
 const COUNT_IN_KEY="abcTremoloHarmonicaCountIn";
 const METRONOME_KEY="abcTremoloHarmonicaMetronome";
 function updateHarmonicaHeaderStatus(){
-  const tuning=HARMONICA_TUNING_NAMES[$("system").value]||"Western (Wiener/Viennese) — 20 Hole";
+  const tuning=HARMONICA_TUNING_NAMES[$("system").value]||"Tombo 1521: 21-Hole";
   const key=$("style").value;
   const octNum=parseInt($("fingeringDisplay").value,10)||0;
   const parts=[tuning,key];
   if(octNum!==0)parts.push(`Octave ${octNum>0?"+":""}${octNum}`);
   $("diagramMeta").textContent=parts.join(" • ");
 }
-function savePrefs(){try{const system=$("system").value;localStorage.setItem(PREFS_KEY,JSON.stringify({system,style:$("style").value,display:$("fingeringDisplay").value,playbackTranspose:$("playbackTranspose").value}))}catch(_){}}
+function savePrefs(){try{const system=$("system").value==="configure"?lastRealSystem:$("system").value;localStorage.setItem(PREFS_KEY,JSON.stringify({system,style:$("style").value,display:$("fingeringDisplay").value,playbackTranspose:$("playbackTranspose").value}))}catch(_){}}
 
 const EDITOR_SIZE_KEY="abcTremoloHarmonicaEditorTextSize";
 function applyEditorTextSize(size,save=false){
@@ -2438,7 +2496,7 @@ function abcNoteTokens(value){
 }
 function restorePrefs(){try{
   const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");
-  if(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,p.system))$("system").value=p.system;
+  if(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,p.system)||p.system==="custom"){$("system").value=p.system;lastRealSystem=p.system}
   updateTremoloKeyChoices(p.style);
   if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display;
   const transpose=Number(p.playbackTranspose);
@@ -2709,7 +2767,7 @@ $("openFile").addEventListener("change",async e=>{
     alert("File load failed: "+(err.message||err));
   }
 });
-$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{updateTremoloKeyChoices();savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{if($("system").value==="configure"){$("system").value=lastRealSystem;openCustomTuningEditor();updateHarmonicaHeaderStatus();return}lastRealSystem=$("system").value;updateTremoloKeyChoices();savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("fingeringDisplay").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
 $("playbackTranspose").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons();});
 
 function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
@@ -2880,7 +2938,7 @@ window.addEventListener("resize",()=>{
   resetLegendPosition();
 });
 
-$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();updateTremoloKeyChoices($("style").value);
+$("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();installCustomTuningEditor();restorePrefs();updateTremoloKeyChoices($("style").value);
 // Safari may restore native form-control selections after script initialization.
 // Rebuild the key list after pageshow so it always matches the visible model.
 window.addEventListener("pageshow",()=>{updateTremoloKeyChoices();});
@@ -2891,7 +2949,7 @@ setTimeout(()=>updateTremoloKeyChoices(),0);
 updateHarmonicaHeaderStatus();
 restoreShowNotePreference();
 restoreHarmonicaDisplayPreference();restoreMetronomePreference();
-restoreCountInPreference();installCountInPlayHandler();{const octNum=parseInt($("fingeringDisplay").value,10)||0;const octLabel=(octNum>0?"+":"")+octNum;$("diagramMeta").textContent=[HARMONICA_TUNING_NAMES[$("system").value]||"Western (Wiener/Viennese) — 20 Hole",$("style").value,...(octNum!==0?[`Octave ${octLabel}`]:[])].join(" • ")}updateShareButtons();startABCTranscriptionToolsHandshake();
+restoreCountInPreference();installCountInPlayHandler();{const octNum=parseInt($("fingeringDisplay").value,10)||0;const octLabel=(octNum>0?"+":"")+octNum;$("diagramMeta").textContent=[HARMONICA_TUNING_NAMES[$("system").value]||"Tombo 1521: 21-Hole",$("style").value,...(octNum!==0?[`Octave ${octLabel}`]:[])].join(" • ")}updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
 // installed. Handle both states so share links are always consumed.

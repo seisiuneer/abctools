@@ -946,7 +946,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 2.5
+     Version 2.51
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1405,12 +1405,10 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      <p>
       <b>Octave shift</b> shifts the harmonica fingering assignment by whole octaves from -3 through +3 without changing the written ABC notes.
      </p>
-     <p>
-      <b>Playback transpose</b> shifts the playback pitch from -12 through +12 semitones without changing the written ABC notes or the displayed harmonica holes and technique indications.</p>
-      <p>This can make it possible and simple to play tunes on a harmonica in a key different from the tune.</p>
-      <p>If the ABC contains a %%MIDI transpose directive, the Playback transpose setting takes precedence during playback; the original ABC is not changed.</p>
-      <p>Harmonica tuning, key, octave shift, and playback transpose are remembered in this browser and included in share links.
-     </p>
+     <p><b>Playback transpose</b> shifts the playback pitch from -12 through +12 semitones without changing the written ABC notes or the displayed harmonica holes and technique indications.</p>
+     <p>This can make it possible and simple to play tunes on a harmonica in a key different from the tune.</p>
+     <p>If the ABC contains a %%MIDI transpose directive, the Playback transpose setting takes precedence during playback; the original ABC is not changed.</p>
+     <p>Harmonica tuning, key, octave shift, and playback transpose are remembered in this browser and included in share links.</p>
      <p style="text-align:left;font-weight:700;margin:18px 0 6px">
       Harmonica Technique Symbols
      </p>
@@ -1528,7 +1526,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
       </b>
       to create a share link containing all loaded tunes.
      </p>
-     <p>The link includes the selected harmonica tuning, key, and octave shift and is copied to the clipboard.</p>
+     <p>The link includes the selected harmonica tuning, key, octave shift, and playback transpose and is copied to the clipboard.</p>
       <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
       <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
      <p>When the selected harmonica tuning is a custom tuning, the complete custom tuning is included in the share link, including its name, hole count, and all 60 tablature note assignments.</p>
@@ -1540,6 +1538,7 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      <p>
       Opening a share link restores its harmonica tuning, key, octave shift, and playback transpose and displays the first tune encoded in the link.
      </p>
+     <p>Settings received from a share link are temporary and do not replace your saved preferences.</p>
      <p>
       When tunes are opened from a share link, click the
       <b>
@@ -1553,13 +1552,12 @@ body.diagram-full .harmonicaStaffNote{top:35.0%;}
      <p id="custom-tuning-instructions" style="text-align:left;font-weight:700;margin:18px 0 6px">
       Custom Harmonica Tuning
      </p>
-     <p><b>Custom tuning is an advanced feature.</b></p>
      <p>It works with custom harmonica tablature settings files saved from the <b>ABC Transcription Tools</b> if they contain only the allowed tablature syntax described below.</p>
-     <p>The custom tuning initially matches Standard Richter.</p>
      <p>After you give the custom tuning a name and save it, that name is shown near the bottom of the <b>Harmonica tuning</b> menu.</p>
      <p>Selecting that named custom tuning uses its tablature map.</p>
      <p>Selecting <b>Configure Custom Tuning...</b> opens the custom tuning editor without changing the currently selected tuning.</p>
      <p>The editor contains a five-octave, 60-note custom harmonica tablature map compatible with the custom harmonica tablature settings used by ABC Transcription Tools.</p>
+     <p>The custom tuning initially matches Standard Richter.</p>
      <p>Enter a custom tuning name and choose whether the physical harmonica has 10, 12, or 16 holes.</p>
      <p>Each note entry must use the ABC Transcription Tools harmonica tablature syntax described below. Examples of valid entries include:</p>
      <p><b>4</b> = blow.</p>
@@ -3137,7 +3135,9 @@ function loadShareLinkAfterStartup(){
         sharedCustomTuningActive=true;
         updateCustomTuningOption();
       }
-      savePrefs();
+      // Share-link settings are temporary for this session. Do not persist the
+      // shared harmonica tuning, key, octave shift, or playback transpose as
+      // the recipient's normal browser preferences.
       manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
       if(system==="8"&&sharedCustomTuningActive){
         const sharedTuningMessage =
