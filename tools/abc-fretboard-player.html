@@ -806,7 +806,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.63</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.65</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -846,7 +846,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), or Guitar (DADGAD). The instrument selection is saved and restored.</p>
       <p>Use <b>Capo</b> to select a capo position from <b>0</b> through <b>12</b>. The capo is applied to generated tablature and the live fretboard display, is saved and restored, and is included in share links and transfers back to ABC Transcription Tools.</p>
       <p>The string labels in both fretboard views show the strings' actual sounding pitch with the selected capo, using sharps or flats according to the tune's <b>K:</b> key and mode.</p>
-      <p>Note: The notation tab shows the fret position relative to the capo while the fretboard views show absolute fret positions.</p>
+      <p>The notation tablature and both live fingering views show fret numbers relative to the capo, so the capo is treated as fret <b>0</b>. The string pitch labels still show the strings' actual sounding pitches at the selected capo position.</p>
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with tablature for the selected instrument. The default is <b>Notation + Tab</b>.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
@@ -860,7 +860,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
-      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and the hollow circle shows the effective open-string position at the nut or capo. When a capo is selected, the top of the diagram starts at the capo's absolute fret number and all fret labels remain absolute. The string labels above the fretboard show the actual sounding pitches at the capo. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; its string labels show the same capo-adjusted sounding pitches, while its displayed fret number remains the absolute physical fret number. This setting is remembered in this browser and is not included in share links.</p>
+      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and the hollow circle shows the effective open-string position at the nut or capo. The nut or capo is treated as fret <b>0</b>, and all displayed fret numbers are relative to that position, matching the abcjs tablature. Notes above the visible fretboard are also labeled with their capo-relative fret number. The string labels above the fretboard show the actual sounding pitches at the selected capo position. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; it uses the same capo-relative fret numbers and capo-adjusted sounding string pitches. This setting is remembered in this browser and is not included in share links.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes. When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
       <p>The <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> choices are remembered in this browser and are also included in generated share links.</p>
@@ -1326,7 +1326,7 @@ function renderGDAEFingering(midi){
       const name=document.createElement("div"); name.className="tabStringName"; name.textContent=displayedStringPitchName(str);
       const line=document.createElement("div"); line.className="tabLine";
       const fret=document.createElement("span"); fret.className="tabFret"+(pos&&pos.stringIndex===i?"":" inactive");
-      if(pos&&pos.stringIndex===i)fret.textContent=String(pos.fret);
+      if(pos&&pos.stringIndex===i)fret.textContent=String(pos.fret-selectedCapo());
       line.appendChild(fret); row.append(name,line); host.appendChild(row);
     });
     return;
@@ -1355,9 +1355,9 @@ function renderGDAEFingering(midi){
   const displayStrings=[...strings].reverse();
   const xs=displayStrings.map((_,i)=>displayStrings.length===1?(left+right)/2:left+i*(right-left)/(displayStrings.length-1));
   const capo=selectedCapo();
-  const topFret=capo;
-  const bottomFret=capo+9;
-  const fretY=f=>top+(bottom-top)*((f-topFret)/9);
+  const topFret=0;
+  const bottomFret=9;
+  const fretY=f=>top+(bottom-top)*(f/9);
 
   // String names and strings. Low string is at the left, matching the compact display.
   displayStrings.forEach((str,i)=>{
@@ -1365,7 +1365,7 @@ function renderGDAEFingering(midi){
     add("line",{x1:xs[i],y1:top,x2:xs[i],y2:bottom,stroke:"#222","stroke-width":1.8,"vector-effect":"non-scaling-stroke"});
   });
 
-  // Capo/top boundary and the next nine absolute frets.
+  // Treat the capo as the effective nut: display fret numbers relative to it.
   for(let f=topFret;f<=bottomFret;f++){
     const y=fretY(f);
     if(f===topFret){
@@ -1383,20 +1383,21 @@ function renderGDAEFingering(midi){
   if(pos){
     const displayIndex=strings.length-1-pos.stringIndex;
     const x=xs[displayIndex];
-    if(pos.fret<=bottomFret){
-      const y=pos.fret===topFret?fretY(topFret):(fretY(pos.fret-1)+fretY(pos.fret))/2;
-      if(pos.fret===topFret){
-        // The capo position is the effective open-string position and uses
+    const relativeFret=pos.fret-capo;
+    if(relativeFret<=bottomFret){
+      const y=relativeFret===topFret?fretY(topFret):(fretY(relativeFret-1)+fretY(relativeFret))/2;
+      if(relativeFret===topFret){
+        // The capo is the effective open-string position (fret 0) and uses
         // the conventional hollow marker at the top boundary.
         add("circle",{cx:x,cy:y,r:10,fill:"#fff",stroke:"#111","stroke-width":3,"vector-effect":"non-scaling-stroke"});
       }else{
         add("circle",{cx:x,cy:y,r:12,fill:"#111"});
-        add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(pos.fret));
+        add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(relativeFret));
       }
     }else{
       const y=bottom+24;
       add("circle",{cx:x,cy:y,r:12,fill:"#111"});
-      add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(pos.fret));
+      add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(relativeFret));
     }
   }
   host.appendChild(svg);
