@@ -77,8 +77,10 @@ body{margin:0;background:#f4f4f4;color:#171717;font-family:-apple-system,BlinkMa
 h1{text-align:center;margin:4px 0 6px;font-size:28px}.sub{text-align:center;color:#555;margin:0 0 18px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 label{display:block;font-weight:650;margin-bottom:6px}
-input[type=number],select{width:100%;padding:9px;border:1px solid #aaa;border-radius:6px;font:inherit}
-select{background:#f3f3f3}
+input[type=number],select{width:100%;height:40px;padding:9px 10px;border:1px solid #888;border-radius:7px;background:#f8f8f8;color:#171717;-webkit-text-fill-color:#171717;box-shadow:none;font:inherit;font-size:16px;line-height:20px}
+input[type=number]{-webkit-appearance:none;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0;display:none}
+select{-webkit-appearance:none;appearance:none;padding-right:38px;background-color:#f8f8f8;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23171717' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:12px 8px}
 input[type=range]{width:100%}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .loadRow{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -89,11 +91,16 @@ input[type=range]{width:100%}
 #analysis tbody tr{cursor:pointer}
 .interpolatedRow.currentSampleRow td{background:#e8f1ff}
 .interpolatedBadge{display:inline-block;padding:1px 6px;border:1px solid #c49a31;border-radius:10px;background:#fff3bf;font-size:11px;font-weight:700;line-height:1.15;white-space:nowrap;vertical-align:middle}.sampleNameWrap{display:flex;align-items:center;gap:6px;white-space:nowrap}
-button{border:1px solid #888;border-radius:7px;background:#f8f8f8;padding:10px 15px;font-weight:600;cursor:pointer}
+button{-webkit-appearance:none;appearance:none;border:1px solid #888;border-radius:7px;background:#f8f8f8;color:#171717;-webkit-text-fill-color:#171717;box-shadow:none;padding:10px 15px;font:inherit;font-weight:600;line-height:1.2;cursor:pointer}
 #orig,#trem{min-width:118px}
 input[type=file]::file-selector-button{-webkit-appearance:none;appearance:none;border:1px solid #777;border-radius:8px;background:#f8f8f8;padding:10px 15px;margin-right:12px;font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
 input[type=file]::-webkit-file-upload-button{-webkit-appearance:none;border:1px solid #777;border-radius:8px;background:#f8f8f8;padding:10px 15px;margin-right:12px;font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
-button:disabled{opacity:.45;cursor:default}.primary{background:#222;color:#fff;border-color:#222}
+button:disabled{opacity:.45;cursor:default}
+button:not(:disabled):hover{background:#e8e8e8;border-color:#666}
+.primary{background:#222;color:#fff;-webkit-text-fill-color:#fff;border-color:#222}
+.primary:not(:disabled):hover{background:#555;border-color:#555;color:#fff;-webkit-text-fill-color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.22)}
+input[type=file]::file-selector-button:hover{background:#e8e8e8;border-color:#666}
+input[type=file]::-webkit-file-upload-button:hover{background:#e8e8e8;border-color:#666}
 .small{font-size:13px;color:#555;line-height:1.4}.status{white-space:pre-wrap;background:#f7f7f7;border:1px solid #ddd;border-radius:6px;padding:10px;min-height:44px}
 table{width:100%;border-collapse:collapse;margin:0;font-size:14px}th,td{text-align:left;padding:11px 7px;border-bottom:1px solid #ddd;vertical-align:middle}th{background:#fafafa;position:sticky;top:0;z-index:2}
 .pitchInput{width:95px!important;padding:6px!important}.good{color:#176b2c}.warn{color:#9a5800}
@@ -113,6 +120,7 @@ details{margin-top:10px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,mono
 .modal_default_main .modal_default_buttons table{margin-left:auto !important;margin-right:auto !important}
 .modal_default_main input{font-size:16px !important}
 .modal_default_main button,.modal_default_main input[type="button"],.modal_default_main input[type="submit"],.modal_default_button{-webkit-appearance:none !important;appearance:none !important;color:#171717 !important;-webkit-text-fill-color:#171717 !important;background:#f5f6f5 !important;border:1px solid #aaa !important;border-radius:6px !important;box-shadow:none !important;font:inherit !important;font-size:14px !important;font-weight:600 !important;line-height:1.2 !important;min-width:78px !important;width:auto !important;padding:6px 14px !important}
+.modal_default_main button:hover,.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}
 body.save-name-prompt-open .modal_default_main .modal_default_content{text-align:left !important;line-height:1.4 !important;padding-bottom:8px !important}
 body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 
@@ -180,7 +188,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <body>
 <div class="app">
 <div class="card">
-<div class="versionLabel">Version 2.3</div>
+<div class="versionLabel">Version 2.4</div>
 <h1>Tremolo Reed Sample Converter</h1>
 <p class="sub">High-quality multi-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
 <div class="loadRow">
