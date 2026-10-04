@@ -335,7 +335,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 #editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;margin-left:-6px;margin-right:8px}
 
 /* Mandolin / Tenor Banjo player overrides */
-.whistleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(150px,.72fr) minmax(145px,.7fr) minmax(220px,1.12fr) auto}
+.whistleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(150px,.72fr) minmax(145px,.7fr) minmax(82px,.42fr) minmax(220px,1.12fr) auto}
 .whistleToolbar .fileControl{grid-column:auto}
 .whistleDiagramWrap{overflow:auto}
 .whistleLive{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(18px,3vw,42px)}
@@ -806,11 +806,12 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.61</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.62</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
  <div class="control"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="mandolin" selected>Mandolin</option><option value="tenor-banjo">Tenor Banjo</option><option value="bouzouki-gdae">Bouzouki (GDAE)</option><option value="bouzouki-gdad">Bouzouki (GDAD)</option><option value="guitar">Guitar (Standard)</option><option value="guitar-dadgad">Guitar (DADGAD)</option></select></div>
+ <div class="control"><label for="capoSelect">Capo</label><select id="capoSelect"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
@@ -841,8 +842,10 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and optional tablature for the selected fretted instrument.</p>
-      <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s first-position fingering, with the note name and optional staff notation to its right.</p>
+      <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to its right.</p>
       <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), or Guitar (DADGAD). The instrument selection is saved and restored.</p>
+      <p>Use <b>Capo</b> to select a capo position from <b>0</b> through <b>12</b>. The capo is applied to generated tablature and the live fretboard display, is saved and restored, and is included in share links and transfers back to ABC Transcription Tools.</p>
+      <p>Note: The notation tab shows the fret position relative to the capo while the fretboard shows absolute fret positions.</p>
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with tablature for the selected instrument. The default is <b>Notation + Tab</b>.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
@@ -856,10 +859,10 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
-      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and hollow circles show open strings. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display. This setting is remembered in this browser and is not included in share links.</p>
+      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and the hollow circle shows the effective open-string position at the nut or capo. When a capo is selected, the top of the diagram starts at that absolute fret number and all fret labels remain absolute. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display. This setting is remembered in this browser and is not included in share links.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes. When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
-      <p>The <b>Notation display</b> and <b>Instrument</b> choices are remembered in this browser and are also included in generated share links.</p>
+      <p>The <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> choices are remembered in this browser and are also included in generated share links.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the fretboard pane updates to that note.</p>
@@ -885,7 +888,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
-      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied in a share URL.</p>
+      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied to the system clipboard in a share URL.</p>
       <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
       <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
@@ -976,7 +979,16 @@ const GUITAR_DADGAD_STRINGS=[
   {name:"D",midi:62}, {name:"A",midi:57}, {name:"G",midi:55}, {name:"D",midi:50}, {name:"A",midi:45}, {name:"D",midi:38}
 ];
 function selectedStrings(){const v=$("instrumentSelect").value; return v==="guitar"?GUITAR_STRINGS:(v==="guitar-dadgad"?GUITAR_DADGAD_STRINGS:(v==="bouzouki-gdad"?GDAD_STRINGS:GDAE_STRINGS));}
-function selectedRenderTab(){const v=$("instrumentSelect").value; return v==="guitar"?GUITAR_RENDER_TAB:(v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB:(v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB));}
+function selectedCapo(){
+  const n=Math.round(Number($("capoSelect")?.value));
+  return Number.isFinite(n)?Math.max(0,Math.min(12,n)):0;
+}
+function selectedRenderTab(){
+  const v=$("instrumentSelect").value;
+  const base=v==="guitar"?GUITAR_RENDER_TAB:(v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB:(v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB));
+  const capo=selectedCapo();
+  return base.map(tab=>({...tab,capo}));
+}
 function selectedMelodyProgram(){const v=$("instrumentSelect").value; return (v==="guitar"||v==="guitar-dadgad")?25:(v==="tenor-banjo"?105:(v.startsWith("bouzouki-")?140:141));}
 function updateInstrumentUI(){
   const v=$("instrumentSelect").value;
@@ -1217,7 +1229,7 @@ function gdaePositionForMidi(midi){
   let best=null;
   for(let i=0;i<strings.length;i++){
     const fret=n-strings[i].midi;
-    if(fret<0||fret>24)continue;
+    if(fret<selectedCapo()||fret>24)continue;
     if(!best||fret<best.fret||(fret===best.fret&&i<best.stringIndex))best={stringIndex:i,fret};
   }
   return best;
@@ -1334,7 +1346,10 @@ function renderGDAEFingering(midi){
   const left=boardCenter-boardWidth/2,right=boardCenter+boardWidth/2,top=42,bottom=326;
   const displayStrings=[...strings].reverse();
   const xs=displayStrings.map((_,i)=>displayStrings.length===1?(left+right)/2:left+i*(right-left)/(displayStrings.length-1));
-  const fretY=f=>top+(bottom-top)*(f/9);
+  const capo=selectedCapo();
+  const topFret=capo;
+  const bottomFret=capo+9;
+  const fretY=f=>top+(bottom-top)*((f-topFret)/9);
 
   // String names and strings. Low string is at the left, matching the compact display.
   displayStrings.forEach((str,i)=>{
@@ -1342,10 +1357,10 @@ function renderGDAEFingering(midi){
     add("line",{x1:xs[i],y1:top,x2:xs[i],y2:bottom,stroke:"#222","stroke-width":1.8,"vector-effect":"non-scaling-stroke"});
   });
 
-  // Nut/fret 0 and frets 1-9.
-  for(let f=0;f<=9;f++){
+  // Capo/top boundary and the next nine absolute frets.
+  for(let f=topFret;f<=bottomFret;f++){
     const y=fretY(f);
-    if(f===0){
+    if(f===topFret){
       // Draw the nut as a filled rectangle instead of a thick stroked line.
       // Its ends align with the outside edges of the two outer string strokes,
       // producing clean square corners without anti-aliased line-cap artifacts.
@@ -1360,10 +1375,11 @@ function renderGDAEFingering(midi){
   if(pos){
     const displayIndex=strings.length-1-pos.stringIndex;
     const x=xs[displayIndex];
-    if(pos.fret<=9){
-      const y=pos.fret===0?fretY(0):(fretY(pos.fret-1)+fretY(pos.fret))/2;
-      if(pos.fret===0){
-        // Open strings use the conventional hollow marker at the nut.
+    if(pos.fret<=bottomFret){
+      const y=pos.fret===topFret?fretY(topFret):(fretY(pos.fret-1)+fretY(pos.fret))/2;
+      if(pos.fret===topFret){
+        // The capo position is the effective open-string position and uses
+        // the conventional hollow marker at the top boundary.
         add("circle",{cx:x,cy:y,r:10,fill:"#fff",stroke:"#111","stroke-width":3,"vector-effect":"non-scaling-stroke"});
       }else{
         add("circle",{cx:x,cy:y,r:12,fill:"#111"});
@@ -1857,6 +1873,7 @@ function generateShareLink(abc){
     params.set("def",compressABCDeflate(abc));
     params.set("notation",$("notationDisplay").value);
     params.set("instrument",$("instrumentSelect").value);
+    params.set("capo",String(selectedCapo()));
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
@@ -1898,7 +1915,7 @@ function openShareInABCTranscriptionTools(allTunes,mode){
       : instrument === "guitar" ? "guitare"
       : instrument === "guitar-dadgad" ? "guitard"
       : "mandolin";
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10`;
+    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10&capo=${selectedCapo()}`;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
     // Safari, Shift+window.open() can explicitly request a new window.
@@ -2189,7 +2206,8 @@ function saveWhistleDisplayPrefs(){
   try{
     localStorage.setItem(WHISTLE_PREFS_KEY,JSON.stringify({
       notation:$("notationDisplay").value,
-      instrument:$("instrumentSelect").value
+      instrument:$("instrumentSelect").value,
+      capo:selectedCapo()
     }));
   }catch(_){}
 }
@@ -2199,6 +2217,7 @@ function restoreWhistleDisplayPrefs(){
     const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
     if(prefs.notation==="notation"||prefs.notation==="mandolin-tab")$("notationDisplay").value=prefs.notation;
     if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
+    if(Number.isFinite(Number(prefs.capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(prefs.capo)))));
   }catch(_){}
 }
 
@@ -2206,9 +2225,11 @@ function applyWhistleShareSettings(){
   const params=new URLSearchParams(location.search);
   const notation=params.get("notation");
   const instrument=params.get("instrument");
+  const capo=params.get("capo");
 
   if(notation==="notation"||notation==="mandolin-tab")$("notationDisplay").value=notation;
   if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
+  if(capo!==null&&Number.isFinite(Number(capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(capo)))));
   saveWhistleDisplayPrefs();
 }
 
@@ -2849,6 +2870,13 @@ $("notationDisplay").addEventListener("change",()=>{
 
 $("instrumentSelect").addEventListener("change",()=>{
   updateInstrumentUI();
+  saveWhistleDisplayPrefs();
+  if(currentLiveMidi!=null)showWhistleLive(currentLiveMidi);
+  if(tunes.length)scheduleRebuild();
+  updateShareButtons();
+});
+
+$("capoSelect").addEventListener("change",()=>{
   saveWhistleDisplayPrefs();
   if(currentLiveMidi!=null)showWhistleLive(currentLiveMidi);
   if(tunes.length)scheduleRebuild();
