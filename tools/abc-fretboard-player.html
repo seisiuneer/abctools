@@ -806,7 +806,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 }
 
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.62</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.63</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -845,7 +845,8 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to its right.</p>
       <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), or Guitar (DADGAD). The instrument selection is saved and restored.</p>
       <p>Use <b>Capo</b> to select a capo position from <b>0</b> through <b>12</b>. The capo is applied to generated tablature and the live fretboard display, is saved and restored, and is included in share links and transfers back to ABC Transcription Tools.</p>
-      <p>Note: The notation tab shows the fret position relative to the capo while the fretboard shows absolute fret positions.</p>
+      <p>The string labels in both fretboard views show the strings' actual sounding pitch with the selected capo, using sharps or flats according to the tune's <b>K:</b> key and mode.</p>
+      <p>Note: The notation tab shows the fret position relative to the capo while the fretboard views show absolute fret positions.</p>
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with tablature for the selected instrument. The default is <b>Notation + Tab</b>.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
@@ -859,7 +860,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
-      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and the hollow circle shows the effective open-string position at the nut or capo. When a capo is selected, the top of the diagram starts at that absolute fret number and all fret labels remain absolute. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display. This setting is remembered in this browser and is not included in share links.</p>
+      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard. Black circles show fretted notes and the hollow circle shows the effective open-string position at the nut or capo. When a capo is selected, the top of the diagram starts at the capo's absolute fret number and all fret labels remain absolute. The string labels above the fretboard show the actual sounding pitches at the capo. Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; its string labels show the same capo-adjusted sounding pitches, while its displayed fret number remains the absolute physical fret number. This setting is remembered in this browser and is not included in share links.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes. When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
       <p>The <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> choices are remembered in this browser and are also included in generated share links.</p>
@@ -888,9 +889,9 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
-      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied to the system clipboard in a share URL.</p>
-      <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
-      <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
+      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied to the system clipboard in a share URL. Fretboard Player share links include the current <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings so they are restored when the link is opened.</p>
+      <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL. The current capo value is passed to ABC Transcription Tools.</p>
+      <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>. The current capo value is passed to ABC Transcription Tools.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
 
       <hr>
@@ -1286,6 +1287,13 @@ function midiPitchClassName(midi){
   return displayPitchClassName(midi);
 }
 
+function displayedStringPitchName(str){
+  if(!str||!Number.isFinite(Number(str.midi)))return "";
+  return displayPitchClassName(Number(str.midi)+selectedCapo())
+    .replace(/#/g,"♯")
+    .replace(/b/g,"♭");
+}
+
 function formattedWhistleNoteName(midi){
   const n=Math.round(Number(midi));
   if(!Number.isFinite(n))return "";
@@ -1315,7 +1323,7 @@ function renderGDAEFingering(midi){
   if(!showFretboardEnabled){
     strings.forEach((str,i)=>{
       const row=document.createElement("div"); row.className="tabString";
-      const name=document.createElement("div"); name.className="tabStringName"; name.textContent=str.name;
+      const name=document.createElement("div"); name.className="tabStringName"; name.textContent=displayedStringPitchName(str);
       const line=document.createElement("div"); line.className="tabLine";
       const fret=document.createElement("span"); fret.className="tabFret"+(pos&&pos.stringIndex===i?"":" inactive");
       if(pos&&pos.stringIndex===i)fret.textContent=String(pos.fret);
@@ -1353,7 +1361,7 @@ function renderGDAEFingering(midi){
 
   // String names and strings. Low string is at the left, matching the compact display.
   displayStrings.forEach((str,i)=>{
-    add("text",{x:xs[i],y:22,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":17,"font-weight":700,fill:"#111"},str.name);
+    add("text",{x:xs[i],y:22,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":17,"font-weight":700,fill:"#111"},displayedStringPitchName(str));
     add("line",{x1:xs[i],y1:top,x2:xs[i],y2:bottom,stroke:"#222","stroke-width":1.8,"vector-effect":"non-scaling-stroke"});
   });
 
