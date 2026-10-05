@@ -275,10 +275,10 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
    <p><b>Reed Tuning</b> selects how the two reed frequencies are created.</p><p><b>− / + Offset</b> splits the total beat offset equally below and above the original pitch.</p><p><b>Original / + Offset</b> leaves the first reed at the original frequency and shifts the second reed upward by the full offset.</p>
    <p><b>− Offset / Original / + Offset</b> creates a three-reed MMM-style sound with the original pitch in the center and the total offset split equally below and above it.</p>
    <p><b>Reed Volume Balance</b> controls the balance between the two sides of the selected tuning.</p>
-   <p>In two-reed modes, it balances the two reeds.</p>
-   <p>In three-reed mode, fully left plays only the original center reed and fully right plays only the combined lower and upper offset reeds.</p>
-   <p>At 50 / 50, the original reed and combined offset reeds contribute equally.</p>
-    <p><b>Reset</b> beside Reed Volume Balance restores the balance to <b>50 / 50</b>.</p>
+    <p>In two-reed modes, it balances the two reeds: fully left plays only the first reed, fully right plays only the second reed, and 50 / 50 gives equal contribution from both reeds.</p>
+    <p>In three-reed mode, fully left plays only the original center reed and fully right plays only the combined lower and upper offset reeds. At 50 / 50, the original center reed and the combined pair of offset reeds contribute equally; the lower and upper offset reeds share the offset-reed contribution equally.</p>
+    <p>Because the three-reed mode includes a strong original-pitch center reed and each outer reed beats against it at half the displayed Beat Offset, it can sound less pronounced or “wetter” than the two-reed − / + Offset mode at the same Beat Offset setting.</p>
+     <p><b>Reset</b> beside Reed Volume Balance restores the balance to <b>50 / 50</b>.</p>
 
    <p class="helpSection">Output Level</p>
    <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample.</p><p>The default is <b>−15 LUFS</b>.</p><p>Normalization is applied after all reeds are mixed.</p>
