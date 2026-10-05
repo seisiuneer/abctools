@@ -115,7 +115,11 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 .balanceControl>input[type="range"]{margin-top:12px}
 .balanceTop label{margin:0}
 .miniReset{padding:2px 8px;font-size:12px;font-weight:600;line-height:1.25;min-width:0;border-radius:5px}
-#endRate{margin-top:6px}
+#endRate,#plusEndRate{margin-top:6px}
+.mmmOffsets{display:none;grid-column:1 / -1}
+.mmmOffsets.active{display:block}
+.syncOffsetsOption{display:flex;align-items:center;gap:8px;font-weight:650;margin:8px 0 0}
+.syncOffsetsOption input{width:18px;height:18px;margin:0}
 .instructionsFooter{flex:0 0 auto;margin-top:auto;padding:0 0 4px}
 #instructionsBtn{width:100%;display:block;font:inherit}
 #helpOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px}
@@ -175,7 +179,7 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 <body>
 <div class="app">
 <div class="card">
-<div class="versionLabel">Version 2.4</div>
+<div class="versionLabel">Version 2.5</div>
 <h1>Tremolo Reed Sample Converter</h1>
 <p class="sub">High-quality multi-reed tremolo synthesis from single-note WAV/MP3 reed instrument samples.</p>
 <div class="loadRow">
@@ -189,50 +193,48 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
 
 <div class="card">
 <div class="settingsGrid">
-<div class="settingsLeft">
- <div><label>Starting Beat Offset (lowest note) — <span id="startRateV">2.0 Hz</span></label><input id="startRate" type="range" min="0" max="30" step=".1" value="2"></div>
+ <div class="settingsLeft">
+  <div><label><span id="startRateLabel">Starting Beat Offset (lowest note)</span> — <span id="startRateV">2.0 Hz</span></label><input id="startRate" type="range" min="0" max="30" step=".1" value="2"></div>
+ </div>
+ <div class="settingsRight">
+  <div>
+   <div class="balanceTop">
+    <label><span id="endRateLabel">Ending Beat Offset (highest note)</span> — <span id="endRateV">5.0 Hz</span></label>
+    <button id="offsetReset" type="button" class="miniReset">Reset All</button>
+   </div>
+   <input id="endRate" type="range" min="0" max="30" step=".1" value="5">
+  </div>
+ </div>
+ <div id="mmmOffsets" class="mmmOffsets">
+  <div class="settingsGrid">
+   <div class="settingsLeft">
+    <div><label>+ Starting Beat Offset (lowest note) — <span id="plusStartRateV">2.0 Hz</span></label><input id="plusStartRate" type="range" min="0" max="30" step=".1" value="2"></div>
+   </div>
+   <div class="settingsRight">
+    <div><label>+ Ending Beat Offset (highest note) — <span id="plusEndRateV">5.0 Hz</span></label><input id="plusEndRate" type="range" min="0" max="30" step=".1" value="5"></div>
+   </div>
+  </div>
+  <label class="syncOffsetsOption" for="syncOffsets"><input id="syncOffsets" type="checkbox"><span>Sync offsets</span></label>
+ </div>
+ <div class="settingsLeft">
+  <div>
+   <label for="curve">Beat Offset Curve</label>
+   <select id="curve">
+    <option value="1">Linear</option><option value="1.2">Curve 1</option><option value="1.4">Curve 2</option><option value="1.6">Curve 3</option><option value="1.8">Curve 4</option><option value="2">Curve 5</option><option value="2.4">Curve 6</option><option value="2.8">Curve 7</option><option value="3.2">Curve 8</option>
+   </select>
+  </div>
+ </div>
+ <div class="settingsRight"><div class="curvePlotWrap"><canvas id="curvePlot" width="800" height="190" aria-label="Beat offset curve preview"></canvas></div></div>
  <div>
-  <label for="curve">Beat Offset Curve</label>
-  <select id="curve">
-   <option value="1">Linear</option>
-   <option value="1.2">Curve 1</option>
-   <option value="1.4">Curve 2</option>
-   <option value="1.6">Curve 3</option>
-   <option value="1.8">Curve 4</option>
-   <option value="2">Curve 5</option>
-   <option value="2.4">Curve 6</option>
-   <option value="2.8">Curve 7</option>
-   <option value="3.2">Curve 8</option>
-  </select>
+  <label for="tuningMode">Reed Tuning</label>
+  <select id="tuningMode"><option value="split">− / + Offset</option><option value="originalPlus">Original / + Offset</option><option value="mmm">− Offset / Original / + Offset</option></select>
  </div>
-</div>
-<div class="settingsRight">
- <div>
- <div class="balanceTop">
-  <label>Ending Beat Offset (highest note) — <span id="endRateV">5.0 Hz</span></label>
-  <button id="offsetReset" type="button" class="miniReset">Reset All</button>
+ <div class="balanceControl">
+  <div class="balanceTop"><label>Reed Volume Balance — <span id="balanceV">50 / 50</span></label><button id="balanceReset" type="button" class="miniReset">Reset</button></div>
+  <input id="balance" type="range" min="0" max="100" step="1" value="50">
  </div>
- <input id="endRate" type="range" min="0" max="30" step=".1" value="5">
-</div>
- <div class="curvePlotWrap"><canvas id="curvePlot" width="800" height="190" aria-label="Beat offset curve preview"></canvas></div>
-</div>
-<div>
- <label for="tuningMode">Reed Tuning</label>
- <select id="tuningMode">
-  <option value="split">− / + Offset</option>
-  <option value="originalPlus">Original / + Offset</option>
-  <option value="mmm">− Offset / Original / + Offset</option>
- </select>
-</div>
-<div class="balanceControl">
- <div class="balanceTop">
-  <label>Reed Volume Balance — <span id="balanceV">50 / 50</span></label>
-  <button id="balanceReset" type="button" class="miniReset">Reset</button>
- </div>
- <input id="balance" type="range" min="0" max="100" step="1" value="50">
-</div>
-<div><label>LUFS Target</label><input id="target" type="number" min="-40" max="-5" step=".1" value="-15"></div>
-<div><label>Output Level Trim (dB)</label><input id="trim" type="number" min="-24" max="12" step=".1" value="0"></div>
+ <div><label>LUFS Target</label><input id="target" type="number" min="-40" max="-5" step=".1" value="-15"></div>
+ <div><label>Output Level Trim (dB)</label><input id="trim" type="number" min="-24" max="12" step=".1" value="0"></div>
 </div>
 </div>
 
@@ -268,28 +270,27 @@ body.save-name-prompt-open .modal_default_main input{padding:7px 9px !important}
    <p><b>Interpolate missing notes?</b> is enabled by default.</p><p>When enabled, missing semitones between the lowest and highest loaded notes are created from the closest available loaded sample in pitch.</p><p>Interpolated notes are identified in the sample list and are otherwise previewed, processed, and saved just like loaded samples.</p><p>If interpolation is disabled, the selected files must contain <b>every semitone</b> from the lowest note through the highest note.</p><p>Duplicate pitches are not allowed in either mode.</p>
 
    <p class="helpSection">Beat Offset</p>
-   <p><b>Starting Beat Offset</b> sets the total frequency separation between the two reeds at the lowest note.</p><p><b>Ending Beat Offset</b> sets the total separation at the highest note.</p>
-   <p><b>Beat Offset Curve</b> controls how that separation changes across the chromatic sample range.</p><p><b>Linear</b> uses an even progression.</p><p><b>Curves 1–8</b> provide progressively stronger nonlinear curves.</p><p>The graph shows the selected progression from the starting value to the ending value.</p>
+   <p><b>Starting Beat Offset</b> and <b>Ending Beat Offset</b> set the beat-offset range from the lowest note to the highest note.</p><p>In the two-reed modes, this pair controls the total frequency separation between the two reeds, as before.</p><p>In <b>− Offset / Original / + Offset</b> mode, separate slider pairs are shown for the <b>− Offset Reed</b> and <b>+ Offset Reed</b>. Each pair independently sets how far that outer reed is detuned from the original center reed across the sample range.</p>
+   <p><b>Beat Offset Curve</b> controls how the offset changes across the chromatic sample range.</p><p><b>Linear</b> uses an even progression.</p><p><b>Curves 1–8</b> provide progressively stronger nonlinear curves.</p><p>In three-reed mode, both the − Offset and + Offset ranges use this same curve setting for interpolation.</p><p><b>Sync offsets</b> is available only in three-reed mode. When checked, the + Offset range immediately matches the current − Offset range. After that, changing either Starting slider changes the other Starting slider to match, and changing either Ending slider changes the other Ending slider to match.</p><p>The graph shows the selected progression; in three-reed mode it shows both outer-reed offset curves.</p>
 
    <p class="helpSection">Reed Tuning and Volume</p>
    <p><b>Reed Tuning</b> selects how the two reed frequencies are created.</p><p><b>− / + Offset</b> splits the total beat offset equally below and above the original pitch.</p><p><b>Original / + Offset</b> leaves the first reed at the original frequency and shifts the second reed upward by the full offset.</p>
-   <p><b>− Offset / Original / + Offset</b> creates a three-reed MMM-style sound with the original pitch in the center and the total offset split equally below and above it.</p>
+   <p><b>− Offset / Original / + Offset</b> creates a three-reed MMM-style sound with the original pitch in the center. The − Offset and + Offset reeds have independent Starting and Ending Beat Offset ranges, allowing symmetrical or asymmetrical tuning around the original pitch. Both ranges default to 2 Hz at the lowest note and 5 Hz at the highest note.</p>
    <p><b>Reed Volume Balance</b> controls the balance between the two sides of the selected tuning.</p>
-    <p>In two-reed modes, it balances the two reeds: fully left plays only the first reed, fully right plays only the second reed, and 50 / 50 gives equal contribution from both reeds.</p>
-    <p>In three-reed mode, fully left plays only the original center reed and fully right plays only the combined lower and upper offset reeds. At 50 / 50, the original center reed and the combined pair of offset reeds contribute equally; the lower and upper offset reeds share the offset-reed contribution equally.</p>
-    <p>Because the three-reed mode includes a strong original-pitch center reed and each outer reed beats against it at half the displayed Beat Offset, it can sound less pronounced or “wetter” than the two-reed − / + Offset mode at the same Beat Offset setting.</p>
-     <p><b>Reset</b> beside Reed Volume Balance restores the balance to <b>50 / 50</b>.</p>
+   <p>In two-reed modes, it balances the two reeds: fully left plays only the first reed, fully right plays only the second reed, and 50 / 50 gives equal contribution from both reeds.</p>
+   <p>In three-reed mode, fully left plays only the original center reed and fully right plays only the combined lower and upper offset reeds. At 50 / 50, the original center reed and the combined pair of offset reeds contribute equally; the lower and upper offset reeds share the offset-reed contribution equally.</p>
+   <p><b>Reset</b> beside Reed Volume Balance restores the balance to <b>50 / 50</b>.</p>
 
    <p class="helpSection">Output Level</p>
    <p><b>LUFS Target</b> sets the loudness target for each finished tremolo sample.</p><p>The default is <b>−15 LUFS</b>.</p><p>Normalization is applied after all reeds are mixed.</p>
    <p><b>Output Level Trim</b> applies an additional gain adjustment after normalization.</p><p>If the requested level would cause digital clipping, peak protection automatically reduces the output level; the completion message reports when this occurs.</p>
    <p>Output samples are mono, <b>44.1 kHz IEEE 32-bit floating-point WAV</b> files.</p>
 
-   <p><b>Reset All</b> restores all converter settings to their original defaults, including Reed Volume Balance to <b>50 / 50</b>.</p>
-    <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
+   <p><b>Reset All</b> restores all converter settings to their original defaults, including both three-reed offset ranges to <b>2 Hz / 5 Hz</b>, <b>Sync offsets</b> to unchecked, and Reed Volume Balance to <b>50 / 50</b>.</p>
+   <p>All converter settings are automatically saved and restored the next time you use the tool.</p>
 
    <p class="helpSection">Sample List and Pitch Detection</p>
-   <p>The sample list is shown in detected pitch order.</p><p>It displays the source LUFS value, detected note and fundamental frequency, total Hz and cents offsets, and the individual reed frequencies and cents offsets used for that sample.</p>
+   <p>The sample list is shown in detected pitch order.</p><p>It displays the source LUFS value, detected note and fundamental frequency, total Hz and cents offsets, and the individual reed frequencies and cents offsets used for that sample. In three-reed mode, the individual reed values are shown in <b>− Offset / Original / + Offset</b> order.</p>
    <p>Recognizable note names in filenames, such as <b>C4</b>, <b>F#4</b>, and <b>Bb3</b>, are used when available.</p>
 
    <p class="helpSection">Preview</p>
@@ -331,7 +332,7 @@ let files=[], decoded=new Map(), analyses=[], ctx=null, currentSource=null;
 let currentPlayMode=null, previewRestartTimer=null, previewGeneration=0;
 
 const SETTINGS_KEY="tremoloReedSampleConverterSettingsV1";
-const settingIds=["startRate","endRate","curve","tuningMode","balance","target","trim","interpolateMissing"];
+const settingIds=["startRate","endRate","plusStartRate","plusEndRate","syncOffsets","curve","tuningMode","balance","target","trim","interpolateMissing"];
 
 function saveSettings(){
  try{
@@ -364,7 +365,8 @@ function drawCurvePlot(){
  if(c.width!==Math.round(cssW*dpr)||c.height!==Math.round(cssH*dpr)){c.width=Math.round(cssW*dpr);c.height=Math.round(cssH*dpr)}
  const g=c.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);
  const w=cssW,h=cssH,L=42,R=14,T=12,B=18;
- const start=+$("startRate").value,end=+$("endRate").value,lo=Math.min(start,end),hi=Math.max(start,end),span=Math.max(1e-9,hi-lo);
+ const start=+$("startRate").value,end=+$("endRate").value,isMmm=$("tuningMode").value==="mmm",plusStart=+$("plusStartRate").value,plusEnd=+$("plusEndRate").value;
+ const values=isMmm?[start,end,plusStart,plusEnd]:[start,end],lo=Math.min(...values),hi=Math.max(...values),span=Math.max(1e-9,hi-lo);
  g.clearRect(0,0,w,h);g.fillStyle="#fff";g.fillRect(0,0,w,h);
  g.strokeStyle="#d0d0d0";g.lineWidth=1;g.beginPath();g.moveTo(L,T);g.lineTo(L,h-B);g.lineTo(w-R,h-B);g.stroke();
  g.fillStyle="#555";g.font="14px -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";g.textAlign="right";g.textBaseline="middle";
@@ -375,9 +377,14 @@ function drawCurvePlot(){
   if(!n)g.moveTo(px,py);else g.lineTo(px,py);
  }
  g.stroke();
+ if(isMmm){
+  g.save();g.setLineDash([7,5]);g.lineWidth=2;g.beginPath();
+  for(let n=0;n<=100;n++){const x=n/100,beat=plusStart+(plusEnd-plusStart)*curveProgress(x),px=L+x*(w-L-R),py=(h-B)-((beat-lo)/span)*(h-T-B);if(!n)g.moveTo(px,py);else g.lineTo(px,py)}
+  g.stroke();g.restore();
+ }
 }
 function updateRateLimits(){
- for(const id of ["startRate","endRate"]){
+ for(const id of ["startRate","endRate","plusStartRate","plusEndRate"]){
   const el=$(id);
   el.min=0;
   el.max=30;
@@ -387,10 +394,26 @@ function updateRateLabels(){
  updateRateLimits();
  $("startRateV").textContent=(+$("startRate").value).toFixed(1)+" Hz";
  $("endRateV").textContent=(+$("endRate").value).toFixed(1)+" Hz";
+ $("plusStartRateV").textContent=(+$("plusStartRate").value).toFixed(1)+" Hz";
+ $("plusEndRateV").textContent=(+$("plusEndRate").value).toFixed(1)+" Hz";
+ const isMmm=$("tuningMode").value==="mmm";
+ $("mmmOffsets").classList.toggle("active",isMmm);
+ $("startRateLabel").textContent=isMmm?"− Starting Beat Offset (lowest note)":"Starting Beat Offset (lowest note)";
+ $("endRateLabel").textContent=isMmm?"− Ending Beat Offset (highest note)":"Ending Beat Offset (highest note)";
  updateOffsetDisplay();drawCurvePlot();
 }
-$("startRate").oninput=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
-$("endRate").oninput=()=>{updateRateLabels();saveSettings();previewSettingChanged()};
+$("endRate").oninput=()=>{if($("syncOffsets").checked&&$("tuningMode").value==="mmm")$("plusEndRate").value=$("endRate").value;updateRateLabels();saveSettings();previewSettingChanged()};
+$("startRate").oninput=()=>{if($("syncOffsets").checked&&$("tuningMode").value==="mmm")$("plusStartRate").value=$("startRate").value;updateRateLabels();saveSettings();previewSettingChanged()};
+$("plusStartRate").oninput=()=>{if($("syncOffsets").checked&&$("tuningMode").value==="mmm")$("startRate").value=$("plusStartRate").value;updateRateLabels();saveSettings();previewSettingChanged()};
+$("plusEndRate").oninput=()=>{if($("syncOffsets").checked&&$("tuningMode").value==="mmm")$("endRate").value=$("plusEndRate").value;updateRateLabels();saveSettings();previewSettingChanged()};
+$("syncOffsets").onchange=()=>{
+ if($("syncOffsets").checked&&$("tuningMode").value==="mmm"){
+  $("plusStartRate").value=$("startRate").value;
+  $("plusEndRate").value=$("endRate").value;
+  updateRateLabels();
+ }
+ saveSettings();previewSettingChanged();
+};
 $("offsetReset").onclick=async()=>{
  const confirmed=window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.confirm==="function"
   ? (await DayPilot.Modal.confirm("Reset all converter settings to their defaults?",{top:100,width:460})).result
@@ -398,6 +421,9 @@ $("offsetReset").onclick=async()=>{
  if(!confirmed)return;
  $("startRate").value=2;
  $("endRate").value=5;
+ $("plusStartRate").value=2;
+ $("plusEndRate").value=5;
+ $("syncOffsets").checked=false;
  $("curve").value="1";
  $("tuningMode").value="split";
  $("balance").value=50;
@@ -591,13 +617,15 @@ $("files").addEventListener("change",async()=>{
   }
  }catch(e){console.error(e);$("status").textContent="Analysis error: "+(e.message||e)}
 });
-function interpolatedBeat(i){
- const n=analyses.length,start=+$("startRate").value,end=+$("endRate").value;
+function interpolatedBeatFor(i,startId,endId){
+ const n=analyses.length,start=+$(startId).value,end=+$(endId).value;
  if(n<=1)return start;
  return start+(end-start)*curveProgress(i/(n-1));
 }
+function interpolatedBeat(i){return interpolatedBeatFor(i,"startRate","endRate")}
+function interpolatedPlusBeat(i){return interpolatedBeatFor(i,"plusStartRate","plusEndRate")}
 function centsFor(i){
- const f=pitchForRaw(i),beat=interpolatedBeat(i),d=reedDisplay(f,beat);
+ const f=pitchForRaw(i),beat=interpolatedBeat(i),d=reedDisplayForIndex(f,i);
  if(d.hz.some(v=>!(v>0)))return {values:d.cents,total:0};
  return {values:d.cents,total:d.totalCents};
 }
@@ -611,35 +639,36 @@ function rebuildPreviewOptions(){
 }
 function renderAnalysis(){
  let rows=analyses.map((a,i)=>{
-  const ni=hzToInfo(a.hz),beat=interpolatedBeat(i),d=reedDisplay(a.hz,beat);
+  const ni=hzToInfo(a.hz),beat=interpolatedBeat(i),plusBeat=$("tuningMode").value==="mmm"?interpolatedPlusBeat(i):null,d=reedDisplay(a.hz,beat,plusBeat);
   const badge=a.interpolated?`<span class="interpolatedBadge" title="Interpolated from ${esc(a.interpolatedFrom)}">Interpolated</span>`:"";
   const note=a.interpolated?midiToFlatName(a.midi):ni.name+(ni.cents?` ${ni.cents>0?"+":""}${ni.cents}¢`:"");
   const hzText=d.hz.map(v=>v.toFixed(2)).join(" / ")+" Hz";
   const centsText=d.cents.map(v=>`${v>=0?"+":""}${v.toFixed(2)}¢`).join(" / ");
-  return `<tr${a.interpolated?' class="interpolatedRow"':""}><td><span class="sampleNameWrap"><span>${esc(a.file.name)}</span>${badge}</span></td><td>${isFinite(a.sourceLUFS)?a.sourceLUFS.toFixed(2):"—"} LUFS</td><td>${note}</td><td>${a.hz.toFixed(2)} Hz</td><td class="beatCell" data-i="${i}">${beat.toFixed(2)} Hz</td><td class="totalCentsCell" data-i="${i}">${d.totalCents.toFixed(2)}¢</td><td class="reedHzCell" data-i="${i}">${hzText}</td><td class="centsCell" data-i="${i}">${centsText}</td></tr>`;
+  return `<tr${a.interpolated?' class="interpolatedRow"':""}><td><span class="sampleNameWrap"><span>${esc(a.file.name)}</span>${badge}</span></td><td>${isFinite(a.sourceLUFS)?a.sourceLUFS.toFixed(2):"—"} LUFS</td><td>${note}</td><td>${a.hz.toFixed(2)} Hz</td><td class="beatCell" data-i="${i}">${($("tuningMode").value==="mmm"?beat+plusBeat:beat).toFixed(2)} Hz</td><td class="totalCentsCell" data-i="${i}">${d.totalCents.toFixed(2)}¢</td><td class="reedHzCell" data-i="${i}">${hzText}</td><td class="centsCell" data-i="${i}">${centsText}</td></tr>`;
  }).join("");
  $("analysis").innerHTML=`<table><thead><tr><th>Sample</th><th>Source LUFS</th><th>Note</th><th>Fundamental</th><th>Total Hz Offset</th><th>Total Cents Offset</th><th>Reed Hz</th><th>Reed Cents</th></tr></thead><tbody>${rows}</tbody></table>`;
  highlightPreviewRow();
 }
-function reedOffsets(totalHz){
+function reedOffsets(totalHz,plusHz=null){
  const mode=$("tuningMode").value;
  if(mode==="originalPlus")return {low:0,center:null,high:totalHz};
- if(mode==="mmm")return {low:-totalHz/2,center:0,high:totalHz/2};
+ if(mode==="mmm")return {low:-totalHz,center:0,high:plusHz==null?totalHz:plusHz};
  return {low:-totalHz/2,center:null,high:totalHz/2};
 }
-function reedDisplay(f,beat){
- const ro=reedOffsets(beat),vals=[ro.low,ro.center,ro.high].filter(v=>v!==null);
+function reedDisplay(f,beat,plusBeat=null){
+ const ro=reedOffsets(beat,plusBeat),vals=[ro.low,ro.center,ro.high].filter(v=>v!==null);
  const hz=vals.map(v=>f+v);
  const cents=hz.map(v=>1200*Math.log2(v/f));
  return {hz,cents,totalCents:cents[cents.length-1]-cents[0]};
 }
+function reedDisplayForIndex(f,i){return reedDisplay(f,interpolatedBeat(i),$("tuningMode").value==="mmm"?interpolatedPlusBeat(i):null)}
 
 function updateOffsetDisplay(){
  if(!analyses.length)return;
- document.querySelectorAll(".beatCell").forEach(el=>{const i=+el.dataset.i;el.textContent=interpolatedBeat(i).toFixed(2)+" Hz"});
- document.querySelectorAll(".totalCentsCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplay(pitchForRaw(i),interpolatedBeat(i));el.textContent=d.totalCents.toFixed(2)+"¢"});
- document.querySelectorAll(".reedHzCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplay(pitchForRaw(i),interpolatedBeat(i));el.textContent=d.hz.map(v=>v.toFixed(2)).join(" / ")+" Hz"});
- document.querySelectorAll(".centsCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplay(pitchForRaw(i),interpolatedBeat(i));el.textContent=d.cents.map(v=>`${v>=0?"+":""}${v.toFixed(2)}¢`).join(" / ")});
+ document.querySelectorAll(".beatCell").forEach(el=>{const i=+el.dataset.i;el.textContent=($("tuningMode").value==="mmm"?interpolatedBeat(i)+interpolatedPlusBeat(i):interpolatedBeat(i)).toFixed(2)+" Hz"});
+ document.querySelectorAll(".totalCentsCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplayForIndex(pitchForRaw(i),i);el.textContent=d.totalCents.toFixed(2)+"¢"});
+ document.querySelectorAll(".reedHzCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplayForIndex(pitchForRaw(i),i);el.textContent=d.hz.map(v=>v.toFixed(2)).join(" / ")+" Hz"});
+ document.querySelectorAll(".centsCell").forEach(el=>{const i=+el.dataset.i,d=reedDisplayForIndex(pitchForRaw(i),i);el.textContent=d.cents.map(v=>`${v>=0?"+":""}${v.toFixed(2)}¢`).join(" / ")});
 }
 function updateNavButtons(){
  const i=+$("preview").value,n=analyses.length;
@@ -684,8 +713,8 @@ $("next").onclick=()=>{const i=+$("preview").value;if(i<analyses.length-1){$("pr
 function pitchFor(i){return pitchForRaw(i)}
 
 async function renderTremolo(index){
- const a=analyses[index],input=a.buffer,f=pitchFor(index),beat=interpolatedBeat(index),bal=+$("balance").value/100;
- const ro=reedOffsets(beat),offsets=[ro.low,ro.center,ro.high].filter(v=>v!==null);
+ const a=analyses[index],input=a.buffer,f=pitchFor(index),beat=interpolatedBeat(index),plusBeat=$("tuningMode").value==="mmm"?interpolatedPlusBeat(index):null,bal=+$("balance").value/100;
+ const ro=reedOffsets(beat,plusBeat),offsets=[ro.low,ro.center,ro.high].filter(v=>v!==null);
  const freqs=offsets.map(v=>f+v);
  if(freqs.some(v=>!(v>0)))throw new Error("Fundamental frequency is too low for the selected tremolo rate.");
  const cents=freqs.map(v=>1200*Math.log2(v/f));
