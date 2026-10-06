@@ -1406,7 +1406,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 3.01
+     Version 3.1
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1454,6 +1454,15 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       </option>
       <option value="5">
        Natural Minor
+      </option>
+      <option value="9">
+       Solo (10-Hole)
+      </option>
+      <option value="10">
+       Solo (12-Hole)
+      </option>
+      <option value="11">
+       Seydel Orchestra-S (10-Hole)
       </option>
       <option value="6">
        Chromatic (12-Hole)
@@ -1790,6 +1799,9 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <option value="3">Melody Maker</option>
       <option value="4">Country (Major 7th)</option>
       <option value="5">Natural Minor</option>
+      <option value="9">Solo (10-Hole)</option>
+      <option value="10">Solo (12-Hole)</option>
+      <option value="11">Seydel Orchestra-S (10-Hole)</option>
       <option value="6">Chromatic (12-Hole)</option>
       <option value="7">Chromatic (16-Hole)</option>
       <option value="reset-x">Reset All to x</option>
@@ -1847,10 +1859,11 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <b>
        Natural Minor
       </b>
-      , and
-      <b>
-       12- and 16-hole Chromatic
-      </b>
+      ,
+      <b>Solo (10-Hole)</b>,
+      <b>Solo (12-Hole)</b>,
+      <b>Seydel Orchestra-S (10-Hole)</b>, and
+      <b>12- and 16-hole Chromatic</b>
       harmonicas.
      </p>
      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1858,7 +1871,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       Harmonica Settings
      </p>
      <p>
-      <b>Harmonica tuning</b> chooses the note layout: the first six options are 10-hole diatonic tunings, and the next two are 12-hole and 16-hole chromatic layouts.
+      <b>Harmonica tuning</b> chooses the note layout. In addition to the six established 10-hole diatonic presets, the player includes Solo 10-hole, Solo 12-hole, Seydel Orchestra-S 10-hole, and 12- and 16-hole chromatic layouts.
      </p>
      <p>
       The bottom of the <b>Harmonica tuning</b> menu also contains an option for using a custom tuning and <b>Configure Custom Tuning...</b>.
@@ -2046,7 +2059,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
      <p><b>Save Tuning File</b> validates the custom tuning name, selected hole count, and all 60 tablature entries before saving.</p>
      <p>After validation, you are asked for a file name.</p>
      <p>The suggested file name is based on the custom tuning name.</p>
-     <p><b>Initialize from Preset</b> opens a dialog where you can initialize the editor from any built-in tuning, or choose <b>Reset All to x</b>.</p>
+     <p><b>Initialize from Preset</b> opens a dialog where you can initialize the editor from any built-in tuning, including Solo (10-Hole), Solo (12-Hole), and Seydel Orchestra-S (10-Hole), or choose <b>Reset All to x</b>.</p>
      <p>Applying a built-in preset copies its map into the editor, sets the name to <b>Custom</b> followed by the preset name, and selects the matching 10-, 12-, or 16-hole size.</p>
      <p><b>Reset All to x</b> fills all 60 entries with <b>x</b>, names it <b>New Tuning Preset</b>, and selects <b>10 Hole</b>.</p>
      <p>Initialization only changes the editor; it is not stored until you click <b>Save</b> in the main custom tuning dialog.</p>
@@ -2168,6 +2181,11 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
      <p>
       So even if the only diatonic you have is in C, <b>Playback Transpose</b> can make it much easier to play along with tunes in a variety of keys while keeping bends to a minimum.
      </p>
+     <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+     <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+      Trademarks
+     </p>
+     <p>Hohner, Suzuki, Tombo, and Seydel, and their referenced product or model names, are trademarks of their respective owners. This independent tool is not affiliated with or endorsed by those companies.</p>
      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
      <p style="text-align:left;font-weight:700;margin:18px 0 6px">
       ABC Tremolo Harmonica Player
@@ -2401,6 +2419,9 @@ const HARMONICA_TAB_MAPS={
       "3":["1","-1'","-1","1o","2","-2''","-2'","-2","2o","3","-3'","-3","4","-4'","-4","4o","5","-5'","-5","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-8o","-9","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
       "4":["1","-1'","-1","1o","2","-2''","-2'","-2","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5'","-5","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
       "5":["1","-1'","-1","2","-2'''","-2''","-2'","-2","-3''","-3'","-3","3o","4","-4'","-4","5","-5'","-5","5o","6","-6'","-6","-7","7'","7","-7o","-8","8","-8o","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "9":["x","x","x","x","x","x","x","x","x","x","x","x","1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","-4","5","-5'","-5","5o","6","-6","6o","7","-7'","-7","7o","-8","9","-9'","-9","9o","10","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "10":["x","x","x","x","x","x","x","x","x","x","x","x","1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","-4","5","-5'","-5","5o","6","-6","6o","7","-7'","-7","7o","-8","9","-9'","-9","9o","10","-10","10o","11","-11'","-11","11o","-12","12","x","x","x","x","x","x","x","x","x","x","x"],
+      "11":["x","x","x","x","x","x","x","1","-1'","-1","1o","-2","3","-3'","-3","3o","4","-4","4o","5","-5'","-5","5o","-6","7","-7'","-7","7o","8","-8","8o","9","-9'","-9","9o","-10","10","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
       "6":["x","x","x","x","x","x","x","x","x","x","x","x","1","1s","-1","-1s","2","-2","-2s","3","3s","-3","-3s","-4","5","5s","-5","-5s","6","-6","-6s","7","7s","-7","-7s","-8","9","9s","-9","-9s","10","-10","-10s","11","11s","-11","-11s","-12","12","12s","-12s","x","x","x","x","x","x","x","x","x"],
       "7":["1","1s","-1","-1s","2","-2","-2s","3","3s","-3","-3s","-4","5","5s","-5","-5s","6","-6","-6s","7","7s","-7","-7s","-8","9","9s","-9","-9s","10","-10","-10s","11","11s","-11","-11s","-12","13","13s","-13","-13s","14","-14","-14s","15","15s","-15","-15s","-16","16","16s","-16s","x","x","x","x","x","x","x","x","x"]
     };
@@ -2709,7 +2730,7 @@ function applyPresetInitializer(){
     setCustomEditor({version:3,type:"CustomHarmonica",name:"New Tuning Preset",holes:10,noteMap:Array(60).fill("x")});
   }else{
     const presetName=HARMONICA_TUNING_NAMES[selected]||"Standard Richter";
-    const holes=selected==="6"?12:selected==="7"?16:10;
+    const holes=(selected==="6"||selected==="10")?12:selected==="7"?16:10;
     setCustomEditor({version:3,type:"CustomHarmonica",name:`Custom ${presetName}`,holes,noteMap:[...(HARMONICA_TAB_MAPS[selected]||HARMONICA_TAB_MAPS["0"])]});
   }
   closePresetInitializer();
@@ -2906,8 +2927,8 @@ function escapeHTML(value){
  * playback update only copies that prepared bitmap and paints the one
  * highlight plus the two changing text fields.
  */
-const HARMONICA_TUNING_NAMES={"0":"Standard Richter","1":"Paddy Richter","2":"Easy Thirds","3":"Melody Maker","4":"Country (Major 7th)","5":"Natural Minor","6":"Chromatic (12-Hole)","7":"Chromatic (16-Hole)","8":"Custom Tuning"};
-const HARMONICA_TUNING_HOLES={"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":12,"7":16};
+const HARMONICA_TUNING_NAMES={"0":"Standard Richter","1":"Paddy Richter","2":"Easy Thirds","3":"Melody Maker","4":"Country (Major 7th)","5":"Natural Minor","9":"Solo (10-Hole)","10":"Solo (12-Hole)","11":"Seydel Orchestra-S (10-Hole)","6":"Chromatic (12-Hole)","7":"Chromatic (16-Hole)","8":"Custom Tuning"};
+const HARMONICA_TUNING_HOLES={"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"9":10,"10":12,"11":10,"6":12,"7":16};
 let currentHarmonicaLayout=null;
 function getHarmonicaHoleCount(tuning){return String(tuning)==="8"?getCustomHarmonica().holes:(HARMONICA_TUNING_HOLES[String(tuning)]||10)}
 function getHarmonicaLayout(tuning){
@@ -3626,7 +3647,7 @@ function loadShareLinkAfterStartup(){
     try{
       if(params.get('lesson')==='1'){if(window.INVALID_LESSON_ERROR)throw new Error(window.INVALID_LESSON_ERROR);validateLessonURLParams(params);}
       const system=params.get("system"),style=params.get("style"),display=params.get("display"),transpose=params.get("transpose");
-      if(["0","1","2","3","4","5","6","7","8"].includes(system)){$("system").value=system;lastRealSystem=system;}
+      if(["0","1","2","3","4","5","6","7","8","9","10","11"].includes(system)){$("system").value=system;lastRealSystem=system;}
       if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(style))$("style").value=style;
       if(["-3","-2","-1","0","1","2","3"].includes(display))$("fingeringDisplay").value=display;
        const sharedTranspose=Number(transpose);
@@ -3751,7 +3772,7 @@ function abcNoteTokens(value){
   }
   return tokens;
 }
-function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7","8"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display;const transpose=Number(p.playbackTranspose);if(Number.isInteger(transpose)&&transpose>=-12&&transpose<=12)$("playbackTranspose").value=String(transpose)}catch(_){}}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(["0","1","2","3","4","5","6","7","8","9","10","11"].includes(p.system))$("system").value=p.system;if(["G","G#","A","Bb","B","C","C#","D","Eb","E","F","F#"].includes(p.style))$("style").value=p.style;if(["-3","-2","-1","0","1","2","3"].includes(p.display))$("fingeringDisplay").value=p.display;const transpose=Number(p.playbackTranspose);if(Number.isInteger(transpose)&&transpose>=-12&&transpose<=12)$("playbackTranspose").value=String(transpose)}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){commitStandardShareSettingsIfPending();try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function updateTempoButtonState(){
@@ -4333,10 +4354,10 @@ function savedLessonLinkURLFromText(text){
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');if(system!==null&&!['0','1','2','3','4','5','6','7','8'].includes(system))throw new Error('Lesson harmonica tuning is invalid.');if(style!==null&&!['G','G#','A','Bb','B','C','C#','D','Eb','E','F','F#'].includes(style))throw new Error('Lesson harmonica key is invalid.');if(display!==null&&!['-3','-2','-1','0','1','2','3'].includes(display))throw new Error('Lesson octave shift is invalid.');if(transpose!==null&&(!Number.isInteger(Number(transpose))||Number(transpose)<-12||Number(transpose)>12))throw new Error('Lesson playback transpose is invalid.');if(system==='8'){const encoded=params.get('custom');if(!encoded)throw new Error('Lesson custom tuning data is missing.');decodeSharedCustomTuning(encoded);}}
+function validateLessonSettingsParams(params){const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');if(system!==null&&!['0','1','2','3','4','5','6','7','8','9','10','11'].includes(system))throw new Error('Lesson harmonica tuning is invalid.');if(style!==null&&!['G','G#','A','Bb','B','C','C#','D','Eb','E','F','F#'].includes(style))throw new Error('Lesson harmonica key is invalid.');if(display!==null&&!['-3','-2','-1','0','1','2','3'].includes(display))throw new Error('Lesson octave shift is invalid.');if(transpose!==null&&(!Number.isInteger(Number(transpose))||Number(transpose)<-12||Number(transpose)>12))throw new Error('Lesson playback transpose is invalid.');if(system==='8'){const encoded=params.get('custom');if(!encoded)throw new Error('Lesson custom tuning data is missing.');decodeSharedCustomTuning(encoded);}}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
 function applyLessonSettingsParams(params){validateLessonSettingsParams(params);const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');
-  if(system!==null&&!['0','1','2','3','4','5','6','7','8'].includes(system))throw new Error('Lesson harmonica tuning is invalid.');
+  if(system!==null&&!['0','1','2','3','4','5','6','7','8','9','10','11'].includes(system))throw new Error('Lesson harmonica tuning is invalid.');
   if(style!==null&&!['G','G#','A','Bb','B','C','C#','D','Eb','E','F','F#'].includes(style))throw new Error('Lesson harmonica key is invalid.');
   if(display!==null&&!['-3','-2','-1','0','1','2','3'].includes(display))throw new Error('Lesson octave shift is invalid.');
   if(transpose!==null&&(!Number.isInteger(Number(transpose))||Number(transpose)<-12||Number(transpose)>12))throw new Error('Lesson playback transpose is invalid.');
