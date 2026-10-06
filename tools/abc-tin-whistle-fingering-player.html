@@ -84,7 +84,11 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 @media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
 @media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
 
-.modal_default_main{max-width:460px !important;width:calc(100vw - 32px) !important}
+.modal_default_main{
+  box-sizing:border-box !important;
+  max-width:calc(100vw - 24px) !important;
+}
+/* DayPilot writes the requested dialog width inline. Do not globally override it. */
 /* Larger file/status text and a more compact, larger-type DayPilot tempo dialog. */
 .control input[type=file]{font-size:1.12rem;min-height:38px;height:38px;line-height:38px}
 .control input[type=file]::file-selector-button{min-width:118px;margin-right:8px}
@@ -425,8 +429,481 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
   color:#8a8a8a;
 }
 
+.lessonModal{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:18px}
+.lessonModal.open{display:flex}.lessonDialog{width:min(620px,calc(100vw - 28px));max-height:calc(100dvh - 36px);overflow:auto;background:#fff;border-radius:12px;box-shadow:0 18px 55px rgba(0,0,0,.3);padding:20px;color:#17241c}
+.lessonDialog h2{margin:0 0 16px;text-align:center}.lessonDialog label{display:block;font-weight:650;margin:12px 0 5px}.lessonDialog input[type=text],.lessonDialog input[type=number],.lessonDialog textarea{width:100%;font:inherit;border:1px solid #b8c7bd;border-radius:7px;padding:8px}.lessonDialog textarea{min-height:120px;resize:vertical}.lessonActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center}.lessonActions button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.lessonActions button:disabled{opacity:.45;cursor:default}.lessonScope{display:flex;gap:18px;flex-wrap:wrap;margin-top:7px}.lessonScope label{margin:0;font-weight:500}.lessonHint{font-size:.86rem;color:#607068;margin-top:6px}.lessonLinkOutput{min-height:90px!important;font-size:.82rem}.lessonStudentText{white-space:pre-wrap;line-height:1.45;margin:12px 0 4px}.lessonStudentTitle{text-align:center;margin-bottom:10px}.lessonStudentTempo{text-align:center;color:#607068;font-size:.9rem}
+body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margin-top:0}#lessonSaveAbcBtn{display:none}body.lessonMode #lessonSaveAbcBtn{display:inline-flex}
+@media(max-width:650px){.shareButtons{display:block!important}.lessonDialog{padding:16px}.lessonActions button{flex:1 1 45%}}
+
+
+/* v1.70: refined Share / Configure Lesson dialog layout. */
+.lessonModal{
+  align-items:flex-start;
+  justify-content:center;
+  padding:100px 18px 18px;
+}
+.lessonDialog{
+  max-height:calc(100dvh - 118px);
+}
+.lessonDialog h2{margin:0 0 20px}
+
+/* Match the clean neutral buttons used by the Save ABC filename dialog. */
+.lessonActions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:14px 16px;
+  margin-top:22px;
+}
+.lessonActions button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f5f6f5;
+  border:1px solid #aebbb3;
+  border-radius:6px;
+  box-shadow:none;
+  font:inherit;
+  font-weight:400;
+  line-height:1.2;
+  padding:8px 18px;
+  cursor:pointer;
+}
+.lessonActions button:hover:not(:disabled){background:#e4e8e5;border-color:#81968a}
+.lessonActions button:disabled{opacity:.45;cursor:default}
+
+#shareModal .lessonDialog{
+  width:min(620px,calc(100vw - 28px));
+  padding:24px 28px 26px;
+}
+#shareModal .lessonActions{margin-top:0}
+
+/* Close is deliberately quieter and separated from the action buttons. */
+.lessonCloseRow{
+  display:flex;
+  justify-content:center;
+  margin-top:24px;
+}
+.lessonCloseBtn{
+  -webkit-appearance:none;
+  appearance:none;
+  border:0;
+  background:transparent;
+  color:#526159;
+  -webkit-text-fill-color:#526159;
+  font:inherit;
+  font-weight:400;
+  padding:5px 12px;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.lessonCloseBtn:hover{color:#17241c;-webkit-text-fill-color:#17241c}
+
+#lessonModal .lessonDialog{
+  width:min(590px,calc(100vw - 28px));
+  padding:24px 28px 26px;
+}
+#lessonModal label{margin:14px 0 6px}
+#lessonModal textarea{min-height:112px}
+#lessonModal .lessonHint{margin-top:7px}
+#lessonModal .lessonActions{margin-top:22px}
+@media(max-width:650px){
+  .lessonModal{padding:100px 14px 14px}
+  .lessonDialog{max-height:calc(100dvh - 114px)}
+  #shareModal .lessonDialog,#lessonModal .lessonDialog{padding:20px 16px 22px}
+  .lessonActions{gap:12px}
+  .lessonActions button{flex:1 1 45%}
+  .lessonCloseRow{margin-top:22px}
+}
+
+
+/* v1.71: lesson dialog button hierarchy. */
+.lessonActions button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  border:1px solid #aebbb3;
+  border-radius:6px;
+  box-shadow:none;
+  font:inherit;
+  font-weight:400;
+  line-height:1.2;
+  padding:7px 16px;
+  cursor:pointer;
+}
+
+/* Main share/configuration actions: subtle blue tint distinguishes them from Close. */
+#shareCurrentBtn,
+#shareAllBtn,
+#shareConfigureLessonBtn,
+#lessonSaveConfigBtn,
+#lessonLoadConfigBtn,
+#lessonShareBtn{
+  background:#e8f1ff;
+  border-color:#9dbaf2;
+}
+#shareCurrentBtn:hover,
+#shareAllBtn:hover,
+#shareConfigureLessonBtn:hover,
+#lessonSaveConfigBtn:hover,
+#lessonLoadConfigBtn:hover,
+#lessonShareBtn:hover{
+  background:#d6e6ff;
+  border-color:#6f99e8;
+}
+
+/* Close is a normal neutral button, matching the Save ABC prompt treatment. */
+#shareCloseBtn,
+#lessonCloseBtn,
+#lessonLinkCloseBtn{
+  background:#f5f6f5;
+  border-color:#aebbb3;
+}
+#shareCloseBtn:hover,
+#lessonCloseBtn:hover,
+#lessonLinkCloseBtn:hover{
+  background:#e4e8e5;
+  border-color:#81968a;
+}
+
+
+/* v1.72: final Share / Configure Lesson button treatment. */
+#shareModal .lessonActions button,
+#lessonModal .lessonActions button{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#e6e8ff;
+  border:1px solid #a9aed8;
+  border-radius:6px;
+  box-shadow:none;
+  font:inherit;
+  font-weight:400;
+  line-height:1.2;
+  padding:7px 16px;
+  cursor:pointer;
+}
+#shareModal .lessonActions button:hover:not(:disabled),
+#lessonModal .lessonActions button:hover:not(:disabled){
+  background:#daddff;
+  border-color:#8f96c8;
+}
+#shareModal .lessonActions button:disabled,
+#lessonModal .lessonActions button:disabled{
+  opacity:.45;
+  cursor:default;
+}
+
+/* Close: real neutral button matching the Save ABC dialog buttons. */
+#shareCloseBtn,
+#lessonCloseBtn,
+#lessonLinkCloseBtn{
+  -webkit-appearance:none;
+  appearance:none;
+  color:#17241c;
+  -webkit-text-fill-color:#17241c;
+  background:#f5f6f5;
+  border:1px solid #aebbb3;
+  border-radius:6px;
+  box-shadow:none;
+  font:inherit;
+  font-weight:400;
+  line-height:1.2;
+  min-width:78px;
+  padding:6px 14px;
+  cursor:pointer;
+  text-decoration:none;
+}
+#shareCloseBtn:hover,
+#lessonCloseBtn:hover,
+#lessonLinkCloseBtn:hover{
+  background:#e4e8e5;
+  border-color:#81968a;
+  text-decoration:none;
+}
+#shareModal .lessonCloseRow{margin-top:34px}
+#lessonModal .lessonCloseRow{margin-top:30px}
+
+
+/* v1.73: square lesson dialogs and rebalanced Share spacing. */
+#shareChoiceDialog,
+#lessonConfigDialog{
+  border-radius:0 !important;
+}
+
+/* Share only: 75px from top, tighter sides, more breathing room below title. */
+#shareModal{
+  padding-top:75px !important;
+}
+#shareChoiceDialog{
+  width:min(690px,calc(100vw - 28px));
+  padding:24px 20px 26px !important;
+}
+#shareChoiceDialog h2{
+  margin:0 0 34px !important;
+}
+#shareChoiceDialog .lessonActions{
+  column-gap:16px !important;
+}
+
+/* Configure Lesson remains at the existing 100px top position. */
+#lessonModal{
+  padding-top:75px !important;
+}
+
+@media(max-width:650px){
+  #shareModal{padding-top:75px !important}
+  #lessonModal{padding-top:75px !important}
+  #shareChoiceDialog{
+    width:calc(100vw - 28px);
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+}
+
+
+/* v1.74: square dialogs, rebalanced Share layout, and auto-close after sharing. */
+#shareModal .lessonDialog,
+#lessonModal .lessonDialog,
+#shareChoiceDialog,
+#lessonConfigDialog{
+  border-radius:0 !important;
+}
+
+/* Share dialog position and spacing. */
+#shareModal{
+  padding-top:150px !important;
+}
+#shareChoiceDialog h2{
+  margin-bottom:46px !important;
+}
+#shareChoiceDialog .lessonCloseRow{
+  margin-top:42px !important;
+}
+
+@media(max-width:650px){
+  #shareModal{padding-top:150px !important}
+}
+
+
+/* v1.75: equal vertical spacing around the Share action row. */
+#shareChoiceDialog h2{
+  margin-bottom:42px !important;
+}
+#shareChoiceDialog .lessonCloseRow{
+  margin-top:42px !important;
+}
+
+
+/* v1.76: explicitly balance the actual Share dialog elements. */
+#shareModal .lessonDialog{
+  border-radius:0 !important;
+  width:min(620px,calc(100vw - 28px)) !important;
+  padding:28px 24px 28px !important;
+}
+#shareModal .lessonDialog > h2{
+  margin:0 !important;
+}
+#shareModal .lessonDialog > .lessonActions{
+  margin-top:44px !important;
+}
+#shareModal .lessonDialog > .lessonCloseRow{
+  margin-top:44px !important;
+}
+#lessonModal .lessonDialog{
+  border-radius:0 !important;
+}
+
+
+/* v1.79: taller Lesson Share Link URL field. */
+#lessonLinkOutput{
+  min-height:240px !important;
+  height:240px !important;
+}
+
+
+/* v1.82: final Configure Lesson / Lesson Share Link spacing refinements. */
+
+/* Move Create Lesson Link slightly farther below the save/load row. */
+#lessonShareBtn{
+  margin-top:8px !important;
+}
+
+/* Lesson Share Link: square container with more breathing room around actions. */
+#lessonLinkModal .lessonDialog{
+  border-radius:0 !important;
+  padding-bottom:32px !important;
+}
+#lessonLinkModal .lessonActions{
+  margin-top:30px !important;
+  margin-bottom:8px !important;
+}
+
+
+/* Release lesson dialog sizing refinements. */
+#lessonModal .lessonDialog{
+  width:min(700px,calc(100vw - 28px)) !important;
+  max-width:700px !important;
+  height:50vh !important;
+  max-height:50vh !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+#lessonModal #lessonInstructionsInput{
+  flex:1 1 0 !important;
+  min-height:160px !important;
+  height:100% !important;
+  resize:none !important;
+}
+#lessonModal .lessonActions,#lessonModal .lessonCloseRow,#lessonModal h2,#lessonModal label,#lessonModal input,#lessonModal .lessonHint{flex:0 0 auto}
+#lessonLinkModal .lessonDialog{
+  width:min(700px,calc(100vw - 28px)) !important;
+  max-width:700px !important;
+}
+@media(max-width:650px){
+  #lessonModal .lessonDialog{height:50vh !important;max-height:50vh !important}
+  #lessonModal #lessonInstructionsInput{min-height:100px !important}
+}
+
+/* Lesson student-mode presentation and locked lesson settings. */
+#studentLessonModal .lessonDialog{
+  width:min(700px,calc(100vw - 28px));
+  padding:34px 40px 32px;
+}
+#studentLessonModal .lessonStudentTitle{
+  margin:0 0 34px;
+}
+#studentLessonModal .lessonStudentText{
+  margin:0 0 40px;
+}
+#studentLessonModal .lessonActions{
+  margin-top:0;
+}
+
+/* In a running lesson, keep the toolbar visible so the assigned setup can be
+   seen, but prevent the student from changing it. Hide Browse visually while preserving its layout space, and hide Share. */
+body.lessonMode .toolbar{display:grid!important}
+body.lessonMode .workspace{margin-top:0}
+body.lessonMode .fileControl #openFile{visibility:hidden!important;pointer-events:none!important}
+body.lessonMode .shareButtons{display:none!important}
+#lessonSaveAbcBtn{display:none!important}
+
+body.lessonMode .toolbar select:disabled{
+  color:#5f6762;
+  -webkit-text-fill-color:#5f6762;
+  background-color:#f2f2f2;
+  border-color:#c8c8c8;
+  opacity:1;
+  cursor:default;
+}
+
+@media(max-width:650px){
+  #studentLessonModal .lessonDialog{
+    width:min(700px,calc(100vw - 28px));
+    padding:28px 22px 26px;
+  }
+  #studentLessonModal .lessonStudentTitle{margin-bottom:28px}
+  #studentLessonModal .lessonStudentText{margin-bottom:34px}
+}
+
+
+/* Student lesson information dialog: fixed title/footer with scrolling instructions. */
+#studentLessonModal{
+  align-items:flex-start;
+  padding-top:62px;
+}
+#studentLessonModal .lessonDialog{
+  width:min(700px,calc(100vw - 28px));
+  max-width:min(700px,calc(100vw - 28px));
+  height:auto;
+  max-height:60vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-sizing:border-box;
+  border-radius:0;
+  padding:28px 38px 26px;
+}
+#studentLessonModal .lessonStudentTitle{
+  flex:0 0 auto;
+  margin:0 0 26px;
+}
+#studentLessonModal .lessonStudentScroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding-right:10px;
+}
+#studentLessonModal .lessonStudentText{
+  margin:0;
+  white-space:pre-wrap;
+  line-height:1.45;
+}
+#studentLessonModal .lessonLockedNote{
+  flex:0 0 auto;
+  margin:22px 0 13px 0;
+  color:#777;
+  font-size:.82rem;
+  line-height:1.35;
+  text-align:center;
+}
+#studentLessonModal .lessonActions{
+  flex:0 0 auto;
+  margin:14px 0 0;
+}
+
+@media(max-width:650px){
+  #studentLessonModal{
+    padding-top:28px;
+  }
+  #studentLessonModal .lessonDialog{
+    width:calc(100vw - 28px);
+    max-width:calc(100vw - 28px);
+    max-height:60vh;
+    padding:24px 22px 22px;
+    border-radius:0;
+  }
+  #studentLessonModal .lessonStudentTitle{margin-bottom:22px}
+  #studentLessonModal .lessonActions{margin-top:22px}
+}
+
+
+/* Unified lesson mode final overrides */
+.shareButtons #shareTuneBtn,.shareButtons #shareAllBtn{display:none!important}
+body.lessonMode .toolbar{display:grid!important}
+body.lessonMode .workspace{margin-top:0}
+body.lessonMode .fileControl #openFile{visibility:hidden!important;pointer-events:none!important}
+body.lessonMode .shareButtons{display:none!important}
+body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#5f6762;background-color:#f2f2f2;border-color:#c8c8c8;opacity:1;cursor:default}
+
+
+/* Context help for Sharing Controls and Configure Lesson. */
+#shareModal .lessonDialog,#lessonModal .lessonDialog{position:relative}
+.dialogHelpBtn{position:absolute;left:16px;top:14px;width:34px;height:34px;padding:0;border:1px solid #aebdb4;border-radius:50%;background:#f7f9f8;color:#17241c;font:600 20px/32px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;cursor:pointer;text-align:center}
+.dialogHelpBtn:hover{background:#e4e8e5;border-color:#81968a}
+@media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:18px;line-height:30px}}
+
+
+/* Context-help layering and minimal help-button appearance. */
+#shareModal .lessonDialog,#lessonModal .lessonDialog{position:relative}
+.dialogHelpBtn{
+  position:absolute;left:16px;top:14px;width:34px;height:34px;padding:0 !important;
+  border:0 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;
+  color:#17241c !important;-webkit-text-fill-color:#17241c !important;
+  font:600 28px/34px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif !important;
+  cursor:pointer;text-align:center;
+}
+.dialogHelpBtn:hover,.dialogHelpBtn:active{background:transparent !important;border:0 !important;box-shadow:none !important}
+@media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:28px !important;line-height:32px !important}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.40</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -455,7 +932,13 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 </div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
-<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:4000;padding:50px 24px 24px">
+<div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
+<div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
+<div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
+<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: The settings in the top bar are locked for lessons and cannot be changed.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
+
+
+<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Tin Whistle Fingering Player Instructions</h2>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
@@ -464,17 +947,20 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>The Whistle Fingering pane shows the current tune title and, during playback, a large fingering diagram for the note being played with its note name to the right.</p>
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with D-whistle tablature. The default is <b>Notation + Whistle Tab</b>.</p>
 
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
       <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or <b>.txt</b> file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
       <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play. Edits are retained when changing tunes.</p>
       <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
 
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>The upper-left panel contains editable ABC. The lower-left panel shows abcjs notation and playback controls. The <b>Notation display</b> selector chooses whether D-whistle tablature is also shown.</p>
       <p>Editing the ABC rebuilds the notation and audio. When whistle tablature is enabled it is rebuilt at the same time. Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
       <p>The display uses standard D-whistle fingering. The note name appears to the right of the fingering symbol.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names are displayed using sharps or flats according to the tune's <b>K:</b> key and mode. When <b>Show note</b> is enabled, the notation below the note name uses the same sharp or flat naming.</p>
@@ -482,7 +968,8 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
       <p>The two <b>Color-coded</b> choices draw the fingering glyph black below D5, dark red from D5 through C#6, and orange from D6 upward.</p>
       <p>The <b>Notation display</b> and <b>Octave Display</b> choices are remembered in this browser and are also included in generated share links.</p>
 
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Whistle Fingering pane updates to that note.</p>
       <p>Playback uses <b>MIDI program 78</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
@@ -499,27 +986,57 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
              alt="Tempo control"
              style="max-width: 100%; height: auto;">
       </div>
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
       <p>On wide screens, drag the vertical divider to resize the left and whistle-fingering panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
       <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Whistle Fingering</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
 
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
-      <p>Click <b>Share Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The compressed ABC is copied in a share URL.</p>
-      <p><b>Shift-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools ABC Editor</b> instead of copying this player's share URL.</p>
-      <p><b>Alt-click</b> <b>Share Tune</b> or <b>Share All Tunes</b> to open the selected ABC directly in the <b>ABC Transcription Tools Player</b>.</p>
-      <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+      <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
+      <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
+      <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p><p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
 
-      <hr>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      
+      <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
+      <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
+      <p>A lesson uses the <b>current tune only</b>.</p>
+      <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
+      <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
+      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Tin Whistle Player share link.</p>
+      <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
+      <p>Those saved player settings are <b>Notation display and Octave Display</b>.</p>
+      <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
+      <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
+      <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings.</p>
+      <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
+      <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
+      <p>Your music teacher may provide you with a Tin Whistle Player lesson link.</p>
+      <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
+      <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
+      <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
+      <p>The lesson setup controls and tune selector are shown at the top of the player but are disabled so they cannot be changed.</p>
+      <p>The ABC file Browse control and Share control are hidden while you are using a lesson.</p>
+      <p>You can use the normal notation, fingering display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
+      <p>You can edit the ABC if your teacher asks you to make changes.</p>
+      <p>Click <b>Save ABC</b> to save your edited ABC.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>based on a suggestion by Ephraim Schafli.<br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
-      <hr>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
     </div>
     <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
   </div>
 </div>
 
 <script>
+  
 const $=id=>document.getElementById(id);
 
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -687,7 +1204,7 @@ function restoreMetronomePreference(){
   const cb=$("metronomeCheck");
   if(cb)cb.checked=metronomeEnabled;
 }
-function saveMetronomePreference(){
+function saveMetronomePreference(){commitStandardShareSettingsIfPending();
   try{localStorage.setItem(METRONOME_KEY,String(metronomeEnabled))}catch(_){}
 }
 async function toggleMetronome(){
@@ -1240,7 +1757,7 @@ function savedSplitters(){
 const DEFAULT_SPLIT_V=52.5,DEFAULT_SPLIT_H=45;
 let splitVPercent=DEFAULT_SPLIT_V,splitHPercent=DEFAULT_SPLIT_H;
 
-function saveSplitterPercents(){
+function saveSplitterPercents(){commitStandardShareSettingsIfPending();
   try{
     localStorage.setItem(SPLIT_KEY,JSON.stringify({v:splitVPercent,h:splitHPercent}));
   }catch(_){}
@@ -1416,15 +1933,7 @@ function openShareInABCTranscriptionTools(allTunes,mode){
 }
 
 function handleShareButtonClick(event,allTunes){
-  if(event.shiftKey){
-    openShareInABCTranscriptionTools(allTunes,"editor");
-    return;
-  }
-  if(event.altKey){
-    openShareInABCTranscriptionTools(allTunes,"player");
-    return;
-  }
-  copyShareLink(allTunes);
+  showStandardShareLink(allTunes);
 }
 
 async function copyShareLink(allTunes){
@@ -1462,7 +1971,7 @@ async function copyShareLink(allTunes){
     if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
       await DayPilot.Modal.alert(message,{top:100,width:460});
     }else{
-      alert(allTunes
+      void showPlayerAlert(allTunes
         ?"Share link for all tunes copied to the clipboard."
         :`Share link for the current tune ${tuneName} copied to the clipboard.`);
     }
@@ -1471,7 +1980,7 @@ async function copyShareLink(allTunes){
     if(typeof DayPilot!=="undefined"&&DayPilot.Modal){
       await DayPilot.Modal.alert(message,{top:100,width:460});
     }else{
-      alert(message);
+      void showPlayerAlert(message);
     }
   }
 }
@@ -1593,6 +2102,9 @@ function processLoadedABC(abc,label){
   $("saveAbcBtn").disabled=false;
   populateTuneSelector(label);
   loadTune(0,false);
+  // Share-link loading occurs after Lesson mode is established. Keep the tune
+  // selector locked after the normal loader repopulates and enables it.
+  if(document.body.classList.contains("lessonMode"))$("tuneSelect").disabled=true;
 }
 
 function trustedABCTranscriptionToolsMessage(event){
@@ -1632,7 +2144,7 @@ function loadABCFromABCTranscriptionTools(data,event){
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
     console.error(error);
-    alert("Unable to load ABC from "+sourceName+": "+(error&&error.message||error));
+    void showPlayerAlert("Unable to load ABC from "+sourceName+": "+(error&&error.message||error));
   }
 }
 
@@ -1672,11 +2184,18 @@ function restoreShowNotePreference(){
   try{showNoteEnabled=localStorage.getItem(SHOW_NOTE_KEY)==="true"}catch(_){showNoteEnabled=false}
   $("showNoteCheck").checked=showNoteEnabled;
 }
-function saveShowNotePreference(){
+function saveShowNotePreference(){commitStandardShareSettingsIfPending();
   try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}
 }
 
-function saveWhistleDisplayPrefs(){
+let standardShareSettingsPending=false;
+function commitStandardShareSettingsIfPending(){
+  if(!standardShareSettingsPending)return;
+  standardShareSettingsPending=false;
+  try{localStorage.setItem(WHISTLE_PREFS_KEY,JSON.stringify({notation:$("notationDisplay").value,octave:$("octaveDisplay").value}))}catch(_){}
+}
+
+function saveWhistleDisplayPrefs(){commitStandardShareSettingsIfPending();
   try{
     localStorage.setItem(WHISTLE_PREFS_KEY,JSON.stringify({
       notation:$("notationDisplay").value,
@@ -1708,7 +2227,8 @@ function applyWhistleShareSettings(){
   if(["upper-prime","lower-upper","color-upper-prime","color-lower-upper"].includes(octave)){
     $("octaveDisplay").value=octave;
   }
-  saveWhistleDisplayPrefs();
+  // URL settings are session-only until the user changes a persistent setting.
+  standardShareSettingsPending=!!params.get("def")&&params.get("lesson")!=="1";
 }
 
 function loadShareLinkAfterStartup(){
@@ -1721,12 +2241,13 @@ function loadShareLinkAfterStartup(){
 
   setTimeout(()=>{
     try{
+      if(params.get('lesson')==='1'){if(window.INVALID_LESSON_ERROR)throw new Error(window.INVALID_LESSON_ERROR);validateLessonURLParams(params);}
       manualEntryCollection=false;
       currentSaveBaseName="shared-tin-whistle-tunes";
       sharePlaybackNeedsGesture=true;
       processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
-      alert("Unable to open share link: "+(err&&err.message||err));
+      showFileLoadError(err);
     }
   },750);
 }
@@ -1740,6 +2261,7 @@ function applyEditorTextSize(size,save=false){
   ta.classList.add("editorText"+size[0].toUpperCase()+size.slice(1));
   $("editorTextSize").value=size;
   if(save){
+    commitStandardShareSettingsIfPending();
     try{localStorage.setItem(EDITOR_SIZE_KEY,size)}catch(_){}
   }
 }
@@ -1759,7 +2281,7 @@ function savedTempo(){
   }
 }
 
-function saveTempo(n){
+function saveTempo(n){commitStandardShareSettingsIfPending();
   try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}
 }
 
@@ -1892,7 +2414,7 @@ function showEnablePlaybackButton(){
       sharePlaybackNeedsGesture=true;
       btn.disabled=false;
       btn.textContent="Click to Enable Playback";
-      alert("Unable to enable playback: "+(e&&e.message||e));
+      void showPlayerAlert("Unable to enable playback: "+(e&&e.message||e));
     }
   },{once:true});
 
@@ -2011,7 +2533,7 @@ async function rebuild(){
       },0));
     }
   }catch(e){
-    alert("Unable to prepare tune: "+(e&&e.message||e));
+    void showPlayerAlert("Unable to prepare tune: "+(e&&e.message||e));
     $("audio").innerHTML="";
   }
 }
@@ -2057,7 +2579,7 @@ async function toggleMelodyMute(){
       else if(typeof controller.play==="function")await controller.play();
     }
   }catch(e){
-    alert("Unable to restart playback: "+(e&&e.message||e));
+    void showPlayerAlert("Unable to restart playback: "+(e&&e.message||e));
   }
 }
 function restoreCountInPreference(){
@@ -2065,7 +2587,7 @@ function restoreCountInPreference(){
   const cb=$("countInCheck");
   if(cb)cb.checked=countInEnabled;
 }
-function saveCountInPreference(){
+function saveCountInPreference(){commitStandardShareSettingsIfPending();
   const cb=$("countInCheck");
   countInEnabled=!!(cb&&cb.checked);
   try{localStorage.setItem(COUNT_IN_KEY,String(countInEnabled))}catch(_){}
@@ -2143,7 +2665,7 @@ async function showMultiplePasteAlert(){
   if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.alert==="function"){
     await DayPilot.Modal.alert(message,{top:100,width:460});
   }else{
-    alert(
+    void showPlayerAlert(
       "Pasting multiple tunes into the ABC editor is not allowed.\n\n"+
       "Please save the multiple tunes to a .abc file and then load the file into the tool."
     );
@@ -2232,20 +2754,62 @@ $("openFile").addEventListener("change",async e=>{
     return;
   }
 
+  let lessonPreloadedText=null;
+  try{
+    lessonPreloadedText=await f.text();
+    try{const lessonURL=savedLessonLinkURLFromText(lessonPreloadedText);if(lessonURL){const lessonURLObject=new URL(lessonURL);const payload=lessonURLObject.searchParams.get('def');if(!payload)throw new Error('The lesson link does not contain ABC data.');lessonPreloadedText=decompressABCDeflate(payload);}}catch(err){input.value='';await showFileLoadError(err);return}
+    // Saved standard Share Link text files are accepted too. Validate and decode
+    // the ABC payload before navigating so malformed URLs get a clean DayPilot
+    // error instead of reaching the ABC renderer.
+    if(/^https?:\/\//i.test(String(lessonPreloadedText||'').trim())){
+      try{
+        const shareURL=new URL(String(lessonPreloadedText||'').trim());
+        const payload=shareURL.searchParams.get('def');
+        if(!payload)throw new Error('The share link does not contain ABC data.');
+        const sharedABC=decompressABCDeflate(payload);
+        if(typeof sharedABC!=='string'||!sharedABC.trim()||!/(^|\n)\s*X\s*:\s*\S+/m.test(sharedABC)){
+          throw new Error('The share link does not contain valid ABC notation.');
+        }
+        // Browse is content-only: decode the ABC but ignore every setting in the URL.
+        lessonPreloadedText=sharedABC;
+      }catch(err){
+        input.value='';
+        await showFileLoadError(err);
+        return;
+      }
+    }
+    // Intercept lesson configuration files before ordinary ABC detection.
+    // Never allow lesson JSON (including a lesson made by another player) to
+    // fall through and be mistaken for ABC merely because its embedded `abc`
+    // property contains an X: field.
+    const normalizedFileText=String(lessonPreloadedText||'').replace(/^\uFEFF/,'').trim();
+    let lessonConfig=null;
+    if(looksLikeLessonConfigText(normalizedFileText) || /^[\[{]/.test(normalizedFileText)){
+      try{lessonConfig=parseLessonConfigText(normalizedFileText)}catch(err){input.value='';await showLessonLoadError(err);return}
+      if(lessonConfig){/* Browse is content-only: use the validated lesson ABC without applying lesson settings. */lessonPreloadedText=lessonConfig.abc}
+      if(!lessonConfig){
+        input.value='';
+        await showFileLoadError(new Error('The selected file does not contain valid ABC notation.'));
+        return;
+      }
+    }
+  }catch(err){input.value="";await showFileLoadError(err);return}
+
   if(!(await confirmDiscardDirtyForOpen())){
     input.value="";
     return;
   }
 
   try{
-    const abc=await f.text();
+    const abc=lessonPreloadedText;
+    if(!hasMinimumABCForRender(lessonPreloadedText)){input.value='';await showFileLoadError(new Error('No ABC tunes found in the selected file.'));return}
     sharePlaybackNeedsGesture=false;
     manualEntryCollection=false;
     currentSaveBaseName=baseNameForSave(f.name);
     processLoadedABC(abc,f.name);
   }catch(err){
     input.value="";
-    alert("File load failed: "+(err.message||err));
+    await showFileLoadError(err);
   }
 });
 
@@ -2310,6 +2874,15 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape"&&document.body.classList.contains("diagram-full"))setFull(false);
 });
 
+function openInstructionsAt(sectionId){
+  const overlay=$("helpOverlay");
+  if(!overlay)return;
+  overlay.style.display="block";
+  requestAnimationFrame(()=>{
+    const target=$(sectionId);
+    if(target)target.scrollIntoView({block:"start",behavior:"auto"});
+  });
+}
 $("instructionsBtn").addEventListener("click",()=>{
   $("helpOverlay").style.display="block";
 });
@@ -2419,4 +2992,144 @@ function installPlaybackPermissionHeaderControlSync(){
 }
 
 installPlaybackPermissionHeaderControlSync();
+
+/* Unified lesson sharing system */
+const LESSON_LINK_MAX_LEN=SHARE_LINK_MAX_LEN||8100;
+function lessonIsIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+async function showFileLoadError(err){
+  const message='Unable to open file: '+(err&&err.message||err);
+  if(typeof DayPilot!=='undefined'&&DayPilot.Modal&&typeof DayPilot.Modal.alert==='function'){
+    await DayPilot.Modal.alert(message,{top:150,width:520});
+  }else{
+    console.error(message);
+  }
+}
+async function showPlayerAlert(message,options){
+  if(typeof DayPilot!=='undefined'&&DayPilot.Modal&&typeof DayPilot.Modal.alert==='function'){
+    await DayPilot.Modal.alert(String(message),Object.assign({top:100,width:520},options||{}));
+  }else{
+    console.error(message);
+  }
+}
+function savedLessonLinkURLFromText(text){
+  const value=String(text||'').trim();
+  if(!/^https?:\/\//i.test(value))return null;
+  let u;try{u=new URL(value)}catch(_){return null}
+  if(u.searchParams.get('lesson')!=='1')return null;
+  const lessonPlayer=u.pathname.split('/').pop();
+  if(lessonPlayer!=='abc-tin-whistle-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be opened in this tool.');
+  validateLessonURLParams(u.searchParams);
+  return u.toString();
+}
+function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
+function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
+function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
+function validateLessonSettingsParams(params){const notation=params.get("notation"),octave=params.get("octave");if(notation!==null&&!['notation','whistle-tab'].includes(notation))throw new Error('Lesson notation setting is invalid.');if(octave!==null&&!['upper-prime','lower-upper','color-upper-prime','color-lower-upper'].includes(octave))throw new Error('Lesson octave display setting is invalid.');}
+function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
+function applyLessonSettingsParams(params){validateLessonSettingsParams(params);const notation=params.get("notation"),octave=params.get("octave");
+  if(notation!==null&&!['notation','whistle-tab'].includes(notation))throw new Error('Lesson notation setting is invalid.');
+  if(octave!==null&&!['upper-prime','lower-upper','color-upper-prime','color-lower-upper'].includes(octave))throw new Error('Lesson octave display setting is invalid.');
+  if(notation)$('notationDisplay').value=notation;if(octave)$('octaveDisplay').value=octave;saveWhistleDisplayPrefs();}
+function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
+function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
+function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
+function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
+function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
+function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
+function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-tin-whistle-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:Object.fromEntries(u.searchParams.entries())}}
+function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
+  if(c.player!=='abc-tin-whistle-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
+function parseLessonConfigText(text){let c;try{c=JSON.parse(String(text||''))}catch(_){return null}if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson')return null;validateLessonConfigObject(c);return c}
+function looksLikeLessonConfigText(text){return /["']format["']\s*:\s*["']ABCPlayerLesson["']/.test(String(text||''))}
+async function showLessonLoadError(err){const msg='Unable to load lesson: '+(err&&err.message||err);if(window.DayPilot&&DayPilot.Modal)await DayPilot.Modal.alert(msg,{top:100,width:520});else console.error(msg)}
+async function confirmLessonConfigReplacement(){if(!tunes.length)return true;const msg=tunes.length===1?'Loading this lesson will replace the currently loaded tune.<br><br>OK to Continue?':`Loading this lesson will replace the ${tunes.length} currently loaded tunes.<br><br>OK to Continue?`;if(window.DayPilot&&DayPilot.Modal&&DayPilot.Modal.confirm){const r=await DayPilot.Modal.confirm(msg,{top:150,width:600});return !!(r&&!r.canceled&&r.result)}return window.confirm(msg.replace(/<br\s*\/?>/gi,'\\n'))}
+async function loadLessonConfigObject(c){const checked=validateLessonConfigObject(c);if(!(await confirmLessonConfigReplacement()))return false;$('lessonTitleInput').value=checked.meta.title;$('lessonInstructionsInput').value=checked.meta.instructions;saveLessonDraftPreferences();const q=checked.q;q.delete('def');q.delete('lesson');q.delete('ldata');applyLessonSettingsParams(q);sharePlaybackNeedsGesture=false;manualEntryCollection=false;currentSaveBaseName='';processLoadedABC(c.abc,'Lesson configuration');$('openFile').value='';updateShareButtons();refreshUnifiedShareState();setModal('shareModal',false);setModal('lessonLinkModal',false);setModal('lessonModal',true);return true}
+function lessonFileBaseName(v){v=String(v||'').trim().replace(/\.txt$/i,'').replace(/[\\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim();return v||'saved_lesson'}
+async function askLessonTextFileName(promptText,defaultBase){
+  const def=lessonFileBaseName(defaultBase)+'.txt';
+  let v=null;
+  document.body.classList.add("save-name-prompt-open");
+  try{
+    if(window.DayPilot&&DayPilot.Modal&&typeof DayPilot.Modal.prompt==="function"){
+      const r=await DayPilot.Modal.prompt(promptText,def,{top:100,width:460});
+      if(!r||r.canceled)return null;
+      v=r.result;
+    }else{
+      v=window.prompt(promptText,def);
+      if(v===null)return null;
+    }
+  }finally{
+    document.body.classList.remove("save-name-prompt-open");
+  }
+  return lessonFileBaseName(v)+'.txt';
+}
+async function lessonSaveText(name,text){const blob=new Blob([text],{type:'text/plain'});if(lessonIsIOS()&&navigator.share&&typeof File!=='undefined'){try{const f=new File([blob],name,{type:'text/plain'});if(!navigator.canShare||navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(e){if(e&&e.name==='AbortError')return}}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function saveLessonConfig(){const name=await askLessonTextFileName('Save lesson file name:',$('lessonTitleInput').value||'saved_lesson');if(name)await lessonSaveText(name,JSON.stringify(lessonConfigObject(),null,2))}
+async function lessonCopy(text){try{await navigator.clipboard.writeText(text);return true}catch(_){try{$('lessonLinkOutput').focus();$('lessonLinkOutput').select();return document.execCommand('copy')}catch(__){return false}}}
+const LESSON_DRAFT_STORAGE_KEY='abctinWhistlePlayerLessonDraftV1';
+function saveLessonDraftPreferences(){try{localStorage.setItem(LESSON_DRAFT_STORAGE_KEY,JSON.stringify({title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value}))}catch(_){}}
+function restoreLessonDraftPreferences(){let d={};try{d=JSON.parse(localStorage.getItem(LESSON_DRAFT_STORAGE_KEY)||'{}')||{}}catch(_){}$('lessonTitleInput').value=typeof d.title==='string'?d.title:'';$('lessonInstructionsInput').value=typeof d.instructions==='string'?d.instructions:''}
+function lockLessonTopControls(){for(const id of ["notationDisplay", "octaveDisplay", "tuneSelect"]){const el=$(id);if(el)el.disabled=true}const save=$('saveAbcBtn');if(save){save.disabled=!tunes.length;save.textContent='Save ABC'}}
+function setupLessonMode(){if(!lessonModeActive())return;let d;try{d=lessonDataFromURL()}catch(err){window.INVALID_LESSON_ERROR=err&&err.message||String(err);return}document.body.classList.add('lessonMode');lockLessonTopControls();setTimeout(()=>{$('studentLessonTitle').textContent=d.title||'Lesson';$('studentLessonInstructions').textContent=d.instructions||'';setModal('studentLessonModal',true);lockLessonTopControls()},1050)}
+let shareLinkDialogKind='lesson';
+function shareLinkDialogTitle(kind){
+  return kind==='current'?'Current Tune Share Link':kind==='all'?'All Tunes Share Link':'Lesson Share Link';
+}
+function showShareLinkDialog(kind,url){
+  shareLinkDialogKind=kind;
+  $('lessonLinkTitle').textContent=shareLinkDialogTitle(kind);
+  $('lessonLinkOutput').value=url;
+  $('lessonLinkCloseBtn').textContent=kind==='lesson'?'Back':'Close';
+  if(kind!=='lesson')setModal('shareModal',false);
+  setModal('lessonLinkModal',true);
+}
+function showStandardShareLink(allTunes){
+  syncCurrentTuneFromEditor();
+  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
+  const url=generateShareLink(abc);
+  if(!url||url.length>SHARE_LINK_MAX_LEN)return;
+  setModal('shareModal',false);
+  showShareLinkDialog(allTunes?'all':'current',url);
+}
+function shareLinkCopyMessage(copied){
+  if(!copied)return 'Unable to copy the share link to the clipboard.';
+  if(shareLinkDialogKind==='lesson')return 'Lesson link copied to the clipboard.';
+  if(shareLinkDialogKind==='all')return 'Share link for all tunes copied to the clipboard.';
+  return 'Share link for the current tune copied to the clipboard.';
+}
+async function askCurrentShareLinkFileName(){
+  syncCurrentTuneFromEditor();
+  const title=firstTitle($('abcText').value,1);
+  const namedTitle=/^T:\s*.*\S.*$/m.test($('abcText').value)?String(title).trim():'';
+  return askLessonTextFileName('Save current tune share link file name:',namedTitle?namedTitle+' Share Link':'current_tune_share_link');
+}
+async function askAllShareLinkFileName(){
+  return askLessonTextFileName('Save all tunes share link file name:','All Tunes Share Link');
+}
+async function askShareLinkFileName(){
+  if(shareLinkDialogKind==='current')return askCurrentShareLinkFileName();
+  if(shareLinkDialogKind==='all')return askAllShareLinkFileName();
+  const title=String($('lessonTitleInput').value||'').trim();
+  return askLessonTextFileName('Save lesson link file name:',title?title+' Lesson Link':'lesson_link');
+}
+function openDisplayedShareInABCTT(){
+  // Reuse the player's established ABCTT preprocessing. For lessons this
+  // deliberately uses only the lesson tune and omits ldata/lesson parameters.
+  openShareInABCTranscriptionTools(shareLinkDialogKind==='all','editor');
+}
+function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';oldTune.parentElement.appendChild(btn)}btn.disabled=false;btn.onclick=()=>{refreshUnifiedShareState();setModal('shareModal',true)};$('shareCloseBtn').onclick=()=>setModal('shareModal',false);
+  $('shareHelpBtn').onclick=()=>openInstructionsAt('sharingInstructionsSection');
+  $('lessonHelpBtn').onclick=()=>openInstructionsAt('teacherLessonInstructionsSection');$('shareCurrentDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(false)};$('shareAllDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(true)};$('configureLessonBtn').onclick=()=>{setModal('shareModal',false);refreshUnifiedShareState();setModal('lessonModal',true)};$('lessonCloseBtn').onclick=()=>setModal('lessonModal',false);restoreLessonDraftPreferences();$('lessonTitleInput').oninput=saveLessonDraftPreferences;$('lessonInstructionsInput').oninput=saveLessonDraftPreferences;$('lessonSaveConfigBtn').onclick=saveLessonConfig;$('lessonLoadConfigBtn').onclick=()=>$('lessonConfigFile').click();if(lessonIsIOS())$('lessonConfigFile').removeAttribute('accept');$('lessonConfigFile').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const text=String(await f.text()).trim();let c=null;try{c=JSON.parse(text)}catch(_){const u=new URL(text);const lessonPlayer=u.pathname.split('/').pop();
+        if(lessonPlayer!=='abc-tin-whistle-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');
+        const params=u.searchParams;const loaded=validateLessonURLParams(params);if(!loaded)throw new Error('This is not a valid ABC Player lesson configuration or lesson link file.');c={format:'ABCPlayerLesson',version:2,player:'abc-tin-whistle-fingering-player.html',title:loaded.meta.title,instructions:loaded.meta.instructions,abc:loaded.abc,settings:Object.fromEntries(params.entries())}}await loadLessonConfigObject(c)}catch(err){await showLessonLoadError(err)}finally{e.target.value=''}};$('lessonShareBtn').onclick=()=>{saveLessonDraftPreferences();const url=buildLessonLink($('lessonTitleInput').value,$('lessonInstructionsInput').value);if(!url||url.length>LESSON_LINK_MAX_LEN){void showPlayerAlert('This lesson is too large to fit in a share link. Save a Lesson Configuration instead.');return}showShareLinkDialog('lesson',url)};$('lessonCopyLinkBtn').onclick=async()=>{
+    const copied=await lessonCopy($('lessonLinkOutput').value);
+    const message=shareLinkCopyMessage(copied);
+    if(typeof DayPilot!=='undefined'&&DayPilot.Modal)await DayPilot.Modal.alert(message,{top:100,width:460});
+    else console.error(message);
+  };
+  $('lessonSaveLinkBtn').onclick=async()=>{const filename=await askShareLinkFileName();if(!filename)return;await lessonSaveText(filename,$('lessonLinkOutput').value+'\n','text/plain')};
+  $('lessonTestLinkBtn').onclick=()=>{const url=$('lessonLinkOutput').value.trim();if(url)window.open(url,'_blank','noopener')};
+  $('lessonOpenABCTTBtn').onclick=openDisplayedShareInABCTT;
+  $('lessonLinkCloseBtn').onclick=()=>setModal('lessonLinkModal',false);$('studentLessonStartBtn').onclick=()=>setModal('studentLessonModal',false);refreshUnifiedShareState()}
+setupLessonMode();installUnifiedSharing();
 </script></body></html>
