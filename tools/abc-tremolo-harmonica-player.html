@@ -3506,6 +3506,15 @@ window.addEventListener("resize",()=>{
   resetLegendPosition();
 });
 
+function openInstructionsAt(sectionId){
+  const overlay=$("helpOverlay");
+  if(!overlay)return;
+  overlay.style.display="block";
+  requestAnimationFrame(()=>{
+    const target=$(sectionId);
+    if(target)target.scrollIntoView({block:"start",behavior:"auto"});
+  });
+}
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();installCustomTuningEditor();restorePrefs();updateTremoloKeyChoices($("style").value);
 // Safari may restore native form-control selections after script initialization.
 // Rebuild the key list after pageshow so it always matches the visible model.

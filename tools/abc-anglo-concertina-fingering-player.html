@@ -1117,7 +1117,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>On mobile devices, the file is saved with a .txt extension.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Sharing Tunes</p>
+      <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Sharing Tunes</p>
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> to create a share link for the currently displayed tune,
         or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
       <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
@@ -4313,6 +4313,15 @@ window.addEventListener("resize",()=>{
   const p=$("tabOverridePopover");
   p.dataset.dragged?clampPopoverToViewport(p):positionTabOverridePopover();
 });
+function openInstructionsAt(sectionId){
+  const overlay=$("helpOverlay");
+  if(!overlay)return;
+  overlay.style.display="block";
+  requestAnimationFrame(()=>{
+    const target=$(sectionId);
+    if(target)target.scrollIntoView({block:"start",behavior:"auto"});
+  });
+}
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreShowNotePreference();restoreMetronomePreference();
 restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
