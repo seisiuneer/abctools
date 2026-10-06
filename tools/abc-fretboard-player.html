@@ -1161,7 +1161,7 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
    seen, but prevent the student from changing it. Hide Browse visually while preserving its layout space, and hide Share. */
 body.lessonMode .toolbar{display:grid!important}
 body.lessonMode .workspace{margin-top:0}
-body.lessonMode .fileControl #openFile{visibility:hidden!important;pointer-events:none!important}
+body.lessonMode .fileControl #openFile{visibility:visible!important;pointer-events:auto!important}
 body.lessonMode .shareButtons{display:none!important}
 #lessonSaveAbcBtn{display:none!important}
 
@@ -1247,14 +1247,14 @@ body.lessonMode .toolbar select:disabled{
 
 
 /* Context help for Sharing Controls and Configure Lesson. */
-#shareModal .lessonDialog,#lessonModal .lessonDialog{position:relative}
+#shareModal .lessonDialog,#lessonModal .lessonDialog,#studentLessonModal .lessonDialog{position:relative}
 .dialogHelpBtn{position:absolute;left:16px;top:14px;width:34px;height:34px;padding:0;border:1px solid #aebdb4;border-radius:50%;background:#f7f9f8;color:#17241c;font:600 20px/32px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;cursor:pointer;text-align:center}
 .dialogHelpBtn:hover{background:#e4e8e5;border-color:#81968a}
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:18px;line-height:30px}}
 
 
 /* Context-help layering and minimal help-button appearance. */
-#shareModal .lessonDialog,#lessonModal .lessonDialog{position:relative}
+#shareModal .lessonDialog,#lessonModal .lessonDialog,#studentLessonModal .lessonDialog{position:relative}
 .dialogHelpBtn{
   position:absolute;left:16px;top:14px;width:34px;height:34px;padding:0 !important;
   border:0 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;
@@ -1265,7 +1265,7 @@ body.lessonMode .toolbar select:disabled{
 .dialogHelpBtn:hover,.dialogHelpBtn:active{background:transparent !important;border:0 !important;box-shadow:none !important}
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:28px !important;line-height:32px !important}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.01</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1297,7 +1297,7 @@ body.lessonMode .toolbar select:disabled{
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
-<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: The settings in the top bar are locked for lessons and cannot be changed.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
+<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: The settings in the top bar are locked for lessons and cannot be changed.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
@@ -1404,21 +1404,22 @@ body.lessonMode .toolbar select:disabled{
       <p>Those saved player settings are <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b>.</p>
       <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
       <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
-      <p>Loading a lesson configuration restores its tune, lesson title, instructions, <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings.</p>
+      <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
+      <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       <p>Your music teacher may provide you with a Fretboard Player lesson link.</p>
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
       <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
-      <p>The lesson's <b>Notation display</b>, <b>Instrument</b>, <b>Capo</b>, and tune settings are shown at the top of the player but are disabled so they cannot be changed.</p>
-      <p>The ABC file Browse control and Share control are hidden while you are using a lesson.</p>
+      <p>The lesson's <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
+      <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, fretboard, playback, tempo, metronome, count-in, display, and pane controls that remain available while practicing the lesson.</p>
       <p>You can edit the ABC text during the lesson if needed.</p>
-      <p>Click <b>Save ABC</b> to save your edited ABC.</p>
+      <p>Click <b>Save</b> to save your edited ABC.</p>
+      <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
       <p>To return to normal Fretboard Player operation, open the player normally rather than through the lesson link.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -3400,6 +3401,7 @@ $("openFile").addEventListener("change",async e=>{
     manualEntryCollection=false;
     currentSaveBaseName=baseNameForSave(f.name);
     processLoadedABC(text,f.name);
+    if(lessonModeActive())$("tuneSelect").disabled=false;
   }catch(err){
     input.value="";
     await showFileLoadError(err);
@@ -3809,6 +3811,9 @@ function populateLessonConfigObject(c){
   // do not enter student Lesson mode.
   q.delete('def');q.delete('lesson');q.delete('ldata');q.delete('lessonconfig');
   applyFretboardSettingsParams(q);
+  // Loading a Lesson Configuration is a teacher action: make its player settings
+  // the normal saved preferences. Direct student Lesson Links do not use this path.
+  saveWhistleDisplayPrefs();
 
   // Load the saved ABC through the same normal in-memory path used by file/share loads.
   sharePlaybackNeedsGesture=false;
@@ -3848,12 +3853,12 @@ function setupLessonMode(){
     if(el)el.disabled=true;
   });
 
-  // Save remains in its normal position and is relabeled "Save ABC".
-  // Browse and Share are hidden by lesson-mode CSS.
+  // Save remains in its normal position with its normal label.
+  // Browse remains available for student ABC files; Share is hidden by lesson-mode CSS.
   const saveBtn=$('saveAbcBtn');
   if(saveBtn){
     saveBtn.disabled=!tunes.length;
-    saveBtn.textContent='Save ABC';
+    saveBtn.textContent='Save';
   }
 
   setTimeout(()=>{$('studentLessonTitle').textContent=d.title||'Lesson';$('studentLessonInstructions').textContent=d.instructions||'';setModal('studentLessonModal',true)},1050)
@@ -3930,6 +3935,7 @@ function installUnifiedSharing(){
   $('shareCloseBtn').onclick=()=>setModal('shareModal',false);
   $('shareHelpBtn').onclick=()=>openInstructionsAt('sharingInstructionsSection');
   $('lessonHelpBtn').onclick=()=>openInstructionsAt('teacherLessonInstructionsSection');
+  $('studentLessonHelpBtn').onclick=()=>openInstructionsAt('studentLessonInstructionsSection');
   $('shareCurrentDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(false)};
   $('shareAllDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(true)};
   $('configureLessonBtn').onclick=()=>{setModal('shareModal',false);refreshUnifiedShareState();setModal('lessonModal',true)};
