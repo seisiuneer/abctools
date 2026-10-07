@@ -35,12 +35,12 @@
   <title>
    ABC Harmonica Player
   </title>
-  <meta content="Play ABC tunes while following synchronized harmonica diagrams for 10-, 12-, or 16-hole diatonic or chromatic harmonicas, with blow, draw, bend, slide, and overblow indications." name="description">
+  <meta content="Play ABC tunes while following synchronized harmonica diagrams for diatonic, chromatic, and custom harmonica tunings, with 8-, 10-, 12-, 14-, and 16-hole custom instruments supported." name="description">
    <meta content="ABC notation, harmonica, diatonic harmonica, chromatic harmonica, harmonica tablature, harmonica fingering, Richter tuning, harmonica playback, Irish traditional music, ABC Transcription Tools" name="keywords">
     <meta content="Michael Eskin" name="author"/>
     <meta content="website" property="og:type"/>
     <meta content="ABC Harmonica Player" property="og:title"/>
-    <meta content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows for 10-hole, 12-, or 16-hole diatonic or chromatic harmonicas." property="og:description"/>
+    <meta content="Play ABC tunes with synchronized notation, audio playback, and clearly highlighted harmonica holes, breath direction, bends, slides, and overblows, including 8-, 10-, 12-, 14-, and 16-hole custom instruments." property="og:description"/>
     <meta content="ABC Harmonica Player" property="og:site_name"/>
     <meta content="https://michaeleskin.com/tools/abc-harmonica-player.html" property="og:url"/>
     <meta content="https://michaeleskin.com/tools/img/abc-harmonica-player-1.jpg" property="og:image"/>
@@ -1406,7 +1406,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 3.1
+     Version 3.2
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1415,7 +1415,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
      ABC Harmonica Player
     </h1>
     <p>
-     Play ABC tunes with synchronized 10-, 12-, or 16-hole diatonic or chromatic harmonica diagrams.
+     Play ABC tunes with synchronized diatonic, chromatic, and custom harmonica diagrams.
     </p>
    </header>
    <div class="toolbar">
@@ -1766,7 +1766,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
     <div class="customTuningBody">
      <div class="customTuningTop">
       <label>Custom tuning name<input id="customTuningName" type="text" maxlength="40" autocomplete="off"></label>
-      <label>Harmonica<select id="customHoleCount"><option value="">Select hole count…</option><option value="10">10 Hole</option><option value="12">12 Hole</option><option value="16">16 Hole</option></select></label>
+      <label>Harmonica<select id="customHoleCount"><option value="">Select hole count…</option><option value="8">8 Hole</option><option value="10">10 Hole</option><option value="12">12 Hole</option><option value="14">14 Hole</option><option value="16">16 Hole</option></select></label>
      </div>
      <div class="customTuningHelp">
       Enter one tablature indication for each chromatic note:<br><code>4</code> = blow &nbsp; <code>-4</code> = draw &nbsp; <code>-3'</code> = 1-semitone bend &nbsp; <code>-3''</code> = 2-semitone bend &nbsp; <code>-3'''</code> = 3-semitone bend<br><code>6o</code> = overblow &nbsp; <code>-7o</code> = overdraw &nbsp; <code>1s</code> = slide-in &nbsp; <code>x</code> = note unavailable<br>Only hole numbers, <code>-</code>, <code>'</code>, <code>o</code>, <code>s</code>, and <code>x</code> are used. Hole numbers must fit the selected instrument.
@@ -1829,13 +1829,13 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       Overview
      </p>
      <p>
-      Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for 10-, 12-, or 16-hole diatonic or chromatic styles.
+      Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated horizontal harmonica for built-in diatonic and chromatic styles or custom 8-, 10-, 12-, 14-, and 16-hole tunings.
      </p>
      <p>
       The active hole is highlighted while the symbol below it shows the required breath direction or technique.
      </p>
      <p>
-      The player supports
+      The player includes built-in presets for:
       <b>
        Standard Richter
       </b>
@@ -1909,7 +1909,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <b>Use Arrows</b> (the default) uses directional arrow shapes for blow, draw, and bends, with <b>o</b> for overblow/overdraw and <b>S</b> for the chromatic slide.
      </p>
      <p>
-      If the current instrument definition contains an <b>s</b> on any note in its tablature map, the 10-, 12-, or 16-hole harmonica diagram also shows an animated physical slide. This applies to both built-in and custom instruments; the slide moves in for notes marked with <b>s</b> and remains out for other notes.
+      If the current instrument definition contains an <b>s</b> on any note in its tablature map, the harmonica diagram also shows an animated physical slide. This applies to both built-in and custom instruments; the slide moves in for notes marked with <b>s</b> and remains out for other notes.
      </p>
      <p>
       In Use Arrows or Use Bars display mode, click
@@ -2034,7 +2034,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
      <p>Selecting <b>Configure Custom Tuning...</b> opens the custom tuning editor without changing the currently selected tuning.</p>
      <p>The editor contains a five-octave, 60-note custom harmonica tablature map compatible with the custom harmonica tablature settings used by ABC Transcription Tools.</p>
      <p>The custom tuning initially matches Standard Richter.</p>
-     <p>Enter a custom tuning name and choose whether the physical harmonica has 10, 12, or 16 holes.</p>
+     <p>Enter a custom tuning name and choose whether the physical harmonica has 8, 10, 12, 14, or 16 holes.</p>
      <p>Each note entry must use the ABC Transcription Tools harmonica tablature syntax described below. Examples of valid entries include:</p>
      <p><b>4</b> = blow.</p>
      <p><b>-4</b> = draw.</p>
@@ -2046,11 +2046,11 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
      <p><b>1s</b> = slide-in.</p>
      <p><b>x</b> = note unavailable.</p>
      <p>Only the supported blow, draw, bend, overblow/overdraw, and slide combinations are allowed.</p>
-     <p>Every referenced hole number must be within the selected 10-, 12-, or 16-hole instrument size before the tuning can be saved.</p>
+     <p>Every referenced hole number must be within the selected 8-, 10-, 12-, 14-, or 16-hole instrument size before the tuning can be saved.</p>
      <p><b>Load Tuning File</b> loads a <b>.txt</b> custom harmonica tuning file saved by ABC Transcription Tools or by this player.</p>
       <p>Loading a tuning file places it in the editor for review; it does not replace your saved custom tuning until you click <b>Save</b>.</p>
-     <p><b>ABC Transcription Tools</b> custom tuning files do not contain a hole count, so the player infers an initial 10-, 12-, or 16-hole setting from the highest hole number referenced in the file.</p>
-     <p>After loading a file without a hole count, you may change the hole count to any of the three choices while editing, including a smaller size.</p>
+     <p><b>ABC Transcription Tools</b> custom tuning files do not contain a hole count, so the player infers an initial 8-, 10-, 12-, 14-, or 16-hole setting from the highest hole number referenced in the file: holes 1–8 infer 8 holes, 9–10 infer 10, 11–12 infer 12, 13–14 infer 14, and 15–16 infer 16.</p>
+     <p>After loading a file without a hole count, you may change the hole count to any of the five choices while editing, including a smaller size.</p>
      <p>The selected hole count and all tablature entries are validated when you save the tuning to the player or save it to a file.</p>
      <p>A tuning cannot be saved while it contains an invalid entry or an out-of-range hole reference.</p>
      <p>Invalid files do not replace your previously saved custom tuning.</p>
@@ -2060,7 +2060,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
      <p>After validation, you are asked for a file name.</p>
      <p>The suggested file name is based on the custom tuning name.</p>
      <p><b>Initialize from Preset</b> opens a dialog where you can initialize the editor from any built-in tuning, including Solo (10-Hole), Solo (12-Hole), and Seydel Orchestra-S (10-Hole), or choose <b>Reset All to x</b>.</p>
-     <p>Applying a built-in preset copies its map into the editor, sets the name to <b>Custom</b> followed by the preset name, and selects the matching 10-, 12-, or 16-hole size.</p>
+     <p>Applying a built-in preset copies its map into the editor, sets the name to <b>Custom</b> followed by the preset name, and selects the matching hole count. The 8- and 14-hole sizes are available for custom tunings even though there are currently no built-in presets with those hole counts.</p>
      <p><b>Reset All to x</b> fills all 60 entries with <b>x</b>, names it <b>New Tuning Preset</b>, and selects <b>10 Hole</b>.</p>
      <p>Initialization only changes the editor; it is not stored until you click <b>Save</b> in the main custom tuning dialog.</p>
      <p>The dialog's <b>Save</b> button validates and stores the custom tuning name, hole count, and tablature map in this browser for reuse.</p>
@@ -2528,7 +2528,7 @@ function normalizeLoadedCustom(obj){
   if(obj.version===1&&map.length===38)while(map.length<60)map.push("x");
   if(obj.version===2&&map.length===48)while(map.length<60)map.push("x");
   if(map.length!==60)throw new Error("The custom tuning must contain exactly 60 tablature entries.");
-  return {version:3,type:"CustomHarmonica",name:String(obj.name??"").trim(),holes:[10,12,16].includes(Number(obj.holes))?Number(obj.holes):null,noteMap:map.map(v=>String(v??"").trim())};
+  return {version:3,type:"CustomHarmonica",name:String(obj.name??"").trim(),holes:[8,10,12,14,16].includes(Number(obj.holes))?Number(obj.holes):null,noteMap:map.map(v=>String(v??"").trim())};
 }
 function validateCustomName(name){
   const n=String(name||"").trim();
@@ -2552,7 +2552,7 @@ function parseValidatedCustomGlyph(value,holes){
 }
 function validateCustomObject(obj,requireHoles=true){
   const n=normalizeLoadedCustom(obj);n.name=validateCustomName(n.name);
-  if(requireHoles&&!n.holes)throw new Error("Select whether this is a 10-, 12-, or 16-hole harmonica.");
+  if(requireHoles&&!n.holes)throw new Error("Select whether this is an 8-, 10-, 12-, 14-, or 16-hole harmonica.");
   if(n.holes){n.noteMap.forEach((g,i)=>{try{parseValidatedCustomGlyph(g,n.holes)}catch(e){const oct=Math.floor(i/12)+1,note=CUSTOM_NOTE_NAMES[i%12];throw new Error(`Octave ${oct}, ${note}: ${e.message}`)}})}
   return n;
 }
@@ -2601,7 +2601,7 @@ function buildCustomMatrix(){
 function setCustomEditor(obj){
   buildCustomMatrix();customEditorWorking={...obj,noteMap:[...obj.noteMap]};
   $("customTuningName").value=obj.name||"";$("customHoleCount").value=obj.holes?String(obj.holes):"";
-  // An imported ATT file may suggest an initial hole count, but all three sizes
+  // An imported ATT file may suggest an initial hole count, but all five sizes
   // remain selectable while editing. Grammar and hole ranges are enforced only
   // when applying the tuning or saving it to a file.
   [...$("customHoleCount").options].forEach(opt=>opt.disabled=false);
@@ -2683,9 +2683,9 @@ function loadCustomTuningFile(file){
           if(!m)throw new Error(`Octave ${Math.floor(i/12)+1}, ${CUSTOM_NOTE_NAMES[i%12]}: “${text||"(blank)"}” is not a valid tablature indication.`);
           maxHole=Math.max(maxHole,Number(m[1]));
         });
-        obj.holes=maxHole<=10?10:(maxHole<=12?12:16);obj.inferredMinHoles=obj.holes;
+        obj.holes=maxHole<=8?8:(maxHole<=10?10:(maxHole<=12?12:(maxHole<=14?14:16)));obj.inferredMinHoles=obj.holes;
       }
-      setCustomEditor(obj);showCustomError(obj.inferredMinHoles?`Hole count inferred as ${obj.holes} from the ATT tuning. You may choose 10, 12, or 16 holes while editing; the selected size and all hole references will be validated when you save or apply the tuning.`:"")
+      setCustomEditor(obj);showCustomError(obj.inferredMinHoles?`Hole count inferred as ${obj.holes} from the ATT tuning. You may choose 8, 10, 12, 14, or 16 holes while editing; the selected size and all hole references will be validated when you save or apply the tuning.`:"")
     }catch(e){showCustomError(e.message||"This is not a valid custom harmonica tuning file.")}};reader.onerror=()=>showCustomError("Unable to read the selected tuning file.");reader.readAsText(file)
 }
 function applyCustomTuning(){
