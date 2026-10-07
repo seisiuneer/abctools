@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3352_100726_1000";
+var gVersionNumber = "3353_100726_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31394,13 +31394,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_7Oct2026;
+        var updatePresented = localStorage.sawUpdate_7Oct2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_7Oct2026 = true;
+          localStorage.sawUpdate_7Oct2026a = true;
 
         }
 
@@ -60936,16 +60936,15 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New <strong>Harmonica Tablature Presets</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Harmonica Tablature Injector</strong> now includes presets for <strong>PowerBender</strong>, <strong>PowerDraw</strong>, <strong>Solo (10-Hole)</strong>, <strong>Solo (12-Hole)</strong>, and <strong>Seydel Orchestra-S (10-Hole)</strong>. The <strong>Custom Harmonica Tuning</strong> editor can also initialize its 60-note map from any of the available harmonica presets, or initialize all entries to <strong>x</strong> as a blank starting point for a new custom tuning.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>ABC Irish Button Box Fingering Player</strong> added to Open ABC in External Tool</p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Recorder Fingering Player</strong> has been removed from the <strong>Open ABC in External Tool</strong> dialog and replaced by the <strong>ABC Irish Button Box Fingering Player</strong>. You can send either the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new player.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New Tools on the <strong>Open ABC in External Tool</strong> dialog</p>';
-  modal_msg += '<p style="font-size:12pt;">You can now send tunes directly to the <strong>ABC Fretboard Player</strong>, <strong>ABC Tin Whistle Fingering Player</strong>, <strong>ABC Anglo Concertina Fingering Player</strong>, <strong>ABC Recorder Fingering Player</strong>, or <strong>ABC Harmonica Player</strong> from either the <strong>Sharing Controls</strong> dialog, <strong>Player</strong>, or <strong>Tune Trainer</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Also restored the <strong>abcjs quick editor</strong> to the <strong>3rd-Party Tools</strong> tab.</p>';
+  modal_msg += '<p style="font-size:12pt;">New <strong>Harmonica Tablature Presets</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Harmonica Tablature Injector</strong> now includes presets for <strong>PowerBender</strong>, <strong>PowerDraw</strong>, <strong>Solo (10-Hole)</strong>, <strong>Solo (12-Hole)</strong>, and <strong>Seydel Orchestra-S (10-Hole)</strong>. The <strong>Custom Harmonica Tuning</strong> editor can also initialize its 60-note map from any of the available harmonica presets, or initialize all entries to <strong>x</strong> as a blank starting point for a new custom tuning.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67860,13 +67859,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_7Oct2026;
+    var updatePresented = localStorage.sawUpdate_7Oct2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_7Oct2026 = true;
+      localStorage.sawUpdate_7Oct2026a = true;
 
     }
 
@@ -70597,13 +70596,9 @@ function launchAbcFretboardPlayer(){
     }, 15000);
 }
 
+function OpenInABCIrishButtonBoxFingeringPlayer(abcText,isFromPlayer){
 
-
-
-
-function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
-
-  sendGoogleAnalytics("action", "OpenInABCRecorderFingeringPlayer");
+  sendGoogleAnalytics("action", "OpenInABCIrishButtonBoxFingeringPlayer");
 
   if (isFromPlayer){
     abcText = AggregateABCFileHeaderForShare(abcText);
@@ -70613,7 +70608,7 @@ function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
     var deflated = pako.deflate(utf8Bytes, { level: 6 });
     var theDef = def_bytesToBase64URL(deflated);
 
-    var theURL = "https://michaeleskin.com/tools/abc-recorder-fingering-player.html?def="+theDef;
+    var theURL = "https://michaeleskin.com/tools/abc-irish-box-fingering-player.html?def="+theDef;
 
     if (theURL.length < 8100)
     {
@@ -70621,7 +70616,7 @@ function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
     }
     else{
 
-      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Recorder Fingering Player.</p>', {
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Irish Button Box Fingering Player.</p>', {
         theme: "modal_flat",
         top: 230,
         scrollWithPage: (AllowDialogsToScroll())
@@ -70630,26 +70625,26 @@ function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
     }
   }
   else{
-    launchAbcRecorderFingeringPlayer();
+    launchAbcIrishButtonBoxFingeringPlayer();
   }
 }
 
 //
-// Launch the standalone ABC Recorder Fingering Player in a new window and
+// Launch the standalone ABC Irish Button Box Fingering Player in a new window and
 // transfer the full ABC editor contents after the player reports that it is ready.
 //
-var gAbcRecorderFingeringPlayerURL = "https://michaeleskin.com/tools/abc-recorder-fingering-player.html";
+var gAbcIrishButtonBoxFingeringPlayerURL = "https://michaeleskin.com/tools/abc-irish-box-fingering-player.html";
 
-function getAbcRecorderFingeringPlayerLaunchURL() {
+function getAbcIrishButtonBoxFingeringPlayerLaunchURL() {
 
-    var separator = (gAbcRecorderFingeringPlayerURL.indexOf("?") === -1) ? "?" : "&";
+    var separator = (gAbcIrishButtonBoxFingeringPlayerURL.indexOf("?") === -1) ? "?" : "&";
 
-    return gAbcRecorderFingeringPlayerURL +
+    return gAbcIrishButtonBoxFingeringPlayerURL +
         separator +
         "cb=" + encodeURIComponent(String(Date.now()));
 }
 
-function getAbcRecorderFingeringPlayerTargetOrigin(url) {
+function getAbcIrishButtonBoxFingeringPlayerTargetOrigin(url) {
 
     try {
         var parsedURL = new URL(url, window.location.href);
@@ -70660,7 +70655,7 @@ function getAbcRecorderFingeringPlayerTargetOrigin(url) {
     }
 }
 
-function showAbcRecorderFingeringPlayerMessage(message, width){
+function showAbcIrishButtonBoxFingeringPlayerMessage(message, width){
 
     DayPilot.Modal.alert(
         '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>',
@@ -70668,23 +70663,23 @@ function showAbcRecorderFingeringPlayerMessage(message, width){
     );
 }
 
-function showAbcRecorderFingeringPlayerOfflineMessage(){
+function showAbcIrishButtonBoxFingeringPlayerOfflineMessage(){
 
-    showAbcRecorderFingeringPlayerMessage(
-        "The ABC Recorder Fingering Player is not available while offline. Please reconnect to the internet and try again.",
+    showAbcIrishButtonBoxFingeringPlayerMessage(
+        "The ABC Irish Button Box Fingering Player is not available while offline. Please reconnect to the internet and try again.",
         560
     );
 }
 
-function showAbcRecorderFingeringPlayerOfficialVersionMessage(){
+function showAbcIrishButtonBoxFingeringPlayerOfficialVersionMessage(){
 
-    showAbcRecorderFingeringPlayerMessage(
-        "Direct ABC transfer to the ABC Recorder Fingering Player is only available from the official online version at https://michaeleskin.com.<br/><br/>Please run the official online version of the ABC Transcription Tools to use direct ABC transfer.<br/><br/>As a workaround, save the ABC file and manually open that ABC file in the ABC Recorder Fingering Player with its Open ABC file control.",
+    showAbcIrishButtonBoxFingeringPlayerMessage(
+        "Direct ABC transfer to the ABC Irish Button Box Fingering Player is only available from the official online version at https://michaeleskin.com.<br/><br/>Please run the official online version of the ABC Transcription Tools to use direct ABC transfer.<br/><br/>As a workaround, save the ABC file and manually open that ABC file in the ABC Irish Button Box Fingering Player with its Open ABC file control.",
         560
     );
 }
 
-function launchAbcRecorderFingeringPlayer(){
+function launchAbcIrishButtonBoxFingeringPlayer(){
 
     if (!gAllowWebExport){
         return;
@@ -70700,26 +70695,26 @@ function launchAbcRecorderFingeringPlayer(){
     }
 
     if (!abcText || !/^\s*X\s*:/m.test(abcText)){
-        showAbcRecorderFingeringPlayerMessage(
-            "There are no ABC tunes in the editor to send to the ABC Recorder Fingering Player.",
+        showAbcIrishButtonBoxFingeringPlayerMessage(
+            "There are no ABC tunes in the editor to send to the ABC Irish Button Box Fingering Player.",
             520
         );
         return;
     }
 
     if (!isRunningFromOfficialMichaeleskinDomain()){
-        showAbcRecorderFingeringPlayerOfficialVersionMessage();
+        showAbcIrishButtonBoxFingeringPlayerOfficialVersionMessage();
         return;
     }
 
     if (!navigator.onLine){
-        showAbcRecorderFingeringPlayerOfflineMessage();
+        showAbcIrishButtonBoxFingeringPlayerOfflineMessage();
         return;
     }
 
-    var generatorURL = gAbcRecorderFingeringPlayerURL;
-    var targetOrigin = getAbcRecorderFingeringPlayerTargetOrigin(generatorURL);
-    var messageId = "abctools-recorder-fingering-player-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    var generatorURL = gAbcIrishButtonBoxFingeringPlayerURL;
+    var targetOrigin = getAbcIrishButtonBoxFingeringPlayerTargetOrigin(generatorURL);
+    var messageId = "abctools-irish-box-fingering-player-" + Date.now() + "-" + Math.random().toString(36).slice(2);
     var generatorWindow = null;
     var generatorReadyReceived = false;
     var loadMessageAttempted = false;
@@ -70742,8 +70737,8 @@ function launchAbcRecorderFingeringPlayer(){
         replaceExisting: true
     };
 
-    function cleanupRecorderFingeringPlayerLaunchHandlers(){
-        window.removeEventListener("message", handleRecorderFingeringPlayerLaunchMessage);
+    function cleanupIrishButtonBoxFingeringPlayerLaunchHandlers(){
+        window.removeEventListener("message", handleIrishButtonBoxFingeringPlayerLaunchMessage);
         if (cleanupTimer){
             clearTimeout(cleanupTimer);
             cleanupTimer = null;
@@ -70758,21 +70753,21 @@ function launchAbcRecorderFingeringPlayer(){
         fallbackTimers = [];
     }
 
-    function showRecorderFingeringPlayerLaunchFailure(message, width){
+    function showIrishButtonBoxFingeringPlayerLaunchFailure(message, width){
         if (loadMessageAcknowledged || failureMessageShown){
-            cleanupRecorderFingeringPlayerLaunchHandlers();
+            cleanupIrishButtonBoxFingeringPlayerLaunchHandlers();
             return;
         }
 
         failureMessageShown = true;
-        cleanupRecorderFingeringPlayerLaunchHandlers();
-        showAbcRecorderFingeringPlayerMessage(message, width || 620);
+        cleanupIrishButtonBoxFingeringPlayerLaunchHandlers();
+        showAbcIrishButtonBoxFingeringPlayerMessage(message, width || 620);
     }
 
-    function postABCToRecorderFingeringPlayer(){
+    function postABCToIrishButtonBoxFingeringPlayer(){
         if (!generatorWindow || generatorWindow.closed){
-            showRecorderFingeringPlayerLaunchFailure(
-                "The ABC Recorder Fingering Player window was closed before the tunes could be transferred.",
+            showIrishButtonBoxFingeringPlayerLaunchFailure(
+                "The ABC Irish Button Box Fingering Player window was closed before the tunes could be transferred.",
                 600
             );
             return;
@@ -70787,15 +70782,15 @@ function launchAbcRecorderFingeringPlayer(){
             generatorWindow.postMessage(loadMessage, targetOrigin);
         }
         catch (error) {
-            console.error("Unable to send ABC to the ABC Recorder Fingering Player:", error);
-            showRecorderFingeringPlayerLaunchFailure(
-                "ABC Transcription Tools could not send the tunes to the ABC Recorder Fingering Player. Browser security settings may have blocked the transfer.",
+            console.error("Unable to send ABC to the ABC Irish Button Box Fingering Player:", error);
+            showIrishButtonBoxFingeringPlayerLaunchFailure(
+                "ABC Transcription Tools could not send the tunes to the ABC Irish Button Box Fingering Player. Browser security settings may have blocked the transfer.",
                 650
             );
         }
     }
 
-    function handleRecorderFingeringPlayerLaunchMessage(event){
+    function handleIrishButtonBoxFingeringPlayerLaunchMessage(event){
         if (!generatorWindow || event.source !== generatorWindow){
             return;
         }
@@ -70808,24 +70803,24 @@ function launchAbcRecorderFingeringPlayer(){
 
         if (data.type === "abcjsEskinWebsiteBuilderReady"){
             generatorReadyReceived = true;
-            postABCToRecorderFingeringPlayer();
+            postABCToIrishButtonBoxFingeringPlayer();
             return;
         }
 
         if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
             loadMessageAcknowledged = true;
-            cleanupRecorderFingeringPlayerLaunchHandlers();
+            cleanupIrishButtonBoxFingeringPlayerLaunchHandlers();
         }
     }
 
-    window.addEventListener("message", handleRecorderFingeringPlayerLaunchMessage);
+    window.addEventListener("message", handleIrishButtonBoxFingeringPlayerLaunchMessage);
 
-    generatorWindow = window.open(getAbcRecorderFingeringPlayerLaunchURL(), "_blank");
+    generatorWindow = window.open(getAbcIrishButtonBoxFingeringPlayerLaunchURL(), "_blank");
 
     if (!generatorWindow){
-        cleanupRecorderFingeringPlayerLaunchHandlers();
-        showAbcRecorderFingeringPlayerMessage(
-            "The ABC Recorder Fingering Player window was blocked by the browser. Please allow popups for this site and try again.",
+        cleanupIrishButtonBoxFingeringPlayerLaunchHandlers();
+        showAbcIrishButtonBoxFingeringPlayerMessage(
+            "The ABC Irish Button Box Fingering Player window was blocked by the browser. Please allow popups for this site and try again.",
             560
         );
         return;
@@ -70833,8 +70828,8 @@ function launchAbcRecorderFingeringPlayer(){
 
     closedCheckTimer = setInterval(function(){
         if (generatorWindow && generatorWindow.closed && !loadMessageAcknowledged){
-            showRecorderFingeringPlayerLaunchFailure(
-                "The ABC Recorder Fingering Player window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+            showIrishButtonBoxFingeringPlayerLaunchFailure(
+                "The ABC Irish Button Box Fingering Player window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
                 650
             );
         }
@@ -70846,44 +70841,39 @@ function launchAbcRecorderFingeringPlayer(){
     [1200, 2400, 4200].forEach(function(delay){
         fallbackTimers.push(setTimeout(function(){
             if (!loadMessageAcknowledged && !failureMessageShown){
-                postABCToRecorderFingeringPlayer();
+                postABCToIrishButtonBoxFingeringPlayer();
             }
         }, delay));
     });
 
     cleanupTimer = setTimeout(function(){
         if (loadMessageAcknowledged){
-            cleanupRecorderFingeringPlayerLaunchHandlers();
+            cleanupIrishButtonBoxFingeringPlayerLaunchHandlers();
             return;
         }
 
         if (!generatorReadyReceived){
-            showRecorderFingeringPlayerLaunchFailure(
-                "The ABC Recorder Fingering Player opened, but ABC Transcription Tools did not receive a ready message from it. If the tunes are not visible in the ABC Recorder Fingering Player, use its Open ABC file control instead.",
+            showIrishButtonBoxFingeringPlayerLaunchFailure(
+                "The ABC Irish Button Box Fingering Player opened, but ABC Transcription Tools did not receive a ready message from it. If the tunes are not visible in the ABC Irish Button Box Fingering Player, use its Open ABC file control instead.",
                 680
             );
             return;
         }
 
         if (loadMessageAttempted){
-            showRecorderFingeringPlayerLaunchFailure(
-                "ABC Transcription Tools sent the tunes to the ABC Recorder Fingering Player, but did not receive confirmation that they loaded. If the tunes are not visible in the ABC Recorder Fingering Player, use its Open ABC file control instead.",
+            showIrishButtonBoxFingeringPlayerLaunchFailure(
+                "ABC Transcription Tools sent the tunes to the ABC Irish Button Box Fingering Player, but did not receive confirmation that they loaded. If the tunes are not visible in the ABC Irish Button Box Fingering Player, use its Open ABC file control instead.",
                 700
             );
             return;
         }
 
-        showRecorderFingeringPlayerLaunchFailure(
-            "ABC Transcription Tools could not complete the transfer to the ABC Recorder Fingering Player. If the tunes are not visible in the ABC Recorder Fingering Player, use its Open ABC file control instead.",
+        showIrishButtonBoxFingeringPlayerLaunchFailure(
+            "ABC Transcription Tools could not complete the transfer to the ABC Irish Button Box Fingering Player. If the tunes are not visible in the ABC Irish Button Box Fingering Player, use its Open ABC file control instead.",
             700
         );
     }, 15000);
 }
-
-
-
-
-
 
 function OpenInABCHarmonicaPlayer(abcText,isFromPlayer){
 
@@ -71440,8 +71430,8 @@ function openInExternalTool(theABC, isFromPlayer){
         toolCard('external_chord_chart', 'img/tool_chordchart_other_1.jpg', 'Open the ABC in the ABC Chord Chart Generator', 'ABC Chord Chart Generator', 'ABC Chord Chart Generator') +
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
         toolCard('external_tin_whistle', 'img/tool-abc-tin-whistle-player-1.jpg', 'Open the ABC in the ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player') +
+        toolCard('external_irish_box', 'img/tool-abc-box-1.jpg', 'Open the ABC in the ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player') +
         toolCard('external_anglo_concertina', 'img/tool-abc-anglo-player-1.jpg', 'Open the ABC in the ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player') +
-        toolCard('external_recorder_player', 'img/tool-abc-recorder-player-1.jpg', 'Open the ABC in the ABC Recorder Fingering Player', 'ABC Recorder Fingering Player', 'ABC Recorder Fingering Player') +
         toolCard('external_harmonica_player', 'img/tool-abc-harmonica-player-1.jpg', 'Open the ABC in the ABC Harmonica Player', 'ABC Harmonica Player', 'ABC Harmonica Player') +
       '</div>' +
       '<div id="external_tools_panel_other" style="display:none;grid-template-columns:310px 310px;grid-template-rows:196px 196px 196px;column-gap:32px;row-gap:8px;justify-content:center;">' +
@@ -71502,8 +71492,8 @@ function openInExternalTool(theABC, isFromPlayer){
   elem = document.getElementById("external_fretboard_player");
   if (elem) elem.onclick = function(){ OpenInABCFretboardPlayer(theABC,isFromPlayer); };
 
-  elem = document.getElementById("external_recorder_player");
-  if (elem) elem.onclick = function(){ OpenInABCRecorderFingeringPlayer(theABC,isFromPlayer); };
+  elem = document.getElementById("external_irish_box");
+  if (elem) elem.onclick = function(){ OpenInABCIrishButtonBoxFingeringPlayer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_harmonica_player");
   if (elem) elem.onclick = function(){ OpenInABCHarmonicaPlayer(theABC,isFromPlayer); };
