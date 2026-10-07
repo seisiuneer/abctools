@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3351_092926_1100";
+var gVersionNumber = "3352_100726_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31394,13 +31394,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_29sep2026;
+        var updatePresented = localStorage.sawUpdate_7Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_29sep2026 = true;
+          localStorage.sawUpdate_7Oct2026 = true;
 
         }
 
@@ -33980,60 +33980,41 @@ function resetHarmonicaCustom() {
 
 //
 //
-// Reset the custom harmonica settings to the default with confirmation
+// Initialize the custom harmonica settings from a preset or all x values
 //
-function defaultCustomHarmonica() {
+function initializeCustomHarmonica() {
 
   // Keep track of actions
-  sendGoogleAnalytics("action", "defaultCustomHarmonica");
+  sendGoogleAnalytics("action", "initializeCustomHarmonica");
 
-  var thePrompt = "Are you sure you want to reset the custom harmonica tuning?";
+  var select = document.getElementById("custom_harmonica_initializer");
+  if (!select) return;
 
-  // Center the string in the prompt
-  thePrompt = makeCenteredPromptString(thePrompt);
+  var selected = select.value;
 
-  DayPilot.Modal.confirm(thePrompt, {
-    top: 180,
-    theme: "modal_flat",
-    scrollWithPage: (AllowDialogsToScroll())
-  }).then(function(args) {
+  if (selected == "all-x") {
+    gHarmonicaCustom = {
+      version: 3,
+      type: "CustomHarmonica",
+      name: "New Tuning Preset",
+      noteMap: Array(60).fill("x")
+    };
+  }
+  else {
+    var presetMap = gHarmonicaPresetMaps[selected];
+    var presetName = gHarmonicaPresetNames[selected];
 
-    if (!args.canceled) {
+    if (!presetMap || !presetName) return;
 
-      var i;
+    gHarmonicaCustom = {
+      version: 3,
+      type: "CustomHarmonica",
+      name: "Custom " + presetName,
+      noteMap: presetMap.slice()
+    };
+  }
 
-      resetHarmonicaCustom();
-
-      var id = "r0c1";
-      document.getElementById(id).value = gHarmonicaCustom.name;
-
-      for (i = 0; i < 12; ++i) {
-        var id = "r1c" + (i + 1);
-        document.getElementById(id).value = gHarmonicaCustom.noteMap[i];
-      }
-
-      for (i = 0; i < 12; ++i) {
-        var id = "r2c" + (i + 1);
-        document.getElementById(id).value = gHarmonicaCustom.noteMap[i + 12];
-      }
-
-      for (i = 0; i < 12; ++i) {
-        var id = "r3c" + (i + 1);
-        document.getElementById(id).value = gHarmonicaCustom.noteMap[i + 24];
-      }
-
-      for (i = 0; i < 12; ++i) {
-        var id = "r4c" + (i + 1);
-        document.getElementById(id).value = gHarmonicaCustom.noteMap[i + 36];
-      }
-
-      for (i = 0; i < 12; ++i) {
-        var id = "r5c" + (i + 1);
-        document.getElementById(id).value = gHarmonicaCustom.noteMap[i + 48];
-      }
-    }
-
-  });
+  initCustomHarmonicaSettings();
 }
 
 //
@@ -34353,7 +34334,7 @@ function EditCustomHarmonica() {
   modal_msg += '</table>\n';
   modal_msg += '</div>\n';
   modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="load_custom_harmonica_tuning_fs" accept=".txt,.TXT" hidden/><input id="save_custom_harmonica_tuning" class="btn btn-subdialog save_custom_harmonica_tuning" onclick="saveCustomHarmonica()" type="button" value="Save Custom Harmonica Tuning" title="Save a custom harmonica tuning file"><input id="load_custom_harmonica_tuning" class="btn btn-subdialog load_custom_harmonica_tuning" onclick="loadCustomHarmonicaClickHandler()" type="button" value="Load Custom Harmonica Tuning" title="Load a custom harmonica tuning file"></p>\n';
-  modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultCustomHarmonica()" type="button" value="Reset to Default (Standard Richter)" title="Resets the custom tuning to Standard Richter"></p>\n';
+  modal_msg += '<p class="custom-harmonica-initialize-row"><span>Initialize from:</span> <select id="custom_harmonica_initializer"><option value="0">Standard Richter</option><option value="1">Paddy Richter</option><option value="2">Easy Thirds</option><option value="3">Melody Maker</option><option value="4">Country (Major 7th)</option><option value="5">Natural Minor</option><option value="13">PowerBender</option><option value="14">PowerDraw</option><option value="9">Solo (10-Hole)</option><option value="10">Solo (12-Hole)</option><option value="11">Seydel Orchestra-S (10-Hole)</option><option value="6">Chromatic (12-Hole)</option><option value="7">Chromatic (16-Hole)</option><option value="all-x">All x</option></select><input id="initialize_custom_harmonica" class="btn btn-clearbutton" onclick="initializeCustomHarmonica()" type="button" value="Initialize" title="Initialize the custom tuning from the selected preset"></p>\n';
 
   const form = [{
     html: modal_msg
@@ -34371,7 +34352,7 @@ function EditCustomHarmonica() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 50,
+    top: 25,
     width: 800,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: false
@@ -34418,7 +34399,7 @@ function EditCustomHarmonica() {
 
         if (selectElement) {
 
-          const option = selectElement.querySelector(`option[value="6"]`);
+          const option = selectElement.querySelector(`option[value="8"]`);
 
           if (option) {
             option.text = gHarmonicaCustom.name; // Update the displayed text
@@ -34436,7 +34417,7 @@ function EditCustomHarmonica() {
 }
 
 //
-// Inject Diatonic harmonica tablature
+// Inject harmonica tablature
 //
 function DoInjectHarmonicaTab() {
 
@@ -34522,13 +34503,28 @@ function DoInjectHarmonicaTab() {
   }, {
     name: "  Natural Minor",
     id: "5"
-  },{
+  }, {
+    name: "  PowerBender",
+    id: "13"
+  }, {
+    name: "  PowerDraw",
+    id: "14"
+  }, {
+    name: "  Solo (10-Hole)",
+    id: "9"
+  }, {
+    name: "  Solo (12-Hole)",
+    id: "10"
+  }, {
+    name: "  Seydel Orchestra-S (10-Hole)",
+    id: "11"
+  }, {
     name: "  Chromatic (12-Hole)",
     id: "6"
-  },{
+  }, {
     name: "  Chromatic (16-Hole)",
     id: "7"
-  },{
+  }, {
     name: gHarmonicaCustom.name,
     id: "8"
   }];
@@ -34546,9 +34542,9 @@ function DoInjectHarmonicaTab() {
   };
 
   const form = [{
-    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Diatonic Harmonica Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Harmonica Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_harmonica" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
-    html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a 10-hole diatonic harmonica in the harmonica tuning and key selected below into all of the tunes in the ABC text area:</p>'
+    html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject harmonica tablature in the tuning and key selected below into all of the tunes in the ABC text area:</p>'
   }, {
     name: "Harmonica tuning:",
     id: "configure_harmonica_tuning",
@@ -34641,7 +34637,7 @@ function DoInjectHarmonicaTab() {
       // Set dirty
       gIsDirty = true;
 
-      var thePrompt = "Diatonic Harmonica tablature injected!";
+      var thePrompt = "Harmonica tablature injected!";
 
       // Center the string in the prompt
       thePrompt = makeCenteredPromptString(thePrompt);
@@ -49452,6 +49448,39 @@ var gHarmonicaTabColors = false;
 //
 var gHarmonicaCustom;
 
+// Preset maps available for initializing the custom harmonica editor.
+const gHarmonicaPresetMaps = {
+      "0":["1","-1'","-1","1o","2","-2''","-2'","3","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "1":["1","-1'","-1","1o","2","-2''","-2'","-2","-3'''","3","-3'","-3","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "2":["1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","x","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "3":["1","-1'","-1","1o","2","-2''","-2'","-2","2o","3","-3'","-3","4","-4'","-4","4o","5","-5'","-5","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-8o","-9","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "4":["1","-1'","-1","1o","2","-2''","-2'","-2","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5'","-5","6","-6'","-6","6o","-7","7","-7o","-8","8'","8","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "5":["1","-1'","-1","2","-2'''","-2''","-2'","-2","-3''","-3'","-3","3o","4","-4'","-4","5","-5'","-5","5o","6","-6'","-6","-7","7'","7","-7o","-8","8","-8o","-9","9'","9","-9o","-10","10''","10'","10","-10o'","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "9":["x","x","x","x","x","x","x","x","x","x","x","x","1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","-4","5","-5'","-5","5o","6","-6","6o","7","-7'","-7","7o","-8","9","-9'","-9","9o","10","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "10":["x","x","x","x","x","x","x","x","x","x","x","x","1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","-4","5","-5'","-5","5o","6","-6","6o","7","-7'","-7","7o","-8","9","-9'","-9","9o","10","-10","10o","11","-11'","-11","11o","-12","12","x","x","x","x","x","x","x","x","x","x","x"],
+      "11":["x","x","x","x","x","x","x","1","-1'","-1","1o","-2","3","-3'","-3","3o","4","-4","4o","5","-5'","-5","5o","-6","7","-7'","-7","7o","8","-8","8o","9","-9'","-9","9o","-10","10","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "13":["1","-1'","-1","1o","2","-2''","-2'","3","-3'''","-3''","-3'","-3","4","-4'","-4","-5'","-5","6","-6'","-6","6o","7","-7'","-7","8","-8'","-8","8o","9","-9''","-9'","-9","9o","10","-10''","-10'","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "14":["1","-1'","-1","1o","2","-2''","-2'","3","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","-7'","-7","8","-8'","-8","8o","9","-9''","-9'","-9","9o","10","-10''","-10'","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],
+      "6":["x","x","x","x","x","x","x","x","x","x","x","x","1","1s","-1","-1s","2","-2","-2s","3","3s","-3","-3s","-4","5","5s","-5","-5s","6","-6","-6s","7","7s","-7","-7s","-8","9","9s","-9","-9s","10","-10","-10s","11","11s","-11","-11s","-12","12","12s","-12s","x","x","x","x","x","x","x","x","x"],
+      "7":["1","1s","-1","-1s","2","-2","-2s","3","3s","-3","-3s","-4","5","5s","-5","-5s","6","-6","-6s","7","7s","-7","-7s","-8","9","9s","-9","-9s","10","-10","-10s","11","11s","-11","-11s","-12","13","13s","-13","-13s","14","-14","-14s","15","15s","-15","-15s","-16","16","16s","-16s","x","x","x","x","x","x","x","x","x"]
+};
+
+const gHarmonicaPresetNames = {
+  "0": "Standard Richter",
+  "1": "Paddy Richter",
+  "2": "Easy Thirds",
+  "3": "Melody Maker",
+  "4": "Country (Major 7th)",
+  "5": "Natural Minor",
+  "13": "PowerBender",
+  "14": "PowerDraw",
+  "9": "Solo (10-Hole)",
+  "10": "Solo (12-Hole)",
+  "11": "Seydel Orchestra-S (10-Hole)",
+  "6": "Chromatic (12-Hole)",
+  "7": "Chromatic (16-Hole)"
+};
+
 const gHarmonicaCustomDefault = {
   version: 3,
   type: "CustomHarmonica",
@@ -60901,14 +60930,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 September 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 7 October 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Updated <strong>Open ABC in External Tool</strong> dialog</p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Open ABC in External Tool</strong> dialog has been redesigned with separate <strong>Michael\'s Tools</strong> and <strong>3rd-Party Tools</strong> tabs for easier navigation.</p>';
+  modal_msg += '<p style="font-size:12pt;">New <strong>Harmonica Tablature Presets</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Harmonica Tablature Injector</strong> now includes presets for <strong>PowerBender</strong>, <strong>PowerDraw</strong>, <strong>Solo (10-Hole)</strong>, <strong>Solo (12-Hole)</strong>, and <strong>Seydel Orchestra-S (10-Hole)</strong>. The <strong>Custom Harmonica Tuning</strong> editor can also initialize its 60-note map from any of the available harmonica presets, or initialize all entries to <strong>x</strong> as a blank starting point for a new custom tuning.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -67831,13 +67860,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_29sep2026;
+    var updatePresented = localStorage.sawUpdate_7Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_29sep2026 = true;
+      localStorage.sawUpdate_7Oct2026 = true;
 
     }
 

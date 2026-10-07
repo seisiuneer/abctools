@@ -896,8 +896,8 @@
             </details>
            
             <details>
-            <summary><h3>Instrument Tablature, Note Name, Shape Note, and Solfège Injectors</h3></summary>
-            <a style="text-decoration:none;" href="#injecting_tablature">Instrument Tablature, Note Name, Shape Note, and Solfège Injectors</a>
+            <summary><h3>Instrument Tablature Injectors</h3></summary>
+            <a style="text-decoration:none;" href="#injecting_tablature">Instrument Tablature Injectors</a>
             <a style="text-decoration:none;" href="#tab_harmonica">Inject Harmonica Tab</a>
             <a style="text-decoration:none;" href="#tab_harmonica_custom">Edit Custom Harmonica Tuning Tab</a>
             <a style="text-decoration:none;" href="#tab_irish_box">Inject Irish Button Box Tab</a>
@@ -1478,9 +1478,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Instrument Tablature, Note Name, Shape Note, and Solfège Injectors</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Instrument Tablature Injectors</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Instrument Tablature, Note Name, Shape Note, and Solfège Injectors</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Instrument Tablature Injectors</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tab_harmonica">Inject Harmonica Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tab_harmonica_custom">Edit Custom Harmonica Tuning Tab</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tab_irish_box">Inject Irish Button Box Tab</a></p>
@@ -6145,21 +6145,21 @@
                 <p>Once the SmartDraw file is created and saved to your system, you can import it into SmartDraw from the SmartDraw file and template explorer.</p>
                 <p>For more information on SmartDraw and to get a free trial, please visit <a href="https://www.smartdraw.com" target="_blank">SmartDraw</a>.</p>
                 <hr class="hidden-print" id="injecting_tablature">
-                <h1 class="page_break_always">Instrument Tablature, Note Name, Shape Note, and Solfège Injectors</h1>
+                <h1 class="page_break_always">Instrument Tablature Injectors</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <p>The tablature/solfège injection features add additional text into your ABC to create tablature for the selected instrument or notation style.</p>
+                <p>The instrument tablature injection features add additional text into your ABC to create tablature for the selected instrument or notation style.</p>
                 <p style="text-align: center;"><strong>Consider saving or grabbing a Snapshot your work before injecting tab!</strong></p>
                 <p>Since the tab injectors modify your original ABC, you may want to grab a Snapshot of the entire ABC (simply click <strong>Snapshot</strong>) before doing the tab injection operation.</p>
                 <p>If you grab a Snapshot, after the tab injection operation, if there was an issue, you can click <strong>Restore</strong> to get back your original ABC.</p>
                 <hr id="tab_harmonica">
-                <p><strong>Inject Harmonica Tab</strong> - Brings up a dialog where you can inject tab for standard 10-hole diatonic harmonica:</p>
+                <p><strong>Inject Harmonica Tab</strong> - Brings up a dialog where you can inject harmonica tablature using the selected tuning and key:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/YcYAi1Ba3mo" title="Harmonica Tab Injection Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/harmonica_tab_9.jpg">
+                    <img class="image" loading="lazy" src="img/harmonica_tab_10.jpg">
                 </div>
-                <p>Choose the harmonica tuning (Standard Richter, Paddy Richter, Easy Thirds, Melody Maker, Country (Major 7th), Natural Minor, Chromatic (12-Hole), Chromatic (16-Hole), or Custom) from the <strong>Harmonica tuning</strong> dropdown.</p>
+                <p>Choose the harmonica tuning (Standard Richter, Paddy Richter, Easy Thirds, Melody Maker, Country (Major 7th), Natural Minor, PowerBender, PowerDraw, Solo (10-Hole), Solo (12-Hole), Seydel Orchestra-S (10-Hole), Chromatic (12-Hole), Chromatic (16-Hole), or Custom) from the <strong>Harmonica tuning</strong> dropdown.</p>
                 <p>Choose the harmonica key from the <strong>Harmonica key</strong> dropdown.</p>
                 <p>If you want to shift the position on the harmonica up or down one, two, or three octaves, select the octave shift from the <strong>Octave shift</strong> dropdown.</p>
                 <p>Blow notes can be indicated either with or without a + along with the hole number.</p>
@@ -6177,22 +6177,23 @@
                 <p>Click <strong>Edit Custom Harmonica Tuning Tab</strong> to bring up a dialog where you can set the text used for the harmonica tab for every scale note, and save or load custom tuning tab settings:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1ex41_ocMl4" title="Custom Harmonica Tab Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/harmonica_custom_3.jpg">
+                    <img class="image" loading="lazy" src="img/harmonica_custom_4.jpg">
                 </div>
-                <p>When entering custom tablature strings, if you are indicating a multiple bend, best to use multiple single quote characters '' rather than double quotes "</p>
+                <p>When entering custom tablature text, if you are indicating a multiple bend, best to use multiple single quote characters '' rather than double quotes "</p>
                 <p>Additionally, the following characters are not allowed in the ABC annotation and will be filtered out: ^ _</p>
                 <p>Any double-quote " characters entered will be replaced by two single quotes ' '</p>
                 <p>Click <strong>Save Custom Harmonica Tuning</strong> to save your custom tuning to a file.</p>
                 <p>Click <strong>Load Custom Harmonica Tuning</strong> to load a previously saved custom tuning from a file.</p>
-                <p>Click <strong>Reset to Default (Standard Richter)</strong> to reset the custom setting to a Standard Richter tuning that you can modify and rename.</p>
+                <p>Use <strong>Initialize from</strong> to initialize all 60 custom tablature values from any of the existing harmonica presets, then click <strong>Initialize</strong>. This gives you a complete preset tuning as a starting point that you can modify and rename. Choose <strong>All x</strong> to initialize every value to x when you want to build a custom tuning from scratch.</p>
                 <hr>
-                <p style="text-align: center;"><strong>How to Read the Diatonic Harmonica Tablature</strong></p>
+                <p style="text-align: center;"><strong>How to Read the Harmonica Tablature</strong></p>
                 <p>Numbers correspond to the holes on the harmonica.</p>
                 <p>Number alone indicates blow.</p>
                 <p>If enabled by checking <strong>Include + for blow notes in the tablature</strong>, blow is indicated by a + .</p>
                 <p>Draw is indicated by – .</p>
                 <p>Bends are indicated by ', '', or ''' after the number.</p>
                 <p>Overblow is indicated by o after the number.</p>
+                <p>For chromatic harmonica presets, pressing the chromatic slide is indicated by s after the number.</p>
                 <hr id="tab_irish_box">
                 <p><strong>Inject Irish Box Tab</strong> - Brings up a dialog where you can choose to inject either B/C or C#/D Irish button box tab into the ABC.</p>
                 <div class="image_holder_p">
@@ -9162,7 +9163,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#inject_midigchord">Inject MIDI gchord Templates</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Note Names/Shapes/Solfège</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Instrument Tablature, Note Name, Shape Note, and Solfège Injectors</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#injecting_tablature">Instrument Tablature Injectors</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#ipad_share_sheet">iOS File Saves and Exports Use the Native File Sharing Dialog</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#ipad_keyboard">iPad On-Screen Keyboard Tricks</a></p>

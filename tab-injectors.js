@@ -7760,7 +7760,7 @@ var injectABCNoteNames = function (theABC){
 }
 
 //
-// Inject Diatonic Harmonica Tab below the notes
+// Inject Harmonica Tab below the notes
 //
 var HarmonicaTabGenerator = function (theABC){
 
@@ -8197,6 +8197,31 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[58] = "x"; // A# / Bb
                 theTabMap[59] = "x"; // B
  
+                break;
+
+            // PowerBender
+            case "13":
+                theTabMap = ["1","-1'","-1","1o","2","-2''","-2'","3","-3'''","-3''","-3'","-3","4","-4'","-4","-5'","-5","6","-6'","-6","6o","7","-7'","-7","8","-8'","-8","8o","9","-9''","-9'","-9","9o","10","-10''","-10'","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"];
+                break;
+
+            // PowerDraw
+            case "14":
+                theTabMap = ["1","-1'","-1","1o","2","-2''","-2'","3","-3'''","-3''","-3'","-3","4","-4'","-4","4o","5","-5","5o","6","-6'","-6","-7'","-7","8","-8'","-8","8o","9","-9''","-9'","-9","9o","10","-10''","-10'","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"];
+                break;
+
+            // Solo (10-Hole)
+            case "9":
+                theTabMap = ["x","x","x","x","x","x","x","x","x","x","x","x","1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","-4","5","-5'","-5","5o","6","-6","6o","7","-7'","-7","7o","-8","9","-9'","-9","9o","10","-10","10o","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"];
+                break;
+
+            // Solo (12-Hole)
+            case "10":
+                theTabMap = ["x","x","x","x","x","x","x","x","x","x","x","x","1","-1'","-1","1o","2","-2","2o","3","-3'","-3","3o","-4","5","-5'","-5","5o","6","-6","6o","7","-7'","-7","7o","-8","9","-9'","-9","9o","10","-10","10o","11","-11'","-11","11o","-12","12","x","x","x","x","x","x","x","x","x","x","x"];
+                break;
+
+            // Seydel Orchestra-S (10-Hole)
+            case "11":
+                theTabMap = ["x","x","x","x","x","x","x","1","-1'","-1","1o","-2","3","-3'","-3","3o","4","-4","4o","5","-5'","-5","5o","-6","7","-7'","-7","7o","8","-8","8o","9","-9'","-9","9o","-10","10","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"];
                 break;
 
             // Chromatic 12-hole
@@ -9263,6 +9288,21 @@ var HarmonicaTabGenerator = function (theABC){
                     break;
                 case "5":
                     harpInfo += " (Natural Minor)\n"
+                    break;
+                case "13":
+                    harpInfo += " (PowerBender)\n"
+                    break;
+                case "14":
+                    harpInfo += " (PowerDraw)\n"
+                    break;
+                case "9":
+                    harpInfo += " (Solo 10-Hole)\n"
+                    break;
+                case "10":
+                    harpInfo += " (Solo 12-Hole)\n"
+                    break;
+                case "11":
+                    harpInfo += " (Seydel Orchestra-S 10-Hole)\n"
                     break;
                 case "6":
                     harpInfo += " (Chromatic 12-Hole)\n"
