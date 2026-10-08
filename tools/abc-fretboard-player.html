@@ -1264,8 +1264,11 @@ body.lessonMode .toolbar select:disabled{
 }
 .dialogHelpBtn:hover,.dialogHelpBtn:active{background:transparent !important;border:0 !important;box-shadow:none !important}
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:28px !important;line-height:32px !important}}
+
+/* Hide practice mode: blank the complete instrument pane without disturbing notation or playback. */
+.diagramCard.hideFingerings .diagramWrap > *{visibility:hidden!important}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.01</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.02</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1281,7 +1284,7 @@ body.lessonMode .toolbar select:disabled{
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">GDAE Fingering</span><span class="diagramHeaderRight"><label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked disabled>Show Fretboard</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">GDAE Fingering</span><span class="diagramHeaderRight"><label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked disabled>Show Fretboard</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
   <div class="diagramWrap whistleDiagramWrap">
    <div id="whistleLive" class="whistleLive" hidden>
     <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
@@ -1348,6 +1351,7 @@ body.lessonMode .toolbar select:disabled{
       <p>The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes.</p>
       <p>When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
+      <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
       <p>The <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> choices are remembered in this browser and are also included in generated share links.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1395,6 +1399,7 @@ body.lessonMode .toolbar select:disabled{
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
+      
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
       <p>A lesson uses the <b>current tune only</b>.</p>
       <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
@@ -1407,9 +1412,11 @@ body.lessonMode .toolbar select:disabled{
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
+<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
+      
       <p>Your music teacher may provide you with a Fretboard Player lesson link.</p>
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
@@ -1421,8 +1428,8 @@ body.lessonMode .toolbar select:disabled{
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
       <p>To return to normal Fretboard Player operation, open the player normally rather than through the lesson link.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
+<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>
       <p style="text-align:center">If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
@@ -2719,6 +2726,26 @@ function startABCTranscriptionToolsHandshake(){
   [0,250,750,1500].forEach(delay=>setTimeout(notifyABCTranscriptionToolsReady,delay));
 }
 
+
+// Hide practice mode is a local preference outside lessons; lesson settings are temporary.
+const HIDE_FINGERING_KEY="abcHideFingering_abc-fretboard-player.html";
+let hideFingeringEnabled=false;
+function setHideFingering(enabled,persist=false){
+  hideFingeringEnabled=!!enabled;
+  const cb=$("hideFingeringCheck");if(cb)cb.checked=hideFingeringEnabled;
+  const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("hideFingerings",hideFingeringEnabled);
+  if(persist&&!lessonModeActive())try{localStorage.setItem(HIDE_FINGERING_KEY,String(hideFingeringEnabled))}catch(_){}
+}
+function restoreHideFingeringPreference(){
+  let enabled=false;
+  try{enabled=localStorage.getItem(HIDE_FINGERING_KEY)==="true"}catch(_){}
+  setHideFingering(enabled,false);
+}
+function applyLessonHideFingering(params){
+  if(params.get("lesson")!=="1")return;
+  const value=params.get("hide");
+  if(value!==null)setHideFingering(value==="1",false);
+}
 function restoreShowNotePreference(){
   try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}
   $("showNoteCheck").checked=showNoteEnabled;
@@ -2773,7 +2800,7 @@ function validateLessonABCText(abc){
   if(typeof abc!=="string"||!abc.trim()||!/(^|\n)\s*X\s*:\s*\S+/m.test(abc))throw new Error("Lesson ABC data is missing or invalid.");
   return abc;
 }
-function validateFretboardSettingsParams(params){
+function validateFretboardSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!(["0","1"].includes(hide)))throw new Error("Lesson Hide setting is invalid.");
   const notation=params.get("notation");
   const instrument=params.get("instrument");
   const capo=params.get("capo");
@@ -2816,6 +2843,7 @@ function applyWhistleShareSettings(){
 
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
+  applyLessonHideFingering(params);
   const payload=params.get("def");
   if(!payload){
     updateShareButtons();
@@ -3495,6 +3523,7 @@ $("showFretboardCheck").addEventListener("change",e=>{
   requestAnimationFrame(alignStaffCenterToFretStatus);
 });
 
+$("hideFingeringCheck").addEventListener("change",e=>setHideFingering(e.target.checked,true));
 $("showNoteCheck").addEventListener("change",e=>{
   showNoteEnabled=!!e.target.checked;
   saveShowNotePreference();
@@ -3537,6 +3566,7 @@ restoreWhistleDisplayPrefs();
 updateInstrumentUI();
 restoreShowFretboardPreference();
 restoreShowNotePreference();
+restoreHideFingeringPreference();
 restoreMetronomePreference();
 restoreCountInPreference();
 installCountInPlayHandler();
@@ -3566,6 +3596,7 @@ function syncPlaybackPermissionHeaderControls(){
 
   const editorTextSize=$("editorTextSize");
   const showNote=$("showNoteCheck");
+  const hideFingering=$("hideFingeringCheck");
   const showFretboard=$("showFretboardCheck");
   const tabOverride=$("tabOverrideBtn");
   const foldOctaves=$("foldOctavesCheck");
@@ -3576,6 +3607,7 @@ function syncPlaybackPermissionHeaderControls(){
   const headerDisabled=!hasTunes||permissionPending;
   if(editorTextSize)editorTextSize.disabled=headerDisabled;
   if(showNote)showNote.disabled=headerDisabled;
+  if(hideFingering)hideFingering.disabled=headerDisabled;
   if(showFretboard)showFretboard.disabled=headerDisabled;
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
@@ -3648,7 +3680,7 @@ function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
 function buildLessonLink(title,instructions){
   const abc=lessonABC(),base=generateShareLink(abc);if(!base)return '';
   const u=new URL(base);
-  u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));
+  u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));
   // Keep the lesson marker last for clearer, more recognizable lesson URLs.
   u.searchParams.delete('lesson');
   u.searchParams.append('lesson','1');
@@ -3707,7 +3739,7 @@ async function lessonSaveText(name,text,type='text/plain'){
 function lessonConfigObject(){
   const title=$('lessonTitleInput').value,instructions=$('lessonInstructionsInput').value;
   const abc=lessonABC(),settingsURL=generateShareLink(abc),u=new URL(settingsURL);
-  return {format:'ABCPlayerLesson',version:2,player:'abc-fretboard-player.html',title,instructions,abc,settings:Object.fromEntries(u.searchParams.entries())};
+  return {format:'ABCPlayerLesson',version:2,player:'abc-fretboard-player.html',title,instructions,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}};
 }
 function lessonFileBaseName(v){
   v=String(v||"").trim().replace(/\.txt$/i,"").replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ").trim();
@@ -3801,6 +3833,7 @@ async function loadLessonConfigObject(c){
 }
 function populateLessonConfigObject(c){
   const checked=validateLessonConfigObject(c),q=checked.q,meta=checked.meta;
+  setHideFingering(q.get("hide")==="1",false);
 
   // Validation is complete before anything is changed.
   $('lessonTitleInput').value=meta.title;

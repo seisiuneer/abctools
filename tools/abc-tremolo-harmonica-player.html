@@ -1323,13 +1323,16 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 }
 .dialogHelpBtn:hover,.dialogHelpBtn:active{background:transparent !important;border:0 !important;box-shadow:none !important}
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:28px !important;line-height:32px !important}}
+
+/* Hide practice mode: blank the complete instrument pane without disturbing notation or playback. */
+.diagramCard.hideFingerings .diagramWrap > *{visibility:hidden!important}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 3.01
+     Version 3.02
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1559,7 +1562,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 <label class="showNoteLabel" for="showNoteCheck">
 <input id="showNoteCheck" type="checkbox"/>
         Show note
-       </label>
+       </label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label>
 <button class="fullBtn" disabled="" id="fullBtn">
         Full-Page View
        </button>
@@ -1633,6 +1636,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 <p>The diagram represents the two rows of a tremolo harmonica. Each playable note uses a vertically aligned pair of reeds; both holes in the pair are highlighted together. Green indicates <b>blow</b> and magenta indicates <b>draw</b>.</p>
 <p><b>Display</b> chooses <b>Arrows</b> or <b>Text</b>. Arrows show breath direction. Text shows the position number, with a leading – for draw. Tremolo layouts in this player use only blow and draw; bends, overblows, and chromatic-slide techniques are not supported.</p>
 <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
+      <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument play techniques. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
 <p>Editing the ABC rebuilds the notation and tremolo harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the tremolo display to that note. Use the editor text-size menu to change the ABC editor text size.</p>
@@ -1697,6 +1701,7 @@ Then follow the displayed positions on your C tremolo.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
 <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
+      
 <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
 <p>A lesson uses the <b>current tune only</b>.</p>
 <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
@@ -1709,9 +1714,11 @@ Then follow the displayed positions on your C tremolo.</p>
 <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
 <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
 <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
+<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument play techniques. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
 <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
+      
 <p>Your music teacher may provide you with a Tremolo Harmonica Player lesson link.</p>
 <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
 <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
@@ -1722,6 +1729,7 @@ Then follow the displayed positions on your C tremolo.</p>
 <p>You can edit the ABC if your teacher asks you to make changes.</p>
 <p>Click <b>Save</b> to save your edited ABC.</p>
 <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
+<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument play techniques. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
 <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
@@ -2377,6 +2385,26 @@ function renderHarmonicaStaffNote(item){
   if(steps>=4)add("line",{x1:72.8,y1:y+1,x2:72.8,y2:y+35,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
   else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
 }
+
+// Hide practice mode is a local preference outside lessons; lesson settings are temporary.
+const HIDE_FINGERING_KEY="abcHideFingering_abc-tremolo-harmonica-player.html";
+let hideFingeringEnabled=false;
+function setHideFingering(enabled,persist=false){
+  hideFingeringEnabled=!!enabled;
+  const cb=$("hideFingeringCheck");if(cb)cb.checked=hideFingeringEnabled;
+  const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("hideFingerings",hideFingeringEnabled);
+  if(persist&&!lessonModeActive())try{localStorage.setItem(HIDE_FINGERING_KEY,String(hideFingeringEnabled))}catch(_){}
+}
+function restoreHideFingeringPreference(){
+  let enabled=false;
+  try{enabled=localStorage.getItem(HIDE_FINGERING_KEY)==="true"}catch(_){}
+  setHideFingering(enabled,false);
+}
+function applyLessonHideFingering(params){
+  if(params.get("lesson")!=="1")return;
+  const value=params.get("hide");
+  if(value!==null)setHideFingering(value==="1",false);
+}
 function restoreShowNotePreference(){try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
 function saveShowNotePreference(){commitStandardShareSettingsIfPending();try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){} }
 function updateHarmonicaDisplayUI(){const select=$("harmonicaDisplayMode"),legend=$("legendBtn");if(select)select.value=harmonicaDisplayMode;if(legend)legend.hidden=true;drawDiagram(currentDiagramItem,true)}
@@ -2902,6 +2930,7 @@ function startABCTranscriptionToolsHandshake(){
 
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
+  applyLessonHideFingering(params);
   const payload=params.get("def");
   if(!payload){updateShareButtons();return;}
   // Let the page and abcjs finish their ordinary startup first. Then decode the
@@ -3265,6 +3294,7 @@ $("tempoBtn").addEventListener("click",()=>{
   if(!input||$("tempoBtn").disabled)return;
   openTempoDialog(input);
 });
+$("hideFingeringCheck").addEventListener("change",e=>setHideFingering(e.target.checked,true));
 $("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderHarmonicaStaffNote(currentDiagramItem)});
 $("harmonicaDisplayMode").addEventListener("change",e=>{harmonicaDisplayMode=(e.target.value==="text"||e.target.value==="style2")?e.target.value:"style1";saveHarmonicaDisplayPreference();updateHarmonicaDisplayUI()});
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
@@ -3525,6 +3555,7 @@ setTimeout(()=>updateTremoloKeyChoices(),0);
 });
 updateHarmonicaHeaderStatus();
 restoreShowNotePreference();
+restoreHideFingeringPreference();
 restoreHarmonicaDisplayPreference();restoreMetronomePreference();
 restoreCountInPreference();installCountInPlayHandler();{const octNum=parseInt($("fingeringDisplay").value,10)||0;const octLabel=(octNum>0?"+":"")+octNum;$("diagramMeta").textContent=[HARMONICA_TUNING_NAMES[$("system").value]||"Tombo 1521: 21-Hole",$("style").value,...(octNum!==0?[`Octave ${octLabel}`]:[])].join(" • ")}updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
@@ -3546,6 +3577,7 @@ function syncPlaybackPermissionHeaderControls(){
   const metronome=$("metronomeCheck");
   const countIn=$("countInCheck");
   const showNote=$("showNoteCheck");
+  const hideFingering=$("hideFingeringCheck");
   const harmonicaDisplay=$("harmonicaDisplayMode");
 
   // These controls are unavailable with no loaded tune, and remain unavailable
@@ -3553,6 +3585,7 @@ function syncPlaybackPermissionHeaderControls(){
   if(metronome)metronome.disabled=!hasTunes||permissionPending;
   if(countIn)countIn.disabled=!hasTunes||permissionPending;
   if(showNote)showNote.disabled=!hasTunes||permissionPending;
+  if(hideFingering)hideFingering.disabled=!hasTunes||permissionPending;
   if(harmonicaDisplay)harmonicaDisplay.disabled=!hasTunes||permissionPending;
 
   const paneFullDisabled=!hasTunes||permissionPending;
@@ -3612,9 +3645,9 @@ function savedLessonLinkURLFromText(text){
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');if(system!==null&&!(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,system)||system==='custom'))throw new Error('Lesson tremolo model is invalid.');if(display!==null&&!['-3','-2','-1','0','1','2','3'].includes(display))throw new Error('Lesson octave shift is invalid.');if(transpose!==null&&(!Number.isInteger(Number(transpose))||Number(transpose)<-12||Number(transpose)>12))throw new Error('Lesson playback transpose is invalid.');if(system==='custom'){const encoded=params.get('custom');if(!encoded)throw new Error('Lesson custom tuning data is missing.');decodeSharedCustomTuning(encoded);}const keys=system==='custom'?['Custom']:(TREMOLO_MODEL_KEYS[system||$('system').value]||['C']);if(style!==null&&!keys.includes(style))throw new Error('Lesson tremolo key is invalid.');}
+function validateLessonSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');if(system!==null&&!(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,system)||system==='custom'))throw new Error('Lesson tremolo model is invalid.');if(display!==null&&!['-3','-2','-1','0','1','2','3'].includes(display))throw new Error('Lesson octave shift is invalid.');if(transpose!==null&&(!Number.isInteger(Number(transpose))||Number(transpose)<-12||Number(transpose)>12))throw new Error('Lesson playback transpose is invalid.');if(system==='custom'){const encoded=params.get('custom');if(!encoded)throw new Error('Lesson custom tuning data is missing.');decodeSharedCustomTuning(encoded);}const keys=system==='custom'?['Custom']:(TREMOLO_MODEL_KEYS[system||$('system').value]||['C']);if(style!==null&&!keys.includes(style))throw new Error('Lesson tremolo key is invalid.');}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
-function applyLessonSettingsParams(params){validateLessonSettingsParams(params);const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');
+function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));validateLessonSettingsParams(params);const system=params.get('system'),style=params.get('style'),display=params.get('display'),transpose=params.get('transpose');
   if(system!==null&&!(Object.prototype.hasOwnProperty.call(TREMOLO_LAYOUTS,system)||system==='custom'))throw new Error('Lesson tremolo model is invalid.');
   if(display!==null&&!['-3','-2','-1','0','1','2','3'].includes(display))throw new Error('Lesson octave shift is invalid.');
   if(transpose!==null&&(!Number.isInteger(Number(transpose))||Number(transpose)<-12||Number(transpose)>12))throw new Error('Lesson playback transpose is invalid.');
@@ -3623,11 +3656,11 @@ function applyLessonSettingsParams(params){validateLessonSettingsParams(params);
   const keys=system==='custom'?['Custom']:(TREMOLO_MODEL_KEYS[$('system').value]||['C']);if(style!==null&&!keys.includes(style))throw new Error('Lesson tremolo key is invalid.');if(style)$('style').value=style;if(display)$('fingeringDisplay').value=display;if(transpose!==null)$('playbackTranspose').value=String(Number(transpose));updateHarmonicaHeaderStatus();}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
 function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
-function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
+function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
 function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
 function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
-function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-tremolo-harmonica-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:Object.fromEntries(u.searchParams.entries())}}
+function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-tremolo-harmonica-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-tremolo-harmonica-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
 function parseLessonConfigText(text){let c;try{c=JSON.parse(String(text||''))}catch(_){return null}if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson')return null;validateLessonConfigObject(c);return c}
