@@ -62,7 +62,7 @@
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
 .toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
-.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0} .diagramHeaderRight #diagramMeta{margin-right:12px}
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
 .abcWrap textarea.editorTextSmall{font-size:14px}
 .abcWrap textarea.editorTextMedium{font-size:16px}
@@ -339,7 +339,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
   padding:6px 14px !important;
 }
 
-
 /* Final DayPilot spacing refinements. */
 body.save-name-prompt-open .modal_default_main .modal_default_content{
   line-height:1.4 !important;
@@ -356,13 +355,9 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
   line-height:1.55 !important;
 }
 
-
-
-
 /* Draggable Tab Override popover. */
 .tabOverrideTop{cursor:move;user-select:none;-webkit-user-select:none}
 body.popoverDragging{user-select:none;-webkit-user-select:none}
-
 
 /* Version 2.02: compact v1.96-style palette with separated hands. */
 .tabOverridePopover{width:min(484px,calc(100vw - 24px));padding:12px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
@@ -960,9 +955,19 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:28px !important;line-height:32px !important}}
 
 /* Hide practice mode: blank the complete instrument pane without disturbing notation or playback. */
-.diagramCard.hideFingerings .diagramWrap > *{visibility:hidden!important}
+.diagramCard.displayNone .diagramWrap > *{visibility:hidden!important}
+#displayMode{min-height:30px;padding:4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;max-width:145px}
+#displayMode:disabled{opacity:.45;cursor:default}
+
+/* Keep diagram controls accessible when the instrument pane becomes narrow. */
+@media (max-width: 1250px){
+  .diagramHeader{flex-wrap:wrap;justify-content:flex-start;column-gap:16px;row-gap:8px}
+  .diagramHeaderRight{flex:1 1 100%;flex-wrap:wrap;justify-content:flex-start;min-width:0;column-gap:10px;row-gap:8px}
+  .diagramHeaderRight #diagramMeta{margin-right:12px}
+  .diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto}
+}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.12</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.14</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -978,7 +983,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1105,7 +1110,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p><b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
       <p>Note names throughout the tool use sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>Check <b>Show note</b> in the Fingering Diagram header to display the current pitch as a quarter note on a staff centered below the bellows-direction arrow.</p>
-      <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
+      <p>Use <b>Mode</b> to choose <b>Show All</b> for the normal animated fingering display, <b>Diagram Only</b> to see the labeled button layout and Push/Draw legend without note highlights, note names, note image, or bellows direction, or <b>Hide All</b> to hide the instrument display entirely. <b>Diagram Only</b> is useful for practicing with the button layout as a reference without seeing the fingering solutions.</p>
       <p>The staff notation uses the same sharp or flat naming as the displayed note name.</p>
       <p>Playback uses the ABC Transcription Tools custom concertina <b>MIDI program 133</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
@@ -1204,8 +1209,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>The <b>Mode</b> selector lets you choose how much help students initially see: <b>Show All</b> shows normal fingering highlights, note names, and bellows direction; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without revealing the active button or bellows direction; <b>Hide All</b> hides the instrument display completely. Your selection determines the starting mode in lesson links and saved lesson configurations. Students can change the mode during a lesson without affecting their normal saved preference.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       
@@ -1219,8 +1224,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>Your teacher may choose the starting <b>Mode</b> for the lesson. <b>Show All</b> shows the full animated fingering display; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without highlighting notes or showing bellows direction; <b>Hide All</b> hides the instrument display. You can change the mode at any time during the lesson without affecting your saved preference for normal use.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align: center">
@@ -2809,7 +2814,7 @@ function prepareDiagramBase(){
   ctx.clearRect(0,0,c.width,c.height);
   ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);
   ctx.textAlign="center";ctx.textBaseline="alphabetic";
-  ctx.font="400 54px Arial";ctx.fillStyle="#333";ctx.fillText(title,640,58);
+  if(displayMode==="all"){ctx.font="400 54px Arial";ctx.fillStyle="#333";ctx.fillText(title,640,58);}
 
   // Static system/style information. Note numbering is intentionally omitted.
   ctx.textAlign="left";ctx.font="400 18px Arial";ctx.fillStyle="#555";
@@ -2873,7 +2878,7 @@ function drawBellowsDirectionArrow(ctx,direction){
 function renderConcertinaStaffNote(item){
   const svg=$("concertinaStaffNote"),stack=$("diagramStack");if(!svg||!stack)return;
   const midi=item?abcPitchToMidi(item.normalizedNote||item.abcNote):null;
-  const visible=!!showNoteEnabled&&midi!=null;
+  const visible=displayMode==="all"&&!!showNoteEnabled&&midi!=null;
   while(svg.firstChild)svg.removeChild(svg.firstChild);
   if(!visible){svg.style.display="none";return}
   svg.style.display="block";
@@ -2901,24 +2906,32 @@ function renderConcertinaStaffNote(item){
   else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
 }
 
-// Hide practice mode is a local preference outside lessons; lesson settings are temporary.
-const HIDE_FINGERING_KEY="abcHideFingering_abc-anglo-concertina-fingering-player.html";
-let hideFingeringEnabled=false;
-function setHideFingering(enabled,persist=false){
-  hideFingeringEnabled=!!enabled;
-  const cb=$("hideFingeringCheck");if(cb)cb.checked=hideFingeringEnabled;
-  const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("hideFingerings",hideFingeringEnabled);
-  if(persist&&!lessonModeActive())try{localStorage.setItem(HIDE_FINGERING_KEY,String(hideFingeringEnabled))}catch(_){}
+// The display mode is a local preference; lesson overrides remain session-only.
+const DISPLAY_MODE_KEY="abcDisplayMode_abc-anglo-concertina-fingering-player.html";
+const DISPLAY_MODES=new Set(["all","buttons","none"]);
+let displayMode="all";
+function setDisplayMode(mode,persist=false){
+  const next=DISPLAY_MODES.has(mode)?mode:"all";
+  const changed=displayMode!==next;
+  displayMode=next;
+  const select=$("displayMode");if(select)select.value=displayMode;
+  const showNote=$("showNoteCheck");if(showNote)showNote.disabled=displayMode!=="all"||!tunes.length||!!$("enablePlaybackBtn");
+  const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("displayNone",displayMode==="none");
+  if(changed&&tunes.length){
+    prepareDiagramBase();
+    drawDiagram(currentDiagramItem,true);
+  }
+  if(persist&&!lessonModeActive())try{localStorage.setItem(DISPLAY_MODE_KEY,displayMode)}catch(_){}
 }
-function restoreHideFingeringPreference(){
-  let enabled=false;
-  try{enabled=localStorage.getItem(HIDE_FINGERING_KEY)==="true"}catch(_){}
-  setHideFingering(enabled,false);
+function restoreDisplayModePreference(){
+  let mode="all";
+  try{mode=localStorage.getItem(DISPLAY_MODE_KEY)||"all"}catch(_){}
+  setDisplayMode(mode,false);
 }
-function applyLessonHideFingering(params){
+function applyLessonDisplayMode(params){
   if(params.get("lesson")!=="1")return;
-  const value=params.get("hide");
-  if(value!==null)setHideFingering(value==="1",false);
+  const value=params.get("display");
+  if(DISPLAY_MODES.has(value))setDisplayMode(value,false);
 }
 function restoreShowNotePreference(){showNoteEnabled=true;try{const saved=localStorage.getItem(SHOW_NOTE_KEY);if(saved!==null)showNoteEnabled=saved==="true"}catch(_){}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
 function saveShowNotePreference(){commitStandardShareSettingsIfPending();try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}}
@@ -2931,10 +2944,10 @@ function drawDiagram(item=null,force=false){
   // and change one DOM text node. No full diagram/text canvas rendering.
   const c=$("diagramOverlay"),ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
-  $("liveNoteName").textContent=item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
+  $("liveNoteName").textContent=displayMode==="all"&&item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
   renderConcertinaStaffNote(item);
 
-  if(item){
+  if(displayMode==="all"&&item){
     const physical=item.button.replace(/^L9a$/,"L9").replace(/^R1x$/,"R1");
     const p=POS[physical];
     if(p){
@@ -3415,7 +3428,7 @@ function startABCTranscriptionToolsHandshake(){
 
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
-  applyLessonHideFingering(params);
+  applyLessonDisplayMode(params);
   const watermark=$("diagramWatermark");
   if(watermark)watermark.hidden=params.get("nowatermark")==="1";
   const payload=params.get("def");
@@ -4156,7 +4169,7 @@ $("tempoBtn").addEventListener("click",()=>{
   if(!input||$("tempoBtn").disabled)return;
   openTempoDialog(input);
 });
-$("hideFingeringCheck").addEventListener("change",e=>setHideFingering(e.target.checked,true));
+$("displayMode").addEventListener("change",e=>setDisplayMode(e.target.value,true));
 $("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderConcertinaStaffNote(currentDiagramItem)});
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
@@ -4351,7 +4364,7 @@ function openInstructionsAt(sectionId){
   });
 }
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreShowNotePreference();
-restoreHideFingeringPreference();restoreMetronomePreference();
+restoreDisplayModePreference();restoreMetronomePreference();
 restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
@@ -4374,7 +4387,7 @@ function syncPlaybackPermissionHeaderControls(){
 
   const editorTextSize=$("editorTextSize");
   const showNote=$("showNoteCheck");
-  const hideFingering=$("hideFingeringCheck");
+  const displaySelect=$("displayMode");
   const showFretboard=$("showFretboardCheck");
   const tabOverride=$("tabOverrideBtn");
   const foldOctaves=$("foldOctavesCheck");
@@ -4384,8 +4397,8 @@ function syncPlaybackPermissionHeaderControls(){
   // browser's explicit Enable Playback gesture has been completed.
   const headerDisabled=!hasTunes||permissionPending;
   if(editorTextSize)editorTextSize.disabled=headerDisabled;
-  if(showNote)showNote.disabled=headerDisabled;
-  if(hideFingering)hideFingering.disabled=headerDisabled;
+  if(showNote)showNote.disabled=headerDisabled||displayMode!=="all";
+  if(displaySelect)displaySelect.disabled=headerDisabled;
   if(showFretboard)showFretboard.disabled=headerDisabled;
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
@@ -4450,27 +4463,27 @@ function savedLessonLinkURLFromText(text){
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');const system=params.get('system'),style=params.get('style');if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');if(style!==null&&!['onrow','cross'].includes(style))throw new Error('Lesson fingering solution is invalid.');}
+function validateLessonSettingsParams(params){const display=params.get("display");if(display!==null&&!DISPLAY_MODES.has(display))throw new Error('Lesson Display setting is invalid.');const system=params.get('system'),style=params.get('style');if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');if(style!==null&&!['onrow','cross'].includes(style))throw new Error('Lesson fingering solution is invalid.');}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
-function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));validateLessonSettingsParams(params);const system=params.get('system'),style=params.get('style');
+function applyLessonSettingsParams(params){validateLessonSettingsParams(params);applyLessonDisplayMode(new URLSearchParams("lesson=1&"+params.toString()));const system=params.get('system'),style=params.get('style');
   if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');
   if(style!==null&&!['onrow','cross'].includes(style))throw new Error('Lesson fingering solution is invalid.');
   
   if(system)$('system').value=system;if(style)$('style').value=style;savePrefs();}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
 function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
-function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
+function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('display',displayMode);u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
 function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
 function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
-function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-anglo-concertina-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
+function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-anglo-concertina-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),display:displayMode}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-anglo-concertina-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
 function parseLessonConfigText(text){let c;try{c=JSON.parse(String(text||''))}catch(_){return null}if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson')return null;validateLessonConfigObject(c);return c}
 function looksLikeLessonConfigText(text){return /["']format["']\s*:\s*["']ABCPlayerLesson["']/.test(String(text||''))}
 async function showLessonLoadError(err){const msg='Unable to load lesson: '+(err&&err.message||err);if(window.DayPilot&&DayPilot.Modal)await DayPilot.Modal.alert(msg,{top:100,width:520});else console.error(msg)}
 async function confirmLessonConfigReplacement(){if(!tunes.length)return true;const msg=tunes.length===1?'Loading this lesson will replace the currently loaded tune.<br><br>OK to Continue?':`Loading this lesson will replace the ${tunes.length} currently loaded tunes.<br><br>OK to Continue?`;if(window.DayPilot&&DayPilot.Modal&&DayPilot.Modal.confirm){const r=await DayPilot.Modal.confirm(msg,{top:150,width:600});return !!(r&&!r.canceled&&r.result)}return window.confirm(msg.replace(/<br\s*\/?>/gi,'\\n'))}
-async function loadLessonConfigObject(c){const checked=validateLessonConfigObject(c);if(!(await confirmLessonConfigReplacement()))return false;$('lessonTitleInput').value=checked.meta.title;$('lessonInstructionsInput').value=checked.meta.instructions;saveLessonDraftPreferences();const q=checked.q;q.delete('def');q.delete('lesson');q.delete('ldata');applyLessonSettingsParams(q);sharePlaybackNeedsGesture=false;manualEntryCollection=false;currentSaveBaseName='';processLoadedABC(c.abc,'Lesson configuration');$('openFile').value='';updateShareButtons();refreshUnifiedShareState();setModal('shareModal',false);setModal('lessonLinkModal',false);setModal('lessonModal',true);return true}
+async function loadLessonConfigObject(c){const checked=validateLessonConfigObject(c);if(!(await confirmLessonConfigReplacement()))return false;$('lessonTitleInput').value=checked.meta.title;$('lessonInstructionsInput').value=checked.meta.instructions;saveLessonDraftPreferences();const q=checked.q;q.delete('def');q.delete('lesson');q.delete('ldata');applyLessonSettingsParams(q);if(q.has("display"))setDisplayMode(q.get("display"),true);sharePlaybackNeedsGesture=false;manualEntryCollection=false;currentSaveBaseName='';processLoadedABC(c.abc,'Lesson configuration');$('openFile').value='';updateShareButtons();refreshUnifiedShareState();setModal('shareModal',false);setModal('lessonLinkModal',false);setModal('lessonModal',true);return true}
 function lessonFileBaseName(v){v=String(v||'').trim().replace(/\.txt$/i,'').replace(/[\\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim();return v||'saved_lesson'}
 async function askLessonTextFileName(promptText,defaultBase){
   const def=lessonFileBaseName(defaultBase)+'.txt';

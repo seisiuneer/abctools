@@ -62,7 +62,7 @@
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
 .toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(240px,1.45fr) minmax(120px,.55fr) minmax(170px,.9fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button,.notationHeaderBtn{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled,.notationHeaderBtn:disabled{opacity:.45;cursor:default}
-.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
+.toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,.notationHeaderBtn:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0} .diagramHeaderRight #diagramMeta{margin-right:12px}
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
 .abcWrap textarea.editorTextSmall{font-size:14px}
 .abcWrap textarea.editorTextMedium{font-size:16px}
@@ -960,9 +960,19 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:28px !important;line-height:32px !important}}
 
 /* Hide practice mode: blank the complete instrument pane without disturbing notation or playback. */
-.diagramCard.hideFingerings .diagramWrap > *{visibility:hidden!important}
+.diagramCard.displayNone .diagramWrap > *{visibility:hidden!important}
+#displayMode{min-height:30px;padding:4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;max-width:145px}
+#displayMode:disabled{opacity:.45;cursor:default}
+
+/* Keep diagram controls accessible when the instrument pane becomes narrow. */
+@media (max-width: 1250px){
+  .diagramHeader{flex-wrap:wrap;justify-content:flex-start;column-gap:16px;row-gap:8px}
+  .diagramHeaderRight{flex:1 1 100%;flex-wrap:wrap;justify-content:flex-start;min-width:0;column-gap:10px;row-gap:8px}
+  .diagramHeaderRight #diagramMeta{margin-right:12px}
+  .diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto}
+}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.03</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
+<header class="app-header"><div class="version">Version 3.04</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Tuning</label><select id="system"><option value="bc">B/C</option><option value="cd">C#/D</option></select></div>
@@ -976,7 +986,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Button Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">B/C</span><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="840"></canvas><canvas id="diagramOverlay" width="1280" height="840"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="boxStaffNote" class="boxStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark"></div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Button Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">B/C</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="840"></canvas><canvas id="diagramOverlay" width="1280" height="840"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="boxStaffNote" class="boxStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark"></div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1005,7 +1015,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
     <h2 style="text-align:center;margin:0 0 24px">ABC Irish Button Box Fingering Player Instructions</h2>
 
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
-            <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Irish button accordion fingerings.</p>
       <p>Choose <b>B/C</b> or <b>C#/D</b> tuning. The fixed 21-button keyboard diagram shows the C row above the B row for B/C tuning, and the D row above the C# row for C#/D tuning.</p>
       <p>23-button instrument players will need to offset the displayed button position one button to the right.</p>
@@ -1066,6 +1076,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p><b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
       <p>Note names throughout the tool use sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>Check <b>Show note</b> in the Button Diagram header to also show the current pitch as a quarter note on a staff positioned to the right of the note name.</p>
+      <p>Use <b>Mode</b> to choose <b>Show All</b> for the normal animated fingering display, <b>Diagram Only</b> to see the labeled button layout and Push/Draw legend without note highlights, note names, note image, or bellows direction, or <b>Hide All</b> to hide the instrument display entirely. <b>Diagram Only</b> is useful for practicing with the button layout as a reference without seeing the fingering solutions.</p>
       <p>The staff notation uses the same sharp or flat naming as the displayed note name.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
       <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
@@ -1115,8 +1126,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player setting. The restored tuning also becomes your saved preference for future use.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player setting carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>The <b>Mode</b> selector lets you choose how much help students initially see: <b>Show All</b> shows normal fingering highlights, note names, and bellows direction; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without revealing the active button or bellows direction; <b>Hide All</b> hides the instrument display completely. Your selection determines the starting mode in lesson links and saved lesson configurations. Students can change the mode during a lesson without affecting their normal saved preference.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       
       <p>Your music teacher may provide you with an Irish Button Box Player lesson link.</p>
@@ -1126,13 +1137,12 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>The lesson setup controls and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, button display, playback, tempo, metronome, count-in, Show note, and full-page controls while working on the lesson.</p>
-      <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's tuning remains locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
+      <p>Your teacher may choose the starting <b>Mode</b> for the lesson. <b>Show All</b> shows the full animated fingering display; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without highlighting notes or showing bellows direction; <b>Hide All</b> hides the instrument display. You can change the mode at any time during the lesson without affecting your saved preference for normal use.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align: center">
         This tool was created by
         <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
@@ -2282,12 +2292,12 @@ const BOX_BUTTON_RADIUS=48;
 function boxPositions(){const out={};const xs10=Array.from({length:10},(_,i)=>167.5+i*105),xs11=Array.from({length:11},(_,i)=>115+i*105);xs10.forEach((x,i)=>out["T"+(i+1)]={x,y:435});xs11.forEach((x,i)=>out["B"+(i+1)]={x,y:575});return out}const POS=boxPositions();
 function drawBoxButton(ctx,x,y,push,draw){const r=BOX_BUTTON_RADIUS;ctx.save();ctx.fillStyle="#fff";ctx.strokeStyle="#171717";ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();ctx.fillStyle="#111";ctx.font="500 21px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(push,x,y-20);ctx.fillText(draw,x,y+20);ctx.restore()}
 function drawPushDrawLegend(ctx){const x=70,y=70,r=BOX_BUTTON_RADIUS;ctx.save();ctx.fillStyle="#fff";ctx.strokeStyle="#171717";ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();ctx.fillStyle="#111";ctx.font="500 16px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("PUSH",x,y-20);ctx.fillText("DRAW",x,y+20);ctx.restore()}
-function prepareDiagramBase(){const c=$("diagram"),ctx=c.getContext("2d"),tuning=$("system").value,layout=BOX_LAYOUTS[tuning];const title=tunes.length?firstTitle(tunes[currentTune],currentTune+1):"";ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);drawPushDrawLegend(ctx);ctx.fillStyle="#333";ctx.textAlign="center";ctx.font="400 52px Arial";ctx.fillText(title,640,85);layout.top.forEach((p,i)=>{drawBoxButton(ctx,POS["T"+(i+1)].x,POS["T"+(i+1)].y,p[0],p[1]);ctx.font="400 18px Arial";ctx.fillStyle="#444";ctx.fillText(String(i+1),POS["T"+(i+1)].x,370)});layout.bottom.forEach((p,i)=>{drawBoxButton(ctx,POS["B"+(i+1)].x,POS["B"+(i+1)].y,p[0],p[1]);ctx.font="400 18px Arial";ctx.fillStyle="#444";ctx.fillText(String(i+1),POS["B"+(i+1)].x,640)});$("diagramStack").hidden=false;$("emptyDiagram").hidden=true;$("fullBtn").disabled=false;$("diagramMeta").textContent=tuning==="bc"?"B/C":"C#/D";lastDiagramIndex=-2}
+function prepareDiagramBase(){const c=$("diagram"),ctx=c.getContext("2d"),tuning=$("system").value,layout=BOX_LAYOUTS[tuning];const title=tunes.length?firstTitle(tunes[currentTune],currentTune+1):"";ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);drawPushDrawLegend(ctx);ctx.fillStyle="#333";ctx.textAlign="center";ctx.font="400 52px Arial";if(displayMode==="all")ctx.fillText(title,640,85);layout.top.forEach((p,i)=>{drawBoxButton(ctx,POS["T"+(i+1)].x,POS["T"+(i+1)].y,p[0],p[1]);ctx.font="400 18px Arial";ctx.fillStyle="#444";if(displayMode==="all")ctx.fillText(String(i+1),POS["T"+(i+1)].x,370)});layout.bottom.forEach((p,i)=>{drawBoxButton(ctx,POS["B"+(i+1)].x,POS["B"+(i+1)].y,p[0],p[1]);ctx.font="400 18px Arial";ctx.fillStyle="#444";if(displayMode==="all")ctx.fillText(String(i+1),POS["B"+(i+1)].x,640)});$("diagramStack").hidden=false;$("emptyDiagram").hidden=true;$("fullBtn").disabled=false;$("diagramMeta").textContent=tuning==="bc"?"B/C":"C#/D";lastDiagramIndex=-2}
 function drawBellowsDirectionArrow(ctx,direction){const x=640,top=667,bottom=792,stem=12,head=40,hh=50;ctx.save();const color=direction==="push"?PUSH_COLOR:DRAW_COLOR;ctx.fillStyle=color;ctx.beginPath();if(direction==="push"){ctx.moveTo(x-stem,top);ctx.lineTo(x+stem,top);ctx.lineTo(x+stem,bottom-hh);ctx.lineTo(x+head,bottom-hh);ctx.lineTo(x,bottom);ctx.lineTo(x-head,bottom-hh);ctx.lineTo(x-stem,bottom-hh)}else{ctx.moveTo(x,top);ctx.lineTo(x+head,top+hh);ctx.lineTo(x+stem,top+hh);ctx.lineTo(x+stem,bottom);ctx.lineTo(x-stem,bottom);ctx.lineTo(x-stem,top+hh);ctx.lineTo(x-head,top+hh)}ctx.closePath();ctx.fill();ctx.font="600 36px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(direction==="push"?"PUSH":"DRAW",x,826);ctx.restore()}
 function renderBoxStaffNote(item){
   const svg=$("boxStaffNote"),stack=$("diagramStack");if(!svg||!stack)return;
   const midi=item?abcPitchToMidi(item.normalizedNote||item.abcNote):null;
-  const visible=!!showNoteEnabled&&midi!=null;
+  const visible=displayMode==="all"&&!!showNoteEnabled&&midi!=null;
   while(svg.firstChild)svg.removeChild(svg.firstChild);
   if(!visible){svg.style.display="none";return}
   svg.style.display="block";
@@ -2315,28 +2325,36 @@ function renderBoxStaffNote(item){
   else add("line",{x1:89.2,y1:y-1,x2:89.2,y2:y-36,stroke:"#17241c","stroke-width":1.9,"stroke-linecap":"round","vector-effect":"non-scaling-stroke"});
 }
 
-// Hide practice mode is a local preference outside lessons; lesson settings are temporary.
-const HIDE_FINGERING_KEY="abcHideFingering_abc-irish-box-fingering-player.html";
-let hideFingeringEnabled=false;
-function setHideFingering(enabled,persist=false){
-  hideFingeringEnabled=!!enabled;
-  const cb=$("hideFingeringCheck");if(cb)cb.checked=hideFingeringEnabled;
-  const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("hideFingerings",hideFingeringEnabled);
-  if(persist&&!lessonModeActive())try{localStorage.setItem(HIDE_FINGERING_KEY,String(hideFingeringEnabled))}catch(_){}
+// The display mode is a local preference; lesson overrides remain session-only.
+const DISPLAY_MODE_KEY="abcDisplayMode_abc-irish-box-fingering-player.html";
+const DISPLAY_MODES=new Set(["all","buttons","none"]);
+let displayMode="all";
+function setDisplayMode(mode,persist=false){
+  const next=DISPLAY_MODES.has(mode)?mode:"all";
+  const changed=displayMode!==next;
+  displayMode=next;
+  const select=$("displayMode");if(select)select.value=displayMode;
+  const showNote=$("showNoteCheck");if(showNote)showNote.disabled=displayMode!=="all"||!tunes.length||!!$("enablePlaybackBtn");
+  const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("displayNone",displayMode==="none");
+  if(changed&&tunes.length){
+    prepareDiagramBase();
+    drawDiagram(currentDiagramItem,true);
+  }
+  if(persist&&!lessonModeActive())try{localStorage.setItem(DISPLAY_MODE_KEY,displayMode)}catch(_){}
 }
-function restoreHideFingeringPreference(){
-  let enabled=false;
-  try{enabled=localStorage.getItem(HIDE_FINGERING_KEY)==="true"}catch(_){}
-  setHideFingering(enabled,false);
+function restoreDisplayModePreference(){
+  let mode="all";
+  try{mode=localStorage.getItem(DISPLAY_MODE_KEY)||"all"}catch(_){}
+  setDisplayMode(mode,false);
 }
-function applyLessonHideFingering(params){
+function applyLessonDisplayMode(params){
   if(params.get("lesson")!=="1")return;
-  const value=params.get("hide");
-  if(value!==null)setHideFingering(value==="1",false);
+  const value=params.get("display");
+  if(DISPLAY_MODES.has(value))setDisplayMode(value,false);
 }
 function restoreShowNotePreference(){showNoteEnabled=true;try{const saved=localStorage.getItem(SHOW_NOTE_KEY);if(saved!==null)showNoteEnabled=saved==="true"}catch(_){}const cb=$("showNoteCheck");if(cb)cb.checked=showNoteEnabled}
 function saveShowNotePreference(){commitStandardShareSettingsIfPending();try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}}
-function drawDiagram(item=null,force=false){const itemIndex=item?item.index:-1;if(!force&&itemIndex===lastDiagramIndex)return;currentDiagramItem=item;const c=$("diagramOverlay"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);$("liveNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderBoxStaffNote(item);if(item&&item.direction!=="none"){const p=POS[item.button];if(p){const r=BOX_BUTTON_RADIUS,isPush=item.direction==="push",color=isPush?PUSH_COLOR:DRAW_COLOR;ctx.save();ctx.beginPath();ctx.arc(p.x,p.y,r-2,0,Math.PI*2);ctx.clip();ctx.fillStyle=color;ctx.globalAlpha=.16;ctx.fillRect(p.x-r,isPush?p.y-r:p.y,r*2,r);ctx.globalAlpha=1;ctx.restore();ctx.save();ctx.strokeStyle=color;ctx.lineWidth=6;ctx.beginPath();if(isPush)ctx.arc(p.x,p.y,r-1,Math.PI,Math.PI*2);else ctx.arc(p.x,p.y,r-1,0,Math.PI);ctx.stroke();ctx.restore();drawBellowsDirectionArrow(ctx,item.direction)}}lastDiagramIndex=itemIndex}
+function drawDiagram(item=null,force=false){const itemIndex=item?item.index:-1;if(!force&&itemIndex===lastDiagramIndex)return;currentDiagramItem=item;const c=$("diagramOverlay"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);$("liveNoteName").textContent=displayMode==="all"&&item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";renderBoxStaffNote(item);if(displayMode==="all"&&item&&item.direction!=="none"){const p=POS[item.button];if(p){const r=BOX_BUTTON_RADIUS,isPush=item.direction==="push",color=isPush?PUSH_COLOR:DRAW_COLOR;ctx.save();ctx.beginPath();ctx.arc(p.x,p.y,r-2,0,Math.PI*2);ctx.clip();ctx.fillStyle=color;ctx.globalAlpha=.16;ctx.fillRect(p.x-r,isPush?p.y-r:p.y,r*2,r);ctx.globalAlpha=1;ctx.restore();ctx.save();ctx.strokeStyle=color;ctx.lineWidth=6;ctx.beginPath();if(isPush)ctx.arc(p.x,p.y,r-1,Math.PI,Math.PI*2);else ctx.arc(p.x,p.y,r-1,0,Math.PI);ctx.stroke();ctx.restore();drawBellowsDirectionArrow(ctx,item.direction)}}lastDiagramIndex=itemIndex}
 function removeCursor(){
   lastAutoscrollSystemTop=null;if(playbackCursor){playbackCursor.remove();playbackCursor=null}}
 function recursiveStartChar(x){if(!x)return null;if(typeof x.startChar==="number")return x.startChar;if(x.dataset&&x.dataset.startChar&&!isNaN(+x.dataset.startChar))return +x.dataset.startChar;if(Array.isArray(x)){for(const y of x){const v=recursiveStartChar(y);if(v!=null)return v}}else if(typeof x==="object"){for(const k of ["elements","abselem","elemset","sourceElement"]){if(x[k]){const v=recursiveStartChar(x[k]);if(v!=null)return v}}}return null}
@@ -2785,7 +2803,7 @@ function startABCTranscriptionToolsHandshake(){
 
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
-  applyLessonHideFingering(params);
+  applyLessonDisplayMode(params);
   const watermark=$("diagramWatermark");
   if(watermark)watermark.hidden=params.get("nowatermark")==="1";
   const payload=params.get("def");
@@ -3523,7 +3541,7 @@ $("tempoBtn").addEventListener("click",()=>{
   if(!input||$("tempoBtn").disabled)return;
   openTempoDialog(input);
 });
-$("hideFingeringCheck").addEventListener("change",e=>setHideFingering(e.target.checked,true));
+$("displayMode").addEventListener("change",e=>setDisplayMode(e.target.value,true));
 $("showNoteCheck").addEventListener("change",e=>{showNoteEnabled=!!e.target.checked;saveShowNotePreference();renderBoxStaffNote(currentDiagramItem)});
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 $("openFile").addEventListener("change",async e=>{
@@ -3718,7 +3736,7 @@ function openInstructionsAt(sectionId){
   });
 }
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreShowNotePreference();
-restoreHideFingeringPreference();restoreMetronomePreference();
+restoreDisplayModePreference();restoreMetronomePreference();
 restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=$("system").value==="bc"?"B/C":"C#/D";updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
@@ -3741,7 +3759,7 @@ function syncPlaybackPermissionHeaderControls(){
 
   const editorTextSize=$("editorTextSize");
   const showNote=$("showNoteCheck");
-  const hideFingering=$("hideFingeringCheck");
+  const displaySelect=$("displayMode");
   const showFretboard=$("showFretboardCheck");
   const tabOverride=$("tabOverrideBtn");
   const foldOctaves=$("foldOctavesCheck");
@@ -3751,8 +3769,8 @@ function syncPlaybackPermissionHeaderControls(){
   // browser's explicit Enable Playback gesture has been completed.
   const headerDisabled=!hasTunes||permissionPending;
   if(editorTextSize)editorTextSize.disabled=headerDisabled;
-  if(showNote)showNote.disabled=headerDisabled;
-  if(hideFingering)hideFingering.disabled=headerDisabled;
+  if(showNote)showNote.disabled=headerDisabled||displayMode!=="all";
+  if(displaySelect)displaySelect.disabled=headerDisabled;
   if(showFretboard)showFretboard.disabled=headerDisabled;
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
@@ -3817,23 +3835,23 @@ function savedLessonLinkURLFromText(text){
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');const tuning=params.get("tuning");if(tuning!==null&&!['bc','cd'].includes(tuning))throw new Error("Lesson button box tuning is invalid.");}
+function validateLessonSettingsParams(params){const display=params.get("display");if(display!==null&&!DISPLAY_MODES.has(display))throw new Error('Lesson Display setting is invalid.');const tuning=params.get("tuning");if(tuning!==null&&!['bc','cd'].includes(tuning))throw new Error("Lesson button box tuning is invalid.");}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
-function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));validateLessonSettingsParams(params);const tuning=params.get("tuning");if(tuning)$("system").value=tuning;savePrefs();}
+function applyLessonSettingsParams(params){validateLessonSettingsParams(params);applyLessonDisplayMode(new URLSearchParams("lesson=1&"+params.toString()));const tuning=params.get("tuning");if(tuning)$("system").value=tuning;savePrefs();}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
 function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
-function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
+function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('display',displayMode);u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
 function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
 function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
-function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-irish-box-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
+function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-irish-box-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),display:displayMode}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-irish-box-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
 function parseLessonConfigText(text){let c;try{c=JSON.parse(String(text||''))}catch(_){return null}if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson')return null;validateLessonConfigObject(c);return c}
 function looksLikeLessonConfigText(text){return /["']format["']\s*:\s*["']ABCPlayerLesson["']/.test(String(text||''))}
 async function showLessonLoadError(err){const msg='Unable to load lesson: '+(err&&err.message||err);if(window.DayPilot&&DayPilot.Modal)await DayPilot.Modal.alert(msg,{top:100,width:520});else console.error(msg)}
 async function confirmLessonConfigReplacement(){if(!tunes.length)return true;const msg=tunes.length===1?'Loading this lesson will replace the currently loaded tune.<br><br>OK to Continue?':`Loading this lesson will replace the ${tunes.length} currently loaded tunes.<br><br>OK to Continue?`;if(window.DayPilot&&DayPilot.Modal&&DayPilot.Modal.confirm){const r=await DayPilot.Modal.confirm(msg,{top:150,width:600});return !!(r&&!r.canceled&&r.result)}return window.confirm(msg.replace(/<br\s*\/?>/gi,'\\n'))}
-async function loadLessonConfigObject(c){const checked=validateLessonConfigObject(c);if(!(await confirmLessonConfigReplacement()))return false;$('lessonTitleInput').value=checked.meta.title;$('lessonInstructionsInput').value=checked.meta.instructions;saveLessonDraftPreferences();const q=checked.q;q.delete('def');q.delete('lesson');q.delete('ldata');applyLessonSettingsParams(q);sharePlaybackNeedsGesture=false;manualEntryCollection=false;currentSaveBaseName='';processLoadedABC(c.abc,'Lesson configuration');$('openFile').value='';updateShareButtons();refreshUnifiedShareState();setModal('shareModal',false);setModal('lessonLinkModal',false);setModal('lessonModal',true);return true}
+async function loadLessonConfigObject(c){const checked=validateLessonConfigObject(c);if(!(await confirmLessonConfigReplacement()))return false;$('lessonTitleInput').value=checked.meta.title;$('lessonInstructionsInput').value=checked.meta.instructions;saveLessonDraftPreferences();const q=checked.q;q.delete('def');q.delete('lesson');q.delete('ldata');applyLessonSettingsParams(q);if(q.has("display"))setDisplayMode(q.get("display"),true);sharePlaybackNeedsGesture=false;manualEntryCollection=false;currentSaveBaseName='';processLoadedABC(c.abc,'Lesson configuration');$('openFile').value='';updateShareButtons();refreshUnifiedShareState();setModal('shareModal',false);setModal('lessonLinkModal',false);setModal('lessonModal',true);return true}
 function lessonFileBaseName(v){v=String(v||'').trim().replace(/\.txt$/i,'').replace(/[\\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim();return v||'saved_lesson'}
 async function askLessonTextFileName(promptText,defaultBase){
   const def=lessonFileBaseName(defaultBase)+'.txt';
