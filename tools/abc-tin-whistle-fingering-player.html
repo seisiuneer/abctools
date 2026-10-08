@@ -2182,7 +2182,7 @@ function startABCTranscriptionToolsHandshake(){
 }
 
 function restoreShowNotePreference(){
-  try{showNoteEnabled=localStorage.getItem(SHOW_NOTE_KEY)==="true"}catch(_){showNoteEnabled=false}
+  try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}
   $("showNoteCheck").checked=showNoteEnabled;
 }
 function saveShowNotePreference(){commitStandardShareSettingsIfPending();
