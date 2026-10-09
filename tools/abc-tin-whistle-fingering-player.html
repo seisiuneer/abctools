@@ -293,7 +293,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
   outline:0 !important;
 }
 
-
 /* DayPilot dialog typography refinement. */
 .modal_default_main input{
   font-size:16px !important;
@@ -306,7 +305,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
   min-width:78px !important;
   padding:6px 14px !important;
 }
-
 
 /* Final DayPilot spacing refinements. */
 body.save-name-prompt-open .modal_default_main .modal_default_content{
@@ -323,9 +321,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
 body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
   line-height:1.55 !important;
 }
-
-
-
 
 #editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;margin-left:-6px;margin-right:8px}
 
@@ -518,7 +513,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   .lessonActions button{flex:1 1 45%}
   .lessonCloseRow{margin-top:22px}
 }
-
 
 /* v1.71: lesson dialog button hierarchy. */
 .lessonActions button{
@@ -719,13 +713,11 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   border-radius:0 !important;
 }
 
-
 /* v1.79: taller Lesson Share Link URL field. */
 #lessonLinkOutput{
   min-height:240px !important;
   height:240px !important;
 }
-
 
 /* v1.82: final Configure Lesson / Lesson Share Link spacing refinements. */
 
@@ -743,7 +735,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   margin-top:30px !important;
   margin-bottom:8px !important;
 }
-
 
 /* Release lesson dialog sizing refinements. */
 #lessonModal .lessonDialog{
@@ -812,7 +803,6 @@ body.lessonMode .toolbar select:disabled{
   #studentLessonModal .lessonStudentText{margin-bottom:34px}
 }
 
-
 /* Student lesson information dialog: fixed title/footer with scrolling instructions. */
 #studentLessonModal{
   align-items:flex-start;
@@ -874,7 +864,6 @@ body.lessonMode .toolbar select:disabled{
   #studentLessonModal .lessonActions{margin-top:22px}
 }
 
-
 /* Unified lesson mode final overrides */
 .shareButtons #shareTuneBtn,.shareButtons #shareAllBtn{display:none!important}
 body.lessonMode .toolbar{display:grid!important}
@@ -882,7 +871,6 @@ body.lessonMode .workspace{margin-top:0}
 
 body.lessonMode .shareButtons{display:none!important}
 body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#5f6762;background-color:#f2f2f2;border-color:#c8c8c8;opacity:1;cursor:default}
-
 
 /* Context help for Sharing Controls and Configure Lesson. */
 #shareModal .lessonDialog,#lessonModal .lessonDialog,#studentLessonModal .lessonDialog{position:relative}
@@ -906,7 +894,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 /* Hide practice mode: blank the complete instrument pane without disturbing notation or playback. */
 .diagramCard.hideFingerings .diagramWrap > *{visibility:hidden!important}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.02</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.03</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -940,7 +928,6 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
 <div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: The settings in the top bar are locked for lessons and cannot be changed.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
-
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Tin Whistle Fingering Player Instructions</h2>
@@ -951,19 +938,19 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with D-whistle tablature. The default is <b>Notation + Whistle Tab</b>.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
       <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or <b>.txt</b> file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
       <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play. Edits are retained when changing tunes.</p>
       <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>The upper-left panel contains editable ABC. The lower-left panel shows abcjs notation and playback controls. The <b>Notation display</b> selector chooses whether D-whistle tablature is also shown.</p>
       <p>Editing the ABC rebuilds the notation and audio. When whistle tablature is enabled it is rebuilt at the same time. Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
       <p>The display uses standard D-whistle fingering. The note name appears to the right of the fingering symbol.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names are displayed using sharps or flats according to the tune's <b>K:</b> key and mode. When <b>Show note</b> is enabled, the notation below the note name uses the same sharp or flat naming.</p>
@@ -973,7 +960,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>The <b>Notation display</b> and <b>Octave Display</b> choices are remembered in this browser and are also included in generated share links.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Whistle Fingering pane updates to that note.</p>
       <p>Playback uses <b>MIDI program 78</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
@@ -990,17 +977,37 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
              alt="Tempo control"
              style="max-width: 100%; height: auto;">
       </div>
+
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
       <p>On wide screens, drag the vertical divider to resize the left and whistle-fingering panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
       <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Whistle Fingering</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p><p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Practicing D Minor and G Minor Tunes on a C Whistle</p>
+      <p>To practice a tune written in <b>D minor</b> or <b>G minor</b> using a <b>C whistle</b>, you can display its notation and fingerings two semitones higher while keeping playback at the tune’s original pitch. This lets you follow the displayed fingerings on your C whistle while hearing the tune in D minor or G minor.</p>
+      <p>Add these lines to the ABC tune header (before the music):</p>
+      <pre style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7f5;border:1px solid rgba(127,127,127,.25);padding:12px;border-radius:6px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">%
+% Transpose the tune up two semitones from D minor (or G minor) 
+% to E minor (or A minor)
+%
+%%visualtranspose 2
+%
+% Pitch shift the tune playback back down two semitones to 
+% D minor (or G minor)
+%
+%voice_tuning_cents -200
+%</pre>
+      <p><b>%%visualtranspose 2</b> raises the displayed notation and fingering positions by two semitones (D minor → E minor, or G minor → A minor).</p>
+      <p><b>%voice_tuning_cents -200</b> lowers the audio playback by 200 cents (two semitones), restoring the original sounding key.</p>
+      <p>Leave the tune’s original <b>K:</b> key unchanged. These directives affect the displayed fingering and playback, rather than rewriting the ABC melody notes.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       
@@ -1018,8 +1025,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       
@@ -1033,8 +1040,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>based on a suggestion by Ephraim Schafli.<br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
