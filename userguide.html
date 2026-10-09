@@ -4032,14 +4032,14 @@
                 <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/vwIVW55WOB4" title="Using the Solfège Instrument to Sing Tunes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="code">% Select the Solfège instrument:<br/>%%MIDI program 136</p>
-                <p>If you have injected Fixed (Do=C) Solfège under the notes using the <strong>Inject Note Names/Shapes/Solfège</strong> dialog, the sung notes will match the displayed note names.</p>
-                <p>If you have injected either Do-based minor or La-based minor Movable Do Solfège under the notes using the <strong>Inject Note Names/Shapes/Solfège</strong> dialog, you can transpose the sound to match without changing the displayed notation by adding the following voice directive to your ABC:</p>
+                <p>If you have injected Fixed (Do=C) Solfège above or below the notes using the <strong>Inject Note Names/Shapes/Solfège</strong> dialog, the sung notes will match the displayed note names.</p>
+                <p>If you have injected either Do-based minor or La-based minor Movable Do Solfège above or below the notes using the <strong>Inject Note Names/Shapes/Solfège</strong> dialog, you can transpose the sound to match without changing the displayed notation by adding the following voice directive to your ABC:</p>
                 <p class="code">% Set the voice transpose:<br/>V:1 transpose=5<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
                 <p>Change the 5 to whatever is required to get the displayed solfège to match the sung note names.</p>
                 <p>There if the result sounds too high, you can also shift the required offset down by 12, this would be equivalent as far as the sung note names:</p>
                 <p class="code">% Set the voice transpose:<br/>V:1 transpose=-7<br/><br/>% Select the Solfège instrument for this voice:<br/>%%MIDI program 136</p>
                 <p><strong>Note:</strong> When transposed the absolute pitch of the sound when transposed will not be correct as compared with the notation, but this is the best possible at this time. At least the visual display and the sung notes will match.</p>
-                <p>For details on injecting solfège under the notes, see <a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Note Names/Shapes/Solfège</a>.</p>
+                <p>For details on injecting solfège above or below the notes, see <a style="text-decoration:none;" href="#advanced_shapenoteshapes">Inject Note Names/Shapes/Solfège</a>.</p>
                 <hr class="hidden-print" id="voice_hiding">
                 <h1 class="page_break_always">Voice Combining and Hiding</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -6348,15 +6348,9 @@
                 <p>There are also additional options for injecting fixed solfège at Do=C with or without chromatic note names, movable solfège based on key/mode, or movable solfège based on key/mode with shift for do or la-based minor.</p>
                 <p>For shape notes, the ABC injected before each note name to select the note head style is one of the following:</p>
                 <p class="code">!style=sn_do! C2<br/>!style=sn_re! D2<br/>!style=sn_mi! E2<br/>!style=sn_fa! F2 <br/>!style=sn_so! G2<br/>!style=sn_la! A2<br/>!style=sn_ti! B2<br/>!style=sn_do! c2<br/>!style=sn_re! d2<br/>!style=sn_mi! e2 <br/>!style=sn_fa! f2<br/>!style=sn_so! g2<br/>!style=sn_la! a2<br/>!style=sn_ti! b2</p>
-                <p>By default, the injected note names are drawn below the staves.</p>
-                <p>If you want to show the note names above the staves, after doing the note name injection, simply use the "Find and Replace" feature, available on the "Hamburger" menu or press Ctrl-F (Windows) or CMD-F (Mac), to replace all instances of:</p>
-                <p class="code">"_</p>
-                <p>with:</p>
-                <p class="code">"^</p>
-                <p>This video demonstrates the process:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ms1K0tvTL9o" title="Showing injected note names below the staves" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Click <strong>Tablature Injection Settings</strong> to edit the font and font size used for the tab and choose whether you want the tab displayed above or below the notation.</p>
                 <p>See the <a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the tablature font and spacing options.</p>
+                <p>The 4-shape and 7-shape options always place their optional text below the notation and preserve existing chord symbols, regardless of the tablature injection settings. The other Note Names and Solfège options support placement above or below the notation. When placed above, existing chords are removed; when placed below, chord removal follows the Strip Chords setting.</p>
                 <hr class="hidden-print" id="tab_custom">
                 <h1 class="page_break_always">Inject Custom Tab</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">

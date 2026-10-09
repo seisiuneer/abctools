@@ -5860,6 +5860,17 @@ var MDTablatureGenerator = function (theABC){
 // Released under CC0 - No Rights Reserved
 // https://creativecommons.org/share-your-work/public-domain/cc0/
 //
+// Remove previously supplied staff separation directives before rebuilding
+// note-name, solfege, or shape-note tablature. Applies to file and tune headers.
+function stripStaffSepForNoteInjection(abc) {
+    return abc.replace(/^[ \t]*%%staffsep\b[^\r\n]*(?:\r?\n|$)/gmi, "");
+}
+
+// Remove prior annotation font directives before regenerating note injection.
+function stripAnnotationFontForNoteInjection(abc) {
+    return abc.replace(/^[ \t]*%%annotationfont\b[^\r\n]*(?:\r?\n|$)/gmi, "");
+}
+
 var shapeNoteGenerator = function (theABC){
 
     var verbose = false;
@@ -6295,7 +6306,7 @@ var shapeNoteGenerator = function (theABC){
 
 
             // Note names, fixed Do, or movable do with no La don't do La minor modification
-            if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
+            if (gShapeNoteStyle == 10){
                 if (gTheMode == "Minor"){
                     theNoteIndex -= 3;
                     if (theNoteIndex < 0){
@@ -6363,7 +6374,7 @@ var shapeNoteGenerator = function (theABC){
             }
 
             // Note names, fixed Do, or movable do with no La don't do La minor modification
-            if ((gShapeNoteStyle != 6) && (gShapeNoteStyle != 7) && (gShapeNoteStyle != 8)){
+            if (gShapeNoteStyle == 10){
                 if (gTheMode == "Minor"){
                     theNoteIndex -= 3;
                     if (theNoteIndex < 0){
@@ -6659,6 +6670,13 @@ var shapeNoteGenerator = function (theABC){
 
         thisGlyph = glyph_map[note];
 
+        // Text-only Pitch Names and Solfège follow the tab location setting.
+        // Preserve every 4-shape and 7-shape variant (styles 0–5) unchanged.
+        if (thisGlyph && gShapeNoteStyle >= 6 && gShapeNoteStyle <= 10 &&
+            parseInt(gInjectTab_TabLocation, 10) === 0) {
+            thisGlyph = thisGlyph.replace(/^"_/, '"^');
+        }
+
         if (!thisGlyph){
             return "x ";
         }   
@@ -6881,6 +6899,15 @@ var shapeNoteGenerator = function (theABC){
 
     }
 
+    // Remove only shape-note decorations emitted by this injector.
+    // Do not remove unrelated ABC decorations or user-defined !...! tokens.
+    function stripPreviousShapeStyles(tune) {
+        return tune.split("\n").map(function(line) {
+            if (/^\s*%/.test(line) || /^\s*[A-Za-z]:/.test(line)) return line;
+            return line.replace(/!style=sn_(?:do|re|mi|fa|so|sol|la|ti)!/g, "");
+        }).join("\n");
+    }
+
     //
     // Main processor
     //
@@ -6889,6 +6916,10 @@ var shapeNoteGenerator = function (theABC){
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
         var staffSep = gInjectTab_StaffSep;
+        var tabLocation = parseInt(gInjectTab_TabLocation, 10);
+        var stripChords = gInjectTab_StripChords;
+        var isTextOnly = gShapeNoteStyle >= 6 && gShapeNoteStyle <= 10;
+
 
         // Clear all the params
         gKeySignature = null;
@@ -6897,13 +6928,13 @@ var shapeNoteGenerator = function (theABC){
  
         var nTunes = countTunes(theABC);
 
-        var result = FindPreTuneHeader(theABC);
+        var result = stripStaffSepForNoteInjection(FindPreTuneHeader(theABC)); // Preserve file-header %%annotationfont.
 
         clearGetTuneByIndexCache();
 
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(i);
+            var thisTune = (gShapeNoteStyle === 0 || gShapeNoteStyle === 3 ? stripStaffSepForNoteInjection(getTuneByIndex(i)) : stripAnnotationFontForNoteInjection(stripStaffSepForNoteInjection(getTuneByIndex(i))));
 
             // Don't inject section header tune fragments
             if (isSectionHeader(thisTune)){
@@ -6913,9 +6944,25 @@ var shapeNoteGenerator = function (theABC){
                 continue;
             }
 
+            // 4-shape and 7-shape styles (0–5) always preserve chords,
+            // because their annotations are placed below the notation.
+            // Text-only styles (6–10): Above always strips chords;
+            // Below follows the Strip Chords setting.
+            if (isTextOnly && (tabLocation === 0 || (tabLocation === 1 && stripChords))) {
+                thisTune = StripChordsOne(thisTune);
+            }
+
+            // Match instrument injectors: replace existing above/below tab,
+            // and remove shape-note styling from earlier shape-note injections.
+            thisTune = StripTabOne(thisTune);
+            thisTune = stripPreviousShapeStyles(thisTune);
+
             thisTune = generate_tab(thisTune);
             
-            thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
+            // Pure 4-shape and 7-shape notation (styles 0 and 3) needs no extra staff separation.
+            if (gShapeNoteStyle !== 0 && gShapeNoteStyle !== 3) {
+                thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
+            }
 
             // If injecting note names, add the annotation font directive
             switch (gShapeNoteStyle){
@@ -7152,7 +7199,9 @@ var injectABCNoteNames = function (theABC){
 
             var glyphLen = glyph.length;
 
-            theTab = "\"_" +glyph+'"';
+            // Above = 0, Below = 1 (the existing tablature setting).
+            var placement = parseInt(gInjectTab_TabLocation, 10) === 0 ? "^" : "_";
+            theTab = '"' + placement + glyph + '"';
 
             var tabLen = theTab.length;
 
@@ -7715,16 +7764,20 @@ var injectABCNoteNames = function (theABC){
         var fontFamily = gInjectTab_FontFamily;
         var tabFontSize = gInjectTab_TabFontSize;
         var staffSep = gInjectTab_StaffSep;
+        var tabLocation = parseInt(gInjectTab_TabLocation, 10);
+        var stripChords = gInjectTab_StripChords;
+        var isTextOnly = true;
+
  
         var nTunes = countTunes(theABC);
 
-        var result = FindPreTuneHeader(theABC);
+        var result = stripStaffSepForNoteInjection(FindPreTuneHeader(theABC)); // Preserve file-header %%annotationfont.
 
         clearGetTuneByIndexCache();
 
         for (var i = 0; i < nTunes; ++i) {
 
-            var thisTune = getTuneByIndex(i);
+            var thisTune = stripAnnotationFontForNoteInjection(stripStaffSepForNoteInjection(getTuneByIndex(i)));
 
             // Don't inject section header tune fragments
             if (isSectionHeader(thisTune)){
@@ -7733,6 +7786,21 @@ var injectABCNoteNames = function (theABC){
                 result += "\n\n";
                 continue;
             }
+
+            // Text-only annotations follow the same chord policy as instrument tab:
+            // Above always strips chords; Below uses the user's strip preference.
+            // Shape-note styles 0–5 retain their previous behavior.
+            if (isTextOnly && (tabLocation === 0 || (tabLocation === 1 && stripChords))) {
+                thisTune = StripChordsOne(thisTune);
+            }
+
+            // Match instrument injectors: replace existing above/below tab.
+            thisTune = StripTabOne(thisTune);
+            // Also remove shape-note styling when switching from a shape-note style.
+            thisTune = thisTune.split("\n").map(function(line) {
+                if (/^\s*%/.test(line) || /^\s*[A-Za-z]:/.test(line)) return line;
+                return line.replace(/!style=sn_(?:do|re|mi|fa|so|sol|la|ti)!/g, "");
+            }).join("\n");
 
             thisTune = generate_tab(thisTune);
             

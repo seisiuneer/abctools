@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3353_100726_1400";
+var gVersionNumber = "3354_100926_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31394,13 +31394,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_7Oct2026a;
+        var updatePresented = localStorage.sawUpdate_9Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_7Oct2026a = true;
+          localStorage.sawUpdate_9Oct2026 = true;
 
         }
 
@@ -60930,7 +60930,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 7 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 October 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">Enhanced <strong>Note Names, Shape Notes &amp; Solfège Injection</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Note Names / Shape Notes / Solfège Injector</strong> now supports placing text annotations <strong>above or below the staff</strong>, improved chord handling, and automatic replacement of previously injected tablature and shape-note annotations.</p>';
+  modal_msg += '<p style="font-size:12pt;">Also includes corrected <strong>Do-based and La-based minor Solfège</strong> behavior.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60938,13 +60946,6 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>ABC Irish Button Box Fingering Player</strong> added to Open ABC in External Tool</p>';
   modal_msg += '<p style="font-size:12pt;">The <strong>ABC Recorder Fingering Player</strong> has been removed from the <strong>Open ABC in External Tool</strong> dialog and replaced by the <strong>ABC Irish Button Box Fingering Player</strong>. You can send either the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new player.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New <strong>Harmonica Tablature Presets</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Harmonica Tablature Injector</strong> now includes presets for <strong>PowerBender</strong>, <strong>PowerDraw</strong>, <strong>Solo (10-Hole)</strong>, <strong>Solo (12-Hole)</strong>, and <strong>Seydel Orchestra-S (10-Hole)</strong>. The <strong>Custom Harmonica Tuning</strong> editor can also initialize its 60-note map from any of the available harmonica presets, or initialize all entries to <strong>x</strong> as a blank starting point for a new custom tuning.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67859,13 +67860,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_7Oct2026a;
+    var updatePresented = localStorage.sawUpdate_9Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_7Oct2026a = true;
+      localStorage.sawUpdate_9Oct2026 = true;
 
     }
 
