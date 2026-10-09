@@ -943,7 +943,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   .diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto}
 }
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.15</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.16</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -3516,7 +3516,7 @@ function ensureManualTabDirectives(){
     // Both missing: add annotationfont immediately below X:, then staffsep
     // immediately after it. If staffsep already exists elsewhere, preserve it.
     const offset=lineOffset(xIndex+1);
-    let add="%%annotationfont Palatino 12"+newline;
+    let add="%%annotationfont Palatino 10"+newline;
     if(staffsepIndex<0)add+="%%staffsep 70"+newline;
     insertAt(offset,add);
   }else if(staffsepIndex<0){

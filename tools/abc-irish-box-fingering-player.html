@@ -942,8 +942,14 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   .diagramHeaderRight #diagramMeta{margin-right:12px}
   .diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto}
 }
+/* Button box Tab Override: physical ten-button and eleven-button rows. */
+.tabOverridePopover{width:min(590px,calc(100vw - 16px))}
+.tabOverrideRow.boxTabOverrideRow{display:flex;justify-content:center;gap:5px;grid-template-columns:none}
+.boxTabOverrideRow .tabOverrideKey{flex:0 1 46px;min-width:0;width:46px;height:42px;padding:2px;font-size:18px}
+.tabOverrideActions{width:100%;max-width:540px}
+@media(max-width:650px){.boxTabOverrideRow .tabOverrideKey{flex:1 1 0;width:auto;height:34px;font-size:clamp(10px,2.8vw,16px)}.tabOverridePopover{padding:8px}.tabOverrideActions{width:100%}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.05</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
+<header class="app-header"><div class="version">Version 3.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Tuning</label><select id="system"><option value="bc">B/C</option><option value="cd">C#/D</option></select></div>
@@ -952,7 +958,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled hidden>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
@@ -963,7 +969,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 </div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
-<div id="tabOverridePopover" class="tabOverridePopover" hidden style="display:none!important" role="dialog" aria-label="Tab Override">
+<div id="tabOverridePopover" class="tabOverridePopover" hidden role="dialog" aria-label="Tab Override">
   <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div></div>
   <div class="tabOverrideRows" id="tabOverrideRows"></div>
   <div class="tabOverrideActions">
@@ -1085,8 +1091,29 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Chord Symbols</p>
       <p>Quoted ABC chord symbols are ignored by the fingering solver but remain available to abcjs for accompaniment.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
-      
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Advanced: Manual Tablature Overrides</p>
+      <p>Click a note in the notation, then click <b>Tab Override</b> in the ABC panel header to select a specific button and bellows direction instead of the automatic fingering.</p>
+      <p><b>Assumptions about the automatic B/C and C#/D box fingering solutions:</b> The automatic tablature solution assumes that the “magic” notes, which are available on both rows, are played on the <b>C-row</b> of a <b>B/C</b> box (<b>E and B</b>) and on the <b>D-row</b> of a <b>C#/D</b> box (<b>F# and C#</b>). Tab Override is especially useful when you want to play one of these notes on the other row instead.</p>
+      <p><b>For B/C:</b></p>
+      <ul>
+        <li>Notes on the <b>C-row</b> are indicated by ordinary numbers: <b>1, 2, 3, …</b></li>
+        <li>Notes on the <b>B-row</b> are indicated by circled numbers: <b>①, ②, ③, …</b></li>
+        <li><b>Push</b> is indicated by <b>↓</b>; <b>Draw</b> is indicated by <b>↑</b>.</li>
+      </ul>
+      <p><b>For C#/D:</b></p>
+      <ul>
+        <li>Notes on the <b>D-row</b> are indicated by ordinary numbers: <b>1, 2, 3, …</b></li>
+        <li>Notes on the <b>C#-row</b> are indicated by circled numbers: <b>①, ②, ③, …</b></li>
+        <li><b>Push</b> is indicated by <b>↓</b>; <b>Draw</b> is indicated by <b>↑</b>.</li>
+      </ul>
+      <p>The popover represents the two physical rows with ordinary-numbered buttons <b>1–10</b> and circled-numbered buttons <b>①–⑪</b>, using the same symbols as the ABC Transcription Tools button accordion tab injector.</p>
+      <p>Click a button, then <b>Push ↓</b> or <b>Draw ↑</b> to set the direction. New button choices default to Push unless the note already has a direction override. An existing override is replaced, not duplicated.</p>
+      <p>Use <b>←</b> and <b>→</b> to navigate notes; the selected note and effective button and direction appear in the notation and diagram. The popover can be dragged and keeps its position until the page closes.</p>
+      <p>Overrides are stored as quoted ABC annotations and are recognized when the tune is reloaded or shared. Notes without valid overrides continue using the automatic fingering.</p>
+      <p><b>Note:</b> Overrides change only the displayed fingering, not the note played. You can select a button or direction that does not produce the written note.</p>
+
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p> 
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
       <p>A lesson uses the <b>current tune only</b>.</p>
       <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
@@ -1116,7 +1143,6 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's tuning remains locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
       <p>A lesson link includes the teacher's selected <b>Mode</b>. You may change Mode during the lesson, but these changes are temporary and do not overwrite your saved Mode preference. Outside lessons, changing Mode saves it for future visits.</p>
       <p>Your teacher may choose the starting <b>Mode</b> for the lesson. <b>Show All</b> shows the full animated fingering display with all buttons fully visible; <b>Focus</b> dims inactive buttons while leaving the playing button and its guidance fully visible; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without highlighting notes or showing bellows direction; <b>Hide All</b> hides the instrument display. You can change the mode at any time during the lesson without affecting your saved preference for normal use.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align: center">
         This tool was created by
@@ -2048,37 +2074,21 @@ function midiToDisplayNoteName(midi){
 }
 function abcPitchToDisplayNoteName(s){const midi=abcPitchToMidi(s);return midi==null?(s&&s!=="x"&&s!=="z"?String(s):"—"):midiToDisplayNoteName(midi)}
 function stripChordSymbols(abc){return abc.replace(/"[^"\r\n]*"/g,m=>" ".repeat(m.length))}
-/*
- * ABC Transcription Tools can inject button box tablature immediately before
- * a melody note. The automatic solver still runs first; recognized injected
- * tab then overrides only the corresponding solved note.
- *
- * Injected button numbering:
- *   plain 1-10 = left hand, circled ①-⑩ = right hand
- *   * = top-row accidental button, ↓ = Push, ↑ = Draw
- */
-const CIRCLED_BUTTON_NUMBERS={"①":1,"②":2,"③":3,"④":4,"⑤":5,"⑥":6,"⑦":7,"⑧":8,"⑨":9,"⑩":10};
+/* ABC Transcription Tools box tab: plain 1–10 = upper row;
+ * circled ①–⑪ = lower row; ↓ = push, ↑ = draw.
+ * The box has no starred accidental buttons. */
+const CIRCLED_BUTTON_NUMBERS={"①":1,"②":2,"③":3,"④":4,"⑤":5,"⑥":6,"⑦":7,"⑧":8,"⑨":9,"⑩":10,"⑪":11};
 function parseInjectedConcertinaTab(text){
   if(!text)return null;
-  let t=String(text).trim().replace(/^[_^]/,"").trim();
+  const t=String(text).trim().replace(/^[_^]/,"").trim();
   const direction=t.includes("↓")?"push":t.includes("↑")?"draw":null;
-  if(!direction)return null;
-
-  let hand=null,num=null;
-  for(const glyph of Object.keys(CIRCLED_BUTTON_NUMBERS)){
-    if(t.includes(glyph)){hand="R";num=CIRCLED_BUTTON_NUMBERS[glyph];break}
+  if(!direction||t.includes("*"))return null;
+  let button=null;
+  for(const [glyph,num] of Object.entries(CIRCLED_BUTTON_NUMBERS)){
+    if(t.includes(glyph)){button="B"+num;break}
   }
-  if(num==null){
-    const m=t.match(/(?:^|\s)(10|[1-9])(?=\s*[*;↓↑]|\s*$)/);
-    if(m){hand="L";num=parseInt(m[1],10)}
-  }
-  if(num==null)return null;
-
-  const topRow=/\*/.test(t);
-  if(topRow&&num>5)return null;
-  const button=hand+String(num)+(topRow?"a":"");
-  if(!POS[button])return null;
-  return {button,direction};
+  if(!button){const m=t.match(/(?:^|\s)(10|[1-9])(?=\s*[;↓↑]|\s*$)/);if(m)button="T"+Number(m[1])}
+  return button&&POS[button]?{button,direction}:null;
 }
 function injectedTabBeforeNote(abc,noteIndex){
   if(!abc||noteIndex==null||noteIndex<0)return null;
@@ -2345,21 +2355,38 @@ function recursiveStartChar(x){if(!x)return null;if(typeof x.startChar==="number
 function fingeringForEvent(event){
   if(!event)return null;
   // An explicit empty midiPitches array is a non-note/rest playback event.
-  // Do not let the source-position fallback search forward into the next note.
   if(Array.isArray(event.midiPitches)&&event.midiPitches.length===0)return null;
-  // Use the source position from the exact same abcjs playback event that
-  // positions the notation cursor. There is no independent note counter.
   let source=recursiveStartChar(event);
   if(source==null)return null;
   source-=prefixLength;
-  let item=solutionByIndex.get(source);
-  if(item)return item;
-  // abcjs can anchor the event on an accidental/decorator just before a note.
-  for(let d=1;d<=8;d++){
-    item=solutionByIndex.get(source+d);
-    if(item)return item;
+  const exact=solutionByIndex.get(source);
+  if(exact)return exact;
+
+  // abcjs may report the start of a quoted annotation (rather than the
+  // following note) as the playback event's source position. A tab override
+  // makes that gap longer than the old eight-character fallback allowed.
+  // Only advance through annotations, decorations and horizontal whitespace;
+  // never jump across another note, a barline, or a newline.
+  const abc=$("abcText").value;
+  let pos=source;
+  if(pos<0||pos>=abc.length)return null;
+  while(pos<abc.length){
+    const ch=abc[pos];
+    if(ch===" "||ch==="\t"){pos++;continue}
+    if(ch==='"'){
+      const end=abc.indexOf('"',pos+1);
+      if(end<0||/[\r\n]/.test(abc.slice(pos,end+1)))break;
+      pos=end+1;continue;
+    }
+    if(ch==="!"||ch==="+"){
+      const end=abc.indexOf(ch,pos+1);
+      if(end<0||/[\r\n]/.test(abc.slice(pos,end+1)))break;
+      pos=end+1;continue;
+    }
+    if(ch==="^"||ch==="_"||ch==="="){pos++;if(abc[pos]===ch)pos++;continue}
+    break;
   }
-  return null;
+  return solutionByIndex.get(pos)||null;
 }
 function keepCursorVisible(event){
   if(!playbackCursor)return;
@@ -2821,22 +2848,26 @@ function commitStandardShareSettingsIfPending(){
 
 function savePrefs(){commitStandardShareSettingsIfPending();try{localStorage.setItem(PREFS_KEY,JSON.stringify({tuning:$("system").value}))}catch(_){}}
 
-const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
+const TAB_CIRCLED=["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪"];
 function buildTabOverridePalette(){
-  const host=$("tabOverrideRows");
-  const addRow=(left,right,top)=>{
-    const row=document.createElement("div");row.className="tabOverrideRow";
-    left.forEach(i=>{const b=document.createElement("button");b.type="button";b.className="tabOverrideKey tabOverrideLeft";b.dataset.tabButton=String(i)+(top?"*":"");b.textContent=String(i)+(top?"*":"");b.title="Left hand button "+i+(top?" (top row)":"");row.appendChild(b)});
-    right.forEach(i=>{const b=document.createElement("button");b.type="button";b.className="tabOverrideKey tabOverrideRight";b.dataset.tabButton=TAB_CIRCLED[i-1]+(top?"*":"");b.textContent=TAB_CIRCLED[i-1]+(top?"*":"");b.title="Right hand button "+i+(top?" (top row)":"");row.appendChild(b)});
-    host.appendChild(row);
+  const host=$("tabOverrideRows");host.replaceChildren();
+  const makeRow=(numbers,circled)=>{
+    const row=document.createElement("div");row.className="tabOverrideRow boxTabOverrideRow";
+    numbers.forEach(i=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="tabOverrideKey";
+      const symbol=circled?TAB_CIRCLED[i-1]:String(i);
+      b.dataset.tabButton=symbol;b.textContent=symbol;
+      b.title=(circled?"Lower":"Upper")+" row, button "+i;
+      row.appendChild(b);
+    });host.appendChild(row);
   };
-  addRow([1,2,3,4,5],[1,2,3,4,5],true);
-  addRow([1,2,3,4,5],[1,2,3,4,5],false);
-  addRow([6,7,8,9,10],[6,7,8,9,10],false);
+  makeRow(Array.from({length:10},(_,i)=>i+1),false);
+  makeRow(Array.from({length:11},(_,i)=>i+1),true);
 }
 function validTabAnnotationText(s){
   const t=String(s||"").trim().replace(/^[_^]/,"").trim();
-  return t==="" || /^(?:(?:10|[1-9])|[①②③④⑤⑥⑦⑧⑨⑩]|\*|↓|↑|[;\s])+$/.test(t);
+  return t==="" || /^(?:(?:10|[1-9])|[①②③④⑤⑥⑦⑧⑨⑩⑪]|\*|↓|↑|[;\s])+$/.test(t);
 }
 function quotedAnnotationAtCursor(value,pos){
   const lineStart=Math.max(value.lastIndexOf("\n",Math.max(0,pos-1)),value.lastIndexOf("\r",Math.max(0,pos-1)))+1;
@@ -2882,7 +2913,7 @@ function ensureManualTabDirectives(){
     // Both missing: add annotationfont immediately below X:, then staffsep
     // immediately after it. If staffsep already exists elsewhere, preserve it.
     const offset=lineOffset(xIndex+1);
-    let add="%%annotationfont Palatino 12"+newline;
+    let add="%%annotationfont Palatino 10"+newline;
     if(staffsepIndex<0)add+="%%staffsep 70"+newline;
     insertAt(offset,add);
   }else if(staffsepIndex<0){
@@ -2897,20 +2928,18 @@ function ensureManualTabDirectives(){
 
 function normalizeTabOverrideContent(content){
   const prefix=String(content||"").trim().startsWith("_")?"_":"";
-  const button=(String(content||"").match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/)||[])[0]||"";
-  const star=String(content||"").includes("*")?"*":"";
+  const button=(String(content||"").match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩⑪])/)||[])[0]||"";
   const arrow=(String(content||"").match(/[↓↑]/)||[])[0]||"";
   if(button){
-    return prefix+button+star+(arrow?";"+arrow:"");
+    return prefix+button+(arrow?";"+arrow:"");
   }
   return prefix+(arrow?";"+arrow:"");
 }
 
 function insertTabOverrideCharacter(ch){
   const ta=$("abcText");if(!ta||ta.disabled)return;
-  const buttonChoice=/^((?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩]))(\*)?$/.exec(ch);
+  const buttonChoice=/^((?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩⑪]))$/.exec(ch);
   const chosenButton=buttonChoice?buttonChoice[1]:null;
-  const chosenTopRow=!!(buttonChoice&&buttonChoice[2]);
 
   // Restore the exact location captured when Tab Override was opened. This
   // avoids browser-dependent selection changes when a palette button gets focus.
@@ -2987,7 +3016,7 @@ function insertTabOverrideCharacter(ch){
     const isNumber=!!buttonChoice;
     const isArrow=ch==="↓"||ch==="↑";
     if(isNumber){
-      const re=/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/g;
+      const re=/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩⑪])/g;
       const matches=[...content.matchAll(re)];
       if(matches.length){
         const hit=matches[0],a=hit.index,b=a+hit[0].length;
@@ -2996,15 +3025,6 @@ function insertTabOverrideCharacter(ch){
       }else{
         content=content.slice(0,rel)+chosenButton+content.slice(rel);
         rel+=chosenButton.length;
-      }
-      // The physical top-row choice owns the * state: top-row buttons add it,
-      // normal-row buttons remove it.
-      content=content.replace(/\*/g,"");
-      const button=content.match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/);
-      if(chosenTopRow&&button){
-        const pos=button.index+button[0].length;
-        content=content.slice(0,pos)+"*"+content.slice(pos);
-        rel=pos+1;
       }
       // A newly selected button defaults to Push when no direction exists.
       if(!/[↓↑]/.test(content))content+="↓";
@@ -3017,33 +3037,15 @@ function insertTabOverrideCharacter(ch){
         content=content.slice(0,rel)+ch+content.slice(rel);
         rel+=ch.length;
       }
-    }else if(ch==="*"){
-      // Toggle the top-row marker. When present it always belongs immediately
-      // after the button number.
-      if(content.includes("*")){
-        const star=content.indexOf("*");
-        content=content.replace(/\*/g,"");
-        rel=Math.min(star,content.length);
-      }else{
-        const button=content.match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/);
-        if(button){
-          const pos=button.index+button[0].length;
-          content=content.slice(0,pos)+"*"+content.slice(pos);
-          rel=pos+1;
-        }else{
-          content=content.slice(0,rel)+"*"+content.slice(rel);
-          rel+=1;
-        }
-      }
     }else{
       content=content.slice(0,rel)+ch+content.slice(rel);
       rel+=ch.length;
     }
     // Canonical injected-tab order is always:
-    // _ + button number + optional * + ; + Push/Draw arrow.
+    // _ + box button symbol + ; + Push/Draw arrow.
     content=normalizeTabOverrideContent(content);
     const semicolon=content.indexOf(";");
-    if(isNumber||ch==="*")rel=semicolon>=0?semicolon:content.length;
+    if(isNumber)rel=semicolon>=0?semicolon:content.length;
     else if(isArrow)rel=content.length;
     else rel=Math.min(rel,content.length);
     ta.setRangeText(content,annotation.start,annotation.end,"end");
@@ -3051,7 +3053,7 @@ function insertTabOverrideCharacter(ch){
     ta.setSelectionRange(newPos,newPos);
   }else{
     const isNumber=!!buttonChoice;
-    const initialContent=normalizeTabOverrideContent("_"+(isNumber?chosenButton+(chosenTopRow?"*":""):ch)+(isNumber?";↓":""));
+    const initialContent=normalizeTabOverrideContent("_"+(isNumber?chosenButton:ch)+(isNumber?";↓":""));
     const insert='"'+initialContent+'"';
     ta.setRangeText(insert,start,end,"end");
     const semicolon=initialContent.indexOf(";");
@@ -3413,7 +3415,7 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
 }
 
-async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=window.solveBoxTune(stripChordSymbols(tune),$("system").value);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=window.solveBoxTune(stripChordSymbols(tune),$("system").value);applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
   selectionColor:"#ff0000",
