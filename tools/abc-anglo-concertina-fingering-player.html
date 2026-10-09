@@ -227,7 +227,6 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
    setTune() has completed, the host clears abcjs-loading from the SVG so the
    library's normal Play presentation is restored. */
 
-
 /* Explicit cross-platform styling for the share-link Enable Playback control. */
 #enablePlaybackBtn {
   -webkit-appearance: none;
@@ -268,7 +267,6 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   -webkit-text-fill-color: #17251d;
 }
 
-
 /* Tab Override entry palette: compact physical concertina layout. */
 .abcHeaderRight{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0;flex:1 1 auto;flex-wrap:wrap}
 #abcPanel .panelHeader{flex-wrap:wrap}
@@ -285,17 +283,14 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
 #tabOverrideBtn:not(:disabled):active{background:#d5e7dc}
 #tabOverrideBtn:disabled{opacity:.45;cursor:default}
 
-
 .fileControlRow{display:flex;align-items:center;gap:8px;min-width:0}
 .fileControlRow #openFile{min-width:0;flex:1 1 auto}
 .fileControlRow #saveAbcBtn{flex:0 0 auto}
-
 
 /* Save filename prompt: left-align its title while preserving centered share alerts. */
 body.save-name-prompt-open .modal_default_main .modal_default_content{
   text-align:left !important;
 }
-
 
 /* Refined DayPilot prompt/alert styling: lighter scale and simple border. */
 .modal_default_main{
@@ -324,7 +319,6 @@ body.save-name-prompt-open .modal_default_main .modal_default_content{
 .modal_default_main .modal_default_buttons{
   outline:0 !important;
 }
-
 
 /* DayPilot dialog typography refinement. */
 .modal_default_main input{
@@ -408,18 +402,15 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
   .tabOverrideNav button{min-width:41px;width:41px;height:37px;padding:2px 6px;font-size:18px}
 }
 
-
 /* Grey Metronome and Count-in labels whenever their checkboxes are disabled. */
 .countInLabel:has(input:disabled){
   color:#8a8a8a;
 }
 
-
 /* iPad full-page: add a little more space below the live note name. */
 @media (pointer:coarse) and (min-width:700px) and (min-height:700px){
   body.diagram-full .liveNoteName{top:calc(12.5% - 8px);}
 }
-
 
 #fileLabel{margin-right:10px}
 .paneFullBtn:disabled{opacity:.45;cursor:default}
@@ -465,7 +456,6 @@ body.notation-full #notationPanel{
 }
 body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 
-
 /* Unified header-control idling: match Harmonica Player disabled appearance. */
 #editorTextSize:disabled{
   color:#8a8a8a;
@@ -485,7 +475,6 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 .lessonDialog h2{margin:0 0 16px;text-align:center}.lessonDialog label{display:block;font-weight:650;margin:12px 0 5px}.lessonDialog input[type=text],.lessonDialog input[type=number],.lessonDialog textarea{width:100%;font:inherit;border:1px solid #b8c7bd;border-radius:7px;padding:8px}.lessonDialog textarea{min-height:120px;resize:vertical}.lessonActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center}.lessonActions button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.lessonActions button:disabled{opacity:.45;cursor:default}.lessonScope{display:flex;gap:18px;flex-wrap:wrap;margin-top:7px}.lessonScope label{margin:0;font-weight:500}.lessonHint{font-size:.86rem;color:#607068;margin-top:6px}.lessonLinkOutput{min-height:90px!important;font-size:.82rem}.lessonStudentText{white-space:pre-wrap;line-height:1.45;margin:12px 0 4px}.lessonStudentTitle{text-align:center;margin-bottom:10px}.lessonStudentTempo{text-align:center;color:#607068;font-size:.9rem}
 body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margin-top:0}#lessonSaveAbcBtn{display:none}body.lessonMode #lessonSaveAbcBtn{display:inline-flex}
 @media(max-width:650px){.shareButtons{display:block!important}.lessonDialog{padding:16px}.lessonActions button{flex:1 1 45%}}
-
 
 /* v1.70: refined Share / Configure Lesson dialog layout. */
 .lessonModal{
@@ -570,7 +559,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   .lessonCloseRow{margin-top:22px}
 }
 
-
 /* v1.71: lesson dialog button hierarchy. */
 .lessonActions button{
   -webkit-appearance:none;
@@ -620,7 +608,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   background:#e4e8e5;
   border-color:#81968a;
 }
-
 
 /* v1.72: final Share / Configure Lesson button treatment. */
 #shareModal .lessonActions button,
@@ -680,7 +667,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
 #shareModal .lessonCloseRow{margin-top:34px}
 #lessonModal .lessonCloseRow{margin-top:30px}
 
-
 /* v1.73: square lesson dialogs and rebalanced Share spacing. */
 #shareChoiceDialog,
 #lessonConfigDialog{
@@ -717,7 +703,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   }
 }
 
-
 /* v1.74: square dialogs, rebalanced Share layout, and auto-close after sharing. */
 #shareModal .lessonDialog,
 #lessonModal .lessonDialog,
@@ -741,7 +726,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   #shareModal{padding-top:150px !important}
 }
 
-
 /* v1.75: equal vertical spacing around the Share action row. */
 #shareChoiceDialog h2{
   margin-bottom:42px !important;
@@ -749,7 +733,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
 #shareChoiceDialog .lessonCloseRow{
   margin-top:42px !important;
 }
-
 
 /* v1.76: explicitly balance the actual Share dialog elements. */
 #shareModal .lessonDialog{
@@ -770,13 +753,11 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   border-radius:0 !important;
 }
 
-
 /* v1.79: taller Lesson Share Link URL field. */
 #lessonLinkOutput{
   min-height:240px !important;
   height:240px !important;
 }
-
 
 /* v1.82: final Configure Lesson / Lesson Share Link spacing refinements. */
 
@@ -794,7 +775,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   margin-top:30px !important;
   margin-bottom:8px !important;
 }
-
 
 /* Release lesson dialog sizing refinements. */
 #lessonModal .lessonDialog{
@@ -863,7 +843,6 @@ body.lessonMode .toolbar select:disabled{
   #studentLessonModal .lessonStudentText{margin-bottom:34px}
 }
 
-
 /* Student lesson information dialog: fixed title/footer with scrolling instructions. */
 #studentLessonModal{
   align-items:flex-start;
@@ -925,7 +904,6 @@ body.lessonMode .toolbar select:disabled{
   #studentLessonModal .lessonActions{margin-top:22px}
 }
 
-
 /* Unified lesson mode final overrides */
 .shareButtons #shareTuneBtn,.shareButtons #shareAllBtn{display:none!important}
 body.lessonMode .toolbar{display:grid!important}
@@ -934,13 +912,11 @@ body.lessonMode .workspace{margin-top:0}
 body.lessonMode .shareButtons{display:none!important}
 body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#5f6762;background-color:#f2f2f2;border-color:#c8c8c8;opacity:1;cursor:default}
 
-
 /* Context help for Sharing Controls and Configure Lesson. */
 #shareModal .lessonDialog,#lessonModal .lessonDialog,#studentLessonModal .lessonDialog{position:relative}
 .dialogHelpBtn{position:absolute;left:16px;top:14px;width:34px;height:34px;padding:0;border:1px solid #aebdb4;border-radius:50%;background:#f7f9f8;color:#17241c;font:600 20px/32px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;cursor:pointer;text-align:center}
 .dialogHelpBtn:hover{background:#e4e8e5;border-color:#81968a}
 @media(max-width:650px){.dialogHelpBtn{left:12px;top:10px;width:32px;height:32px;font-size:18px;line-height:30px}}
-
 
 /* Context-help layering and minimal help-button appearance. */
 #shareModal .lessonDialog,#lessonModal .lessonDialog,#studentLessonModal .lessonDialog{position:relative}
@@ -967,7 +943,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   .diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto}
 }
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.14</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.15</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -983,7 +959,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1110,7 +1086,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p><b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
       <p>Note names throughout the tool use sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>Check <b>Show note</b> in the Fingering Diagram header to display the current pitch as a quarter note on a staff centered below the bellows-direction arrow.</p>
-      <p>Use <b>Mode</b> to choose <b>Show All</b> for the normal animated fingering display, <b>Diagram Only</b> to see the labeled button layout and Push/Draw legend without note highlights, note names, note image, or bellows direction, or <b>Hide All</b> to hide the instrument display entirely. <b>Diagram Only</b> is useful for practicing with the button layout as a reference without seeing the fingering solutions.</p>
+      <p>Use <b>Mode</b> to choose <b>Show All</b> for an animated fingering display with all buttons fully visible, <b>Focus</b> to fade the button board while keeping the current button, highlight, note name, staff, and bellows direction fully visible, <b>Diagram Only</b> to see the labeled button layout and Push/Draw legend without note highlights, note names, note image, or bellows direction, or <b>Hide All</b> to hide the instrument display entirely. <b>Diagram Only</b> is useful for practicing with the button layout as a reference without seeing the fingering solutions.</p>
       <p>The staff notation uses the same sharp or flat naming as the displayed note name.</p>
       <p>Playback uses the ABC Transcription Tools custom concertina <b>MIDI program 133</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
@@ -1143,6 +1119,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> to create a share link for the currently displayed tune,
         or <b>Share All Tunes</b> to create a share link containing all loaded tunes.</p>
       <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
+      <p>The <b>Mode</b> display setting is a local preference and is <b>not</b> included in ordinary tune share links. A recipient uses their own saved Mode, or <b>Focus</b> if no preference has been saved.</p>
       <p>The link includes the current Concertina type and Fingering solution. The fingering diagram always uses Button Half with Arrows.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>A share button
@@ -1207,9 +1184,10 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
       <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
+      <p>Unlike an ordinary tune share link, a lesson link includes the selected <b>Mode</b> so students begin with the intended display. Their Mode changes during the lesson are not saved as a preference.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-      <p>The <b>Mode</b> selector lets you choose how much help students initially see: <b>Show All</b> shows normal fingering highlights, note names, and bellows direction; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without revealing the active button or bellows direction; <b>Hide All</b> hides the instrument display completely. Your selection determines the starting mode in lesson links and saved lesson configurations. Students can change the mode during a lesson without affecting their normal saved preference.</p>
+      <p>The <b>Mode</b> selector lets you choose how much help students initially see: <b>Show All</b> shows normal fingering highlights, note names, and bellows direction with all buttons fully visible; <b>Focus</b> fades the background buttons while keeping the active button and guidance at full strength; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without revealing the active button or bellows direction; <b>Hide All</b> hides the instrument display completely. Your selection determines the starting mode in lesson links and saved lesson configurations. Students can change the mode during a lesson without affecting their normal saved preference.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
@@ -1224,7 +1202,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-      <p>Your teacher may choose the starting <b>Mode</b> for the lesson. <b>Show All</b> shows the full animated fingering display; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without highlighting notes or showing bellows direction; <b>Hide All</b> hides the instrument display. You can change the mode at any time during the lesson without affecting your saved preference for normal use.</p>
+      <p>A lesson link includes the teacher's selected <b>Mode</b>. You may change Mode during the lesson, but these changes are temporary and do not overwrite your saved Mode preference. Outside lessons, changing Mode saves it for future visits.</p>
+      <p>Your teacher may choose the starting <b>Mode</b> for the lesson. <b>Show All</b> shows the full animated fingering display with all buttons fully visible; <b>Focus</b> dims inactive buttons while leaving the playing button and its guidance fully visible; <b>Diagram Only</b> shows the labeled button layout and Push/Draw legend without highlighting notes or showing bellows direction; <b>Hide All</b> hides the instrument display. You can change the mode at any time during the lesson without affecting your saved preference for normal use.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
@@ -2814,14 +2793,17 @@ function prepareDiagramBase(){
   ctx.clearRect(0,0,c.width,c.height);
   ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);
   ctx.textAlign="center";ctx.textBaseline="alphabetic";
-  if(displayMode==="all"){ctx.font="400 54px Arial";ctx.fillStyle="#333";ctx.fillText(title,640,58);}
+  if(displayMode==="all"||displayMode==="focus"){ctx.font="400 54px Arial";ctx.fillStyle="#333";ctx.fillText(title,640,58);}
 
   // Static system/style information. Note numbering is intentionally omitted.
   ctx.textAlign="left";ctx.font="400 18px Arial";ctx.fillStyle="#555";
 
 
   const bm=mapFor(system);
+  // Focus fades only the physical buttons; title and legend remain fully opaque.
+  ctx.save();if(displayMode==="focus")ctx.globalAlpha=.35;
   Object.keys(POS).forEach(id=>{const pair=bm[id]||["?","?"];drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]))});
+  ctx.restore();
   ctx.textAlign="center";
   ctx.textBaseline="middle";
   // Fixed Push/Draw key, independent of the selected fingering display.
@@ -2878,7 +2860,7 @@ function drawBellowsDirectionArrow(ctx,direction){
 function renderConcertinaStaffNote(item){
   const svg=$("concertinaStaffNote"),stack=$("diagramStack");if(!svg||!stack)return;
   const midi=item?abcPitchToMidi(item.normalizedNote||item.abcNote):null;
-  const visible=displayMode==="all"&&!!showNoteEnabled&&midi!=null;
+  const visible=(displayMode==="all"||displayMode==="focus")&&!!showNoteEnabled&&midi!=null;
   while(svg.firstChild)svg.removeChild(svg.firstChild);
   if(!visible){svg.style.display="none";return}
   svg.style.display="block";
@@ -2908,24 +2890,27 @@ function renderConcertinaStaffNote(item){
 
 // The display mode is a local preference; lesson overrides remain session-only.
 const DISPLAY_MODE_KEY="abcDisplayMode_abc-anglo-concertina-fingering-player.html";
-const DISPLAY_MODES=new Set(["all","buttons","none"]);
-let displayMode="all";
+const DISPLAY_MODES=new Set(["all","focus","buttons","none"]);
+let displayMode="focus";
 function setDisplayMode(mode,persist=false){
-  const next=DISPLAY_MODES.has(mode)?mode:"all";
+  const next=DISPLAY_MODES.has(mode)?mode:"focus";
   const changed=displayMode!==next;
   displayMode=next;
   const select=$("displayMode");if(select)select.value=displayMode;
-  const showNote=$("showNoteCheck");if(showNote)showNote.disabled=displayMode!=="all"||!tunes.length||!!$("enablePlaybackBtn");
+  const showNote=$("showNoteCheck");if(showNote)showNote.disabled=!(["all","focus"].includes(displayMode))||!tunes.length||!!$("enablePlaybackBtn");
   const pane=document.querySelector(".diagramCard");if(pane)pane.classList.toggle("displayNone",displayMode==="none");
   if(changed&&tunes.length){
     prepareDiagramBase();
     drawDiagram(currentDiagramItem,true);
   }
-  if(persist&&!lessonModeActive())try{localStorage.setItem(DISPLAY_MODE_KEY,displayMode)}catch(_){}
+  if(persist&&!lessonModeActive()){
+    commitStandardShareSettingsIfPending();
+    try{localStorage.setItem(DISPLAY_MODE_KEY,displayMode)}catch(_){}
+  }
 }
 function restoreDisplayModePreference(){
-  let mode="all";
-  try{mode=localStorage.getItem(DISPLAY_MODE_KEY)||"all"}catch(_){}
+  let mode="focus";
+  try{mode=localStorage.getItem(DISPLAY_MODE_KEY)||"focus"}catch(_){}
   setDisplayMode(mode,false);
 }
 function applyLessonDisplayMode(params){
@@ -2944,13 +2929,18 @@ function drawDiagram(item=null,force=false){
   // and change one DOM text node. No full diagram/text canvas rendering.
   const c=$("diagramOverlay"),ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
-  $("liveNoteName").textContent=displayMode==="all"&&item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
+  $("liveNoteName").textContent=(displayMode==="all"||displayMode==="focus")&&item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
   renderConcertinaStaffNote(item);
 
-  if(displayMode==="all"&&item){
+  if((displayMode==="all"||displayMode==="focus")&&item){
     const physical=item.button.replace(/^L9a$/,"L9").replace(/^R1x$/,"R1");
     const p=POS[physical];
     if(p){
+      // Restore the active button to full opacity above the faded board.
+      if(displayMode==="focus"){
+        const bm=mapFor($("system").value),pair=bm[physical]||["?","?"];
+        drawButton(ctx,p.x,p.y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]));
+      }
       
       // Match the Irish Button Box Player: translucent half-button tint
       // and a clean semicircular arc on the selected Push/Draw half.
@@ -3428,7 +3418,7 @@ function startABCTranscriptionToolsHandshake(){
 
 function loadShareLinkAfterStartup(){
   const params=new URLSearchParams(location.search);
-  applyLessonDisplayMode(params);
+  if(params.get("lesson")==="1")applyLessonDisplayMode(params);
   const watermark=$("diagramWatermark");
   if(watermark)watermark.hidden=params.get("nowatermark")==="1";
   const payload=params.get("def");
@@ -4397,7 +4387,7 @@ function syncPlaybackPermissionHeaderControls(){
   // browser's explicit Enable Playback gesture has been completed.
   const headerDisabled=!hasTunes||permissionPending;
   if(editorTextSize)editorTextSize.disabled=headerDisabled;
-  if(showNote)showNote.disabled=headerDisabled||displayMode!=="all";
+  if(showNote)showNote.disabled=headerDisabled||!(["all","focus"].includes(displayMode));
   if(displaySelect)displaySelect.disabled=headerDisabled;
   if(showFretboard)showFretboard.disabled=headerDisabled;
   if(tabOverride)tabOverride.disabled=headerDisabled;
