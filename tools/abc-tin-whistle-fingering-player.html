@@ -995,22 +995,23 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p><p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Practicing D Minor and G Minor Tunes on a C Whistle</p>
-      <p>To practice a tune written in <b>D minor</b> or <b>G minor</b> using a <b>C whistle</b>, you can display its notation and fingerings two semitones higher while keeping playback at the tune’s original pitch. This lets you follow the displayed fingerings on your C whistle while hearing the tune in D minor or G minor.</p>
-      <p>Click <b>Inject into Current Tune</b> to insert the annotations shown below into the currently loaded tune, immediately before the music.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Practicing D Minor/Dorian Mode Tunes on a C Whistle</p>
+      <p>To practice a tune written in <b>D Minor or D Dorian mode</b> using a <b>C whistle</b>, you can display its notation and fingerings two semitones higher while keeping playback at the tune’s original pitch.</p>
+      <p>This lets you follow the displayed fingerings on your C whistle while hearing the tune in D Minor or D Dorian mode.</p>
+      <p>Click <b>Inject into Current Tune</b> to insert the annotations shown below into the currently loaded tune, immediately before the ABC notes.</p>
       <div class="cWhistleCodeWrap"><button id="injectCWhistleBtn" class="notationHeaderBtn cWhistleInjectBtn" type="button">Inject into Current Tune</button><pre id="cWhistleSampleCode" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7f5;border:1px solid rgba(127,127,127,.25);padding:38px 12px 12px;border-radius:6px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">%
-% Transpose the tune up two semitones from D minor (or G minor) 
-% to E minor (or A minor)
+% Transpose the tune notation and fingerings up two semitones from
+% D Minor/Dorian to E Minor/Dorian
 %
 %%visualtranspose 2
 %
 % Pitch shift the tune playback back down two semitones to 
-% D minor (or G minor)
+% D Minor/Dorian
 %
 %voice_tuning_cents -200
 %</pre></div>
-      <p><b>%%visualtranspose 2</b> raises the displayed notation and fingering positions by two semitones (D minor → E minor, or G minor → A minor).</p>
-      <p><b>%voice_tuning_cents -200</b> lowers the audio playback by 200 cents (two semitones), restoring the original sounding key.</p>
+      <p><b>%%visualtranspose 2</b> raises the displayed notation and fingering positions by two semitones (D Minor/Dorian → E Minor/Dorian).</p>
+      <p><b>%voice_tuning_cents -200</b> lowers the audio playback by 200 cents (two semitones), restoring the original sounding key of D Minor/Dorian.</p>
       <p>Leave the tune’s original <b>K:</b> key unchanged. These directives affect the displayed fingering and playback, rather than rewriting the ABC melody notes.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
