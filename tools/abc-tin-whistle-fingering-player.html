@@ -329,6 +329,10 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
     .whistle_small { font-family:'TinWhistleFingering'; font-size:32px; }
     .hiddentabline { display:none; }
 
+/* C-whistle instructions sample action. */
+.cWhistleCodeWrap{position:relative}
+.cWhistleInjectBtn{position:absolute;top:7px;right:8px;z-index:1;padding:5px 9px;font-size:12px;max-width:calc(100% - 16px);border-radius:6px;}
+
 /* Tin Whistle player overrides */
 .whistleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(125px,.64fr) minmax(185px,.94fr) minmax(220px,1.12fr) auto}
 .whistleToolbar .fileControl{grid-column:auto}
@@ -993,8 +997,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Practicing D Minor and G Minor Tunes on a C Whistle</p>
       <p>To practice a tune written in <b>D minor</b> or <b>G minor</b> using a <b>C whistle</b>, you can display its notation and fingerings two semitones higher while keeping playback at the tune’s original pitch. This lets you follow the displayed fingerings on your C whistle while hearing the tune in D minor or G minor.</p>
-      <p>Add these lines to the ABC tune header (before the music):</p>
-      <pre style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7f5;border:1px solid rgba(127,127,127,.25);padding:12px;border-radius:6px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">%
+      <p>Click <b>Inject into Current Tune</b> to insert the annotations shown below into the currently loaded tune, immediately before the music.</p>
+      <div class="cWhistleCodeWrap"><button id="injectCWhistleBtn" class="notationHeaderBtn cWhistleInjectBtn" type="button">Inject into Current Tune</button><pre id="cWhistleSampleCode" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7f5;border:1px solid rgba(127,127,127,.25);padding:38px 12px 12px;border-radius:6px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">%
 % Transpose the tune up two semitones from D minor (or G minor) 
 % to E minor (or A minor)
 %
@@ -1004,7 +1008,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 % D minor (or G minor)
 %
 %voice_tuning_cents -200
-%</pre>
+%</pre></div>
       <p><b>%%visualtranspose 2</b> raises the displayed notation and fingering positions by two semitones (D minor → E minor, or G minor → A minor).</p>
       <p><b>%voice_tuning_cents -200</b> lowers the audio playback by 200 cents (two semitones), restoring the original sounding key.</p>
       <p>Leave the tune’s original <b>K:</b> key unchanged. These directives affect the displayed fingering and playback, rather than rewriting the ABC melody notes.</p>
@@ -2924,6 +2928,33 @@ function openInstructionsAt(sectionId){
 $("instructionsBtn").addEventListener("click",()=>{
   $("helpOverlay").style.display="block";
 });
+// Insert the instructions' exact C-whistle sample in the selected tune only.
+$("injectCWhistleBtn").addEventListener("click",()=>{
+  if(!tunes.length||currentTune<0||currentTune>=tunes.length)return;
+  const editor=$("abcText");
+  if(!editor||editor.disabled||!hasMinimumABCForRender(editor.value))return;
+  const sample=$("cWhistleSampleCode").textContent.trim();
+  const newline=editor.value.includes("\r\n")?"\r\n":"\n";
+  const abc=editor.value;
+  // Never add a second copy of the same sample.
+  if(abc.includes(sample.replace(/\n/g,newline)))return;
+  const lines=abc.split(/\r?\n/);
+  const keyIndex=lines.findIndex(line=>/^\s*K\s*:/.test(line));
+  if(keyIndex<0)return;
+  // Header fields and directives may follow K:. Insert before the first music line.
+  let insertAt=keyIndex+1;
+  while(insertAt<lines.length){
+    const line=lines[insertAt];
+    if(!line.trim()||/^\s*(?:%|[A-Za-z+]:)/.test(line)){
+      insertAt++;
+    }else break;
+  }
+  const block=sample.split("\n");
+  lines.splice(insertAt,0,...block);
+  editor.value=lines.join(newline);
+  editor.dispatchEvent(new Event("input",{bubbles:true}));
+});
+
 $("helpClose").addEventListener("click",()=>{
   $("helpOverlay").style.display="none";
 });
