@@ -2929,29 +2929,51 @@ function openInstructionsAt(sectionId){
 $("instructionsBtn").addEventListener("click",()=>{
   $("helpOverlay").style.display="block";
 });
-// Insert the instructions' exact C-whistle sample in the selected tune only.
+// Apply the C-whistle directives to the selected tune only. Detect directives
+// independently of the sample comments or whitespace, so edited samples do not duplicate.
 $("injectCWhistleBtn").addEventListener("click",()=>{
   if(!tunes.length||currentTune<0||currentTune>=tunes.length)return;
   const editor=$("abcText");
   if(!editor||editor.disabled||!hasMinimumABCForRender(editor.value))return;
-  const sample=$("cWhistleSampleCode").textContent.trim();
   const newline=editor.value.includes("\r\n")?"\r\n":"\n";
-  const abc=editor.value;
-  // Never add a second copy of the same sample.
-  if(abc.includes(sample.replace(/\n/g,newline)))return;
-  const lines=abc.split(/\r?\n/);
+  const lines=editor.value.split(/\r?\n/);
   const keyIndex=lines.findIndex(line=>/^\s*K\s*:/.test(line));
   if(keyIndex<0)return;
-  // Header fields and directives may follow K:. Insert before the first music line.
-  let insertAt=keyIndex+1;
-  while(insertAt<lines.length){
-    const line=lines[insertAt];
-    if(!line.trim()||/^\s*(?:%|[A-Za-z+]:)/.test(line)){
-      insertAt++;
-    }else break;
+
+  // Normalize existing directives to the requested settings and remove any
+  // extra copies, even when the explanatory comments have been edited.
+  const directives=[
+    {pattern:/^\s*%%visualtranspose(?:\s|$)/,value:"%%visualtranspose 2"},
+    {pattern:/^\s*%voice_tuning_cents(?:\s|$)/,value:"%voice_tuning_cents -200"}
+  ];
+  let changed=false;
+  const missing=[];
+  for(const directive of directives){
+    const matches=[];
+    for(let i=0;i<lines.length;i++)if(directive.pattern.test(lines[i]))matches.push(i);
+    if(!matches.length){missing.push(directive.value);continue;}
+    if(lines[matches[0]]!==directive.value){lines[matches[0]]=directive.value;changed=true;}
+    for(let i=matches.length-1;i>=1;i--){lines.splice(matches[i],1);changed=true;}
   }
-  const block=sample.split("\n");
-  lines.splice(insertAt,0,...block);
+  if(missing.length){
+    // Header fields and directives may follow K:. Insert before the first music line.
+    let insertAt=lines.findIndex(line=>/^\s*K\s*:/.test(line))+1;
+    while(insertAt<lines.length){
+      const line=lines[insertAt];
+      if(!line.trim()||/^\s*(?:%|[A-Za-z+]:)/.test(line))insertAt++;
+      else break;
+    }
+    if(missing.length===directives.length){
+      // For a fresh injection, include the explanatory sample from the instructions.
+      const sample=$("cWhistleSampleCode").textContent.trim();
+      lines.splice(insertAt,0,...sample.split("\n"));
+    }else{
+      // Only insert the missing directive; do not duplicate existing comments.
+      lines.splice(insertAt,0,...missing);
+    }
+    changed=true;
+  }
+  if(!changed)return;
   editor.value=lines.join(newline);
   editor.dispatchEvent(new Event("input",{bubbles:true}));
 });
