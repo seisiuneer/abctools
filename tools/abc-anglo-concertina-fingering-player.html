@@ -946,14 +946,38 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 .tabOverridePopover .tabOverrideKey.tabOverrideDraw:not(:disabled):hover{background:#c3e9d8;border-color:#34896d}
 .tabOverrideActions{display:flex;justify-content:space-between;align-items:center;width:100%}
 .tabOverrideActions{position:relative;justify-content:flex-end}
+
+/* v3.4: Tune-specific tablature controls. */
+.tuneWithTab{display:flex;align-items:end;gap:8px;min-width:0}
+.tuneSelectWrap{flex:1;min-width:0}
+.tuneWithTab #tabBtn{height:38px;min-width:55px;flex:none}
+#tabModal .lessonDialog{margin-top:100px;max-width:460px;border-radius:0}
+#tabModal .lessonDialog p{text-align:center;line-height:1.45}
+#tabModal .lessonActions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+#tabModal .lessonActions button:disabled{opacity:.45;cursor:default}
+/* Match Add Tab / Clear Tab to the Share dialog action buttons. */
+#tabModal #addTabBtn,#tabModal #clearTabBtn{
+  -webkit-appearance:none;appearance:none;color:#17241c;-webkit-text-fill-color:#17241c;
+  background:#e6e8ff;border:1px solid #a9aed8;border-radius:6px;
+  box-shadow:none;font:inherit;font-weight:400;line-height:1.2;
+  padding:7px 16px;cursor:pointer;
+}
+#tabModal #addTabBtn:hover:not(:disabled),#tabModal #clearTabBtn:hover:not(:disabled){
+  background:#daddff;border-color:#8f96c8;
+}
+#tabModal #addTabBtn:disabled,#tabModal #clearTabBtn:disabled{opacity:.45;cursor:default}
+/* The Tab dialog Close control is a conventional button, not a text link. */
+#tabModal #tabCloseBtn{appearance:none;-webkit-appearance:none;border:1px solid #aebbb3;border-radius:6px;background:#f5f6f5;color:#17241c;-webkit-text-fill-color:#17241c;text-decoration:none;font:600 14px/1.2 inherit;padding:9px 22px;min-width:100px;cursor:pointer}
+#tabModal #tabCloseBtn:hover{background:#e4e8e5;border-color:#81968a}
+
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
  <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
  
- <div class="control"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
+ <div class="control tuneWithTab"><button id="tabBtn" type="button" disabled>Tab Tools</button><div class="tuneSelectWrap"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
 <div class="workspace" id="workspace">
@@ -978,6 +1002,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   </div>
 </div>
 
+<div id="tabModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="tabModalTitle"><div class="lessonDialog"><h2 id="tabModalTitle">Tablature Tools</h2><p>Add fingering tablature below each note using the current instrument settings, or remove existing tablature from this tune. The injected tab uses the same fingering solution as ABC Transcription Tools for this instrument.</p><div class="lessonActions"><button id="addTabBtn" type="button">Add Tab</button><button id="clearTabBtn" type="button" disabled>Clear Tab</button></div><div class="lessonCloseRow"><button id="tabCloseBtn" class="lessonCloseBtn" type="button">Close</button></div></div></div>
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
@@ -1078,6 +1103,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>
         The divider positions are remembered in this browser and restored the next time the tool is opened on a wide screen.
       </p>
+      <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Fingering Diagram</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
  
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
@@ -1103,9 +1129,17 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
              style="max-width: 100%; height: auto;">
       </div>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
-      <p>On wide screens, drag the vertical divider to resize the left and fingering-diagram panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
-      <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Fingering Diagram</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
+      <p><b>Tab Tools (Add Tab / Clear Tab):</b></p>
+      <p>The <b>Tab Tools</b> button beside the Tune selector opens the <b>Tablature Tools</b> dialog for the current tune.</p>
+      <p><b>Add Tab</b> inserts below-staff ABC fingering annotations using the current instrument settings and On-Row or Cross-Row fingering solution.</p>
+      <p>The injected tablature uses the same fingering solutions as the ABC Transcription Tools.</p>
+      <p>If the current tune already contains instrument tablature, <b>Add Tab</b> asks for confirmation before replacing it, including any manual tab overrides.</p>
+      <p><b>Clear Tab</b> removes instrument tablature annotations from the current tune only, after confirmation.</p>
+      <p>Changing the instrument type or the On-Row/Cross-Row fingering solution checks <b>all loaded tunes</b> for existing instrument tablature.</p>
+      <p>If any loaded tune contains tablature, the player asks for confirmation before clearing instrument tablature from <b>every loaded tune that contains it</b>.</p>
+      <p>Canceling the confirmation preserves all tunes and the previous instrument settings.</p>
+      <p>These changes mark the ABC as modified, so save the ABC file to keep them.</p>
+      <p><b>Tab Tools</b> is available when running lessons.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Saving the ABC</p>
@@ -1128,13 +1162,6 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>When tunes are opened from a share link or transferred directly from <b>ABC Transcription Tools</b>, click the
         <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
       <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Chord Symbols</p>
-      <p>
-        Quoted ABC chord symbols are ignored by the fingering solver but remain
-        available to abcjs for accompaniment.
-      </p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tab Override</p>
@@ -3576,7 +3603,7 @@ function buildTabOverridePalette(){
 }
 function validTabAnnotationText(s){
   const t=String(s||"").trim().replace(/^[_^]/,"").trim();
-  return t==="" || /^(?:(?:10|[1-9])|[①②③④⑤⑥⑦⑧⑨⑩]|\*|↓|↑|[;\s])+$/.test(t);
+  return t==="" || t==="x" || /^(?:(?:10|[1-9])|[①②③④⑤⑥⑦⑧⑨⑩]|\*|↓|↑|[;\s])+$/.test(t);
 }
 function quotedAnnotationAtCursor(value,pos){
   const lineStart=Math.max(value.lastIndexOf("\n",Math.max(0,pos-1)),value.lastIndexOf("\r",Math.max(0,pos-1)))+1;
@@ -4050,7 +4077,7 @@ async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.
 let rebuildTimer=0;function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuild,180)}
 function loadTune(index,syncEditor=true){
   const notationViewport=$("notation").parentElement;
-  if(notationViewport)notationViewport.scrollTop=0;if(syncEditor)syncCurrentTuneFromEditor();cancelCountIn();manualSelectedNoteStart=null;playbackActive=false;melodyMuted=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;updateMuteMelodyButton();$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons()}
+  if(notationViewport)notationViewport.scrollTop=0;if(syncEditor)syncCurrentTuneFromEditor();cancelCountIn();manualSelectedNoteStart=null;playbackActive=false;melodyMuted=false;currentTune=index;$("abcText").value=tunes[index]||"";$("abcText").disabled=false;$("tabOverrideBtn").disabled=false;updateMuteMelodyButton();$("tuneSelect").value=String(index);$("fullBtn").disabled=true;scheduleRebuild();updateShareButtons();refreshTabButton()}
 function updateMuteMelodyButton(){
   const btn=$("muteMelodyBtn");
   if(!btn)return;
@@ -4208,7 +4235,7 @@ $("openFile").addEventListener("change",async e=>{
     await showFileLoadError(err);
   }
 });
-$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));$("system").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});$("style").addEventListener("change",()=>{savePrefs();scheduleRebuild();updateShareButtons()});
+$("tuneSelect").addEventListener("change",()=>loadTune(+$('tuneSelect').value));
 
 function hasMinimumABCForRender(abc){return /^\s*X\s*:/m.test(abc)&&/^\s*K\s*:/m.test(abc)}
 function beginManualTuneIfNeeded(){
@@ -4429,6 +4456,114 @@ function savedLessonLinkURLFromText(text){
   validateLessonURLParams(u.searchParams);
   return u.toString();
 }
+
+// v3.4: Apply current fingering solution as ABC below-staff annotations.
+// Only recognizable instrument tab annotations are removed; chords and unrelated text remain.
+function isPlayerTabAnnotation(content){
+  const t=String(content||'');
+  return /^_[\s;]*(?:(?:[LR]?(?:10|[1-9])(?:a|\*)?)|(?:[①②③④⑤⑥⑦⑧⑨⑩⑪]\*?)|x)[\s;]*(?:↓|↑)?[\s;]*$/.test(t);
+}
+function playerTabMatches(abc){
+  const matches=[];
+  const re=/"([^"\r\n]*)"/g;let m;
+  while((m=re.exec(abc))!==null){if(isPlayerTabAnnotation(m[1]))matches.push({start:m.index,end:re.lastIndex});}
+  return matches;
+}
+function stripPlayerTab(abc){
+  const matches=playerTabMatches(abc);
+  for(let i=matches.length-1;i>=0;i--)abc=abc.slice(0,matches[i].start)+abc.slice(matches[i].end);
+  return abc;
+}
+function stripPlayerTabDirectives(abc){
+  // Clear only the current tune's annotation layout directives, preserving
+  // its line-ending convention and every other ABC directive.
+  return abc.replace(/^[ \t]*%%(?:annotationfont|staffsep)\b[^\r\n]*(?:\r\n|\n|\r|$)/gim,'');
+}
+function currentTabSolution(abc){
+  if(PLAYER_TAB_IS_ANGLO){
+    gInjectTab_ConcertinaStyle=$('system').value==='wheatstone'?1:0;
+    gInjectTab_ConcertinaFingering=$('style').value==='cross'?1:0;
+    return angloFingeringsGenerator(stripChordSymbols(abc));
+  }
+  return window.solveBoxTune(stripChordSymbols(abc),$('system').value);
+}
+const PLAYER_TAB_IS_ANGLO=true;
+function playerTabForItem(item){
+  if(!item||!item.button||item.button==='x')return '"_x"';
+  const direction=item.direction==='push'?'↓':item.direction==='draw'?'↑':null;
+  if(!direction)return '"_x"';
+  let label;
+  if(PLAYER_TAB_IS_ANGLO){
+    // Solver buttons use internal L/R identifiers. ABC tablature uses plain
+    // numbers for left-hand buttons and circled numbers for right-hand buttons.
+    const m=String(item.button).match(/^([LR])(10|[1-9])(a)?$/);
+    if(m){
+      const number=Number(m[2]);
+      label=(m[1]==='R'?['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'][number-1]:String(number))+(m[3]?'*':'');
+    }
+  }
+  else {
+    const button=String(item.button);
+    if(button.startsWith('T'))label=button.slice(1);
+    else if(button.startsWith('B'))label=TAB_CIRCLED[Number(button.slice(1))-1];
+  }
+  return label?'"_'+label+';'+direction+'"':'"_x"';
+}
+function refreshTabButton(){
+  const b=$('tabBtn');if(b)b.disabled=!tunes.length;
+}
+function refreshTabDialog(){
+  $('addTabBtn').disabled=!tunes.length;
+  $('clearTabBtn').disabled=!tunes.length||!playerTabMatches($('abcText').value).length;
+}
+async function confirmTabAction(message){
+  if(window.DayPilot?.Modal?.confirm){const r=await DayPilot.Modal.confirm(message,{top:150,width:510});return !!(r&&!r.canceled&&r.result);}
+  return window.confirm(message.replace(/<br\s*\/?\s*>/gi,'\n'));
+}
+function commitTabEdit(value){
+  const ta=$('abcText');if(value===ta.value)return;
+  ta.value=value;
+  syncCurrentTuneFromEditor();setAbcDirty(true);
+  manualSelectedNoteStart=null;tabOverrideAnchorPos=null;
+  scheduleRebuild();updateShareButtons();refreshTabDialog();
+}
+async function addPlayerTab(){
+  if(!tunes.length)return;
+  const original=$('abcText').value;
+  const hasExistingTab=playerTabMatches(original).length>0;
+  if(hasExistingTab){
+    if(!await confirmTabAction('This tune already contains tablature,<br/>including possible manual tab overrides.<br><br>Add Tab will clear the existing tablature and replace it with the default solution for the currently selected instrument'+(PLAYER_TAB_IS_ANGLO?' and fingering style':'')+'.<br><br>Continue?'))return;
+  }
+  // Remove old tab and its layout directives before calculating note positions.
+  // Unrelated annotations and ABC directives remain untouched.
+  const clean=hasExistingTab?stripPlayerTabDirectives(stripPlayerTab(original)):original;
+  let items;
+  try{items=currentTabSolution(clean);}catch(e){await showPlayerAlert('Unable to generate tablature: '+(e?.message||e));return;}
+  if(!Array.isArray(items)||!items.length){await showPlayerAlert('No playable notes were found for tablature.');return;}
+  let result=clean;
+  const ordered=items.filter(x=>Number.isInteger(x.abcIndex)&&x.abcIndex>=0&&x.abcIndex<clean.length).sort((a,b)=>b.abcIndex-a.abcIndex);
+  for(const item of ordered)result=result.slice(0,item.abcIndex)+playerTabForItem(item)+result.slice(item.abcIndex);
+  commitTabEdit(result);
+  // Use the same annotation font/spacing setup as manual Tab Override.
+  ensureManualTabDirectives();syncCurrentTuneFromEditor();setAbcDirty(true);scheduleRebuild();refreshTabDialog();
+  setModal('tabModal',false);
+}
+async function clearPlayerTab(){
+  if(!tunes.length||!playerTabMatches($('abcText').value).length)return;
+  if(!await confirmTabAction('Remove all instrument tablature<br/>annotations from the current tune?<br><br>This cannot be undone.'))return;
+  commitTabEdit(stripPlayerTabDirectives(stripPlayerTab($('abcText').value)));setModal('tabModal',false);
+}
+function installTabDialog(){
+  $('tabBtn').addEventListener('click',()=>{if(!tunes.length)return;refreshTabDialog();setModal('tabModal',true)});
+  $('tabCloseBtn').addEventListener('click',()=>setModal('tabModal',false));
+  $('addTabBtn').addEventListener('click',addPlayerTab);
+  $('clearTabBtn').addEventListener('click',clearPlayerTab);
+  $('abcText').addEventListener('input',refreshTabDialog);
+  new MutationObserver(refreshTabButton).observe($('tuneSelect'),{attributes:true,attributeFilter:['disabled']});
+  refreshTabButton();
+}
+installTabDialog();
+
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
@@ -4542,4 +4677,52 @@ function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('share
   $('lessonOpenABCTTBtn').onclick=openDisplayedShareInABCTT;
   $('lessonLinkCloseBtn').onclick=()=>setModal('lessonLinkModal',false);$('studentLessonStartBtn').onclick=()=>setModal('studentLessonModal',false);refreshUnifiedShareState()}
 setupLessonMode();installUnifiedSharing();
+// Protect existing tablature when changing the concertina layout or fingering.
+// The listener runs in capture phase, before any other change handlers.
+(function installTabSystemChangeProtection(){
+  const ids=PLAYER_TAB_IS_ANGLO?['system','style']:['system'];
+  const accepted=Object.fromEntries(ids.map(id=>[id,$(id).value]));
+  let applying=false;
+  for(const id of ids){
+    const select=$(id);
+    select.addEventListener('change',async event=>{
+      if(applying)return;
+      const requested=select.value,prior=accepted[id];
+      if(requested===prior)return;
+      // Block the ordinary change listeners until confirmation is complete.
+      event.stopImmediatePropagation();
+      select.value=prior;
+      if(!tunes.length){
+        accepted[id]=requested;select.value=requested;
+      }else{
+        // The editor may have unsaved keystrokes not yet reflected in tunes[].
+        const all=tunes.slice();
+        if(currentTune>=0&&currentTune<all.length&&!$('abcText').disabled)all[currentTune]=$('abcText').value;
+        const affected=all.map((abc,i)=>playerTabMatches(abc).length?i:-1).filter(i=>i>=0);
+        if(affected.length){
+          const ok=await confirmTabAction('Changing the instrument type or fingering system will remove all existing instrument tablature annotations from every loaded tune that contains tablature, including manual tab overrides.<br><br>This cannot be undone.<br><br>Do you want to continue?');
+          if(!ok)return;
+          // Build the complete replacement before committing any change.
+          for(const i of affected)all[i]=stripPlayerTabDirectives(stripPlayerTab(all[i]));
+          tunes.splice(0,tunes.length,...all);
+          loadedABC=tunes.join('\n\n');
+          if(currentTune>=0&&currentTune<tunes.length)$('abcText').value=tunes[currentTune];
+          setAbcDirty(true);
+          manualSelectedNoteStart=null;
+          tabOverrideAnchorPos=null;
+          refreshTabDialog();
+        }
+        accepted[id]=requested;
+        select.value=requested;
+      }
+      applying=true;
+      try{
+        // Run existing setting-change listeners only after the new state is committed.
+        select.dispatchEvent(new Event('change',{bubbles:true}));
+        savePrefs();scheduleRebuild();updateShareButtons();
+      }finally{applying=false;}
+    },true);
+  }
+})();
+
 </script></body></html>
