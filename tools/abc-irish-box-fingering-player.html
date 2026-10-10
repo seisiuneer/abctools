@@ -365,8 +365,6 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 .tabOverrideKey:not(:disabled):hover{background:#e4efe8;border-color:#789b87}
 .tabOverrideKey:active{background:#d5e7dc}
 .tabOverrideActions{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:430px;margin:10px auto 0;padding-top:0;border-top:0}
-.tabOverrideDirection{grid-column:2;display:flex;justify-content:center;gap:6px}
-.tabOverrideDirection .tabOverrideKey{width:auto;min-width:72px;height:34px;padding:3px 8px;font:600 15px/1 inherit;white-space:nowrap}
 .tabOverrideNav{grid-column:3;justify-self:end;display:flex;gap:8px}
 .tabOverrideNav button{-webkit-appearance:none;appearance:none;box-sizing:border-box;min-width:42px;width:42px;height:34px;padding:3px 8px;border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;-webkit-text-fill-color:#17251d;box-shadow:none;font:600 18px/1 inherit;text-align:center;cursor:pointer}
 .tabOverrideNav button:hover{background:#e4efe8;border-color:#789b87}
@@ -377,7 +375,6 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
  .tabOverridePopover{width:calc(100vw - 16px);padding:10px}
  .tabOverrideRow{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(34px,1.35fr) repeat(5,minmax(0,1fr));gap:4px}
  .tabOverrideKey{min-width:0;width:100%;height:32px;padding:2px;font-size:12px}
- .tabOverrideDirection .tabOverrideKey{width:auto;min-width:64px;height:32px;padding:2px 5px;font-size:12px}
  .tabOverrideNav{gap:4px}.tabOverrideNav button{min-width:36px;width:36px;height:32px;padding:2px 5px;font-size:16px}
 }
 
@@ -389,15 +386,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 .tabOverrideRow{grid-template-columns:repeat(5,39px) 35px repeat(5,39px);gap:7px}
 .tabOverrideKey{min-width:39px;width:39px;height:39px;padding:3px 5px;font-size:17px}
 .tabOverrideActions{width:494px;margin-top:11px}
-.tabOverrideDirection{gap:7px}
-.tabOverrideDirection .tabOverrideKey{width:auto;min-width:83px;height:39px;padding:3px 9px;font-size:17px}
 .tabOverrideNav{gap:9px}
 .tabOverrideNav button{min-width:48px;width:48px;height:39px;padding:3px 9px;font-size:21px}
 @media(max-width:520px){
   .tabOverridePopover{width:calc(100vw - 16px)}
   .tabOverrideRow{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(39px,1.35fr) repeat(5,minmax(0,1fr));gap:4px}
   .tabOverrideKey{min-width:0;width:100%;height:37px;padding:2px;font-size:14px}
-  .tabOverrideDirection .tabOverrideKey{width:auto;min-width:74px;height:37px;padding:2px 6px;font-size:14px}
   .tabOverrideNav{gap:5px}
   .tabOverrideNav button{min-width:41px;width:41px;height:37px;padding:2px 6px;font-size:18px}
 }
@@ -988,7 +982,6 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
 <div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: The settings in the top bar are locked for lessons and cannot be changed.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
-
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Irish Button Box Fingering Player Instructions</h2>
@@ -999,7 +992,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Choose <b>B/C</b> or <b>C#/D</b> tuning. The fixed 21-button keyboard diagram shows the C row above the B row for B/C tuning, and the D row above the C# row for C#/D tuning.</p>
       <p>23-button instrument players will need to offset the displayed button position one button to the right.</p>
       <p>The fingering solution uses the same B/C and C#/D tablature solution as <b>ABC Transcription Tools</b>.</p>
-      <p>Play tunes with synchronized notation highlighting and a button diagram that shows the required button and Push or Draw direction.</p>
+      <p>Play tunes with synchronized notation highlighting and a button diagram that shows the required button and <b>Push</b> or <b>Draw</b> direction.</p>
       <p>Edit the ABC directly and click rendered notes to locate them in the editor and show their button fingering without starting playback.</p>
       <p>Load and work with multi-tune ABC collections, save your edited ABC, and create share links for one tune or the complete collection.</p>
       <p>Use the resizable workspace and optional full-page button diagram for practice on desktop and mobile browsers.</p>
@@ -1014,7 +1007,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Button Box Tuning and Display</p>
       <p>Select the <b>Tuning</b> as <b>B/C</b> or <b>C#/D</b>.</p>
       <p>For <b>B/C</b>, the top row of the diagram is the C row and the bottom row is the B row. For <b>C#/D</b>, the top row is the D row and the bottom row is the C# row.</p>
-      <p>Each button is divided into Push and Draw halves and displays the corresponding note names. During playback or when a note is clicked, the <b>top half lights red for Push</b> and the <b>bottom half lights green for Draw</b>.</p>
+      <p>Each button is divided into <b>Push</b> and <b>Draw</b> halves and displays the corresponding note names. During playback or when a note is clicked, the <b>Top Half</b> lights <b>Red</b> for <b>Push</b> and the <b>Bottom Half</b> lights <b>Green</b> for <b>Draw</b>.</p>
       <div style="text-align:center;margin:14px 0 12px">
         <svg width="110" height="110" viewBox="0 0 110 110" role="img" aria-label="Button legend showing Push on the top half and Draw on the bottom half" style="display:block;margin:0 auto">
           <circle cx="55" cy="55" r="48" fill="#fff" stroke="#171717" stroke-width="2"/>
@@ -1023,7 +1016,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
           <text x="55" y="75" text-anchor="middle" dominant-baseline="middle" fill="#111" font-family="Arial, sans-serif" font-size="16" font-weight="500">DRAW</text>
         </svg>
       </div>
-      <p>A matching arrow centered below the button board shows the bellows direction and is labeled PUSH or DRAW.</p>
+      <p>A matching arrow centered below the button board shows the bellows direction and is labeled <b>PUSH</b> or <b>DRAW</b>.</p>
       <div style="display:flex;justify-content:center;align-items:flex-start;gap:48px;margin:14px 0 12px" role="img" aria-label="Push and Draw bellows direction arrows">
         <svg width="100" height="150" viewBox="0 0 100 150" aria-label="Push arrow" style="display:block">
           <path d="M44 18 H56 V68 H78 L50 103 L22 68 H44 Z" fill="#b80054"/>
@@ -1052,7 +1045,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the button diagram highlights the required accordion button and bellows direction.</p>
-      <p><b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
+      <p><b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>.</p>
       <p>Note names throughout the tool use sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>Check <b>Show note</b> in the Button Diagram header to also show the current pitch as a quarter note on a staff positioned to the right of the note name.</p>
       <p>Use <b>Mode</b> to choose <b>Show All</b> for an animated fingering display with all buttons fully visible, <b>Focus</b> to fade the button board while keeping the current button, highlight, note name, staff, and bellows direction fully visible, <b>Diagram Only</b> to see the labeled button layout and Push/Draw legend without note highlights, note names, note image, or bellows direction, or <b>Hide All</b> to hide the instrument display entirely.</p>
@@ -1094,11 +1087,11 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Quoted ABC chord symbols are ignored by the fingering solver but remain available to abcjs for accompaniment.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tab Override</p>
-<p>Use <b>Tab Override</b> to choose a different button for a note, especially when the same note is available on both rows.</p>
-<p>Click a note in the notation, then click <b>Tab Override</b>. Only buttons that can play that note are available. <b>Red</b> means Push, <b>green</b> means Draw, and grey buttons are unavailable.</p>
-<p>Click a button to apply its fingering and bellows direction automatically. Use the <b>←</b> and <b>→</b> arrows to move between notes. You can drag the popover by its title.</p>
-<p>Your choices appear in the notation and are retained when you save or share the ABC. Changing a fingering does not change the note's sound.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>Use <b>Tab Override</b> to choose a different button for a note, especially when the same note is available on both rows.</p>
+      <p>Click a note in the notation, then click <b>Tab Override</b>. Only buttons that can play that note are available. <b>Red</b> means <b>Push</b>, <b>Green</b> means <b>Draw</b>, and grey buttons are unavailable.</p>
+      <p>Click a button to apply its fingering and bellows direction automatically. Use the <b>←</b> and <b>→</b> arrows to move between notes. You can drag the popover by its title.</p>
+      <p>Your choices appear in the notation and are retained when you save or share the ABC. Changing a fingering does not change the note's sound.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p> 
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
       <p>A lesson uses the <b>current tune only</b>.</p>

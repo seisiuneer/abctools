@@ -52,11 +52,11 @@
   gtag('config', 'G-VM0N9HL3MK');
 </script>
 
-<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20261009_0540" rel="stylesheet">
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20261009_0540"></script>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20261009_0540"></script>
-<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20261010_0240" rel="stylesheet">
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20261010_0240"></script>
+<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20261010_0240"></script>
+<script type="text/javascript" src="pako.min.js?cb=20261010_0240"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20261010_0240"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#b80054;--draw:#008762;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -357,16 +357,13 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 .tabOverridePopover{width:min(484px,calc(100vw - 24px));padding:12px;border:1px solid #aebbb4;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22)}
 .tabOverrideTop{margin-bottom:12px}
 .tabOverrideTitle{font-size:inherit;font-weight:700;line-height:normal}
-.tabOverrideHands,.tabOverrideHand,.tabOverrideHandTitle{display:none}
 .tabOverrideRows{display:grid;gap:6px}
 .tabOverrideRow{display:grid;grid-template-columns:repeat(5,34px) 30px repeat(5,34px);gap:6px;justify-content:center}
 .tabOverrideRow .tabOverrideRight:nth-child(6){grid-column:7}
 .tabOverrideKey{-webkit-appearance:none;appearance:none;box-sizing:border-box;min-width:34px;width:34px;height:34px;padding:3px 5px;border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;-webkit-text-fill-color:#17251d;font:600 15px/1 inherit;text-align:center;cursor:pointer}
-.tabOverrideKey:hover{background:#e4efe8;border-color:#789b87}
+.tabOverrideKey:not(:disabled):hover{background:#e4efe8;border-color:#789b87}
 .tabOverrideKey:active{background:#d5e7dc}
 .tabOverrideActions{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:430px;margin:10px auto 0;padding-top:0;border-top:0}
-.tabOverrideDirection{grid-column:2;display:flex;justify-content:center;gap:6px}
-.tabOverrideDirection .tabOverrideKey{width:auto;min-width:72px;height:34px;padding:3px 8px;font:600 15px/1 inherit;white-space:nowrap}
 .tabOverrideNav{grid-column:3;justify-self:end;display:flex;gap:8px}
 .tabOverrideNav button{-webkit-appearance:none;appearance:none;box-sizing:border-box;min-width:42px;width:42px;height:34px;padding:3px 8px;border:1px solid #aebbb4;border-radius:7px;background:#f7faf8;color:#17251d;-webkit-text-fill-color:#17251d;box-shadow:none;font:600 18px/1 inherit;text-align:center;cursor:pointer}
 .tabOverrideNav button:hover{background:#e4efe8;border-color:#789b87}
@@ -377,7 +374,6 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
  .tabOverridePopover{width:calc(100vw - 16px);padding:10px}
  .tabOverrideRow{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(34px,1.35fr) repeat(5,minmax(0,1fr));gap:4px}
  .tabOverrideKey{min-width:0;width:100%;height:32px;padding:2px;font-size:12px}
- .tabOverrideDirection .tabOverrideKey{width:auto;min-width:64px;height:32px;padding:2px 5px;font-size:12px}
  .tabOverrideNav{gap:4px}.tabOverrideNav button{min-width:36px;width:36px;height:32px;padding:2px 5px;font-size:16px}
 }
 
@@ -389,15 +385,12 @@ body.popoverDragging{user-select:none;-webkit-user-select:none}
 .tabOverrideRow{grid-template-columns:repeat(5,39px) 35px repeat(5,39px);gap:7px}
 .tabOverrideKey{min-width:39px;width:39px;height:39px;padding:3px 5px;font-size:17px}
 .tabOverrideActions{width:494px;margin-top:11px}
-.tabOverrideDirection{gap:7px}
-.tabOverrideDirection .tabOverrideKey{width:auto;min-width:83px;height:39px;padding:3px 9px;font-size:17px}
 .tabOverrideNav{gap:9px}
 .tabOverrideNav button{min-width:48px;width:48px;height:39px;padding:3px 9px;font-size:21px}
 @media(max-width:520px){
   .tabOverridePopover{width:calc(100vw - 16px)}
   .tabOverrideRow{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(39px,1.35fr) repeat(5,minmax(0,1fr));gap:4px}
   .tabOverrideKey{min-width:0;width:100%;height:37px;padding:2px;font-size:14px}
-  .tabOverrideDirection .tabOverrideKey{width:auto;min-width:74px;height:37px;padding:2px 6px;font-size:14px}
   .tabOverrideNav{gap:5px}
   .tabOverrideNav button{min-width:41px;width:41px;height:37px;padding:2px 6px;font-size:18px}
 }
@@ -942,8 +935,17 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   .diagramHeaderRight #diagramMeta{margin-right:12px}
   .diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto}
 }
+.tabOverridePopover .tabOverrideKey:disabled{opacity:.25;filter:grayscale(1);cursor:not-allowed;background:#e5e5e5;border-color:#c8c8c8;box-shadow:none}
+
+/* v3.17: pitch-matched single-click Anglo override choices. */
+.tabOverridePopover .tabOverrideKey:disabled{opacity:.25;filter:grayscale(1);cursor:not-allowed;background:#e5e5e5;border-color:#c8c8c8}
+.tabOverridePopover .tabOverrideKey.tabOverridePush:not(:disabled){background:#fbe5ed;border-color:#c87896;color:#86133f;-webkit-text-fill-color:#86133f}
+.tabOverridePopover .tabOverrideKey.tabOverrideDraw:not(:disabled){background:#ddf3e9;border-color:#69a992;color:#075c43;-webkit-text-fill-color:#075c43}
+.tabOverridePopover .tabOverrideKey.tabOverridePush:not(:disabled):hover{background:#f6cedd;border-color:#a83b65}
+.tabOverridePopover .tabOverrideKey.tabOverrideDraw:not(:disabled):hover{background:#c3e9d8;border-color:#34896d}
+.tabOverrideActions{display:flex;justify-content:flex-end;width:100%}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.16</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -969,10 +971,6 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div></div>
   <div class="tabOverrideRows" id="tabOverrideRows"></div>
   <div class="tabOverrideActions">
-    <div class="tabOverrideDirection">
-      <button type="button" class="tabOverrideKey" data-tab-char="↓" title="Push">Push ↓</button>
-      <button type="button" class="tabOverrideKey" data-tab-char="↑" title="Draw">Draw ↑</button>
-    </div>
     <span class="tabOverrideNav"><button type="button" id="tabPrevNote" aria-label="Previous note" title="Previous note">←</button><button type="button" id="tabNextNote" aria-label="Next note" title="Next note">→</button></span>
   </div>
 </div>
@@ -981,7 +979,6 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
 <div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: The settings in the top bar are locked for lessons and cannot be changed.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
-
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
@@ -994,7 +991,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Anglo concertina fingerings.</p>
       <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or Cross-Row fingering solutions.</p>
-      <p>Play tunes with synchronized notation highlighting and a fingering diagram that shows the required button and Push or Draw direction.</p>
+      <p>Play tunes with synchronized notation highlighting and a fingering diagram that shows the required button and <b>Push</b> or <b>Draw</b> direction.</p>
       <p>Edit the ABC directly, click rendered notes to locate them in the editor, and use manual tablature overrides when you want to specify particular fingerings.</p>
       <p>Load and work with multi-tune ABC collections, save your edited ABC, and create share links for one tune or the complete collection.</p>
       <p>Use the resizable workspace and optional full-page fingering diagram for practice on desktop and mobile browsers.</p>
@@ -1016,9 +1013,9 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
       <p>Select the <b>Concertina type</b> (Jeffries or Wheatstone) and <b>Fingering solution</b> (On-Row or Cross-Row).</p>
-      <p>The button for the playing note is highlighted on its upper half for Push or lower half for Draw.</p>
-      <p><b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>      
-      <p>The bellows-direction arrow points down for <b>Push</b> or up for <b>Draw</b>.</p>
+      <p>The button for the playing note is highlighted on its <b>Upper Half</b> for <b>Push</b> or <b>Lower Half</b> for <b>Draw</b>.</p>
+      <p><b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>.</p>      
+      <p>The bellows-direction arrow points <b>Down</b> for <b>Push</b> or <b>Up</b> for <b>Draw</b>.</p>
       <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:36px;margin:16px 0 18px" role="img" aria-label="Fixed Push and Draw button legend and labeled bellows-direction arrows">
         <svg width="110" height="110" viewBox="0 0 110 110" aria-hidden="true" style="display:block">
           <circle cx="55" cy="55" r="48" fill="#fff" stroke="#171717" stroke-width="2"/>
@@ -1081,9 +1078,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
  
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
-      <p>As each melody note plays, the notation cursor follows the tune and the
-        fingering diagram highlights the required concertina button.</p>
-      <p><b>Red</b> indicates Push and <b>green</b> indicates Draw.</p>
+      <p>As each melody note plays, the notation cursor follows the tune and the fingering diagram highlights the required concertina button.</p>
+      <p><b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>.</p>
       <p>Note names throughout the tool use sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>Check <b>Show note</b> in the Fingering Diagram header to display the current pitch as a quarter note on a staff centered below the bellows-direction arrow.</p>
       <p>Use <b>Mode</b> to choose <b>Show All</b> for an animated fingering display with all buttons fully visible, <b>Focus</b> to fade the button board while keeping the current button, highlight, note name, staff, and bellows direction fully visible, <b>Diagram Only</b> to see the labeled button layout and Push/Draw legend without note highlights, note names, note image, or bellows direction, or <b>Hide All</b> to hide the instrument display entirely. <b>Diagram Only</b> is useful for practicing with the button layout as a reference without seeing the fingering solutions.</p>
@@ -1138,19 +1134,11 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       </p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Advanced: Manual Tablature Overrides</p>
-      <p>Use <b>Tab Override</b> when you want a note to use a specific concertina button or bellows direction instead of its automatically calculated fingering.</p>
-      <p>Click a note in the notation, then click <b>Tab Override</b>.</p>
-      <p>The popover has three rows matching the concertina layout.</p>
-      <p>Each row has the five left-hand buttons on the left and the five right-hand buttons on the right, separated by a small gap. The top row contains the <b>*</b> buttons, the middle row contains buttons 1–5, and the bottom row contains buttons 6–10.</p>
-      <p>Click the button you want, then choose <b>Push ↓</b> or <b>Draw ↑</b> if you need to change the direction.</p>
-      <p>A newly selected button uses Push by default unless the note already has a Push or Draw override.</p>
-      <p>If the note already has a manual override, your choices change that override rather than adding another one.</p>
-      <p>Notes without overrides continue to use the automatically calculated fingering.</p>
-      <p>Use the <b>←</b> and <b>→</b> buttons to move through the notes while entering or reviewing fingerings.</p>
-      <p>The selected note is highlighted in the notation and its effective fingering is shown immediately on the main Fingering Diagram.</p>
-      <p>The Tab Override popover can be dragged to a convenient position and remembers that position while the tool remains open.</p>
-      <p>Manual overrides use the same ABC annotation format as <b>ABC Transcription Tools</b>, so existing valid tablature annotations are recognized automatically.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tab Override</p>
+      <p>To choose a different fingering, click a note in the notation and open <b>Tab Override</b>.</p>
+      <p>The buttons show the concertina layout. Available choices are colored <b>Red</b> for <b>Push</b> or <b>Green</b> for <b>Draw</b>; unavailable buttons are greyed out. Click an available button to set its fingering and bellows direction together.</p>
+      <p>Use <b>←</b> and <b>→</b> to move between notes. You can drag the popover to a convenient position.</p>
+      <p>Overrides are used when you click notes or play the tune, and are retained when you save or share the ABC.</p>
       <a class="helpFingeringImageLink" href="img/anglo-fingerings.jpg" target="_blank" rel="noopener noreferrer" title="Open fingering button-number diagram in a new tab">
         <img class="helpFingeringImage" src="img/anglo-fingerings.jpg" alt="Anglo concertina button-number diagram showing left-hand and right-hand button numbers and Push and Draw directions">
       </a>
@@ -2459,6 +2447,14 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     //
     // Generate Anglo Concertina Tablature
+    function angloNoteMidi(spelling){
+        var m=/^([_^=]?)([A-Ga-g])([,']*)$/.exec(String(spelling||""));
+        if(!m)return null;
+        var base={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+        var oct=m[2]===m[2].toLowerCase()?5:4;
+        for(var j=0;j<m[3].length;j++)oct+=m[3][j]==="'"?1:-1;
+        return (oct+1)*12+base[m[2].toUpperCase()]+(m[1]==="^"?1:m[1]==="_"?-1:0);
+    }
     window.solveAngloTune = function(abc, system, fingeringStyle) {
         gInjectTab_ConcertinaStyle = system === "wheatstone" ? 1 : 0;
         gInjectTab_ConcertinaFingering = fingeringStyle === "cross" ? 1 : 0;
@@ -2469,6 +2465,19 @@ var angloFingeringsGenerator = function (theABC, callback){
         if (keySignature == null) throw new Error("Unknown or unsupported key signature.");
         var notes = getAbcNotes(abc);
         var noteToButtonMap = generateNoteToButtonMap(buttonToNoteMap);
+        // Preserve the preferred existing spellings; use equivalent MIDI pitch
+        // only when a note has no direct spelling in the physical-button map.
+        var midiMap=Object.create(null);
+        for(var spelling in noteToButtonMap){
+            var midi=angloNoteMidi(spelling);
+            if(midi!=null && !midiMap[midi])midiMap[midi]=noteToButtonMap[spelling];
+        }
+        for(var ni=0;ni<notes.length;ni++){
+            var pitchName=notes[ni].normalizedValue;
+            if(noteToButtonMap[pitchName])continue;
+            var target=angloNoteMidi(pitchName);
+            if(target!=null&&midiMap[target])noteToButtonMap[pitchName]=midiMap[target];
+        }
         sortButtonMap(noteToButtonMap);
         var stateTree = generateStateTree(notes, noteToButtonMap);
         var path = chooseFingerings(stateTree);
@@ -2609,11 +2618,68 @@ function injectedTabBeforeNote(abc,noteIndex){
   const m=before.match(/"([^"\r\n]*)"[ \t]*$/);
   return m?parseInjectedConcertinaTab(m[1]):null;
 }
+// All override decisions use the resolved (key-signature/accidental-aware) note pitch.
+function overridePitch(item){return item?abcPitchToMidi(item.normalizedNote||item.abcNote):null}
+function overrideButtonPitch(button,direction){
+  const pair=mapFor($("system").value)[button];
+  return pair?abcPitchToMidi(pair[direction==="push"?0:1]):null;
+}
+function validOverridePair(item,button,direction){
+  const pitch=overridePitch(item);
+  return pitch!=null && (direction==="push"||direction==="draw") && overrideButtonPitch(button,direction)===pitch;
+}
+function overrideButtonId(symbol){
+  const m=String(symbol||"").match(/^(10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩⑪])(\*)?$/);
+  if(!m)return null;
+  const circled="①②③④⑤⑥⑦⑧⑨⑩⑪";
+  const n=circled.indexOf(m[1]);
+  return m[2]?(n>=0?"R"+(n+1)+"a":"L"+m[1]+"a"):(n>=0?"R"+(n+1):"L"+m[1]);
+}
+function selectedOverrideNote(){
+  const ta=$("abcText");if(!ta||!tunes.length)return null;
+  // The user must explicitly select a rendered note or navigate to one.
+  if(manualSelectedNoteStart==null)return null;
+  const pos=Number.isInteger(tabOverrideAnchorPos)?tabOverrideAnchorPos:ta.selectionStart;
+  const notePos=noteStartForEditorPosition(ta.value,pos);
+  if(notePos==null)return null;
+  // Re-resolve the note from the current ABC, since inserting directives or
+  // annotations changes all subsequent source offsets before rebuild finishes.
+  const current=window.solveAngloTune(stripChordSymbols(ta.value),$("system").value,$("style").value);
+  return current.find(x=>x.abcIndex===notePos)||null;
+}
+function existingOverrideChoice(item){
+  if(!item)return null;
+  const parsed=injectedTabBeforeNote($("abcText").value,item.abcIndex);
+  return parsed||null; // Existing annotations remain authoritative, even when pitch-incompatible.
+}
+// A single button choice determines both its physical button and bellows direction.
+function overrideDirectionForButton(item,button){
+  const push=validOverridePair(item,button,"push"),draw=validOverridePair(item,button,"draw");
+  if(!push&&!draw)return null;
+  if(push&&!draw)return "push";
+  if(draw&&!push)return "draw";
+  const existing=existingOverrideChoice(item);
+  if(existing&&existing.button===button&&(existing.direction==="push"||existing.direction==="draw"))return existing.direction;
+  const effective=solution.find(x=>x.abcIndex===item.abcIndex);
+  return effective&&effective.button===button&&effective.direction?effective.direction:"push";
+}
+function refreshTabOverrideIdling(){
+  const pop=$("tabOverridePopover");if(!pop)return;
+  const item=selectedOverrideNote();
+  for(const b of pop.querySelectorAll("[data-tab-button]")){
+    const id=overrideButtonId(b.dataset.tabButton);
+    const dir=id&&item?overrideDirectionForButton(item,id):null;
+    b.disabled=!dir;
+    b.classList.toggle("tabOverridePush",dir==="push");
+    b.classList.toggle("tabOverrideDraw",dir==="draw");
+    b.title=(b.title||"").replace(/ — (Push|Draw)$/,'')+(dir?" — "+(dir==="push"?"Push":"Draw"):"");
+  }
+}
 function applyInjectedTabOverrides(abc,automaticSolution){
   let count=0;
   for(const item of automaticSolution){
     const override=injectedTabBeforeNote(abc,item.abcIndex);
-    if(!override)continue;
+    if(!override)continue; // Preserve every recognizable user annotation as the source of truth.
     item.button=override.button;
     item.direction=override.direction;
     item.injectedTabOverride=true;
@@ -2973,22 +3039,58 @@ function removeCursor(){
 function recursiveStartChar(x){if(!x)return null;if(typeof x.startChar==="number")return x.startChar;if(x.dataset&&x.dataset.startChar&&!isNaN(+x.dataset.startChar))return +x.dataset.startChar;if(Array.isArray(x)){for(const y of x){const v=recursiveStartChar(y);if(v!=null)return v}}else if(typeof x==="object"){for(const k of ["elements","abselem","elemset","sourceElement"]){if(x[k]){const v=recursiveStartChar(x[k]);if(v!=null)return v}}}return null}
 function fingeringForEvent(event){
   if(!event)return null;
-  // An explicit empty midiPitches array is a non-note/rest playback event.
-  // Do not let the source-position fallback search forward into the next note.
   if(Array.isArray(event.midiPitches)&&event.midiPitches.length===0)return null;
-  // Use the source position from the exact same abcjs playback event that
-  // positions the notation cursor. There is no independent note counter.
-  let source=recursiveStartChar(event);
-  if(source==null)return null;
-  source-=prefixLength;
-  let item=solutionByIndex.get(source);
-  if(item)return item;
-  // abcjs can anchor the event on an accidental/decorator just before a note.
-  for(let d=1;d<=8;d++){
-    item=solutionByIndex.get(source+d);
-    if(item)return item;
+  const sourceStart=recursiveStartChar(event);
+  if(sourceStart==null)return null;
+  const abc=$("abcText").value;
+  const pos=sourceStart-prefixLength;
+  if(pos<0||pos>=abc.length)return null;
+
+  // Prefer the precise source note when abcjs supplies it. With injected
+  // annotations, some abcjs playback events instead start at the quotation
+  // (or even inside the quoted text) preceding the musical note.
+  const exact=solutionByIndex.get(pos);
+  if(exact)return exact;
+
+  // Locate the *musical note* belonging to this event without crossing a
+  // barline, another note, or a newline. In particular, recognize a position
+  // inside a quoted annotation and skip to its closing quote first.
+  let cursor=pos;
+  const lineStart=Math.max(abc.lastIndexOf("\n",pos-1),abc.lastIndexOf("\r",pos-1))+1;
+  let quoted=false;
+  for(let i=lineStart;i<cursor;i++)if(abc[i]==='"')quoted=!quoted;
+  if(quoted){
+    const close=abc.indexOf('"',cursor);
+    if(close<0||/[\r\n]/.test(abc.slice(cursor,close+1)))return null;
+    cursor=close+1;
   }
-  return null;
+  while(cursor<abc.length){
+    const ch=abc[cursor];
+    if(ch===" "||ch==="\t"){cursor++;continue}
+    if(ch==='"'){
+      const close=abc.indexOf('"',cursor+1);
+      if(close<0||/[\r\n]/.test(abc.slice(cursor,close+1)))break;
+      cursor=close+1;continue;
+    }
+    if(ch==="!"||ch==="+"){
+      const close=abc.indexOf(ch,cursor+1);
+      if(close<0||/[\r\n]/.test(abc.slice(cursor,close+1)))break;
+      cursor=close+1;continue;
+    }
+    if(ch==="^"||ch==="_"||ch==="="){
+      const accidental=ch;cursor++;
+      if((accidental==="^"||accidental==="_")&&abc[cursor]===accidental)cursor++;
+      continue;
+    }
+    break;
+  }
+  const direct=solutionByIndex.get(cursor);
+  if(direct)return direct;
+  // The solver indexes some notes at their pitch letter rather than their
+  // accidental. Resolve against complete ABC note tokens, never by guessing
+  // the nearest pitch or ignoring the octave.
+  const token=abcNoteTokens(abc).find(t=>t.start===cursor||t.pitch===cursor);
+  return token?(solutionByIndex.get(token.start)||solutionByIndex.get(token.pitch)||null):null;
 }
 function keepCursorVisible(event){
   if(!playbackCursor)return;
@@ -3542,164 +3644,35 @@ function normalizeTabOverrideContent(content){
 
 function insertTabOverrideCharacter(ch){
   const ta=$("abcText");if(!ta||ta.disabled)return;
-  const buttonChoice=/^((?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩]))(\*)?$/.exec(ch);
-  const chosenButton=buttonChoice?buttonChoice[1]:null;
-  const chosenTopRow=!!(buttonChoice&&buttonChoice[2]);
-
-  // Restore the exact location captured when Tab Override was opened. This
-  // avoids browser-dependent selection changes when a palette button gets focus.
+  const item=selectedOverrideNote();
+  const button=overrideButtonId(ch);
+  const direction=button&&item?overrideDirectionForButton(item,button):null;
+  if(!direction)return;
   if(Number.isInteger(tabOverrideAnchorPos)){
-    const p=Math.max(0,Math.min(tabOverrideAnchorPos,ta.value.length));
-    ta.setSelectionRange(p,p);
+    const pos=Math.max(0,Math.min(tabOverrideAnchorPos,ta.value.length));
+    ta.setSelectionRange(pos,pos);
   }
-
-  // If directives are inserted above the cursor, this routine adjusts the
-  // textarea selection so it continues to point at the same musical note.
   ensureManualTabDirectives();
-
-  let start=ta.selectionStart??0,end=ta.selectionEnd??start,value=ta.value;
-
-  // A browser/abcjs cursor may land on the pitch letter, after the pitch letter,
-  // or among octave/length suffix characters. Normalize any such position to
-  // the beginning of the complete ABC note token so an override is always
-  // inserted BEFORE accidentals and never inside a note's suffix.
-  if(start===end){
-    // Resolve horizontal whitespace first. noteTokenAtPosition() deliberately
-    // accepts a token's trailing edge as an abcjs/browser fallback, but at the
-    // first space after a note that would otherwise incorrectly select the
-    // PREVIOUS note instead of the following note.
-    let token=/[ \t]/.test(value[start]||"")
-      ? nextNoteAfterHorizontalWhitespace(value,start)
-      : noteTokenAtPosition(value,start);
-    if(!token)token=nextNoteAfterHorizontalWhitespace(value,start);
-    if(token){
-      start=token.start;
-      end=token.start;
-      ta.setSelectionRange(start,end);
-    }
-  }
-
-  let annotation=start===end?quotedAnnotationAtCursor(value,start):null;
-
-  // In the click-note -> Tab Override workflow the cursor is exactly at the
-  // beginning of the note, so first look directly behind that note for an
-  // already attached tab annotation.
-  if(!annotation && start===end)annotation=tabAnnotationForNote(value,start);
-
-  // Opening Tab Override after clicking a rendered note collapses the ABC
-  // selection to the start of that note. In that state the cursor is not
-  // inside a preceding tab annotation, so explicitly look for a valid tab
-  // annotation already attached to the note at the cursor. This ensures a
-  // palette choice edits that annotation instead of inserting a duplicate.
-  if(!annotation && start===end){
-    // The cursor can be at the start of the note token OR, for accidentals and
-    // abcjs source ranges, somewhere within the note token. Find the note whose
-    // token contains the cursor, then resolve any valid annotation attached to it.
-    const notes=abcNoteStarts(value);
-    let noteAtCursor=notes.find(n=>n===start);
-    if(noteAtCursor===undefined){
-      noteAtCursor=notes.slice().reverse().find(n=>{
-        if(n>start)return false;
-        let e=n;
-        while(value[e]==="^"||value[e]==="_"||value[e]==="=")e++;
-        if(/[A-Ga-g]/.test(value[e]||"")){
-          e++;
-          while(/[',0-9/]/.test(value[e]||""))e++;
-        }
-        return start>=n && start<=e;
-      });
-    }
-    if(noteAtCursor!==undefined)annotation=tabAnnotationForNote(value,noteAtCursor);
-  }
-
-  if(annotation){
-    let content=value.slice(annotation.start,annotation.end);
-    let rel=Math.max(0,Math.min(start-annotation.start,content.length));
-
-    // Button identity is one semantic field. Clicking any plain or circled
-    // number replaces an existing button number instead of accumulating one.
-    const isNumber=!!buttonChoice;
-    const isArrow=ch==="↓"||ch==="↑";
-    if(isNumber){
-      const re=/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/g;
-      const matches=[...content.matchAll(re)];
-      if(matches.length){
-        const hit=matches[0],a=hit.index,b=a+hit[0].length;
-        content=content.slice(0,a)+chosenButton+content.slice(b);
-        rel=a+chosenButton.length;
-      }else{
-        content=content.slice(0,rel)+chosenButton+content.slice(rel);
-        rel+=chosenButton.length;
-      }
-      // The physical top-row choice owns the * state: top-row buttons add it,
-      // normal-row buttons remove it.
-      content=content.replace(/\*/g,"");
-      const button=content.match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/);
-      if(chosenTopRow&&button){
-        const pos=button.index+button[0].length;
-        content=content.slice(0,pos)+"*"+content.slice(pos);
-        rel=pos+1;
-      }
-      // A newly selected button defaults to Push when no direction exists.
-      if(!/[↓↑]/.test(content))content+="↓";
-    }else if(isArrow){
-      const idx=Math.max(content.indexOf("↓"),content.indexOf("↑"));
-      if(idx>=0){
-        content=content.slice(0,idx)+ch+content.slice(idx+1);
-        rel=idx+ch.length;
-      }else{
-        content=content.slice(0,rel)+ch+content.slice(rel);
-        rel+=ch.length;
-      }
-    }else if(ch==="*"){
-      // Toggle the top-row marker. When present it always belongs immediately
-      // after the button number.
-      if(content.includes("*")){
-        const star=content.indexOf("*");
-        content=content.replace(/\*/g,"");
-        rel=Math.min(star,content.length);
-      }else{
-        const button=content.match(/(?:10|[1-9]|[①②③④⑤⑥⑦⑧⑨⑩])/);
-        if(button){
-          const pos=button.index+button[0].length;
-          content=content.slice(0,pos)+"*"+content.slice(pos);
-          rel=pos+1;
-        }else{
-          content=content.slice(0,rel)+"*"+content.slice(rel);
-          rel+=1;
-        }
-      }
-    }else{
-      content=content.slice(0,rel)+ch+content.slice(rel);
-      rel+=ch.length;
-    }
-    // Canonical injected-tab order is always:
-    // _ + button number + optional * + ; + Push/Draw arrow.
-    content=normalizeTabOverrideContent(content);
-    const semicolon=content.indexOf(";");
-    if(isNumber||ch==="*")rel=semicolon>=0?semicolon:content.length;
-    else if(isArrow)rel=content.length;
-    else rel=Math.min(rel,content.length);
-    ta.setRangeText(content,annotation.start,annotation.end,"end");
-    const newPos=annotation.start+rel;
-    ta.setSelectionRange(newPos,newPos);
-  }else{
-    const isNumber=!!buttonChoice;
-    const initialContent=normalizeTabOverrideContent("_"+(isNumber?chosenButton+(chosenTopRow?"*":""):ch)+(isNumber?";↓":""));
-    const insert='"'+initialContent+'"';
-    ta.setRangeText(insert,start,end,"end");
-    const semicolon=initialContent.indexOf(";");
-    const newPos=start+1+(semicolon>=0?semicolon:initialContent.length);
-    ta.setSelectionRange(newPos,newPos);
-  }
-
+  const value=ta.value;
+  const note=noteTokenAtPosition(value,ta.selectionStart);
+  const notePos=note?note.start:noteStartForEditorPosition(value,ta.selectionStart);
+  if(notePos==null)return;
+  const old=tabAnnotationForNote(value,notePos);
+  const annotation='"_'+ch+';'+(direction==="push"?'↓':'↑')+'"';
+  if(old){
+    // Replace the complete annotation, preserving the original placement marker.
+    const existing=value.slice(old.start,old.end);
+    const prefix=existing.trim().startsWith('^')?'^':'_';
+    const newAnnotation='"'+prefix+ch+';'+(direction==="push"?'↓':'↑')+'"';
+    ta.setRangeText(newAnnotation,old.start-1,old.end+1,'end');
+  }else ta.setRangeText(annotation,notePos,notePos,'end');
+  const newNotePos=abcNoteStarts(ta.value).find(n=>n>=Math.max(0,notePos-1));
+  tabOverrideAnchorPos=Number.isInteger(newNotePos)?newNotePos:null;
+  manualSelectedNoteStart=tabOverrideAnchorPos;
+  if(tabOverrideAnchorPos!=null)ta.setSelectionRange(tabOverrideAnchorPos,tabOverrideAnchorPos);
   ta.focus({preventScroll:true});
-  // After the first palette action, the cursor inside the annotation becomes
-  // authoritative for subsequent palette actions.
-  tabOverrideAnchorPos=null;
-  manualSelectedNoteStart=noteStartForEditorPosition(ta.value,ta.selectionStart??0);
-  setAbcDirty(true);
-  syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons();
+  setAbcDirty(true);syncCurrentTuneFromEditor();scheduleRebuild();updateShareButtons();
+  refreshTabOverrideIdling();
 }
 
 function clampPopoverToViewport(pop){
@@ -3770,6 +3743,7 @@ function toggleTabOverridePopover(){
     }
   }
   pop.hidden=!pop.hidden;
+  if(!pop.hidden)refreshTabOverrideIdling();
   // Once dragged, preserve this popover's position for the rest of this page use.
   // No localStorage persistence is intentional.
   if(!pop.hidden&&!pop.dataset.dragged)requestAnimationFrame(positionTabOverridePopover);
@@ -3868,7 +3842,7 @@ function noteTokenAtPosition(value,pos){
   return tokens.find(t=>pos===t.end) || null;
 }
 function tabAnnotationForNote(value,notePos){
-  // Find a valid quoted tab annotation immediately before this note, allowing
+  // Find an existing recognizable tab annotation immediately before this note, allowing
   // horizontal whitespace between the closing quote and the note.
   let close=notePos-1;
   while(close>=0&&/[ \t]/.test(value[close]))close--;
@@ -3918,6 +3892,7 @@ function moveTabOverrideToNote(direction){
   // Previous/Next is also a manual fingering browser: highlight the destination
   // note in the rendered notation and show its effective fingering immediately.
   showManualFingeringForNote(target,true);
+  tabOverrideAnchorPos=target;refreshTabOverrideIdling();
 }
 
 function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style;}catch(_){}}
@@ -4332,9 +4307,9 @@ makePopoverDraggable($("tabOverridePopover"),$("tabOverridePopover").querySelect
 $("tabOverrideBtn").addEventListener("click",e=>{e.stopPropagation();toggleTabOverridePopover()});
 $("tabOverridePopover").addEventListener("click",e=>{
   const button=e.target.closest("[data-tab-button]");
-  if(button){e.preventDefault();insertTabOverrideCharacter(button.dataset.tabButton);return}
+  if(button){e.preventDefault();if(!button.disabled)insertTabOverrideCharacter(button.dataset.tabButton);return}
   const key=e.target.closest("[data-tab-char]");
-  if(key){e.preventDefault();insertTabOverrideCharacter(key.dataset.tabChar)}
+  if(key){e.preventDefault();if(!key.disabled)insertTabOverrideCharacter(key.dataset.tabChar)}
 });
 document.addEventListener("pointerdown",e=>{
   const pop=$("tabOverridePopover");
