@@ -349,6 +349,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
   line-height:1.55 !important;
 }
 
+.tabOverrideNoteName{position:absolute;left:50%;transform:translateX(-50%);font-size:20px;font-weight:700;line-height:1.2;color:#17241c;min-width:0;white-space:nowrap;pointer-events:none}
 /* Draggable Tab Override popover. */
 .tabOverrideTop{cursor:move;user-select:none;-webkit-user-select:none}
 body.popoverDragging{user-select:none;-webkit-user-select:none}
@@ -940,7 +941,8 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 .tabOverridePopover{width:min(590px,calc(100vw - 16px))}
 .tabOverrideRow.boxTabOverrideRow{display:flex;justify-content:center;gap:5px;grid-template-columns:none}
 .boxTabOverrideRow .tabOverrideKey{flex:0 1 46px;min-width:0;width:46px;height:42px;padding:2px;font-size:18px}
-.tabOverrideActions{width:100%;max-width:540px;display:flex;justify-content:flex-end}
+.tabOverrideActions{width:100%;max-width:540px;display:flex;justify-content:space-between;align-items:center}
+.tabOverrideActions{position:relative;justify-content:flex-end}
 @media(max-width:650px){.boxTabOverrideRow .tabOverrideKey{flex:1 1 0;width:auto;height:34px;font-size:clamp(10px,2.8vw,16px)}.tabOverridePopover{padding:8px}.tabOverrideActions{width:100%}}
 .tabOverridePopover .tabOverrideKey:disabled{opacity:.25;filter:grayscale(1);cursor:not-allowed;background:#e5e5e5;border-color:#c8c8c8;box-shadow:none}
 /* Pitch-valid choices are tinted by their automatically determined bellows direction. */
@@ -949,7 +951,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 .tabOverridePopover .tabOverrideKey.tabOverridePush:not(:disabled):hover{background:#f6cedd;border-color:#a83b65}
 .tabOverridePopover .tabOverrideKey.tabOverrideDraw:not(:disabled):hover{background:#c3e9d8;border-color:#34896d}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
+<header class="app-header"><div class="version">Version 3.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Tuning</label><select id="system"><option value="bc">B/C</option><option value="cd">C#/D</option></select></div>
@@ -973,6 +975,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div></div>
   <div class="tabOverrideRows" id="tabOverrideRows"></div>
   <div class="tabOverrideActions">
+    <span id="tabOverrideNoteName" class="tabOverrideNoteName" aria-live="polite"></span>
     <span class="tabOverrideNav"><button type="button" id="tabPrevNote" aria-label="Previous note" title="Previous note">←</button><button type="button" id="tabNextNote" aria-label="Next note" title="Next note">→</button></span>
   </div>
 </div>
@@ -2166,6 +2169,7 @@ function overrideDirectionForButton(item,button){
 function refreshTabOverrideIdling(){
   const pop=$("tabOverridePopover");if(!pop)return;
   const item=selectedOverrideNote();
+  $("tabOverrideNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):"";
   for(const b of pop.querySelectorAll("[data-tab-button]")){
     const button=overrideButtonId(b.dataset.tabButton);
     const direction=overrideDirectionForButton(item,button);

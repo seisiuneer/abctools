@@ -349,6 +349,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
   line-height:1.55 !important;
 }
 
+.tabOverrideNoteName{position:absolute;left:50%;transform:translateX(-50%);font-size:20px;font-weight:700;line-height:1.2;color:#17241c;min-width:0;white-space:nowrap;pointer-events:none}
 /* Draggable Tab Override popover. */
 .tabOverrideTop{cursor:move;user-select:none;-webkit-user-select:none}
 body.popoverDragging{user-select:none;-webkit-user-select:none}
@@ -943,9 +944,10 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 .tabOverridePopover .tabOverrideKey.tabOverrideDraw:not(:disabled){background:#ddf3e9;border-color:#69a992;color:#075c43;-webkit-text-fill-color:#075c43}
 .tabOverridePopover .tabOverrideKey.tabOverridePush:not(:disabled):hover{background:#f6cedd;border-color:#a83b65}
 .tabOverridePopover .tabOverrideKey.tabOverrideDraw:not(:disabled):hover{background:#c3e9d8;border-color:#34896d}
-.tabOverrideActions{display:flex;justify-content:flex-end;width:100%}
+.tabOverrideActions{display:flex;justify-content:space-between;align-items:center;width:100%}
+.tabOverrideActions{position:relative;justify-content:flex-end}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -971,6 +973,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <div class="tabOverrideTop"><div class="tabOverrideTitle">Tab Override</div></div>
   <div class="tabOverrideRows" id="tabOverrideRows"></div>
   <div class="tabOverrideActions">
+    <span id="tabOverrideNoteName" class="tabOverrideNoteName" aria-live="polite"></span>
     <span class="tabOverrideNav"><button type="button" id="tabPrevNote" aria-label="Previous note" title="Previous note">←</button><button type="button" id="tabNextNote" aria-label="Next note" title="Next note">→</button></span>
   </div>
 </div>
@@ -2666,6 +2669,7 @@ function overrideDirectionForButton(item,button){
 function refreshTabOverrideIdling(){
   const pop=$("tabOverridePopover");if(!pop)return;
   const item=selectedOverrideNote();
+  $("tabOverrideNoteName").textContent=item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
   for(const b of pop.querySelectorAll("[data-tab-button]")){
     const id=overrideButtonId(b.dataset.tabButton);
     const dir=id&&item?overrideDirectionForButton(item,id):null;
