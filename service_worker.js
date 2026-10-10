@@ -5,22 +5,14 @@
 //
 //
 //
-//
-//
-//
-//
 // Updated 9 Oct 2026 1000
 //
 //
 //
 //
 //
-//
-//
-//
-//
 
-const cacheName = 'abctoolscache-3354';
+const cacheName = 'abctoolscache-3355';
 
 const contentToCache = [
     'abctools.html',
@@ -110,6 +102,8 @@ const contentToCache = [
     'img/tool-abc-fretboard-player-1.jpg',
     'img/tool-abc-box-1.jpg',
     'img/tool-abc-harmonica-player-1.jpg',
+    'img/tool-abc-recorder-player-1.jpg',
+    'img/tool-abc-tremolo-harmonica-player-1.jpg',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',

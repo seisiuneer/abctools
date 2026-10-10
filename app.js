@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3354_100926_1000";
+var gVersionNumber = "3355_101026_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31394,13 +31394,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_9Oct2026;
+        var updatePresented = localStorage.sawUpdate_10Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_9Oct2026 = true;
+          localStorage.sawUpdate_10Oct2026 = true;
 
         }
 
@@ -60930,7 +60930,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 10 October 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">New Tools Added to <strong>Open ABC in External Tool</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Recorder Fingering Player</strong> and <strong>ABC Tremolo Harmonica Player</strong> tools have been added to the <strong>Open ABC in External Tool</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">You can send either the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new tools.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60939,13 +60947,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">Enhanced <strong>Note Names, Shape Notes &amp; Solfège Injection</strong></p>';
   modal_msg += '<p style="font-size:12pt;">The <strong>Note Names / Shape Notes / Solfège Injector</strong> now supports placing text annotations <strong>above or below the staff</strong>, improved chord handling, and automatic replacement of previously injected tablature and shape-note annotations.</p>';
   modal_msg += '<p style="font-size:12pt;">Also includes corrected <strong>Do-based and La-based minor Solfège</strong> behavior.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>ABC Irish Button Box Fingering Player</strong> added to Open ABC in External Tool</p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Recorder Fingering Player</strong> has been removed from the <strong>Open ABC in External Tool</strong> dialog and replaced by the <strong>ABC Irish Button Box Fingering Player</strong>. You can send either the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new player.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67860,13 +67861,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_9Oct2026;
+    var updatePresented = localStorage.sawUpdate_10Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_9Oct2026 = true;
+      localStorage.sawUpdate_10Oct2026 = true;
 
     }
 
@@ -71402,6 +71403,57 @@ function OpenInABCJSEskinWebsiteBuilder(abcText,isFromPlayer){
   }
 }
 
+// Both players use the same single-tune share and full-editor postMessage protocol.
+function OpenInAdditionalFingeringPlayer(abcText, isFromPlayer, name, url, analyticsEvent){
+  sendGoogleAnalytics("action", analyticsEvent);
+  if (isFromPlayer){
+    abcText = AggregateABCFileHeaderForShare(abcText);
+    var deflated = pako.deflate(new TextEncoder().encode(abcText), {level: 6});
+    var shareURL = url + "?def=" + def_bytesToBase64URL(deflated);
+    if (shareURL.length < 8100) window.open(shareURL);
+    else DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ' + name + '.</p>', {theme:"modal_flat",top:230,scrollWithPage:AllowDialogsToScroll()});
+    return;
+  }
+  if (!gAllowWebExport) return;
+  var fullABC = getABCEditorText();
+  function warn(message){ DayPilot.Modal.alert('<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>', {theme:"modal_flat",top:150,width:620,scrollWithPage:AllowDialogsToScroll()}); }
+  if (!fullABC || !/^\s*X\s*:/m.test(fullABC)){warn('There are no ABC tunes in the editor to send to the ' + name + '.');return;}
+  if (!isRunningFromOfficialMichaeleskinDomain()){warn('Direct ABC transfer to the ' + name + ' is only available from the official online version at https://michaeleskin.com. Save the ABC file and open it manually in the player instead.');return;}
+  if (!navigator.onLine){warn('The ' + name + ' is not available while offline.');return;}
+  var targetOrigin = new URL(url).origin;
+  var messageId = 'abctools-external-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  var win, acknowledged = false, ready = false, attempted = false, finished = false;
+  var timers = [];
+  function cleanup(){window.removeEventListener('message', onMessage);timers.forEach(function(t){clearTimeout(t);clearInterval(t);});timers=[];}
+  function fail(message){if(finished)return;finished=true;cleanup();warn(message + ' If the tunes are not visible, use the player’s Open ABC file control instead.');}
+  var sourceName = 'ABC Transcription Tools' + ((typeof gDisplayedName === 'string' && gDisplayedName.trim()) ? ' - ' + gDisplayedName.trim() : '');
+  function send(){
+    if(finished || acknowledged)return;
+    if(!win || win.closed){fail('The ' + name + ' window was closed before transfer completed.');return;}
+    try{attempted=true;win.postMessage({type:'abcjsEskinWebsiteBuilderLoadABC',messageId:messageId,abc:fullABC,sourceName:sourceName,replaceExisting:true},targetOrigin);}
+    catch(e){console.error('ABC transfer failed:',e);fail('Could not send ABC to the ' + name + '.');}
+  }
+  function onMessage(event){
+    if(!win || event.source !== win || event.origin !== targetOrigin)return;
+    var data=event.data || {};
+    if(data.type === 'abcjsEskinWebsiteBuilderReady'){ready=true;send();}
+    if(data.type === 'abcjsEskinWebsiteBuilderABCLoaded' && data.messageId === messageId){acknowledged=true;finished=true;cleanup();}
+  }
+  window.addEventListener('message',onMessage);
+  win=window.open(url + '?cb=' + encodeURIComponent(String(Date.now())),'_blank');
+  if(!win){fail('The ' + name + ' window was blocked by the browser. Please allow popups.');return;}
+  [1200,2400,4200].forEach(function(delay){timers.push(setTimeout(send,delay));});
+  timers.push(setInterval(function(){if(win && win.closed && !acknowledged)fail('The ' + name + ' window was closed before confirmation.');},1000));
+  timers.push(setTimeout(function(){if(!acknowledged)fail(!ready ? 'The ' + name + ' did not send its ready message.' : attempted ? 'The ' + name + ' did not confirm the ABC was loaded.' : 'The transfer to the ' + name + ' could not be completed.');},15000));
+}
+
+function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
+  OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Recorder Fingering Player','https://michaeleskin.com/tools/abc-recorder-fingering-player.html','OpenInABCRecorderFingeringPlayer');
+}
+function OpenInABCTremoloHarmonicaPlayer(abcText,isFromPlayer){
+  OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Tremolo Harmonica Player','https://michaeleskin.com/tools/abc-tremolo-harmonica-player.html','OpenInABCTremoloHarmonicaPlayer');
+}
+
 function openInExternalTool(theABC, isFromPlayer){
 
   var toolCard = function(id, src, title, alt, label){
@@ -71427,13 +71479,15 @@ function openInExternalTool(theABC, isFromPlayer){
         '<button id="external_tools_tab_abc" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-radius:4px 0 0 4px;background:#1b3f8b;color:white;font-size:12pt;cursor:pointer;">Michael\'s Tools</button>' +
         '<button id="external_tools_tab_other" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-left:0;border-radius:0 4px 4px 0;background:#eee;color:black;font-size:12pt;cursor:pointer;">3rd-Party Tools</button>' +
       '</div>' +
-      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:196px 196px 196px;column-gap:32px;row-gap:8px;justify-content:center;">' +
+      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:repeat(4,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
         toolCard('external_chord_chart', 'img/tool_chordchart_other_1.jpg', 'Open the ABC in the ABC Chord Chart Generator', 'ABC Chord Chart Generator', 'ABC Chord Chart Generator') +
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
         toolCard('external_tin_whistle', 'img/tool-abc-tin-whistle-player-1.jpg', 'Open the ABC in the ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player') +
         toolCard('external_irish_box', 'img/tool-abc-box-1.jpg', 'Open the ABC in the ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player') +
         toolCard('external_anglo_concertina', 'img/tool-abc-anglo-player-1.jpg', 'Open the ABC in the ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player') +
         toolCard('external_harmonica_player', 'img/tool-abc-harmonica-player-1.jpg', 'Open the ABC in the ABC Harmonica Player', 'ABC Harmonica Player', 'ABC Harmonica Player') +
+        toolCard('external_recorder_player', 'img/tool-abc-recorder-player-1.jpg', 'Open the ABC in the ABC Recorder Fingering Player', 'ABC Recorder Fingering Player', 'ABC Recorder Fingering Player') +
+        toolCard('external_tremolo_player', 'img/tool-abc-tremolo-harmonica-player-1.jpg', 'Open the ABC in the ABC Tremolo Harmonica Player', 'ABC Tremolo Harmonica Player', 'ABC Tremolo Harmonica Player') +
       '</div>' +
       '<div id="external_tools_panel_other" style="display:none;grid-template-columns:310px 310px;grid-template-rows:196px 196px 196px;column-gap:32px;row-gap:8px;justify-content:center;">' +
         toolCard('external_abc_encoder', 'img/abcencoderlogo.jpg', 'Export the tunes to Anton Zille\'s ABC Encoder for auto-formatting headers and sorting sets of tunes or ABC collections', 'N.S.S.S. ABC Encoder', 'N.S.S.S. ABC Encoder') +
@@ -71495,6 +71549,12 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_irish_box");
   if (elem) elem.onclick = function(){ OpenInABCIrishButtonBoxFingeringPlayer(theABC,isFromPlayer); };
+
+  elem = document.getElementById("external_recorder_player");
+  if (elem) elem.onclick = function(){ OpenInABCRecorderFingeringPlayer(theABC,isFromPlayer); };
+
+  elem = document.getElementById("external_tremolo_player");
+  if (elem) elem.onclick = function(){ OpenInABCTremoloHarmonicaPlayer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_harmonica_player");
   if (elem) elem.onclick = function(){ OpenInABCHarmonicaPlayer(theABC,isFromPlayer); };
