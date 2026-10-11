@@ -970,8 +970,17 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 #tabModal #tabCloseBtn{appearance:none;-webkit-appearance:none;border:1px solid #aebbb3;border-radius:6px;background:#f5f6f5;color:#17241c;-webkit-text-fill-color:#17241c;text-decoration:none;font:600 14px/1.2 inherit;padding:9px 22px;min-width:100px;cursor:pointer}
 #tabModal #tabCloseBtn:hover{background:#e4e8e5;border-color:#81968a}
 
+
+/* Previous/next ABC note controls. */
+.diagramNoteNavigation{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:24px;padding:8px 10px;height:56px;box-sizing:border-box;border-top:1px solid var(--border);background:#fff}
+.diagramNoteNavigation .paneFullBtn{height:38px;min-width:64px;padding:8px 18px;font-size:16px;line-height:20px;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;cursor:pointer;color:#17241c}
+.diagramNoteNavigation .paneFullBtn:disabled{opacity:.45;cursor:default}
+.diagramNoteNavigation .paneFullBtn:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
+
+/* Full-page navigation: center the buttons without pushing them outside the strip. */
+body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -987,7 +996,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div><div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1089,6 +1098,7 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
       <p>Medium is the default,
         and the selection is saved in this browser.</p>
 
+      <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing the Panels</p>
       <p>
@@ -4725,4 +4735,17 @@ setupLessonMode();installUnifiedSharing();
   }
 })();
 
+
+// Instrument-panel arrows reuse the Tab Override note navigation.
+function refreshInstrumentNoteButtons(){
+  const enabled=abcNoteStarts($("abcText").value).length>0;
+  $("abcPrevNoteBtn").disabled=!enabled;$("abcNextNoteBtn").disabled=!enabled;
+}
+$("abcPrevNoteBtn").addEventListener("click",()=>moveTabOverrideToNote(-1));
+$("abcNextNoteBtn").addEventListener("click",()=>moveTabOverrideToNote(1));
+$("abcText").addEventListener("input",refreshInstrumentNoteButtons);
+$("abcText").addEventListener("change",refreshInstrumentNoteButtons);
+$("abcText").addEventListener("keyup",refreshInstrumentNoteButtons);
+new MutationObserver(refreshInstrumentNoteButtons).observe($("abcText"),{attributes:true});
+setInterval(refreshInstrumentNoteButtons,700);
 </script></body></html>

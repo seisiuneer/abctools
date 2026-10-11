@@ -1267,8 +1267,17 @@ body.lessonMode .toolbar select:disabled{
 
 /* Hide practice mode: blank the complete instrument pane without disturbing notation or playback. */
 .diagramCard.hideFingerings .diagramWrap > *{visibility:hidden!important}
+
+/* Previous/next ABC note controls. */
+.diagramNoteNavigation{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:24px;padding:8px 10px;height:56px;box-sizing:border-box;border-top:1px solid var(--border);background:#fff}
+.diagramNoteNavigation .paneFullBtn{height:38px;min-width:64px;padding:8px 18px;font-size:16px;line-height:20px;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;cursor:pointer;color:#17241c}
+.diagramNoteNavigation .paneFullBtn:disabled{opacity:.45;cursor:default}
+.diagramNoteNavigation .paneFullBtn:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
+
+/* Full-page navigation: center the buttons without pushing them outside the strip. */
+body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.02</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1292,7 +1301,7 @@ body.lessonMode .toolbar select:disabled{
    </div>
    <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
   </div>
- </section>
+ <div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1338,6 +1347,7 @@ body.lessonMode .toolbar select:disabled{
       <p>Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
+      <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
       <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard.</p>
@@ -3076,6 +3086,7 @@ async function rebuild(){
     }
 
     const visual=ABCJS.renderAbc("notation",playbackABC,renderParams);
+    instrumentNavVisual=visual&&visual[0]||null;
     if(gen!==renderGeneration)return;
     if(!visual||!visual.length)throw new Error("No notation was rendered.");
 
@@ -4022,5 +4033,43 @@ bootstrapLessonConfig();
 setupLessonMode();
 installUnifiedSharing();
 
+
+// Note navigation uses existing notation-click selection and pitch display logic.
+let instrumentNavAnchor=null;
+let instrumentNavVisual=null;
+function instrumentNavTokens(){return abcNoteTokens($("abcText").value)}
+function refreshInstrumentNoteButtons(){
+ const enabled=instrumentNavTokens().length>0;
+ $("abcPrevNoteBtn").disabled=!enabled;$("abcNextNoteBtn").disabled=!enabled;
+}
+function moveInstrumentNote(direction){
+ const ta=$("abcText"),tokens=instrumentNavTokens();if(!tokens.length)return;
+ const pos=ta.selectionStart??0;
+ let current=tokens.findIndex(t=>t.start===instrumentNavAnchor);
+ if(current<0||!(pos>=tokens[current].start&&pos<=tokens[current].end)){
+   current=tokens.findIndex(t=>pos>=t.start&&pos<=t.end);
+   if(current<0)current=direction>0?tokens.findIndex(t=>t.start>=pos):tokens.findLastIndex(t=>t.start<pos);
+   if(current<0)current=direction>0?-1:tokens.length;
+ }
+ const target=tokens[current+direction];if(!target)return;
+ instrumentNavAnchor=target.start;
+ if(instrumentNavVisual?.engraver?.rangeHighlight){
+   try{instrumentNavVisual.engraver.rangeHighlight(target.start+prefixLength,target.end+prefixLength)}catch(_){ }
+ }
+ ta.focus({preventScroll:true});ta.setSelectionRange(target.start,target.end);
+ const line=ta.value.slice(0,target.start).split(/\r?\n/).length-1;
+ const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;
+ ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
+ let midi=clickedNotationMidi(target);
+ if(midi!=null){
+   if($("instrumentSelect")&&["guitar","guitar-dadgad"].includes($("instrumentSelect").value))midi-=12;
+   showWhistleLive(midi);
+ }
+}
+$("abcPrevNoteBtn").addEventListener("click",()=>moveInstrumentNote(-1));
+$("abcNextNoteBtn").addEventListener("click",()=>moveInstrumentNote(1));
+$("abcText").addEventListener("input",()=>{instrumentNavAnchor=null;refreshInstrumentNoteButtons()});
+$("abcText").addEventListener("click",()=>{instrumentNavAnchor=null});
+setInterval(refreshInstrumentNoteButtons,700);
 </script>
 </body></html>
