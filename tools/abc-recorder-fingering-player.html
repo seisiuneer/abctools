@@ -986,7 +986,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 #notationPanel #showAllFingeringsBtn{white-space:normal;max-width:115px;text-align:center}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="recorder-tab" selected>Notation + Recorder Tab</option></select></div>
@@ -3848,10 +3848,13 @@ async function printCurrentTuneFingerings(){
     return `<section class="staffrow">${positioned}</section>`;
   }).join('');
   const title=esc((abc.match(/^T:\s*(.*)$/m)||[])[1]||'Untitled Tune');
+  const recorderInfo=recorderInstrumentInfo();
+  const recorderSubtitle=esc(`${recorderInfo.alto?'Alto':'Soprano'} Recorder — ${recorderInfo.german?'German':'Baroque'} Fingering`);
   const fontRule=PRINT_FONT;
   const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title} — Fingerings</title><style>
     @page{size:auto;margin:13mm 12mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#111;margin:0}
-    h1{text-align:center;font-size:20pt;font-weight:600;margin:0 0 13mm}
+    h1{text-align:center;font-size:20pt;font-weight:600;margin:0 0 4mm}
+    .chartSubtitle{text-align:center;font-size:12pt;font-weight:400;color:#555;margin:0 0 10mm}
     .staffrow{position:relative;height:${PRINT_ROW_HEIGHT};margin:0 0 5mm;break-inside:avoid;page-break-inside:avoid}
     .symbol{position:absolute;top:8mm;transform:translateX(-50%);text-align:center;white-space:nowrap}
     .bar{position:absolute;top:7mm;height:${PRINT_BAR_HEIGHT};border-left:0.8px solid #111}
@@ -3880,7 +3883,7 @@ async function printCurrentTuneFingerings(){
       /* Enlarge the on-screen preview without changing printed dimensions. */
       body{zoom:var(--preview-zoom,1)}
     }
-    </style></head><body><h1>${title}</h1>${printRows}<script>
+    </style></head><body><h1>${title}</h1><div class="chartSubtitle">${recorderSubtitle}</div>${printRows}<script>
   (function(){
     function sizePreview(){
       // At zoom 1, the preview's maximum content width is 1100 CSS pixels.
