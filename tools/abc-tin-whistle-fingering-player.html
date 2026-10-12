@@ -3760,8 +3760,26 @@ async function printCurrentTuneFingerings(){
     /* Keep symbols legible on both portrait and landscape paper.
        The staff positions remain proportional to the available page width. */
     @media print{.staffrow{break-inside:avoid;page-break-inside:avoid}}
-    @media screen{body{padding:15mm;max-width:1100px;margin:auto}}
-    </style></head><body><h1>${title}</h1>${printRows}</body></html>`;
+    @media screen{
+      body{padding:15mm;max-width:1100px;margin:auto}
+      /* Enlarge the on-screen preview without changing printed dimensions. */
+      body{zoom:var(--preview-zoom,1)}
+    }
+    </style></head><body><h1>${title}</h1>${printRows}<script>
+  (function(){
+    function sizePreview(){
+      // At zoom 1, the preview's maximum content width is 1100 CSS pixels.
+      // Never enlarge beyond the available viewport width.
+      var available=Math.max(320,document.documentElement.clientWidth-24);
+      var base=Math.min(1100,available);
+      var factor=Math.min(1.55,Math.max(1,available/base));
+      // On wider screens use the extra space; smaller windows retain the print layout.
+      document.body.style.setProperty('--preview-zoom',String(factor));
+    }
+    sizePreview();
+    window.addEventListener('resize',sizePreview);
+  })();
+  <\/script></body></html>`;
   // Open the complete fingering sheet in a separate tab for viewing,
   // browser printing, or saving as PDF.
   const w=window.open('','_blank');

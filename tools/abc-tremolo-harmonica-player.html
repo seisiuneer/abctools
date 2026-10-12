@@ -4271,7 +4271,7 @@ async function printCurrentTuneFingerings(){
     return `${indicator}<div class="noteName">${esc(noteName)}</div>${item?.playable&&item.slide?'<div class="techniqueSlide">S</div>':''}${roll?'<div class="rollMark">~</div>':''}`;
   };
   const PRINT_FONT='';
-  const PRINT_EXTRA_CSS='.holeNumber{font-size:15pt;font-weight:700;line-height:1.1}.techniqueGraphic{display:block;width:15mm;height:13mm;object-fit:contain;margin:auto}.techniqueText{font-size:15pt;font-weight:700;line-height:14mm}.techniqueMissing{font-size:15pt;font-weight:700;line-height:1.1}.techniqueSpacer{visibility:hidden}.techniqueSlide{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;line-height:1.1;text-align:center;margin-top:.5mm}.noteName{font-size:11pt;margin-top:1mm}.rollMark{font-family:Arial,sans-serif;font-size:13pt;line-height:1;text-align:center;margin-top:.5mm}';
+  const PRINT_EXTRA_CSS='.holeNumber{font-size:12pt;font-weight:700;line-height:1.1}.techniqueGraphic{display:block;width:15mm;height:13mm;object-fit:contain;margin:auto}.techniqueText{font-size:15pt;font-weight:700;line-height:14mm}.techniqueMissing{font-size:15pt;font-weight:700;line-height:1.1}.techniqueSpacer{visibility:hidden}.techniqueSlide{font-family:Arial,sans-serif;font-size:11pt;font-weight:700;line-height:1.1;text-align:center;margin-top:.5mm}.noteName{font-size:11pt;margin-top:1mm}.rollMark{font-family:Arial,sans-serif;font-size:13pt;line-height:1;text-align:center;margin-top:.5mm}';
   const PRINT_ROW_HEIGHT='43mm',PRINT_BAR_HEIGHT='29mm';
   const systems=new Map();
   function system(id){if(!systems.has(id))systems.set(id,[]);return systems.get(id)}
@@ -4518,8 +4518,26 @@ async function printCurrentTuneFingerings(){
     /* Keep symbols legible on both portrait and landscape paper.
        The staff positions remain proportional to the available page width. */
     @media print{.staffrow{break-inside:avoid;page-break-inside:avoid}}
-    @media screen{body{padding:15mm;max-width:1100px;margin:auto}}
-    </style></head><body><h1>${title}</h1>${instrumentDescription?`<div class="instrumentDescription">${instrumentDescription}</div>`:""}${printRows}</body></html>`;
+    @media screen{
+      body{padding:15mm;max-width:1100px;margin:auto}
+      /* Enlarge the on-screen preview without changing printed dimensions. */
+      body{zoom:var(--preview-zoom,1)}
+    }
+    </style></head><body><h1>${title}</h1>${instrumentDescription?`<div class="instrumentDescription">${instrumentDescription}</div>`:""}${printRows}<script>
+  (function(){
+    function sizePreview(){
+      // At zoom 1, the preview's maximum content width is 1100 CSS pixels.
+      // Never enlarge beyond the available viewport width.
+      var available=Math.max(320,document.documentElement.clientWidth-24);
+      var base=Math.min(1100,available);
+      var factor=Math.min(1.25,Math.max(1,available/base));
+      // On wider screens use the extra space; smaller windows retain the print layout.
+      document.body.style.setProperty('--preview-zoom',String(factor));
+    }
+    sizePreview();
+    window.addEventListener('resize',sizePreview);
+  })();
+  <\/script></body></html>`;
   // Open the complete fingering sheet in a separate tab for viewing,
   // browser printing, or saving as PDF.
   const w=window.open('','_blank');

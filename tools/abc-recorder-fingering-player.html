@@ -1101,6 +1101,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p>Use your browser’s print controls to print the sheet or save it as a PDF.</p>
       <p>For best results with dense tunes, use landscape orientation when printing.</p>
       <p>This feature requires pop-ups to be allowed on your browser.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
@@ -3874,8 +3875,26 @@ async function printCurrentTuneFingerings(){
     /* Keep symbols legible on both portrait and landscape paper.
        The staff positions remain proportional to the available page width. */
     @media print{.staffrow{break-inside:avoid;page-break-inside:avoid}}
-    @media screen{body{padding:15mm;max-width:1100px;margin:auto}}
-    </style></head><body><h1>${title}</h1>${printRows}</body></html>`;
+    @media screen{
+      body{padding:15mm;max-width:1100px;margin:auto}
+      /* Enlarge the on-screen preview without changing printed dimensions. */
+      body{zoom:var(--preview-zoom,1)}
+    }
+    </style></head><body><h1>${title}</h1>${printRows}<script>
+  (function(){
+    function sizePreview(){
+      // At zoom 1, the preview's maximum content width is 1100 CSS pixels.
+      // Never enlarge beyond the available viewport width.
+      var available=Math.max(320,document.documentElement.clientWidth-24);
+      var base=Math.min(1100,available);
+      var factor=Math.min(1.55,Math.max(1,available/base));
+      // On wider screens use the extra space; smaller windows retain the print layout.
+      document.body.style.setProperty('--preview-zoom',String(factor));
+    }
+    sizePreview();
+    window.addEventListener('resize',sizePreview);
+  })();
+  <\/script></body></html>`;
   // Open the complete fingering sheet in a separate tab for viewing,
   // browser printing, or saving as PDF.
   const w=window.open('','_blank');
