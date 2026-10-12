@@ -976,8 +976,16 @@ body.lessonMode .toolbar select:disabled{color:#5f6762;-webkit-text-fill-color:#
 
 /* Full-page navigation: center the buttons without pushing them outside the strip. */
 body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
+
+/* Optional keyboard/foot-pedal navigation; the two note buttons stay centered. */
+.diagramNoteNavigation{position:relative}
+.arrowKeyNavLabel{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:5px;font-size:13px;white-space:nowrap;cursor:pointer;color:#28382f;font-weight:650}
+body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
+.arrowKeyNavLabel input{margin:0}
+.arrowKeyNavLabel:has(input:disabled){opacity:.55;cursor:default}
+@media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.8</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="recorder-tab" selected>Notation + Recorder Tab</option></select></div>
@@ -1000,7 +1008,7 @@ body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
    </div>
    <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
   </div>
- <div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button></div></section>
+ <div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1022,20 +1030,32 @@ body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
       <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with recorder tablature. The default is <b>Notation + Recorder Tab</b>.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
       <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or <b>.txt</b> file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
       <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play. Edits are retained when changing tunes.</p>
       <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>The upper-left panel contains editable ABC. The lower-left panel shows abcjs notation and playback controls. The <b>Notation display</b> selector chooses whether recorder tablature is also shown.</p>
       <p>Editing the ABC rebuilds the notation and audio. When recorder tablature is enabled it is rebuilt at the same time. Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
       <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
+
+      <p>Leave <strong>Use arrow keys?</strong> checked at the lower right of the instrument panel to navigate with the Left and Right Arrow keys, or jump to the first or last note with Home or End (including compatible Bluetooth keyboard foot pedals).</p>
+
+      <p>This option is on by default. Your choice is remembered in this browser.</p>
+
+      <p>When enabled, unmodified Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
+
+      <p>These keys navigate notes instead of moving the ABC editor cursor.</p>
+
+      <p>Keyboard shortcuts are temporarily disabled while dialogs or controls that use these keys are active. When this option is enabled, the shortcuts also work while the ABC editor has focus.</p>
+
+      <p>Uncheck the option to restore normal arrow-key behavior.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Recorder Fingering Display</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Recorder Fingering Display</p>
       <p>The display uses the selected Baroque or German recorder fingering. The note name appears to the right of the fingering symbol.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names are displayed using sharps or flats according to the tune's <b>K:</b> key and mode. When <b>Show note</b> is enabled, the notation below the note name uses the same sharp or flat naming.</p>
@@ -1044,7 +1064,7 @@ body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
       <p>The <b>Notation display</b> and <b>Recorder</b> choices are remembered in this browser and are also included in generated share links.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Recorder Fingering pane updates to that note.</p>
       <p>Playback uses <b>MIDI program 144</b> for Soprano Recorder or <b>MIDI program 145</b> for Alto Recorder, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
@@ -1068,12 +1088,12 @@ body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
              style="max-width: 100%; height: auto;">
       </div>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
       <p>On wide screens, drag the vertical divider to resize the left and recorder-fingering panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
       <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Recorder Fingering</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
@@ -1095,8 +1115,8 @@ body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
       <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       
@@ -1110,8 +1130,8 @@ body.diagram-full .diagramNoteNavigation .paneFullBtn{position:relative;top:5px}
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
@@ -1369,47 +1389,49 @@ function removeCursor(){
   }
 }
 
+// Shared playback/manual scroll geometry. The playback path retains its original
+// short-pane staff-change rule and tall-pane 22%-78% safe zone.
+function notationScrollTarget(viewport, marker, options={}){
+  if(!viewport||!marker)return null;
+  const view=viewport.getBoundingClientRect();
+  if(view.height<=0)return null;
+  const shortPane=view.height<Math.max(150,marker.height*2.2);
+  if(shortPane&&options.staffChanged===false)return null;
+  let delta=0;
+  if(shortPane){
+    delta=marker.top-view.top-8;
+  }else{
+    const topLimit=view.top+view.height*.22;
+    const bottomLimit=view.top+view.height*.78;
+    if(marker.top<topLimit)delta=marker.top-topLimit;
+    else if(marker.bottom>bottomLimit)delta=marker.bottom-bottomLimit;
+  }
+  if(Math.abs(delta)<=1)return null;
+  const maxScroll=Math.max(0,viewport.scrollHeight-viewport.clientHeight);
+  const target=Math.max(0,Math.min(maxScroll,viewport.scrollTop+delta));
+  return Math.abs(target-viewport.scrollTop)>1?target:null;
+}
+function applyNotationScroll(viewport, marker, options={}){
+  const target=notationScrollTarget(viewport,marker,options);
+  if(target!==null)viewport.scrollTo({top:target,behavior:options.behavior||'instant'});
+}
 function keepCursorVisible(event){
   if(!playbackCursor)return;
-  const vp=$("notation").parentElement;
-  const c=playbackCursor.getBoundingClientRect();
-  const v=vp.getBoundingClientRect();
-  if(!vp||v.height<=0)return;
-
-  // Hybrid autoscroll:
-  // - Short panes: scroll only when playback moves to a different staff/system.
-  // - Taller panes: leave the cursor alone inside a generous safe zone and
-  //   smooth-scroll only when it moves outside that zone.
-  // event.top is the abcjs system-relative Y position and is stable while a
-  // smooth scroll is in progress, so it is safe to use as the system identity.
-  const shortPane=v.height < Math.max(150,c.height*2.2);
+  const vp=$('notation').parentElement;
+  if(!vp)return;
+  const cursor=playbackCursor.getBoundingClientRect();
+  const view=vp.getBoundingClientRect();
+  if(view.height<=0)return;
+  const shortPane=view.height<Math.max(150,cursor.height*2.2);
   if(shortPane){
     const systemTop=event&&Number.isFinite(Number(event.top))?Number(event.top):null;
     if(systemTop===null)return;
     if(lastAutoscrollSystemTop!==null&&Math.abs(systemTop-lastAutoscrollSystemTop)<1)return;
     lastAutoscrollSystemTop=systemTop;
-
-    // Put the current staff close to the top of a short pane. Clamp the
-    // destination so the first and last systems cannot cause oscillation.
-    const maxScroll=Math.max(0,vp.scrollHeight-vp.clientHeight);
-    const target=Math.max(0,Math.min(maxScroll,vp.scrollTop+(c.top-v.top)-8));
-    if(Math.abs(target-vp.scrollTop)>1)
-      vp.scrollTo({top:target,behavior:"smooth"});
-    return;
+  }else{
+    lastAutoscrollSystemTop=null;
   }
-
-  lastAutoscrollSystemTop=null;
-  const topLimit=v.top+v.height*.22;
-  const bottomLimit=v.top+v.height*.78;
-  let delta=0;
-  if(c.top<topLimit)delta=c.top-topLimit;
-  else if(c.bottom>bottomLimit)delta=c.bottom-bottomLimit;
-  if(Math.abs(delta)>1){
-    const maxScroll=Math.max(0,vp.scrollHeight-vp.clientHeight);
-    const target=Math.max(0,Math.min(maxScroll,vp.scrollTop+delta));
-    if(Math.abs(target-vp.scrollTop)>1)
-      vp.scrollTo({top:target,behavior:"smooth"});
-  }
+  applyNotationScroll(vp,cursor,{behavior:'smooth'});
 }
 function recorderFingeringIndexForMidi(midi){
   const n=Math.round(Number(midi));
@@ -3143,6 +3165,7 @@ if(document.readyState==="complete"){
 /* UI-only playback-permission synchronization for notation-header controls.
    The Tempo implementation and audio/playback code are intentionally untouched. */
 function syncPlaybackPermissionHeaderControls(){
+  syncArrowKeyNavigationIdle();
   const permissionPending=!!$("enablePlaybackBtn");
   const hasTunes=tunes.length>0;
   const muteBtn=$("muteMelodyBtn");
@@ -3345,9 +3368,76 @@ function instrumentNavTokens(){return abcNoteTokens($("abcText").value)}
 function refreshInstrumentNoteButtons(){
  const enabled=instrumentNavTokens().length>0;
  $("abcPrevNoteBtn").disabled=!enabled;$("abcNextNoteBtn").disabled=!enabled;
+  syncArrowKeyNavigationIdle();
+}
+
+/* Keep manually navigated notes visible without disturbing playback scrolling. */
+// Manual note navigation: position a newly reached staff one-third down the viewport,
+// then hold the scroll position while moving through notes on that staff.
+// Manual navigation shares playback's scroll calculations but scrolls instantly.
+// A stable staff reference prevents note-pitch changes from moving the viewport.
+let manualNoteScrollFrame=0;
+let manualNoteScrollStaff=null;
+let manualNoteScrollY=null;
+let manualNoteScrollViewport=null;
+function scrollNavigatedNotationNoteIntoView(){
+  cancelAnimationFrame(manualNoteScrollFrame);
+  manualNoteScrollFrame=requestAnimationFrame(()=>{
+    const notation=document.getElementById('notation');
+    const viewport=notation?.parentElement;
+    if(!notation||!viewport||viewport.clientHeight<=0)return;
+    const selected=notation.querySelector('.abcjs-note_selected');
+    if(!selected)return;
+    const note=selected.getBoundingClientRect();
+    const view=viewport.getBoundingClientRect();
+    if(!note.height||!view.height)return;
+
+    // abcjs assigns abcjs-lN to each notation system. This is a more
+    // reliable staff identity than the note's pitch or SVG parent group.
+    // Importantly, the same system also contains the optional rendered tab.
+    const lineClass=Array.from(selected.classList).find(c=>/^abcjs-l\d+$/.test(c))||
+      Array.from(selected.querySelectorAll('*')).flatMap(e=>Array.from(e.classList||[]))
+        .find(c=>/^abcjs-l\d+$/.test(c));
+    const staff=selected.closest('.abcjs-staff');
+    const center=(note.top+note.bottom)/2;
+    const absoluteY=center-view.top+viewport.scrollTop;
+    const staffKey=lineClass||staff;
+    const sameStaff=manualNoteScrollViewport===viewport&&
+      (staffKey?staffKey===manualNoteScrollStaff:
+       manualNoteScrollStaff===null&&manualNoteScrollY!==null&&
+       Math.abs(absoluteY-manualNoteScrollY)<65);
+    manualNoteScrollViewport=viewport;
+    manualNoteScrollStaff=staffKey||null;
+    if(!sameStaff)manualNoteScrollY=absoluteY;
+    if(sameStaff&&center>=view.top+8&&center<=view.bottom-8)return;
+
+    // Calculate the full rendered system bounds, including tablature, rather
+    // than just the selected note or the five-line music staff. This makes
+    // the marker height match the playback cursor's event.height behavior.
+    let marker=null;
+    if(lineClass){
+      const elements=notation.querySelectorAll('.'+lineClass);
+      let top=Infinity,bottom=-Infinity;
+      for(const element of elements){
+        if(!(element instanceof SVGGraphicsElement))continue;
+        const r=element.getBoundingClientRect();
+        if(r.height<=0||r.width<=0)continue;
+        top=Math.min(top,r.top);
+        bottom=Math.max(bottom,r.bottom);
+      }
+      if(Number.isFinite(top)&&bottom>top)marker={top,bottom,height:bottom-top};
+    }
+    if(!marker){
+      const r=staff?.getBoundingClientRect();
+      marker=r&&r.height>0?r:{top:center-5,bottom:center+5,height:10};
+    }
+    applyNotationScroll(viewport,marker,{staffChanged:!sameStaff,behavior:'instant'});
+  });
 }
 function moveInstrumentNote(direction){
  const ta=$("abcText"),tokens=instrumentNavTokens();if(!tokens.length)return;
+ // Without an active notation selection, either arrow starts at the first note.
+ if(instrumentNavAnchor==null){jumpToInstrumentNoteBoundary(false);return;}
  const pos=ta.selectionStart??0;
  let current=tokens.findIndex(t=>t.start===instrumentNavAnchor);
  if(current<0||!(pos>=tokens[current].start&&pos<=tokens[current].end)){
@@ -3360,6 +3450,7 @@ function moveInstrumentNote(direction){
  if(instrumentNavVisual?.engraver?.rangeHighlight){
    try{instrumentNavVisual.engraver.rangeHighlight(target.start+prefixLength,target.end+prefixLength)}catch(_){ }
  }
+ scrollNavigatedNotationNoteIntoView();
  ta.focus({preventScroll:true});ta.setSelectionRange(target.start,target.end);
  const line=ta.value.slice(0,target.start).split(/\r?\n/).length-1;
  const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;
@@ -3375,4 +3466,84 @@ $("abcNextNoteBtn").addEventListener("click",()=>moveInstrumentNote(1));
 $("abcText").addEventListener("input",()=>{instrumentNavAnchor=null;refreshInstrumentNoteButtons()});
 $("abcText").addEventListener("click",()=>{instrumentNavAnchor=null});
 setInterval(refreshInstrumentNoteButtons,700);
+
+
+/* Keep keyboard navigation idling synchronized with the existing note and
+   playback-permission control refreshes (not a separate mutation observer). */
+function syncArrowKeyNavigationIdle(){
+  const check=document.getElementById('arrowKeyNavCheck');
+  const prev=document.getElementById('abcPrevNoteBtn');
+  const next=document.getElementById('abcNextNoteBtn');
+  if(check&&prev&&next){
+    check.disabled=prev.disabled||next.disabled||!!document.getElementById('enablePlaybackBtn');
+  }
+}
+
+/* Home/End navigate directly to the first/last note using the existing manual display path. */
+function jumpToInstrumentNoteBoundary(toEnd){
+  const ta=$('abcText'),tokens=instrumentNavTokens();
+  if(!ta||!tokens.length)return;
+  const target=toEnd?tokens[tokens.length-1]:tokens[0];
+  instrumentNavAnchor=target.start;
+  if(instrumentNavVisual?.engraver?.rangeHighlight){
+    try{instrumentNavVisual.engraver.rangeHighlight(target.start+prefixLength,target.end+prefixLength)}catch(_){}
+  }
+  scrollNavigatedNotationNoteIntoView();
+  ta.focus({preventScroll:true});
+  ta.setSelectionRange(target.start,target.end);
+  const line=ta.value.slice(0,target.start).split(/\r?\n/).length-1;
+  const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;
+  ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
+  let midi=clickedNotationMidi(target);
+  if(midi!=null){
+    if($('instrumentSelect')&&['guitar','guitar-dadgad'].includes($('instrumentSelect').value))midi-=12;
+    showWhistleLive(midi);
+  }
+}
+
+/* Version 3.8: default-on left/right arrow navigation for keyboard and Bluetooth HID pedals. */
+(function installArrowKeyNoteNavigation(){
+  const check=document.getElementById('arrowKeyNavCheck');
+  const prev=document.getElementById('abcPrevNoteBtn');
+  const next=document.getElementById('abcNextNoteBtn');
+  const storageKey='abcPlayerArrowKeyNavigation';
+  if(!check||!prev||!next)return;
+  try{check.checked=localStorage.getItem(storageKey)!=='false'}catch(_){check.checked=true}
+  check.addEventListener('change',()=>{
+    try{localStorage.setItem(storageKey,String(check.checked))}catch(_){}
+  });
+  // The existing control-state routines call this directly.
+  syncArrowKeyNavigationIdle();
+  function visible(el){
+    if(!el||el.hidden||el.getAttribute('aria-hidden')==='true')return false;
+    const style=getComputedStyle(el);
+    return style.display!=='none'&&style.visibility!=='hidden'&&el.getClientRects().length>0;
+  }
+  function dialogOpen(){
+    return Array.from(document.querySelectorAll('.lessonModal,.modal_default_main,dialog,[role="dialog"],[aria-modal="true"],.swal2-container,.ui-dialog,.modal.show,#helpOverlay'))
+      .some(visible);
+  }
+  document.addEventListener('keydown',function(event){
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    if(!check.checked||check.disabled||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||event.isComposing)return;
+    if(dialogOpen())return;
+    const active=document.activeElement;
+    // ABC editor is deliberately included. Other text-entry controls and
+    // selectors retain native arrow-key handling.
+    // File chooser retains focus after an ABC file is opened; the arrow-mode
+    // checkbox can also retain focus after enabling it. Neither needs arrow keys.
+    // Preserve native keyboard behavior for all other form/editable controls.
+    const navigationSafeFocus=active&&(active.id==='abcText'||active.id==='arrowKeyNavCheck'||(active.matches&&active.matches('input[type="file"]')));
+    if(active&&!navigationSafeFocus&&(active.isContentEditable||active.closest('input,select,textarea,[contenteditable="true"],[role="combobox"],[role="listbox"],[role="slider"]')))return;
+    const boundary=event.key==='Home'||event.key==='End';
+    const button=event.key==='ArrowLeft'?prev:next;
+    // Home/End have their own note-availability guard in the boundary helper.
+    // Only Left/Right depend on the corresponding arrow button's state.
+    if(!boundary&&button.disabled)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if(boundary)jumpToInstrumentNoteBoundary(event.key==='End');
+    else button.click();
+  },true);
+})();
 </script></body></html>
