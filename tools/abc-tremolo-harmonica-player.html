@@ -1406,7 +1406,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 3.10
+     Version 3.11
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -4559,19 +4559,17 @@ async function printCurrentTuneFingerings(){
        The staff positions remain proportional to the available page width. */
     @media print{.staffrow{break-inside:avoid;page-break-inside:avoid}}
     @media screen{
-      body{padding:15mm;max-width:1100px;margin:auto}
+      body{padding:15mm;width:1100px;max-width:none;margin:auto}
       /* Enlarge the on-screen preview without changing printed dimensions. */
       body{zoom:var(--preview-zoom,1)}
     }
     </style></head><body><h1>${title}</h1>${instrumentDescription?`<div class="instrumentDescription">${instrumentDescription}</div>`:""}${printRows}<script>
   (function(){
     function sizePreview(){
-      // At zoom 1, the preview's maximum content width is 1100 CSS pixels.
-      // Never enlarge beyond the available viewport width.
-      var available=Math.max(320,document.documentElement.clientWidth-24);
-      var base=Math.min(1100,available);
-      var factor=Math.min(1.25,Math.max(1,available/base));
-      // On wider screens use the extra space; smaller windows retain the print layout.
+      // Scale the entire fixed-width preview uniformly, including row heights,
+      // labels, symbols, and spacing. Preserve the existing maximum zoom.
+      var available=Math.max(1,document.documentElement.clientWidth-24);
+      var factor=Math.min(1.25,available/1100);
       document.body.style.setProperty('--preview-zoom',String(factor));
     }
     sizePreview();
