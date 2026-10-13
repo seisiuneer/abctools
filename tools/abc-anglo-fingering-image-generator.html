@@ -165,7 +165,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.37</div>
+<header class="app-header"><div class="version">Version 1.53</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -176,10 +176,19 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
       <div><label for="system">Fingering system</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
       <div><label for="style">Fingering style</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
     </div>
-    <label style="display:flex;align-items:center;gap:9px;margin-top:14px;font-weight:600;cursor:pointer">
-      <input id="respectRepeats" type="checkbox" checked style="width:auto;margin:0">
-      Respect repeats and first/second endings in image sequence
-    </label>
+    <label for="level">Level to show on tune</label>
+    <select id="level">
+      <option value="none" selected>None</option>
+      <option value="Introductory">Introductory</option>
+      <option value="Very Easy">Very Easy</option>
+      <option value="Easy">Easy</option>
+      <option value="Moderate">Moderate</option>
+      <option value="Moderately Hard">Moderately Hard</option>
+      <option value="Hard">Hard</option>
+      <option value="Very Hard">Very Hard</option>
+      <option value="Advanced">Advanced</option>
+      <option value="Expert">Expert</option>
+    </select>
   </section>
   <section class="card">
     <button id="generateBtn" disabled>Generate JPEG Images and Save ZIP</button>
@@ -1470,6 +1479,19 @@ const DRAW_COLOR = "#009e73";
 
 const PREF_SYSTEM_KEY = "abcAngloFingeringSystem";
 const PREF_STYLE_KEY = "abcAngloFingeringStyle";
+const PREF_LEVEL_KEY = "abcAngloFingeringLevel";
+const LEVEL_VALUES = new Set(["none", "Introductory", "Very Easy", "Easy", "Moderate", "Moderately Hard", "Hard", "Very Hard", "Advanced", "Expert"]);
+function restoreLevelPreference() {
+  let level = "none";
+  try {
+    const saved = localStorage.getItem(PREF_LEVEL_KEY);
+    if (LEVEL_VALUES.has(saved)) level = saved;
+  } catch (_) {}
+  $("level").value = level;
+}
+function saveLevelPreference() {
+  try { localStorage.setItem(PREF_LEVEL_KEY, $("level").value); } catch (_) {}
+}
 function restoreFingeringPreferences() {
   let system = "jeffries", style = "cross";
   try {
@@ -1490,6 +1512,8 @@ function saveFingeringPreferences() {
 restoreFingeringPreferences();
 $("system").addEventListener("change", saveFingeringPreferences);
 $("style").addEventListener("change", saveFingeringPreferences);
+restoreLevelPreference();
+$("level").addEventListener("change", saveLevelPreference);
 
 async function showInstructions() {
   const html = `
@@ -1499,44 +1523,86 @@ async function showInstructions() {
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
     <h3>1. Open an ABC file</h3>
-    <p>Click <b>Browse</b> and select an <b>.abc</b> or text file containing one or more ABC tunes. Each tune must have a supported <b>K:</b> key field. The first <b>T:</b> field in each tune is used as the tune name.</p>
+    <p>Click <b>Browse</b> and select an <b>.abc</b> or text file containing one or more ABC tunes.</p>
+    <p>Files without recognizable tunes leave the Generate button disabled.</p>
+    <p>The first <b>T:</b> field in each tune is used as the tune name.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
     <h3>2. Choose the fingering system</h3>
-    <p>Select <b>Jeffries</b> or <b>Wheatstone</b>. This selects the concertina button layout used when solving and drawing the fingering diagrams.</p>
+    <p>Select <b>Jeffries</b> or <b>Wheatstone</b>.</p>
+    <p>This selects the concertina button layout used when solving and drawing the fingering diagrams.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
     <h3>3. Choose the fingering style</h3>
-    <p>Select <b>On-Row</b> or <b>Cross-Row</b>. The tool remembers your most recent fingering system and style in this browser. The initial defaults are <b>Jeffries</b> and <b>Cross-Row</b>.</p>
+    <p>Select <b>On-Row</b> or <b>Cross-Row</b>.</p>
+    <p>The tool remembers your most recent fingering system and style in this browser.</p>
+    <p>The initial defaults are <b>Jeffries</b> and <b>Cross-Row</b>.</p>
     <p>The fingering solution descriptions below are relative to C/G tuning.</p>
     <p><strong>On-Row:</strong></p>
     <p>Jim Van Donsel's original fingering solution, favors center row:</p>
-    <p>Favors playing D5 and E5 on the right-side C-row.</p>
+    <p>Favors playing D' and E' on the right-side C-row.</p>
     <p>For Jeffries-style instruments:</p>
-    <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
+    <p>Favors right-side top-row 2nd button for C#' and D#'.</p>
     <p><strong>Cross-Row:</strong></p>
     <p>A more cross-row friendly fingering solution:</p>
-    <p>Favors playing the D5 and E5 on the left-side G-row.</p>
-    <p>Favors playing C5 on the left-side G-row draw.</p>
-    <p>Favors playing B4 on the right-side C-row draw.</p>
+    <p>Favors playing the D' and E' on the left-side G-row.</p>
+    <p>Favors playing C' on the left-side G-row draw.</p>
+    <p>Favors playing B on the right-side C-row draw.</p>
     <p>For Jeffries-style instruments:</p>
-    <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
+    <p>Favors right-side top-row 2nd button for C#' and D#'.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
-    <h3>4. Fingering diagrams and note display</h3>
-    <p>Each JPEG uses the Anglo Concertina Fingering Player's <b>Focus</b> display: the selected button is fully opaque, while the other buttons are shown at <b>35%</b> opacity. The played half of the button has a translucent red <b>Push</b> or green <b>Draw</b> tint and a matching semicircular outline. A direction arrow appears between the two button groups.</p>
-    <p>The current note is always shown on a musical staff centered below the button board; there is no separate Push/Draw legend. Button labels and the current-note name use the same note naming as the Player: <b>C</b> for middle C, apostrophes for higher octaves (such as <b>C'</b>), and commas for lower octaves (such as <b>C,</b>). Sharps and flats follow the tune's key and mode, including Major, Minor, Mixolydian, and Dorian.</p>
+    <h3>4. Choose a difficulty level (optional)</h3>
+    <p>Use the <b>Level to show on tune</b> menu to add a difficulty label to the bottom-left corner of every generated JPEG, such as <b>Level: Easy</b>.</p>
+    <p>Choices are <b>Introductory, Very Easy, Easy, Moderate, Moderately Hard, Hard, Very Hard, Advanced,</b> and <b>Expert</b>.</p>
+    <p>The label is applied to all images in the export; the tool does not estimate difficulty automatically.</p>
+    <p>The default is <b>None</b>, which draws no level label.</p>
+    <p>Your choice is remembered in this browser using local storage.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
-    <h3>5. Generate the images</h3>
-    <p>Click <b>Generate JPEG Images and Save ZIP</b>. The Anglo fingering solver determines the default button and bellows direction for each note.</p>
-    <p>If the ABC contains compatible Anglo Concertina tablature annotations created by ABC Transcription Tools or the ABC Anglo Concertina Fingering Player, those annotations override the automatic fingering for their individual notes. Notes without an override continue to use the selected automatic On-Row or Cross-Row solution.</p>
-    <p><b>Respect repeats and first/second endings in image sequence</b> is enabled by default and remembered in this browser. When enabled, repeated sections are expanded in the JPEG sequence, including <b>|: ... :|</b>, first/second endings written as <b>[1 ... [2 ...</b> or <b>|1 ... :|2 ...</b>, and an end repeat <b>:|</b> with no preceding start repeat, which repeats from the beginning of the tune. Turn the option off to export each written note only once in ABC order.</p>
+    <h3>5. Fingering diagrams and note display</h3>
+    <p>In each image the selected button is fully visible, while the other buttons are dimmed.</p>
+    <p>The played half of the button has a translucent red <b>Push</b> or green <b>Draw</b> tint and an outline.</p>
+    <p>A direction arrow with a matching-color Push or Draw label appears between the two button groups.</p>
+    <p>The current note is always shown on a musical staff centered below the button board.</p>
+    <p>Button labels and the current-note name use the following note naming:</p>
+    <p><b>C</b> for middle C, apostrophes for higher octaves (such as <b>C'</b>), and commas for lower octaves (such as <b>C,</b>).</p>
+    <p>Sharps and flats follow the tune's key and mode, including Major, Minor, Mixolydian, and Dorian.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
-    <h3>6. File names and ZIP file</h3>
-    <p>JPEGs are named from the tune title followed by the three-digit note index, beginning with <b>001</b>, for example <b>Kesh_001.jpg</b>.</p>
-    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, and fingering style, for example <b>Kesh_Jeffries_Cross-Row.zip</b>. For multiple tunes, the name begins with <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row.zip</b>.</p>
+    <h3>6. Generate the images</h3>
+    <p>Click <b>Generate JPEG Images and Save ZIP</b>.</p>
+    <p>The Anglo fingering solver determines the default button and bellows direction for each note.</p>
+    <p>If the ABC contains compatible Anglo Concertina tablature annotations created by ABC Transcription Tools or the ABC Anglo Concertina Fingering Player, those annotations override the automatic fingering for their individual notes.</p>
+    <p>Notes without an override continue to use the selected automatic On-Row or Cross-Row solution.</p>
+    <p>When any manual tablature overrides are found in a tune, every image for that tune shows <b>+ Overrides</b> after the fingering style at the upper right.</p>
+    <p>This indicator is evaluated separately for each tune.</p>
+    <p>Repeats and alternate first/second endings are always expanded into playing order.</p>
+    <p>Each repeated part starts with its own first pass, even when the preceding part ends with a second ending.</p>
+    <p>Each exported image represents one note actually played, including repeated notes.</p>
+
+    <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
+    <h3>7. Part and repeat labels</h3>
+    <p>Each image identifies its <b>A, B, C</b> (etc.) part and note position.</p>
+    <p>For a part played more than once, the label includes the pass, such as <b>A Part - 1st Repeat - Note 32 of 56</b>.</p>
+    <p>For a part played only once, it reads <b>A Part - Note 32 of 56</b>.</p>
+    <p>Part boundaries are inferred from repeat sections and double barlines (<b>||</b>, <b>[|</b>, <b>|]</b>).</p>
+    <p>First and second endings belong to the same part.</p>
+    <p>Each pass counts only the notes actually played on that pass; alternate endings are excluded.</p>
+    <p>The Jeffries/Wheatstone layout and On-Row/Cross-Row solution appear at upper right.</p>
+    <p>For tunes without explicit part separators, the complete tune is treated as the A part.</p>
+    <p>Unusual or ambiguous repeat notation may require checking the generated labels.</p>
+
+    <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
+    <h3>8. File names and ZIP file</h3>
+    <p>JPEG filenames include the tune title, part letter, two-digit repeat pass, and three-digit note number within that pass, for example <b>Cooleys_A_01_001.jpg</b>, <b>Cooleys_A_02_001.jpg</b>, and <b>Cooleys_B_01_001.jpg</b>.</p>
+    <p>Alphabetical filename sorting follows the detected part and repeat order.</p>
+    <p>No global playback sequence number is added.</p>
+    <p>If multiple tunes have the same filename-safe title, each version receives a three-digit prefix to prevent JPEG filenames from colliding.</p>
+    <p>For example, the first version uses <b>001_Cooleys_A_01_001.jpg</b> and the second uses <b>002_Cooleys_A_01_001.jpg</b>.</p>
+    <p>Tunes with unique titles have no prefix.</p>
+    <p>For a single tune, the suggested ZIP name contains the tune name, concertina system, and fingering style, for example <b>Kesh_Jeffries_Cross-Row.zip</b>.</p>
+    <p>For multiple tunes, the name begins with <b>Multiple</b>, for example <b>Multiple_Jeffries_Cross-Row.zip</b>.</p>
     <p>The ZIP filename is shown before saving and may be edited.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
@@ -1685,6 +1751,24 @@ function splitTunes(abc) {
   return tunes.filter(Boolean);
 }
 
+// Only count tunes with a key declaration and at least one music note.
+// Ignore metadata, comments, quoted chords, and decoration text while checking.
+function validTunes(abc) {
+  return splitTunes(abc).filter(tune => {
+    const lines=tune.replace(/\r\n?/g,"\n").split("\n");
+    const keyIndex=lines.findIndex(line=>/^K\s*:\s*[A-G](?:b|#)?(?:(?:maj|minor|min|m|dor|mix|aeo|ion|phr|lyd|loc|exp)[a-z]*|\s|$)/i.test(line));
+    if(keyIndex<0)return false;
+    const music=lines.slice(keyIndex+1).filter(line=>
+      !/^\s*(?:%|[A-Za-z]:|$)/.test(line)
+    ).join("\n")
+      .replace(/%[^\n]*/g,"")
+      .replace(/"[^"\n]*"/g,"")
+      .replace(/![^!\n]*!/g,"")
+      .replace(/\[[^\]\n|]*\]/g,"");
+    return /(?:[=^_]?[A-Ga-g][,']*)/.test(music);
+  });
+}
+
 function firstTitle(tune, n) {
   const m = tune.match(/^T:\s*(.*?)\s*$/m);
   return (m && m[1].trim()) || `Tune ${n}`;
@@ -1749,6 +1833,10 @@ function drawBellowsDirectionArrow(ctx,direction){
   }
   ctx.closePath();
   ctx.fill();
+  ctx.font="700 22px Arial, Helvetica, sans-serif";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(direction==="push"?"PUSH":"DRAW",x,435);
   ctx.restore();
 }
 
@@ -1789,11 +1877,16 @@ function makeCanvas(title, solution, item, system, style, playedIndex, tune) {
   ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
   ctx.fillStyle="#333"; ctx.textBaseline="alphabetic";
 
-  // Compact fingering/status information in the upper-left.
-  ctx.textAlign="left";
+  // Part-relative location at upper left; instrument settings at upper right.
   ctx.font="400 18px Arial, Helvetica, sans-serif";
   ctx.fillStyle="#555";
-  ctx.fillText(`Note ${playedIndex} of ${solution.length} • ${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`,28,34);
+  ctx.textAlign="left";
+  const location = item.partLocation || {name:"A",pass:1,index:playedIndex,total:solution.length};
+  const ordinal = n => n===1?"1st":n===2?"2nd":n===3?"3rd":`${n}th`;
+  const repeatLabel = location.partPasses > 1 ? ` - ${ordinal(location.pass)} Repeat` : "";
+  ctx.fillText(`${location.name} Part${repeatLabel} - Note ${location.index} of ${location.total}`,28,47);
+  ctx.textAlign="right";
+  ctx.fillText(`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}${solution.some(note=>note.injectedTabOverride)?" + Overrides":""}`,1252,47);
 
   // Tune title centered at the top.
   ctx.textAlign="center";
@@ -1837,6 +1930,19 @@ function makeCanvas(title, solution, item, system, style, playedIndex, tune) {
   }
   drawStaffNoteBelowBoard(ctx,item,tune);
 
+  // Optional user-selected difficulty label, aligned with the lower image margin.
+  const level = $("level").value;
+  if (level !== "none" && LEVEL_VALUES.has(level)) {
+    ctx.save();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#555";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.font = "400 18px Arial, Helvetica, sans-serif";
+    ctx.fillText(`Level: ${level}`, 28, 635);
+    ctx.restore();
+  }
+
   // Match the Fingering Player visual-design watermark. It may be suppressed
   // by opening the tool with nowatermark=1 in the URL.
   if(!SUPPRESS_WATERMARK){
@@ -1878,101 +1984,188 @@ function musicStartIndex(abc) {
   return 0;
 }
 
+// Scan structural barlines without mistaking quoted chords, comments, inline
+// fields, or decorations for music. Source offsets match the solver's indices.
 function repeatControlTokens(abc) {
-  const out=[], start=musicStartIndex(abc);
-  let inQuote=false, inComment=false;
+  const tokens=[];let quoted=false,decorated=false,comment=false;
+  const start=musicStartIndex(abc);
   for(let i=start;i<abc.length;i++){
-    const c=abc[i];
-    if(inComment){if(c==="\n"||c==="\r")inComment=false;continue}
-    if(!inQuote && c==="%"){inComment=true;continue}
-    if(c==='"'){inQuote=!inQuote;continue}
-    if(inQuote)continue;
+    const ch=abc[i];
+    if(comment){if(ch==='\n'||ch==='\r')comment=false;continue}
+    if(!quoted && ch==='%'){comment=true;continue}
+    if(ch==='"'){quoted=!quoted;continue}
+    if(quoted)continue;
+    if(ch==='!'){decorated=!decorated;continue}
+    if(decorated)continue;
+    // Inline ABC fields (such as [K:G]) are not ending markers.
+    if(ch==='[' && /^\[[A-Za-z]:/.test(abc.slice(i))){
+      const close=abc.indexOf(']',i+1);if(close>=0){i=close;continue}
+    }
     const rest=abc.slice(i);
     let m;
-    if(rest.startsWith("|:")){out.push({type:"start",pos:i});i++;continue}
-    if((m=rest.match(/^:\|\s*([12])?/))){
-      out.push({type:"end",pos:i});
-      if(m[1]) out.push({type:m[1]==="1"?"first":"second",pos:i+2});
+    if((m=rest.match(/^:\|(?:\s*\[?([12]))?/))){
+      tokens.push({type:'end',pos:i});
+      if(m[1])tokens.push({type:m[1]==='1'?'first':'second',pos:i+2});
       i+=m[0].length-1;continue;
     }
-    if((m=rest.match(/^(?:\[\s*|\|\s*)([12])(?=\s|[A-Ga-g_^=])/))){
-      out.push({type:m[1]==="1"?"first":"second",pos:i});
-      i+=m[0].length-1;continue;
+    if(rest.startsWith('|:')){tokens.push({type:'start',pos:i});i++;continue}
+    if(rest.startsWith('::')){tokens.push({type:'end',pos:i},{type:'start',pos:i+1});i++;continue}
+    if((m=rest.match(/^(?:\[|\|)([12])(?=\s|[A-Ga-g_^=zZxX]|$)/))){
+      tokens.push({type:m[1]==='1'?'first':'second',pos:i});i+=m[0].length-1;continue;
+    }
+    if(rest.startsWith('||')||rest.startsWith('[|')||rest.startsWith('|]')){
+      tokens.push({type:'double',pos:i,endPos:i+2});i++;continue;
     }
   }
-  return out;
+  return tokens;
+}
+
+// Label written notes by structural part, keeping alternate endings in the
+// preceding part. A repeated A section followed by B starts B at its next note.
+function identifyWrittenParts(abc, solution) {
+  const tokens=repeatControlTokens(abc), boundaries=[];
+  let inEnding=false, afterFirst=false, pendingRepeatEnd=false;
+  for(let i=0;i<tokens.length;i++){
+    const t=tokens[i],next=tokens[i+1];
+    if(t.type==='first'){inEnding=true;afterFirst=true;continue}
+    if(t.type==='second'){inEnding=true;afterFirst=false;continue}
+    if(t.type==='end'){
+      // A first-ending :| is a playback jump, not a part boundary.
+      if(afterFirst){pendingRepeatEnd=true;continue}
+      boundaries.push(t.pos+2);inEnding=false;afterFirst=false;pendingRepeatEnd=false;
+      continue;
+    }
+    if(t.type==='double'){
+      if(afterFirst)continue;
+      boundaries.push(t.endPos);inEnding=false;afterFirst=false;pendingRepeatEnd=false;
+      continue;
+    }
+    if(t.type==='start'){
+      // A new explicit repeat following a second ending begins a new part.
+      if(inEnding || pendingRepeatEnd)boundaries.push(t.pos);
+      inEnding=false;afterFirst=false;pendingRepeatEnd=false;
+    }
+  }
+  const positions=[...new Set(boundaries)].sort((x,y)=>x-y);
+  let part=0;
+  for(const item of solution){
+    while(part<positions.length && item.abcIndex>=positions[part])part++;
+    item.writtenPart=part;
+  }
+  // Empty structural sections do not consume a part letter.
+  const actual=[...new Set(solution.map(x=>x.writtenPart))];
+  const remap=new Map(actual.map((p,i)=>[p,i]));
+  for(const item of solution)item.writtenPart=remap.get(item.writtenPart);
+  return solution;
+}
+function partLetter(index){
+  let s="";do{s=String.fromCharCode(65+index%26)+s;index=Math.floor(index/26)-1}while(index>=0);
+  return s;
+}
+function labelPartOccurrences(solution){
+  // Each pass has its own note sequence. Excluded alternate endings do not
+  // contribute to the numerator or denominator for that pass.
+  const groups=new Map();
+  const occurrence=new Map();
+  let previousPart=null, previousPass=null, currentGroup=null;
+  for(const item of solution){
+    const part=item.writtenPart;
+    const pass=item.repeatPass || 1;
+    if(part!==previousPart || pass!==previousPass){
+      const key=String(part);
+      const count=(occurrence.get(key)||0)+1;
+      occurrence.set(key,count);
+      currentGroup={part,pass:count,items:[]};
+      groups.set(groups.size,currentGroup);
+      previousPart=part;
+      previousPass=pass;
+    }
+    currentGroup.items.push(item);
+  }
+  const passesByPart=new Map();
+  for(const group of groups.values()){
+    passesByPart.set(group.part, Math.max(passesByPart.get(group.part)||0,group.pass));
+  }
+  for(const group of groups.values()){
+    const total=group.items.length;
+    group.items.forEach((item,i)=>{
+      item.partLocation={name:partLetter(group.part),pass:group.pass,partPasses:passesByPart.get(group.part),index:i+1,total};
+    });
+  }
+  return solution;
 }
 
 function expandSolutionForRepeats(abc, solution) {
-  if(!solution || !solution.length) return solution || [];
+  if(!solution || !solution.length)return solution||[];
   const controls=repeatControlTokens(abc);
-  if(!controls.length) return solution.slice();
-
-  const events=[];
-  solution.forEach((item,idx)=>events.push({type:"note",pos:item.abcIndex,item,idx}));
-  controls.forEach(x=>events.push(x));
-  const rank={start:0,first:0,end:1,second:2,note:3};
-  events.sort((a,b)=>a.pos-b.pos || (rank[a.type]||0)-(rank[b.type]||0));
-
-  const secondAfter=new Map();
-  for(let i=0;i<events.length;i++)if(events[i].type==="first"){
+  const events=solution.map(item=>({type:'note',pos:item.abcIndex,item})).concat(controls);
+  const rank={start:0,first:1,second:1,end:2,double:2,note:3};
+  events.sort((a,b)=>a.pos-b.pos||rank[a.type]-rank[b.type]);
+  const firstToSecond=new Map(),secondToAfter=new Map();
+  for(let i=0;i<events.length;i++){
+    if(events[i].type!=='first')continue;
     let j=i+1;
-    while(j<events.length && events[j].type!=="second")j++;
-    if(j<events.length)secondAfter.set(i,j);
+    while(j<events.length && events[j].type!=='second')j++;
+    if(j<events.length){firstToSecond.set(i,j);secondToAfter.set(j,i)}
   }
-
-  const output=[];
-  let pc=0, repeatStart=0, pass=1, guard=0, activeFirst=-1;
-  const endVisits=new Map();
-  while(pc<events.length && guard++<events.length*10+200){
+  const output=[],visits=new Map();
+  let pc=0,start=0,pass=1,first=null,steps=0;
+  while(pc<events.length && steps++<events.length*12+100){
     const e=events[pc];
-    if(e.type==="note"){output.push(e.item);pc++;continue}
-    if(e.type==="start"){repeatStart=pc+1;pass=1;activeFirst=-1;pc++;continue}
-    if(e.type==="first"){
-      if(pass===2){
-        const j=secondAfter.get(pc);
-        if(j!=null){pc=j;continue}
-      } else activeFirst=pc;
+    if(e.type==='note'){
+      output.push({...e.item,repeatPass:pass});pc++;continue;
+    }
+    if(e.type==='start'){
+      // An explicit |: begins a fresh section, even when the previous
+      // section finished on its second ending without a closing :|.
+      // Only preserve pass 2 when jumping back to this very same |:.
+      if(pass===2 && start===pc+1){pc++;continue}
+      pass=1;
+      start=pc+1;
+      first=null;
       pc++;continue;
     }
-    if(e.type==="second"){
-      // ABC also permits [1 ... [2 ... without an explicit :| between endings.
-      // In that form, [2 acts as the boundary that sends the first pass back.
-      if(pass===1 && activeFirst>=0){
-        pass=2;
-        pc=repeatStart;
-        continue;
+    if(e.type==='first'){
+      if(pass===2){
+        const second=firstToSecond.get(pc);
+        if(second!=null){pc=second+1;continue}
       }
-      pass=1;activeFirst=-1;pc++;continue;
+      first=pc;pc++;continue;
     }
-    if(e.type==="end"){
-      const n=endVisits.get(pc)||0;
-      if(n===0){
-        endVisits.set(pc,1);pass=2;pc=repeatStart;continue;
+    if(e.type==='second'){
+      if(pass===1 && first!=null){
+        // First/second endings without an explicit :|.
+        pass=2;pc=start;continue;
       }
-      endVisits.set(pc,2);pass=1;activeFirst=-1;repeatStart=pc+1;pc++;continue;
+      // After the second ending, the following repeat is a new section.
+      // Its |: will initialize its own first pass.
+      first=null;pc++;continue;
+    }
+    if(e.type==='end'){
+      const count=visits.get(pc)||0;
+      if(count===0){
+        visits.set(pc,1);
+        pass=2;pc=start;continue;
+      }
+      visits.set(pc,2);
+      pass=1;first=null;start=pc+1;pc++;continue;
     }
     pc++;
   }
-  return output.length ? output : solution.slice();
+  return output.length?output:solution.slice();
 }
-
-function restoreRepeatPreference(){
-  let v=true;
-  try{const x=localStorage.getItem("abcAngloImageRespectRepeats");if(x!==null)v=x!=="false"}catch(_){}
-  $("respectRepeats").checked=v;
-}
-function saveRepeatPreference(){
-  try{localStorage.setItem("abcAngloImageRespectRepeats",$("respectRepeats").checked?"true":"false")}catch(_){}
-}
-restoreRepeatPreference();
-$("respectRepeats").addEventListener("change",saveRepeatPreference);
 
 $("generateBtn").addEventListener("click", async()=>{
-  if (!loadedABC) return;
+  if (!loadedABC || !validTunes(loadedABC).length) return;
   if (typeof JSZip==="undefined") { setStatus("JSZip is not loaded."); return; }
   const system=$("system").value, style=$("style").value;
-  const exportTunes=splitTunes(loadedABC);
+  const exportTunes=validTunes(loadedABC);
+  const titleCounts=new Map();
+  for (let ti=0;ti<exportTunes.length;ti++) {
+    const base=sanitize(firstTitle(exportTunes[ti],ti+1));
+    titleCounts.set(base,(titleCounts.get(base)||0)+1);
+  }
+  const titleOccurrences=new Map();
   const zip=new JSZip();
   $("generateBtn").disabled=true; $("openFile").disabled=true;
   try {
@@ -1990,16 +2183,23 @@ $("generateBtn").addEventListener("click", async()=>{
         const tuneForSolver = stripChordSymbols(tune);
         solution = angloFingeringsGenerator(tuneForSolver);
         applyInjectedTabOverrides(tune, solution);
-        if ($("respectRepeats").checked) solution = expandSolutionForRepeats(tune, solution);
+        identifyWrittenParts(tune, solution);
+        solution = expandSolutionForRepeats(tune, solution);
+        labelPartOccurrences(solution);
       }
       catch(err) { skipped.push(`${title}: ${err.message||err}`); continue; }
       const base=sanitize(title);
+      const occurrence=(titleOccurrences.get(base)||0)+1;
+      titleOccurrences.set(base,occurrence);
+      const filenameBase=titleCounts.get(base)>1 ? `${String(occurrence).padStart(3,"0")}_${base}` : base;
       for (let i=0;i<solution.length;i++) {
         const item=solution[i];
         setStatus(`Generating ${title}: image ${i+1} of ${solution.length}`);
         const canvas=makeCanvas(title,solution,item,system,style,i+1,tune);
         const blob=await canvasBlob(canvas);
-        zip.file(`${base}_${String(i+1).padStart(3,"0")}.jpg`,blob);
+        const loc=item.partLocation;
+        const filename=`${filenameBase}_${loc.name}_${String(loc.pass).padStart(2,"0")}_${String(loc.index).padStart(3,"0")}.jpg`;
+        zip.file(filename,blob);
         totalImages++;
         if ((i&7)===7) await new Promise(r=>setTimeout(r,0));
       }
@@ -2020,7 +2220,7 @@ $("generateBtn").addEventListener("click", async()=>{
   } catch(err) {
     setStatus("Generation failed: "+(err.message||err));
   } finally {
-    $("generateBtn").disabled=!loadedABC; $("openFile").disabled=false;
+    $("generateBtn").disabled=!validTunes(loadedABC).length; $("openFile").disabled=false;
   }
 });
 
@@ -2052,10 +2252,10 @@ $("openFile").addEventListener("change", async e => {
   if (!f) return;
   loadedABC = await f.text();
   loadedFileName = f.name;
-  const loadedTunes = splitTunes(loadedABC);
+  const loadedTunes = validTunes(loadedABC);
   $("generateBtn").disabled = !loadedTunes.length;
   $("fileInfo").textContent = `${f.name} — ${loadedTunes.length} tune${loadedTunes.length===1?"":"s"}`;
-  setStatus(`Loaded ${f.name}. Ready to generate fingering images.`);
+  setStatus(loadedTunes.length ? `Loaded ${f.name}. Ready to generate fingering images.` : `No valid ABC tunes found in ${f.name}. A tune needs a K: key field and music notes.`);
 });
 </script>
 </body>
