@@ -924,7 +924,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 .arrowKeyNavLabel:has(input:disabled){opacity:.55;cursor:default}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -3696,7 +3696,12 @@ async function printCurrentTuneFingerings(){
     // Allocate slightly less space to bars than to notes, and reserve extra
     // room immediately after an opening repeat for its dots.
     const layout=events.map((e,i)=>({e,i})).sort((a,b)=>a.e.x-b.e.x||a.i-b.i);
-    const weights=layout.map(({e})=>e.kind==='note'?1:e.kind==='bar'?0.55:0.4);
+    // Repeat barlines need extra breathing room on both sides in printed charts.
+    const weights=layout.map(({e})=>{
+      if(e.kind==='note')return 1;
+      if(e.kind!=='bar')return 0.4;
+      return /repeat/i.test(String(e.type||''))?1.05:0.55;
+    });
     const totalWeight=weights.reduce((a,b)=>a+b,0);
     let usedWeight=0;
     const leftByIndex=new Map();
@@ -3742,14 +3747,11 @@ async function printCurrentTuneFingerings(){
     .bar{position:absolute;top:7mm;height:${PRINT_BAR_HEIGHT};border-left:0.8px solid #111}
     .bar.double{border-left:3px double #111}
     .bar.repeatStart,.bar.repeatEnd,.bar.repeatBoth{border-left:3px double #111}
-    /* Draw the repeat dots as circles rather than text. This avoids font and
-       CSS escape differences and keeps the dots clear of the bar strokes. */
+    /* Round, solid repeat dots, drawn without background gradients for Firefox printing. */
     .bar.repeatStart:after,.bar.repeatEnd:after,.bar.repeatBoth:after,
-    .bar.repeatBoth:before{content:'';position:absolute;top:50%;
-      transform:translateY(-50%);width:5px;height:13px;
-      background:radial-gradient(circle at 50% 3px,#111 2px,transparent 2.3px),
-                 radial-gradient(circle at 50% 10px,#111 2px,transparent 2.3px);
-      background-repeat:no-repeat}
+    .bar.repeatBoth:before{content:'';position:absolute;top:calc(50% - 10px);
+      width:5px;height:5px;border:0;border-radius:50%;
+      box-shadow:inset 0 0 0 5px #111,0 13px 0 0 #111}
     .bar.repeatStart:after{left:6px}
     .symbol.afterOpeningRepeat{margin-left:0}
     .bar.repeatEnd:after{right:8px}

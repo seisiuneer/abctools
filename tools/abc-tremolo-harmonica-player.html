@@ -1391,7 +1391,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 3.9
+     Version 3.10
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -4451,7 +4451,28 @@ async function printCurrentTuneFingerings(){
     // Allocate slightly less space to bars than to notes, and reserve extra
     // room immediately after an opening repeat for its dots.
     const layout=events.map((e,i)=>({e,i})).sort((a,b)=>a.e.x-b.e.x||a.i-b.i);
-    const weights=layout.map(({e})=>e.kind==='note'?1:e.kind==='bar'?0.55:0.4);
+    // In Use Arrows, an overblow/overdraw circle extends sideways beyond its
+    // note's arrow. Give adjacent barlines a little extra clearance without
+    // moving the symbol within its note column or affecting Use Bars.
+    const hasAdjacentArrowOverblow=(index)=>{
+      if(harmonicaDisplayMode!=='style1')return false;
+      for(const step of [-1,1]){
+        let j=index+step;
+        while(j>=0&&j<layout.length&&layout[j].e.kind==='ending')j+=step;
+        const neighbor=layout[j]?.e;
+        if(neighbor?.kind==='note'&&solutionByIndex.get(neighbor.token.start)?.overblow)return true;
+      }
+      return false;
+    };
+    // Preserve existing repeat spacing; add clearance only where needed.
+    const weights=layout.map(({e},index)=>{
+      // Reserve a little extra width to the right of every overblow/overdraw
+      // indicator in Use Arrows, even when the next item is another note.
+      if(e.kind==='note')return harmonicaDisplayMode==='style1'&&solutionByIndex.get(e.token.start)?.overblow?1.35:1;
+      if(e.kind!=='bar')return 0.4;
+      const base=/repeat/i.test(String(e.type||''))?1.05:0.55;
+      return base+(hasAdjacentArrowOverblow(index)?0.45:0);
+    });
     const totalWeight=weights.reduce((a,b)=>a+b,0);
     let usedWeight=0;
     const leftByIndex=new Map();
@@ -4500,14 +4521,11 @@ async function printCurrentTuneFingerings(){
     .bar{position:absolute;top:7mm;height:${PRINT_BAR_HEIGHT};border-left:0.8px solid #111}
     .bar.double{border-left:3px double #111}
     .bar.repeatStart,.bar.repeatEnd,.bar.repeatBoth{border-left:3px double #111}
-    /* Draw the repeat dots as circles rather than text. This avoids font and
-       CSS escape differences and keeps the dots clear of the bar strokes. */
+    /* Round, solid repeat dots, drawn without background gradients for Firefox printing. */
     .bar.repeatStart:after,.bar.repeatEnd:after,.bar.repeatBoth:after,
-    .bar.repeatBoth:before{content:'';position:absolute;top:50%;
-      transform:translateY(-50%);width:5px;height:13px;
-      background:radial-gradient(circle at 50% 3px,#111 2px,transparent 2.3px),
-                 radial-gradient(circle at 50% 10px,#111 2px,transparent 2.3px);
-      background-repeat:no-repeat}
+    .bar.repeatBoth:before{content:'';position:absolute;top:calc(50% - 10px);
+      width:5px;height:5px;border:0;border-radius:50%;
+      box-shadow:inset 0 0 0 5px #111,0 13px 0 0 #111}
     .bar.repeatStart:after{left:6px}
     .symbol.afterOpeningRepeat{margin-left:0}
     .bar.repeatEnd:after{right:8px}
