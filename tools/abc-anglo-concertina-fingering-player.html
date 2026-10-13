@@ -1002,8 +1002,14 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #notation [fill="red"],#notation [fill="#ff0000"],#notation [fill="#f00"]{fill:#000 !important}
   #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
 }
+
+/* Whole-tune fingering sheet action: keep the label intact and wrap header actions at every width. */
+#notationPanel .panelHeader{flex-wrap:wrap;align-items:center}
+#notationPanel .notationHeaderRight{flex:1 1 auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px;min-width:0}
+#showAllFingeringsBtn{white-space:nowrap;flex:0 0 auto;max-width:none}
+@media(max-width:650px){#notationPanel .notationHeaderRight{flex:1 1 100%}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.81</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 3.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -1016,7 +1022,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
  <div class="leftPane" id="leftPane">
   <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div><div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
@@ -1097,16 +1103,16 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p>The fingering solution descriptions below are relative to C/G tuning.</p>
       <p><strong>On-Row:</strong></p>
       <p>Jim Van Donsel's original fingering solution, which favors the C-row:</p>
-      <p>Favors playing D5 and E5 on the right-side C-row.</p>
+      <p>Favors playing D' and E' on the right-side C-row.</p>
       <p>For Jeffries-style instruments:</p>
-      <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
+      <p>Favors right-side top-row 2nd button for C♯' and D♯'.</p>
       <p><strong>Cross-Row:</strong></p>
       <p>A more cross-row friendly fingering solution:</p>
-      <p>Favors playing the D5 and E5 on the left-side G-row.</p>
-      <p>Favors playing C5 on the left-side G-row draw.</p>
-      <p>Favors playing B4 on the right-side C-row draw.</p>
+      <p>Favors playing the D' and E' on the left-side G-row.</p>
+      <p>Favors playing C' on the left-side G-row draw.</p>
+      <p>Favors playing B on the right-side C-row draw.</p>
       <p>For Jeffries-style instruments:</p>
-      <p>Favors right-side top-row 2nd button for C#5 and D#5.</p>
+      <p>Favors right-side top-row 2nd button for C♯' and D♯'.</p>
       
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing, Notation, and Fingering Display</p>
@@ -1191,6 +1197,14 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p>Click <b>Save</b> to save the entire currently loaded tune collection, including edits made to any tune.</p>
       <p>Edits are retained when you change tunes with the Tune menu.</p>
       <p>On mobile devices, the file is saved with a .txt extension.</p>
+
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+	    <p style="text-align:left;font-weight:700;margin:18px 0 6px">Showing All Fingerings for a Tune</p>
+			<p>Click <b>All Fingerings</b> in the <b>Notation</b> pane header to open a complete fingering sheet for the current tune in a new browser tab.</p> 
+			<p>The sheet uses the current instrument tuning and fingering solution, including any recognized tablature overrides, and displays left-hand button numbers plainly, right-hand button numbers circled, and top-row buttons with an appended <b>*</b>, followed by a colored bellows arrow (<b>Red</b> for <b>Push</b>, <b>Green</b> for <b>Draw</b>), and the note name.</p>
+			<p>It follows the rendered notation's staff breaks, barlines, repeats, and endings.</p>
+			<p>Print the new tab or save it as PDF using your browser.</p>
+			<p><b>All Fingerings</b> supports single-voice melodies. Multiple voices, multi-note chords, and inline key changes are not supported. If notes cannot be matched reliably to the rendered melody, the sheet is not generated.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Sharing Tunes</p>
@@ -2748,7 +2762,7 @@ function overrideDirectionForButton(item,button){
 function refreshTabOverrideIdling(){
   const pop=$("tabOverridePopover");if(!pop)return;
   const item=selectedOverrideNote();
-  $("tabOverrideNoteName").textContent=item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
+  $("tabOverrideNoteName").textContent=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
   for(const b of pop.querySelectorAll("[data-tab-button]")){
     const id=overrideButtonId(b.dataset.tabButton);
     const dir=id&&item?overrideDirectionForButton(item,id):null;
@@ -2951,7 +2965,7 @@ function prepareDiagramBase(){
   const bm=mapFor(system);
   // Focus fades only the physical buttons; title and legend remain fully opaque.
   ctx.save();if(displayMode==="focus")ctx.globalAlpha=.35;
-  Object.keys(POS).forEach(id=>{const pair=bm[id]||["?","?"];drawButton(ctx,POS[id].x,POS[id].y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]))});
+  Object.keys(POS).forEach(id=>{const pair=bm[id]||["?","?"];drawButton(ctx,POS[id].x,POS[id].y,abcPitchToDisplayNoteName(pair[0]),abcPitchToDisplayNoteName(pair[1]))});
   ctx.restore();
   ctx.textAlign="center";
   ctx.textBaseline="middle";
@@ -3078,7 +3092,7 @@ function drawDiagram(item=null,force=false){
   // and change one DOM text node. No full diagram/text canvas rendering.
   const c=$("diagramOverlay"),ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
-  $("liveNoteName").textContent=(displayMode==="all"||displayMode==="focus")&&item?abcPitchToScientific(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
+  $("liveNoteName").textContent=(displayMode==="all"||displayMode==="focus")&&item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote).replace(/#/g,"♯").replace(/b/g,"♭"):"";
   renderConcertinaStaffNote(item);
 
   if((displayMode==="all"||displayMode==="focus")&&item){
@@ -3088,7 +3102,7 @@ function drawDiagram(item=null,force=false){
       // Restore the active button to full opacity above the faded board.
       if(displayMode==="focus"){
         const bm=mapFor($("system").value),pair=bm[physical]||["?","?"];
-        drawButton(ctx,p.x,p.y,abcPitchToScientific(pair[0]),abcPitchToScientific(pair[1]));
+        drawButton(ctx,p.x,p.y,abcPitchToDisplayNoteName(pair[0]),abcPitchToDisplayNoteName(pair[1]));
       }
       
       // Match the Irish Button Box Player: translucent half-button tint
@@ -4494,6 +4508,7 @@ function syncPlaybackPermissionHeaderControls(){
   const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn"),exitFull=$("exitFull");
   if(abcFullBtn)abcFullBtn.disabled=headerDisabled;
   if(notationFullBtn)notationFullBtn.disabled=headerDisabled;
+  if($("showAllFingeringsBtn"))$("showAllFingeringsBtn").disabled=headerDisabled;
   if(fullBtn)fullBtn.disabled=headerDisabled;
   if(exitFull)exitFull.disabled=headerDisabled;
 
@@ -4862,6 +4877,439 @@ function jumpToInstrumentNoteBoundary(toEnd){
   tabOverrideAnchorPos=target;
   refreshTabOverrideIdling();
 }
+
+function midiToDisplayNoteName(midi){
+  const n=Math.round(Number(midi));if(!Number.isFinite(n))return "—";const octave=Math.floor(n/12)-1;
+  const suffix=octave===1?",,,":octave===2?",,":octave===3?",":octave===4?"":octave===5?"'":octave===6?"''":octave===7?"'''":"";
+  return displayPitchClassName(n).replace("#","♯").replace("b","♭")+suffix;
+}
+function abcPitchToDisplayNoteName(s){const midi=abcPitchToMidi(s);return midi==null?(s&&s!=="x"&&s!=="z"?String(s):"—"):midiToDisplayNoteName(midi)}
+function unsupportedAllFingeringsReason(abc){
+  const lines=abc.split(/\r?\n/);
+  const voices=new Set();
+  let inText=false;
+  let music='';
+  for(const line of lines){
+    if(/^\s*%%begintext\b/i.test(line)){inText=true;continue;}
+    if(/^\s*%%endtext\b/i.test(line)){inText=false;continue;}
+    if(inText)continue;
+    const field=line.match(/^\s*V:\s*([^\s%]+)/);
+    if(field)voices.add(field[1]);
+    if(/^\s*%%(?:score|staves)\b/i.test(line))return 'multiple voices';
+    if(/^\s*[A-Za-z]:/.test(line))continue;
+    let cleaned='',quoted=false,grace=false,decoration=null;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='%'&&!quoted&&!grace&&!decoration)break;
+      if(c==='"'&&!grace&&!decoration){quoted=!quoted;continue;}
+      if(quoted)continue;
+      if(c==='{'&&!decoration){grace=true;continue;}
+      if(c==='}'&&grace){grace=false;continue;}
+      if(grace)continue;
+      if(decoration){if(c===decoration)decoration=null;continue;}
+      if(c==='!'||c==='+'){decoration=c;continue;}
+      cleaned+=c;
+    }
+    music+=' '+cleaned;
+  }
+  // Inspect only actual bracketed constructs. ABC also uses [1, [2, [| and
+  // similar opening markers without a matching closing bracket; never scan
+  // across those markers looking for a later ] (which caused false chords).
+  for(let i=0;i<music.length;i++){
+    if(music[i]!=='[')continue;
+    const next=music[i+1]||'';
+    if(/[0-9|:]/.test(next))continue; // endings and barlines
+    const end=music.indexOf(']',i+1);
+    if(end<0)continue;
+    const inside=music.slice(i+1,end);
+    // A second opening bracket means this is not a single bracketed chord.
+    if(inside.includes('['))continue;
+    if(/^\s*K\s*:/i.test(inside))return 'inline key changes';
+    if(/^\s*V\s*:/i.test(inside)){
+      voices.add(inside.replace(/^\s*V\s*:/i,'').trim().split(/\s+/)[0]);
+      i=end;
+      continue;
+    }
+    if(!/^\s*[A-Za-z]\s*:/.test(inside)){
+      // A chord must consist of consecutive ABC pitch tokens, optionally
+      // with accidentals, octave marks and note lengths.
+      const pitch=/(?:\^{1,2}|_{1,2}|=)?[A-Ga-g][,']*(?:\d+\/?\d*|\/+\d*)?/y;
+      let pos=0,count=0,valid=true;
+      while(pos<inside.length){
+        if(/\s/.test(inside[pos])){pos++;continue;}
+        pitch.lastIndex=pos;
+        const note=pitch.exec(inside);
+        if(!note){valid=false;break;}
+        count++;
+        pos=pitch.lastIndex;
+      }
+      if(valid&&count>1)return 'multi-note chords';
+    }
+    i=end;
+  }
+  if(voices.size>1)return 'multiple voices';
+  return null;
+}
+
+
+async function printCurrentTuneFingerings(){
+  const abc=$('abcText').value;
+  const notation=$('notation');
+  const svg=notation?.querySelector('svg');
+  if(!tunes.length||!svg){await DayPilot.Modal.alert('Render a tune before printing.',{top:100,width:520});return;}
+  const unsupported=unsupportedAllFingeringsReason(abc);
+  if(unsupported){
+    await DayPilot.Modal.alert('All Fingerings cannot display tunes containing multiple voices, multi-note chords, or inline key changes.<br><br>This tune contains '+unsupported+'.',{top:100,width:560});
+    return;
+  }
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const staffId=el=>{
+    for(const node of [el,...el.querySelectorAll('*')]){
+      const match=Array.from(node.classList||[]).find(c=>/^abcjs-l\d+$/.test(c));
+      if(match)return Number(match.slice(7));
+    }
+    return null;
+  };
+  const box=el=>{try{const r=el.getBBox();return {x:r.x+r.width/2,w:r.width}}catch(_){return null}};
+  // Do not use the editor's textual line breaks: abcjs may wrap systems differently.
+  // Only the melody voice is printable. When tablature is displayed, abcjs
+  // creates additional SVG note-like elements for the tablature staff.
+  // Match melody engraving to abcjs's source ranges, system by system;
+  // never infer source correspondence from an unfiltered global SVG count.
+  // Mask comments without changing source offsets or the shared navigation tokenizer.
+  const printableABC=abc.replace(/(^|\n)([^\n]*)/g,(line)=>{
+    let quoted=false,decor=null;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(decor){if(c===decor)decor=null;continue;}
+      if(c==='"'){quoted=!quoted;continue;}
+      if(!quoted&&(c==='!'||c==='+')){decor=c;continue;}
+      if(c==='%'&&!quoted)return line.slice(0,i)+line.slice(i).replace(/[^\r\n]/g,' ');
+    }
+    return line;
+  });
+  const PRINT_TOKENS=abcNoteTokens(printableABC);
+  // Use the same resolved note objects as the live diagram, including
+  // validated user tablature overrides and the selected instrument settings.
+  // Use the same hand/row labels as the Anglo tablature: plain left-hand
+  // numbers, circled right-hand numbers, and * for the upper row.
+  const printButtonLabel=raw=>{
+    const button=String(raw||'').replace(/^L9a$/,'L9').replace(/^R1x$/,'R1');
+    const match=button.match(/^([LR])(10|[1-9])(a)?$/);
+    if(!match)return button||'X';
+    const n=Number(match[2]);
+    return (match[1]==='R'?TAB_CIRCLED[n-1]:String(n))+(match[3]?'*':'');
+  };
+  const PRINT_SYMBOL=t=>{
+    const item=solutionByIndex.get(t.start);
+    const noteName=item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):'';
+    const valid=item&&item.button&&item.direction&&(item.direction==='push'||item.direction==='draw');
+    const button=valid?printButtonLabel(item.button):'X';
+    // Slim bellows arrows using the live diagram push/draw colors,
+    // without the PUSH/DRAW text. The arrow is scaled uniformly to its sheet cell.
+    const arrow=valid?`<svg class="techniqueGraphic" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(item.direction)}"><path fill="${item.direction==='push'?'#b80054':'#008762'}" d="${item.direction==='push'?'M34 4 H46 V70 H61 L40 96 L19 70 H34 Z':'M40 4 L61 30 H46 V96 H34 V30 H19 Z'}"/></svg>`:'<div class="techniqueGraphic techniqueSpacer"></div>';
+    return `<div class="holeNumber${button.length>=3?' longButtonName':''}">${esc(button)}</div>${arrow}<div class="noteName${noteName.length>=3?' longNoteName':''}">${esc(noteName)}</div>`;
+  };
+  const PRINT_FONT='';
+  const PRINT_EXTRA_CSS='.holeNumber{font-family:Arial,sans-serif;font-size:10.5pt;font-weight:600;line-height:1.2;letter-spacing:0;height:5mm;display:flex;align-items:center;justify-content:center}.holeNumber.longButtonName{font-size:9.5pt;letter-spacing:-.35px}.techniqueGraphic{display:block;width:7mm;height:11mm;margin:1mm auto 0}.techniqueMissing{font-size:11pt;font-weight:600}.techniqueSpacer{visibility:hidden}.noteName{position:absolute;top:19mm;left:50%;transform:translateX(-50%);width:max-content;font-family:Arial,sans-serif;font-size:10pt;font-weight:400;line-height:1.2;margin:0;white-space:nowrap}.noteName.longNoteName{font-size:9pt;letter-spacing:-.25px}';
+  const PRINT_ROW_HEIGHT='32.25mm',PRINT_BAR_HEIGHT='23mm';
+  const systems=new Map();
+  function system(id){if(!systems.has(id))systems.set(id,[]);return systems.get(id)}
+
+  // Prefer the engraver's own source-linked absolute elements. Their abcelem
+  // positions are the same coordinates used by the existing note click handler.
+  const staffGroups=currentVisual?.engraver?.staffgroups||[];
+  let mapped=0;
+  const seen=new Set();
+  for(let systemIndex=0;systemIndex<staffGroups.length;systemIndex++){
+    const group=staffGroups[systemIndex];
+    for(const voice of group.voices||[]){
+      // Tablature is an extra voice/staff: only source-linked pitched melody
+      // notes are eligible. Deduplicate shared ABC source ranges.
+      for(const abs of voice.children||[]){
+        const ae=abs.abcelem;
+        if(!ae||ae.el_type!=='note'||!ae.pitches?.length||!Number.isInteger(ae.startChar))continue;
+        const start=ae.startChar-prefixLength,end=ae.endChar-prefixLength;
+        const token=PRINT_TOKENS.find(t=>t.pitch>=start&&t.pitch<end);
+        if(!token||seen.has(token.start))continue;
+        const graphics=(abs.elemset||[]).filter(el=>el&&typeof el.getBBox==='function');
+        const shape=graphics.find(el=>el.classList?.contains('abcjs-note'))||graphics[0];
+        let x=Number(abs.x);
+        if(!Number.isFinite(x)&&shape)x=box(shape)?.x;
+        if(!Number.isFinite(x))continue;
+        seen.add(token.start);
+        system(systemIndex).push({kind:'note',x,token});
+        mapped++;
+      }
+    }
+  }
+  // On builds without exposed engraver staffgroups, the melody's SVG note
+  // groups carry abcjs-v0; omit all tablature voices before matching tokens.
+  if(!mapped){
+    const melody=Array.from(svg.querySelectorAll('.abcjs-note.abcjs-v0'))
+      .filter(el=>staffId(el)!==null&&box(el));
+    if(melody.length===PRINT_TOKENS.length){
+      melody.forEach((el,i)=>system(staffId(el)).push({kind:'note',x:box(el).x,token:PRINT_TOKENS[i]}));
+      mapped=melody.length;
+    }
+  }
+  if(!mapped||mapped!==PRINT_TOKENS.length){
+    await DayPilot.Modal.alert(`Could not reliably match all ${PRINT_TOKENS.length} tune notes to the rendered melody (${mapped} matched). Printing was cancelled to avoid an incorrect sheet.`,{top:100,width:520});
+    return;
+  }
+  // Obtain musical bar types and ending labels from abcjs's engraving model.
+  // SVG bar paths alone usually do not distinguish repeats from plain bars.
+  const engravedBars=new Map();
+  const engravedEndings=new Map();
+  for(let systemIndex=0;systemIndex<staffGroups.length;systemIndex++){
+    const group=staffGroups[systemIndex];
+    const bars=[];
+    for(const voice of group.voices||[]){
+      for(const abs of voice.children||[]){
+        const ae=abs.abcelem;
+        if(!ae||ae.el_type!=='bar'||!Number.isFinite(Number(abs.x)))continue;
+        const x=Number(abs.x);
+        const type=String(ae.type||'');
+        const rawLabel=String(ae.startEnding||'').trim();
+        // Only numbered volta endings belong on the fingering sheet.
+        // Chord names and other annotations must never become ending labels.
+        const label=/^\d+(?:[\s,.-]+\d+)*\.?$/.test(rawLabel)?rawLabel:'';
+        // Multiple voices can share a bar. Prefer the richest bar type.
+        const existing=bars.find(b=>Math.abs(b.x-x)<2);
+        if(existing){
+          if(type.includes('repeat')||(!existing.type&&type))existing.type=type;
+          if(label)existing.label=label;
+        }else bars.push({x,type,label});
+      }
+    }
+    bars.sort((a,b)=>a.x-b.x);
+    engravedBars.set(systemIndex,bars);
+    for(const bar of bars){
+      system(systemIndex).push({kind:'bar',x:bar.x,type:bar.type});
+      if(bar.label)system(systemIndex).push({kind:'ending',x:bar.x,label:bar.label});
+    }
+  }
+  // Fallback to the SVG when the engraver model is not exposed. In that
+  // case the graphic bar is retained even if its repeat type is unknown.
+  for(const el of svg.querySelectorAll('.abcjs-bar')){
+    const id=staffId(el),r=box(el);
+    if(id===null||!r)continue;
+    if((engravedBars.get(id)||[]).some(b=>Math.abs(b.x-r.x)<8))continue;
+    system(id).push({kind:'bar',x:r.x,type:String(el.getAttribute('class')||'')});
+  }
+  // Some abcjs versions draw endings separately. Anchor their labels to the
+  // bar at the START of the measure, not to the bracket's visual center.
+  for(const el of svg.querySelectorAll('.abcjs-ending')){
+    const id=staffId(el),r=box(el);
+    if(id===null||!r)continue;
+    const label=String(el.textContent||'').trim();
+    // The SVG ending class can contain chord/annotation text in some builds.
+    if(!/^\d+(?:[\s,.-]+\d+)*\.?$/.test(label))continue;
+    const events=system(id);
+    if(events.some(e=>e.kind==='ending'&&e.label===label))continue;
+    const bars=events.filter(e=>e.kind==='bar'&&e.x<=r.x+5).sort((a,b)=>b.x-a.x);
+    events.push({kind:'ending',x:bars.length?bars[0].x:r.x-r.w/2,label});
+  }
+  const rows=Array.from(systems).sort((a,b)=>a[0]-b[0]).filter(([,events])=>events.some(e=>e.kind==='note'));
+  const printRows=rows.map(([id,events])=>{
+    events.sort((a,b)=>a.x-b.x);
+    const notes=events.filter(e=>e.kind==='note');
+    // A repeat or double bar is already the boundary of the system. abcjs
+    // can expose its individual strokes as separate SVG bars; collapse those
+    // strokes rather than drawing a second line beside the repeat sign.
+    const bars=events.filter(e=>e.kind==='bar').sort((a,b)=>a.x-b.x);
+    const repeatRank=e=>/repeat/i.test(String(e.type||''))?3:/double|dbl|thick|thin_thin/i.test(String(e.type||''))?2:1;
+    const clustered=[];
+    for(const bar of bars){
+      const previous=clustered[clustered.length-1];
+      const interveningNote=previous&&notes.some(n=>n.x>previous.x&&n.x<bar.x);
+      // abcjs can expose a start repeat as both an engraved repeat bar and
+      // a separate SVG stroke 12-30 engraving units away. Treat those as
+      // one boundary before the first note, but never merge across notes.
+      // A pickup can precede the opening repeat. Its engraved repeat and
+      // separate SVG stroke still form one boundary even though it is not
+      // before the first note of the system.
+      const repeatBoundary=previous&&(repeatRank(previous)===3||repeatRank(bar)===3);
+      const nearSameBoundary=previous&&bar.x-previous.x<(repeatBoundary?36:12);
+      if(nearSameBoundary&&!interveningNote){
+        if(repeatRank(bar)>repeatRank(previous)){
+          const index=events.indexOf(previous);
+          if(index>=0)events.splice(index,1);
+          clustered[clustered.length-1]=bar;
+        }else{
+          const index=events.indexOf(bar);
+          if(index>=0)events.splice(index,1);
+        }
+      }else clustered.push(bar);
+    }
+    const firstNote=notes[0].x,lastNote=notes[notes.length-1].x;
+    // Recover opening repeats from the ABC source, including transitions
+    // that occur MID-SYSTEM after an ending repeat (:| followed by |:).
+    // Checking only the first note of a system misses that common pattern
+    // when abcjs places the next part's pickup in the same engraving row.
+    for(const note of notes){
+      const tokenIndex=PRINT_TOKENS.indexOf(note.token);
+      const previousToken=tokenIndex>0?PRINT_TOKENS[tokenIndex-1]:null;
+      const sourceGap=abc.slice(previousToken?previousToken.end:0,note.token.start)
+        .replace(/"(?:[^"\\]|\\.)*"/g,'')
+        .replace(/%[^\n\r]*/g,'');
+      // A repeat must be the last musical bar token before this note.
+      // Ignore spaces, line continuations, and ABC decorations after it.
+      if(!/\|:(?:\s|\\)*$/.test(sourceGap))continue;
+      const previousX=notes.filter(n=>n.x<note.x).map(n=>n.x).pop();
+      const candidates=clustered.filter(e=>e.x<note.x&&
+        (previousX===undefined||e.x>previousX));
+      if(candidates.length){
+        const bar=candidates[candidates.length-1];
+        const oldType=String(bar.type||'');
+        if(!/left_repeat|repeat_left|bar_left_repeat|dbl_repeat|double_repeat/i.test(oldType)){
+          bar.type=/right_repeat|repeat_right|bar_right_repeat/i.test(oldType)
+            ?'bar_dbl_repeat':'bar_left_repeat';
+        }
+      }else{
+        // Some engravings omit the opening bar altogether. Insert it at
+        // the boundary rather than silently losing the repeat.
+        const bar={kind:'bar',x:previousX===undefined?note.x-12:(previousX+note.x)/2,type:'bar_left_repeat'};
+        events.push(bar);
+        clustered.push(bar);
+      }
+    }
+    const lastBar=clustered.filter(e=>e.x>lastNote).sort((a,b)=>a.x-b.x)[0];
+    // Every staff after the first starts with a barline unless an engraved
+    // barline (including a repeat or double bar) already precedes its first note.
+    // Do not add a starting barline to the first staff.
+    if(id!==rows[0][0]&&!clustered.some(e=>e.x<firstNote)){
+      events.push({kind:'bar',x:firstNote-12,type:'synthetic'});
+    }
+    if(!lastBar)events.push({kind:'bar',x:lastNote+12,type:'synthetic'});
+    events.sort((a,b)=>a.x-b.x);
+    const low=Math.min(...events.map(e=>e.x)),high=Math.max(...events.map(e=>e.x));
+    const span=Math.max(1,high-low);
+    // Spread dense engraving evenly enough that short source durations do not
+    // cause fingering glyphs and note names to overlap. Retain the original
+    // left-to-right order and the positions of barlines between notes.
+    // Allocate slightly less space to bars than to notes, and reserve extra
+    // room immediately after an opening repeat for its dots.
+    const layout=events.map((e,i)=>({e,i})).sort((a,b)=>a.e.x-b.e.x||a.i-b.i);
+    const weights=layout.map(({e},j)=>{
+      if(e.kind!=='note')return e.kind==='bar'?(/repeat/i.test(String(e.type||''))?1.05:0.55):0.4;
+      // Reserve width for every long button name, not only chromatic names.
+      // In particular, runs of L10/R10 must remain readable without collisions.
+      const label=ev=>ev?.kind==='note'?printButtonLabel(solutionByIndex.get(ev.token.start)?.button||''):'';
+      const current=label(e);
+      const prev=label(layout[j-1]?.e),next=label(layout[j+1]?.e);
+      const isLong=s=>s.length>=3;
+      const noteLabel=ev=>{
+        if(ev?.kind!=='note')return '';
+        const item=solutionByIndex.get(ev.token.start);
+        return item?abcPitchToDisplayNoteName(item.normalizedNote||item.abcNote):'';
+      };
+      const longNote=noteLabel(e).length>=3;
+      const neighborLongNote=noteLabel(layout[j-1]?.e).length>=3||noteLabel(layout[j+1]?.e).length>=3;
+      // Both the button name above and the pitch label below share the same
+      // horizontal cell. Reserve width for whichever label needs more room.
+      if(isLong(current))return Math.max(/\*$/.test(current)?1.65:1.4,longNote?1.55:1);
+      if(longNote)return 1.55;
+      if(isLong(prev)||isLong(next)||neighborLongNote)return 1.2;
+      return 1;
+    });
+    const totalWeight=weights.reduce((a,b)=>a+b,0);
+    let usedWeight=0;
+    const leftByIndex=new Map();
+    layout.forEach(({i},j)=>{
+      leftByIndex.set(i,(2+96*(usedWeight+weights[j]/2)/totalWeight).toFixed(3)+'%');
+      usedWeight+=weights[j];
+    });
+    const positioned=events.map((e,i)=>{
+      const left=leftByIndex.get(i);
+      if(e.kind==='note'){
+        // Give the first note after an opening repeat room for its two dots.
+        // The repeat bar's position remains tied to the engraved boundary.
+        const openingRepeat=events.filter(b=>b.kind==='bar'&&b.x<e.x&&
+          /left_repeat|repeat_left|bar_left_repeat|dbl_repeat|double_repeat/i.test(String(b.type||'')))
+          .sort((a,b)=>b.x-a.x)[0];
+        const priorNote=notes.filter(n=>n.x<e.x).sort((a,b)=>b.x-a.x)[0];
+        const afterOpeningRepeat=openingRepeat&&(!priorNote||priorNote.x<openingRepeat.x);
+        return `<div class="symbol${afterOpeningRepeat?' afterOpeningRepeat':''}" style="left:${left}">${PRINT_SYMBOL(e.token)}</div>`;
+      }
+      if(e.kind==='bar'){
+        const type=String(e.type||'').toLowerCase();
+        const leftRepeat=/left_repeat|repeat_left|bar_left_repeat/.test(type);
+        const rightRepeat=/right_repeat|repeat_right|bar_right_repeat/.test(type);
+        const bothRepeat=/dbl_repeat|double_repeat/.test(type)||(leftRepeat&&rightRepeat);
+        // abcjs uses bar_thin_thin for ||, bar_thick_thin for [|,
+        // and bar_thin_thick for |]. Keep repeat types separate.
+        const double=/double|dbl|thin_thin|thin_thick|thick_thin|thick_thick/.test(type);
+        const cl=bothRepeat?'repeatBoth':leftRepeat?'repeatStart':rightRepeat?'repeatEnd':double?'double':'';
+        return `<div class="bar ${cl}" style="left:${left}"></div>`;
+      }
+      // Place the ending number just inside the measure's left barline.
+      return `<div class="ending" style="left:${left}">${esc(e.label)}</div>`;
+    }).join('');
+    return `<section class="staffrow">${positioned}</section>`;
+  }).join('');
+  const title=esc((abc.match(/^T:\s*(.*)$/m)||[])[1]||'Untitled Tune');
+  // Use the exact instrument description already displayed by the live diagram.
+  const instrumentDescription=esc($('diagramMeta')?.textContent?.trim()||'');
+  const fontRule=PRINT_FONT;
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>${title} — Fingerings</title><style>
+    @page{size:auto;margin:13mm 12mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#111;margin:0}
+    h1{text-align:center;font-size:20pt;font-weight:600;margin:0 0 4mm}
+    .instrumentDescription{text-align:center;font-size:12pt;font-weight:400;color:#555;margin:0 0 10mm}
+    .staffrow{position:relative;height:${PRINT_ROW_HEIGHT};margin:0 0 4.6875mm;break-inside:avoid;page-break-inside:avoid}
+    .symbol{position:absolute;top:8mm;transform:translateX(-50%);text-align:center;white-space:nowrap}
+    .bar{position:absolute;top:7mm;height:${PRINT_BAR_HEIGHT};border-left:0.8px solid #111}
+    .bar.double{border-left:3px double #111}
+    .bar.repeatStart,.bar.repeatEnd,.bar.repeatBoth{border-left:3px double #111}
+    /* Round, solid repeat dots, drawn without background gradients for Firefox printing. */
+    .bar.repeatStart:after,.bar.repeatEnd:after,.bar.repeatBoth:after,
+    .bar.repeatBoth:before{content:'';position:absolute;top:calc(50% - 10px);
+      width:5px;height:5px;border:0;border-radius:50%;
+      box-shadow:inset 0 0 0 5px #111,0 13px 0 0 #111}
+    .bar.repeatStart:after{left:6px}
+    .symbol.afterOpeningRepeat{margin-left:0}
+    .bar.repeatEnd:after{right:8px}
+    .bar.repeatBoth:after{left:8px}
+    .bar.repeatBoth:before{right:8px}
+    .ending{position:absolute;top:-1mm;border-top:1px solid #111;font-size:10pt;min-width:72px;padding-left:5px;transform:translateX(2px)}
+    ${fontRule} ${PRINT_EXTRA_CSS}
+    /* Keep symbols legible on both portrait and landscape paper.
+       The staff positions remain proportional to the available page width. */
+    @media print{.staffrow{break-inside:avoid;page-break-inside:avoid}}
+    @media screen{
+      body{padding:15mm;max-width:1100px;margin:auto}
+      /* Enlarge the on-screen preview without changing printed dimensions. */
+      body{zoom:var(--preview-zoom,1)}
+    }
+    </style></head><body><h1>${title}</h1>${instrumentDescription?`<div class="instrumentDescription">${instrumentDescription}</div>`:""}${printRows}<script>
+  (function(){
+    function sizePreview(){
+      // At zoom 1, the preview's maximum content width is 1100 CSS pixels.
+      // Never enlarge beyond the available viewport width.
+      var available=Math.max(320,document.documentElement.clientWidth-24);
+      var base=Math.min(1100,available);
+      var factor=Math.min(1.25,Math.max(1,available/base));
+      // On wider screens use the extra space; smaller windows retain the print layout.
+      document.body.style.setProperty('--preview-zoom',String(factor));
+    }
+    sizePreview();
+    window.addEventListener('resize',sizePreview);
+  })();
+  <\/script></body></html>`;
+  // Open the complete fingering sheet in a separate tab for viewing,
+  // browser printing, or saving as PDF.
+  const w=window.open('','_blank');
+  if(!w){await DayPilot.Modal.alert('Please allow pop-ups for this site to view the fingering sheet.',{top:100,width:520});return;}
+  w.document.open();w.document.write(html);w.document.close();
+}
+
+
+
+$("showAllFingeringsBtn").addEventListener("click",async()=>{
+  if($("showAllFingeringsBtn").disabled)return;
+  try{await printCurrentTuneFingerings();}
+  catch(err){console.error("All Fingerings generation failed:",err);await DayPilot.Modal.alert("Unable to generate the All Fingerings view: "+(err?.message||String(err)),{top:100,width:540});}
+});
 
 /* Version 3.8: default-on left/right arrow navigation for keyboard and Bluetooth HID pedals. */
 (function installArrowKeyNoteNavigation(){
