@@ -730,12 +730,10 @@ body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDispl
   .countInLabel{font-size:12px}
 }
 
-
 /* Grey Metronome and Count-in labels whenever their checkboxes are disabled. */
 .countInLabel:has(input:disabled){
   color:#8a8a8a;
 }
-
 
 #fileLabel{margin-right:10px}
 .paneFullBtn:disabled{opacity:.45;cursor:default}
@@ -796,7 +794,6 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
   color:#8a8a8a;
 }
 
-
 /* Unified sharing and lesson mode */
 .shareButtons #shareTuneBtn,.shareButtons #shareAllBtn{display:none!important}
 .shareButtons{display:flex!important}.shareButtons #shareBtn{width:100%;white-space:nowrap}
@@ -805,7 +802,6 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
 .lessonDialog h2{margin:0 0 16px;text-align:center}.lessonDialog label{display:block;font-weight:650;margin:12px 0 5px}.lessonDialog input[type=text],.lessonDialog input[type=number],.lessonDialog textarea{width:100%;font:inherit;border:1px solid #b8c7bd;border-radius:7px;padding:8px}.lessonDialog textarea{min-height:120px;resize:vertical}.lessonActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center}.lessonActions button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.lessonActions button:disabled{opacity:.45;cursor:default}.lessonScope{display:flex;gap:18px;flex-wrap:wrap;margin-top:7px}.lessonScope label{margin:0;font-weight:500}.lessonHint{font-size:.86rem;color:#607068;margin-top:6px}.lessonLinkOutput{min-height:90px!important;font-size:.82rem}.lessonStudentText{white-space:pre-wrap;line-height:1.45;margin:12px 0 4px}.lessonStudentTitle{text-align:center;margin-bottom:10px}.lessonStudentTempo{text-align:center;color:#607068;font-size:.9rem}
 body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margin-top:0}#lessonSaveAbcBtn{display:none}body.lessonMode #lessonSaveAbcBtn{display:inline-flex}
 @media(max-width:650px){.shareButtons{display:block!important}.lessonDialog{padding:16px}.lessonActions button{flex:1 1 45%}}
-
 
 /* v1.70: refined Share / Configure Lesson dialog layout. */
 .lessonModal{
@@ -1070,7 +1066,6 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   margin-top:42px !important;
 }
 
-
 /* v1.76: explicitly balance the actual Share dialog elements. */
 #shareModal .lessonDialog{
   border-radius:0 !important;
@@ -1090,13 +1085,11 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   border-radius:0 !important;
 }
 
-
 /* v1.79: taller Lesson Share Link URL field. */
 #lessonLinkOutput{
   min-height:240px !important;
   height:240px !important;
 }
-
 
 /* v1.82: final Configure Lesson / Lesson Share Link spacing refinements. */
 
@@ -1285,10 +1278,10 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 .arrowKeyNavLabel:has(input:disabled){opacity:.55;cursor:default}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.8</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
- <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
+ <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
  <div class="control"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="mandolin" selected>Mandolin</option><option value="tenor-banjo">Tenor Banjo</option><option value="bouzouki-gdae">Bouzouki (GDAE)</option><option value="bouzouki-gdad">Bouzouki (GDAD)</option><option value="guitar">Guitar (Standard)</option><option value="guitar-dadgad">Guitar (DADGAD)</option></select></div>
  <div class="control"><label for="capoSelect">Capo</label><select id="capoSelect"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
@@ -1335,7 +1328,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p>The string labels in both fretboard views show the strings' actual sounding pitch with the selected capo, using sharps or flats according to the tune's <b>K:</b> key and mode.</p>
       <p>The notation tablature and both live fingering views show fret numbers relative to the capo, so the capo is treated as fret <b>0</b>.</p>
       <p>The string pitch labels still show the strings' actual sounding pitches at the selected capo position.</p>
-      <p>Use <b>Notation display</b> to choose standard notation alone or standard notation with tablature for the selected instrument.</p>
+      <p>Use <b>Notation display</b> to choose <b>Notation Only</b>, <b>Tablature Only</b>, or <b>Notation + Tab</b>. Tablature Only shows the selected instrument’s tablature without the standard notation staff.</p>
       <p>The default is <b>Notation + Tab</b>.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -2816,7 +2809,7 @@ function saveWhistleDisplayPrefs(){commitStandardShareSettingsIfPending();
 function restoreWhistleDisplayPrefs(){
   try{
     const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
-    if(prefs.notation==="notation"||prefs.notation==="mandolin-tab")$("notationDisplay").value=prefs.notation;
+    if(["notation","tablature-only","mandolin-tab"].includes(prefs.notation))$("notationDisplay").value=prefs.notation;
     if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
     if(Number.isFinite(Number(prefs.capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(prefs.capo)))));
   }catch(_){}
@@ -2836,7 +2829,7 @@ function validateFretboardSettingsParams(params){const hide=params.get("hide");i
   const notation=params.get("notation");
   const instrument=params.get("instrument");
   const capo=params.get("capo");
-  if(notation!==null&&!["notation","mandolin-tab"].includes(notation))throw new Error("Lesson notation setting is invalid.");
+  if(notation!==null&&!["notation","tablature-only","mandolin-tab"].includes(notation))throw new Error("Lesson notation setting is invalid.");
   if(instrument!==null&&!["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(instrument))throw new Error("Lesson instrument setting is invalid.");
   if(capo!==null&&(!Number.isFinite(Number(capo))||Number(capo)<0||Number(capo)>12))throw new Error("Lesson capo setting is invalid.");
 }
@@ -2857,7 +2850,7 @@ function applyFretboardSettingsParams(params){
   const instrument=params.get("instrument");
   const capo=params.get("capo");
 
-  if(notation==="notation"||notation==="mandolin-tab")$("notationDisplay").value=notation;
+  if(["notation","tablature-only","mandolin-tab"].includes(notation))$("notationDisplay").value=notation;
   if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
   if(capo!==null&&Number.isFinite(Number(capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(capo)))));
   updateInstrumentUI();
@@ -3091,9 +3084,31 @@ async function rebuild(){
     }
 
     configureIrishRollsForTune(tune);
-    const playbackABC=buildPlaybackABC(tune);
+    let playbackABC=buildPlaybackABC(tune);
+    const notationMode=$("notationDisplay").value;
+    const tablatureOnly=notationMode==="tablature-only";
+    // Inject only into the temporary rendering ABC, immediately below X:.
+    // The source editor, saved ABC, and shared tune remain unchanged.
+    if(tablatureOnly){
+      // Neutralize existing staff separation directives without shifting any
+      // source character positions (the same technique as MIDI overrides).
+      playbackABC=playbackABC.replace(
+        /^([ \t]*)%%staffsep\b[^\r\n]*/gmi,
+        m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1));}
+      );
+      const xLine=/^X:[^\r\n]*(?:\r?\n|$)/m.exec(playbackABC);
+      if(xLine){
+        const guitar=["guitar","guitar-dadgad"].includes($("instrumentSelect").value);
+        const injection=`%tablature_only\n%%staffsep ${guitar?80:60}\n`;
+        const at=xLine.index+xLine[0].length;
+        playbackABC=playbackABC.slice(0,at)+injection+playbackABC.slice(at);
+        // Both inserted directives precede the notes and must be included in
+        // notation click/highlight source-offset conversion.
+        prefixLength+=injection.length;
+      }
+    }
 
-    const showWhistleTab=$("notationDisplay").value==="mandolin-tab";
+    const showWhistleTab=notationMode==="mandolin-tab"||tablatureOnly;
     const renderParams={
       responsive:"resize",
       expandToWidest:true,
@@ -3101,9 +3116,10 @@ async function rebuild(){
       selectionColor:"#ff0000",
       clickListener:selectClickedNotationNote
     };
+    if(!tablatureOnly)renderParams.disallowTablatureOnly=true;
     if(showWhistleTab){
       renderParams.paddingbottom=16;
-      renderParams.disallowTablatureOnly=true;
+      renderParams.disallowTablatureOnly=!tablatureOnly;
       renderParams.tablature=selectedRenderTab();
     }
 
