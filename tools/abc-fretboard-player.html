@@ -720,6 +720,13 @@ body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDispl
   .diagramHeader .fullBtn,.diagramHeader .exitFull{flex:0 0 auto}
 }
 
+/* Keep the instrument header actions visible when its split pane narrows.
+   Wrap based on available pane space, not just the browser viewport. */
+.diagramHeader{flex-wrap:wrap}
+.diagramHeaderRight{flex:1 1 320px;min-width:0;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.diagramHeaderRight label{white-space:nowrap;flex:0 0 auto}
+.diagramHeaderRight .fullBtn,.diagramHeaderRight .exitFull{flex:0 0 auto;white-space:nowrap}
+
 /* All Tablature: keep each button intact, wrapping header actions as needed. */
 #notationPanel .panelHeader{flex-wrap:wrap;align-items:center}
 #notationPanel .notationHeaderRight{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap;gap:7px}
@@ -1283,8 +1290,23 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 .arrowKeyNavLabel input{margin:0}
 .arrowKeyNavLabel:has(input:disabled){opacity:.55;cursor:default}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
+
+/* Browser print: only the complete notation, in normal document flow. */
+@page { size:auto; margin:12mm; }
+@media print {
+  html,body{height:auto !important;min-height:0 !important;width:auto !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:white !important}
+  .app,.workspace,.leftPane,#notationPanel,.notationViewport{display:block !important;position:static !important;float:none !important;transform:none !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;max-height:none !important;margin:0 !important;padding:0 !important;overflow:visible !important;grid-template-columns:none !important;grid-template-rows:none !important;flex:none !important}
+  .app-header,.toolbar,#abcPanel,.splitH,.splitV,.diagramCard,.bottomBar,#notationPanel>.panelHeader,#notationPanel>.audioRow,.lessonModal,.modal_default_main,.modal_default_background{display:none !important}
+  #notationPanel{border:0 !important;border-radius:0 !important;box-shadow:none !important}
+  #notation{display:block !important;position:static !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:#fff !important}
+  #notation svg{display:block !important;width:100% !important;max-width:100% !important;height:auto !important;overflow:visible !important}
+  #notation .abcjs-cursor{display:none !important}
+  #notation .abcjs-highlight,#notation .abcjs-selected,#notation .abcjs-note_selected{fill:#000 !important;stroke:#000 !important}
+  #notation [fill="red"],#notation [fill="#ff0000"],#notation [fill="#f00"]{fill:#000 !important}
+  #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
+}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.91</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.92</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>

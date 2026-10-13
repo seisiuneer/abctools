@@ -1457,6 +1457,21 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 .arrowKeyNavLabel:has(input:disabled){opacity:.55;cursor:default}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 #notationPanel #showAllFingeringsBtn{white-space:nowrap;max-width:none;flex:0 0 auto;text-align:center}
+
+/* Browser print: only the complete notation, in normal document flow. */
+@page { size:auto; margin:12mm; }
+@media print {
+  html,body{height:auto !important;min-height:0 !important;width:auto !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:white !important}
+  .app,.workspace,.leftPane,#notationPanel,.notationViewport{display:block !important;position:static !important;float:none !important;transform:none !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;max-height:none !important;margin:0 !important;padding:0 !important;overflow:visible !important;grid-template-columns:none !important;grid-template-rows:none !important;flex:none !important}
+  .app-header,.toolbar,#abcPanel,.splitH,.splitV,.diagramCard,.bottomBar,#notationPanel>.panelHeader,#notationPanel>.audioRow,.lessonModal,.modal_default_main,.modal_default_background{display:none !important}
+  #notationPanel{border:0 !important;border-radius:0 !important;box-shadow:none !important}
+  #notation{display:block !important;position:static !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:#fff !important}
+  #notation svg{display:block !important;width:100% !important;max-width:100% !important;height:auto !important;overflow:visible !important}
+  #notation .abcjs-cursor{display:none !important}
+  #notation .abcjs-highlight,#notation .abcjs-selected,#notation .abcjs-note_selected{fill:#000 !important;stroke:#000 !important}
+  #notation [fill="red"],#notation [fill="#ff0000"],#notation [fill="#f00"]{fill:#000 !important}
+  #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
+}
 </style>
 </style>
    </meta>
