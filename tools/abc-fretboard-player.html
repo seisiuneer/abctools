@@ -1452,6 +1452,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>Fretboard Player share links include the current <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings so they are restored when the link is opened.</p><p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
+      <p>When sharing a <b>Baritone Ukulele</b> tune back to ABC Transcription Tools, the player uses custom tablature settings for the instrument.</p>
       <p>The current capo value is passed to ABC Transcription Tools.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -2548,14 +2549,23 @@ function openShareInABCTranscriptionTools(allTunes,mode){
   const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
   if(!abc||!abc.trim())return;
   try{
-    const def=compressABCDeflate(abc);
-    const action=mode==="player"?"play=1":"editor=1";
     const instrument=$("instrumentSelect").value;
+    // Baritone Ukulele uses a custom four-string tablature definition in ABCTT.
+    // Apply it only to the transferred copy, leaving the editor ABC untouched.
+    let transferABC=abc;
+    if(instrument==="ukulele-baritone"){
+      const capo=selectedCapo();
+      const label=capo?`Baritone Ukulele (Capo ${capo})`:"Baritone Ukulele";
+      const tabDirective='%abcjs_render_params '+JSON.stringify({tablature:[{instrument:"violin",label,tuning:["D","G","B","e"],highestNote:"f'",capo}]});
+      transferABC=transferABC.replace(/^(X:[^\r\n]*)(\r?\n|$)/gm,(_match,header,newline)=>header+(newline||"\n")+tabDirective+(newline||"\n"));
+    }
+    const def=compressABCDeflate(transferABC);
+    const action=mode==="player"?"play=1":"editor=1";
     const attFormat = instrument === "bouzouki-gdad" ? "gdad"
       : instrument === "guitar" ? "guitare"
       : instrument === "guitar-dadgad" ? "guitard"
       : instrument === "ukulele" ? "uke"
-      : instrument === "ukulele-baritone" ? "guitare" : "mandolin";
+      : instrument === "ukulele-baritone" ? "noten" : "mandolin";
     const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10&capo=${selectedCapo()}`;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
