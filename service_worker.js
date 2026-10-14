@@ -12,7 +12,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3355';
+const cacheName = 'abctoolscache-3357';
 
 const contentToCache = [
     'abctools.html',
@@ -28,6 +28,7 @@ const contentToCache = [
     'app-min.css',
     'codemirror-min.css',
     'app-min.js',
+    'interface-language.js',
     'jquery-1.11.1.min.js',
 	'jszip.min.js',
 	'xml2abc-min.js',
@@ -225,5 +226,3 @@ self.addEventListener('fetch', (e) => {
         }
     })());
 });
-
-
