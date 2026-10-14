@@ -32,12 +32,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Fretboard Player</title>
-<meta name="description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, and guitar." />
-<meta name="keywords" content="ABC notation, fretboard player, mandolin, tenor banjo, bouzouki, guitar, DADGAD, GDAE, GDAD, tablature, fingering, Irish traditional music, ABC Transcription Tools" />
+<meta name="description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, guitar, and ukulele." />
+<meta name="keywords" content="ABC notation, fretboard player, mandolin, tenor banjo, bouzouki, guitar, DADGAD, GDAE, GDAD, ukulele, tablature, fingering, Irish traditional music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ABC Fretboard Player" />
-<meta property="og:description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, and guitar." />
+<meta property="og:description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, guitar, and ukulele." />
 <meta property="og:site_name" content="ABC Fretboard Player" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-fretboard-player.html" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-fretboard-player-1.jpg"/>
@@ -1306,11 +1306,11 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
 }
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.93</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.95</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
- <div class="control"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="mandolin" selected>Mandolin</option><option value="tenor-banjo">Tenor Banjo</option><option value="bouzouki-gdae">Bouzouki (GDAE)</option><option value="bouzouki-gdad">Bouzouki (GDAD)</option><option value="guitar">Guitar (Standard)</option><option value="guitar-dadgad">Guitar (DADGAD)</option></select></div>
+ <div class="control"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="mandolin" selected>Mandolin</option><option value="tenor-banjo">Tenor Banjo</option><option value="bouzouki-gdae">Bouzouki (GDAE)</option><option value="bouzouki-gdad">Bouzouki (GDAD)</option><option value="guitar">Guitar (Standard)</option><option value="guitar-dadgad">Guitar (DADGAD)</option><option value="ukulele">Ukulele (Standard)</option><option value="ukulele-baritone">Ukulele (Baritone)</option></select></div>
  <div class="control"><label for="capoSelect">Capo</label><select id="capoSelect"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button><button id="shareBtn" disabled>Share</button></div>
@@ -1349,8 +1349,10 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and optional tablature for the selected fretted instrument.</p>
       <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to its right.</p>
-      <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), or Guitar (DADGAD).</p>
+      <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), Guitar (DADGAD), Ukulele (Standard), or Ukulele (Baritone).</p>
       <p>The instrument selection is saved and restored.</p>
+      <p>Ukulele (Standard) tablature is for GCEA-tuned instruments and treats the tuning as non-re-entrant. This provides a workable solution for playing traditional Irish tunes: notes below C are “folded” onto the G string, similar to how a whistle player may fold notes below D up an octave.</p>
+      <p>Ukulele (Baritone) uses DGBE tuning, the same pitches as the four highest strings of a standard guitar. This tuning is not re-entrant, so no note folding is required.</p>
       <p>Use <b>Capo</b> to select a capo position from <b>0</b> through <b>12</b>.</p>
       <p>The capo is applied to generated tablature and the live fretboard display, is saved and restored, and is included in share links and transfers back to ABC Transcription Tools.</p>
       <p>The string labels in both fretboard views show the strings' actual sounding pitch with the selected capo, using sharps or flats according to the tune's <b>K:</b> key and mode.</p>
@@ -1413,7 +1415,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the fretboard pane updates to that note.</p>
-      <p>Playback uses the ABC Transcription Tools custom <b>MIDI program 141</b> for Mandolin, <b>MIDI program 105</b> for Tenor Banjo, the ABC Transcription Tools custom <b>MIDI program 140</b> for either Bouzouki tuning, or <b>MIDI program 25</b> for either Guitar tuning, with program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+      <p>Playback uses the ABC Transcription Tools custom <b>MIDI program 141</b> for Mandolin, <b>MIDI program 105</b> for Tenor Banjo, the ABC Transcription Tools custom <b>MIDI program 140</b> for either Bouzouki tuning, <b>MIDI program 25</b> for either Guitar tuning, or <b>MIDI program 25</b> for either Ukulele, with program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback.</p>
       <p>Changing this setting stops and rewinds the current tune.</p>
       <p>The metronome setting is remembered in this browser but is not included in share links.</p>
@@ -1555,6 +1557,18 @@ const GDAD_RENDER_TAB=[{
   label:"",
   tuning:["G,","D","A","d"]
 }];
+const UKULELE_RENDER_TAB=[{
+  instrument:"violin",
+  label:"",
+  tuning:["G,","C","E","A"],
+  highestNote:"f'"
+}];
+const UKULELE_BARITONE_RENDER_TAB=[{
+  instrument:"violin",
+  label:"",
+  tuning:["D","G","B","e"],
+  highestNote:"f'"
+}];
 const GUITAR_RENDER_TAB=[{
   instrument:"guitar",
   label:"",
@@ -1566,6 +1580,12 @@ const GUITAR_DADGAD_RENDER_TAB=[{
   tuning:["D,","A,","D","G","A","d"]
 }];
 
+const UKULELE_STRINGS=[
+  {name:"A",midi:69}, {name:"E",midi:64}, {name:"C",midi:60}, {name:"G",midi:55}
+];
+const UKULELE_BARITONE_STRINGS=[
+  {name:"E",midi:64}, {name:"B",midi:59}, {name:"G",midi:55}, {name:"D",midi:50}
+];
 const GDAE_STRINGS=[
   {name:"E",midi:76}, {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}
 ];
@@ -1578,21 +1598,27 @@ const GUITAR_STRINGS=[
 const GUITAR_DADGAD_STRINGS=[
   {name:"D",midi:62}, {name:"A",midi:57}, {name:"G",midi:55}, {name:"D",midi:50}, {name:"A",midi:45}, {name:"D",midi:38}
 ];
-function selectedStrings(){const v=$("instrumentSelect").value; return v==="guitar"?GUITAR_STRINGS:(v==="guitar-dadgad"?GUITAR_DADGAD_STRINGS:(v==="bouzouki-gdad"?GDAD_STRINGS:GDAE_STRINGS));}
+function selectedStrings(){const v=$("instrumentSelect").value; return v==="ukulele"?UKULELE_STRINGS:(v==="ukulele-baritone"?UKULELE_BARITONE_STRINGS:(v==="guitar"?GUITAR_STRINGS:(v==="guitar-dadgad"?GUITAR_DADGAD_STRINGS:(v==="bouzouki-gdad"?GDAD_STRINGS:GDAE_STRINGS))));}
 function selectedCapo(){
   const n=Math.round(Number($("capoSelect")?.value));
   return Number.isFinite(n)?Math.max(0,Math.min(12,n)):0;
 }
 function selectedRenderTab(){
   const v=$("instrumentSelect").value;
-  const base=v==="guitar"?GUITAR_RENDER_TAB:(v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB:(v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB));
+  const base=v==="ukulele"?UKULELE_RENDER_TAB:(v==="ukulele-baritone"?UKULELE_BARITONE_RENDER_TAB:(v==="guitar"?GUITAR_RENDER_TAB:(v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB:(v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB))));
   const capo=selectedCapo();
   return base.map(tab=>({...tab,capo}));
 }
-function selectedMelodyProgram(){const v=$("instrumentSelect").value; return (v==="guitar"||v==="guitar-dadgad")?25:(v==="tenor-banjo"?105:(v.startsWith("bouzouki-")?140:141));}
+function selectedMelodyProgram(){
+  const v=$("instrumentSelect").value;
+  if(v==="ukulele"||v==="ukulele-baritone")return 25;
+  if(v==="guitar"||v==="guitar-dadgad")return 25;
+  if(v==="tenor-banjo")return 105;
+  return v.startsWith("bouzouki-")?140:141;
+}
 function updateInstrumentUI(){
   const v=$("instrumentSelect").value;
-  const labels={mandolin:"Mandolin (GDAE)","tenor-banjo":"Tenor Banjo (GDAE)","bouzouki-gdae":"Bouzouki (GDAE)","bouzouki-gdad":"Bouzouki (GDAD)",guitar:"Guitar (Standard)","guitar-dadgad":"Guitar (DADGAD)"};
+  const labels={mandolin:"Mandolin (GDAE)","tenor-banjo":"Tenor Banjo (GDAE)","bouzouki-gdae":"Bouzouki (GDAE)","bouzouki-gdad":"Bouzouki (GDAD)",ukulele:"Ukulele (Standard)","ukulele-baritone":"Ukulele (Baritone)",guitar:"Guitar (Standard)","guitar-dadgad":"Guitar (DADGAD)"};
   $("fingeringPanelLabel").textContent=labels[v]||"Mandolin (GDAE)";
   $("mandolinFingering").setAttribute("aria-label",(labels[v]||"Instrument")+" fingering");
 }
@@ -1740,7 +1766,7 @@ function buildPlaybackABC(abc){
   const forced=[
     "%soundfont fatboy",
     melodyMuted?"%%MIDI program mute":(`%%MIDI program ${selectedMelodyProgram()}`),
-    ...((["guitar","guitar-dadgad"].includes($("instrumentSelect").value))?["%%MIDI transpose -12"]:[]),
+    ...((["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))?["%%MIDI transpose -12"]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
@@ -2128,7 +2154,7 @@ function renderWhistleStaffNote(midi){
   requestAnimationFrame(alignStaffCenterToFretStatus);
 }
 function showWhistleLive(midi){
-  // Playback is already transposed down an octave for Guitar mode by the
+  // Playback is already transposed down an octave for Guitar and Baritone Ukulele modes by the
   // injected %%MIDI transpose -12 directive. The playback callback therefore
   // supplies the sounding MIDI pitch; do not transpose it a second time here.
   const liveMidi=midi==null?null:Math.round(Number(midi));
@@ -2159,7 +2185,7 @@ function showWhistleLive(midi){
   // Guitar sounds one octave below written pitch. Keep the live fret display
   // on the sounding pitch, but show the note name/staff at written pitch so
   // they agree with the notation and guitar tablature.
-  const displayMidi = ["guitar","guitar-dadgad"].includes($("instrumentSelect").value) ? n + 12 : n;
+  const displayMidi = ["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value) ? n + 12 : n;
   note.textContent=formattedWhistleNoteName(displayMidi).replace(/#/g,"♯").replace(/b/g,"♭");
   renderWhistleStaffNote(displayMidi);
   renderGDAEFingering(n);
@@ -2338,9 +2364,9 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken){
     let midi=clickedNotationMidi(clickedToken);
     if(midi!=null){
-      // Guitar playback sounds one octave below written notation; showWhistleLive()
+      // Guitar/Baritone Ukulele playback sounds one octave below written notation; showWhistleLive()
       // expects that sounding pitch and handles the written note-name/staff display.
-      if($("instrumentSelect")&&["guitar","guitar-dadgad"].includes($("instrumentSelect").value))midi-=12;
+      if($("instrumentSelect")&&["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))midi-=12;
       showWhistleLive(midi);
     }
   }
@@ -2526,7 +2552,8 @@ function openShareInABCTranscriptionTools(allTunes,mode){
     const attFormat = instrument === "bouzouki-gdad" ? "gdad"
       : instrument === "guitar" ? "guitare"
       : instrument === "guitar-dadgad" ? "guitard"
-      : "mandolin";
+      : instrument === "ukulele" ? "uke"
+      : instrument === "ukulele-baritone" ? "guitare" : "mandolin";
     const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10&capo=${selectedCapo()}`;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
@@ -2850,7 +2877,7 @@ function restoreWhistleDisplayPrefs(){
   try{
     const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
     if(["notation","tablature-only","mandolin-tab"].includes(prefs.notation))$("notationDisplay").value=prefs.notation;
-    if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
+    if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
     if(Number.isFinite(Number(prefs.capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(prefs.capo)))));
   }catch(_){}
 }
@@ -2870,7 +2897,7 @@ function validateFretboardSettingsParams(params){const hide=params.get("hide");i
   const instrument=params.get("instrument");
   const capo=params.get("capo");
   if(notation!==null&&!["notation","tablature-only","mandolin-tab"].includes(notation))throw new Error("Lesson notation setting is invalid.");
-  if(instrument!==null&&!["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(instrument))throw new Error("Lesson instrument setting is invalid.");
+  if(instrument!==null&&!["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))throw new Error("Lesson instrument setting is invalid.");
   if(capo!==null&&(!Number.isFinite(Number(capo))||Number(capo)<0||Number(capo)>12))throw new Error("Lesson capo setting is invalid.");
 }
 function validateLessonURLParams(params){
@@ -2891,7 +2918,7 @@ function applyFretboardSettingsParams(params){
   const capo=params.get("capo");
 
   if(["notation","tablature-only","mandolin-tab"].includes(notation))$("notationDisplay").value=notation;
-  if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
+  if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
   if(capo!==null&&Number.isFinite(Number(capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(capo)))));
   updateInstrumentUI();
   // URL settings are session-only until the user changes a persistent setting.
@@ -3694,7 +3721,7 @@ $("showNoteCheck").addEventListener("change",e=>{
   showNoteEnabled=!!e.target.checked;
   saveShowNotePreference();
   {
-    const staffMidi = currentLiveMidi==null ? null : ((["guitar","guitar-dadgad"].includes($("instrumentSelect").value)) ? currentLiveMidi+12 : currentLiveMidi);
+    const staffMidi = currentLiveMidi==null ? null : ((["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value)) ? currentLiveMidi+12 : currentLiveMidi);
     renderWhistleStaffNote(staffMidi);
   }
 });
@@ -4287,7 +4314,7 @@ function moveInstrumentNote(direction){
  ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
  let midi=clickedNotationMidi(target);
  if(midi!=null){
-   if($("instrumentSelect")&&["guitar","guitar-dadgad"].includes($("instrumentSelect").value))midi-=12;
+   if($("instrumentSelect")&&["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))midi-=12;
    showWhistleLive(midi);
  }
 }
@@ -4326,7 +4353,7 @@ function jumpToInstrumentNoteBoundary(toEnd){
   ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
   let midi=clickedNotationMidi(target);
   if(midi!=null){
-    if($('instrumentSelect')&&['guitar','guitar-dadgad'].includes($('instrumentSelect').value))midi-=12;
+    if($('instrumentSelect')&&['guitar','guitar-dadgad','ukulele-baritone'].includes($('instrumentSelect').value))midi-=12;
     showWhistleLive(midi);
   }
 }
