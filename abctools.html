@@ -133,6 +133,14 @@
 
 					<div id="topbar">
 
+						<div style="float:right;display:flex;align-items:center;gap:6px;margin:8px 12px 0 8px;font-family:Arial,sans-serif;font-size:10pt;">
+							<label for="ui-language">Language</label>
+							<select id="ui-language" aria-label="Interface language" onchange="SetInterfaceLanguage(this.value)">
+								<option value="en">English</option>
+								<option value="zh-CN">简体中文</option>
+							</select>
+						</div>
+
 						<font size="5" face="Comic Sans MS" id="toolpagetitle">ABC Transcription Tools</font>
 
 						<p>
@@ -150,6 +158,7 @@
 						<input style="margin-right:8px" class="abcupload btn btn-top" id="openabcfile" title="Opens an existing ABC, MusicXML, BWW, or MIDI file.&nbsp;&nbsp;You may also drag-and-drop ABC, MusicXML, BWW, or MIDI files on the editor area to add them." onclick="fileOpenIntercept(event);" type="button" value="Open"/>
 						<input style="margin-right:8px" class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, seach for tunes, re-order tunes, delete tunes, or add examples tunes and song templates to the ABC"/>
 						<input style="margin-right:8px" class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file"/>
+						<input style="margin-right:8px" class="btn btn-top" id="saveasxml" onclick="ExportCurrentTuneAsMusicXML();" type="button" value="Export XML" title="Exports the selected tune as a MusicXML file using abc2xml"/>
 						<input style="margin-right:8px" class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog();" type="button" value="Export PDF" title="Exports a PDF tunebook"/>
 						<input style="margin-right:8px" class="saveaswebsitedisabled btn btn-top" id="saveaswebsite" onclick="generateWebsite();" type="button" value="Export Website" title="Exports the tunebook as a website"/>
 						<input style="margin-right:8px;padding-left:20px;padding-right:20px;" class="playbuttondisabled btn btn-play" id="playbutton" onclick="PlayABC(event);" type="button" value="Play" title="Opens the ABC player with the currently selected tune.&nbsp;&nbsp;Alt-click to play a random tune in the current ABC tunebook.&nbsp;&nbsp;Press F4 to open the Player."/>
@@ -284,5 +293,6 @@
 	<script type="text/javascript" src="baritone-ukulele-chords.js"></script><!-- baritone ukulele chord grid definitions -->
 	<script type="text/javascript" src="api-keys.js"></script><!-- API keys used by the tool -->
 	<script type="text/javascript" src="app-min.js"></script><!-- main application business logic -->
+	<script type="text/javascript" src="interface-language.js?v=3357"></script><!-- shared interface translations and MusicXML export -->
 
 </html>
