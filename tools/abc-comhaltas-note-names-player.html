@@ -925,17 +925,28 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 
 /* Comhaltas note display: retain original element IDs for player event wiring. */
 .whistleGlyphGroup{display:flex;flex-direction:column;align-items:center;justify-content:center}
-.whistleLargeGlyph{font-family:system-ui,-apple-system,sans-serif!important;font-size:clamp(110px,19vw,300px)!important;font-weight:800!important;line-height:1.15!important;white-space:nowrap;text-align:center;letter-spacing:-.035em}
+.whistleLargeGlyph{font-family:system-ui,-apple-system,sans-serif!important;font-size:clamp(110px,19vw,260px)!important;font-weight:800!important;line-height:1.15!important;white-space:nowrap;text-align:center;letter-spacing:-.035em}
 .whistleNoteGroup{position:relative!important;left:auto!important;top:auto!important;transform:none!important;margin:0!important;width:auto!important}
 .whistleLiveNote{display:none!important}
 .whistleStaffNote{position:relative!important;top:auto!important;left:auto!important;transform:none!important;margin:10px auto 0!important}
-body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,380px)!important}
-@media(max-width:650px){.whistleLargeGlyph{font-size:clamp(90px,24vw,190px)!important}}
+body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important}
+@media(max-width:650px){.whistleLargeGlyph{font-size:clamp(90px,24vw,170px)!important}}
+
+/* Match the Tin Whistle toolbar: file/save, notation, octave, tune, share. */
+.whistleToolbar{grid-template-columns:minmax(260px,1.4fr) minmax(225px,.85fr) minmax(205px,.9fr) minmax(190px,1.1fr) max-content;align-items:end}
+.fileControlRow{display:flex;align-items:center;flex-wrap:nowrap;gap:12px;min-width:0}
+.fileControlRow #openFile{flex:1 1 auto;min-width:0;width:100%}
+.fileControlRow #saveAbcBtn{flex:0 0 auto;margin-left:12px}
+.notationModeControl{min-width:0}
+.notationModeControl label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}
+.notationModeControl select{width:100%;min-height:38px;font:inherit;font-size:1rem;color:#17241c;-webkit-text-fill-color:#17241c}
+.whistleToolbar .tuneControl{min-width:0}
+@media(max-width:1150px){.whistleToolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.whistleToolbar .fileControl{grid-column:auto}.whistleToolbar .shareButtons{justify-self:stretch}}
+@media(max-width:650px){.whistleToolbar{grid-template-columns:minmax(0,1fr)}.whistleToolbar .fileControl{grid-column:auto}.whistleToolbar .shareButtons{justify-self:stretch}.fileControlRow #saveAbcBtn{margin-left:4px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
+<header class="app-header"><div class="version">Version 2.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
 <div class="toolbar whistleToolbar">
- <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
- 
+ <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names" selected>Notation + Note Names</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
@@ -983,6 +994,7 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,380px)!important
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>The upper-left panel contains editable ABC. The lower-left panel shows standard music notation and playback controls.</p>
+      <p>The <b>Notation display</b> selector switches between Notation Only, which displays standard music notation without note names, and Notation + Note Names, which adds Comhaltas note names beneath the notation. This setting is remembered in this browser.</p>
       <p>Editing the ABC rebuilds the notation and audio. Click a rendered note to select its corresponding ABC text and show its Comhaltas note name.</p>
       <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
 
@@ -1049,6 +1061,7 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,380px)!important
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, without instrument-specific formatting. For a Lesson Share Link, lesson-only information is omitted and only the tune is sent to ABC Transcription Tools.</p>
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
+      <p>The <b>Notation display</b> setting is not included in normal share links. Opening a normal share link retains your existing Notation display preference.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1065,13 +1078,14 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,380px)!important
       <p>A lesson uses the <b>current tune only</b>.</p>
       <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
       <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
-      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Comhaltas Note Names Player share link.</p>
+      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the player settings carried by a normal Comhaltas Note Names Player share link, plus the lesson-specific Notation display selection.</p>
       <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
       <p>The <b>Octave colors</b> selection is included in lesson links and saved lesson configurations as the initial student setting; students may change it during a lesson without changing their saved preference.</p>
+      <p>The <b>Notation display</b> selection is included in lesson links and saved lesson configurations as the initial student setting. Students may change it during a lesson without changing their saved preference.</p>
       <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
       <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
-      <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
+      <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the player settings carried by a normal share link and the lesson-specific Notation display selection.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
       <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the note-name display initially hidden, so students can practice without seeing the note names. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1082,9 +1096,9 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,380px)!important
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
       <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
-      <p>The tune selector is initially disabled for the teacher's assigned tune, but <b>Octave colors</b> remains available.</p>
+      <p>The tune selector is initially disabled for the teacher's assigned tune, but the <b>Notation display</b> and <b>Octave colors</b> selectors remain available.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
-      <p>You can use the normal notation, note-name display, playback, tempo, metronome, count-in, and full-page controls while working on the lesson. The <b>Octave colors</b> setting starts with your teacher's selection, but you can change it during the lesson without changing your saved preference for normal player use.</p>
+      <p>You can use the normal notation, note-name display, playback, tempo, metronome, count-in, and full-page controls while working on the lesson. The <b>Notation display</b> and <b>Octave colors</b> settings start with your teacher's selections, but you can change them during the lesson without changing your saved preferences for normal player use.</p>
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
       <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
@@ -1280,9 +1294,32 @@ async function toggleMetronome(){
   if(tunes.length)await rebuild();
 }
 
-function buildPlaybackABC(abc){
+// In Notation Only mode, preserve an existing staffsep of 50 or greater.
+// Lower values are neutralized without changing source character positions,
+// so abcjs startChar/endChar mappings remain aligned with the editor.
+function notationOnlyStaffSepSource(abc){
   const source=String(abc||"");
+  if($("notationMode").value!=="only")return {source,inject:false};
+  const directive=/^([ \t]*)%%staffsep[ \t]+([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:[ \t]*(?:%[^\r\n]*)?)?$/gmi;
+  let hasSufficient=false;
+  const matches=[...source.matchAll(directive)];
+  for(const m of matches){
+    if(Number(m[2])>=50){hasSufficient=true;break;}
+  }
+  if(hasSufficient)return {source,inject:false};
+  const cleaned=source.replace(directive,(line)=>{
+    // Preserve leading indentation and every character in the line.
+    const indent=(line.match(/^[ \t]*/)||[""])[0];
+    return indent+"%"+" ".repeat(Math.max(0,line.length-indent.length-1));
+  });
+  return {source:cleaned,inject:true};
+}
+
+function buildPlaybackABC(abc){
+  const staffSep=notationOnlyStaffSepSource(abc);
+  const source=staffSep.source;
   const forced=[
+    ...(staffSep.inject?["%%staffsep 50"]:[]),
     "%soundfont fatboy",
     melodyMuted?"%%MIDI program mute":"%%MIDI program 0",
     "%%MIDI bassprog 0",
@@ -2446,6 +2483,96 @@ function showEnablePlaybackButton(){
   updateTempoButtonState();
 }
 
+
+const NOTATION_MODE_KEY="abcComhaltasNoteNamesNotationMode";
+function restoreNotationMode(){
+  try{if(localStorage.getItem(NOTATION_MODE_KEY)==="only")$("notationMode").value="only"}catch(_){}
+}
+function saveNotationMode(){
+  if(lessonModeActive())return;
+  try{localStorage.setItem(NOTATION_MODE_KEY,$("notationMode").value)}catch(_){}
+}
+// Replace native abcjs tablature labels using the source-linked melody pitches.
+// The string/fret combination alone cannot be decoded as 55 + fret: abcjs
+// chooses among strings in different octaves. Use the engraving source range.
+function applyComhaltasTabNames(visual){
+  if($('notationMode').value!=='names'||!visual)return;
+  const svg=$('notation').querySelector('svg');
+  if(!svg)return;
+  const tokens=abcNoteTokens($('abcText').value);
+  const groups=visual.engraver?.staffgroups||[];
+  let converted=0,unmatched=0;
+  const tabs=[...svg.querySelectorAll('g[data-name="tabNumber"]')];
+  // The engraver and SVG share a horizontal coordinate system. Build a separate
+  // melody pitch map for each rendered system, preserving multiple notes at x.
+  const systems=[];
+  for(const group of groups){
+    const notes=[];
+    for(const voice of group.voices||[]){
+      for(const abs of voice.children||[]){
+        const ae=abs.abcelem;
+        if(ae?.el_type!=='note'||!ae.pitches?.length||!Number.isInteger(ae.startChar))continue;
+        const start=ae.startChar-prefixLength,end=ae.endChar-prefixLength;
+        const token=tokens.find(t=>t.pitch>=start&&t.pitch<end);
+        if(!token||!Number.isFinite(abs.x))continue;
+        const pitch=clickedNotationMidi(token);
+        if(pitch==null)continue;
+        const midi=pitch+notationVisualTransposeAt(token.start);
+        if(!notes.some(n=>n.start===token.start))notes.push({x:abs.x,midi,start:token.start});
+      }
+    }
+    systems.push(notes);
+  }
+  // Locate each tab label's system from the abcjs-lN class, which is shared
+  // with the corresponding engraved melody note.
+  for(const tab of tabs){
+    const span=tab.querySelector('text > tspan');
+    if(!span)continue;
+    const lineClass=[...tab.classList,...(tab.querySelector('text')?.classList||[])]
+      .find(c=>/^abcjs-l\d+$/.test(c));
+    let systemIndex=lineClass?Number(lineClass.slice(7)):null;
+    if(systemIndex==null){
+      const ancestor=tab.closest('[class*="abcjs-l"]');
+      const cls=[...(ancestor?.classList||[])].find(c=>/^abcjs-l\d+$/.test(c));
+      if(cls)systemIndex=Number(cls.slice(7));
+    }
+    // The tab label's horizontal position is already laid out by abcjs.
+    let x;
+    try{x=tab.getBBox().x+tab.getBBox().width/2}catch(_){continue}
+    const candidates=systemIndex!=null?systems[systemIndex]||[]:systems.flat();
+    if(!candidates.length){unmatched++;continue}
+    let closest=null,dist=Infinity;
+    for(const note of candidates){
+      const d=Math.abs(note.x-x);
+      if(d<dist){dist=d;closest=note}
+    }
+    // Refuse to print a potentially wrong label when the source association
+    // cannot be established. This is preferable to an incorrect note name.
+    if(!closest||dist>35){unmatched++;continue}
+    span.textContent=formattedComhaltasName(closest.midi);
+    converted++;
+  }
+  // Restore the proven tablature-staff hiding used in the prior version.
+  // abcjs places the tab staves in the second half of each rendered system.
+  const tabStaffFlags=[];
+  for(const line of visual.lines||[]){
+    if(!line.staff)continue;
+    const split=line.staff.length/2;
+    for(let i=0;i<line.staff.length;i++)tabStaffFlags.push(i>=split);
+  }
+  const topLines=[...svg.querySelectorAll('.abcjs-top-line')];
+  topLines.forEach((top,i)=>{
+    if(!tabStaffFlags[i])return;
+    top.style.display='none';
+    let sibling=top.nextElementSibling;
+    while(sibling){
+      sibling.style.display='none';
+      sibling=sibling.nextElementSibling;
+    }
+  });
+  if(unmatched)console.warn(`Comhaltas tab: ${unmatched} labels could not be safely matched to source notes (${converted} matched).`);
+}
+
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
@@ -2478,8 +2605,11 @@ async function rebuild(){
       selectionColor:"#ff0000",
       clickListener:selectClickedNotationNote
     };
+    if($("notationMode").value==="names")renderParams.tablature=[{instrument:"violin",tuning:["G,,,","G,,","G,"],highestNote:"b'",hideTabSymbol:true,linePitch:2}];
 
     const visual=ABCJS.renderAbc("notation",playbackABC,renderParams);
+    $("notation").classList.toggle("comhaltas-names",$("notationMode").value==="names");
+    if(visual&&visual[0])applyComhaltasTabNames(visual[0]);
     instrumentNavVisual=visual&&visual[0]||null;
     if(gen!==renderGeneration)return;
     if(!visual||!visual.length)throw new Error("No notation was rendered.");
@@ -2919,6 +3049,8 @@ $("editorTextSize").addEventListener("change",e=>{
   applyEditorTextSize(e.target.value,true);
 });
 
+$("notationMode").addEventListener("change",()=>{saveNotationMode();if(tunes.length)void rebuild()});
+
 $("octaveColors").addEventListener("change",()=>{
   // Lesson students may change colors without overwriting their saved preference.
   if(!lessonModeActive())saveWhistleDisplayPrefs();
@@ -2934,6 +3066,7 @@ $("abcText").disabled=false;
 
 restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
+restoreNotationMode();
 restoreShowNotePreference();
 restoreHideFingeringPreference();
 restoreMetronomePreference();
@@ -3044,18 +3177,18 @@ function savedLessonLinkURLFromText(text){
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');const colors=params.get('colors');if(colors!==null&&!['0','1'].includes(colors))throw new Error('Lesson octave colors setting is invalid.');}
+function validateLessonSettingsParams(params){const mode=params.get('notationmode');if(mode!==null&&!['only','names'].includes(mode))throw new Error('Lesson notation mode is invalid.');const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');const colors=params.get('colors');if(colors!==null&&!['0','1'].includes(colors))throw new Error('Lesson octave colors setting is invalid.');}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
-function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));validateLessonSettingsParams(params);const colors=params.get('colors');if(colors!==null)$('octaveColors').value=colors;
+function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));validateLessonSettingsParams(params);const colors=params.get('colors');if(colors!==null)$('octaveColors').value=colors;const mode=params.get('notationmode');if(mode!==null)$('notationMode').value=mode;
   if(!lessonModeActive())saveWhistleDisplayPrefs();
   if(currentLiveMidi!=null)$('whistleLargeGlyph').style.color=whistleGlyphColor(currentLiveMidi);}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
 function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
-function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
+function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('notationmode',$('notationMode').value);u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
 function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
 function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
-function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-comhaltas-note-names-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
+function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-comhaltas-note-names-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0',notationmode:$('notationMode').value}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-comhaltas-note-names-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
 function parseLessonConfigText(text){let c;try{c=JSON.parse(String(text||''))}catch(_){return null}if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson')return null;validateLessonConfigObject(c);return c}
