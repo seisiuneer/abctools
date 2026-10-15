@@ -944,7 +944,7 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
 @media(max-width:1150px){.whistleToolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.whistleToolbar .fileControl{grid-column:auto}.whistleToolbar .shareButtons{justify-self:stretch}}
 @media(max-width:650px){.whistleToolbar{grid-template-columns:minmax(0,1fr)}.whistleToolbar .fileControl{grid-column:auto}.whistleToolbar .shareButtons{justify-self:stretch}.fileControlRow #saveAbcBtn{margin-left:4px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
+<header class="app-header"><div class="version">Version 2.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names" selected>Notation + Note Names</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
@@ -984,6 +984,7 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard music notation and live Comhaltas note names.</p>
       <p>The Comhaltas Note Names pane displays a large note name that follows playback and note-by-note navigation.</p>
+      <p>The Comhaltas note-name tablature supports the chromatic range from G3 (G,) through B6 (B''), including sharps and flats. Notes outside this range may not display correctly in the notation note-name labels.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
@@ -2492,65 +2493,29 @@ function saveNotationMode(){
   if(lessonModeActive())return;
   try{localStorage.setItem(NOTATION_MODE_KEY,$("notationMode").value)}catch(_){}
 }
-// Replace native abcjs tablature labels using the source-linked melody pitches.
-// The string/fret combination alone cannot be decoded as 55 + fret: abcjs
-// chooses among strings in different octaves. Use the engraving source range.
+// Convert abcjs numeric tablature labels directly using the same fret-index
+// mapping as ABC Transcription Tools' live Comhaltas note-name tablature.
+// No SVG coordinates, note-token matching, or proximity tolerance is needed.
 function applyComhaltasTabNames(visual){
   if($('notationMode').value!=='names'||!visual)return;
   const svg=$('notation').querySelector('svg');
   if(!svg)return;
-  const tokens=abcNoteTokens($('abcText').value);
-  const groups=visual.engraver?.staffgroups||[];
+  // The numeric fret index is the authoritative index into the ATTools table.
+  // Keep the 3-string artificial violin tuning in rebuild() unchanged: the
+  // tuning and these 41-element mappings form a single working configuration.
+  const names=COMHALTAS_NAMES[keyTagPrefersFlats($('abcText').value)?'flats':'sharps'];
   let converted=0,unmatched=0;
-  const tabs=[...svg.querySelectorAll('g[data-name="tabNumber"]')];
-  // The engraver and SVG share a horizontal coordinate system. Build a separate
-  // melody pitch map for each rendered system, preserving multiple notes at x.
-  const systems=[];
-  for(const group of groups){
-    const notes=[];
-    for(const voice of group.voices||[]){
-      for(const abs of voice.children||[]){
-        const ae=abs.abcelem;
-        if(ae?.el_type!=='note'||!ae.pitches?.length||!Number.isInteger(ae.startChar))continue;
-        const start=ae.startChar-prefixLength,end=ae.endChar-prefixLength;
-        const token=tokens.find(t=>t.pitch>=start&&t.pitch<end);
-        if(!token||!Number.isFinite(abs.x))continue;
-        const pitch=clickedNotationMidi(token);
-        if(pitch==null)continue;
-        const midi=pitch+notationVisualTransposeAt(token.start);
-        if(!notes.some(n=>n.start===token.start))notes.push({x:abs.x,midi,start:token.start});
-      }
+  for(const span of svg.querySelectorAll('g[data-name="tabNumber"] > text > tspan')){
+    const raw=span.textContent.trim();
+    if(!/^\d+$/.test(raw)){unmatched++;continue;}
+    const index=Number(raw);
+    if(index>=0&&index<names.length){
+      span.textContent=names[index];
+      converted++;
+    }else{
+      span.textContent='?';
+      unmatched++;
     }
-    systems.push(notes);
-  }
-  // Locate each tab label's system from the abcjs-lN class, which is shared
-  // with the corresponding engraved melody note.
-  for(const tab of tabs){
-    const span=tab.querySelector('text > tspan');
-    if(!span)continue;
-    const lineClass=[...tab.classList,...(tab.querySelector('text')?.classList||[])]
-      .find(c=>/^abcjs-l\d+$/.test(c));
-    let systemIndex=lineClass?Number(lineClass.slice(7)):null;
-    if(systemIndex==null){
-      const ancestor=tab.closest('[class*="abcjs-l"]');
-      const cls=[...(ancestor?.classList||[])].find(c=>/^abcjs-l\d+$/.test(c));
-      if(cls)systemIndex=Number(cls.slice(7));
-    }
-    // The tab label's horizontal position is already laid out by abcjs.
-    let x;
-    try{x=tab.getBBox().x+tab.getBBox().width/2}catch(_){continue}
-    const candidates=systemIndex!=null?systems[systemIndex]||[]:systems.flat();
-    if(!candidates.length){unmatched++;continue}
-    let closest=null,dist=Infinity;
-    for(const note of candidates){
-      const d=Math.abs(note.x-x);
-      if(d<dist){dist=d;closest=note}
-    }
-    // Refuse to print a potentially wrong label when the source association
-    // cannot be established. This is preferable to an incorrect note name.
-    if(!closest||dist>35){unmatched++;continue}
-    span.textContent=formattedComhaltasName(closest.midi);
-    converted++;
   }
   // Restore the proven tablature-staff hiding used in the prior version.
   // abcjs places the tab staves in the second half of each rendered system.
@@ -2570,7 +2535,7 @@ function applyComhaltasTabNames(visual){
       sibling=sibling.nextElementSibling;
     }
   });
-  if(unmatched)console.warn(`Comhaltas tab: ${unmatched} labels could not be safely matched to source notes (${converted} matched).`);
+  if(unmatched)console.warn(`Comhaltas tab: ${unmatched} labels outside the supported note-name mapping (${converted} converted).`);
 }
 
 async function rebuild(){
