@@ -923,6 +923,9 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
 }
 
+/* Slightly reduce Comhaltas labels beneath the notation without affecting other text. */
+#notation svg g[data-name="tabNumber"] > text > tspan{font-size:94%}
+
 /* Comhaltas note display: retain original element IDs for player event wiring. */
 .whistleGlyphGroup{display:flex;flex-direction:column;align-items:center;justify-content:center}
 .whistleLargeGlyph{font-family:system-ui,-apple-system,sans-serif!important;font-size:clamp(110px,19vw,260px)!important;font-weight:800!important;line-height:1.15!important;white-space:nowrap;text-align:center;letter-spacing:-.035em}
@@ -944,7 +947,7 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
 @media(max-width:1150px){.whistleToolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.whistleToolbar .fileControl{grid-column:auto}.whistleToolbar .shareButtons{justify-self:stretch}}
 @media(max-width:650px){.whistleToolbar{grid-template-columns:minmax(0,1fr)}.whistleToolbar .fileControl{grid-column:auto}.whistleToolbar .shareButtons{justify-self:stretch}.fileControlRow #saveAbcBtn{margin-left:4px}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
+<header class="app-header"><div class="version">Version 2.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names" selected>Notation + Note Names</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
