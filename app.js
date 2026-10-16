@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3357_101526_1130";
+var gVersionNumber = "3358_101626_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31394,13 +31394,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_15Oct2026;
+        var updatePresented = localStorage.sawUpdate_16Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_15Oct2026 = true;
+          localStorage.sawUpdate_16Oct2026 = true;
 
         }
 
@@ -60930,14 +60930,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 15 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 16 October 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;">New Tools Added to <strong>Open ABC in External Tool</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Comhaltas Note Names Player</strong> and <strong>ABC Takadimi Player</strong> have been added to the <strong>Open ABC in External Tool</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Mountain Dulcimer Player</strong>, <strong>ABC Comhaltas Note Names Player</strong>, and <strong>ABC Takadimi Player</strong> have been added to the <strong>Open ABC in External Tool</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">You can send the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new tools.</p>';
   modal_msg += '</div>';
 
@@ -67853,13 +67853,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_15Oct2026;
+    var updatePresented = localStorage.sawUpdate_16Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_15Oct2026 = true;
+      localStorage.sawUpdate_16Oct2026 = true;
 
     }
 
@@ -71446,6 +71446,10 @@ function OpenInABCTremoloHarmonicaPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Tremolo Harmonica Player','https://michaeleskin.com/tools/abc-tremolo-harmonica-player.html','OpenInABCTremoloHarmonicaPlayer');
 }
 
+function OpenInABCMountainDulcimerPlayer(abcText,isFromPlayer){
+  OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Mountain Dulcimer Player','https://michaeleskin.com/tools/abc-mountain-dulcimer-player.html','OpenInABCMountainDulcimerPlayer');
+}
+
 function OpenInABCComhaltasNoteNamesPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Comhaltas Note Names Player','https://michaeleskin.com/tools/abc-comhaltas-note-names-player.html','OpenInABCComhaltasNoteNamesPlayer');
 }
@@ -71479,7 +71483,7 @@ function openInExternalTool(theABC, isFromPlayer){
         '<button id="external_tools_tab_abc" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-radius:4px 0 0 4px;background:#1b3f8b;color:white;font-size:12pt;cursor:pointer;">Michael\'s Tools</button>' +
         '<button id="external_tools_tab_other" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-left:0;border-radius:0 4px 4px 0;background:#eee;color:black;font-size:12pt;cursor:pointer;">3rd-Party Tools</button>' +
       '</div>' +
-      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:repeat(5,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
+      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:repeat(6,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
         toolCard('external_chord_chart', 'img/tool_chordchart_other_1.jpg', 'Open the ABC in the ABC Chord Chart Generator', 'ABC Chord Chart Generator', 'ABC Chord Chart Generator') +
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
         toolCard('external_tin_whistle', 'img/tool-abc-tin-whistle-player-1.jpg', 'Open the ABC in the ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player') +
@@ -71488,6 +71492,7 @@ function openInExternalTool(theABC, isFromPlayer){
         toolCard('external_harmonica_player', 'img/tool-abc-harmonica-player-1.jpg', 'Open the ABC in the ABC Harmonica Player', 'ABC Harmonica Player', 'ABC Harmonica Player') +
         toolCard('external_recorder_player', 'img/tool-abc-recorder-player-1.jpg', 'Open the ABC in the ABC Recorder Fingering Player', 'ABC Recorder Fingering Player', 'ABC Recorder Fingering Player') +
         toolCard('external_tremolo_player', 'img/tool-abc-tremolo-harmonica-player-1.jpg', 'Open the ABC in the ABC Tremolo Harmonica Player', 'ABC Tremolo Harmonica Player', 'ABC Tremolo Harmonica Player') +
+        toolCard('external_mountain_dulcimer_player', 'img/tool-abc-mountain-dulcimer-player-1.jpg', 'Open the ABC in the ABC Mountain Dulcimer Player', 'ABC Mountain Dulcimer Player', 'ABC Mountain Dulcimer Player') +
         toolCard('external_comhaltas_player', 'img/tool-abc-comhaltas-player-1.jpg', 'Open the ABC in the ABC Comhaltas Note Names Player', 'ABC Comhaltas Note Names Player', 'ABC Comhaltas Note Names Player') +
         toolCard('external_takadimi_player', 'img/tool-abc-takadimi-player-1.jpg', 'Open the ABC in the ABC Takadimi Player', 'ABC Takadimi Player', 'ABC Takadimi Player') +
       '</div>' +
@@ -71557,6 +71562,9 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_tremolo_player");
   if (elem) elem.onclick = function(){ OpenInABCTremoloHarmonicaPlayer(theABC,isFromPlayer); };
+
+  elem = document.getElementById("external_mountain_dulcimer_player");
+  if (elem) elem.onclick = function(){ OpenInABCMountainDulcimerPlayer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_comhaltas_player");
   if (elem) elem.onclick = function(){ OpenInABCComhaltasNoteNamesPlayer(theABC,isFromPlayer); };
