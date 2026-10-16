@@ -33,17 +33,19 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Mountain Dulcimer Player</title>
 <meta name="description" content="Play ABC tunes with custom diatonic Mountain Dulcimer tablature, adaptive three-course fretboard fingering, and compatibility checking for supported tunings." />
-<meta name="keywords" content="ABC notation, Mountain Dulcimer, DAd, DAA, DAc, DAG, CGc, DGd, GDg, AEa, diatonic tablature, fingering, Irish music, ABC Transcription Tools" />
+<meta name="keywords" content="ABC notation, Mountain Dulcimer, DAd, DAA, DAc, DAG, CGc, DGd, GDg, AEa, DF♯A, EAd, diatonic tablature, fingering, Irish music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ABC Mountain Dulcimer Player" />
 <meta property="og:description" content="Play ABC tunes with custom diatonic Mountain Dulcimer tablature, adaptive three-course fretboard fingering, and compatibility checking for supported tunings." />
 <meta property="og:site_name" content="ABC Mountain Dulcimer Player" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-mountain-dulcimer-player.html" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-mountain-dulcimer-player-og1.jpg"/>
 
 <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -1377,8 +1379,87 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
  .toolbar.whistleToolbar .tuneControl{min-width:0}
 }
 
-</style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.0.54</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+</style>
+<style>/* v1.0.5 horizontal dulcimer display */
+#whistleNoteGroup:has(#mandolinFingering.mdDulcimer){display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:20px!important;width:100%!important;max-width:100%!important;position:relative!important}
+#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) .noteDisplayGroup{position:static!important;left:auto!important;top:auto!important;transform:none!important;width:100%!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
+#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) .whistleLiveNote{font-size:clamp(48px,5vw,76px)!important}
+#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) .whistleStaffNote{max-height:110px!important}
+#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) #mandolinFingering{flex:none!important}
+.mdTabAdded .mdTabFret,.mdTabAdded .mdTabStringLabel{font-weight:400!important}
+
+/* Make the horizontal diagram independent of the original vertical mandolin sizing. */
+#whistleLive:not([hidden]) #whistleNoteGroup {display:flex!important;flex-direction:column!important;align-items:center!important;gap:18px!important;width:100%!important;height:auto!important;min-height:300px!important;position:relative!important;transform:none!important;overflow:visible!important}
+#whistleLive:not([hidden]) #mandolinFingering.mdDulcimer {display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;inset:auto!important;transform:none!important;flex:0 0 auto!important;width:min(94%,850px)!important;height:auto!important;min-height:150px!important;max-height:none!important;overflow:visible!important}
+#whistleLive:not([hidden]) #mandolinFingering.mdDulcimer svg.mdBoard {display:block!important;visibility:visible!important;width:100%!important;height:auto!important;min-height:150px!important;max-height:230px!important}
+#whistleLive:not([hidden]) #noteDisplayGroup {display:flex!important;visibility:visible!important;position:relative!important;inset:auto!important;transform:none!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
+/* v1.0.14: enlarge the current note and separate it from the staff. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote {
+  font-size:clamp(76px,7vw,112px)!important;
+  line-height:1.12!important;
+  transform:none!important;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote {
+  width:clamp(175px,19vw,245px)!important;
+  height:clamp(165px,18vw,225px)!important;
+  max-height:none!important;
+  margin-top:0!important;
+  flex-shrink:0!important;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup.withStaffNote {
+  gap:0!important;
+}
+@media(max-width:650px){
+  #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{font-size:clamp(65px,13vw,86px)!important}
+  #whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{width:170px!important;height:195px!important;margin-top:-36px!important}
+}
+/* Pull the staff closer to the large note without changing its drawing scale. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{margin-top:-48px!important}
+@media(max-width:650px){#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{margin-top:-36px!important}}
+#notation .mdTabAdded text.mdTabStringLabel{font-size:12.6px!important;fill:#252b2c!important;font-family:Arial,Helvetica,sans-serif!important;font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal!important}
+#notation .mdTabAdded text.mdTabFret {font-family:Arial,Helvetica,sans-serif!important;font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal!important}
+
+/* v1.0.23: compact the right-hand display only on short desktop screens. */
+@media (min-width:1051px) and (max-height:950px) {
+  #whistleLive:not([hidden]) {padding-top:10px!important;padding-bottom:10px!important;justify-content:center!important}
+  #whistleLive:not([hidden]) #whistleTuneTitle {font-size:clamp(22px,2.1vw,32px)!important;line-height:1.1!important;margin-bottom:10px!important;flex-shrink:0!important}
+  #whistleLive:not([hidden]) .whistleLiveRow {flex-shrink:1!important;min-height:0!important}
+  #whistleLive:not([hidden]) #whistleNoteGroup {gap:6px!important;min-height:0!important}
+  #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer {width:min(84%,730px)!important;min-height:0!important}
+  #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer svg.mdBoard {min-height:0!important;max-height:175px!important}
+  #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote {font-size:clamp(62px,5.5vw,88px)!important}
+  #whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote {width:175px!important;height:165px!important;margin-top:-38px!important}
+}
+
+/* v1.0.29: scale the full-page dulcimer presentation on genuinely large displays.
+   Normal panel and short-screen layouts retain their existing geometry. */
+@media (min-width:1500px) and (min-height:960px) {
+ body.diagram-full #whistleLive:not([hidden]) #whistleTuneTitle {
+   font-size:clamp(40px,2.9vw,58px)!important;
+ }
+ body.diagram-full #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer {
+   width:min(94%,1100px)!important;
+   max-width:1100px!important;
+   min-height:0!important;
+ }
+ body.diagram-full #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer svg.mdBoard {
+   max-width:1100px!important;
+   max-height:325px!important;
+   min-height:0!important;
+ }
+ body.diagram-full #whistleLive:not([hidden]) #whistleNoteGroup {gap:24px!important}
+ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote {
+   font-size:clamp(112px,8vw,150px)!important;
+ }
+ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote {
+   width:clamp(245px,17vw,310px)!important;
+   height:clamp(225px,16vw,280px)!important;
+   margin-top:-58px!important;
+ }
+}
+</style>
+</head><body><div class="app">
+<header class="app-header"><div class="version">Version 1.0.55</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1460,6 +1541,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>Edit the ABC text in the upper-left pane to change notes, titles, keys, or other tune details.</p>
       <p>The notation and tablature update to reflect your edits.</p>
+      <p>This single-melody player rejects tunes containing voice declarations (V: or [V:]), multiple staves, bracketed note chords such as [CEG], or inline key changes such as [K:G]. An unsupported tune displays a warning instead of notation, tablature, or playback controls.</p>
       <p>Use the editor text-size menu to make the ABC text easier to read.</p>
       <p>Click a note in the notation to show its fingering on the dulcimer display.</p>
       <p>Use the previous and next note controls to step through the tune without playing it.</p>
@@ -3043,6 +3125,69 @@ function showEnablePlaybackButton(){
   updateTempoButtonState();
 }
 
+/* Reject unsupported ABC structures before rendering, solving, or playback.
+   Scan music (not quoted chord symbols, comments, decorations, or headers).
+   A single V: declaration also counts as multi-voice input: this player
+   intentionally supports only unvoiced melody notation. */
+function mdValidateABCStructure(source){
+  const problems=new Set();
+  const lines=String(source||"").replace(/\r\n?/g,"\n").split("\n");
+  let inHeader=true;
+  for(const raw of lines){
+    const trimmed=raw.trimStart();
+    if(/^V\s*:/.test(trimmed))problems.add("multiple voices (V:)");
+    if(/^%%\s*(?:score|staves)\b/i.test(trimmed))problems.add("multiple voices (score/staves)");
+    if(/^K\s*:/.test(trimmed))inHeader=false;
+    if(/^\s*(?:%|[A-Za-z]\s*:)/.test(raw))continue;
+    if(inHeader)continue;
+    let quoted=false;
+    for(let i=0;i<raw.length;i++){
+      const c=raw[i];
+      if(c==='"'){quoted=!quoted;continue}
+      if(quoted)continue;
+      if(c==='%')break;
+      if(c==='!'||c==='+'){
+        const end=raw.indexOf(c,i+1);
+        if(end>=0){i=end;continue}
+      }
+      if(c==='['){
+        const tail=raw.slice(i);
+        const field=/^\[\s*([A-Za-z])\s*:/.exec(tail);
+        if(field){
+          if(field[1].toUpperCase()==='K')problems.add("inline key changes ([K:])");
+          if(field[1].toUpperCase()==='V')problems.add("multiple voices ([V:])");
+          const end=raw.indexOf(']',i+1);
+          if(end>=0){i=end;continue}
+        }
+        // [1 / [2 are volta endings, [| is a barline, and ["text"
+        // is an annotation, not a simultaneous-note chord.
+        if(/^\[\s*[1-9](?!\d)/.test(tail)||/^\[\|/.test(tail))continue;
+        const chord=/^\[((?:\^{1,2}|_{1,2}|=)?[A-Ga-g][,']*(?:\d+\/*|\/*\d*)?\s*){2,}\]/.exec(tail);
+        if(chord){problems.add("simultaneous note chords ([CEG])");i+=chord[0].length-1;continue}
+        // Also reject single-note bracketed chord syntax [C].
+        const single=/^\[(?:\^{1,2}|_{1,2}|=)?[A-Ga-g][,']*(?:\d+\/*|\/*\d*)?\]/.exec(tail);
+        if(single){problems.add("bracketed note chords ([CEG])");i+=single[0].length-1}
+      }
+    }
+  }
+  return [...problems];
+}
+function mdShowRejectedABC(problems){
+  MD.events=[];MD.missing=[];MD.active=null;MD.noteMarkers=[];
+  MD.unsupported=problems.slice();MD.tokenIndex=new Map();
+  const host=$("mdCompatibility");
+  if(host){
+    host.replaceChildren();
+    const message=document.createElement("span");
+    message.textContent="⚠ Unsupported ABC: "+problems.join("; ")+". This tune cannot be displayed or played.";
+    host.appendChild(message);host.className="mdCompatibility mdPartial";host.hidden=false;
+  }
+  instrumentNavVisual=null;
+  $("abcPrevNoteBtn").disabled=true;$("abcNextNoteBtn").disabled=true;
+  if(typeof syncArrowKeyNavigationIdle==="function")syncArrowKeyNavigationIdle();
+  updateTempoButtonState();
+}
+
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
@@ -3060,6 +3205,16 @@ async function rebuild(){
     showWhistleLive(null);
 
     const tune=$("abcText").value;
+    const rejected=mdValidateABCStructure(tune);
+    if(rejected.length){
+      controller=null;
+      mdClearScoreTab();
+      mdShowRejectedABC(rejected);
+      showWhistleLive(null);
+      return;
+    }
+    const oldWarning=$("mdCompatibility");
+    if(oldWarning){oldWarning.hidden=true;oldWarning.replaceChildren()}
 
     if(typeof ABCJS==="undefined"||!ABCJS.renderAbc){
       throw new Error("Portable abcjs library did not load.");
@@ -4667,82 +4822,3 @@ updateInstrumentUI();
 
 </script>
 </body></html>
-
-<style>/* v1.0.5 horizontal dulcimer display */
-#whistleNoteGroup:has(#mandolinFingering.mdDulcimer){display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:20px!important;width:100%!important;max-width:100%!important;position:relative!important}
-#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) .noteDisplayGroup{position:static!important;left:auto!important;top:auto!important;transform:none!important;width:100%!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
-#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) .whistleLiveNote{font-size:clamp(48px,5vw,76px)!important}
-#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) .whistleStaffNote{max-height:110px!important}
-#whistleNoteGroup:has(#mandolinFingering.mdDulcimer) #mandolinFingering{flex:none!important}
-.mdTabAdded .mdTabFret,.mdTabAdded .mdTabStringLabel{font-weight:400!important}
-
-/* Make the horizontal diagram independent of the original vertical mandolin sizing. */
-#whistleLive:not([hidden]) #whistleNoteGroup {display:flex!important;flex-direction:column!important;align-items:center!important;gap:18px!important;width:100%!important;height:auto!important;min-height:300px!important;position:relative!important;transform:none!important;overflow:visible!important}
-#whistleLive:not([hidden]) #mandolinFingering.mdDulcimer {display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;inset:auto!important;transform:none!important;flex:0 0 auto!important;width:min(94%,850px)!important;height:auto!important;min-height:150px!important;max-height:none!important;overflow:visible!important}
-#whistleLive:not([hidden]) #mandolinFingering.mdDulcimer svg.mdBoard {display:block!important;visibility:visible!important;width:100%!important;height:auto!important;min-height:150px!important;max-height:230px!important}
-#whistleLive:not([hidden]) #noteDisplayGroup {display:flex!important;visibility:visible!important;position:relative!important;inset:auto!important;transform:none!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
-/* v1.0.14: enlarge the current note and separate it from the staff. */
-#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote {
-  font-size:clamp(76px,7vw,112px)!important;
-  line-height:1.12!important;
-  transform:none!important;
-}
-#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote {
-  width:clamp(175px,19vw,245px)!important;
-  height:clamp(165px,18vw,225px)!important;
-  max-height:none!important;
-  margin-top:0!important;
-  flex-shrink:0!important;
-}
-#whistleLive:not([hidden]) #noteDisplayGroup.withStaffNote {
-  gap:0!important;
-}
-@media(max-width:650px){
-  #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{font-size:clamp(65px,13vw,86px)!important}
-  #whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{width:170px!important;height:195px!important;margin-top:-36px!important}
-}
-/* Pull the staff closer to the large note without changing its drawing scale. */
-#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{margin-top:-48px!important}
-@media(max-width:650px){#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{margin-top:-36px!important}}
-#notation .mdTabAdded text.mdTabStringLabel{font-size:12.6px!important;fill:#252b2c!important;font-family:Arial,Helvetica,sans-serif!important;font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal!important}
-#notation .mdTabAdded text.mdTabFret {font-family:Arial,Helvetica,sans-serif!important;font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal!important}
-
-/* v1.0.23: compact the right-hand display only on short desktop screens. */
-@media (min-width:1051px) and (max-height:950px) {
-  #whistleLive:not([hidden]) {padding-top:10px!important;padding-bottom:10px!important;justify-content:center!important}
-  #whistleLive:not([hidden]) #whistleTuneTitle {font-size:clamp(22px,2.1vw,32px)!important;line-height:1.1!important;margin-bottom:10px!important;flex-shrink:0!important}
-  #whistleLive:not([hidden]) .whistleLiveRow {flex-shrink:1!important;min-height:0!important}
-  #whistleLive:not([hidden]) #whistleNoteGroup {gap:6px!important;min-height:0!important}
-  #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer {width:min(84%,730px)!important;min-height:0!important}
-  #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer svg.mdBoard {min-height:0!important;max-height:175px!important}
-  #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote {font-size:clamp(62px,5.5vw,88px)!important}
-  #whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote {width:175px!important;height:165px!important;margin-top:-38px!important}
-}
-
-/* v1.0.29: scale the full-page dulcimer presentation on genuinely large displays.
-   Normal panel and short-screen layouts retain their existing geometry. */
-@media (min-width:1500px) and (min-height:960px) {
- body.diagram-full #whistleLive:not([hidden]) #whistleTuneTitle {
-   font-size:clamp(40px,2.9vw,58px)!important;
- }
- body.diagram-full #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer {
-   width:min(94%,1100px)!important;
-   max-width:1100px!important;
-   min-height:0!important;
- }
- body.diagram-full #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer svg.mdBoard {
-   max-width:1100px!important;
-   max-height:325px!important;
-   min-height:0!important;
- }
- body.diagram-full #whistleLive:not([hidden]) #whistleNoteGroup {gap:24px!important}
- body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote {
-   font-size:clamp(112px,8vw,150px)!important;
- }
- body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote {
-   width:clamp(245px,17vw,310px)!important;
-   height:clamp(225px,16vw,280px)!important;
-   margin-top:-58px!important;
- }
-}
-</style>
