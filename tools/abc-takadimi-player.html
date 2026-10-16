@@ -81,7 +81,7 @@
 .splitH{height:5px;cursor:row-resize;position:relative;touch-action:none;z-index:2}.splitV{width:5px;cursor:col-resize;position:relative;touch-action:none;z-index:2}.splitH:after,.splitV:after{content:"";position:absolute;background:transparent}.splitH:after{left:0;right:0;top:-7px;bottom:-7px}.splitV:after{top:0;bottom:0;left:-7px;right:-7px}.splitH:hover:before,.splitV:hover:before{background:rgba(23,107,67,.75)}body.resizing{user-select:none;-webkit-user-select:none}.splitH:before,.splitV:before{content:"";position:absolute;background:rgba(127,127,127,.42);border-radius:2px}.splitH:before{left:0;right:0;top:2px;height:2px}.splitV:before{top:0;bottom:0;left:2px;width:2px}
 .diagramCard{display:flex;flex-direction:column;position:relative}.diagramHeader{padding:7px 10px}.diagramHeader .meta{font-size:.88rem;font-weight:600;color:#4d5c54}.diagramWrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff;position:relative;container-type:inline-size}
 .emptyDiagram{text-align:center;color:#607068;padding:30px}.bottomBar{flex:0 0 auto;padding:8px var(--page) 10px;border-top:1px solid var(--border);background:#fff}.bottomBar button{width:100%;display:block}
-body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
+body.diagram-full .app-header,body.diagram-full .takadimiGroupingWarning,body.diagram-full .toolbar,body.diagram-full .leftPane,body.diagram-full .splitV,body.diagram-full .bottomBar{display:none}body.diagram-full .workspace{display:block;padding:0;height:100vh}body.diagram-full .diagramCard{position:fixed;inset:0 0 62px 0;z-index:3000;border:0;border-radius:0}body.diagram-full .diagramHeader{padding:10px 14px}body.diagram-full .diagramWrap{padding:10px}.exitFull{display:none}body.diagram-full .exitFull{display:inline-flex}body.diagram-full .fullBtn{display:none}.fullBtn{white-space:nowrap}body.diagram-full>.audioRow{display:block;position:fixed;left:0;right:0;bottom:0;z-index:3100;padding:7px 12px 9px;background:#fff;border-top:1px solid var(--border)}body.diagram-full>.audioRow #audio{width:100%}
 @media(max-width:1050px){.app-header{padding-top:52px}.tip{left:14px;top:10px}.version{right:14px;top:13px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .fileControl{grid-column:1 / -1}.workspace{display:block;flex:none;min-height:auto;overflow:visible}.splitV{display:none}.leftPane{height:720px;margin-bottom:5px}.diagramCard{height:auto;min-height:520px}.diagramWrap{flex:none;min-height:0}.app{height:auto;min-height:100vh;overflow:visible}body{height:auto;min-height:100%;overflow:auto}.bottomBar{position:sticky;bottom:0}.fullBtn{grid-column:auto}}
 @media(max-width:650px){.toolbar{grid-template-columns:1fr}.shareButtons{display:grid;grid-template-columns:1fr 1fr}.shareButtons button{width:100%}.app-header h1{font-size:1.35rem}.workspace{padding:8px 10px}.leftPane{height:680px}.diagramCard{min-height:390px}.bottomBar{grid-template-columns:1fr}.bottomBar button{width:100%}}
 
@@ -402,6 +402,7 @@ body.abc-full #abcPanel .panelHeader{padding:10px 14px}
 body.notation-full{overflow:hidden}
 body.notation-full .app-header,
 body.notation-full .toolbar,
+body.notation-full #takadimiGroupingWarning,
 body.notation-full #abcPanel,
 body.notation-full #splitH,
 body.notation-full .diagramCard,
@@ -909,12 +910,16 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 .arrowKeyNavLabel:has(input:disabled){opacity:.55;cursor:default}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 
+/* Non-blocking warning for an invalid tune-specific Takadimi grouping. */
+.abcWrap{position:relative}
+.takadimiGroupingWarning{position:absolute;top:1px;left:1px;right:1px;z-index:5;pointer-events:none;background:#fff3c4;border:1px solid #e0bd54;border-radius:4px;color:#5b4400;padding:6px 12px;font-size:13px;font-weight:600;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,.08)}
+.takadimiGroupingWarning[hidden]{display:none!important}
 /* Browser print: only the complete notation, in normal document flow. */
 @page { size:auto; margin:12mm; }
 @media print {
   html,body{height:auto !important;min-height:0 !important;width:auto !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:white !important}
   .app,.workspace,.leftPane,#notationPanel,.notationViewport{display:block !important;position:static !important;float:none !important;transform:none !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;max-height:none !important;margin:0 !important;padding:0 !important;overflow:visible !important;grid-template-columns:none !important;grid-template-rows:none !important;flex:none !important}
-  .app-header,.toolbar,#abcPanel,.splitH,.splitV,.diagramCard,.bottomBar,#notationPanel>.panelHeader,#notationPanel>.audioRow,.lessonModal,.modal_default_main,.modal_default_background{display:none !important}
+  .app-header,.toolbar,#takadimiGroupingWarning,#abcPanel,.splitH,.splitV,.diagramCard,.bottomBar,#notationPanel>.panelHeader,#notationPanel>.audioRow,.lessonModal,.modal_default_main,.modal_default_background{display:none !important}
   #notationPanel{border:0 !important;border-radius:0 !important;box-shadow:none !important}
   #notation{display:block !important;position:static !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:#fff !important}
   #notation svg{display:block !important;width:100% !important;max-width:100% !important;height:auto !important;overflow:visible !important}
@@ -988,7 +993,7 @@ body.diagram-full .whistleLargeGlyph{max-width:100%}
   .whistleLargeGlyph.combinedDisplay{font-size:clamp(42px,9vh,65px)!important}
 }
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Takadimi Player</h1><p>Play ABC tunes with synchronized note names and Takadimi rhythm syllables.</p></header>
+<header class="app-header"><div class="version">Version 1.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Takadimi Player</h1><p>Play ABC tunes with synchronized note names and Takadimi rhythm syllables.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names">Notation + Note Name</option><option value="rhythm" selected>Notation + Takadimi</option><option value="both">Notation + Note Name + Takadimi</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
@@ -997,7 +1002,7 @@ body.diagram-full .whistleLargeGlyph{max-width:100%}
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea><div id="takadimiGroupingWarning" class="takadimiGroupingWarning" role="status" aria-live="polite" hidden></div></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Note Names</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
@@ -1121,6 +1126,60 @@ body.diagram-full .whistleLargeGlyph{max-width:100%}
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
       <p>The <b>Notation display</b> setting is not included in normal share links. Opening a normal share link retains your existing Notation display preference.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Custom Takadimi Beat Grouping</p>
+      <p>For meters that can be felt in different ways, use the private ABC directive <b>%%takadimi_grouping</b> anywhere after the tune's <b>X:</b> field to override automatic beat grouping.</p>
+      <p>Write the grouping as positive numbers separated by plus signs, using the meter denominator as the unit.</p>
+      <p>For example, in <b>M:6/4</b>, three half-note beats can be specified with:</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">%%takadimi_grouping 2+2+2</pre>
+      <p>For two dotted-half-note beats, use:</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">%%takadimi_grouping 3+3</pre>
+      <p>The first grouping places Ta at the start of each half-note beat; the second uses compound-beat syllables with Ta at the start of each dotted-half-note beat.</p>
+      <p>For six quarter-note beats, use:</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">%%takadimi_grouping 1+1+1+1+1+1</pre>
+      <p>This allows quarter-note-aligned triplets to begin with Ta on a main beat.</p>
+      <p>The grouping must add up to the meter numerator, and each group must contain one, two, or three denominator units.</p>
+      <p>If the directive is invalid, the player uses its usual automatic grouping and shows a small yellow warning banner.</p>
+      <p>The directive applies only to its tune, is retained in saved and shared ABC, and does not alter the written notation or playback durations.</p>
+      <p>Use <b>%%takadimi_offbeat_triplet_syllables</b> to customize complete equal-duration triplets that start between main beats; triplets starting on a main beat always use <b>Ta Ki Da</b>.</p>
+      <p>Specify one to three space-separated syllables to replace <b>Ta Ki Da</b> from left to right, leaving unspecified syllables unchanged; use <b>-</b> to suppress any syllable.</p>
+      <p>Without the directive, offbeat triplets use <b>Ta Ki Da</b>; invalid or duplicate directives are ignored and display a yellow warning.</p>
+      <p>This optional pronunciation override is not an established Takadimi convention and does not change notation or playback timing.</p>
+      <p><b>Example 1: Two ways to group the same 6/4 measure.</b></p>
+      <p>With <b>L:1/8</b>, the following six quarter notes fill one measure, and only the grouping directive changes between these examples.</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">M:6/4
+L:1/8
+%%takadimi_grouping 2+2+2
+K:C
+C2 D2 E2 F2 G2 A2|</pre>
+      <p><b>2+2+2 result:</b> Ta Di Ta Di Ta Di (three half-note beats).</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">M:6/4
+L:1/8
+%%takadimi_grouping 3+3
+K:C
+C2 D2 E2 F2 G2 A2|</pre>
+      <p><b>3+3 result:</b> Ta Ki Da Ta Ki Da (two dotted-half-note beats).</p>
+      <p><b>Example 2: An offbeat triplet in 6/4 with 3+3 grouping.</b></p>
+      <p>The triplet <b>(3EFG</b> begins on the third quarter-note position, inside the first dotted-half-note beat rather than at its beginning.</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">M:6/4
+L:1/8
+%%takadimi_grouping 3+3
+K:C
+C2 D2 (3EFG A2 B2 c2|</pre>
+      <p><b>Default result:</b> Ta Ki <b>Ta Ki Da</b> Ta Ki Da.</p>
+      <p>To replace only the triplet's first syllable, add the following directive after the <b>X:</b> field.</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">M:6/4
+%%takadimi_grouping 3+3
+%%takadimi_offbeat_triplet_syllables Va</pre>
+      <p><b>First-syllable replacement result:</b> Ta Ki <b>Va Ki Da</b> Ta Ki Da.</p>
+      <p>To replace all three syllables, use the following directives instead.</p>
+      <pre style="white-space:pre-wrap;font:inherit;background:#f6f8f6;border:1px solid #d6e0d8;border-radius:6px;padding:10px">M:6/4
+%%takadimi_grouping 3+3
+%%takadimi_offbeat_triplet_syllables Va Za Zu</pre>
+      <p><b>Full replacement result:</b> Ta Ki <b>Va Za Zu</b> Ta Ki Da.</p>
+      <p>Only the offbeat triplet changes in these examples; syllables for the other notes remain the same.</p>
+
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
@@ -2560,6 +2619,56 @@ function saveNotationMode(){
  * notes and non-musical text are excluded from timing.
  * Timing uses notated (not performance-tempo) durations.
  */
+// A private, tune-local ABC directive. Units are the denominator of M:.
+// Only 1-, 2- and 3-unit beats have defined syllable maps in this player.
+function readTakadimiGrouping(abc){
+  const lines=String(abc||'').split(/\r?\n/);
+  let seenX=false,values=[];
+  for(const line of lines){
+    if(/^\s*X\s*:/.test(line)){seenX=true;continue;}
+    if(!seenX)continue;
+    const match=line.match(/^\s*%%takadimi_grouping\b(.*)$/i);
+    if(match)values.push(match[1].trim());
+  }
+  if(!values.length)return {present:false,valid:true,groups:null};
+  const meter=String(abc||'').match(/^\s*M\s*:\s*(\d+)\s*\/\s*(\d+)\s*$/mi);
+  const value=values[0];
+  const syntax=/^[1-3](?:\s*\+\s*[1-3])*$/;
+  const groups=syntax.test(value)?value.split('+').map(x=>Number(x.trim())):null;
+  const valid=values.length===1&&!!meter&&!!groups&&
+    groups.reduce((a,b)=>a+b,0)===Number(meter[1]);
+  return {present:true,valid,groups:valid?groups:null};
+}
+// Optional private override for triplets starting inside the selected main beat.
+// One to three syllables replace Ta, Ki, Da from left to right; "-" suppresses
+// that syllable entirely. This is user-defined, not a Takadimi standard.
+function readTakadimiOffbeatTripletSyllables(abc){
+  const lines=String(abc||'').split(/\r?\n/);
+  let seenX=false,values=[];
+  for(const line of lines){
+    if(/^\s*X\s*:/.test(line)){seenX=true;continue;}
+    if(!seenX)continue;
+    const match=line.match(/^\s*%%takadimi_offbeat_triplet_syllables\b(.*)$/i);
+    if(match)values.push(match[1].trim());
+  }
+  if(!values.length)return {present:false,valid:true,syllables:null};
+  const parts=values[0].split(/\s+/);
+  const valid=values.length===1&&parts.length>=1&&parts.length<=3&&
+    parts.every(v=>v==='-'||/^[A-Za-z]+$/.test(v));
+  return {present:true,valid,syllables:valid?
+    ['Ta','Ki','Da'].map((v,i)=>i<parts.length?(parts[i]==='-'?'':parts[i]):v):null};
+}
+function updateTakadimiGroupingWarning(abc){
+  const el=document.getElementById('takadimiGroupingWarning');
+  if(!el)return;
+  const result=readTakadimiGrouping(abc);
+  const triplet=readTakadimiOffbeatTripletSyllables(abc);
+  const warnings=[];
+  if(result.present&&!result.valid)warnings.push('Invalid %%takadimi_grouping for the current meter — using automatic beat grouping.');
+  if(triplet.present&&!triplet.valid)warnings.push('Invalid %%takadimi_offbeat_triplet_syllables — using Ta Ki Da for offbeat triplets.');
+  el.hidden=!warnings.length;
+  el.textContent=warnings.join(' ');
+}
 class UltimateTakadimiParser {
   constructor(){this.resetState()}
   resetState(){
@@ -2567,6 +2676,8 @@ class UltimateTakadimiParser {
     this.unitNoteLength=1/8;
     this.meterType='SIMPLE';
     this.beatDuration=1/4;
+    this.customGrouping=null;
+    this.offbeatTripletSyllables=null;
   }
   initializeMeta(abc){
     this.resetState();
@@ -2579,6 +2690,10 @@ class UltimateTakadimiParser {
     const l=String(abc).match(/^\s*L\s*:\s*(\d+)\s*\/\s*(\d+)\s*$/mi);
     if(l)this.setLength(l[1]+'/'+l[2]);
     else this.unitNoteLength=(this.timeSignature.num/this.timeSignature.den)<3/4?1/16:1/8;
+    const grouping=readTakadimiGrouping(abc);
+    this.customGrouping=grouping.valid?grouping.groups:null;
+    const tripletOverride=readTakadimiOffbeatTripletSyllables(abc);
+    this.offbeatTripletSyllables=tripletOverride.valid?tripletOverride.syllables:null;
   }
   setMeter(meter){
     const s=String(meter||'').trim().toUpperCase();
@@ -2818,9 +2933,26 @@ class UltimateTakadimiParser {
       // boundary anywhere in the tune, not just at the very beginning.
       if(pickupOffsets.has(index))barTime=pickupOffsets.get(index);
       const actualDuration=this.eventDuration(event);
-      const beat=this.beatDuration;
-      const phase=((barTime+1e-10)%beat)/beat;
-      let attackSyllable=this.mapOffsetToSyllable(phase,this.meterType);
+      let beat=this.beatDuration;
+      let beatStart=Math.floor((barTime+1e-10)/beat)*beat;
+      let beatMeter=this.meterType;
+      if(this.customGrouping){
+        // Each group is measured in M: denominator units, not ABC L: units.
+        const unit=1/this.timeSignature.den;
+        let offset=0;
+        for(const size of this.customGrouping){
+          const end=offset+size*unit;
+          if(barTime<end-1e-9){
+            beat=size*unit;
+            beatStart=offset;
+            beatMeter=size===3?'COMPOUND':'SIMPLE';
+            break;
+          }
+          offset=end;
+        }
+      }
+      const phase=((barTime-beatStart+1e-10)%beat)/beat;
+      let attackSyllable=this.mapOffsetToSyllable(phase,beatMeter);
       const group=event.tupletGroup;
       // ABC triplets use a 3:2 duration ratio by default. They need not
       // occupy a full beat or begin on a beat boundary (notably in 6/8).
@@ -2830,7 +2962,7 @@ class UltimateTakadimiParser {
       // compound beat uses Ta–Di, with Di at the midpoint. ABC (2
       // defaults to 2:3 in compound meter. Do not force Ta–Di onto
       // shorter or displaced tuplets that do not divide one beat.
-      if(group&&group.p===2&&this.meterType==='COMPOUND'){
+      if(group&&group.p===2&&beatMeter==='COMPOUND'){
         if(event.tupletOrdinal===0){
           const members=[];
           for(let j=index;j<events.length;j++){
@@ -2857,10 +2989,14 @@ class UltimateTakadimiParser {
           const durations=members.map(e=>this.eventDuration(e));
           const equal=durations.length===3&&durations.every(d=>
             d>0&&Math.abs(d-durations[0])<1e-8);
-          irregularGroups.set(group.id,{valid:group.r===3&&equal});
+          const aligned=Math.abs(phase)<1e-6||Math.abs(phase-1)<1e-6;
+          irregularGroups.set(group.id,{valid:group.r===3&&equal,offbeat:!aligned});
         }
-        if(irregularGroups.get(group.id)?.valid){
-          attackSyllable=['Ta','Ki','Da'][event.tupletOrdinal]||'-';
+        const tripletInfo=irregularGroups.get(group.id);
+        if(tripletInfo?.valid){
+          const labels=tripletInfo.offbeat&&this.offbeatTripletSyllables?
+            this.offbeatTripletSyllables:['Ta','Ki','Da'];
+          attackSyllable=labels[event.tupletOrdinal]??'-';
         }
       }
       if(group&&(group.p===5||group.p===7)){
@@ -2892,7 +3028,7 @@ class UltimateTakadimiParser {
       let syllable=tied?'':attackSyllable;
       if(event.kind==='rest')syllable='('+syllable.toLowerCase()+')';
       const item={...event,duration:actualDuration,timelinePos:barTime,
-        beat:Math.floor(barTime/beat)+1,takadimi:syllable,attackSyllable};
+        beat:this.customGrouping?this.customGrouping.findIndex((_,i)=>this.customGrouping.slice(0,i+1).reduce((a,b)=>a+b,0)/this.timeSignature.den>barTime+1e-9)+1:Math.floor(barTime/beat)+1,takadimi:syllable,attackSyllable};
       output.push(item);
       barTime+=actualDuration;
       priorTie=event.hasTie?event.pitch:null;
@@ -3130,7 +3266,7 @@ function applyStandardNoteTabNames(visual){
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
-  if(!tunes.length)return;
+  if(!tunes.length){updateTakadimiGroupingWarning('');return;}
 
   try{
     playbackActive=false;
@@ -3144,6 +3280,7 @@ async function rebuild(){
     showWhistleLive(null);
 
     const tune=$("abcText").value;
+    updateTakadimiGroupingWarning(tune);
     const unsupported=unsupportedTuneReason(tune);
     currentTuneUnsupported=!!unsupported;
     if(unsupported){
