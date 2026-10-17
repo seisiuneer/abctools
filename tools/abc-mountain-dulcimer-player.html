@@ -1570,10 +1570,9 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
 <div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: Notation display can be changed. Tuning, capo and fret configuration are locked for the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
-
 <!-- Playback settings are edited in the DayPilot Configure Playback dialog. -->
 <div id="mdPlaybackState" hidden>
-  <select id="mdSoundSelect"><option value="148" selected>Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
+  <select id="mdSoundSelect"><option value="148" selected>Mountain Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
   <input type="checkbox" id="mdOctaveLower" checked>
   <input type="checkbox" id="mdOpenStringsCheck" checked>
 </div>
@@ -1640,7 +1639,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
       <p>Click <b>Configure Playback</b> in the Notation header to choose the instrument sound and adjust the playback options.</p>
-      <p>Choose <b>Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b> as the instrument sound.</p>
+      <p>Choose <b>Mountain Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b> as the instrument sound.</p>
       <p>The selected instrument sound applies to both the melody and the open strings.</p>
       <p><b>Play octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
       <p>This option also uses the lower melody pitch when determining playable fretboard positions and generating tablature.</p>
@@ -3546,7 +3545,7 @@ async function mdConfigurePlayback(){
   const form=[
     {name:"Configure Playback",type:"title",cssClass:"mdPlaybackDialogTitle"},
     {name:"Instrument",id:"sound",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
-      {name:"Dulcimer",id:"148"},
+      {name:"Mountain Dulcimer",id:"148"},
       {name:"Guitar",id:"25"},
       {name:"Harp",id:"46"}
     ]},
