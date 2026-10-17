@@ -611,7 +611,6 @@ body.diagram-full .whistleNoteGroup.sixString .noteDisplayGroup{
 }
 
 /* Full fretboard display. */
-.octaveLowerLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}.octaveLowerLabel input{margin:0}
 .mandolinFingering.fullFretboardMode{display:block;width:clamp(230px,27vw,350px);height:clamp(300px,34vw,430px);overflow:visible}
 .fullFretboardSvg{display:block;width:100%;height:100%;overflow:visible}
 body.diagram-full .mandolinFingering.fullFretboardMode{width:clamp(250px,29vw,380px);height:clamp(330px,38vw,470px)}
@@ -796,8 +795,7 @@ body.notation-full #notationPanel .panelHeader{padding:10px 14px}
   opacity:1;
 }
 .countInLabel:has(input:disabled),
-.showNoteLabel:has(input:disabled),
- .octaveLowerLabel:has(input:disabled){
+.showNoteLabel:has(input:disabled){
   color:#8a8a8a;
 }
 
@@ -1377,6 +1375,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
  .toolbar.whistleToolbar .tuneControl{min-width:0}
 }
 
+
 /* v1.2.11: Keep the controls compact on iPad landscape. The earlier
    <=1280px grid made Share span two tracks and pushed the workspace down. */
 @media (orientation:landscape) and (min-width:1051px) and (max-width:1280px){
@@ -1408,6 +1407,37 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   .toolbar.whistleToolbar .tuneControl{grid-column:2;grid-row:3;min-width:0}
   .toolbar.whistleToolbar .shareButtons{grid-column:3;grid-row:3;justify-self:start;align-self:end;min-width:0}
   .toolbar.whistleToolbar .shareButtons #shareBtn{width:auto;min-width:80px}
+}
+
+/* v1.2.18: Configure Playback form styling, scoped to its DayPilot fields. */
+.modal_default_main .mdPlaybackDialogTitle{
+  text-align:center !important;
+  font-size:1.3rem !important;
+  line-height:1.2 !important;
+  font-weight:750 !important;
+}
+.modal_default_main .mdPlaybackDialogSelect{
+  margin-bottom:23px !important;
+}
+.modal_default_main .mdPlaybackDialogSelect select{
+  display:block;
+  margin-top:5px !important;
+  width:100% !important;
+  min-height:38px;
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  padding:7px 36px 7px 10px !important;
+  border:1px solid #b8c7bd !important;
+  border-radius:7px !important;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  font-family:inherit !important;
+  font-size:16px !important;
+  line-height:1.3 !important;
+}
+.modal_default_main .mdPlaybackDialogCheckbox input[type="checkbox"]{
+  margin-right:11px !important;
 }
 </style>
 <style>/* v1.0.5 horizontal dulcimer display */
@@ -1504,7 +1534,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.2.13</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1519,10 +1549,10 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
  <div class="leftPane" id="leftPane">
   <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div id="mdCompatibility" class="mdCompatibility" role="status" aria-live="polite" hidden></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="configurePlaybackBtn" class="notationHeaderBtn" type="button" disabled>Configure Playback</button><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div id="mdCompatibility" class="mdCompatibility" role="status" aria-live="polite" hidden></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">Mountain Dulcimer (DAd)</span><span class="diagramHeaderRight"><label class="octaveLowerLabel" for="mdOctaveLower"><input type="checkbox" id="mdOctaveLower" checked>Play octave lower</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">Mountain Dulcimer (DAd)</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
   <div class="diagramWrap whistleDiagramWrap">
    <div id="whistleLive" class="whistleLive" hidden>
     <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
@@ -1541,6 +1571,12 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 <div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: Notation display can be changed. Tuning, capo and fret configuration are locked for the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
 
+<!-- Playback settings are edited in the DayPilot Configure Playback dialog. -->
+<div id="mdPlaybackState" hidden>
+  <select id="mdSoundSelect"><option value="148" selected>Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
+  <input type="checkbox" id="mdOctaveLower" checked>
+  <input type="checkbox" id="mdOpenStringsCheck" checked>
+</div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
@@ -1597,21 +1633,28 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display and Navigation</p>
       <p>The Mountain Dulcimer panel shows the current note and its suggested string and fret position.</p>
       <p>Use <b>Show note</b> to display the note name, and <b>Hide</b> to practice without seeing the fingering.</p>
-      <p>Use <b>Play octave lower</b> when you want to hear the tune an octave lower.</p>
       <p>Click <b>Full-Page View</b> to enlarge a pane, and <b>Exit Full-Page</b> to return to the normal layout.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
-      <p>Use <b>Mute Melody</b> to practice with the beat without hearing the melody.</p>
+      <p>Click <b>Configure Playback</b> in the Notation header to choose the instrument sound and adjust the playback options.</p>
+      <p>Choose <b>Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b> as the instrument sound.</p>
+      <p>The selected instrument sound applies to both the melody and the open strings.</p>
+      <p><b>Play octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
+      <p>This option also uses the lower melody pitch when determining playable fretboard positions and generating tablature.</p>
+      <p><b>Play open strings?</b> sounds the dulcimer's open strings along with each melody note, giving the tune the accompanying drone sound characteristic of the instrument.</p>
+      <p>This option is enabled by default, and the open-string pitches follow the selected tuning and capo position.</p>
+      <p>When both options are enabled, the melody plays an octave lower while the open strings retain their actual tuned pitches.</p>
+      <p>Use <b>Mute Melody</b> to practice without hearing the melody; any enabled metronome and open strings remain audible.</p>
       <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to download the loaded ABC tunes, including your edits.</p>
       <p>Click <b>Share</b> to open <b>Sharing Controls</b> and choose <b>Share Current Tune</b> or <b>Share All Tunes</b>.</p>
       <p>In the Share Link dialog, you can copy the link, save it, or test it in a new browser tab.</p>
-      <p>Share links carry the selected tuning, capo, highest fret, extra frets, and notation display so the recipient can see the same setup.</p>
+      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, initial <b>Play open strings?</b> and <b>Play octave lower?</b> settings, and <b>Instrument</b> selection so the recipient can use the same setup.</p>
       <p>Use <b>Open in ABCTT</b> to open the ABC in ABC Transcription Tools for further editing.</p>
       <p>A received share link applies its settings for that visit without replacing your saved preferences unless you change a setting.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1630,16 +1673,16 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <p>Use <b>Save Lesson Configuration</b> to save the tune, lesson details, and selected player settings for later reuse.</p>
       <p>Use <b>Load Lesson Configuration</b> to restore a saved lesson configuration or lesson link file.</p>
       <p>Click <b>Create Lesson Link</b> to generate a link that you can send to students.</p>
-      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, and initial notation display.</p>
-      <p>The tuning, capo, and fret settings are locked during a lesson so students practice with the setup you selected.</p>
+      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, initial <b>Play open strings?</b> and <b>Play octave lower?</b> settings, and <b>Instrument</b> selection.</p>
+      <p>The tuning, capo, fret, and Play octave lower? settings are locked during a lesson so students practice with the setup you selected.</p>
       <p>Use <b>Hide</b> if you want the fingering display to start hidden; students can reveal it while practicing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       <p>Open the lesson link provided by your teacher to load the assigned tune, lesson instructions, and dulcimer settings.</p>
       <p>Read the instructions and click <b>Start Lesson</b> to begin.</p>
       <p>If prompted, click <b>Click to Enable Playback</b> to turn on the audio controls.</p>
-      <p>You can change <b>Notation display</b> while practicing without changing your saved preference.</p>
-      <p>Your teacher's tuning, capo, and fret settings remain locked during the lesson.</p>
+      <p>You can change <b>Notation display</b>, and use <b>Configure Playback</b> to change the <b>Instrument</b> and <b>Play open strings?</b> options without changing your saved preferences.</p>
+      <p>Your teacher's tuning, capo, fret, and Play octave lower? settings remain locked during the lesson.</p>
       <p>You can use the notation, note navigation, playback, tempo, and display controls to practice.</p>
       <p>You can edit the ABC and click <b>Save</b> to keep your changes.</p>
       <p>You can use <b>Browse</b> to load another ABC file; the assigned instrument settings remain locked.</p>
@@ -1693,6 +1736,7 @@ let audioControllerInitializing=false;
 let melodyMuted=false;
 let metronomeEnabled=false;
 let countInEnabled=false;
+let mdOpenStringsEnabled=true;
 let countInTimer=null;
 let countInToken=0;
 let rebuildTimer=0;
@@ -1707,6 +1751,9 @@ const SPLIT_KEY="abcMountainDulcimerPlayerSplitters";
 const EDITOR_SIZE_KEY="abcMountainDulcimerPlayerEditorTextSize";
 const TEMPO_KEY="abcMountainDulcimerPlayerTempo";
 const COUNT_IN_KEY="abcMountainDulcimerPlayerCountIn";
+const MD_OPEN_STRINGS_KEY="abcMountainDulcimerPlayerOpenStrings";
+const MD_SOUND_KEY="abcMountainDulcimerPlayerSound";
+const MD_SOUND_PROGRAMS=[148,25,46];
 const METRONOME_KEY="abcMountainDulcimerPlayerMetronome";
 const SHOW_NOTE_KEY="abcMountainDulcimerPlayerShowNote";
 const WHISTLE_PREFS_KEY="abcMountainDulcimerPlayerPrefs";
@@ -3303,6 +3350,23 @@ async function rebuild(){
     mdUpdateAnalysis(visual[0]);
     if(showWhistleTab)mdRenderScoreTab();else mdClearScoreTab();
 
+    // Add the two unfretted courses to the AUDIO sequence, not the score.
+    // Capture this tune's fingering analysis so a later tune or setting change
+    // cannot alter notes when Safari starts its synth after a user gesture.
+    if(mdOpenStringsEnabled&&typeof visual[0].setUpAudio==="function"){
+      const sourceNotes=MD.events.map(e=>({start:e.start,end:e.end,midi:e.midi,writtenMidi:e.writtenMidi,course:e.position?.course}));
+      const openPitches=mdCapoOpen();
+      const sourcePrefix=prefixLength;
+      const octaveOffset=mdOctaveOffset();
+      const soundProgram=selectedMelodyProgram();
+      const originalSetUpAudio=visual[0].setUpAudio;
+      visual[0].setUpAudio=function(audioOptions){
+        const sequence=originalSetUpAudio.call(this,audioOptions);
+        mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefix,octaveOffset,soundProgram);
+        return sequence;
+      };
+    }
+
     if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function"){
       throw new Error("abcjs audio is unavailable.");
     }
@@ -3450,6 +3514,80 @@ function saveCountInPreference(){commitStandardShareSettingsIfPending();
   countInEnabled=!!(cb&&cb.checked);
   try{localStorage.setItem(COUNT_IN_KEY,String(countInEnabled))}catch(_){}
 }
+// Like the other playback checkboxes, this is remembered during normal use,
+// but changing it within a student lesson never writes browser preferences.
+function mdRestoreOpenStringsPreference(){
+  try{const saved=localStorage.getItem(MD_OPEN_STRINGS_KEY);mdOpenStringsEnabled=saved===null?true:saved==="true"}catch(_){mdOpenStringsEnabled=true}
+  $("mdOpenStringsCheck").checked=mdOpenStringsEnabled;
+}
+function mdSaveOpenStringsPreference(){
+  if(lessonModeActive())return;
+  commitStandardShareSettingsIfPending();
+  try{localStorage.setItem(MD_OPEN_STRINGS_KEY,String(mdOpenStringsEnabled))}catch(_){}
+}
+// In normal use the Sound selection persists; in a student lesson it can be
+// changed without writing the student's saved preference.
+function mdRestoreSoundPreference(){
+  let saved=null;
+  try{saved=localStorage.getItem(MD_SOUND_KEY)}catch(_){}
+  const program=saved===null?148:Number(saved);
+  $("mdSoundSelect").value=MD_SOUND_PROGRAMS.includes(program)?String(program):"148";
+}
+function mdSaveSoundPreference(){
+  if(lessonModeActive())return;
+  commitStandardShareSettingsIfPending();
+  try{localStorage.setItem(MD_SOUND_KEY,String(selectedMelodyProgram()))}catch(_){}
+}
+// DayPilot form provides a consistent select/checkbox UI and only commits
+// changes when OK is pressed. The hidden fields above remain the single source
+// of truth for audio building, preferences, share links, and saved lessons.
+async function mdConfigurePlayback(){
+  if($("configurePlaybackBtn").disabled || !window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.form!=="function")return;
+  const form=[
+    {name:"Configure Playback",type:"title",cssClass:"mdPlaybackDialogTitle"},
+    {name:"Instrument",id:"sound",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
+      {name:"Dulcimer",id:"148"},
+      {name:"Guitar",id:"25"},
+      {name:"Harp",id:"46"}
+    ]},
+    {name:"Play octave lower?",id:"octaveLower",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox",disabled:lessonModeActive()},
+    {name:"Play open strings?",id:"openStrings",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"}
+  ];
+  const data={
+    sound:$("mdSoundSelect").value,
+    octaveLower:$("mdOctaveLower").checked,
+    openStrings:mdOpenStringsEnabled
+  };
+  const response=await DayPilot.Modal.form(form,data,{top:150,width:380,autoFocus:false});
+  if(!response || response.canceled || !response.result)return;
+  const result=response.result;
+  const sound=Number(result.sound);
+  if(!MD_SOUND_PROGRAMS.includes(sound))return;
+  const nextOctave=lessonModeActive()?data.octaveLower:result.octaveLower===true;
+  const nextOpen=result.openStrings===true;
+  const soundChanged=String(sound)!==data.sound;
+  const octaveChanged=nextOctave!==data.octaveLower;
+  const openChanged=nextOpen!==data.openStrings;
+  if(!soundChanged&&!octaveChanged&&!openChanged)return;
+
+  const wasPlaying=playbackActive;
+  $("mdSoundSelect").value=String(sound);
+  $("mdOctaveLower").checked=nextOctave;
+  $("mdOpenStringsCheck").checked=nextOpen;
+  mdOpenStringsEnabled=nextOpen;
+  if(soundChanged)mdSaveSoundPreference();
+  if(openChanged)mdSaveOpenStringsPreference();
+  if(octaveChanged)saveWhistleDisplayPrefs();
+  // A single rebuild applies all three settings together, keeping the
+  // existing open-course injection and transpose compensation in sync.
+  if(tunes.length){
+    await rebuild();
+    if(wasPlaying&&controller){
+      try{if(typeof controller.play==="function")await controller.play()}
+      catch(e){void showPlayerAlert("Unable to restart playback: "+(e&&e.message||e))}
+    }
+  }else if(octaveChanged)renderGDAEFingering(currentLiveMidi);
+}
 function cancelCountIn(){
   countInToken++;
   if(countInTimer){clearTimeout(countInTimer);countInTimer=null}
@@ -3589,6 +3727,9 @@ function initializeActionButtonStates(){
   // disabled states across reloads/pageshow.
   $("metronomeCheck").disabled=!hasTunes;
   $("countInCheck").disabled=!hasTunes;
+  $("mdOpenStringsCheck").disabled=!hasTunes;
+  $("mdSoundSelect").disabled=!hasTunes;
+  $("configurePlaybackBtn").disabled=!hasTunes;
   $("saveAbcBtn").disabled=!hasTunes;
   // Firefox may restore a stale enabled state on reload. With no tune loaded,
   // force Tempo back to its true startup state after form-state restoration.
@@ -3725,6 +3866,7 @@ $("abcText").addEventListener("input",()=>{
 
 $("metronomeCheck").addEventListener("change",toggleMetronome);
 $("countInCheck").addEventListener("change",saveCountInPreference);
+$("configurePlaybackBtn").addEventListener("click",mdConfigurePlayback);
 $("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
 $("tempoBtn").addEventListener("click",()=>{
   const input=findTempoInput();
@@ -3806,6 +3948,8 @@ restoreShowNotePreference();
 restoreHideFingeringPreference();
 restoreMetronomePreference();
 restoreCountInPreference();
+mdRestoreOpenStringsPreference();
+mdRestoreSoundPreference();
 installCountInPlayHandler();
 // Share settings are applied after the dulcimer callbacks are defined.
 restoreSplitters();
@@ -3831,6 +3975,8 @@ function syncPlaybackPermissionHeaderControls(){
   const muteBtn=$("muteMelodyBtn");
   const metronome=$("metronomeCheck");
   const countIn=$("countInCheck");
+  const openStrings=$("mdOpenStringsCheck");
+  const sound=$("mdSoundSelect");
 
   const editorTextSize=$("editorTextSize");
   const showNote=$("showNoteCheck");
@@ -3850,6 +3996,10 @@ function syncPlaybackPermissionHeaderControls(){
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
   if(countIn)countIn.disabled=headerDisabled;
+  if(openStrings)openStrings.disabled=headerDisabled;
+  if(sound)sound.disabled=headerDisabled;
+  const playbackBtn=$("configurePlaybackBtn");
+  if(playbackBtn)playbackBtn.disabled=headerDisabled;
   if(foldOctaves)foldOctaves.disabled=headerDisabled;
 
   const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn"),exitFull=$("exitFull");
@@ -4085,6 +4235,8 @@ function populateLessonConfigObject(c){
   // Loading a Lesson Configuration is a teacher action: make its player settings
   // the normal saved preferences. Direct student Lesson Links do not use this path.
   saveWhistleDisplayPrefs();
+  mdSaveOpenStringsPreference();
+  mdSaveSoundPreference();
 
   // Load the saved ABC through the same normal in-memory path used by file/share loads.
   sharePlaybackNeedsGesture=false;
@@ -4522,6 +4674,48 @@ function mdInitialCost(p){
   const coursePenalty=p.course===0?2.8:p.course===1?1.5:0;
   return p.fret*.15+coursePenalty-(p.fret===0?.33:0);
 }
+// Add open-course plucks to abcjs's MIDI track BEFORE soundfont samples load.
+// The original melody track, score, source ABC, cursor and note navigation remain
+// unchanged. Playback timing (including repeat endings and ornaments) comes from
+// the flattened sequence, so the drones stay synchronized and seek/loop correctly.
+function mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefix,octaveOffset,soundProgram){
+  if(!sequence||!Array.isArray(sequence.tracks)||!sequence.tracks.length)return;
+  const melodyTrack=sequence.tracks[0];
+  if(!Array.isArray(melodyTrack)||!Array.isArray(openPitches)||openPitches.length!==3)return;
+  const courseTrack=[];
+  for(const note of melodyTrack){
+    if(note.cmd!=="note"||note.style==="grace"||!(note.duration>0)||!Number.isInteger(note.pitch))continue;
+    const start=Number(note.startChar)-sourcePrefix;
+    const end=Number(note.endChar)-sourcePrefix;
+    // Match the *played* note to its chosen course. This also works through
+    // repeats because abcjs repeats notes with the same source char positions.
+    const sourceMatches=Number.isFinite(start)&&Number.isFinite(end)
+      ?sourceNotes.filter(e=>e.start>=start-2&&e.start<end+2)
+      :[];
+    // abcjs may report the pre- or post-transpose pitch in its MIDI sequence.
+    // Prefer the note's exact written/sounding pitch, then its source span.
+    const match=sourceMatches.find(e=>e.midi===note.pitch||e.writtenMidi===note.pitch)
+      ||sourceMatches[0];
+    // If source spans are absent, infer the course using the sounding pitch.
+    const soundingPitch=note.pitch+octaveOffset;
+    const candidates=mdCandidates(soundingPitch);
+    const course=Number.isInteger(match?.course)?match.course:
+      (candidates.length?candidates:mdCandidates(note.pitch))
+        .sort((a,b)=>mdInitialCost(a)-mdInitialCost(b))[0]?.course;
+    if(!Number.isInteger(course)||course<0||course>2)continue;
+    for(let i=0;i<3;i++){
+      if(i===course)continue;
+      courseTrack.push({
+        // The playback ABC applies %%MIDI transpose to every track, including
+        // injected notes. Cancel that transpose for physical open-string pitches.
+        cmd:"note",pitch:openPitches[i]-octaveOffset,instrument:soundProgram,
+        start:note.start,duration:note.duration,gap:note.gap||0,
+        volume:58,startChar:note.startChar,endChar:note.endChar
+      });
+    }
+  }
+  if(courseTrack.length)sequence.tracks.push(courseTrack);
+}
 function mdSolve(events){
   const solved=events.map(e=>({...e,writtenMidi:e.midi,midi:e.midi+mdOctaveOffset(),candidates:mdCandidates(e.midi+mdOctaveOffset()),position:null}));
   let i=0;
@@ -4796,7 +4990,10 @@ function mdRenderBoard(midi){
 function selectedStrings(){return mdCapoOpen().slice().reverse().map(midi=>({midi,name:mdNoteName(midi)}))}
 function selectedCapo(){return 0}
 function selectedRenderTab(){return []}
-function selectedMelodyProgram(){return 25}
+function selectedMelodyProgram(){
+  const program=Number($("mdSoundSelect")?.value);
+  return MD_SOUND_PROGRAMS.includes(program)?program:148;
+}
 function updateInstrumentUI(){
   const tuningSelect=$("instrumentSelect");
   const label=`Mountain Dulcimer (${tuningSelect.options[tuningSelect.selectedIndex]?.textContent.trim() || tuningSelect.value})`;
@@ -4838,6 +5035,8 @@ function generateShareLink(abc){
     params.set("notation",$("notationDisplay").value);
     params.set("instrument",$("instrumentSelect").value);
     params.set("mdcfg",bytesToBase64URL(new TextEncoder().encode(JSON.stringify(mdConfig()))));
+    params.set("openstrings",mdOpenStringsEnabled?"1":"0");
+    params.set("sound",String(selectedMelodyProgram()));
     return SHARE_BASE_URL+"?"+params.toString();
   }catch(err){console.error(err);return ""}
 }
@@ -4857,10 +5056,28 @@ function mdURLConfig(params){
 function validateFretboardSettingsParams(params){
   const hide=params.get("hide");if(hide!==null&&!/^[01]$/.test(hide))throw new Error("Invalid Hide setting.");
   const notation=params.get("notation");if(notation&&!['notation','mandolin-tab'].includes(notation))throw new Error("Invalid notation setting.");
+  const openStrings=params.get("openstrings");
+  if(openStrings!==null&&!/^[01]$/.test(openStrings))throw new Error("Invalid Play open strings setting.");
+  const sound=params.get("sound");
+  if(sound!==null&&!MD_SOUND_PROGRAMS.map(String).includes(sound))throw new Error("Invalid Sound setting.");
   mdURLConfig(params);
 }
 function applyFretboardSettingsParams(params){
   const notation=params.get("notation");if(['notation','mandolin-tab'].includes(notation))$("notationDisplay").value=notation;
+  const openStrings=params.get("openstrings");
+  if((openStrings==="0"||openStrings==="1")||params.has("def")){
+    // When a link does not specify open strings, use the new default (on).
+    mdOpenStringsEnabled=openStrings!=="0";
+    $("mdOpenStringsCheck").checked=mdOpenStringsEnabled;
+  }
+  const sound=params.get("sound");
+  if(sound!==null){
+    // Known sound names are conveyed as their numeric MIDI programs.
+    if(MD_SOUND_PROGRAMS.includes(Number(sound)))$("mdSoundSelect").value=String(Number(sound));
+  }else if(params.has("def")||params.has("mdcfg")){
+    // Links without an instrument setting use Dulcimer.
+    $("mdSoundSelect").value="148";
+  }
   if(params.has("def")){
     try{mdSetConfig(mdURLConfig(params))}catch(e){console.warn("Invalid custom dulcimer link settings",e)}
   }
@@ -4901,7 +5118,6 @@ function mdInstallInteractions(){
   $("md65").addEventListener("change",e=>{for(const f of [6.5,13.5])MD.extra[String(f)]=[e.target.checked,e.target.checked,e.target.checked];mdSyncSimpleControls();mdChanged()});
   $("instrumentSelect").addEventListener("change",mdChanged);
   $("mdCapoSelect").addEventListener("change",mdChanged);
-  $("mdOctaveLower").addEventListener("change",()=>{mdChanged();if(tunes.length)rebuild()});
   if(lessonModeActive())for(const id of ["md15","md65","mdOctaveLower"])$(id).disabled=true;
 }
 mdInstallInteractions();
