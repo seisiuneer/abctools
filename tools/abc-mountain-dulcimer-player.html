@@ -1474,7 +1474,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 1.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -3241,6 +3241,10 @@ async function rebuild(){
 
     configureIrishRollsForTune(tune);
     let playbackABC=buildPlaybackABC(tune);
+    // A source %%staffsep overrides our tab-aware staff spacing. Disable it
+    // only in the temporary rendering copy, preserving every character offset.
+    // "% staffsep" is an ordinary ABC comment of exactly the same length.
+    playbackABC=playbackABC.replace(/^(\s*)%%staffsep\b/gim,(_,indent)=>indent+"% staffsep");
     const notationMode=$("notationDisplay").value;
     const tablatureOnly=notationMode==="tablature-only";
     // Inject only into the temporary rendering ABC, immediately below X:.
