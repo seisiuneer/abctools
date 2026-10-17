@@ -1504,7 +1504,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.2.12</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 1.2.13</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1936,11 +1936,9 @@ function keepCursorVisible(event){
   }else{
     lastAutoscrollSystemTop=null;
   }
-  // The abcjs playback cursor covers the music staff only; the custom
-  // dulcimer tablature extends below it. Include that area when scrolling.
-  const tab=$('notation').querySelector('.mdTabAdded');
-  const extra=tab?Math.max(0,tab.getBoundingClientRect().height+10):0;
-  const marker={top:cursor.top,bottom:cursor.bottom+extra,height:cursor.height+extra};
+  // The cursor itself now extends through the tablature for its own system.
+  // Use its actual bounds rather than adding the height of an unrelated tab row.
+  const marker={top:cursor.top,bottom:cursor.bottom,height:cursor.height};
   applyNotationScroll(vp,marker,{behavior:'smooth'});
 }
 function gdaePositionForMidi(midi){
@@ -3313,6 +3311,28 @@ async function rebuild(){
       return;
     }
 
+    // Extend the abcjs staff cursor through the three custom dulcimer tab
+    // strings belonging to the same music system. All values are SVG units.
+    function mdPlaybackCursorBottom(event){
+      const staffBottom=Number(event.top)+Number(event.height);
+      if(!Number.isFinite(staffBottom))return staffBottom;
+      const svg=$('notation').querySelector('svg');
+      if(!svg)return staffBottom;
+      let closest=Infinity,tabBottom=staffBottom;
+      for(const layer of svg.querySelectorAll('.mdTabAdded')){
+        let bounds;
+        try{bounds=layer.getBBox()}catch(_){continue}
+        // The matching tab starts just below this staff. Ignore previous
+        // systems and avoid accidentally reaching into the next system.
+        const distance=bounds.y-staffBottom;
+        if(distance>=-8&&distance<90&&distance<closest){
+          closest=distance;
+          tabBottom=bounds.y+bounds.height+4;
+        }
+      }
+      return Math.max(staffBottom,tabBottom);
+    }
+
     const cursorControl={
       onStart(){
         if(audioControllerInitializing)return;
@@ -3331,7 +3351,7 @@ async function rebuild(){
           playbackCursor.setAttribute("x1",String(event.left-2));
           playbackCursor.setAttribute("x2",String(event.left-2));
           playbackCursor.setAttribute("y1",String(event.top));
-          playbackCursor.setAttribute("y2",String(event.top+event.height));
+          playbackCursor.setAttribute("y2",String(mdPlaybackCursorBottom(event)));
           keepCursorVisible(event);
         }
         const midi=eventMidi(event);
