@@ -1490,7 +1490,7 @@ body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote{
       <p>The string labels (above the strings in <b>Vertical</b> orientation and to their left in <b>Horizontal</b> orientation) show the actual sounding pitches at the selected capo position.</p>
       <p>Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; it uses the same capo-relative fret numbers and capo-adjusted sounding string pitches.</p>
       <p>This setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
-      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name; in <b>Horizontal</b> orientation the note name and staff appear below the fretboard.</p>
+      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name; in Horizontal orientation the note name and staff appear below the fretboard.</p>
       <p>The Show note setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
       <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes.</p>
       <p>When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
@@ -2145,6 +2145,10 @@ function renderGDAEFingering(midi){
     }
   }
   host.appendChild(svg);
+  // The first note creates the horizontal layout after the initial sizing pass.
+  // Measure again once the SVG and layout are in the document; otherwise the
+  // first note uses the fallback board size until a checkbox triggers a resize.
+  if(horizontal)requestAnimationFrame(sizeHorizontalFretboard);
 }
 function centerFretStatus(){
   // String/fret status text was intentionally removed in v1.21.
@@ -3855,7 +3859,7 @@ $("helpOverlay").addEventListener("click",e=>{
 });
 
 // Fit the horizontal composition to the actual diagram viewport. Reserve space
-// for the title, note name and optional staff before allocating board height.
+// for the title, note name and staff (even when hidden) before allocating board height.
 // A modest floor protects readability; only exceptionally short panes scroll.
 function sizeHorizontalFretboard(){
   const wrap=document.querySelector(".diagramWrap");
@@ -3863,7 +3867,6 @@ function sizeHorizontalFretboard(){
   if(!wrap||!live)return;
   const height=wrap.clientHeight;
   const width=wrap.clientWidth;
-  const staffVisible=!!$("showNoteCheck")?.checked;
   const title=live.querySelector(".whistleTuneTitle");
   const titleHeight=title ? title.getBoundingClientRect().height : 48;
   const horizontal=!!live.querySelector(".horizontalFretboardLayout");
@@ -3873,10 +3876,10 @@ function sizeHorizontalFretboard(){
   // Size the note and staff together with the board, avoiding the previous
   // fixed-size note display that could push the title out of the viewport.
   const usable=Math.max(0,height-titleHeight-padding-gap);
-  const noteBudget=staffVisible?Math.min(200,Math.max(82,usable*.37)):Math.min(115,Math.max(45,usable*.24));
+  const noteBudget=Math.min(200,Math.max(82,usable*.37)); // Reserve the same space whether staff notation is shown or hidden.
   const boardHeight=Math.max(105,Math.min(500,usable-noteBudget));
   live.style.setProperty("--horizontal-board-height",boardHeight+"px");
-  live.style.setProperty("--horizontal-note-size",Math.max(32,Math.min(112,noteBudget*(staffVisible?.52:.88)))+"px");
+  live.style.setProperty("--horizontal-note-size",Math.max(32,Math.min(112,noteBudget*.52))+"px");
   live.style.setProperty("--horizontal-staff-width",Math.max(75,Math.min(245,noteBudget*1.15))+"px");
   live.style.setProperty("--horizontal-staff-height",Math.max(72,Math.min(225,noteBudget*.98))+"px");
 }
