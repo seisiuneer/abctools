@@ -1377,6 +1377,38 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
  .toolbar.whistleToolbar .tuneControl{min-width:0}
 }
 
+/* v1.2.11: Keep the controls compact on iPad landscape. The earlier
+   <=1280px grid made Share span two tracks and pushed the workspace down. */
+@media (orientation:landscape) and (min-width:1051px) and (max-width:1280px){
+  .toolbar.whistleToolbar{
+    grid-template-columns:minmax(165px,1.35fr) auto minmax(130px,1fr)
+      minmax(95px,.75fr) minmax(70px,.45fr) minmax(90px,.55fr)
+      minmax(94px,.6fr) minmax(120px,1fr) auto;
+    gap:8px;
+  }
+  .toolbar.whistleToolbar .fileControl,
+  .toolbar.whistleToolbar .shareButtons{grid-column:auto;min-width:0}
+  .toolbar.whistleToolbar .mdFretControl{min-width:94px}
+  .toolbar.whistleToolbar .mdFretChoices{display:flex;flex-wrap:nowrap;gap:6px;white-space:nowrap}
+  .toolbar.whistleToolbar .shareButtons{justify-self:end}
+  .toolbar.whistleToolbar .shareButtons #shareBtn{width:auto;min-width:75px}
+  .toolbar.whistleToolbar .tuneControl{min-width:0}
+}
+/* v1.2.12: iPad portrait: keep Share compact beside Tune rather than
+   spanning two grid columns and creating a full-width extra row. */
+@media (orientation:portrait) and (min-width:781px) and (max-width:1050px){
+  .toolbar.whistleToolbar{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .toolbar.whistleToolbar .fileControl{grid-column:1;grid-row:1;min-width:0}
+  .toolbar.whistleToolbar .saveControl{grid-column:2;grid-row:1;justify-self:start}
+  .toolbar.whistleToolbar .control:has(#notationDisplay){grid-column:3;grid-row:1}
+  .toolbar.whistleToolbar .control:has(#instrumentSelect){grid-column:1;grid-row:2}
+  .toolbar.whistleToolbar .mdCapoControl{grid-column:2;grid-row:2}
+  .toolbar.whistleToolbar .control:has(#capoSelect){grid-column:3;grid-row:2}
+  .toolbar.whistleToolbar .mdFretControl{grid-column:1;grid-row:3}
+  .toolbar.whistleToolbar .tuneControl{grid-column:2;grid-row:3;min-width:0}
+  .toolbar.whistleToolbar .shareButtons{grid-column:3;grid-row:3;justify-self:start;align-self:end;min-width:0}
+  .toolbar.whistleToolbar .shareButtons #shareBtn{width:auto;min-width:80px}
+}
 </style>
 <style>/* v1.0.5 horizontal dulcimer display */
 #whistleNoteGroup:has(#mandolinFingering.mdDulcimer){display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:20px!important;width:100%!important;max-width:100%!important;position:relative!important}
@@ -1472,7 +1504,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.2.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 1.2.12</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
