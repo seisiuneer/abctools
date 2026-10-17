@@ -1000,6 +1000,30 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #notation [fill="red"],#notation [fill="#ff0000"],#notation [fill="#f00"]{fill:#000 !important}
   #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
 }
+
+/* iPad landscape only: fit the complete live fingering beneath the tune title.
+   Portrait, phone layouts, and mouse/trackpad desktop layouts are unchanged. */
+@media (orientation:landscape) and (min-width:900px) and (max-width:1400px)
+       and (max-height:950px) and (hover:none) and (pointer:coarse) {
+  body:not(.diagram-full) .whistleLive { padding:10px 14px; }
+  body:not(.diagram-full) .whistleTuneTitle {
+    font-size:clamp(24px,3.5vh,34px);
+    margin-bottom:8px;
+  }
+  body:not(.diagram-full) .whistleLiveRow { align-items:center; }
+  /* Lower the fingering, note name, and staff together without moving the title. */
+  body:not(.diagram-full) .whistleGlyphGroup { transform:translateY(24px); }
+  body:not(.diagram-full) .whistleLargeGlyph {
+    font-size:clamp(175px,36vh,285px);
+  }
+  body:not(.diagram-full) .whistleLiveNote {
+    font-size:clamp(42px,8vh,70px);
+  }
+  body:not(.diagram-full) .whistleStaffNote {
+    width:clamp(100px,14vh,135px);
+    height:clamp(125px,18vh,165px);
+  }
+}
 </style></head><body><div class="app">
 <header class="app-header"><div class="version">Version 3.12</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
