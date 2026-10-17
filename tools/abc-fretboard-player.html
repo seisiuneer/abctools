@@ -1305,8 +1305,92 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #notation [fill="red"],#notation [fill="#ff0000"],#notation [fill="#f00"]{fill:#000 !important}
   #notation [stroke="red"],#notation [stroke="#ff0000"],#notation [stroke="#f00"]{stroke:#000 !important}
 }
+
+/* Optional horizontal full fretboard: preserve the original SVG geometry. */
+.fretboardOrientationLabel{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;white-space:nowrap}
+#fretboardOrientation{font:inherit;font-size:13px;padding:4px 6px;border:1px solid #aebbb4;border-radius:6px;background:#fff;color:#17241c}
+#fretboardOrientation:disabled{color:#8a8a8a;background:#f2f2f2;border-color:#c8c8c8;opacity:1}
+.fretboardOrientationLabel:has(select:disabled){color:#8a8a8a}
+.whistleNoteGroup.horizontalFretboardLayout,body.diagram-full .whistleNoteGroup.horizontalFretboardLayout{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode,body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode{width:clamp(300px,38vw,490px);height:clamp(220px,25vw,350px);max-width:95%;margin:0;flex:0 0 auto}
+.whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup,body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup{position:static;transform:none!important;margin:0!important;width:auto;max-width:100%;justify-self:center}
+.whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote,body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote{transform:none!important}
+.whistleNoteGroup.horizontalFretboardLayout .tabCaption{margin:0}
+@container (max-width:560px){.whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode{width:min(94cqw,420px);height:clamp(175px,60cqw,300px)}}
+/* Horizontal mode: size the composition to the available diagram height,
+   rather than imposing a minimum content height and scrolling on short screens. */
+.whistleLive:has(.horizontalFretboardLayout){justify-content:center;min-height:0;height:100%;padding:clamp(5px,1vh,18px) clamp(8px,2vw,28px);gap:clamp(4px,1vh,14px)}
+.whistleLive:has(.horizontalFretboardLayout) .whistleTuneTitle{flex:0 0 auto;margin:0;font-size:clamp(20px,3vw,42px);line-height:1.12}
+.whistleLive:has(.horizontalFretboardLayout) .whistleLiveRow{flex:0 1 auto;min-height:0;width:100%}
+.whistleNoteGroup.horizontalFretboardLayout,body.diagram-full .whistleNoteGroup.horizontalFretboardLayout{gap:clamp(4px,1vh,14px)}
+.whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode{
+  width:min(92cqw,calc(var(--horizontal-board-height,300px) * 390 / 230),850px);
+  height:auto;aspect-ratio:390 / 230;max-width:100%;flex:0 0 auto
+}
+.whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup{gap:clamp(2px,.6vh,7px)}
+.whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote{font-size:clamp(38px,6vh,96px)}
+.whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote{width:clamp(70px,13vh,160px);height:clamp(75px,14vh,180px)}
+/* Match the Mountain Dulcimer note-name and staff proportions in horizontal mode.
+   Size against the diagram's measured height so short panels remain fitted. */
+.whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup{gap:0}
+.whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote{
+  font-size:clamp(48px,min(7vw,calc(var(--horizontal-board-height,300px) * .34)),112px);
+  line-height:1.12;
+}
+.whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote{
+  width:clamp(100px,min(19vw,calc(var(--horizontal-board-height,300px) * .75)),245px);
+  height:clamp(100px,min(18vw,calc(var(--horizontal-board-height,300px) * .70)),225px);
+  margin-top:clamp(-48px,calc(var(--horizontal-board-height,300px) * -.15),-15px);
+  flex-shrink:0;
+}
+/* Bring the note name and staff closer to the horizontal fretboard without
+   changing the vertical composition or reducing the fitted board dimensions. */
+.whistleNoteGroup.horizontalFretboardLayout,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout{gap:0}
+.whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .noteDisplayGroup{
+  margin-top:clamp(-20px,-2vh,-8px)!important;
+}
+/* Keep the title in its own layout row on short six-string displays.
+   The fretboard must scale inside the remaining space, never overlap the title. */
+.whistleLive:has(.horizontalFretboardLayout) .whistleLiveRow{flex-shrink:0}
+.whistleLive:has(.horizontalFretboardLayout) .whistleTuneTitle{position:relative;z-index:1}
+/* Short panels: anchor the title at the top of the composition. Centering an
+   overflowing flex column pushed the title above the clipped viewport. */
+.whistleLive:has(.horizontalFretboardLayout){justify-content:flex-start;overflow-y:auto;overflow-x:hidden}
+.whistleLive:has(.horizontalFretboardLayout) .whistleTuneTitle{flex-shrink:0}
+.whistleLive:has(.horizontalFretboardLayout) .whistleLiveRow{flex:0 0 auto}
+/* Phone-sized diagram panes: preserve legible horizontal fretboard proportions.
+   If the available height is exceptionally short, the existing vertical
+   overflow is preferable to shrinking the entire diagram to a thumbnail. */
+@container (max-width:650px){
+  .whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode,
+  body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .mandolinFingering.fullFretboardMode{
+    width:min(94cqw,calc(var(--horizontal-board-height,220px) * 390 / 230));
+  }
+}
+/* Keep the orientation and fretboard controls together when the header wraps. */
+.diagramHeaderRight .fretboardOrientationLabel,.diagramHeaderRight .showFretboardLabel{flex:0 0 auto}
+
+/* v4.0 horizontal short-pane fit: the note display scales with the available
+   height, and the title always occupies its own row above the fretboard. */
+.whistleLive:has(.horizontalFretboardLayout){overflow-y:auto;justify-content:flex-start}
+.whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleLiveNote{font-size:var(--horizontal-note-size,76px)}
+.whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote,
+body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote{
+  width:var(--horizontal-staff-width,150px);height:var(--horizontal-staff-height,140px);
+  margin-top:calc(var(--horizontal-staff-height,140px) * -.22)
+}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.95</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1322,7 +1406,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Tablature</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">GDAE Fingering</span><span class="diagramHeaderRight"><label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked disabled>Show Fretboard</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">GDAE Fingering</span><span class="diagramHeaderRight"><label class="fretboardOrientationLabel" for="fretboardOrientation">Orientation <select id="fretboardOrientation" disabled><option value="vertical">Vertical</option><option value="horizontal" selected>Horizontal</option></select></label><label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked disabled>Show Fretboard</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
   <div class="diagramWrap whistleDiagramWrap">
    <div id="whistleLive" class="whistleLive" hidden>
     <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
@@ -1348,7 +1432,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and optional tablature for the selected fretted instrument.</p>
-      <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to its right.</p>
+      <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to the right in Vertical orientation or below the fretboard in Horizontal orientation.</p>
       <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), Guitar (DADGAD), Ukulele (Standard), or Ukulele (Baritone).</p>
       <p>The instrument selection is saved and restored.</p>
       <p>Ukulele (Standard) tablature is for GCEA-tuned instruments and treats the tuning as non-re-entrant. This provides a workable solution for playing traditional Irish tunes: notes below C are “folded” onto the G string, similar to how a whistle player may fold notes below D up an octave.</p>
@@ -1398,15 +1482,16 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
       <p>Uncheck the option to restore normal arrow-key behavior.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
-      <p>With <b>Show Fretboard</b> checked, the current note is shown on a vertical fretboard.</p>
-      <p>Black circles show fretted notes and the hollow circle shows the effective open-string position at the nut or capo.</p>
+      <p>Use <b>Orientation</b> to select <b>Vertical</b> (strings running top to bottom) or <b>Horizontal</b> (default, strings running left to right), then use <b>Show Fretboard</b> to display the complete fretboard instead of the compact string-and-fret view.</p>
+      <p>Orientation is included in regular share links and lesson links. It can be changed while using either link, but changes made in lesson mode are not saved as browser preferences.</p>
+      <p>Green filled circles show fretted notes; a green outlined, hollow circle shows the effective open-string position at the nut or capo in either orientation.</p>
       <p>The nut or capo is treated as fret <b>0</b>, and all displayed fret numbers are relative to that position, matching the abcjs tablature.</p>
       <p>Notes above the visible fretboard are also labeled with their capo-relative fret number.</p>
-      <p>The string labels above the fretboard show the actual sounding pitches at the selected capo position.</p>
+      <p>The string labels (above the strings in <b>Vertical</b> orientation and to their left in <b>Horizontal</b> orientation) show the actual sounding pitches at the selected capo position.</p>
       <p>Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; it uses the same capo-relative fret numbers and capo-adjusted sounding string pitches.</p>
-      <p>This setting is remembered in this browser and is not included in share links.</p>
-      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name.</p>
-      <p>The Show note setting is remembered in this browser and is not included in share links.</p>
+      <p>This setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
+      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name; in <b>Horizontal</b> orientation the note name and staff appear below the fretboard.</p>
+      <p>The Show note setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
       <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes.</p>
       <p>When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
       <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
@@ -1537,6 +1622,7 @@ let sharePlaybackNeedsGesture=false;
 let currentLiveMidi=null;
 let showNoteEnabled=false;
 let showFretboardEnabled=true;
+let fretboardOrientation="horizontal";
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-fretboard-player.html";
 const ABC_TOOLS_BASE_URL="https://michaeleskin.com/abctools/abctools.html";
@@ -1548,6 +1634,7 @@ const COUNT_IN_KEY="abcGDAEPlayerCountIn";
 const METRONOME_KEY="abcGDAEPlayerMetronome";
 const SHOW_NOTE_KEY="abcGDAEPlayerShowNote";
 const SHOW_FRETBOARD_KEY="abcFretboardPlayerShowFretboard";
+const FRETBOARD_ORIENTATION_KEY="abcFretboardPlayerOrientation";
 const WHISTLE_PREFS_KEY="abcGDAEPlayerPrefs";
 
 const GDAE_RENDER_TAB=[{
@@ -1941,6 +2028,8 @@ function renderGDAEFingering(midi){
   if(!host)return;
   host.innerHTML="";
   host.classList.toggle("fullFretboardMode",!!showFretboardEnabled);
+  host.classList.toggle("horizontalFretboard",!!showFretboardEnabled&&fretboardOrientation==="horizontal");
+  $("whistleNoteGroup")?.classList.toggle("horizontalFretboardLayout",!!showFretboardEnabled&&fretboardOrientation==="horizontal");
   if(midi==null)return;
   const pos=gdaePositionForMidi(midi);
   const strings=selectedStrings();
@@ -1965,13 +2054,38 @@ function renderGDAEFingering(midi){
   const NS="http://www.w3.org/2000/svg";
   const svg=document.createElementNS(NS,"svg");
   svg.setAttribute("class","fullFretboardSvg");
-  svg.setAttribute("viewBox","0 0 300 390");
+  const horizontal=fretboardOrientation==="horizontal";
+  svg.setAttribute("viewBox",horizontal?"0 35 390 230":"0 0 300 390");
   svg.setAttribute("preserveAspectRatio","xMidYMid meet");
   svg.setAttribute("role","img");
   svg.setAttribute("aria-label",host.getAttribute("aria-label")||"Instrument fretboard");
   const add=(name,attrs,text)=>{
     const el=document.createElementNS(NS,name);
-    for(const [k,v] of Object.entries(attrs||{}))el.setAttribute(k,String(v));
+    // Rotate the board geometry clockwise while keeping text upright and legible.
+    const a={...(attrs||{})};
+    if(horizontal){
+      if(name==="line"){
+        const x1=Number(a.x1),y1=Number(a.y1),x2=Number(a.x2),y2=Number(a.y2);
+        Object.assign(a,{x1:y1,y1:300-x1,x2:y2,y2:300-x2});
+      }else if(name==="circle"){
+        const x=Number(a.cx),y=Number(a.cy);a.cx=y;a.cy=300-x;
+      }else if(name==="rect"){
+        const x=Number(a.x),y=Number(a.y),w=Number(a.width),h=Number(a.height);
+        Object.assign(a,{x:y,y:300-x-w,width:h,height:w});
+      }else if(name==="text"){
+        const x=Number(a.x),y=Number(a.y);
+        a.x=y;a.y=300-x;
+        // The marker's original +5 baseline offset becomes a sideways offset
+        // when rotating the geometry. Recenter its white number on the circle.
+        if(a.fill==="#fff"&&a["font-weight"]===800){a.x=y-5;a.y=300-x+5;}
+        // Fret labels were drawn with a +5 vertical baseline offset in the
+        // vertical board. After rotation, cancel that horizontal offset so
+        // each label is centered directly beneath its fret line.
+        if(a.fill==="#111"&&a["font-size"]===14&&a["text-anchor"]==="end"){a.x=y-5;}
+        a["text-anchor"]="middle";
+      }
+    }
+    for(const [k,v] of Object.entries(a))el.setAttribute(k,String(v));
     if(text!=null)el.textContent=text;
     svg.appendChild(el);
     return el;
@@ -1980,7 +2094,7 @@ function renderGDAEFingering(midi){
   // Keep the string field centered on the SVG/title. Four-string instruments use
   // a tighter field so their string spacing is visually similar to six-string guitar.
   const boardCenter=150;
-  const boardWidth=strings.length===4?156:222;
+  const boardWidth=horizontal?(strings.length===4?124:170):(strings.length===4?156:222);
   const left=boardCenter-boardWidth/2,right=boardCenter+boardWidth/2,top=42,bottom=326;
   const displayStrings=[...strings].reverse();
   const xs=displayStrings.map((_,i)=>displayStrings.length===1?(left+right)/2:left+i*(right-left)/(displayStrings.length-1));
@@ -2019,14 +2133,14 @@ function renderGDAEFingering(midi){
       if(relativeFret===topFret){
         // The capo is the effective open-string position (fret 0) and uses
         // the conventional hollow marker at the top boundary.
-        add("circle",{cx:x,cy:y,r:10,fill:"#fff",stroke:"#111","stroke-width":3,"vector-effect":"non-scaling-stroke"});
+        add("circle",{cx:x,cy:y,r:10,fill:"#fff",stroke:"#176b43","stroke-width":3,"vector-effect":"non-scaling-stroke"});
       }else{
-        add("circle",{cx:x,cy:y,r:12,fill:"#111"});
+        add("circle",{cx:x,cy:y,r:12,fill:"#176b43"});
         add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(relativeFret));
       }
     }else{
       const y=bottom+24;
-      add("circle",{cx:x,cy:y,r:12,fill:"#111"});
+      add("circle",{cx:x,cy:y,r:12,fill:"#176b43"});
       add("text",{x:x,y:y+5,"text-anchor":"middle","font-family":"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace","font-size":14,"font-weight":800,fill:"#fff"},String(relativeFret));
     }
   }
@@ -2513,6 +2627,7 @@ function generateShareLink(abc){
     params.set("notation",$("notationDisplay").value);
     params.set("instrument",$("instrumentSelect").value);
     params.set("capo",String(selectedCapo()));
+    params.set("orientation",fretboardOrientation);
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
@@ -2854,7 +2969,7 @@ function restoreShowNotePreference(){
   try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}
   $("showNoteCheck").checked=showNoteEnabled;
 }
-function saveShowNotePreference(){commitStandardShareSettingsIfPending();
+function saveShowNotePreference(){if(lessonModeActive())return;commitStandardShareSettingsIfPending();
   try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}
 }
 function restoreShowFretboardPreference(){
@@ -2864,9 +2979,21 @@ function restoreShowFretboardPreference(){
   }catch(_){showFretboardEnabled=true}
   $("showFretboardCheck").checked=showFretboardEnabled;
 }
-function saveShowFretboardPreference(){commitStandardShareSettingsIfPending();
+function saveShowFretboardPreference(){if(lessonModeActive())return;commitStandardShareSettingsIfPending();
   try{localStorage.setItem(SHOW_FRETBOARD_KEY,String(showFretboardEnabled))}catch(_){}
 }
+function restoreFretboardOrientation(){
+  try{fretboardOrientation=localStorage.getItem(FRETBOARD_ORIENTATION_KEY)==="vertical"?"vertical":"horizontal"}catch(_){fretboardOrientation="horizontal"}
+  $("fretboardOrientation").value=fretboardOrientation;
+}
+function setFretboardOrientation(value,persist=true){
+  fretboardOrientation=value==="horizontal"?"horizontal":"vertical";
+  $("fretboardOrientation").value=fretboardOrientation;
+  if(persist&&!lessonModeActive())try{localStorage.setItem(FRETBOARD_ORIENTATION_KEY,fretboardOrientation)}catch(_){}
+  renderGDAEFingering(currentLiveMidi);
+  requestAnimationFrame(alignStaffCenterToFretStatus);
+}
+
 
 let standardShareSettingsPending=false;
 function commitStandardShareSettingsIfPending(){
@@ -2911,6 +3038,8 @@ function validateFretboardSettingsParams(params){const hide=params.get("hide");i
   const notation=params.get("notation");
   const instrument=params.get("instrument");
   const capo=params.get("capo");
+  const orientation=params.get("orientation");
+  if(orientation!==null&&! ["vertical","horizontal"].includes(orientation))throw new Error("Lesson fretboard orientation is invalid.");
   if(notation!==null&&!["notation","tablature-only","mandolin-tab"].includes(notation))throw new Error("Lesson notation setting is invalid.");
   if(instrument!==null&&!["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))throw new Error("Lesson instrument setting is invalid.");
   if(capo!==null&&(!Number.isFinite(Number(capo))||Number(capo)<0||Number(capo)>12))throw new Error("Lesson capo setting is invalid.");
@@ -2935,6 +3064,7 @@ function applyFretboardSettingsParams(params){
   if(["notation","tablature-only","mandolin-tab"].includes(notation))$("notationDisplay").value=notation;
   if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
   if(capo!==null&&Number.isFinite(Number(capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(capo)))));
+  if(["vertical","horizontal"].includes(params.get("orientation")))setFretboardOrientation(params.get("orientation"),false);
   updateInstrumentUI();
   // URL settings are session-only until the user changes a persistent setting.
   standardShareSettingsPending=!!params.get("def")&&params.get("lesson")!=="1";
@@ -3724,10 +3854,46 @@ $("helpOverlay").addEventListener("click",e=>{
   if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none";
 });
 
+// Fit the horizontal composition to the actual diagram viewport. Reserve space
+// for the title, note name and optional staff before allocating board height.
+// A modest floor protects readability; only exceptionally short panes scroll.
+function sizeHorizontalFretboard(){
+  const wrap=document.querySelector(".diagramWrap");
+  const live=$("whistleLive");
+  if(!wrap||!live)return;
+  const height=wrap.clientHeight;
+  const width=wrap.clientWidth;
+  const staffVisible=!!$("showNoteCheck")?.checked;
+  const title=live.querySelector(".whistleTuneTitle");
+  const titleHeight=title ? title.getBoundingClientRect().height : 48;
+  const horizontal=!!live.querySelector(".horizontalFretboardLayout");
+  if(!horizontal)return;
+  const padding=height<440?12:height<650?20:32;
+  const gap=height<440?8:16;
+  // Size the note and staff together with the board, avoiding the previous
+  // fixed-size note display that could push the title out of the viewport.
+  const usable=Math.max(0,height-titleHeight-padding-gap);
+  const noteBudget=staffVisible?Math.min(200,Math.max(82,usable*.37)):Math.min(115,Math.max(45,usable*.24));
+  const boardHeight=Math.max(105,Math.min(500,usable-noteBudget));
+  live.style.setProperty("--horizontal-board-height",boardHeight+"px");
+  live.style.setProperty("--horizontal-note-size",Math.max(32,Math.min(112,noteBudget*(staffVisible?.52:.88)))+"px");
+  live.style.setProperty("--horizontal-staff-width",Math.max(75,Math.min(245,noteBudget*1.15))+"px");
+  live.style.setProperty("--horizontal-staff-height",Math.max(72,Math.min(225,noteBudget*.98))+"px");
+}
+if(typeof ResizeObserver!=="undefined"){
+  new ResizeObserver(sizeHorizontalFretboard).observe(document.querySelector(".diagramWrap"));
+}
+window.addEventListener("resize",sizeHorizontalFretboard);
+$("fretboardOrientation").addEventListener("change",()=>requestAnimationFrame(sizeHorizontalFretboard));
+$("showFretboardCheck").addEventListener("change",()=>requestAnimationFrame(sizeHorizontalFretboard));
+$("showNoteCheck").addEventListener("change",sizeHorizontalFretboard);
+sizeHorizontalFretboard();
+$("fretboardOrientation").addEventListener("change",e=>setFretboardOrientation(e.target.value,true));
 $("showFretboardCheck").addEventListener("change",e=>{
   showFretboardEnabled=!!e.target.checked;
   saveShowFretboardPreference();
   renderGDAEFingering(currentLiveMidi);
+  syncPlaybackPermissionHeaderControls();
   requestAnimationFrame(alignStaffCenterToFretStatus);
 });
 
@@ -3773,6 +3939,7 @@ restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
 updateInstrumentUI();
 restoreShowFretboardPreference();
+restoreFretboardOrientation();
 restoreShowNotePreference();
 restoreHideFingeringPreference();
 restoreMetronomePreference();
@@ -3818,6 +3985,7 @@ function syncPlaybackPermissionHeaderControls(){
   if(showNote)showNote.disabled=headerDisabled;
   if(hideFingering)hideFingering.disabled=headerDisabled;
   if(showFretboard)showFretboard.disabled=headerDisabled;
+  $("fretboardOrientation").disabled=headerDisabled||!showFretboardEnabled;
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
   if(countIn)countIn.disabled=headerDisabled;
