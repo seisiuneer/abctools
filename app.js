@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3358_101626_1700";
+var gVersionNumber = "3359_101826_0530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36117,7 +36117,7 @@ function DoInjectTablature_MD() {
   const form = [{
       html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Mountain Dulcimer Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_dulcimer" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
     }, {
-      html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject tablature for a DAD, DGD, or DAA-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'
+      html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica;">This will inject tablature for a DAD, DGD, or DAA-tuned Mountain Dulcimer in the style selected below into all of the tunes in the ABC text area:</p>'
     }, {
       name: "Style:",
       id: "configure_dulcimer_style",
@@ -36135,7 +36135,10 @@ function DoInjectTablature_MD() {
       type: "checkbox",
       cssClass: "configure_md_settings_form_text"
     }, {
-      html: '<p style="text-align:center;margin-top:36px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'
+      html: '<p style="text-align:center;margin-top:24px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'
+    },
+    {
+      html: '<p style="text-align:center;margin-top:24px;"><input id="launch_abc_md_player" class="btn btn-subdialog configure_anglo_fonts" onclick="OpenInABCMountainDulcimerPlayerFromTabDialog();" type="button" value="Open All Tunes in the ABC Mountain Dulcimer Player" title="Open all tunes in the ABC Mountain Dulcimer Player"></p>'
     },
 
   ];
@@ -60930,7 +60933,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 16 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 18 October 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
@@ -71448,6 +71451,12 @@ function OpenInABCTremoloHarmonicaPlayer(abcText,isFromPlayer){
 
 function OpenInABCMountainDulcimerPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Mountain Dulcimer Player','https://michaeleskin.com/tools/abc-mountain-dulcimer-player.html','OpenInABCMountainDulcimerPlayer');
+}
+
+// Opener from the MD tab injector dialog
+function OpenInABCMountainDulcimerPlayerFromTabDialog(){
+  var abcText = getABCEditorText();
+  OpenInABCMountainDulcimerPlayer(abcText,false);
 }
 
 function OpenInABCComhaltasNoteNamesPlayer(abcText,isFromPlayer){
