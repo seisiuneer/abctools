@@ -1534,7 +1534,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.0.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1631,6 +1631,8 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display and Navigation</p>
       <p>The Mountain Dulcimer panel shows the current note and its suggested string and fret position.</p>
+      <p>The bass course is displayed at the top, the middle course in the center, and the melody course at the bottom of the fretboard and tablature.</p>
+      <p>The bottom melody course remains the preferred choice for melody fingerings, including tunings such as DAA where the middle and melody courses have the same pitch.</p>
       <p>Use <b>Show note</b> to display the note name, and <b>Hide</b> to practice without seeing the fingering.</p>
       <p>Click <b>Full-Page View</b> to enlarge a pane, and <b>Exit Full-Page</b> to return to the normal layout.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1659,7 +1661,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tablature Solution Limitations</p>
       <p>The tool is limited to generating tablature solutions automatically for melody-only tunes for a variety of Mountain Dulcimer tunings.</p>
-      <p>It is not able to automatically generate tablature for arrangements that include ABC bracket-style chords, such as [CEG].</p>
+      <p>It is not yet able to automatically generate tablature for arrangements that include ABC bracket-style chords, such as [CEG].</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing</p>
       <p>Use your browser's Print command to print the music notation and, when enabled, Mountain Dulcimer tablature.</p>
@@ -4898,15 +4900,16 @@ function mdRenderScoreTab(){
     const labels=mdCapoOpen().map(mdCourseLabel);
     const view=svg.viewBox.baseVal;
     const left=Math.max(view.x+27,minX),right=Math.min(view.x+view.width-12,Math.max(maxX,left+50)),base=staffBottom+19;
+    // Physical dulcimer order, top to bottom: bass (0), middle (1), melody (2).
     for(let row=0;row<3;row++){
       const cy=base+row*15;
       make(layer,"line",{x1:left,y1:cy,x2:right,y2:cy,class:"mdTabLine"});
-      make(layer,"text",{x:left-6,y:cy+3,class:"mdTabStringLabel","text-anchor":"end","font-family":"Arial, Helvetica, sans-serif","font-size":12.6,"font-weight":"400",style:"font-weight:400!important;font-synthesis:none!important;stroke:none!important"},labels[2-row]);
+      make(layer,"text",{x:left-6,y:cy+3,class:"mdTabStringLabel","text-anchor":"end","font-family":"Arial, Helvetica, sans-serif","font-size":12.6,"font-weight":"400",style:"font-weight:400!important;font-synthesis:none!important;stroke:none!important"},labels[row]);
     }
     const count=Math.min(els.length,events.length);
     for(let j=0;j<count;j++){
       const evt=events[j],n=els[j];let b;try{b=n.querySelector(".abcjs-notehead")?.getBBox()||n.getBBox()}catch(_){continue}
-      const x=Math.max(left+11,Math.min(right-10,b.x+Math.min(9,b.width*.5))),row=evt.position?2-evt.position.course:1,cy=base+row*15;
+      const x=Math.max(left+11,Math.min(right-10,b.x+Math.min(9,b.width*.5))),row=evt.position?evt.position.course:1,cy=base+row*15;
       const printed=evt.position?String(evt.position.fret).replace(".5","½"):"X";
       const w=printed.length>2?21:14;
       make(layer,"rect",{x:x-w/2,y:cy-6.5,width:w,height:13,rx:1,class:"mdTabBackground"});
@@ -4934,8 +4937,9 @@ function mdRenderBoard(midi){
   const left=72,right=792,ys=[55,103,151],capo=mdCapoFret();
   // The capo becomes the visual nut: always start the displayed board at left.
   const x=f=>left+(right-left)*(f-capo)/(max-capo+.5);
-  [2,1,0].forEach(course=>{
-    const y=ys[2-course];
+  // Display bass on top and melody on bottom without changing logical course indices.
+  [0,1,2].forEach(course=>{
+    const y=ys[course];
     add("text",{x:12,y:y+5,"font-size":16,fill:"#26322a"},mdCourseLabel(strings[course]));
     add("line",{x1:x(capo)+3,y1:y,x2:right,y2:y,class:"mdBoardStrings"});
   });
@@ -4955,7 +4959,7 @@ function mdRenderBoard(midi){
       // A full-width extra fret spans the same extent as a standard fret.
       let start=-1;
       for(let row=0;row<=3;row++){
-        const on=row<3 && enabled[2-row];
+        const on=row<3 && enabled[row];
         if(on && start<0)start=row;
         if(!on && start>=0){
           const end=row-1;
@@ -4979,7 +4983,7 @@ function mdRenderBoard(midi){
     const index=frets.findIndex(slot=>slot.fret===chosen.fret);
     const previous=index>0?frets[index-1].fret:capo;
     const cx=open?x(chosen.fret):(x(previous)+x(chosen.fret))/2;
-    const cy=ys[2-chosen.course];
+    const cy=ys[chosen.course];
     add("circle",{cx,cy,r:16,class:open?"mdBoardOpen":"mdBoardMarker"});
     if(!open)add("text",{x:cx,y:cy+5,"text-anchor":"middle","font-size":14,"font-weight":600,fill:"white"},String(chosen.fret).replace(".5","½"));
   }else add("text",{x:410,y:229,"text-anchor":"middle",class:"mdBoardMissing","font-size":15},`${mdNoteName(midi)} — NOT PLAYABLE`);
