@@ -1409,6 +1409,48 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   .toolbar.whistleToolbar .shareButtons #shareBtn{width:auto;min-width:80px}
 }
 
+/* v2.5.1: Context help for Configure Playback (same minimalist ? as Share/Lesson). */
+.modal_default_main button.mdPlaybackDialogHelp{
+  position:absolute !important;
+  top:14px !important;
+  left:16px !important;
+  z-index:5;
+  display:block !important;
+  width:34px !important;
+  min-width:0 !important;
+  height:34px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#17241c !important;
+  -webkit-text-fill-color:#17241c !important;
+  font:600 28px/34px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif !important;
+  text-align:center !important;
+  cursor:pointer !important;
+}
+.modal_default_main button.mdPlaybackDialogHelp:hover,
+.modal_default_main button.mdPlaybackDialogHelp:active{background:transparent !important}
+.modal_default_main button.mdPlaybackDialogHelp:focus-visible{
+  outline:2px solid #176b43 !important;
+  outline-offset:2px !important;
+}
+@media(max-width:650px){
+  .modal_default_main button.mdPlaybackDialogHelp{
+    top:10px !important;
+    left:12px !important;
+    width:32px !important;
+    height:32px !important;
+    font-size:28px !important;
+    line-height:32px !important;
+  }
+}
+/* This overlay must sit above the still-open DayPilot dialog, but only when
+   Instructions was opened from Configure Playback. */
+body.mdPlaybackInstructionsOpen #helpOverlay{z-index:2147483647 !important}
+
 /* v1.2.18: Configure Playback form styling, scoped to its DayPilot fields. */
 .modal_default_main .mdPlaybackDialogTitle{
   text-align:center !important;
@@ -1416,9 +1458,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   line-height:1.2 !important;
   font-weight:750 !important;
 }
-.modal_default_main .mdPlaybackDialogSelect{
-  margin-bottom:23px !important;
-}
+
 .modal_default_main .mdPlaybackDialogSelect select{
   display:block;
   margin-top:5px !important;
@@ -1438,6 +1478,36 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 }
 .modal_default_main .mdPlaybackDialogCheckbox input[type="checkbox"]{
   margin-right:11px !important;
+}
+/* When chord generation is off, keep its preferences visible but inactive. */
+.modal_default_main .mdPlaybackDialogSelect:has(select:disabled){
+  color:#8a8a8a !important;
+}
+.modal_default_main .mdPlaybackDialogSelect select:disabled{
+  background-color:#f2f2f2 !important;
+  background-image:none !important;
+  color:#8a8a8a !important;
+  -webkit-text-fill-color:#8a8a8a !important;
+  border-color:#c8c8c8 !important;
+  opacity:1 !important;
+  cursor:default !important;
+}
+/* Instructions: show ABC code examples in separate blocks at body-text size. */
+#helpOverlay .helpCodeExample {
+  margin:6px 0 12px;
+  padding:8px 12px;
+  border:1px solid #d8e2dc;
+  border-radius:6px;
+  background:#f5f8f6;
+  color:inherit;
+  font-size:1em;
+  line-height:1.48;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+#helpOverlay .helpCodeExample code {
+  font-size:inherit;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
 }
 </style>
 <style>/* v1.0.5 horizontal dulcimer display */
@@ -1532,9 +1602,27 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
     max-height:210px!important;
   }
 }
+
+/* Chord names show every played pitch, ascending, without clipping the pane. */
+.whistleLiveNote.mdChordNoteNames{font-size:clamp(21px,3vw,38px);white-space:normal;line-height:1.15;overflow-wrap:normal}
+body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45px)}
+/* v2.5.6: space each chord pitch independently, allowing natural wrapping on phones. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote.mdChordNoteNames{
+  display:flex!important;
+  flex-wrap:wrap;
+  align-items:baseline;
+  justify-content:center;
+  column-gap:.18em;
+  row-gap:0;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordPitchName{white-space:nowrap}
+/* Lower only chord staff images to make room for notes with high ledger lines/stems. */
+#whistleLive:not([hidden]) #noteDisplayGroup:has(.whistleLiveNote.mdChordNoteNames) .whistleStaffNote{
+  transform:translateY(16px)!important;
+}
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.0.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1568,13 +1656,16 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
-<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: Notation display can be changed. Tuning, capo and fret configuration are locked for the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
+<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: Notation display can be changed. Tuning, capo, fret configuration, and all Configure Playback options (including chord voicing and maximum chord fret stretch) are locked for the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
 <!-- Playback settings are edited in the DayPilot Configure Playback dialog. -->
 <div id="mdPlaybackState" hidden>
   <select id="mdSoundSelect"><option value="148" selected>Mountain Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
   <input type="checkbox" id="mdOctaveLower" checked>
   <input type="checkbox" id="mdOpenStringsCheck" checked>
+  <input type="checkbox" id="mdAutoStrumChordsCheck" checked>
+  <select id="mdChordStretchSelect"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
+  <select id="mdChordVoicingSelect"><option value="sparse">Sparse</option><option value="optimal" selected>Optimal</option><option value="full">Full Harmony</option></select>
 </div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
@@ -1632,6 +1723,7 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display and Navigation</p>
       <p>The Mountain Dulcimer panel shows the current note and its suggested string and fret position.</p>
       <p>The bass course is displayed at the top, the middle course in the center, and the melody course at the bottom of the fretboard and tablature.</p>
+      <p>For generated chord fingerings, including their notation, fretboard display, and navigation, see <b>Configure Playback</b> below.</p>
       <p>The bottom melody course remains the preferred choice for melody fingerings, including tunings such as DAA where the middle and melody courses have the same pitch.</p>
       <p>Use <b>Show note</b> to display the note name, and <b>Hide</b> to practice without seeing the fingering.</p>
       <p>Click <b>Full-Page View</b> to enlarge a pane, and <b>Exit Full-Page</b> to return to the normal layout.</p>
@@ -1640,28 +1732,59 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
+      <p>Use <b>Mute Melody</b> to practice without hearing the melody; any enabled metronome and open strings remain audible.</p>
+      <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Playback</p>
       <p>Click <b>Configure Playback</b> in the Notation header to choose the instrument sound and adjust the playback options.</p>
       <p>Choose <b>Mountain Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b> as the instrument sound.</p>
       <p>The selected instrument sound applies to both the melody and the open strings.</p>
-      <p><b>Play octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
+      <p><b>Play melody an octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
       <p>This option also uses the lower melody pitch when determining playable fretboard positions and generating tablature.</p>
       <p><b>Play open strings?</b> sounds the dulcimer's open strings along with each melody note, giving the tune the accompanying drone sound characteristic of the instrument.</p>
       <p>This option is enabled by default, and the open-string pitches follow the selected tuning and capo position.</p>
-      <p>When both options are enabled, the melody plays an octave lower while the open strings retain their actual tuned pitches.</p>
-      <p>Use <b>Mute Melody</b> to practice without hearing the melody; any enabled metronome and open strings remain audible.</p>
-      <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
+      <p>When both <b>Play melody an octave lower?</b> and <b>Play open strings?</b> are enabled, the melody plays an octave lower while the open strings retain their actual tuned pitches.</p>
+      <p><b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is enabled by default and creates playable dulcimer chords at melody notes marked with quoted ABC chord symbols.</p>
+      <p>Place a quoted chord symbol directly before the melody note where you want the chord to sound. Examples of chord symbols:</p>
+      <pre class="helpCodeExample"><code>"D"   "Cm"   "G7"</code></pre>
+      <p>For example, to sound a D chord on a D melody note:</p>
+      <pre class="helpCodeExample"><code>"D"D2</code></pre>
+      <p>Each chord symbol adds a dulcimer chord at that note only, not on subsequent notes or measures; repeat the same chord symbol wherever you want another chord, even when the harmony has not changed.</p>
+      <p>A chord symbol immediately before a triplet marker such as <b>(3</b> applies to the triplet's first note; a chord symbol immediately before a rest is ignored. When chord conversion is enabled, roll (<b>~</b>), staccato (<b>.</b>), and tie (<b>-</b>) markers are replaced with spaces in the temporary chord-solving score, without changing the ABC editor text or note-navigation positions.</p>
+      <p>For example, the following generates chords on D and A but leaves the unmarked F notes as single melody notes:</p>
+      <pre class="helpCodeExample"><code>"D"D2 F2 "D"A2 F2</code></pre>
+      <p>To add the chord again at the start of a later measure, repeat the symbol before that measure's first note.</p>
+      <p><b>Chord Voicing</b> selects <b>Sparse</b>, <b>Optimal</b> (default), or <b>Full Harmony</b> for the automatically generated chords.</p>
+      <p><b>Sparse</b> adds at most one playable harmony note to the melody, preferring the chord's second listed interval (the major third for an ordinary major chord), then another chord tone such as the perfect fifth if needed.</p>
+      <p><b>Optimal</b> adds up to two notes while favoring open strings, lower fret positions, fewer fretted courses, and comfortable finger stretches, even if that means omitting a chord tone or using only two notes.</p>
+      <p><b>Full Harmony</b> adds up to two notes while favoring three-note chords containing the root, second listed interval, and other distinct chord tones, even when more fretting is required.</p>
+      <p><b>Maximum Chord Fret Stretch</b> limits the distance between the lowest and highest fingered fret in a generated chord to <b>2</b>, <b>3</b> (default), or <b>4</b> frets, in all three voicing modes.</p>
+      <p>Added harmony notes follow the tune's key signature without unnecessary written accidentals. Chord tones that would require an accidental outside the key signature, or conflict with an accidental already in effect in the measure, are excluded; the player looks for another playable fingering and may use fewer notes. Original melody accidentals are preserved.</p>
+      <p>Open strings, including those sounding open at the capo, do not contribute to the finger-stretch calculation.</p>
+      <p>To request a <b>chord inversion</b>, append <b>:0</b> through <b>:14</b> to the quoted chord name. Examples:</p>
+      <pre class="helpCodeExample"><code>"Em:1"   "G:2"   "Dm7:4"</code></pre>
+      <p><b>:0</b> requests root position as the lowest note, <b>:1</b> requests the next chord tone, <b>:2</b> the following tone, and higher values proceed through the chord tones before moving up an octave.</p>
+      <p>Generated chords are shown in notation, tablature, fretboard, and playback, and the large note display lists their pitches from low to high.</p>
+      <p>When the tune contains chord symbols that the player solves, abcjs's automatic bass and chord accompaniment are muted, and open-string drones are suppressed throughout the tune to avoid competing accompaniment.</p>
+      <p>Turning off automatic chord generation restores single-note melody tablature, abcjs's own chord accompaniment, and open-string drones if <b>Play open strings?</b> is selected.</p>
+      <p>When automatic chord generation is unchecked, the <b>Chord Voicing</b> and <b>Maximum Chord Fret Stretch</b> controls are disabled and greyed out but retain their selected values.</p>
+      <p>Click <b>OK</b> to apply Configure Playback changes and recalculate the chord fingerings.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to download the loaded ABC tunes, including your edits.</p>
       <p>Click <b>Share</b> to open <b>Sharing Controls</b> and choose <b>Share Current Tune</b> or <b>Share All Tunes</b>.</p>
       <p>In the Share Link dialog, you can copy the link, save it, or test it in a new browser tab.</p>
-      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, initial <b>Play open strings?</b> and <b>Play octave lower?</b> settings, and <b>Instrument</b> selection so the recipient can use the same setup.</p>
-      <p>Use <b>Open in ABCTT</b> to open the ABC in ABC Transcription Tools for further editing.</p>
+      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, <b>Instrument</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings so the recipient can use the same setup.</p>
+      <p>Share links and saved ABC files preserve the original ABC from the editor; generated chord notes and playback directives are not inserted into them.</p>
+      <p>Use <b>Open in ABCTT</b> to transfer the tune to ABC Transcription Tools for further editing.</p>
+      <p>When <b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is enabled, <b>Open in ABCTT</b> transfers the processed ABC for the chord solution, including generated bracketed note chords, injected MIDI commands, and notation layout directives.</p>
+      <p>When automatic chord generation is disabled, <b>Open in ABCTT</b> transfers the current tune exactly as it appears in the ABC editor.</p>
+      <p><b>Open in ABCTT</b> is available for the current tune (including lesson links) only. The <b>Share All Tunes</b> option creates a normal share link if the tunes fit within the share-link length limit, but does not offer an ABCTT transfer.</p>
       <p>A received share link applies its settings for that visit without replacing your saved preferences unless you change a setting.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tablature Solution Limitations</p>
       <p>The tool is limited to generating tablature solutions automatically for melody-only tunes for a variety of Mountain Dulcimer tunings.</p>
-      <p>It is not yet able to automatically generate tablature for arrangements that include ABC bracket-style chords, such as [CEG].</p>
+      <p>It does not accept existing ABC bracket-style note chords such as [CEG]; see <b>Configure Playback</b> for creating playable chords from quoted ABC chord symbols instead.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing</p>
       <p>Use your browser's Print command to print the music notation and, when enabled, Mountain Dulcimer tablature.</p>
@@ -1674,16 +1797,16 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
       <p>Use <b>Save Lesson Configuration</b> to save the tune, lesson details, and selected player settings for later reuse.</p>
       <p>Use <b>Load Lesson Configuration</b> to restore a saved lesson configuration or lesson link file.</p>
       <p>Click <b>Create Lesson Link</b> to generate a link that you can send to students.</p>
-      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, initial <b>Play open strings?</b> and <b>Play octave lower?</b> settings, and <b>Instrument</b> selection.</p>
-      <p>The tuning, capo, fret, and Play octave lower? settings are locked during a lesson so students practice with the setup you selected.</p>
+      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, <b>Instrument</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings.</p>
+      <p>The tuning, capo, fret configuration, and every option in <b>Configure Playback</b> are locked during a lesson so students practice with the setup you selected.</p>
       <p>Use <b>Hide</b> if you want the fingering display to start hidden; students can reveal it while practicing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       <p>Open the lesson link provided by your teacher to load the assigned tune, lesson instructions, and dulcimer settings.</p>
       <p>Read the instructions and click <b>Start Lesson</b> to begin.</p>
       <p>If prompted, click <b>Click to Enable Playback</b> to turn on the audio controls.</p>
-      <p>You can change <b>Notation display</b>, and use <b>Configure Playback</b> to change the <b>Instrument</b> and <b>Play open strings?</b> options without changing your saved preferences.</p>
-      <p>Your teacher's tuning, capo, fret, and Play octave lower? settings remain locked during the lesson.</p>
+      <p>You can change <b>Notation display</b> during a lesson, but you cannot change any of the settings in <b>Configure Playback</b>.</p>
+      <p>Your teacher's tuning, capo, fret configuration, instrument sound, octave-lower playback, open-string drones, automatic chord generation, chord voicing, and maximum chord fret stretch settings remain locked during the lesson.</p>
       <p>You can use the notation, note navigation, playback, tempo, and display controls to practice.</p>
       <p>You can edit the ABC and click <b>Save</b> to keep your changes.</p>
       <p>You can use <b>Browse</b> to load another ABC file; the assigned instrument settings remain locked.</p>
@@ -1705,7 +1828,8 @@ const $=id=>document.getElementById(id);
 // Mountain Dulcimer-specific tuning, playback and sharing logic.
 const MD={
   tuning:"dad",max:14,extra:{},events:[],missing:[],active:null,
-  noteMarkers:[],lastPlaybackIndex:-1,unsupported:[],tokenIndex:new Map(),noteCount:0
+  noteMarkers:[],lastPlaybackIndex:-1,unsupported:[],tokenIndex:new Map(),noteCount:0,
+  chordPlans:new Map(),chordEdits:[]
 };
 const MD_TUNINGS={
   dad:[50,57,62],daa:[50,57,57],dac:[50,57,60],dag:[50,57,55],
@@ -1738,6 +1862,9 @@ let melodyMuted=false;
 let metronomeEnabled=false;
 let countInEnabled=false;
 let mdOpenStringsEnabled=true;
+let mdAutoStrumChordsEnabled=true;
+let mdChordVoicing="optimal";
+let mdMaxChordStretch=3;
 let countInTimer=null;
 let countInToken=0;
 let rebuildTimer=0;
@@ -1753,6 +1880,11 @@ const EDITOR_SIZE_KEY="abcMountainDulcimerPlayerEditorTextSize";
 const TEMPO_KEY="abcMountainDulcimerPlayerTempo";
 const COUNT_IN_KEY="abcMountainDulcimerPlayerCountIn";
 const MD_OPEN_STRINGS_KEY="abcMountainDulcimerPlayerOpenStrings";
+const MD_AUTO_STRUM_CHORDS_KEY="abcMountainDulcimerPlayerAutoStrumChords";
+const MD_CHORD_VOICING_KEY="abcMountainDulcimerPlayerChordVoicing";
+const MD_CHORD_STRETCH_KEY="abcMountainDulcimerPlayerMaxChordStretch";
+const MD_CHORD_STRETCH_VALUES=[2,3,4];
+const MD_CHORD_VOICINGS=["sparse","optimal","full"];
 const MD_SOUND_KEY="abcMountainDulcimerPlayerSound";
 const MD_SOUND_PROGRAMS=[148,25,46];
 const METRONOME_KEY="abcMountainDulcimerPlayerMetronome";
@@ -1897,18 +2029,21 @@ async function toggleMetronome(){
   if(tunes.length)await rebuild();
 }
 
-function buildPlaybackABC(abc){
+function buildPlaybackABC(abc,generatedChordsActive=false){
   const source=String(abc||"");
   const forced=[
     "%soundfont fatboy",
     melodyMuted?"%%MIDI program mute":(`%%MIDI program ${selectedMelodyProgram()}`),
     ...($("mdOctaveLower")?.checked?["%%MIDI transpose -12"]:[]),
     "%%MIDI bassprog 0",
-    "%%MIDI chordprog 0"
+    "%%MIDI chordprog 0",
+    ...(generatedChordsActive?["%%MIDI bassvol 0","%%MIDI chordvol 0"]:[])
   ].join("\n")+"\n";
 
-  let cleaned=source.replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+  const overrideMIDI=generatedChordsActive
+    ? /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi
+    : /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi;
+  let cleaned=source.replace(overrideMIDI,
     m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
   );
 
@@ -2385,9 +2520,9 @@ function abcNoteTokens(value){
 }
 
 
-function clickedNotationMidi(clickedToken){
+function clickedNotationMidi(clickedToken,sourceABC){
   if(!clickedToken)return null;
-  const abc=$("abcText")?.value||"";
+  const abc=sourceABC===undefined?($("abcText")?.value||""):String(sourceABC);
   const token=abc.slice(clickedToken.start,clickedToken.end);
   const m=token.match(/^([=_^]*)([A-Ga-g])([,']*)/);
   if(!m)return null;
@@ -2461,8 +2596,9 @@ function clickedNotationMidi(clickedToken){
 function selectClickedNotationNote(abcelem){
   if(!abcelem||!Number.isInteger(abcelem.startChar)||!Number.isInteger(abcelem.endChar))return;
 
-  let start=abcelem.startChar-prefixLength;
-  let end=abcelem.endChar-prefixLength;
+  const span=mdScoreRangeToSource(abcelem.startChar-prefixLength,abcelem.endChar-prefixLength);
+  let start=span.start;
+  let end=span.end;
   const ta=$("abcText");
   if(start<0||end<=start)return;
 
@@ -3282,6 +3418,41 @@ function mdShowRejectedABC(problems){
   updateTempoButtonState();
 }
 
+// Apply the same first-/second-ending detection to rendered spacing and ABCTT export.
+function mdHasVoltaEndings(abc){
+  const musicLines=String(abc||"").split(/\r?\n/).filter(line=>!/^\s*(?:[A-Za-z]:|%%|%)/.test(line));
+  return musicLines.some(line=>/(?:\|\s*\[?\s*[12](?=\D|$)|\[\s*[12](?=\D|$)|:\|\s*[12](?=\D|$))/.test(line));
+}
+
+function mdPreparePlaybackScoreABC(tune,notationMode){
+  // Use the same score for rendering/playback and for ABCTT transfer.
+  // Neither path modifies the tune in the ABC editor.
+  const chordScore=mdAutoStrumChordsEnabled?mdBuildChordScoreABC(tune):tune;
+  if(!mdAutoStrumChordsEnabled){MD.chordPlans=new Map();MD.chordEdits=[];}
+  const generatedChordsActive=mdAutoStrumChordsEnabled&&MD.chordPlans.size>0;
+  const hasGeneratedChordVoicings=generatedChordsActive&&
+    MD.chordEdits.some(edit=>edit.replacement.startsWith("["));
+  let playbackABC=buildPlaybackABC(chordScore,generatedChordsActive);
+  // Disable any source staffsep in the rendering copy, preserving offsets.
+  playbackABC=playbackABC.replace(/^(\s*)%%staffsep\b/gim,(_,indent)=>indent+"% staffsep");
+  const showWhistleTab=notationMode==="mandolin-tab";
+  if(showWhistleTab){
+    // Custom SVG tab and added chord stems require extra system spacing.
+    const xLine=/^X:[^\r\n]*(?:\r?\n|$)/m.exec(playbackABC);
+    const hasVoltaEndings=mdHasVoltaEndings(playbackABC);
+    const staffSeparation=hasGeneratedChordVoicings
+      ?(hasVoltaEndings?125:110)
+      :(hasVoltaEndings?110:94);
+    if(xLine){
+      const injection=`%%staffsep ${staffSeparation}\n`;
+      const at=xLine.index+xLine[0].length;
+      playbackABC=playbackABC.slice(0,at)+injection+playbackABC.slice(at);
+      prefixLength+=injection.length;
+    }
+  }
+  return {playbackABC,generatedChordsActive,showWhistleTab};
+}
+
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
@@ -3315,28 +3486,8 @@ async function rebuild(){
     }
 
     configureIrishRollsForTune(tune);
-    let playbackABC=buildPlaybackABC(tune);
-    // A source %%staffsep overrides our tab-aware staff spacing. Disable it
-    // only in the temporary rendering copy, preserving every character offset.
-    // "% staffsep" is an ordinary ABC comment of exactly the same length.
-    playbackABC=playbackABC.replace(/^(\s*)%%staffsep\b/gim,(_,indent)=>indent+"% staffsep");
-    const notationMode=$("notationDisplay").value;
-    // Inject only into the temporary rendering ABC, immediately below X:.
-    // The source editor, saved ABC, and shared tune remain unchanged.
-    const showWhistleTab=notationMode==="mandolin-tab";
-    if(showWhistleTab){
-      // Allocate vertical space for the independent, diatonically mapped SVG tab.
-      const xLine=/^X:[^\r\n]*(?:\r?\n|$)/m.exec(playbackABC);
-      // First/second ending brackets need extra room above the next staff and tab.
-      // Only adjust the temporary rendering copy, not the editable ABC.
-      const musicLines=playbackABC.split(/\r?\n/).filter(line=>!/^\s*(?:[A-Za-z]:|%%|%)/.test(line));
-      const hasVoltaEndings=musicLines.some(line=>/(?:\|\s*\[?\s*[12](?=\D|$)|\[\s*[12](?=\D|$)|:\|\s*[12](?=\D|$))/.test(line));
-      if(xLine){const injection=`%%staffsep ${hasVoltaEndings?105:94}\n`;
-        const at=xLine.index+xLine[0].length;
-        playbackABC=playbackABC.slice(0,at)+injection+playbackABC.slice(at);
-        prefixLength+=injection.length;
-      }
-    }
+    const {playbackABC,generatedChordsActive,showWhistleTab}=
+      mdPreparePlaybackScoreABC(tune,$("notationDisplay").value);
     const renderParams={
       responsive:"resize",expandToWidest:true,add_classes:true,
       selectionColor:"#ff0000",clickListener:selectClickedNotationNote,
@@ -3351,11 +3502,15 @@ async function rebuild(){
     mdUpdateAnalysis(visual[0]);
     if(showWhistleTab)mdRenderScoreTab();else mdClearScoreTab();
 
-    // Add the two unfretted courses to the AUDIO sequence, not the score.
-    // Capture this tune's fingering analysis so a later tune or setting change
-    // cannot alter notes when Safari starts its synth after a user gesture.
-    if(mdOpenStringsEnabled&&typeof visual[0].setUpAudio==="function"){
-      const sourceNotes=MD.events.map(e=>({start:e.start,end:e.end,midi:e.midi,writtenMidi:e.writtenMidi,course:e.position?.course}));
+    // Add the two unfretted courses to the AUDIO sequence for ordinary
+    // melody notes only. Tunes with generated chords suppress open-string
+    // drones, while abcjs keeps its own unmodified note timing and cursor
+    // synchronization for the generated chords.
+    const addDrones=mdOpenStringsEnabled&&!generatedChordsActive;
+    if(addDrones&&typeof visual[0].setUpAudio==="function"){
+      // Capture fingering analysis now, before a later tune or setting change.
+      const sourceNotes=MD.events.map(e=>({start:e.start,end:e.end,midi:e.midi,writtenMidi:e.writtenMidi,course:e.position?.course,chord:!!e.chord}));
+      const chordEdits=MD.chordEdits.map(e=>({...e}));
       const openPitches=mdCapoOpen();
       const sourcePrefix=prefixLength;
       const octaveOffset=mdOctaveOffset();
@@ -3363,7 +3518,7 @@ async function rebuild(){
       const originalSetUpAudio=visual[0].setUpAudio;
       visual[0].setUpAudio=function(audioOptions){
         const sequence=originalSetUpAudio.call(this,audioOptions);
-        mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefix,octaveOffset,soundProgram);
+        mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefix,octaveOffset,soundProgram,chordEdits);
         return sequence;
       };
     }
@@ -3420,7 +3575,7 @@ async function rebuild(){
           keepCursorVisible(event);
         }
         const midi=eventMidi(event);
-        if(midi!=null){mdSetEventFromPlayback(event);showWhistleLive(midi);}
+        if(midi!=null){mdSetEventFromPlayback(event);showWhistleLive(MD.active?.midi??midi);}
       },
       onFinished(){
         if(audioControllerInitializing||!playbackActive)return;
@@ -3526,8 +3681,47 @@ function mdSaveOpenStringsPreference(){
   commitStandardShareSettingsIfPending();
   try{localStorage.setItem(MD_OPEN_STRINGS_KEY,String(mdOpenStringsEnabled))}catch(_){}
 }
-// In normal use the Sound selection persists; in a student lesson it can be
-// changed without writing the student's saved preference.
+function mdRestoreAutoStrumChordsPreference(){
+  try{const saved=localStorage.getItem(MD_AUTO_STRUM_CHORDS_KEY);
+    mdAutoStrumChordsEnabled=saved===null?true:saved==="true";
+  }catch(_){mdAutoStrumChordsEnabled=true;}
+  $("mdAutoStrumChordsCheck").checked=mdAutoStrumChordsEnabled;
+}
+function mdSaveAutoStrumChordsPreference(){
+  if(lessonModeActive())return;
+  commitStandardShareSettingsIfPending();
+  try{localStorage.setItem(MD_AUTO_STRUM_CHORDS_KEY,String(mdAutoStrumChordsEnabled))}catch(_){}
+}
+// Chord-voicing mode is independent of the chord-generation toggle. Retain the
+// preference while generation is off, and use it again when generation is on.
+function mdRestoreChordVoicingPreference(){
+  let saved=null;
+  try{saved=localStorage.getItem(MD_CHORD_VOICING_KEY)}catch(_){}
+  mdChordVoicing=MD_CHORD_VOICINGS.includes(saved)?saved:"optimal";
+  $("mdChordVoicingSelect").value=mdChordVoicing;
+}
+function mdSaveChordVoicingPreference(){
+  if(lessonModeActive())return;
+  commitStandardShareSettingsIfPending();
+  try{localStorage.setItem(MD_CHORD_VOICING_KEY,mdChordVoicing)}catch(_){}
+}
+// Limit fingered fret differences in every generated chord. The capo itself
+// acts as the open fret; any course sounding at the capo needs no finger.
+// Frets may include half-frets, which count as their actual fret positions.
+function mdRestoreChordStretchPreference(){
+  let saved=null;
+  try{saved=localStorage.getItem(MD_CHORD_STRETCH_KEY)}catch(_){}
+  const parsed=Number(saved);
+  mdMaxChordStretch=saved!==null&&MD_CHORD_STRETCH_VALUES.includes(parsed)?parsed:3;
+  $("mdChordStretchSelect").value=String(mdMaxChordStretch);
+}
+function mdSaveChordStretchPreference(){
+  if(lessonModeActive())return;
+  commitStandardShareSettingsIfPending();
+  try{localStorage.setItem(MD_CHORD_STRETCH_KEY,String(mdMaxChordStretch))}catch(_){}
+}
+// In normal use the Sound selection persists. All Configure Playback settings
+// are locked for student lessons.
 function mdRestoreSoundPreference(){
   let saved=null;
   try{saved=localStorage.getItem(MD_SOUND_KEY)}catch(_){}
@@ -3539,11 +3733,53 @@ function mdSaveSoundPreference(){
   commitStandardShareSettingsIfPending();
   try{localStorage.setItem(MD_SOUND_KEY,String(selectedMelodyProgram()))}catch(_){}
 }
+// Attach dialog-specific behavior once DayPilot has inserted the playback form.
+// The chord controls retain their selections but are inactive until automatic
+// chord generation is enabled. Bind to this instance of the dynamic form only.
+function mdAttachPlaybackDialogHelp(){
+  const title=document.querySelector('.modal_default_main .mdPlaybackDialogTitle');
+  if(!title)return false;
+  const dialog=title.closest('.modal_default_main');
+  if(!dialog)return false;
+  const checkboxes=dialog.querySelectorAll('.mdPlaybackDialogCheckbox input[type="checkbox"]');
+  const selects=dialog.querySelectorAll('.mdPlaybackDialogSelect select');
+  // Form order: octave, open strings, auto chords; instrument, voicing, stretch.
+  if(checkboxes.length!==3 || selects.length!==3)return false;
+  const autoStrumCheckbox=checkboxes[2];
+  const chordVoicingSelect=selects[1];
+  const chordStretchSelect=selects[2];
+  if(!dialog.querySelector('.mdPlaybackDialogHelp')){
+    const syncChordControls=()=>{
+      const disabled=!autoStrumCheckbox.checked;
+      chordVoicingSelect.disabled=disabled;
+      chordStretchSelect.disabled=disabled;
+    };
+    autoStrumCheckbox.addEventListener('change',syncChordControls);
+    syncChordControls();
+  }
+  if(dialog.querySelector('.mdPlaybackDialogHelp'))return true;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='dialogHelpBtn mdPlaybackDialogHelp';
+  button.textContent='?';
+  button.title='Configure Playback instructions';
+  button.setAttribute('aria-label','Configure Playback instructions');
+  button.addEventListener('click',event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    document.body.classList.add('mdPlaybackInstructionsOpen');
+    openInstructionsAt('configurePlaybackInstructionsSection');
+    // Keep the keyboard in the top dialog until it is closed.
+    $('helpClose').focus({preventScroll:true});
+  });
+  dialog.appendChild(button);
+  return true;
+}
 // DayPilot form provides a consistent select/checkbox UI and only commits
 // changes when OK is pressed. The hidden fields above remain the single source
 // of truth for audio building, preferences, share links, and saved lessons.
 async function mdConfigurePlayback(){
-  if($("configurePlaybackBtn").disabled || !window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.form!=="function")return;
+  if(lessonModeActive() || $("configurePlaybackBtn").disabled || !window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.form!=="function")return;
   const form=[
     {name:"Configure Playback",type:"title",cssClass:"mdPlaybackDialogTitle"},
     {name:"Instrument",id:"sound",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
@@ -3551,35 +3787,83 @@ async function mdConfigurePlayback(){
       {name:"Guitar",id:"25"},
       {name:"Harp",id:"46"}
     ]},
-    {name:"Play octave lower?",id:"octaveLower",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox",disabled:lessonModeActive()},
-    {name:"Play open strings?",id:"openStrings",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"}
+    {name:"Play melody an octave lower?",id:"octaveLower",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"},
+    {name:"Play open strings?",id:"openStrings",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"},
+    {name:"Convert ABC chord symbols to dulcimer-friendly chords?",id:"autoStrumChords",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"},
+    {name:"Chord Voicing",id:"chordVoicing",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
+      {name:"Sparse",id:"sparse"},
+      {name:"Optimal",id:"optimal"},
+      {name:"Full Harmony",id:"full"}
+    ]},
+    {name:"Maximum Chord Fret Stretch",id:"chordStretch",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
+      {name:"2",id:"2"},{name:"3",id:"3"},{name:"4",id:"4"}
+    ]}
   ];
   const data={
     sound:$("mdSoundSelect").value,
     octaveLower:$("mdOctaveLower").checked,
-    openStrings:mdOpenStringsEnabled
+    openStrings:mdOpenStringsEnabled,
+    autoStrumChords:mdAutoStrumChordsEnabled,
+    chordVoicing:mdChordVoicing,
+    chordStretch:String(mdMaxChordStretch)
   };
-  const response=await DayPilot.Modal.form(form,data,{top:150,width:380,autoFocus:false});
+  // Allow the longest checkbox label to fit on one line where screen space permits.
+  // On narrow screens, keep the dialog within the viewport instead.
+  const dialogWidth=Math.min(550,window.innerWidth-24);
+  const responsePromise=DayPilot.Modal.form(form,data,{top:150,width:dialogWidth,autoFocus:false});
+  // Form creation may be synchronous or deferred depending on DayPilot version.
+  // Observe only until its title appears, then stop observing immediately.
+  const helpObserver=new MutationObserver(()=>{
+    if(mdAttachPlaybackDialogHelp())helpObserver.disconnect();
+  });
+  if(!mdAttachPlaybackDialogHelp()){
+    helpObserver.observe(document.body,{childList:true,subtree:true});
+  }
+  let response;
+  try{response=await responsePromise}
+  finally{
+    helpObserver.disconnect();
+    document.body.classList.remove('mdPlaybackInstructionsOpen');
+  }
   if(!response || response.canceled || !response.result)return;
   const result=response.result;
   const sound=Number(result.sound);
   if(!MD_SOUND_PROGRAMS.includes(sound))return;
-  const nextOctave=lessonModeActive()?data.octaveLower:result.octaveLower===true;
+  const nextOctave=result.octaveLower===true;
   const nextOpen=result.openStrings===true;
+  const nextStrum=result.autoStrumChords===true;
+  // Some form serializers omit native disabled selects. Preserve their saved
+  // selections when chord generation is turned off, rather than rejecting OK.
+  const nextVoicing=result.chordVoicing==null?data.chordVoicing:String(result.chordVoicing);
+  const nextStretch=result.chordStretch==null?Number(data.chordStretch):Number(result.chordStretch);
+  if(!MD_CHORD_VOICINGS.includes(nextVoicing)||
+      !MD_CHORD_STRETCH_VALUES.includes(nextStretch))return;
   const soundChanged=String(sound)!==data.sound;
   const octaveChanged=nextOctave!==data.octaveLower;
   const openChanged=nextOpen!==data.openStrings;
-  if(!soundChanged&&!octaveChanged&&!openChanged)return;
+  const strumChanged=nextStrum!==data.autoStrumChords;
+  const voicingChanged=nextVoicing!==data.chordVoicing;
+  const stretchChanged=nextStretch!==mdMaxChordStretch;
+  if(!soundChanged&&!octaveChanged&&!openChanged&&!strumChanged&&!voicingChanged&&!stretchChanged)return;
 
   const wasPlaying=playbackActive;
   $("mdSoundSelect").value=String(sound);
   $("mdOctaveLower").checked=nextOctave;
   $("mdOpenStringsCheck").checked=nextOpen;
   mdOpenStringsEnabled=nextOpen;
+  $("mdAutoStrumChordsCheck").checked=nextStrum;
+  mdAutoStrumChordsEnabled=nextStrum;
+  $("mdChordVoicingSelect").value=nextVoicing;
+  mdChordVoicing=nextVoicing;
+  $("mdChordStretchSelect").value=String(nextStretch);
+  mdMaxChordStretch=nextStretch;
+  if(stretchChanged)mdSaveChordStretchPreference();
+  if(strumChanged)mdSaveAutoStrumChordsPreference();
+  if(voicingChanged)mdSaveChordVoicingPreference();
   if(soundChanged)mdSaveSoundPreference();
   if(openChanged)mdSaveOpenStringsPreference();
   if(octaveChanged)saveWhistleDisplayPrefs();
-  // A single rebuild applies all three settings together, keeping the
+  // A single rebuild applies all six settings together, keeping the
   // existing open-course injection and transpose compensation in sync.
   if(tunes.length){
     await rebuild();
@@ -3728,9 +4012,11 @@ function initializeActionButtonStates(){
   // disabled states across reloads/pageshow.
   $("metronomeCheck").disabled=!hasTunes;
   $("countInCheck").disabled=!hasTunes;
-  $("mdOpenStringsCheck").disabled=!hasTunes;
-  $("mdSoundSelect").disabled=!hasTunes;
-  $("configurePlaybackBtn").disabled=!hasTunes;
+  $("mdOpenStringsCheck").disabled=!hasTunes||lessonModeActive();
+  $("mdSoundSelect").disabled=!hasTunes||lessonModeActive();
+  $("mdAutoStrumChordsCheck").disabled=!hasTunes||lessonModeActive();
+  $("mdChordVoicingSelect").disabled=!hasTunes||lessonModeActive();
+  $("configurePlaybackBtn").disabled=!hasTunes||lessonModeActive();
   $("saveAbcBtn").disabled=!hasTunes;
   // Firefox may restore a stale enabled state on reload. With no tune loaded,
   // force Tempo back to its true startup state after form-state restoration.
@@ -3896,12 +4182,28 @@ function openInstructionsAt(sectionId){
 $("instructionsBtn").addEventListener("click",()=>{
   $("helpOverlay").style.display="block";
 });
-$("helpClose").addEventListener("click",()=>{
+function closeInstructions(){
   $("helpOverlay").style.display="none";
-});
+  const returnToPlayback=document.body.classList.contains('mdPlaybackInstructionsOpen');
+  document.body.classList.remove('mdPlaybackInstructionsOpen');
+  if(returnToPlayback){
+    const helpButton=document.querySelector('.modal_default_main .mdPlaybackDialogHelp');
+    if(helpButton)helpButton.focus({preventScroll:true});
+  }
+}
+$("helpClose").addEventListener("click",closeInstructions);
 $("helpOverlay").addEventListener("click",e=>{
-  if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none";
+  if(e.target===$("helpOverlay"))closeInstructions();
 });
+// Escape closes just the Instructions when they are layered over DayPilot.
+// Prevent the same keypress from canceling the underlying playback form.
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && document.body.classList.contains('mdPlaybackInstructionsOpen')){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    closeInstructions();
+  }
+},true);
 
 
 $("hideFingeringCheck").addEventListener("change",e=>setHideFingering(e.target.checked,true));
@@ -3950,6 +4252,9 @@ restoreHideFingeringPreference();
 restoreMetronomePreference();
 restoreCountInPreference();
 mdRestoreOpenStringsPreference();
+mdRestoreAutoStrumChordsPreference();
+mdRestoreChordVoicingPreference();
+mdRestoreChordStretchPreference();
 mdRestoreSoundPreference();
 installCountInPlayHandler();
 // Share settings are applied after the dulcimer callbacks are defined.
@@ -3993,14 +4298,20 @@ function syncPlaybackPermissionHeaderControls(){
   if(showNote)showNote.disabled=headerDisabled;
   if(hideFingering)hideFingering.disabled=headerDisabled;
   const octaveLower=$("mdOctaveLower");
-  if(octaveLower)octaveLower.disabled=headerDisabled || (typeof lessonModeActive === "function" && lessonModeActive());
+  if(octaveLower)octaveLower.disabled=headerDisabled||lessonModeActive();
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
   if(countIn)countIn.disabled=headerDisabled;
-  if(openStrings)openStrings.disabled=headerDisabled;
-  if(sound)sound.disabled=headerDisabled;
+  if(openStrings)openStrings.disabled=headerDisabled||lessonModeActive();
+  const autoStrum=$("mdAutoStrumChordsCheck");
+  if(autoStrum)autoStrum.disabled=headerDisabled||lessonModeActive();
+  const chordVoicing=$("mdChordVoicingSelect");
+  if(chordVoicing)chordVoicing.disabled=headerDisabled||lessonModeActive();
+  const chordStretch=$("mdChordStretchSelect");
+  if(chordStretch)chordStretch.disabled=headerDisabled||lessonModeActive();
+  if(sound)sound.disabled=headerDisabled||lessonModeActive();
   const playbackBtn=$("configurePlaybackBtn");
-  if(playbackBtn)playbackBtn.disabled=headerDisabled;
+  if(playbackBtn)playbackBtn.disabled=headerDisabled||lessonModeActive();
   if(foldOctaves)foldOctaves.disabled=headerDisabled;
 
   const abcFullBtn=$("abcFullBtn"),notationFullBtn=$("notationFullBtn"),fullBtn=$("fullBtn"),exitFull=$("exitFull");
@@ -4232,12 +4543,17 @@ function populateLessonConfigObject(c){
   // Apply the saved player settings directly. Do not alter the page URL and
   // do not enter student Lesson mode.
   q.delete('def');q.delete('lesson');q.delete('ldata');q.delete('lessonconfig');
-  applyFretboardSettingsParams(q);
+  // Teacher configuration loads must restore the complete dulcimer setup.
+  // A lesson file has no active share-link `def` after validation/removal.
+  applyFretboardSettingsParams(q,true);
   // Loading a Lesson Configuration is a teacher action: make its player settings
   // the normal saved preferences. Direct student Lesson Links do not use this path.
   saveWhistleDisplayPrefs();
   mdSaveOpenStringsPreference();
   mdSaveSoundPreference();
+  mdSaveAutoStrumChordsPreference();
+  mdSaveChordVoicingPreference();
+  mdSaveChordStretchPreference();
 
   // Load the saved ABC through the same normal in-memory path used by file/share loads.
   sharePlaybackNeedsGesture=false;
@@ -4272,7 +4588,9 @@ function setupLessonMode(){
 
   // Let students change the notation view for this lesson only.
   // Tuning, fret configuration, and initial tune remain locked.
-  ['instrumentSelect','capoSelect','mdCapoSelect','tuneSelect'].forEach(id=>{
+  ['instrumentSelect','capoSelect','mdCapoSelect','tuneSelect',
+   'configurePlaybackBtn','mdOctaveLower','mdOpenStringsCheck',
+   'mdAutoStrumChordsCheck','mdChordVoicingSelect','mdChordStretchSelect','mdSoundSelect'].forEach(id=>{
     const el=$(id);
     if(el)el.disabled=true;
   });
@@ -4314,6 +4632,10 @@ function showShareLinkDialog(kind,url){
   $('lessonLinkTitle').textContent=shareLinkDialogTitle(kind);
   $('lessonLinkOutput').value=url;
   $('lessonLinkCloseBtn').textContent=kind==='lesson'?'Back':'Close';
+  // The all-tunes link remains shareable, but ABCTT accepts only the current tune.
+  const abcttButton=$('lessonOpenABCTTBtn');
+  abcttButton.hidden=kind==='all';
+  abcttButton.style.display=kind==='all'?'none':'';
   if(kind!=='lesson')setModal('shareModal',false);
   setModal('lessonLinkModal',true);
 }
@@ -4347,9 +4669,10 @@ async function askShareLinkFileName(){
   return askLessonTextFileName('Save lesson link file name:',title?title+' Lesson Link':'lesson_link');
 }
 function openDisplayedShareInABCTT(){
-  // Reuse the player's established ABCTT preprocessing. For lessons this
-  // deliberately uses only the lesson tune and omits ldata/lesson parameters.
-  openShareInABCTranscriptionTools(shareLinkDialogKind==='all','editor');
+  // Lesson and current-tune dialogs transfer only the editor's current tune.
+  // All-tunes share links have no ABCTT transfer action.
+  if(shareLinkDialogKind==='all')return;
+  openShareInABCTranscriptionTools();
 }
 function installUnifiedSharing(){
   const lessonFile=$('lessonConfigFile');if(lessonFile&&lessonIsIOS())lessonFile.removeAttribute('accept');
@@ -4508,7 +4831,7 @@ function moveInstrumentNote(direction){
  const target=tokens[current+direction];if(!target)return;
  instrumentNavAnchor=target.start;
  if(instrumentNavVisual?.engraver?.rangeHighlight){
-   try{instrumentNavVisual.engraver.rangeHighlight(target.start+prefixLength,target.end+prefixLength)}catch(_){ }
+   try{instrumentNavVisual.engraver.rangeHighlight(mdSourceToScore(target.start)+prefixLength,mdSourceToScore(target.end)+prefixLength)}catch(_){ }
  }
  scrollNavigatedNotationNoteIntoView();
  ta.focus({preventScroll:true});ta.setSelectionRange(target.start,target.end);
@@ -4547,7 +4870,7 @@ function jumpToInstrumentNoteBoundary(toEnd){
   const target=toEnd?tokens[tokens.length-1]:tokens[0];
   instrumentNavAnchor=target.start;
   if(instrumentNavVisual?.engraver?.rangeHighlight){
-    try{instrumentNavVisual.engraver.rangeHighlight(target.start+prefixLength,target.end+prefixLength)}catch(_){}
+    try{instrumentNavVisual.engraver.rangeHighlight(mdSourceToScore(target.start)+prefixLength,mdSourceToScore(target.end)+prefixLength)}catch(_){}
   }
   scrollNavigatedNotationNoteIntoView();
   ta.focus({preventScroll:true});
@@ -4679,24 +5002,32 @@ function mdInitialCost(p){
 // The original melody track, score, source ABC, cursor and note navigation remain
 // unchanged. Playback timing (including repeat endings and ornaments) comes from
 // the flattened sequence, so the drones stay synchronized and seek/loop correctly.
-function mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefix,octaveOffset,soundProgram){
+function mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefix,octaveOffset,soundProgram,chordEdits){
   if(!sequence||!Array.isArray(sequence.tracks)||!sequence.tracks.length)return;
   const melodyTrack=sequence.tracks[0];
   if(!Array.isArray(melodyTrack)||!Array.isArray(openPitches)||openPitches.length!==3)return;
   const courseTrack=[];
   for(const note of melodyTrack){
     if(note.cmd!=="note"||note.style==="grace"||!(note.duration>0)||!Number.isInteger(note.pitch))continue;
-    const start=Number(note.startChar)-sourcePrefix;
-    const end=Number(note.endChar)-sourcePrefix;
+    const span=mdScoreRangeToSource(Number(note.startChar)-sourcePrefix,Number(note.endChar)-sourcePrefix,chordEdits);
+    const start=span.start;
+    const end=span.end;
     // Match the *played* note to its chosen course. This also works through
     // repeats because abcjs repeats notes with the same source char positions.
     const sourceMatches=Number.isFinite(start)&&Number.isFinite(end)
-      ?sourceNotes.filter(e=>e.start>=start-2&&e.start<end+2)
+      ?sourceNotes.filter(e=>e.start<end&&e.end>start)
       :[];
+    // Use the permissive fallback ONLY if abcjs did not supply a precise
+    // source span; adjacent plain notes must not inherit a chord annotation.
+    if(!sourceMatches.length&&Number.isFinite(start)&&Number.isFinite(end))
+      sourceMatches.push(...sourceNotes.filter(e=>e.start>=start-2&&e.start<end+2));
     // abcjs may report the pre- or post-transpose pitch in its MIDI sequence.
     // Prefer the note's exact written/sounding pitch, then its source span.
     const match=sourceMatches.find(e=>e.midi===note.pitch||e.writtenMidi===note.pitch)
       ||sourceMatches[0];
+    // A generated chord already occupies its chosen courses; never add open
+    // drone tones that may not belong to the indicated chord.
+    if(match?.chord||sourceMatches.some(e=>e.chord))continue;
     // If source spans are absent, infer the course using the sounding pitch.
     const soundingPitch=note.pitch+octaveOffset;
     const candidates=mdCandidates(soundingPitch);
@@ -4717,8 +5048,407 @@ function mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefi
   }
   if(courseTrack.length)sequence.tracks.push(courseTrack);
 }
+
+// An ABC quoted chord applies ONLY to its following note. Leave the user's ABC
+// untouched; replace that note by a bracketed chord in the temporary abcjs copy.
+// Original source positions are mapped to/from this generated score for clicks,
+// note navigation, cursor-driven fretboards, and repeated audio passages.
+function mdChordFromAnnotation(text){
+  const value=String(text||'').trim().replace(/^[\^_<>]/,'');
+  // ABC Transcription Tools uses :0 through :14 after the complete chord name
+  // to request successive bass inversions (e.g. "Em:1", "G7:2", "Dm7:4").
+  // Only the supported numeric suffix is removed from the harmonic postfix:
+  // unknown harmonic postfixes must still fall back to a major triad.
+  const inversionMatch=/^(.*):([0-9]{1,2})$/.exec(value);
+  const inversion=inversionMatch&&Number(inversionMatch[2])<=14?
+    Number(inversionMatch[2]):null;
+  const harmonicName=inversion!==null?inversionMatch[1]:value;
+  const m=/^([A-G])([#b♯♭]?)(.*)$/.exec(harmonicName);
+  if(!m)return null;
+  const pc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]];
+  const root=(pc+(['#','♯'].includes(m[2])?1:['b','♭'].includes(m[2])?-1:0)+12)%12;
+  const postfix=m[3];
+  const lookup=typeof gChordIntervals==='object'&&gChordIntervals?gChordIntervals:{};
+  // Unknown postfixes are defined as ordinary major triads, not rejected.
+  const offsets=Object.prototype.hasOwnProperty.call(lookup,postfix)?lookup[postfix]:[0,4,7];
+  if(!Array.isArray(offsets)||!offsets.length)return null;
+  // Inversion positions use the ascending original chord tones, retaining
+  // octave extensions: :N rotates to the Nth tone in the bass; each complete
+  // cycle through the chord's original note count moves the target up 12 semitones.
+  // E.g. Dm7:4 -> root D one octave higher than Dm7:0.
+  const ascending=[...offsets].sort((a,b)=>a-b);
+  const inversionOffset=inversion===null?null:
+    ascending[inversion%ascending.length]+12*Math.floor(inversion/ascending.length);
+  return {symbol:value,root,offsets,classes:[...new Set(offsets.map(i=>(root+i)%12))],
+    second:(root+(offsets[1]??4))%12,inversion,inversionOffset,
+    inversionBassClass:inversionOffset===null?null:(root+inversionOffset)%12};
+}
+// Replace musical roll (~), staccato (.), and note-tie (-) markers with
+// a SPACE only in the temporary chord-solving ABC. Each replacement is one
+// character long, preserving source offsets for note navigation and playback.
+// Do not strip characters from headers, directives, comments, chord symbols,
+// or !...! / +...+ named decorations (including decimal parameters).
+function mdChordOrnamentEdits(source){
+  const edits=[];
+  for(let start=0;start<source.length;){
+    let end=source.indexOf("\n",start);
+    if(end<0)end=source.length;
+    const line=source.slice(start,end);
+    if(!/^\s*(?:[A-Za-z]:|%)/.test(line)){
+      let inQuote=false;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch==='"'){inQuote=!inQuote;continue;}
+        if(inQuote)continue;
+        if(ch==='%')break;
+        if(ch==='!'||ch==='+'){
+          const close=line.indexOf(ch,i+1);
+          if(close>=0){i=close;continue;}
+        }
+        if(ch==='~'||ch==='.'||ch==='-'){
+          const pos=start+i;
+          edits.push({start:pos,end:pos+1,replacement:" ",kind:"ornament"});
+        }
+      }
+    }
+    start=end+1;
+  }
+  return edits;
+}
+function mdChordBeforeToken(source,t,previousEnd){
+  // Bind the quoted chord to its next melody note, accepting ornaments and
+  // (3-style tuplet prefixes between the annotation and that FIRST note.
+  // A rest or barline breaks the match: quoted chords on rests do nothing.
+  const segment=source.slice(Math.max(previousEnd,0),t.start);
+  const chord=/(?:^|[^\"])("([^"\r\n]+)")(?:\s|~|\.|![^!\r\n]*!|\+[^+\r\n]*\+|\(\d+(?::\d*){0,2})*$/.exec(segment);
+  return chord?mdChordFromAnnotation(chord[2]):null;
+}
+// The maximum stretch is an enforced constraint, not merely a scoring penalty.
+// Ignore open (unfingered) strings, including capoed open strings, when
+// measuring the distance between the highest and lowest fretted positions.
+function mdChordHandStretch(positions){
+  const capo=mdCapoFret();
+  const fingered=positions.filter(p=>p.fret>capo).map(p=>p.fret);
+  return fingered.length>1?Math.max(...fingered)-Math.min(...fingered):0;
+}
+// A pick strum cannot skip an interior course. A chord may use any one
+// course, either adjacent pair (bass+middle or middle+melody), or all three.
+// This test deals with physical courses, not pitch order: an open course still
+// counts as a sounded string, even when it shares a pitch with another course.
+function mdChordCoursesStrummable(positions){
+  if(!Array.isArray(positions)||positions.length<1||positions.length>3)return false;
+  const courses=positions.map(p=>p.course);
+  if(courses.some(c=>!Number.isInteger(c)||c<0||c>2))return false;
+  if(new Set(courses).size!==courses.length)return false;
+  return courses.length!==2||Math.abs(courses[0]-courses[1])===1;
+}
+function mdChordPositionPlan(melodyMidi,chord,allowedAddedNote=null){
+  const choices=mdCandidates(melodyMidi);if(!choices.length)return null;
+  const all=Array.from({length:3},(_,course)=>mdAllFrets(course).map(slot=>({
+    course,fret:slot.fret,midi:mdSelectedOpen()[course]+slot.offset
+  })).filter(p=>chord.classes.includes((p.midi%12+12)%12)&&
+    (!allowedAddedNote||allowedAddedNote(p.midi))));
+  // Sparse is deliberately independent of the Optimal / Full scoring.
+  // It can add ONE non-unison chord tone, preferring the second semitone
+  // interval in the abcjs definition, then a perfect fifth (when supported),
+  // then another supported chord tone. The written melody note is always kept.
+  if(mdChordVoicing==="sparse"){
+    // Prefer a strictly lower harmony note, even when it requires a higher
+    // fret position or means omitting the otherwise preferred chord interval.
+    // Only use an equal/higher harmony note if no playable lower pair exists.
+    let bestLowerPair=null,bestPair=null,bestSingle=null;
+    const pitchClass=midi=>((midi%12)+12)%12;
+    const fifthClass=(chord.root+7)%12;
+    for(const melody of choices){
+      const singleScore=Number(melody.course===2)*5000+
+        Number(melody.course===1)*500-Number(melody.fret)*25;
+      if(!bestSingle||singleScore>bestSingle.score)
+        bestSingle={score:singleScore,positions:[melody],melodyPosition:melody};
+      for(const course of [0,1,2]){
+        // Sparse may use only the two physically adjacent courses. A
+        // bass+melody dyad would require skipping the middle string.
+        if(Math.abs(course-melody.course)!==1)continue;
+        for(const added of all[course]){
+          // An octave duplication is allowed; an exact unison is not.
+          if(added.midi===melody.midi)continue;
+          if(mdChordHandStretch([melody,added])>mdMaxChordStretch)continue;
+          const pc=pitchClass(added.midi);
+          const preferred=pc===chord.second;
+          const fifth=pc===fifthClass;
+          const fretted=[melody,added].filter(p=>p.fret>mdCapoFret()).map(p=>p.fret);
+          const handSpan=mdChordHandStretch([melody,added]);
+          const highFret=fretted.length?Math.max(...fretted):0;
+          const melodyTop=melody.midi>=added.midi;
+          let inversionScore=0;
+          if(chord.inversion!==null){
+            const lowest=Math.min(melody.midi,added.midi);
+            if(pitchClass(lowest)===chord.inversionBassClass){
+              const baseRoot=chord.root+12*Math.floor((melodyMidi-12-chord.root)/12);
+              const targetMidi=baseRoot+chord.inversionOffset;
+              inversionScore=150000-Math.min(36,Math.abs(lowest-targetMidi))*400;
+            }
+          }
+          const score=inversionScore+
+            Number(preferred)*60000+Number(!preferred&&fifth)*30000+
+            Number(melody.course===2)*5000+Number(melody.course===1)*500+
+            Number(melodyTop)*1500+
+            Number(melody.fret===0)*250+Number(added.fret===0)*600-
+            highFret*75-handSpan*90-Math.abs(added.fret-melody.fret)*18;
+          const candidate={score,positions:[melody,added],melodyPosition:melody};
+          if(added.midi<melody.midi){
+            if(!bestLowerPair||score>bestLowerPair.score)bestLowerPair=candidate;
+          }else if(!bestPair||score>bestPair.score){
+            bestPair=candidate;
+          }
+        }
+      }
+    }
+    return bestLowerPair||bestPair||bestSingle;
+  }
+  // In both Optimal and Full Harmony, rank *all* playable harmony notes below
+  // the melody ahead of any voicing containing an equal or higher note.
+  // This pitch-order rule outranks chord fullness, inversions, and fret-height
+  // penalties; existing mode-specific scoring breaks ties within each group.
+  let bestLower=null,best=null;
+  const evaluate=positions=>{
+    // Reject bass+melody-only dyads in Optimal and Full Harmony too.
+    // Open strings are genuine sounded positions and remain in the solution.
+    if(!mdChordCoursesStrummable(positions))return;
+    if(mdChordHandStretch(positions)>mdMaxChordStretch)return;
+    const melody=positions[0],add=positions.slice(1);
+    const types=new Set(positions.map(p=>((p.midi%12)+12)%12));
+    const hasRoot=types.has(chord.root),hasSecond=types.has(chord.second);
+    const melodyTop=add.every(p=>p.midi<=melody.midi);
+    const spread=mdChordHandStretch(positions);
+    const movement=add.reduce((v,p)=>v+Math.abs(p.fret-melody.fret),0);
+    // Full Harmony preserves the original scoring: maximize playable notes and
+    // chord-tone coverage before optimizing physical fret placement.
+    const fullScore=add.length*1e6 + Number(hasRoot&&hasSecond)*65000 +
+      Number(hasRoot)*24000+Number(hasSecond)*14000+types.size*5000+
+      Number(melodyTop)*3500+Number(melody.course===2)*2400+
+      Number(melody.course===1)*500-spread*190-movement*38-
+      melody.fret*12-add.reduce((v,p)=>v+p.fret,0)*2;
+    // Optimal values the dulcimer's open courses and lower, easier
+    // fingerings more than completing every interval of the printed chord.
+    // For example, DAd may use 0-0-0 for D rather than fretting the bass at 2
+    // solely to obtain F#. Open courses do not count toward hand stretch.
+    const fretted=positions.filter(p=>p.fret>mdCapoFret());
+    const fingeredFrets=fretted.map(p=>p.fret);
+    const handSpan=fingeredFrets.length>1?Math.max(...fingeredFrets)-Math.min(...fingeredFrets):0;
+    const highFret=fingeredFrets.length?Math.max(...fingeredFrets):0;
+    const fingeredSum=fingeredFrets.reduce((sum,f)=>sum+f,0);
+    const openCourses=positions.length-fretted.length;
+    const optimalScore=Number(melodyTop)*1250+
+      Number(melody.course===2)*1900+Number(melody.course===1)*250+
+      Number(hasRoot)*1000+Number(hasSecond)*650+
+      Number(hasRoot&&hasSecond)*220+types.size*360+
+      add.length*650+openCourses*950-fretted.length*175-
+      highFret*95-fingeredSum*58-handSpan*125;
+    // The requested inversion is a strong preference for the *lowest sounding*
+    // chord note, not for a particular physical course. Preserve the existing
+    // voicing rankings when no :N suffix was supplied. The melody must remain
+    // present even when a requested inversion cannot be played on this dulcimer.
+    let inversionOptimal=0,inversionFull=0;
+    if(chord.inversion!==null&&positions.length>1){
+      const lowest=Math.min(...positions.map(p=>p.midi));
+      const bassClass=((lowest%12)+12)%12;
+      const targetClass=chord.inversionBassClass;
+      // Place the unswapped root roughly a lower octave beneath the melody.
+      // The explicit :N cycle count then provides an octave *preference*, not
+      // an impossible hard restriction on instruments with limited courses.
+      const baseRoot=chord.root+12*Math.floor((melodyMidi-12-chord.root)/12);
+      const targetMidi=baseRoot+chord.inversionOffset;
+      const distance=Math.min(36,Math.abs(lowest-targetMidi));
+      // A duplicate of the exact same sounding pitch is less useful than a
+      // real second chord tone, even if it superficially matches the inversion.
+      const exactUnisons=positions.length-new Set(positions.map(p=>p.midi)).size;
+      if(bassClass===targetClass){
+        inversionOptimal=9000+Math.max(0,8000-distance*650);
+        inversionFull=190000+Math.max(0,60000-distance*3500);
+        inversionOptimal-=exactUnisons*6000;
+        inversionFull-=exactUnisons*45000;
+      }
+    }
+    const score=mdChordVoicing==="full"?
+      fullScore+inversionFull:optimalScore+inversionOptimal;
+    const candidate={score,positions:positions.slice(),melodyPosition:melody};
+    if(add.length&&add.every(p=>p.midi<melody.midi)){
+      if(!bestLower||score>bestLower.score)bestLower=candidate;
+      return;
+    }
+    // Optimal may drop the third course for comfort, but never choose a
+    // melody-only note if a playable second chord tone exists at all.
+    if(best&&mdChordVoicing==="optimal"){
+      if(best.positions.length===1&&positions.length>1){
+        best=candidate;
+        return;
+      }
+      if(best.positions.length>1&&positions.length===1)return;
+    }
+    if(!best||score>best.score)best=candidate;
+  };
+  for(const melody of choices){
+    const others=[0,1,2].filter(c=>c!==melody.course);
+    evaluate([melody]);
+    for(const a of all[others[0]])evaluate([melody,a]);
+    for(const b of all[others[1]])evaluate([melody,b]);
+    for(const a of all[others[0]])for(const b of all[others[1]])evaluate([melody,a,b]);
+  }
+  return bestLower||best;
+}
+// Read the tune's key signature once for chord spelling and candidate selection.
+// Do not change the spelling of the original melody or any ABC chord annotation.
+function mdChordKeySignature(source){
+  const key=/^K:[ \t]*([A-Ga-g])([#b]?)([^\r\n]*)/m.exec(source);
+  const tonic=key?key[1].toUpperCase()+key[2]:"C";
+  const modeText=key?String(key[3]||"").trim().toLowerCase():"";
+  const mode=(modeText.match(/^([a-z]+)/)||["",""])[1];
+  const fifthsByMajor={Cb:-7,Gb:-6,Db:-5,Ab:-4,Eb:-3,Bb:-2,F:-1,
+    C:0,G:1,D:2,A:3,E:4,B:5,"B#":12,"F#":6,"C#":7};
+  let modeOffset=0;
+  if(mode==="m"||mode.startsWith("min")||mode.startsWith("aeo"))modeOffset=-3;
+  else if(mode.startsWith("dor"))modeOffset=-2;
+  else if(mode.startsWith("mix"))modeOffset=-1;
+  else if(mode.startsWith("lyd"))modeOffset=1;
+  else if(mode.startsWith("phr"))modeOffset=-4;
+  else if(mode.startsWith("loc"))modeOffset=-5;
+  const fifths=Math.max(-7,Math.min(7,(fifthsByMajor[tonic]??0)+modeOffset));
+  const byLetter={C:0,D:0,E:0,F:0,G:0,A:0,B:0};
+  const sharps=["F","C","G","D","A","E","B"];
+  const flats=["B","E","A","D","G","C","F"];
+  if(fifths>0)for(let i=0;i<fifths;i++)byLetter[sharps[i]]=1;
+  if(fifths<0)for(let i=0;i<-fifths;i++)byLetter[flats[i]]=-1;
+  // The key defines exactly one unaltered scale pitch for each letter.
+  const naturals={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+  const byClass=new Map();
+  for(const letter of Object.keys(naturals)){
+    const pc=(naturals[letter]+byLetter[letter]+12)%12;
+    byClass.set(pc,{letter,accidental:byLetter[letter],natural:naturals[letter]});
+  }
+  return {byLetter,byClass};
+}
+// A generated note must use the spelling supplied by the key signature, with
+// no printed accidental. A conflicting prior accidental in the same measure
+// also disqualifies it: emitting an accidental to undo that override could
+// change subsequent melody notes. Find another chord position instead.
+function mdKeyChordTone(midi,key,activeAccidentals){
+  const pitch=Math.round(Number(midi));
+  if(!Number.isFinite(pitch))return null;
+  const spelling=key.byClass.get(((pitch%12)+12)%12);
+  if(!spelling)return null;
+  const octaveShift=(pitch-(60+spelling.natural+spelling.accidental))/12;
+  if(!Number.isInteger(octaveShift))return null;
+  const octave=4+octaveShift;
+  const glyph=octave>=5?spelling.letter.toLowerCase():spelling.letter;
+  const marks=octave>=5?"'".repeat(octave-5):",".repeat(Math.max(0,4-octave));
+  const note=glyph+marks;
+  const current=activeAccidentals.get(note);
+  if(current!==undefined&&current!==spelling.accidental)return null;
+  return note;
+}
+// Record the explicit accidentals already present in the original melody.
+// These still affect subsequent notes in the current measure, including when
+// an original note is the first note inside a newly generated bracket chord.
+function mdRememberMelodyAccidental(token,activeAccidentals){
+  const m=/^([=_^]+)([A-Ga-g][,']*)/.exec(token);
+  if(!m)return;
+  const symbols=m[1];
+  const value=symbols.includes('=')?0:
+    symbols.startsWith('^^')?2:symbols.startsWith('__')?-2:
+    symbols.startsWith('^')?1:-1;
+  activeAccidentals.set(m[2],value);
+}
+function mdBuildChordScoreABC(source){
+  MD.chordPlans=new Map();MD.chordEdits=mdChordOrnamentEdits(source);
+  const tokens=abcNoteTokens(source);
+  const offset=mdOctaveOffset();let lastEnd=0;
+  const key=mdChordKeySignature(source);
+  const activeAccidentals=new Map();
+  for(const t of tokens){
+    // ABC accidental overrides end at each measure boundary. The original
+    // melodic spelling is unchanged, so its accidental state stays intact.
+    if(source.slice(lastEnd,t.start).includes('|'))activeAccidentals.clear();
+    const chord=mdChordBeforeToken(source,t,lastEnd);lastEnd=t.end;
+    const writtenMidi=clickedNotationMidi(t,source);
+    if(!Number.isInteger(writtenMidi))continue;
+    const original=source.slice(t.start,t.end);
+    mdRememberMelodyAccidental(original,activeAccidentals);
+    if(!chord)continue;
+    const allowedAddedNote=soundingMidi=>
+      mdKeyChordTone(soundingMidi-offset,key,activeAccidentals)!==null;
+    const choice=mdChordPositionPlan(writtenMidi+offset,chord,allowedAddedNote);
+    const positions=choice?.positions||[];
+    if(positions.length&&!mdChordCoursesStrummable(positions))
+      throw new Error("Non-adjacent dulcimer chord courses");
+    const plan={...chord,start:t.start,end:t.end,positions,
+      melodyPosition:choice?.melodyPosition||null,
+      writtenMidis:positions.map(p=>p.midi-offset).sort((a,b)=>a-b)};
+    MD.chordPlans.set(t.start,plan);
+    if(positions.length<2)continue;
+    const note=/^([=_^]*[A-Ga-g][,']*)([0-9/]*)$/.exec(original);
+    if(!note)continue;
+    // A candidate rejected by the signature or current-measure accidental
+    // filter cannot reappear here. Keep the existing melody note verbatim.
+    const extras=positions.slice(1).map(p=>
+      mdKeyChordTone(p.midi-offset,key,activeAccidentals));
+    if(extras.some(p=>p===null))throw new Error("Unsafe generated chord accidental");
+    const replacement='['+[note[1],...extras].join('')+']'+note[2];
+    MD.chordEdits.push({start:t.start,end:t.end,replacement});
+  }
+  MD.chordEdits.sort((a,b)=>a.start-b.start);
+  let result='',at=0,shift=0;
+  for(const e of MD.chordEdits){
+    e.renderStart=e.start+shift;
+    e.renderEnd=e.renderStart+e.replacement.length;
+    e.delta=e.replacement.length-(e.end-e.start);
+    result+=source.slice(at,e.start)+e.replacement;at=e.end;shift+=e.delta;
+  }
+  return result+source.slice(at);
+}
+function mdSourceToScore(pos){
+  let shift=0;
+  for(const e of MD.chordEdits){
+    if(pos>=e.end)shift+=e.delta;
+    else if(pos>e.start)return e.renderStart;
+    else break;
+  }
+  return pos+shift;
+}
+function mdScoreToSource(pos){
+  let shift=0;
+  for(const e of MD.chordEdits){
+    if(pos>=e.renderEnd)shift+=e.delta;
+    else if(pos>=e.renderStart)return e.start;
+    else break;
+  }
+  return pos-shift;
+}
+function mdScoreRangeToSource(start,end,edits=MD.chordEdits){
+  for(const e of edits){
+    // Decoration/tie-to-space edits preserve character offsets; do not
+    // collapse a note's source span onto one when a parser includes it.
+    if(e.kind!=="ornament"&&start<e.renderEnd&&end>e.renderStart)
+      return {start:e.start,end:e.end};
+  }
+  const convert=pos=>{
+    let shift=0;
+    for(const e of edits){
+      if(pos>=e.renderEnd)shift+=e.delta;
+      else if(pos>=e.renderStart)return e.start;
+      else break;
+    }
+    return pos-shift;
+  };
+  return {start:convert(start),end:convert(end)};
+}
+
 function mdSolve(events){
-  const solved=events.map(e=>({...e,writtenMidi:e.midi,midi:e.midi+mdOctaveOffset(),candidates:mdCandidates(e.midi+mdOctaveOffset()),position:null}));
+  const solved=events.map(e=>{
+    const plan=MD.chordPlans.get(e.start)||null;
+    const midi=e.midi+mdOctaveOffset();
+    return {...e,writtenMidi:e.midi,midi,chord:plan,
+      candidates:plan?.melodyPosition?[plan.melodyPosition]:mdCandidates(midi),position:null};
+  });
   let i=0;
   while(i<solved.length){
     if(!solved[i].candidates.length){i++;continue}
@@ -4754,8 +5484,16 @@ function mdEventsFromScore(visual){
     if(staves.length>1||voices.length>1)multi=true;
     for(const el of (voices[0]||[])){
       if(el.el_type!=="note"||!el.pitches?.length)continue;
-      if(el.pitches.length>1)chords=true;
-      const s=Number(el.startChar)-prefixLength,e=Number(el.endChar)-prefixLength;
+      // Bracketed chords generated from quoted chord symbols are supported.
+      // The source pre-validator still rejects user-entered [CEG] chords.
+      if(el.pitches.length>1){
+        const scoreStart=Number(el.startChar)-prefixLength;
+        const scoreEnd=Number(el.endChar)-prefixLength;
+        if(!MD.chordEdits.some(edit=>edit.replacement.startsWith('[')&&
+             scoreStart<edit.renderEnd&&scoreEnd>edit.renderStart))chords=true;
+      }
+      const span=mdScoreRangeToSource(Number(el.startChar)-prefixLength,Number(el.endChar)-prefixLength);
+      const s=span.start,e=span.end;
       let t=tokens.find(t=>(t.pitch>=s&&t.pitch<e)||(t.start<e&&t.end>s));
       // The parser omits some source positions in rare cases. Never guess an unavailable pitch.
       if(!t&&Number.isFinite(s))t=tokens.find(t=>Math.abs(t.start-s)<=2);
@@ -4793,7 +5531,8 @@ function mdUpdateAnalysis(visual){
   host.innerHTML="";
   // A complete, supported solution needs no status banner.
   // Keep the banner available for missing notes or incomplete assessments.
-  const showIssue = !total || missing > 0 || MD.unsupported.length > 0;
+  const incompleteChords=[...MD.chordPlans.values()].filter(p=>p.positions.length<2);
+  const showIssue = !total || missing > 0 || MD.unsupported.length > 0 || incompleteChords.length>0;
   host.hidden = !showIssue;
   if(!showIssue)return;
   let headline="";
@@ -4803,6 +5542,11 @@ function mdUpdateAnalysis(visual){
   else headline="⚠ Not fully playable as written.";
   const summary=document.createElement("span");summary.textContent=headline;host.appendChild(summary);
   host.className="mdCompatibility "+(!total||MD.unsupported.length?"mdUnknown":missing?"mdPartial":"");
+  if(incompleteChords.length){
+    const info=document.createElement("span");
+    info.textContent=`Unable to add a chord tone at ${incompleteChords.length} annotated note(s) with this tuning and fret configuration.`;
+    host.appendChild(info);
+  }
   if(missing){
     const unique=[...new Set(MD.missing.map(i=>mdNoteName(MD.events[i].midi)))];
     const msg=document.createElement("span");msg.textContent=`Unavailable notes: ${unique.slice(0,10).join(", ")}${unique.length>10?"…":""}.`;host.appendChild(msg);
@@ -4827,7 +5571,7 @@ function mdNavigateMissing(step){
   if(index==null)index=step>0?MD.missing[0]:MD.missing[MD.missing.length-1];
   const e=MD.events[index];if(!e)return;
   instrumentNavAnchor=e.start;MD.active=e;
-  if(instrumentNavVisual?.engraver?.rangeHighlight){try{instrumentNavVisual.engraver.rangeHighlight(e.start+prefixLength,e.end+prefixLength)}catch(_){}}
+  if(instrumentNavVisual?.engraver?.rangeHighlight){try{instrumentNavVisual.engraver.rangeHighlight(mdSourceToScore(e.start)+prefixLength,mdSourceToScore(e.end)+prefixLength)}catch(_){}}
   mdMarkMissingNavigationTarget(e);
   scrollNavigatedNotationNoteIntoView();
   ta.focus({preventScroll:true});ta.setSelectionRange(e.start,e.end);
@@ -4856,13 +5600,15 @@ function mdSetEventFromPlayback(event){
   if(Number.isFinite(x)&&MD.noteMarkers.length){
     let best=null,bestScore=Infinity;
     for(const item of MD.noteMarkers){
-      if(item.e.midi!==midi&&item.e.writtenMidi!==midi)continue;
+      if(item.e.midi!==midi&&item.e.writtenMidi!==midi&&
+         !item.e.chord?.positions?.some(p=>p.midi===midi||p.midi-mdOctaveOffset()===midi))continue;
       const score=Math.abs(item.x-x)+Math.abs(item.top-top)*.5;
       if(score<bestScore){best=item.e;bestScore=score;}
     }
     if(best&&bestScore<95){MD.active=best;MD.lastPlaybackIndex=MD.events.indexOf(best);return}
   }
-  const candidates=MD.events.map((e,i)=>({e,i})).filter(v=>v.e.midi===midi);
+  const candidates=MD.events.map((e,i)=>({e,i})).filter(v=>v.e.midi===midi||
+    v.e.chord?.positions?.some(p=>p.midi===midi||p.midi-mdOctaveOffset()===midi));
   const next=candidates.find(v=>v.i>MD.lastPlaybackIndex)||candidates[0];
   if(next){MD.active=next.e;MD.lastPlaybackIndex=next.i}
 }
@@ -4909,11 +5655,15 @@ function mdRenderScoreTab(){
     const count=Math.min(els.length,events.length);
     for(let j=0;j<count;j++){
       const evt=events[j],n=els[j];let b;try{b=n.querySelector(".abcjs-notehead")?.getBBox()||n.getBBox()}catch(_){continue}
-      const x=Math.max(left+11,Math.min(right-10,b.x+Math.min(9,b.width*.5))),row=evt.position?evt.position.course:1,cy=base+row*15;
-      const printed=evt.position?String(evt.position.fret).replace(".5","½"):"X";
-      const w=printed.length>2?21:14;
-      make(layer,"rect",{x:x-w/2,y:cy-6.5,width:w,height:13,rx:1,class:"mdTabBackground"});
-      make(layer,"text",{x,y:cy+3.6,"text-anchor":"middle","font-size":12.6,"font-family":"Arial, Helvetica, sans-serif","font-weight":"400",style:"font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal",class:evt.position?"mdTabFret":"mdTabMissing","data-md-event-start":evt.start},printed);
+      const x=Math.max(left+11,Math.min(right-10,b.x+Math.min(9,b.width*.5)));
+      const fretted=evt.chord?.positions?.length>1?evt.chord.positions:(evt.position?[evt.position]:[]);
+      for(const position of (fretted.length?fretted:[null])){
+        const row=position?position.course:1,cy=base+row*15;
+        const printed=position?String(position.fret).replace(".5","½"):"X";
+        const w=printed.length>2?21:14;
+        make(layer,"rect",{x:x-w/2,y:cy-6.5,width:w,height:13,rx:1,class:"mdTabBackground"});
+        make(layer,"text",{x,y:cy+3.6,"text-anchor":"middle","font-size":12.6,"font-family":"Arial, Helvetica, sans-serif","font-weight":"400",style:"font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal",class:position?"mdTabFret":"mdTabMissing","data-md-event-start":evt.start},printed);
+      }
       if(!evt.position){n.classList.add("mdUnplayableNote");n.setAttribute("data-md-event-start",String(evt.start));n.setAttribute("aria-label",`${mdNoteName(evt.midi)} not playable`)}
       MD.noteMarkers.push({e:evt,x,top:lineTop});
     }
@@ -4932,7 +5682,9 @@ function mdRenderBoard(midi){
   const chosen=mdDisplayPosition(midi),strings=mdCapoOpen(),max=Number($("capoSelect").value)||14;
   const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
   svg.classList.add("mdBoard");svg.setAttribute("viewBox","0 0 820 240");svg.setAttribute("role","img");
-  svg.setAttribute("aria-label",chosen?`${mdNoteName(midi)} on ${["bass","middle","melody"][chosen.course]} at fret ${chosen.fret}`:`${mdNoteName(midi)} cannot be played`);
+  const event=mdEventAtEditorSelection(midi);
+  const played=event?.chord?.positions?.length>1?event.chord.positions:(chosen?[chosen]:[]);
+  svg.setAttribute("aria-label",played.length?played.map(p=>`${mdNoteName(p.midi)} on ${["bass","middle","melody"][p.course]} at fret ${p.fret}`).join(", "):`${mdNoteName(midi)} cannot be played`);
   const add=(tag,att,t)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(att||{}))n.setAttribute(k,String(v));if(t!=null)n.textContent=t;svg.appendChild(n);return n};
   const left=72,right=792,ys=[55,103,151],capo=mdCapoFret();
   // The capo becomes the visual nut: always start the displayed board at left.
@@ -4974,7 +5726,8 @@ function mdRenderBoard(midi){
   // Paint the nut over the horizontal strings and fret lines, not beneath them.
   // Extend to the outer edges of the 2px horizontal string strokes (not their centerlines).
   add("rect",{x:x(capo)-3,y:ys[0]-1,width:6,height:ys[2]-ys[0]+2,class:"mdBoardNut"});
-  if(chosen){
+  if(played.length){
+    for(const chosen of played){
     // The open string sits at the nut/capo boundary. Every stopped note is
     // centered in its actual fret space, including enabled half-frets.
     // Use the chosen course's fret sequence: extra frets may be course-specific.
@@ -4986,9 +5739,44 @@ function mdRenderBoard(midi){
     const cy=ys[chosen.course];
     add("circle",{cx,cy,r:16,class:open?"mdBoardOpen":"mdBoardMarker"});
     if(!open)add("text",{x:cx,y:cy+5,"text-anchor":"middle","font-size":14,"font-weight":600,fill:"white"},String(chosen.fret).replace(".5","½"));
+    }
   }else add("text",{x:410,y:229,"text-anchor":"middle",class:"mdBoardMissing","font-size":15},`${mdNoteName(midi)} — NOT PLAYABLE`);
   host.appendChild(svg);
 }
+
+// Display all chord tones at the original written pitches in the small staff.
+function mdRenderChordStaff(midis){
+  const svg=$("whistleStaffNote"),group=$("whistleNoteGroup"),display=$("noteDisplayGroup");
+  if(!svg)return;
+  const visible=showNoteEnabled&&midis?.length>1;
+  group?.classList.toggle("showStaffNote",visible);
+  display?.classList.toggle("withStaffNote",visible);
+  svg.replaceChildren();svg.style.display=visible?"block":"none";
+  if(!visible){requestAnimationFrame(alignStaffCenterToFretStatus);return;}
+  const NS="http://www.w3.org/2000/svg";
+  const add=(tag,attributes)=>{const el=document.createElementNS(NS,tag);
+    Object.entries(attributes).forEach(([k,v])=>el.setAttribute(k,String(v)));svg.appendChild(el);return el;};
+  const bottom=132,gap=10;
+  for(let i=0;i<5;i++)add("line",{x1:20,x2:140,y1:bottom-i*gap,y2:bottom-i*gap,stroke:"#17241c","stroke-width":1.35});
+  const notes=midis.map(midi=>{const [letter,accidental]=displayStaffSpelling(midi);
+    const step=(Math.floor(midi/12)-1)*7+{C:0,D:1,E:2,F:3,G:4,A:5,B:6}[letter]-(4*7+2);
+    return {midi,accidental,step,y:bottom-step*gap/2};});
+  const lineYs=new Set();
+  for(const n of notes){
+    if(n.step<0)for(let s=-2;s>=n.step;s-=2)lineYs.add(bottom-s*gap/2);
+    if(n.step>8)for(let s=10;s<=n.step;s+=2)lineYs.add(bottom-s*gap/2);
+  }
+  for(const y of lineYs)add("line",{x1:58,x2:105,y1:y,y2:y,stroke:"#17241c","stroke-width":1.35});
+  for(const n of notes){
+    if(n.accidental===1)add("text",{x:52,y:n.y+8,"font-size":28,fill:"#17241c"}).textContent="♯";
+    if(n.accidental===-1)add("text",{x:52,y:n.y+8,"font-size":28,fill:"#17241c"}).textContent="♭";
+    add("ellipse",{cx:81,cy:n.y,rx:8.5,ry:5.8,transform:`rotate(-18 81 ${n.y})`,fill:"#17241c"});
+  }
+  const top=notes[notes.length-1];
+  if(top)add("line",{x1:89.2,x2:89.2,y1:top.y-1,y2:top.y-36,stroke:"#17241c","stroke-width":2.4});
+  requestAnimationFrame(alignStaffCenterToFretStatus);
+}
+
 // Shared shell callbacks, retaining playback and navigation integration.
 function selectedStrings(){return mdCapoOpen().slice().reverse().map(midi=>({midi,name:mdNoteName(midi)}))}
 function selectedCapo(){return 0}
@@ -5011,7 +5799,7 @@ function showWhistleLive(midi){
   if(!tunes.length){live.hidden=true;empty.hidden=false;$("fullBtn").disabled=true;return}
   $("whistleTuneTitle").textContent=firstTitle($("abcText").value,currentTune+1);
   live.hidden=false;empty.hidden=true;$("fullBtn").disabled=false;
-  if(currentLiveMidi==null){$("whistleLiveNote").textContent="";renderWhistleStaffNote(null);renderGDAEFingering(null);return}
+  if(currentLiveMidi==null){$("whistleLiveNote").textContent="";$("whistleLiveNote").classList.remove("mdChordNoteNames");renderWhistleStaffNote(null);renderGDAEFingering(null);return}
   const e=mdEventAtEditorSelection(currentLiveMidi);if(e)MD.active=e;
   // The fingering uses the sounding pitch, but the large note name and
   // staff always show the original, untransposed ABC pitch.
@@ -5026,8 +5814,22 @@ function showWhistleLive(midi){
         && Number.isFinite(MD.active.writtenMidi)
         ? MD.active.writtenMidi
         : currentLiveMidi - mdOctaveOffset());
-  $("whistleLiveNote").textContent=formattedWhistleNoteName(writtenMidi).replace(/#/g,"♯").replace(/b/g,"♭");
-  renderWhistleStaffNote(writtenMidi);renderGDAEFingering(currentLiveMidi);
+  const writtenChord=e?.chord?.writtenMidis?.length>1?e.chord.writtenMidis:null;
+  const noteNameEl=$("whistleLiveNote");
+  noteNameEl.classList.toggle("mdChordNoteNames",!!writtenChord);
+  const noteNames=(writtenChord||[writtenMidi]).map(n=>formattedWhistleNoteName(n).replace(/#/g,"♯").replace(/b/g,"♭"));
+  if(writtenChord){
+    // Independent elements allow a predictable gap without inserting spaces
+    // into the actual pitch names (including octave apostrophes).
+    noteNameEl.replaceChildren(...noteNames.map(name=>{
+      const span=document.createElement("span");
+      span.className="mdChordPitchName";
+      span.textContent=name;
+      return span;
+    }));
+  }else noteNameEl.textContent=noteNames[0];
+  if(writtenChord)mdRenderChordStaff(writtenChord);else renderWhistleStaffNote(writtenMidi);
+  renderGDAEFingering(currentLiveMidi);
   // The original fretboard alignment routine assumes a vertical diagram.
   // The horizontal layout is positioned entirely by CSS.
 }
@@ -5039,12 +5841,23 @@ function generateShareLink(abc){
     params.set("instrument",$("instrumentSelect").value);
     params.set("mdcfg",bytesToBase64URL(new TextEncoder().encode(JSON.stringify(mdConfig()))));
     params.set("openstrings",mdOpenStringsEnabled?"1":"0");
+    params.set("strumchords",mdAutoStrumChordsEnabled?"1":"0");
+    params.set("chordvoicing",mdChordVoicing);
+    params.set("maxchordstretch",String(mdMaxChordStretch));
     params.set("sound",String(selectedMelodyProgram()));
     return SHARE_BASE_URL+"?"+params.toString();
   }catch(err){console.error(err);return ""}
 }
+function mdDefaultConfig(){
+  return {
+    tuning:"dad",max:14,capo:0,octaveLower:true,
+    extra:Object.fromEntries(MD_EXTRA.map(f=>[
+      String(f),[6.5,13.5].includes(f)?[true,true,true]:[false,false,false]
+    ]))
+  };
+}
 function mdURLConfig(params){
-  const raw=params.get("mdcfg");if(!raw)return {tuning:params.get("instrument")||"dad"};
+  const raw=params.get("mdcfg");if(!raw)return mdDefaultConfig();
   if(raw.length>2500)throw new Error("Invalid dulcimer settings length.");
   let config;
   try{config=JSON.parse(new TextDecoder().decode(base64URLToBytes(raw)))}catch(_){throw new Error("Invalid dulcimer settings.")}
@@ -5061,28 +5874,59 @@ function validateFretboardSettingsParams(params){
   const notation=params.get("notation");if(notation&&!['notation','mandolin-tab'].includes(notation))throw new Error("Invalid notation setting.");
   const openStrings=params.get("openstrings");
   if(openStrings!==null&&!/^[01]$/.test(openStrings))throw new Error("Invalid Play open strings setting.");
+  const strumChords=params.get("strumchords");
+  if(strumChords!==null&&!/^[01]$/.test(strumChords))throw new Error("Invalid Convert ABC chord symbols to dulcimer-friendly chords setting.");
+  const voicing=params.get("chordvoicing");
+  if(voicing!==null&&!MD_CHORD_VOICINGS.includes(voicing))throw new Error("Invalid chord voicing setting.");
+  const stretch=params.get("maxchordstretch");
+  if(stretch!==null&&!MD_CHORD_STRETCH_VALUES.map(String).includes(stretch))
+    throw new Error("Invalid maximum chord fret stretch setting.");
   const sound=params.get("sound");
   if(sound!==null&&!MD_SOUND_PROGRAMS.map(String).includes(sound))throw new Error("Invalid Sound setting.");
   mdURLConfig(params);
 }
-function applyFretboardSettingsParams(params){
-  const notation=params.get("notation");if(['notation','mandolin-tab'].includes(notation))$("notationDisplay").value=notation;
+function applyFretboardSettingsParams(params,forceDefaults=false){
+  const hasShareABC=params.has("def")||forceDefaults;
+  const notation=params.get("notation");
+  if(['notation','mandolin-tab'].includes(notation)||hasShareABC)
+    $("notationDisplay").value=['notation','mandolin-tab'].includes(notation)?notation:'mandolin-tab';
   const openStrings=params.get("openstrings");
-  if((openStrings==="0"||openStrings==="1")||params.has("def")){
-    // When a link does not specify open strings, use the new default (on).
+  if((openStrings==="0"||openStrings==="1")||hasShareABC){
+    // Missing open-strings parameters use the default (on).
     mdOpenStringsEnabled=openStrings!=="0";
     $("mdOpenStringsCheck").checked=mdOpenStringsEnabled;
+  }
+  const strumChords=params.get("strumchords");
+  if(strumChords==="0"||strumChords==="1"||hasShareABC){
+    // Missing chord-generation parameters default to enabled.
+    mdAutoStrumChordsEnabled=strumChords!=="0";
+    $("mdAutoStrumChordsCheck").checked=mdAutoStrumChordsEnabled;
+  }
+  const voicing=params.get("chordvoicing");
+  if(MD_CHORD_VOICINGS.includes(voicing)||hasShareABC){
+    // Share links without an explicit voicing use the Optimal default.
+    mdChordVoicing=MD_CHORD_VOICINGS.includes(voicing)?voicing:"optimal";
+    $("mdChordVoicingSelect").value=mdChordVoicing;
+  }
+  const stretch=params.get("maxchordstretch");
+  if(MD_CHORD_STRETCH_VALUES.map(String).includes(stretch)||hasShareABC){
+    // Missing maximum-stretch parameters use the default of 3.
+    mdMaxChordStretch=MD_CHORD_STRETCH_VALUES.map(String).includes(stretch)?Number(stretch):3;
+    $("mdChordStretchSelect").value=String(mdMaxChordStretch);
   }
   const sound=params.get("sound");
   if(sound!==null){
     // Known sound names are conveyed as their numeric MIDI programs.
     if(MD_SOUND_PROGRAMS.includes(Number(sound)))$("mdSoundSelect").value=String(Number(sound));
-  }else if(params.has("def")||params.has("mdcfg")){
+  }else if(hasShareABC||params.has("mdcfg")){
     // Links without an instrument setting use Dulcimer.
     $("mdSoundSelect").value="148";
   }
-  if(params.has("def")){
-    try{mdSetConfig(mdURLConfig(params))}catch(e){console.warn("Invalid custom dulcimer link settings",e)}
+  if(hasShareABC||params.has("mdcfg")){
+    // An absent mdcfg represents a complete default instrument setup,
+    // not just a default tuning mixed with stale capo/fret/octave values.
+    try{mdSetConfig(mdURLConfig(params))}
+    catch(e){console.warn("Invalid custom dulcimer link settings",e)}
   }
   standardShareSettingsPending=!!params.get("def")&&params.get("lesson")!=="1";
 }
@@ -5101,12 +5945,43 @@ function commitStandardShareSettingsIfPending(){
   if(lessonModeActive()||!standardShareSettingsPending)return;
   standardShareSettingsPending=false;saveWhistleDisplayPrefs();
 }
-function openShareInABCTranscriptionTools(allTunes,mode){
-  syncCurrentTuneFromEditor();const abc=allTunes?tunes.join("\n\n"):$("abcText").value;if(!abc?.trim())return;
+// ABCTT uses more compact score spacing than the player when exporting
+// generated bracket-note chords. Replace the playback-only staffsep rather
+// than changing either the editor ABC or the player's rendering directives.
+function mdABCTTChordStaffsep(playbackABC,sourceTune){
+  const staffsep=mdHasVoltaEndings(sourceTune)?75:70;
+  const abc=playbackABC.replace(/^[ \t]*%%staffsep\b[^\r\n]*(?:\r?\n|$)/gim,"");
+  const xLine=/^X:[^\r\n]*(?:\r?\n|$)/m.exec(abc);
+  if(!xLine)return `%%staffsep ${staffsep}\n`+abc;
+  const at=xLine.index+xLine[0].length;
+  return abc.slice(0,at)+`%%staffsep ${staffsep}\n`+abc.slice(at);
+}
+
+function mdABCForABCTTTransfer(tune){
+  if(!mdAutoStrumChordsEnabled)return tune;
+  const oldPlans=MD.chordPlans;
+  const oldEdits=MD.chordEdits;
+  const oldPrefixLength=prefixLength;
   try{
+    // Preserve playback MIDI directives and solved notes, but use ABCTT's
+    // compact staff spacing when an actual bracket-note chord was generated.
+    const {playbackABC}=mdPreparePlaybackScoreABC(tune,$("notationDisplay").value);
+    const hasSolvedChords=MD.chordEdits.some(edit=>edit.replacement.startsWith("["));
+    return hasSolvedChords?mdABCTTChordStaffsep(playbackABC,tune):playbackABC;
+  }finally{
+    MD.chordPlans=oldPlans;
+    MD.chordEdits=oldEdits;
+    prefixLength=oldPrefixLength;
+  }
+}
+function openShareInABCTranscriptionTools(){
+  syncCurrentTuneFromEditor();
+  const sourceTune=$("abcText").value;
+  if(!sourceTune?.trim())return;
+  try{
+    const abc=mdABCForABCTTTransfer(sourceTune);
     const def=compressABCDeflate(abc);
-    const action=mode==="player"?"play=1":"editor=1";
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&editor=1&format=noten&ssp=10`;
     const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
   }catch(err){console.error("Cannot share to ABC Transcription Tools",err)}
 }
@@ -5121,9 +5996,15 @@ function mdInstallInteractions(){
   $("md65").addEventListener("change",e=>{for(const f of [6.5,13.5])MD.extra[String(f)]=[e.target.checked,e.target.checked,e.target.checked];mdSyncSimpleControls();mdChanged()});
   $("instrumentSelect").addEventListener("change",mdChanged);
   $("mdCapoSelect").addEventListener("change",mdChanged);
-  if(lessonModeActive())for(const id of ["md15","md65","mdOctaveLower"])$(id).disabled=true;
+  if(lessonModeActive())for(const id of ["md15","md65","mdOctaveLower",
+    "mdOpenStringsCheck","mdAutoStrumChordsCheck","mdChordVoicingSelect","mdChordStretchSelect","mdSoundSelect","configurePlaybackBtn"])$(id).disabled=true;
 }
 mdInstallInteractions();
+// The original startup call occurs in an earlier script block, before the
+// dulcimer-specific restoration function is declared. Restore here, now that
+// mdConfig/mdSetConfig and the dulcimer UI are available. Share/lesson URL
+// settings are applied afterward and still take precedence without persisting.
+restoreWhistleDisplayPrefs();
 applyWhistleShareSettings();
 updateInstrumentUI();
 
