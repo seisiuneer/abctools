@@ -1622,7 +1622,7 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -3441,7 +3441,7 @@ function mdPreparePlaybackScoreABC(tune,notationMode){
     const xLine=/^X:[^\r\n]*(?:\r?\n|$)/m.exec(playbackABC);
     const hasVoltaEndings=mdHasVoltaEndings(playbackABC);
     const staffSeparation=hasGeneratedChordVoicings
-      ?(hasVoltaEndings?125:110)
+      ?125 // Chord-solved scores always use the roomier spacing.
       :(hasVoltaEndings?110:94);
     if(xLine){
       const injection=`%%staffsep ${staffSeparation}\n`;
