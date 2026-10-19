@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3361_101926_1030";
+var gVersionNumber = "3362_101926_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20736,6 +20736,25 @@ function searchForTunes() {
           //console.log("Got match, correct key");
         }
 
+        var thisABC = theABCInfo.abc;
+
+        // Check for chords before marking this tune as already seen, so the
+        // first eligible variation is returned when both options are selected.
+        if (returnOnlyWithChords) {
+
+          if (!thisABC) {
+            continue;
+          }
+
+          var searchRegExp = /"[^"]*"/gm
+
+          var chordsPresent = thisABC.match(searchRegExp);
+
+          if ((!chordsPresent) || (chordsPresent.length == 0)) {
+            continue;
+          }
+        }
+
         var ok_to_process = true;
 
         // If only returning first variation, see if the tune_id has already been seen
@@ -20755,22 +20774,8 @@ function searchForTunes() {
 
         if (ok_to_process) {
 
-          var thisABC = theABCInfo.abc;
-
           if (!thisABC) {
             continue;
-          }
-
-          // Are we only returning tunes with chords?
-          if (returnOnlyWithChords) {
-
-            var searchRegExp = /"[^"]*"/gm
-
-            var chordsPresent = thisABC.match(searchRegExp);
-
-            if ((!chordsPresent) || (chordsPresent.length == 0)) {
-              continue;
-            }
           }
 
           theTotal++;
