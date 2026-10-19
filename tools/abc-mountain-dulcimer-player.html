@@ -728,7 +728,7 @@ body.diagram-full .whistleNoteGroup.sixString:has(.fullFretboardMode) .noteDispl
 
 /* v1.50: add a header Tempo button and keep the notation actions usable on
    phone-size portrait screens. The action group may wrap beneath the title,
-   while Mute Melody and Tempo retain the same compact button styling. */
+   while Mute Dulcimer and Tempo retain the same compact button styling. */
 @media (orientation:portrait) and (max-width:650px){
   .panelHeader:has(.notationHeaderRight){align-items:flex-start;flex-wrap:wrap}
   .notationHeaderRight{flex:1 1 100%;justify-content:flex-end;flex-wrap:wrap;gap:7px}
@@ -1721,7 +1721,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1736,7 +1736,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
  <div class="leftPane" id="leftPane">
   <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="configurePlaybackBtn" class="notationHeaderBtn" type="button" disabled>Configure Tab</button><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div id="mdCompatibility" class="mdCompatibility" role="status" aria-live="polite" hidden></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="configurePlaybackBtn" class="notationHeaderBtn" type="button" disabled>Configure Tab</button><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Dulcimer</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div id="mdCompatibility" class="mdCompatibility" role="status" aria-live="polite" hidden></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">Mountain Dulcimer (DAd)</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNamesCheck"><input id="showNamesCheck" type="checkbox" checked disabled>Show names</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show notes</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
@@ -1833,7 +1833,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
-      <p>Use <b>Mute Melody</b> to practice without hearing the melody; any enabled metronome and open strings remain audible.</p>
+      <p>Use <b>Mute Dulcimer</b> to silence all dulcimer playback, including melody notes, generated chords, and open-string drones. The metronome remains audible when enabled. Standard abcjs bass-and-chord accompaniment remains audible only when the tune contains ABC chord symbols and <b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is unchecked.</p>
       <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Sound and Tab</p>
@@ -1855,7 +1855,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>For example, the following generates chords on D and A but leaves the unmarked F notes as single melody notes:</p>
       <pre class="helpCodeExample"><code>"D"D2 F2 "D"A2 F2</code></pre>
       <p>To add the chord again at the start of a later measure, repeat the symbol before that measure's first note.</p>
-      <p>If unchecked, any ABC chords will be played using the ABC Transcription Tools standard "boom-chick" backup pattern using a piano sound for the bass and chords. It may sound better to disable playing of the open strings for this case.</p>
+      <p>If unchecked, ABC chord symbols use the standard abcjs automatic bass-and-chord accompaniment, with piano sounds for the bass and chords. This backing can still be heard with <b>Mute Dulcimer</b> enabled, while dulcimer notes and open strings remain silent.</p>
       <p><b>Chord Voicing</b> selects <b>Sparse</b>, <b>Optimal</b> (default), or <b>Full Harmony</b> for the automatically generated chords.</p>
       <p><b>Sparse</b> adds at most one playable harmony note to the melody, preferring the chord's second listed interval (the major third for an ordinary major chord), then another chord tone such as the perfect fifth if needed.</p>
       <p><b>Optimal</b> adds up to two notes while favoring open strings, lower fret positions, fewer fretted courses, and comfortable finger stretches, even if that means omitting a chord tone or using only two notes.</p>
@@ -3625,7 +3625,7 @@ async function rebuild(){
     // melody notes only. Tunes with generated chords suppress open-string
     // drones, while abcjs keeps its own unmodified note timing and cursor
     // synchronization for the generated chords.
-    const addDrones=mdOpenStringsEnabled&&!generatedChordsActive;
+    const addDrones=mdOpenStringsEnabled&&!generatedChordsActive&&!melodyMuted;
     if(addDrones&&typeof visual[0].setUpAudio==="function"){
       // Capture fingering analysis now, before a later tune or setting change.
       const sourceNotes=MD.events.map(e=>({start:e.start,end:e.end,midi:e.midi,writtenMidi:e.writtenMidi,course:e.position?.course,chord:!!e.chord}));
@@ -3715,7 +3715,16 @@ async function rebuild(){
 
     audioControllerInitializing=true;
     try{
-      await controller.setTune(visual[0],false,{});
+      // The abcjs mute options suppress ALL melody-voice notes, including
+      // bracketed chords from the dulcimer chord solver. They leave the drum
+      // (metronome) track and timing callbacks intact. Only allow abcjs's
+      // own chord backup through when the ABC has chord symbols and the
+      // dulcimer chord conversion option is disabled.
+      const allowABCBackup=!mdAutoStrumChordsEnabled&&hasABCSyntaxChords(tune);
+      const audioOptions=melodyMuted
+        ? {voicesOff:true,chordsOff:!allowABCBackup}
+        : {};
+      await controller.setTune(visual[0],false,audioOptions);
     }finally{
       audioControllerInitializing=false;
     }
@@ -3760,7 +3769,7 @@ function updateMuteMelodyButton(){
   if(!btn)return;
   btn.hidden=false;
   btn.disabled=!tunes.length;
-  btn.textContent=melodyMuted?"Unmute Melody":"Mute Melody";
+  btn.textContent=melodyMuted?"Unmute Dulcimer":"Mute Dulcimer";
 }
 async function toggleMelodyMute(){
   if(!tunes.length)return;
