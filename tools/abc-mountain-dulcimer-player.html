@@ -1409,7 +1409,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   .toolbar.whistleToolbar .shareButtons #shareBtn{width:auto;min-width:80px}
 }
 
-/* v2.5.1: Context help for Configure Playback (same minimalist ? as Share/Lesson). */
+/* v2.5.1: Context help for Configure Tab (same minimalist ? as Share/Lesson). */
 .modal_default_main button.mdPlaybackDialogHelp{
   position:absolute !important;
   top:14px !important;
@@ -1448,10 +1448,10 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   }
 }
 /* This overlay must sit above the still-open DayPilot dialog, but only when
-   Instructions was opened from Configure Playback. */
+   Instructions was opened from Configure Tab. */
 body.mdPlaybackInstructionsOpen #helpOverlay{z-index:2147483647 !important}
 
-/* v1.2.18: Configure Playback form styling, scoped to its DayPilot fields. */
+/* Configure Sound and Tab form styling, scoped to its DayPilot fields. */
 .modal_default_main .mdPlaybackDialogTitle{
   text-align:center !important;
   font-size:1.3rem !important;
@@ -1603,26 +1603,125 @@ body:not(.diagram-full) #whistleLive:not([hidden]) #mandolinFingering.mdDulcimer
   }
 }
 
-/* Chord names show every played pitch, ascending, without clipping the pane. */
-.whistleLiveNote.mdChordNoteNames{font-size:clamp(21px,3vw,38px);white-space:normal;line-height:1.15;overflow-wrap:normal}
-body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45px)}
-/* v2.5.6: space each chord pitch independently, allowing natural wrapping on phones. */
+/* Pitch names are centered beneath the tune; original ABC chord names are
+   appended in parentheses to the right, without shifting the pitches.
+   Both use the same inherited font size as an individual note name. */
+.whistleLiveNote.mdChordNoteNames{white-space:normal;overflow-wrap:normal}
 #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote.mdChordNoteNames{
-  display:flex!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,max-content) minmax(0,1fr);
+  align-items:baseline;
+  justify-items:stretch;
+  width:100%;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordPitchNames{
+  grid-column:2;
+  display:flex;
   flex-wrap:wrap;
   align-items:baseline;
   justify-content:center;
-  column-gap:.18em;
-  row-gap:0;
+  gap:0 .18em;
+  min-width:0;
 }
 #whistleLive:not([hidden]) #noteDisplayGroup .mdChordPitchName{white-space:nowrap}
-/* Lower only chord staff images to make room for notes with high ledger lines/stems. */
-#whistleLive:not([hidden]) #noteDisplayGroup:has(.whistleLiveNote.mdChordNoteNames) .whistleStaffNote{
-  transform:translateY(16px)!important;
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordSymbol{
+  grid-column:3;
+  justify-self:start;
+  padding-left:.28em;
+  font-size:inherit;
+  font-weight:inherit;
+  white-space:nowrap;
+}
+/* These are presentation-only preferences, independent of notation graphics. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote.mdNamesHidden{display:none!important}
+/* At narrow pane widths, keep chord pitches centered and put the chord name
+   immediately after/below them instead of clipping off the edge. */
+@container (max-width:430px){
+  #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote.mdChordNoteNames{
+    grid-template-columns:minmax(0,1fr);
+    justify-items:center;
+  }
+  #whistleLive:not([hidden]) #noteDisplayGroup .mdChordPitchNames{grid-column:1;max-width:100%;}
+  #whistleLive:not([hidden]) #noteDisplayGroup .mdChordSymbol{
+    grid-column:1;
+    justify-self:center;
+    padding-left:0;
+  }
+}
+/* Fretboard header controls wrap based on actual pane width, including lessons
+   and the full-page view. */
+.diagramHeader #fingeringPanelLabel{min-width:0;flex:0 1 auto}
+.diagramHeader .diagramHeaderRight{flex:1 1 390px;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;min-width:0}
+.diagramHeader .showNoteLabel{white-space:nowrap;flex:0 0 auto}
+
+/* Match single-note names, solved chord note names, and appended ABC chord
+   labels to the tune title at every viewport size and in full-page mode.
+   The shared variable keeps their computed font sizes identical. */
+#whistleLive:not([hidden]){--md-fretboard-title-font:clamp(24px,3.2vw,44px)}
+@media(max-width:650px){
+  #whistleLive:not([hidden]){--md-fretboard-title-font:26px}
+}
+@media(min-width:1051px) and (max-height:950px){
+  #whistleLive:not([hidden]){--md-fretboard-title-font:clamp(22px,2.1vw,32px)}
+}
+@media(min-width:1500px) and (min-height:960px){
+  body.diagram-full #whistleLive:not([hidden]){--md-fretboard-title-font:clamp(40px,2.9vw,58px)}
+}
+#whistleLive:not([hidden]) #whistleTuneTitle,
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
+  font-size:var(--md-fretboard-title-font)!important;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordSymbol,
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordPitchName{
+  font-size:inherit!important;
+}
+/* The large-screen full-page rule above was more specific than the shared
+   title/name size. Match that specificity so pitch and chord names stay
+   exactly the same size as the tune title in full-page view. */
+body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
+  font-size:var(--md-fretboard-title-font)!important;
+}
+/* The large pitch/chord line always occupies the same vertical slot, so
+   one-note and solved-chord staff graphics never jump when the note changes.
+   Match title typography (size, weight, and line-height), including the ABC
+   chord label. Reserve two lines at narrow widths where the chord label may
+   wrap below the centered pitch names. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
+  box-sizing:border-box;
+  flex:0 0 auto!important;
+  height:1.15em!important;
+  min-height:1.15em!important;
+  line-height:1.15!important;
+  font-weight:750!important;
+  overflow:visible;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordPitchName,
+#whistleLive:not([hidden]) #noteDisplayGroup .mdChordSymbol{
+  font-weight:inherit!important;
+  line-height:inherit!important;
+}
+/* Hide names without collapsing their slot or moving the staff illustration. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote.mdNamesHidden{
+  display:block!important;
+  visibility:hidden!important;
+}
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote.mdNamesHidden.mdChordNoteNames{
+  display:grid!important;
+}
+/* Apply the same clearance to every staff illustration, including single
+   notes and chords. The SVG's vertical origin no longer depends on voicing. */
+#whistleLive:not([hidden]) #noteDisplayGroup .whistleStaffNote{
+  transform:translateY(24px)!important;
+}
+@container (max-width:430px){
+  #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
+    height:2.3em!important;
+    min-height:2.3em!important;
+  }
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1637,10 +1736,10 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
  <div class="leftPane" id="leftPane">
   <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="configurePlaybackBtn" class="notationHeaderBtn" type="button" disabled>Configure Playback</button><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div id="mdCompatibility" class="mdCompatibility" role="status" aria-live="polite" hidden></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="configurePlaybackBtn" class="notationHeaderBtn" type="button" disabled>Configure Tab</button><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div id="mdCompatibility" class="mdCompatibility" role="status" aria-live="polite" hidden></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">Mountain Dulcimer (DAd)</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">Mountain Dulcimer (DAd)</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNamesCheck"><input id="showNamesCheck" type="checkbox" checked disabled>Show names</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show notes</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
   <div class="diagramWrap whistleDiagramWrap">
    <div id="whistleLive" class="whistleLive" hidden>
     <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
@@ -1656,9 +1755,9 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
-<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: Notation display can be changed. Tuning, capo, fret configuration, and all Configure Playback options (including chord voicing and maximum chord fret stretch) are locked for the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
+<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: Notation display can be changed. Tuning, capo, fret configuration, and all Configure Sound and Tab options (including chord voicing and maximum chord fret stretch) are locked for the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
-<!-- Playback settings are edited in the DayPilot Configure Playback dialog. -->
+<!-- Playback settings are edited in the DayPilot Configure Sound and Tab dialog. -->
 <div id="mdPlaybackState" hidden>
   <select id="mdSoundSelect"><option value="148" selected>Mountain Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
   <input type="checkbox" id="mdOctaveLower" checked>
@@ -1723,9 +1822,11 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display and Navigation</p>
       <p>The Mountain Dulcimer panel shows the current note and its suggested string and fret position.</p>
       <p>The bass course is displayed at the top, the middle course in the center, and the melody course at the bottom of the fretboard and tablature.</p>
-      <p>For generated chord fingerings, including their notation, fretboard display, and navigation, see <b>Configure Playback</b> below.</p>
+      <p>For generated chord fingerings, including their notation, fretboard display, and navigation, see <b>Configure Sound and Tab</b> below.</p>
       <p>The bottom melody course remains the preferred choice for melody fingerings, including tunings such as DAA where the middle and melody courses have the same pitch.</p>
-      <p>Use <b>Show note</b> to display the note name, and <b>Hide</b> to practice without seeing the fingering.</p>
+      <p>Use <b>Show names</b> to show or hide the note names below the fretboard, including the original ABC chord name in parentheses after any generated chord notes.</p>
+      <p>Use <b>Show notes</b> to show or hide the small staff-note illustration. These two checkboxes work independently.</p>
+      <p>Use <b>Hide</b> to practice without seeing the fingering.</p>
       <p>Click <b>Full-Page View</b> to enlarge a pane, and <b>Exit Full-Page</b> to return to the normal layout.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
@@ -1735,10 +1836,10 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
       <p>Use <b>Mute Melody</b> to practice without hearing the melody; any enabled metronome and open strings remain audible.</p>
       <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Playback</p>
-      <p>Click <b>Configure Playback</b> in the Notation header to choose the instrument sound and adjust the playback options.</p>
-      <p>Choose <b>Mountain Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b> as the instrument sound.</p>
-      <p>The selected instrument sound applies to both the melody and the open strings.</p>
+      <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Sound and Tab</p>
+      <p>Click <b>Configure Tab</b> in the Notation header to open <b>Configure Sound and Tab</b>, where you can choose the <b>Sound</b> and adjust tablature and playback settings.</p>
+      <p>Under <b>Sound</b>, choose <b>Mountain Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b>.</p>
+      <p>The selected <b>Sound</b> applies to both the melody and the open strings.</p>
       <p><b>Play melody an octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
       <p>This option also uses the lower melody pitch when determining playable fretboard positions and generating tablature.</p>
       <p><b>Play open strings?</b> sounds the dulcimer's open strings along with each melody note, giving the tune the accompanying drone sound characteristic of the instrument.</p>
@@ -1754,6 +1855,7 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
       <p>For example, the following generates chords on D and A but leaves the unmarked F notes as single melody notes:</p>
       <pre class="helpCodeExample"><code>"D"D2 F2 "D"A2 F2</code></pre>
       <p>To add the chord again at the start of a later measure, repeat the symbol before that measure's first note.</p>
+      <p>If unchecked, any ABC chords will be played using the ABC Transcription Tools standard "boom-chick" backup pattern using a piano sound for the bass and chords. It may sound better to disable playing of the open strings for this case.</p>
       <p><b>Chord Voicing</b> selects <b>Sparse</b>, <b>Optimal</b> (default), or <b>Full Harmony</b> for the automatically generated chords.</p>
       <p><b>Sparse</b> adds at most one playable harmony note to the melody, preferring the chord's second listed interval (the major third for an ordinary major chord), then another chord tone such as the perfect fifth if needed.</p>
       <p><b>Optimal</b> adds up to two notes while favoring open strings, lower fret positions, fewer fretted courses, and comfortable finger stretches, even if that means omitting a chord tone or using only two notes.</p>
@@ -1764,17 +1866,17 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
       <p>To request a <b>chord inversion</b>, append <b>:0</b> through <b>:14</b> to the quoted chord name. Examples:</p>
       <pre class="helpCodeExample"><code>"Em:1"   "G:2"   "Dm7:4"</code></pre>
       <p><b>:0</b> requests root position as the lowest note, <b>:1</b> requests the next chord tone, <b>:2</b> the following tone, and higher values proceed through the chord tones before moving up an octave.</p>
-      <p>Generated chords are shown in notation, tablature, fretboard, and playback, and the large note display lists their pitches from low to high.</p>
+      <p>Generated chords are shown in notation, tablature, fretboard, and playback. When <b>Show names</b> is enabled, the large note display lists the solved pitches from low to high, followed by the original ABC chord symbol in parentheses (for example, <b>C E G (C)</b> or <b>D A C' (D7)</b>).</p>
       <p>When the tune contains chord symbols that the player solves, abcjs's automatic bass and chord accompaniment are muted, and open-string drones are suppressed throughout the tune to avoid competing accompaniment.</p>
       <p>Turning off automatic chord generation restores single-note melody tablature, abcjs's own chord accompaniment, and open-string drones if <b>Play open strings?</b> is selected.</p>
       <p>When automatic chord generation is unchecked, the <b>Chord Voicing</b> and <b>Maximum Chord Fret Stretch</b> controls are disabled and greyed out but retain their selected values.</p>
-      <p>Click <b>OK</b> to apply Configure Playback changes and recalculate the chord fingerings.</p>
+      <p>Click <b>OK</b> to apply the <b>Configure Sound and Tab</b> settings and recalculate the chord fingerings.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to download the loaded ABC tunes, including your edits.</p>
       <p>Click <b>Share</b> to open <b>Sharing Controls</b> and choose <b>Share Current Tune</b> or <b>Share All Tunes</b>.</p>
       <p>In the Share Link dialog, you can copy the link, save it, or test it in a new browser tab.</p>
-      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, <b>Instrument</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings so the recipient can use the same setup.</p>
+      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings so the recipient can use the same setup.</p>
       <p>Share links and saved ABC files preserve the original ABC from the editor; generated chord notes and playback directives are not inserted into them.</p>
       <p>Use <b>Open in ABCTT</b> to transfer the tune to ABC Transcription Tools for further editing.</p>
       <p>When <b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is enabled, <b>Open in ABCTT</b> transfers the processed ABC for the chord solution, including generated bracketed note chords, injected MIDI commands, and notation layout directives.</p>
@@ -1784,7 +1886,7 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tablature Solution Limitations</p>
       <p>The tool is limited to generating tablature solutions automatically for melody-only tunes for a variety of Mountain Dulcimer tunings.</p>
-      <p>It does not accept existing ABC bracket-style note chords such as [CEG]; see <b>Configure Playback</b> for creating playable chords from quoted ABC chord symbols instead.</p>
+      <p>It does not accept existing ABC bracket-style note chords such as [CEG]; see <b>Configure Sound and Tab</b> for creating playable chords from quoted ABC chord symbols instead.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing</p>
       <p>Use your browser's Print command to print the music notation and, when enabled, Mountain Dulcimer tablature.</p>
@@ -1797,15 +1899,15 @@ body.diagram-full .whistleLiveNote.mdChordNoteNames{font-size:clamp(24px,4vw,45p
       <p>Use <b>Save Lesson Configuration</b> to save the tune, lesson details, and selected player settings for later reuse.</p>
       <p>Use <b>Load Lesson Configuration</b> to restore a saved lesson configuration or lesson link file.</p>
       <p>Click <b>Create Lesson Link</b> to generate a link that you can send to students.</p>
-      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, <b>Instrument</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings.</p>
-      <p>The tuning, capo, fret configuration, and every option in <b>Configure Playback</b> are locked during a lesson so students practice with the setup you selected.</p>
+      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings.</p>
+      <p>The tuning, capo, fret configuration, and every option in <b>Configure Sound and Tab</b> are locked during a lesson so students practice with the setup you selected.</p>
       <p>Use <b>Hide</b> if you want the fingering display to start hidden; students can reveal it while practicing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       <p>Open the lesson link provided by your teacher to load the assigned tune, lesson instructions, and dulcimer settings.</p>
       <p>Read the instructions and click <b>Start Lesson</b> to begin.</p>
       <p>If prompted, click <b>Click to Enable Playback</b> to turn on the audio controls.</p>
-      <p>You can change <b>Notation display</b> during a lesson, but you cannot change any of the settings in <b>Configure Playback</b>.</p>
+      <p>You can change <b>Notation display</b>, <b>Show notes</b>, and <b>Show names</b> during a lesson, but you cannot change any of the settings in <b>Configure Sound and Tab</b>.</p>
       <p>Your teacher's tuning, capo, fret configuration, instrument sound, octave-lower playback, open-string drones, automatic chord generation, chord voicing, and maximum chord fret stretch settings remain locked during the lesson.</p>
       <p>You can use the notation, note navigation, playback, tempo, and display controls to practice.</p>
       <p>You can edit the ABC and click <b>Save</b> to keep your changes.</p>
@@ -1871,6 +1973,7 @@ let rebuildTimer=0;
 let sharePlaybackNeedsGesture=false;
 let currentLiveMidi=null;
 let showNoteEnabled=false;
+let showNamesEnabled=true;
 
 const SHARE_BASE_URL="https://michaeleskin.com/tools/abc-mountain-dulcimer-player.html";
 const ABC_TOOLS_BASE_URL="https://michaeleskin.com/abctools/abctools.html";
@@ -1889,6 +1992,7 @@ const MD_SOUND_KEY="abcMountainDulcimerPlayerSound";
 const MD_SOUND_PROGRAMS=[148,25,46];
 const METRONOME_KEY="abcMountainDulcimerPlayerMetronome";
 const SHOW_NOTE_KEY="abcMountainDulcimerPlayerShowNote";
+const SHOW_NAMES_KEY="abcMountainDulcimerPlayerShowNames";
 const WHISTLE_PREFS_KEY="abcMountainDulcimerPlayerPrefs";
 
 function splitTunes(abc){
@@ -2323,7 +2427,7 @@ function alignStaffCenterToFretStatus(){
   const cr=caption.getBoundingClientRect();
   const centerStaffY=sr.top+(112/220)*sr.height;
   // The caption is visually lowered 10px in v1.10; compensate here so the
-  // staff stays at its established v1.9 position when Show note is enabled.
+  // staff stays at its established v1.9 position when Show notes is enabled.
   const captionY=cr.top+cr.height/2-10;
   noteDisplay.style.transform=`translateY(${captionY-centerStaffY}px)`;
 }
@@ -3076,8 +3180,23 @@ function restoreShowNotePreference(){
   try{const saved=localStorage.getItem(SHOW_NOTE_KEY);showNoteEnabled=saved===null?true:saved==="true"}catch(_){showNoteEnabled=true}
   $("showNoteCheck").checked=showNoteEnabled;
 }
-function saveShowNotePreference(){commitStandardShareSettingsIfPending();
+function saveShowNotePreference(){
   try{localStorage.setItem(SHOW_NOTE_KEY,String(showNoteEnabled))}catch(_){}
+}
+function applyShowNamesVisibility(){
+  const names=$("whistleLiveNote");
+  if(names)names.classList.toggle("mdNamesHidden",!showNamesEnabled);
+}
+function restoreShowNamesPreference(){
+  try{
+    const saved=localStorage.getItem(SHOW_NAMES_KEY);
+    showNamesEnabled=saved===null?true:saved==="true";
+  }catch(_){showNamesEnabled=true}
+  const checkbox=$("showNamesCheck");if(checkbox)checkbox.checked=showNamesEnabled;
+  applyShowNamesVisibility();
+}
+function saveShowNamesPreference(){
+  try{localStorage.setItem(SHOW_NAMES_KEY,String(showNamesEnabled))}catch(_){}
 }
 
 let standardShareSettingsPending=false;
@@ -3720,7 +3839,7 @@ function mdSaveChordStretchPreference(){
   commitStandardShareSettingsIfPending();
   try{localStorage.setItem(MD_CHORD_STRETCH_KEY,String(mdMaxChordStretch))}catch(_){}
 }
-// In normal use the Sound selection persists. All Configure Playback settings
+// In normal use the Sound selection persists. All Configure Sound and Tab settings
 // are locked for student lessons.
 function mdRestoreSoundPreference(){
   let saved=null;
@@ -3762,8 +3881,8 @@ function mdAttachPlaybackDialogHelp(){
   button.type='button';
   button.className='dialogHelpBtn mdPlaybackDialogHelp';
   button.textContent='?';
-  button.title='Configure Playback instructions';
-  button.setAttribute('aria-label','Configure Playback instructions');
+  button.title='Configure Sound and Tab instructions';
+  button.setAttribute('aria-label','Configure Sound and Tab instructions');
   button.addEventListener('click',event=>{
     event.preventDefault();
     event.stopPropagation();
@@ -3781,8 +3900,8 @@ function mdAttachPlaybackDialogHelp(){
 async function mdConfigurePlayback(){
   if(lessonModeActive() || $("configurePlaybackBtn").disabled || !window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.form!=="function")return;
   const form=[
-    {name:"Configure Playback",type:"title",cssClass:"mdPlaybackDialogTitle"},
-    {name:"Instrument",id:"sound",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
+    {name:"Configure Sound and Tab",type:"title",cssClass:"mdPlaybackDialogTitle"},
+    {name:"Sound",id:"sound",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
       {name:"Mountain Dulcimer",id:"148"},
       {name:"Guitar",id:"25"},
       {name:"Harp",id:"46"}
@@ -4207,6 +4326,11 @@ document.addEventListener('keydown',e=>{
 
 
 $("hideFingeringCheck").addEventListener("change",e=>setHideFingering(e.target.checked,true));
+$("showNamesCheck").addEventListener("change",e=>{
+  showNamesEnabled=!!e.target.checked;
+  applyShowNamesVisibility();
+  saveShowNamesPreference();
+});
 $("showNoteCheck").addEventListener("change",e=>{
   showNoteEnabled=!!e.target.checked;
   saveShowNotePreference();
@@ -4248,6 +4372,7 @@ restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
 // Mountain Dulcimer panel initialization occurs in the following script block.
 restoreShowNotePreference();
+restoreShowNamesPreference();
 restoreHideFingeringPreference();
 restoreMetronomePreference();
 restoreCountInPreference();
@@ -4286,6 +4411,7 @@ function syncPlaybackPermissionHeaderControls(){
 
   const editorTextSize=$("editorTextSize");
   const showNote=$("showNoteCheck");
+  const showNames=$("showNamesCheck");
   const hideFingering=$("hideFingeringCheck");
   const tabOverride=$("tabOverrideBtn");
   const foldOctaves=$("foldOctavesCheck");
@@ -4296,6 +4422,7 @@ function syncPlaybackPermissionHeaderControls(){
   const headerDisabled=!hasTunes||permissionPending;
   if(editorTextSize)editorTextSize.disabled=headerDisabled;
   if(showNote)showNote.disabled=headerDisabled;
+  if(showNames)showNames.disabled=headerDisabled;
   if(hideFingering)hideFingering.disabled=headerDisabled;
   const octaveLower=$("mdOctaveLower");
   if(octaveLower)octaveLower.disabled=headerDisabled||lessonModeActive();
@@ -5121,7 +5248,11 @@ function mdChordBeforeToken(source,t,previousEnd){
   // A rest or barline breaks the match: quoted chords on rests do nothing.
   const segment=source.slice(Math.max(previousEnd,0),t.start);
   const chord=/(?:^|[^\"])("([^"\r\n]+)")(?:\s|~|\.|![^!\r\n]*!|\+[^+\r\n]*\+|\(\d+(?::\d*){0,2})*$/.exec(segment);
-  return chord?mdChordFromAnnotation(chord[2]):null;
+  if(!chord)return null;
+  const parsed=mdChordFromAnnotation(chord[2]);
+  // Retain the literal ABC chord name (including seventh and :N inversions)
+  // for the live fretboard; fingering remains based on the parsed intervals.
+  return parsed?{...parsed,abcSymbol:chord[2]}:null;
 }
 // The maximum stretch is an enforced constraint, not merely a scoring penalty.
 // Ignore open (unfingered) strings, including capoed open strings, when
@@ -5819,15 +5950,25 @@ function showWhistleLive(midi){
   noteNameEl.classList.toggle("mdChordNoteNames",!!writtenChord);
   const noteNames=(writtenChord||[writtenMidi]).map(n=>formattedWhistleNoteName(n).replace(/#/g,"♯").replace(/b/g,"♭"));
   if(writtenChord){
-    // Independent elements allow a predictable gap without inserting spaces
-    // into the actual pitch names (including octave apostrophes).
-    noteNameEl.replaceChildren(...noteNames.map(name=>{
-      const span=document.createElement("span");
-      span.className="mdChordPitchName";
-      span.textContent=name;
-      return span;
-    }));
+    // Center the solved pitches under the tune title regardless of the chord
+    // annotation width; place the original ABC chord symbol to their right.
+    const pitchGroup=document.createElement("span");
+    pitchGroup.className="mdChordPitchNames";
+    for(const name of noteNames){
+      const pitch=document.createElement("span");
+      pitch.className="mdChordPitchName";
+      pitch.textContent=name;
+      pitchGroup.appendChild(pitch);
+    }
+    const chordName=String(e.chord.abcSymbol||e.chord.symbol||"").trim();
+    if(chordName){
+      const symbol=document.createElement("span");
+      symbol.className="mdChordSymbol";
+      symbol.textContent=`(${chordName})`;
+      noteNameEl.replaceChildren(pitchGroup,symbol);
+    }else noteNameEl.replaceChildren(pitchGroup);
   }else noteNameEl.textContent=noteNames[0];
+  applyShowNamesVisibility();
   if(writtenChord)mdRenderChordStaff(writtenChord);else renderWhistleStaffNote(writtenMidi);
   renderGDAEFingering(currentLiveMidi);
   // The original fretboard alignment routine assumes a vertical diagram.
