@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3360_101826_1830";
+var gVersionNumber = "3361_101926_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -67993,7 +67993,14 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
           continue;
         }
 
-        bodyLines.push(trimmed);
+        // Body-level K: fields must survive bar/repeat expansion. An inline
+        // key change can travel with its measure when phrases are rebuilt.
+        if (/^K\s*:/i.test(trimmed)) {
+          const keyValue = trimmed.replace(/^K\s*:\s*/i, "").trim();
+          if (keyValue) bodyLines.push(`[K:${keyValue}]`);
+        } else {
+          bodyLines.push(trimmed);
+        }
       }
     }
 
@@ -68146,6 +68153,10 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
    */
   function computeMeasureUnits(text) {
     let s = text || "";
+
+    // Key changes affect pitch, not duration. Leave them in the music
+    // elsewhere, but never count the key letter as a sounded note.
+    s = s.replace(/\[K:[^\]\r\n]*\]/gi, "");
 
     // Remove grace notes { ... }
     s = s.replace(/\{[^}]*\}/g, "");
@@ -68330,6 +68341,20 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
     if (cur.trim().length > 0) {
       const notes = cur.replace(/\s+$/g, "");
       measures.push({ notes, bar: "" });
+    }
+
+    // A key change between a repeat end and the following |: belongs to
+    // the next *sounding* measure, not the preceding empty repeat marker.
+    // Attach it before expanding repeats so every pass gets the new key.
+    for (let j = 0; j < measures.length; j++) {
+      const onlyKeyFields = (measures[j].notes || "").trim();
+      if (!/^(?:\[K:[^\]\r\n]+\]\s*)+$/i.test(onlyKeyFields)) continue;
+      let next = j + 1;
+      while (next < measures.length && !(measures[next].notes || "").trim()) next++;
+      if (next < measures.length) {
+        measures[next].notes = onlyKeyFields + " " + measures[next].notes.trimStart();
+        measures[j].notes = "";
+      }
     }
 
     return measures;
@@ -68961,7 +68986,10 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 //
 function StripInlineAnnotations(abc){
 
-  abc = abc.replace(/\[[A-Za-z]:[^\]\r\n]*\]/g, "");
+  // Keep inline key changes for Phrase Builder while removing other
+  // inline fields as before.
+  abc = abc.replace(/\[[A-Za-z]:[^\]\r\n]*\]/g, match =>
+    /^\[K:/i.test(match) ? match : "");
   
   return abc;
 
@@ -68997,7 +69025,9 @@ function PhraseBuilder(theTrainerTune,callback){
     // Matches start of any line (after optional spaces)
     // followed by a single letter OR '+' and then a colon.
     // It does NOT care what comes after the colon (space or not).
-    const re = /^[ \t]*[A-Za-z+]:/m;
+    // A mid-tune K: is supported; all other body-level fields remain
+    // rejected as before (including V:).
+    const re = /^[ \t]*(?!K\s*:)[A-Za-z+]:/im;
 
     return re.test(justTheNotes);
 
@@ -69021,7 +69051,7 @@ function PhraseBuilder(theTrainerTune,callback){
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">All chords in the tune(s) will be stripped.</p>'
   },
   {
-      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with V: tags or other ABC tags at the start of lines outside the header will be skipped.</p>'
+      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with V: tags or other ABC tags (except K: key changes) at the start of lines outside the header will be skipped.</p>'
   }, 
   {
     name: "Phrase length in measures:",

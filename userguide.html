@@ -2760,7 +2760,7 @@
                 <p>If you actually want to modify the tune's ABC to include the phrases and rest measures, use the standalone <a style="text-decoration:none;" href="#advanced_phrasebuilder">Phrase Builder</a> feature on the <strong>More ABC Tools</strong> dialog.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Phrase Builder Limitations</strong></p>
-                <p>The <strong>Phrase Builder</strong> works with single voice tunes that don't have meter changes or other *: ABC tags in the ABC notation itself after the tune header.</p>
+                <p>The <strong>Phrase Builder</strong> works with single voice tunes that don't have meter changes or other *: ABC tags (other than K: key changes) in the ABC notation itself after the tune header.</p>
                 <p>See the <a style="text-decoration:none;" href="#advanced_phrasebuilder">Phrase Builder</a> section below for more information.</p>
                 <hr>
                 <p>Click the <strong>Share</strong> icon at the top-right corner to bring up the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog where you can open the current tune in an external ABC tool.</p>
@@ -5911,12 +5911,13 @@
                 <p><strong>This feature only works on single voice tunes:</strong></p>
                 <p>If a V: tag is found in a tune, as typically would be done for multi-voice tunes, the tune will be skipped and you will be notified about the issue when the operation is complete.</p>
                 <p><strong>Tags at the start of a line outside the header are not supported:</strong></p>
-                <p>If other *: style ABC tags are found in a tune at the start of a line outside the header, the tune will be skipped and you will be notified about the issue when the operation is complete.</p>
-                <p>For example, tunes with changes of key using K: tags, changes in tempo using Q: tags, or meter changes using M: tags that are found in the ABC notes after the terminating K: tag in the tune header will not be processed.</p>
+                <p>If other *: style ABC tags (other than K: key changes) are found in a tune at the start of a line outside the header, the tune will be skipped and you will be notified about the issue when the operation is complete.</p>
+                <p>For example, changes in tempo using Q: tags, or meter changes using M: tags that are found in the ABC notes after the terminating K: tag in the tune header will not be processed.</p>
                 <p>For tunes that contain these kind of tags, I suggest removing the tags, running the Phrase Builder and then re-adding them back manually.</p>
                 <p><strong>Handling exotic repeats or multiple endings (beyond 2):</strong></p>
                 <p>The Phrase Builder is able to handle tunes with initial partial measure pickups as well as anacrusis partial measure pickups and partial measure endings inside of repeats, including 1st and 2nd endings.</p>
-                <p>For exotic nested repeats or multiple endings beyond 2, it will be necessary to reorganize the tune for the Phrase Builder to work correctly.</p>                <hr class="hidden-print" id="incipits_builder_pdf">
+                <p>For exotic nested repeats or multiple endings beyond 2, it will be necessary to reorganize the tune for the Phrase Builder to work correctly.</p>                
+                <hr class="hidden-print" id="incipits_builder_pdf">
                 <h1 class="page_break_always">Notes Incipits Builder</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
