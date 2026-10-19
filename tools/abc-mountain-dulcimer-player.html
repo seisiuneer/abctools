@@ -1838,7 +1838,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
-      <p>Use <b>Mute Dulcimer</b> to silence the melody, generated dulcimer chords, and open-string drones. The metronome remains audible when enabled. Standard abcjs piano bass-and-chord accompaniment remains audible only if the current tune has chord symbols and <b>Chord Playback and Display</b> is set to <b>Play Piano Bass and Chords</b>.</p>
+      <p>Use <b>Mute Dulcimer</b> to silence the melody, generated dulcimer chords, and open-string drones. The metronome remains audible when enabled. Piano bass-and-chord accompaniment remains audible only if the current tune has chord symbols and <b>Chord Playback and Display</b> is set to <b>Play Piano Bass and Chords</b>.</p>
       <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Sound and Tab</p>
@@ -1852,9 +1852,9 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>For tunes without ABC chord symbols, <b>Play open strings?</b> is always available. With chord symbols, it is available only in <b>Don't Play Chords</b> mode. It is disabled and greyed out for piano accompaniment or generated dulcimer chords, without changing the saved checkbox value.</p>
       <p>When both <b>Play melody an octave lower?</b> and <b>Play open strings?</b> are enabled, the melody plays an octave lower while the open strings retain their actual tuned pitches.</p>
       <p><b>Chord Playback and Display</b> chooses how quoted ABC chord symbols are used. <b>Build and Play Dulcimer-friendly Chords</b> is the default.</p>
-      <p><b>Don't Play Chords</b> shows and plays only the melody, without abcjs bass/chord accompaniment or generated chord fingerings. The <b>Play open strings?</b> setting remains available and is respected.</p>
-      <p><b>Play Piano Bass and Chords</b> plays the melody with standard abcjs piano bass-and-chord accompaniment, without generating dulcimer chord fingerings or playing open-string drones.</p>
-      <p><b>Build and Play Dulcimer-friendly Chords</b> generates playable dulcimer chord fingerings at melody notes marked with chord symbols, with no abcjs bass/chord accompaniment or open-string drones.</p>
+      <p><b>Don't Play Chords</b> shows and plays only the melody, without piano bass/chord accompaniment or generated chord fingerings. The <b>Play open strings?</b> setting remains available and is respected.</p>
+      <p><b>Play Piano Bass and Chords</b> plays the melody with standard piano bass-and-chord accompaniment, without generating dulcimer chord fingerings or playing open-string drones.</p>
+      <p><b>Build and Play Dulcimer-friendly Chords</b> generates playable dulcimer chord fingerings at melody notes marked with chord symbols, with no piano bass/chord accompaniment or open-string drones.</p>
       <p>When the current tune has no ABC chord symbols, <b>Chord Playback and Display</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> are disabled and greyed out, without changing their stored values. Open-string playback remains available.</p>
       <p>Place a quoted chord symbol directly before the melody note where you want the chord to sound. Examples of chord symbols:</p>
       <pre class="helpCodeExample"><code>"D"   "Cm"   "G7"</code></pre>
@@ -1864,7 +1864,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>For example, the following generates chords on D and A but leaves the unmarked F notes as single melody notes:</p>
       <pre class="helpCodeExample"><code>"D"D2 F2 "D"A2 F2</code></pre>
       <p>To add the chord again at the start of a later measure, repeat the symbol before that measure's first note.</p>
-      <p>When <b>Play Piano Bass and Chords</b> is selected, the abcjs bass and chords can still be heard with <b>Mute Dulcimer</b> enabled, while the melody and dulcimer open strings remain silent.</p>
+      <p>When <b>Play Piano Bass and Chords</b> is selected, the piano bass and chords can still be heard with <b>Mute Dulcimer</b> enabled, while the melody and dulcimer open strings remain silent.</p>
       <p><b>Chord Voicing</b> selects <b>Sparse</b>, <b>Optimal</b> (default), or <b>Full Harmony</b> for the automatically generated chords.</p>
       <p><b>Sparse</b> adds at most one playable harmony note to the melody, preferring the chord's second listed interval (the major third for an ordinary major chord), then another chord tone such as the perfect fifth if needed.</p>
       <p><b>Optimal</b> adds up to two notes while favoring open strings, lower fret positions, fewer fretted courses, and comfortable finger stretches, even if that means omitting a chord tone or using only two notes.</p>
