@@ -26,6 +26,39 @@
 //
 // Put the whole thing in a function for isolation
 //
+// Read inline and body-line ABC key changes without changing character positions.
+// The cleaned input has already had comments, text blocks, and quoted annotations
+// masked, but still contains bracketed inline fields. All injectors can use the
+// original offsets when merging their note labels back into the ABC.
+function collectABCKeyChanges(originalInput, cleanedInput) {
+    var events = [];
+    var inlineKey = /\[\s*K\s*:\s*([^\]\r\n]*)\]/g;
+    var match;
+    while ((match = inlineKey.exec(cleanedInput)) !== null) {
+        // A trailing ABC comment can contain text such as "[K:C]". Ignore it.
+        // Quoted chord annotations were already masked in cleanedInput.
+        var lineStart = cleanedInput.lastIndexOf("\n", match.index - 1) + 1;
+        if (cleanedInput.slice(lineStart, match.index).indexOf("%") !== -1) continue;
+        events.push({ index: match.index, key: match[1].trim() });
+    }
+
+    // Header-line sanitization masks body K: lines as well. Read their locations
+    // from the original text, excluding any verbatim %%begintext sections.
+    var linePattern = /[^\r\n]*(?:\r?\n|$)/g;
+    var inTextBlock = false;
+    while ((match = linePattern.exec(originalInput)) !== null) {
+        var line = match[0];
+        if (/^\s*%%begintext\b/.test(line)) { inTextBlock = true; continue; }
+        if (/^\s*%%endtext\b/.test(line)) { inTextBlock = false; continue; }
+        if (inTextBlock) continue;
+        var keyLine = /^K:\s*([^\r\n%]*)/.exec(line);
+        if (keyLine) events.push({ index: match.index, key: keyLine[1].trim() });
+        if (!line.length) break;
+    }
+    events.sort(function (a, b) { return a.index - b.index; });
+    return events;
+}
+
 var angloFingeringsGenerator = function (theABC, callback){
 
     var gAngloVerbose = false;
@@ -993,16 +1026,6 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-        while (m = searchRegExp.exec(sanitizedInput)) {
-            var start = m.index;
-            var end = start + m[0].length;
-            for (var index=start;index<end;++index){
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-            }
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
         while (m = searchRegExp.exec(sanitizedInput)) {
@@ -1036,6 +1059,21 @@ var angloFingeringsGenerator = function (theABC, callback){
         // Sanitize !
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+        while (m = searchRegExp.exec(sanitizedInput)) {
+            var start = m.index;
+            var end = start + m[0].length;
+            for (var index=start;index<end;++index){
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+            }
+        }  
+
+
         angloLog("orginal input:\n" + input);
         angloLog("sanitized input:\n" + sanitizedInput);
 
@@ -1044,6 +1082,12 @@ var angloFingeringsGenerator = function (theABC, callback){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -1969,25 +2013,6 @@ var boxTabGenerator = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -2049,6 +2074,30 @@ var boxTabGenerator = function (theABC){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -2056,6 +2105,12 @@ var boxTabGenerator = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -2799,25 +2854,6 @@ var bambooFluteTabGenerator = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -2879,6 +2915,30 @@ var bambooFluteTabGenerator = function (theABC){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -2886,6 +2946,12 @@ var bambooFluteTabGenerator = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -3810,25 +3876,6 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -3888,6 +3935,30 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
+
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
       
         log("sanitized input:" + sanitizedInput);
 
@@ -3896,6 +3967,12 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -4611,25 +4688,6 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -4691,6 +4749,30 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -4698,6 +4780,12 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -5503,25 +5591,6 @@ var MDTablatureGenerator = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -5581,6 +5650,30 @@ var MDTablatureGenerator = function (theABC){
 
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
+
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
        
         log("sanitized input:" + sanitizedInput);
 
@@ -5589,6 +5682,12 @@ var MDTablatureGenerator = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -6718,24 +6817,29 @@ var shapeNoteGenerator = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
+        // Preserve the existing shape-note/solfege parsing path unchanged.
+        // Pitch Names (style 6) must capture inline [K:...] events after other
+        // annotations/comments are masked, so defer bracket masking for it.
+        if (gShapeNoteStyle !== 6) {
+            // Sanitize in-abc chords in brackets
+            searchRegExp = /\[[^\]|]*\]/g
 
-        while (m = searchRegExp.exec(sanitizedInput)) {
+            while (m = searchRegExp.exec(sanitizedInput)) {
 
 
-            var start = m.index;
-            var end = start + m[0].length;
+                var start = m.index;
+                var end = start + m[0].length;
 
-            //console.log(m[0],start,end);
+                //console.log(m[0],start,end);
 
-            for (var index=start;index<end;++index){
+                for (var index=start;index<end;++index){
 
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+                    sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+                }
 
             }
-
-        }  
+        }
 
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
@@ -6798,6 +6902,23 @@ var shapeNoteGenerator = function (theABC){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Style 6 uses the same shared inline/body key-change parser as the
+        // corrected instrument and ABC Note Names injectors. Other styles keep
+        // their original parsing behavior.
+        var keyEvents = [];
+        var nextKeyEvent = 0;
+        if (gShapeNoteStyle === 6) {
+            keyEvents = collectABCKeyChanges(input, sanitizedInput);
+
+            // Mask bracketed ABC fields/chords only AFTER capturing [K:...].
+            searchRegExp = /\[[^\]|]*\]/g;
+            while (m = searchRegExp.exec(sanitizedInput)) {
+                for (var index=m.index; index<m.index+m[0].length; ++index) {
+                    sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index+1);
+                }
+            }
+        }
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -6805,6 +6926,13 @@ var shapeNoteGenerator = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            if (gShapeNoteStyle === 6) {
+                while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                    var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                    if (nextSignature !== null) gKeySignature = nextSignature;
+                    ++nextKeyEvent;
+                }
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 gKeySignature.accidentalFlats = "";
@@ -7575,25 +7703,6 @@ var injectABCNoteNames = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -7655,6 +7764,30 @@ var injectABCNoteNames = function (theABC){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -7662,6 +7795,12 @@ var injectABCNoteNames = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -9063,25 +9202,6 @@ var HarmonicaTabGenerator = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -9143,6 +9263,30 @@ var HarmonicaTabGenerator = function (theABC){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -9150,6 +9294,12 @@ var HarmonicaTabGenerator = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -9931,25 +10081,6 @@ var CustomTabGenerator = function (theABC){
 
         }
 
-        // Sanitize in-abc chords in brackets
-        searchRegExp = /\[[^\]|]*\]/g
-
-        while (m = searchRegExp.exec(sanitizedInput)) {
-
-
-            var start = m.index;
-            var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
-            for (var index=start;index<end;++index){
-
-                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
-            }
-
-        }  
-
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
 
@@ -10011,6 +10142,30 @@ var CustomTabGenerator = function (theABC){
         // Sanitize ! 
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
+        // Capture key changes before bracketed fields are masked.
+        var keyEvents = collectABCKeyChanges(input, sanitizedInput);
+        var nextKeyEvent = 0;
+
+        // Sanitize in-abc chords in brackets
+        searchRegExp = /\[[^\]|]*\]/g
+
+        while (m = searchRegExp.exec(sanitizedInput)) {
+
+
+            var start = m.index;
+            var end = start + m[0].length;
+
+            //console.log(m[0],start,end);
+
+            for (var index=start;index<end;++index){
+
+                sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
+
+            }
+
+        }  
+
+
         log("sanitized input:" + sanitizedInput);
 
         // Find all the notes
@@ -10018,6 +10173,12 @@ var CustomTabGenerator = function (theABC){
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            // The event is applied *before* the next note, including mid-bar changes.
+            while (nextKeyEvent < keyEvents.length && keyEvents[nextKeyEvent].index <= m.index) {
+                var nextSignature = findKeySignature("K:" + keyEvents[nextKeyEvent].key);
+                if (nextSignature !== null) keySignature = nextSignature;
+                ++nextKeyEvent;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";

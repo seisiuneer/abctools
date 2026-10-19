@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3359_101826_0530";
+var gVersionNumber = "3360_101826_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60934,6 +60934,15 @@ function showWhatsNewScreen() {
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
   modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 18 October 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>Fixed Inline Key Changes for Tab Injectors</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">All of the tab injectors were not able to handle inline K: tag key changes.</p>';
+  modal_msg += '<p style="font-size:12pt;">They should be working now except for the Solfège and shape note injectors.</p>';
+  modal_msg += '<p style="font-size:12pt;">They are more complex to fix and still do not handle inline key changes.</p>';
   modal_msg += '</div>';
 
   // Feature card
