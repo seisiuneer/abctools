@@ -1284,7 +1284,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 @media(max-width:540px){.diagramNoteNavigation{gap:10px;justify-content:flex-start;padding-left:10px}.diagramNoteNavigation .paneFullBtn{min-width:48px;padding:7px 12px}.arrowKeyNavLabel{right:8px;font-size:13px}}
 
 /* Browser print: only the complete notation, in normal document flow. */
-@page { size:letter portrait; margin:0.35in; }
+@page { size:auto; margin:0.35in; }
 @media print {
   html,body{height:auto !important;min-height:0 !important;width:auto !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:white !important}
   .app,.workspace,.leftPane,#notationPanel,.notationViewport{display:block !important;position:static !important;float:none !important;transform:none !important;width:100% !important;max-width:none !important;height:auto !important;min-height:0 !important;max-height:none !important;margin:0 !important;padding:0 !important;overflow:visible !important;grid-template-columns:none !important;grid-template-rows:none !important;flex:none !important}
@@ -1479,7 +1479,12 @@ body.mdPlaybackInstructionsOpen #helpOverlay{z-index:2147483647 !important}
 .modal_default_main .mdPlaybackDialogCheckbox input[type="checkbox"]{
   margin-right:11px !important;
 }
-/* When chord generation is off, keep its preferences visible but inactive. */
+/* Grey out any checkbox idled by chord presence or absence. */
+.modal_default_main .mdPlaybackDialogCheckbox:has(input[type="checkbox"]:disabled){
+  color:#8a8a8a !important;
+  opacity:.6;
+}
+/* Idle chord playback, voicing and stretch controls according to ABC chords/mode. */
 .modal_default_main .mdPlaybackDialogSelect:has(select:disabled){
   color:#8a8a8a !important;
 }
@@ -1721,7 +1726,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1762,7 +1767,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
   <select id="mdSoundSelect"><option value="148" selected>Mountain Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
   <input type="checkbox" id="mdOctaveLower" checked>
   <input type="checkbox" id="mdOpenStringsCheck" checked>
-  <input type="checkbox" id="mdAutoStrumChordsCheck" checked>
+  <select id="mdChordPlaybackSelect"><option value="none">Don't Play Chords</option><option value="piano">Play Piano Bass and Chords</option><option value="dulcimer" selected>Build and Play Dulcimer-friendly Chords</option></select>
   <select id="mdChordStretchSelect"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
   <select id="mdChordVoicingSelect"><option value="sparse">Sparse</option><option value="optimal" selected>Optimal</option><option value="full">Full Harmony</option></select>
 </div>
@@ -1833,7 +1838,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
-      <p>Use <b>Mute Dulcimer</b> to silence all dulcimer playback, including melody notes, generated chords, and open-string drones. The metronome remains audible when enabled. Standard abcjs bass-and-chord accompaniment remains audible only when the tune contains ABC chord symbols and <b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is unchecked.</p>
+      <p>Use <b>Mute Dulcimer</b> to silence the melody, generated dulcimer chords, and open-string drones. The metronome remains audible when enabled. Standard abcjs piano bass-and-chord accompaniment remains audible only if the current tune has chord symbols and <b>Chord Playback and Display</b> is set to <b>Play Piano Bass and Chords</b>.</p>
       <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Sound and Tab</p>
@@ -1842,20 +1847,24 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>The selected <b>Sound</b> applies to both the melody and the open strings.</p>
       <p><b>Play melody an octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
       <p>This option also uses the lower melody pitch when determining playable fretboard positions and generating tablature.</p>
-      <p><b>Play open strings?</b> sounds the dulcimer's open strings along with each melody note, giving the tune the accompanying drone sound characteristic of the instrument.</p>
+      <p><b>Play open strings?</b> sounds the dulcimer's open strings along with each melody note when allowed by the chord playback setting, giving the tune the accompanying drone sound characteristic of the instrument.</p>
       <p>This option is enabled by default, and the open-string pitches follow the selected tuning and capo position.</p>
+      <p>For tunes without ABC chord symbols, <b>Play open strings?</b> is always available. With chord symbols, it is available only in <b>Don't Play Chords</b> mode. It is disabled and greyed out for piano accompaniment or generated dulcimer chords, without changing the saved checkbox value.</p>
       <p>When both <b>Play melody an octave lower?</b> and <b>Play open strings?</b> are enabled, the melody plays an octave lower while the open strings retain their actual tuned pitches.</p>
-      <p><b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is enabled by default and creates playable dulcimer chords at melody notes marked with quoted ABC chord symbols.</p>
+      <p><b>Chord Playback and Display</b> chooses how quoted ABC chord symbols are used. <b>Build and Play Dulcimer-friendly Chords</b> is the default.</p>
+      <p><b>Don't Play Chords</b> shows and plays only the melody, without abcjs bass/chord accompaniment or generated chord fingerings. The <b>Play open strings?</b> setting remains available and is respected.</p>
+      <p><b>Play Piano Bass and Chords</b> plays the melody with standard abcjs piano bass-and-chord accompaniment, without generating dulcimer chord fingerings or playing open-string drones.</p>
+      <p><b>Build and Play Dulcimer-friendly Chords</b> generates playable dulcimer chord fingerings at melody notes marked with chord symbols, with no abcjs bass/chord accompaniment or open-string drones.</p>
+      <p>When the current tune has no ABC chord symbols, <b>Chord Playback and Display</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> are disabled and greyed out, without changing their stored values. Open-string playback remains available.</p>
       <p>Place a quoted chord symbol directly before the melody note where you want the chord to sound. Examples of chord symbols:</p>
       <pre class="helpCodeExample"><code>"D"   "Cm"   "G7"</code></pre>
       <p>For example, to sound a D chord on a D melody note:</p>
       <pre class="helpCodeExample"><code>"D"D2</code></pre>
       <p>Each chord symbol adds a dulcimer chord at that note only, not on subsequent notes or measures; repeat the same chord symbol wherever you want another chord, even when the harmony has not changed.</p>
-      <p>A chord symbol immediately before a triplet marker such as <b>(3</b> applies to the triplet's first note; a chord symbol immediately before a rest is ignored. When chord conversion is enabled, roll (<b>~</b>), staccato (<b>.</b>), and tie (<b>-</b>) markers are replaced with spaces in the temporary chord-solving score, without changing the ABC editor text or note-navigation positions.</p>
       <p>For example, the following generates chords on D and A but leaves the unmarked F notes as single melody notes:</p>
       <pre class="helpCodeExample"><code>"D"D2 F2 "D"A2 F2</code></pre>
       <p>To add the chord again at the start of a later measure, repeat the symbol before that measure's first note.</p>
-      <p>If unchecked, ABC chord symbols use the standard abcjs automatic bass-and-chord accompaniment, with piano sounds for the bass and chords. This backing can still be heard with <b>Mute Dulcimer</b> enabled, while dulcimer notes and open strings remain silent.</p>
+      <p>When <b>Play Piano Bass and Chords</b> is selected, the abcjs bass and chords can still be heard with <b>Mute Dulcimer</b> enabled, while the melody and dulcimer open strings remain silent.</p>
       <p><b>Chord Voicing</b> selects <b>Sparse</b>, <b>Optimal</b> (default), or <b>Full Harmony</b> for the automatically generated chords.</p>
       <p><b>Sparse</b> adds at most one playable harmony note to the melody, preferring the chord's second listed interval (the major third for an ordinary major chord), then another chord tone such as the perfect fifth if needed.</p>
       <p><b>Optimal</b> adds up to two notes while favoring open strings, lower fret positions, fewer fretted courses, and comfortable finger stretches, even if that means omitting a chord tone or using only two notes.</p>
@@ -1867,20 +1876,20 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <pre class="helpCodeExample"><code>"Em:1"   "G:2"   "Dm7:4"</code></pre>
       <p><b>:0</b> requests root position as the lowest note, <b>:1</b> requests the next chord tone, <b>:2</b> the following tone, and higher values proceed through the chord tones before moving up an octave.</p>
       <p>Generated chords are shown in notation, tablature, fretboard, and playback. When <b>Show names</b> is enabled, the large note display lists the solved pitches from low to high, followed by the original ABC chord symbol in parentheses (for example, <b>C E G (C)</b> or <b>D A C' (D7)</b>).</p>
-      <p>When the tune contains chord symbols that the player solves, abcjs's automatic bass and chord accompaniment are muted, and open-string drones are suppressed throughout the tune to avoid competing accompaniment.</p>
-      <p>Turning off automatic chord generation restores single-note melody tablature, abcjs's own chord accompaniment, and open-string drones if <b>Play open strings?</b> is selected.</p>
-      <p>When automatic chord generation is unchecked, the <b>Chord Voicing</b> and <b>Maximum Chord Fret Stretch</b> controls are disabled and greyed out but retain their selected values.</p>
+      <p>The automatically generated chord notes appear in notation, tablature and the fretboard only in <b>Build and Play Dulcimer-friendly Chords</b> mode. Piano backing is muted in this mode.</p>
+      <p><b>Don't Play Chords</b> and <b>Play Piano Bass and Chords</b> both display regular single-note melody tablature. Open-string drones play only when <b>Play open strings?</b> is selected and the current chord mode allows them.</p>
+      <p><b>Chord Voicing</b> and <b>Maximum Chord Fret Stretch</b> are enabled only for tunes with ABC chord symbols in <b>Build and Play Dulcimer-friendly Chords</b> mode. Otherwise, they are disabled and greyed out with their values preserved.</p>
       <p>Click <b>OK</b> to apply the <b>Configure Sound and Tab</b> settings and recalculate the chord fingerings.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to download the loaded ABC tunes, including your edits.</p>
       <p>Click <b>Share</b> to open <b>Sharing Controls</b> and choose <b>Share Current Tune</b> or <b>Share All Tunes</b>.</p>
       <p>In the Share Link dialog, you can copy the link, save it, or test it in a new browser tab.</p>
-      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings so the recipient can use the same setup.</p>
+      <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Chord Playback and Display</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings so the recipient can use the same setup.</p>
       <p>Share links and saved ABC files preserve the original ABC from the editor; generated chord notes and playback directives are not inserted into them.</p>
       <p>Use <b>Open in ABCTT</b> to transfer the tune to ABC Transcription Tools for further editing.</p>
-      <p>When <b>Convert ABC chord symbols to dulcimer-friendly chords?</b> is enabled, <b>Open in ABCTT</b> transfers the processed ABC for the chord solution, including generated bracketed note chords, injected MIDI commands, and notation layout directives.</p>
-      <p>When automatic chord generation is disabled, <b>Open in ABCTT</b> transfers the current tune exactly as it appears in the ABC editor.</p>
+      <p>When <b>Build and Play Dulcimer-friendly Chords</b> is selected, <b>Open in ABCTT</b> transfers the processed ABC for the chord solution, including generated bracketed note chords, injected MIDI commands, and notation layout directives.</p>
+      <p>In either of the other chord modes, <b>Open in ABCTT</b> transfers the current tune exactly as it appears in the ABC editor.</p>
       <p><b>Open in ABCTT</b> is available for the current tune (including lesson links) only. The <b>Share All Tunes</b> option creates a normal share link if the tunes fit within the share-link length limit, but does not offer an ABCTT transfer.</p>
       <p>A received share link applies its settings for that visit without replacing your saved preferences unless you change a setting.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1890,7 +1899,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing</p>
       <p>Use your browser's Print command to print the music notation and, when enabled, Mountain Dulcimer tablature.</p>
-      <p>The print layout is optimized for US Letter paper in portrait orientation and automatically reduces the notation size to help tunes fit on the page.</p>
+      <p>Choose your preferred paper size and portrait or landscape orientation in the browser's Print dialog, using the options available for your printer. The print layout scales the notation and tablature together to help them fit the selected page width.</p>
       <p>Very long tunes may require multiple pages, and printing results may vary depending on the browser.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
@@ -1899,7 +1908,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>Use <b>Save Lesson Configuration</b> to save the tune, lesson details, and selected player settings for later reuse.</p>
       <p>Use <b>Load Lesson Configuration</b> to restore a saved lesson configuration or lesson link file.</p>
       <p>Click <b>Create Lesson Link</b> to generate a link that you can send to students.</p>
-      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Convert ABC chord symbols to dulcimer-friendly chords?</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings.</p>
+      <p>Lesson links include the selected tuning, capo, highest fret, extra frets, initial notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Chord Playback and Display</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings.</p>
       <p>The tuning, capo, fret configuration, and every option in <b>Configure Sound and Tab</b> are locked during a lesson so students practice with the setup you selected.</p>
       <p>Use <b>Hide</b> if you want the fingering display to start hidden; students can reveal it while practicing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1908,7 +1917,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>Read the instructions and click <b>Start Lesson</b> to begin.</p>
       <p>If prompted, click <b>Click to Enable Playback</b> to turn on the audio controls.</p>
       <p>You can change <b>Notation display</b>, <b>Show notes</b>, and <b>Show names</b> during a lesson, but you cannot change any of the settings in <b>Configure Sound and Tab</b>.</p>
-      <p>Your teacher's tuning, capo, fret configuration, instrument sound, octave-lower playback, open-string drones, automatic chord generation, chord voicing, and maximum chord fret stretch settings remain locked during the lesson.</p>
+      <p>Your teacher's tuning, capo, fret configuration, instrument sound, octave-lower playback, open-string drones, chord playback mode, chord voicing, and maximum chord fret stretch settings remain locked during the lesson.</p>
       <p>You can use the notation, note navigation, playback, tempo, and display controls to practice.</p>
       <p>You can edit the ABC and click <b>Save</b> to keep your changes.</p>
       <p>You can use <b>Browse</b> to load another ABC file; the assigned instrument settings remain locked.</p>
@@ -1964,7 +1973,7 @@ let melodyMuted=false;
 let metronomeEnabled=false;
 let countInEnabled=false;
 let mdOpenStringsEnabled=true;
-let mdAutoStrumChordsEnabled=true;
+let mdChordPlaybackMode="dulcimer";
 let mdChordVoicing="optimal";
 let mdMaxChordStretch=3;
 let countInTimer=null;
@@ -1983,7 +1992,8 @@ const EDITOR_SIZE_KEY="abcMountainDulcimerPlayerEditorTextSize";
 const TEMPO_KEY="abcMountainDulcimerPlayerTempo";
 const COUNT_IN_KEY="abcMountainDulcimerPlayerCountIn";
 const MD_OPEN_STRINGS_KEY="abcMountainDulcimerPlayerOpenStrings";
-const MD_AUTO_STRUM_CHORDS_KEY="abcMountainDulcimerPlayerAutoStrumChords";
+const MD_CHORD_PLAYBACK_KEY="abcMountainDulcimerPlayerChordPlayback";
+const MD_CHORD_PLAYBACK_MODES=["none","piano","dulcimer"];
 const MD_CHORD_VOICING_KEY="abcMountainDulcimerPlayerChordVoicing";
 const MD_CHORD_STRETCH_KEY="abcMountainDulcimerPlayerMaxChordStretch";
 const MD_CHORD_STRETCH_VALUES=[2,3,4];
@@ -2045,13 +2055,29 @@ function configureIrishRollsForTune(abc){
   }
 }
 
+// A quoted word in an ABC comment or header is not a chord annotation.
+// Ignore comments outside quotes, but retain literal % characters within
+// quoted annotations. This same filter is used when binding chords to notes.
+function mdMusicWithoutComments(line){
+  if(/^\s*(?:[A-Za-z]:|%)/.test(line))return "";
+  let inQuote=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"')inQuote=!inQuote;
+    else if(ch==='%'&&!inQuote)return line.slice(0,i);
+  }
+  return line;
+}
 function hasABCSyntaxChords(abc){
-  const source=String(abc||"");
   const re=/"([^"\r\n]*)"/g;
-  let m;
-  while((m=re.exec(source))){
-    const text=m[1].trim();
-    if(text && !/^[\^_<>@]/.test(text))return true;
+  for(const rawLine of String(abc||"").split(/\r\n?|\n/)){
+    const line=mdMusicWithoutComments(rawLine);
+    re.lastIndex=0;
+    let m;
+    while((m=re.exec(line))){
+      const text=m[1].trim();
+      if(text && !/^[\^_<>@]/.test(text))return true;
+    }
   }
   return false;
 }
@@ -2135,16 +2161,18 @@ async function toggleMetronome(){
 
 function buildPlaybackABC(abc,generatedChordsActive=false){
   const source=String(abc||"");
+  // Back up abcjs chordsOff with explicit MIDI bass/chord volume muting.
+  const suppressABCBackup=mdChordPlaybackMode!=="piano";
   const forced=[
     "%soundfont fatboy",
     melodyMuted?"%%MIDI program mute":(`%%MIDI program ${selectedMelodyProgram()}`),
     ...($("mdOctaveLower")?.checked?["%%MIDI transpose -12"]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0",
-    ...(generatedChordsActive?["%%MIDI bassvol 0","%%MIDI chordvol 0"]:[])
+    ...(suppressABCBackup?["%%MIDI bassvol 0","%%MIDI chordvol 0"]:[])
   ].join("\n")+"\n";
 
-  const overrideMIDI=generatedChordsActive
+  const overrideMIDI=suppressABCBackup
     ? /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi
     : /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi;
   let cleaned=source.replace(overrideMIDI,
@@ -3546,9 +3574,10 @@ function mdHasVoltaEndings(abc){
 function mdPreparePlaybackScoreABC(tune,notationMode){
   // Use the same score for rendering/playback and for ABCTT transfer.
   // Neither path modifies the tune in the ABC editor.
-  const chordScore=mdAutoStrumChordsEnabled?mdBuildChordScoreABC(tune):tune;
-  if(!mdAutoStrumChordsEnabled){MD.chordPlans=new Map();MD.chordEdits=[];}
-  const generatedChordsActive=mdAutoStrumChordsEnabled&&MD.chordPlans.size>0;
+  const solveChords=mdChordPlaybackMode==="dulcimer"&&hasABCSyntaxChords(tune);
+  const chordScore=solveChords?mdBuildChordScoreABC(tune):tune;
+  if(!solveChords){MD.chordPlans=new Map();MD.chordEdits=[];}
+  const generatedChordsActive=solveChords&&MD.chordPlans.size>0;
   const hasGeneratedChordVoicings=generatedChordsActive&&
     MD.chordEdits.some(edit=>edit.replacement.startsWith("["));
   let playbackABC=buildPlaybackABC(chordScore,generatedChordsActive);
@@ -3621,11 +3650,9 @@ async function rebuild(){
     mdUpdateAnalysis(visual[0]);
     if(showWhistleTab)mdRenderScoreTab();else mdClearScoreTab();
 
-    // Add the two unfretted courses to the AUDIO sequence for ordinary
-    // melody notes only. Tunes with generated chords suppress open-string
-    // drones, while abcjs keeps its own unmodified note timing and cursor
-    // synchronization for the generated chords.
-    const addDrones=mdOpenStringsEnabled&&!generatedChordsActive&&!melodyMuted;
+    // Drones are playable with no chords or in melody-only chord mode.
+    // Piano backing and generated dulcimer chords always suppress drones.
+    const addDrones=mdOpenStringsEnabled&&(!hasABCSyntaxChords(tune)||mdChordPlaybackMode==="none")&&!melodyMuted;
     if(addDrones&&typeof visual[0].setUpAudio==="function"){
       // Capture fingering analysis now, before a later tune or setting change.
       const sourceNotes=MD.events.map(e=>({start:e.start,end:e.end,midi:e.midi,writtenMidi:e.writtenMidi,course:e.position?.course,chord:!!e.chord}));
@@ -3715,15 +3742,12 @@ async function rebuild(){
 
     audioControllerInitializing=true;
     try{
-      // The abcjs mute options suppress ALL melody-voice notes, including
-      // bracketed chords from the dulcimer chord solver. They leave the drum
-      // (metronome) track and timing callbacks intact. Only allow abcjs's
-      // own chord backup through when the ABC has chord symbols and the
-      // dulcimer chord conversion option is disabled.
-      const allowABCBackup=!mdAutoStrumChordsEnabled&&hasABCSyntaxChords(tune);
-      const audioOptions=melodyMuted
-        ? {voicesOff:true,chordsOff:!allowABCBackup}
-        : {};
+      // Melody-only mode silences abcjs bass/chord backing, not the melody.
+      // Piano mode enables abcjs backing; dulcimer mode uses solved chords.
+      // Mute Dulcimer silences all melody/solved-chord voices, but retains
+      // piano backing (if selected) and independent metronome drum playback.
+      const allowABCBackup=mdChordPlaybackMode==="piano"&&hasABCSyntaxChords(tune);
+      const audioOptions={chordsOff:!allowABCBackup,...(melodyMuted?{voicesOff:true}:{})};
       await controller.setTune(visual[0],false,audioOptions);
     }finally{
       audioControllerInitializing=false;
@@ -3809,16 +3833,16 @@ function mdSaveOpenStringsPreference(){
   commitStandardShareSettingsIfPending();
   try{localStorage.setItem(MD_OPEN_STRINGS_KEY,String(mdOpenStringsEnabled))}catch(_){}
 }
-function mdRestoreAutoStrumChordsPreference(){
-  try{const saved=localStorage.getItem(MD_AUTO_STRUM_CHORDS_KEY);
-    mdAutoStrumChordsEnabled=saved===null?true:saved==="true";
-  }catch(_){mdAutoStrumChordsEnabled=true;}
-  $("mdAutoStrumChordsCheck").checked=mdAutoStrumChordsEnabled;
+function mdRestoreChordPlaybackPreference(){
+  let saved=null;
+  try{saved=localStorage.getItem(MD_CHORD_PLAYBACK_KEY)}catch(_){}
+  mdChordPlaybackMode=MD_CHORD_PLAYBACK_MODES.includes(saved)?saved:"dulcimer";
+  $("mdChordPlaybackSelect").value=mdChordPlaybackMode;
 }
-function mdSaveAutoStrumChordsPreference(){
+function mdSaveChordPlaybackPreference(){
   if(lessonModeActive())return;
   commitStandardShareSettingsIfPending();
-  try{localStorage.setItem(MD_AUTO_STRUM_CHORDS_KEY,String(mdAutoStrumChordsEnabled))}catch(_){}
+  try{localStorage.setItem(MD_CHORD_PLAYBACK_KEY,mdChordPlaybackMode)}catch(_){}
 }
 // Chord-voicing mode is independent of the chord-generation toggle. Retain the
 // preference while generation is off, and use it again when generation is on.
@@ -3862,8 +3886,9 @@ function mdSaveSoundPreference(){
   try{localStorage.setItem(MD_SOUND_KEY,String(selectedMelodyProgram()))}catch(_){}
 }
 // Attach dialog-specific behavior once DayPilot has inserted the playback form.
-// The chord controls retain their selections but are inactive until automatic
-// chord generation is enabled. Bind to this instance of the dynamic form only.
+// With chords, melody-only permits drones; piano and solved chords do not.
+// Chord-free tunes retain the saved mode while the mode select is disabled.
+// Bind to this instance of the dynamic form only.
 function mdAttachPlaybackDialogHelp(){
   const title=document.querySelector('.modal_default_main .mdPlaybackDialogTitle');
   if(!title)return false;
@@ -3871,20 +3896,25 @@ function mdAttachPlaybackDialogHelp(){
   if(!dialog)return false;
   const checkboxes=dialog.querySelectorAll('.mdPlaybackDialogCheckbox input[type="checkbox"]');
   const selects=dialog.querySelectorAll('.mdPlaybackDialogSelect select');
-  // Form order: octave, open strings, auto chords; instrument, voicing, stretch.
-  if(checkboxes.length!==3 || selects.length!==3)return false;
-  const autoStrumCheckbox=checkboxes[2];
-  const chordVoicingSelect=selects[1];
-  const chordStretchSelect=selects[2];
+  // Form order: octave and open strings; sound, chord playback, voicing, stretch.
+  if(checkboxes.length!==2 || selects.length!==4)return false;
+  const openStringsCheckbox=checkboxes[1];
+  const chordPlaybackSelect=selects[1];
+  const chordVoicingSelect=selects[2];
+  const chordStretchSelect=selects[3];
+  const tuneHasChords=hasABCSyntaxChords($("abcText").value);
+  chordPlaybackSelect.disabled=!tuneHasChords;
+  const syncChordControls=()=>{
+    const mode=chordPlaybackSelect.value;
+    openStringsCheckbox.disabled=tuneHasChords&&mode!=="none";
+    const disabled=!tuneHasChords||mode!=="dulcimer";
+    chordVoicingSelect.disabled=disabled;
+    chordStretchSelect.disabled=disabled;
+  };
   if(!dialog.querySelector('.mdPlaybackDialogHelp')){
-    const syncChordControls=()=>{
-      const disabled=!autoStrumCheckbox.checked;
-      chordVoicingSelect.disabled=disabled;
-      chordStretchSelect.disabled=disabled;
-    };
-    autoStrumCheckbox.addEventListener('change',syncChordControls);
-    syncChordControls();
+    chordPlaybackSelect.addEventListener('change',syncChordControls);
   }
+  syncChordControls();
   if(dialog.querySelector('.mdPlaybackDialogHelp'))return true;
   const button=document.createElement('button');
   button.type='button';
@@ -3917,7 +3947,11 @@ async function mdConfigurePlayback(){
     ]},
     {name:"Play melody an octave lower?",id:"octaveLower",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"},
     {name:"Play open strings?",id:"openStrings",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"},
-    {name:"Convert ABC chord symbols to dulcimer-friendly chords?",id:"autoStrumChords",type:"checkbox",cssClass:"mdPlaybackDialogCheckbox"},
+    {name:"Chord Playback and Display",id:"chordPlayback",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
+      {name:"Don't Play Chords",id:"none"},
+      {name:"Play Piano Bass and Chords",id:"piano"},
+      {name:"Build and Play Dulcimer-friendly Chords",id:"dulcimer"}
+    ]},
     {name:"Chord Voicing",id:"chordVoicing",type:"select",cssClass:"mdPlaybackDialogSelect",options:[
       {name:"Sparse",id:"sparse"},
       {name:"Optimal",id:"optimal"},
@@ -3927,18 +3961,19 @@ async function mdConfigurePlayback(){
       {name:"2",id:"2"},{name:"3",id:"3"},{name:"4",id:"4"}
     ]}
   ];
+  const tuneHasChords=hasABCSyntaxChords($("abcText").value);
   const data={
     sound:$("mdSoundSelect").value,
     octaveLower:$("mdOctaveLower").checked,
     openStrings:mdOpenStringsEnabled,
-    autoStrumChords:mdAutoStrumChordsEnabled,
+    chordPlayback:mdChordPlaybackMode,
     chordVoicing:mdChordVoicing,
     chordStretch:String(mdMaxChordStretch)
   };
-  // Allow the longest checkbox label to fit on one line where screen space permits.
+  // Keep the taller selector dialog within the viewport.
   // On narrow screens, keep the dialog within the viewport instead.
   const dialogWidth=Math.min(550,window.innerWidth-24);
-  const responsePromise=DayPilot.Modal.form(form,data,{top:150,width:dialogWidth,autoFocus:false});
+  const responsePromise=DayPilot.Modal.form(form,data,{top:125,width:dialogWidth,autoFocus:false});
   // Form creation may be synchronous or deferred depending on DayPilot version.
   // Observe only until its title appears, then stop observing immediately.
   const helpObserver=new MutationObserver(()=>{
@@ -3958,40 +3993,47 @@ async function mdConfigurePlayback(){
   const sound=Number(result.sound);
   if(!MD_SOUND_PROGRAMS.includes(sound))return;
   const nextOctave=result.octaveLower===true;
-  const nextOpen=result.openStrings===true;
-  const nextStrum=result.autoStrumChords===true;
-  // Some form serializers omit native disabled selects. Preserve their saved
-  // selections when chord generation is turned off, rather than rejecting OK.
-  const nextVoicing=result.chordVoicing==null?data.chordVoicing:String(result.chordVoicing);
-  const nextStretch=result.chordStretch==null?Number(data.chordStretch):Number(result.chordStretch);
-  if(!MD_CHORD_VOICINGS.includes(nextVoicing)||
+  // A disabled select may be omitted by the dialog serializer. No-chord
+  // tunes keep their selected chord mode without persisting an idle value.
+  const nextMode=tuneHasChords&&MD_CHORD_PLAYBACK_MODES.includes(result.chordPlayback)
+    ?result.chordPlayback:data.chordPlayback;
+  const openControlEnabled=!tuneHasChords||nextMode==="none";
+  const nextOpen=openControlEnabled?result.openStrings===true:data.openStrings;
+  // Only apply voicing/stretch results when dulcimer chord generation is active.
+  const chordVoicingEnabled=tuneHasChords&&nextMode==="dulcimer";
+  const nextVoicing=chordVoicingEnabled&&result.chordVoicing!=null
+    ?String(result.chordVoicing):data.chordVoicing;
+  const nextStretch=chordVoicingEnabled&&result.chordStretch!=null
+    ?Number(result.chordStretch):Number(data.chordStretch);
+  if(!MD_CHORD_PLAYBACK_MODES.includes(nextMode)||
+      !MD_CHORD_VOICINGS.includes(nextVoicing)||
       !MD_CHORD_STRETCH_VALUES.includes(nextStretch))return;
   const soundChanged=String(sound)!==data.sound;
   const octaveChanged=nextOctave!==data.octaveLower;
   const openChanged=nextOpen!==data.openStrings;
-  const strumChanged=nextStrum!==data.autoStrumChords;
+  const modeChanged=nextMode!==data.chordPlayback;
   const voicingChanged=nextVoicing!==data.chordVoicing;
   const stretchChanged=nextStretch!==mdMaxChordStretch;
-  if(!soundChanged&&!octaveChanged&&!openChanged&&!strumChanged&&!voicingChanged&&!stretchChanged)return;
+  if(!soundChanged&&!octaveChanged&&!openChanged&&!modeChanged&&!voicingChanged&&!stretchChanged)return;
 
   const wasPlaying=playbackActive;
   $("mdSoundSelect").value=String(sound);
   $("mdOctaveLower").checked=nextOctave;
   $("mdOpenStringsCheck").checked=nextOpen;
   mdOpenStringsEnabled=nextOpen;
-  $("mdAutoStrumChordsCheck").checked=nextStrum;
-  mdAutoStrumChordsEnabled=nextStrum;
+  $("mdChordPlaybackSelect").value=nextMode;
+  mdChordPlaybackMode=nextMode;
   $("mdChordVoicingSelect").value=nextVoicing;
   mdChordVoicing=nextVoicing;
   $("mdChordStretchSelect").value=String(nextStretch);
   mdMaxChordStretch=nextStretch;
   if(stretchChanged)mdSaveChordStretchPreference();
-  if(strumChanged)mdSaveAutoStrumChordsPreference();
+  if(modeChanged)mdSaveChordPlaybackPreference();
   if(voicingChanged)mdSaveChordVoicingPreference();
   if(soundChanged)mdSaveSoundPreference();
   if(openChanged)mdSaveOpenStringsPreference();
   if(octaveChanged)saveWhistleDisplayPrefs();
-  // A single rebuild applies all six settings together, keeping the
+  // A single rebuild applies all settings together, keeping the
   // existing open-course injection and transpose compensation in sync.
   if(tunes.length){
     await rebuild();
@@ -4140,9 +4182,9 @@ function initializeActionButtonStates(){
   // disabled states across reloads/pageshow.
   $("metronomeCheck").disabled=!hasTunes;
   $("countInCheck").disabled=!hasTunes;
-  $("mdOpenStringsCheck").disabled=!hasTunes||lessonModeActive();
+  $("mdOpenStringsCheck").disabled=!hasTunes||lessonModeActive()||(hasABCSyntaxChords($("abcText").value)&&mdChordPlaybackMode!=="none");
   $("mdSoundSelect").disabled=!hasTunes||lessonModeActive();
-  $("mdAutoStrumChordsCheck").disabled=!hasTunes||lessonModeActive();
+  $("mdChordPlaybackSelect").disabled=!hasTunes||lessonModeActive()||!hasABCSyntaxChords($("abcText").value);
   $("mdChordVoicingSelect").disabled=!hasTunes||lessonModeActive();
   $("configurePlaybackBtn").disabled=!hasTunes||lessonModeActive();
   $("saveAbcBtn").disabled=!hasTunes;
@@ -4386,7 +4428,7 @@ restoreHideFingeringPreference();
 restoreMetronomePreference();
 restoreCountInPreference();
 mdRestoreOpenStringsPreference();
-mdRestoreAutoStrumChordsPreference();
+mdRestoreChordPlaybackPreference();
 mdRestoreChordVoicingPreference();
 mdRestoreChordStretchPreference();
 mdRestoreSoundPreference();
@@ -4438,9 +4480,9 @@ function syncPlaybackPermissionHeaderControls(){
   if(tabOverride)tabOverride.disabled=headerDisabled;
   if(metronome)metronome.disabled=headerDisabled;
   if(countIn)countIn.disabled=headerDisabled;
-  if(openStrings)openStrings.disabled=headerDisabled||lessonModeActive();
-  const autoStrum=$("mdAutoStrumChordsCheck");
-  if(autoStrum)autoStrum.disabled=headerDisabled||lessonModeActive();
+  if(openStrings)openStrings.disabled=headerDisabled||lessonModeActive()||(hasABCSyntaxChords($("abcText").value)&&mdChordPlaybackMode!=="none");
+  const chordPlayback=$("mdChordPlaybackSelect");
+  if(chordPlayback)chordPlayback.disabled=headerDisabled||lessonModeActive()||!hasABCSyntaxChords($("abcText").value);
   const chordVoicing=$("mdChordVoicingSelect");
   if(chordVoicing)chordVoicing.disabled=headerDisabled||lessonModeActive();
   const chordStretch=$("mdChordStretchSelect");
@@ -4687,7 +4729,7 @@ function populateLessonConfigObject(c){
   saveWhistleDisplayPrefs();
   mdSaveOpenStringsPreference();
   mdSaveSoundPreference();
-  mdSaveAutoStrumChordsPreference();
+  mdSaveChordPlaybackPreference();
   mdSaveChordVoicingPreference();
   mdSaveChordStretchPreference();
 
@@ -4726,7 +4768,7 @@ function setupLessonMode(){
   // Tuning, fret configuration, and initial tune remain locked.
   ['instrumentSelect','capoSelect','mdCapoSelect','tuneSelect',
    'configurePlaybackBtn','mdOctaveLower','mdOpenStringsCheck',
-   'mdAutoStrumChordsCheck','mdChordVoicingSelect','mdChordStretchSelect','mdSoundSelect'].forEach(id=>{
+   'mdChordPlaybackSelect','mdChordVoicingSelect','mdChordStretchSelect','mdSoundSelect'].forEach(id=>{
     const el=$(id);
     if(el)el.disabled=true;
   });
@@ -5190,7 +5232,9 @@ function mdAddOpenCoursesToSequence(sequence,sourceNotes,openPitches,sourcePrefi
 // Original source positions are mapped to/from this generated score for clicks,
 // note navigation, cursor-driven fretboards, and repeated audio passages.
 function mdChordFromAnnotation(text){
-  const value=String(text||'').trim().replace(/^[\^_<>]/,'');
+  const value=String(text||'').trim();
+  // ABC positional annotations are text, not harmonic chord symbols.
+  if(!value||/^[\^_<>@]/.test(value))return null;
   // ABC Transcription Tools uses :0 through :14 after the complete chord name
   // to request successive bass inversions (e.g. "Em:1", "G7:2", "Dm7:4").
   // Only the supported numeric suffix is removed from the harmonic postfix:
@@ -5255,8 +5299,15 @@ function mdChordBeforeToken(source,t,previousEnd){
   // Bind the quoted chord to its next melody note, accepting ornaments and
   // (3-style tuplet prefixes between the annotation and that FIRST note.
   // A rest or barline breaks the match: quoted chords on rests do nothing.
-  const segment=source.slice(Math.max(previousEnd,0),t.start);
-  const chord=/(?:^|[^\"])("([^"\r\n]+)")(?:\s|~|\.|![^!\r\n]*!|\+[^+\r\n]*\+|\(\d+(?::\d*){0,2})*$/.exec(segment);
+  // The gap before a note may span an ABC comment or header. Exclude
+  // their quoted text so it cannot become a spurious chord on this note.
+  const segment=source.slice(Math.max(previousEnd,0),t.start)
+    .split(/\r\n?|\n/).map(mdMusicWithoutComments).join("\n");
+  // Text annotations may follow a real chord before its note. Ignore all
+  // five positional forms, without removing barlines, rests or other text
+  // that must still break the chord-to-note association.
+  const chordGap=segment.replace(/"\s*[\^_<>@][^"\r\n]*"/g," ");
+  const chord=/(?:^|[^\"])("([^"\r\n]+)")(?:\s|~|\.|![^!\r\n]*!|\+[^+\r\n]*\+|\(\d+(?::\d*){0,2})*$/.exec(chordGap);
   if(!chord)return null;
   const parsed=mdChordFromAnnotation(chord[2]);
   // Retain the literal ABC chord name (including seventh and :N inversions)
@@ -5991,7 +6042,7 @@ function generateShareLink(abc){
     params.set("instrument",$("instrumentSelect").value);
     params.set("mdcfg",bytesToBase64URL(new TextEncoder().encode(JSON.stringify(mdConfig()))));
     params.set("openstrings",mdOpenStringsEnabled?"1":"0");
-    params.set("strumchords",mdAutoStrumChordsEnabled?"1":"0");
+    params.set("chordplayback",mdChordPlaybackMode);
     params.set("chordvoicing",mdChordVoicing);
     params.set("maxchordstretch",String(mdMaxChordStretch));
     params.set("sound",String(selectedMelodyProgram()));
@@ -6024,8 +6075,9 @@ function validateFretboardSettingsParams(params){
   const notation=params.get("notation");if(notation&&!['notation','mandolin-tab'].includes(notation))throw new Error("Invalid notation setting.");
   const openStrings=params.get("openstrings");
   if(openStrings!==null&&!/^[01]$/.test(openStrings))throw new Error("Invalid Play open strings setting.");
-  const strumChords=params.get("strumchords");
-  if(strumChords!==null&&!/^[01]$/.test(strumChords))throw new Error("Invalid Convert ABC chord symbols to dulcimer-friendly chords setting.");
+  const chordPlayback=params.get("chordplayback");
+  if(chordPlayback!==null&&!MD_CHORD_PLAYBACK_MODES.includes(chordPlayback))
+    throw new Error("Invalid chord playback setting.");
   const voicing=params.get("chordvoicing");
   if(voicing!==null&&!MD_CHORD_VOICINGS.includes(voicing))throw new Error("Invalid chord voicing setting.");
   const stretch=params.get("maxchordstretch");
@@ -6046,11 +6098,11 @@ function applyFretboardSettingsParams(params,forceDefaults=false){
     mdOpenStringsEnabled=openStrings!=="0";
     $("mdOpenStringsCheck").checked=mdOpenStringsEnabled;
   }
-  const strumChords=params.get("strumchords");
-  if(strumChords==="0"||strumChords==="1"||hasShareABC){
-    // Missing chord-generation parameters default to enabled.
-    mdAutoStrumChordsEnabled=strumChords!=="0";
-    $("mdAutoStrumChordsCheck").checked=mdAutoStrumChordsEnabled;
+  const chordPlayback=params.get("chordplayback");
+  if(MD_CHORD_PLAYBACK_MODES.includes(chordPlayback)||hasShareABC){
+    // Missing values default to dulcimer chord generation (no legacy migration).
+    mdChordPlaybackMode=MD_CHORD_PLAYBACK_MODES.includes(chordPlayback)?chordPlayback:"dulcimer";
+    $("mdChordPlaybackSelect").value=mdChordPlaybackMode;
   }
   const voicing=params.get("chordvoicing");
   if(MD_CHORD_VOICINGS.includes(voicing)||hasShareABC){
@@ -6108,7 +6160,7 @@ function mdABCTTChordStaffsep(playbackABC,sourceTune){
 }
 
 function mdABCForABCTTTransfer(tune){
-  if(!mdAutoStrumChordsEnabled)return tune;
+  if(mdChordPlaybackMode!=="dulcimer")return tune;
   const oldPlans=MD.chordPlans;
   const oldEdits=MD.chordEdits;
   const oldPrefixLength=prefixLength;
@@ -6147,7 +6199,7 @@ function mdInstallInteractions(){
   $("instrumentSelect").addEventListener("change",mdChanged);
   $("mdCapoSelect").addEventListener("change",mdChanged);
   if(lessonModeActive())for(const id of ["md15","md65","mdOctaveLower",
-    "mdOpenStringsCheck","mdAutoStrumChordsCheck","mdChordVoicingSelect","mdChordStretchSelect","mdSoundSelect","configurePlaybackBtn"])$(id).disabled=true;
+    "mdOpenStringsCheck","mdChordPlaybackSelect","mdChordVoicingSelect","mdChordStretchSelect","mdSoundSelect","configurePlaybackBtn"])$(id).disabled=true;
 }
 mdInstallInteractions();
 // The original startup call occurs in an earlier script block, before the
