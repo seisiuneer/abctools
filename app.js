@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3362_101926_1330";
+var gVersionNumber = "3363_102026_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31399,13 +31399,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_16Oct2026;
+        var updatePresented = localStorage.sawUpdate_20Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_16Oct2026 = true;
+          localStorage.sawUpdate_20Oct2026 = true;
 
         }
 
@@ -60938,7 +60938,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 18 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 20 October 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">New Tool Added to <strong>Open ABC in External Tool</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Ocarina Fingering Player</strong> has been added to the <strong>Open ABC in External Tool</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">You can send the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new tool.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60948,14 +60956,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">All of the tab injectors were not able to handle inline K: tag key changes.</p>';
   modal_msg += '<p style="font-size:12pt;">They should be working now except for the Solfège and shape note injectors.</p>';
   modal_msg += '<p style="font-size:12pt;">They are more complex to fix and still do not handle inline key changes.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New Tools Added to <strong>Open ABC in External Tool</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Mountain Dulcimer Player</strong>, <strong>ABC Comhaltas Note Names Player</strong>, and <strong>ABC Takadimi Player</strong> have been added to the <strong>Open ABC in External Tool</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">You can send the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new tools.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67870,13 +67870,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_16Oct2026;
+    var updatePresented = localStorage.sawUpdate_20Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_16Oct2026 = true;
+      localStorage.sawUpdate_20Oct2026 = true;
 
     }
 
@@ -71489,6 +71489,9 @@ function OpenInAdditionalFingeringPlayer(abcText, isFromPlayer, name, url, analy
 function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Recorder Fingering Player','https://michaeleskin.com/tools/abc-recorder-fingering-player.html','OpenInABCRecorderFingeringPlayer');
 }
+function OpenInABCOcarinaFingeringPlayer(abcText,isFromPlayer){
+  OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Ocarina Fingering Player','https://michaeleskin.com/tools/abc-ocarina-fingering-player.html','OpenInABCOcarinaFingeringPlayer');
+}
 function OpenInABCTremoloHarmonicaPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Tremolo Harmonica Player','https://michaeleskin.com/tools/abc-tremolo-harmonica-player.html','OpenInABCTremoloHarmonicaPlayer');
 }
@@ -71544,6 +71547,7 @@ function openInExternalTool(theABC, isFromPlayer){
         toolCard('external_anglo_concertina', 'img/tool-abc-anglo-player-1.jpg', 'Open the ABC in the ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player') +
         toolCard('external_harmonica_player', 'img/tool-abc-harmonica-player-1.jpg', 'Open the ABC in the ABC Harmonica Player', 'ABC Harmonica Player', 'ABC Harmonica Player') +
         toolCard('external_recorder_player', 'img/tool-abc-recorder-player-1.jpg', 'Open the ABC in the ABC Recorder Fingering Player', 'ABC Recorder Fingering Player', 'ABC Recorder Fingering Player') +
+        toolCard('external_ocarina_player', 'img/tool-abc-ocarina-player-1.jpg', 'Open the ABC in the ABC Ocarina Fingering Player', 'ABC Ocarina Fingering Player', 'ABC Ocarina Fingering Player') +
         toolCard('external_tremolo_player', 'img/tool-abc-tremolo-harmonica-player-1.jpg', 'Open the ABC in the ABC Tremolo Harmonica Player', 'ABC Tremolo Harmonica Player', 'ABC Tremolo Harmonica Player') +
         toolCard('external_mountain_dulcimer_player', 'img/tool-abc-mountain-dulcimer-player-1.jpg', 'Open the ABC in the ABC Mountain Dulcimer Player', 'ABC Mountain Dulcimer Player', 'ABC Mountain Dulcimer Player') +
         toolCard('external_comhaltas_player', 'img/tool-abc-comhaltas-player-1.jpg', 'Open the ABC in the ABC Comhaltas Note Names Player', 'ABC Comhaltas Note Names Player', 'ABC Comhaltas Note Names Player') +
@@ -71612,6 +71616,9 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_recorder_player");
   if (elem) elem.onclick = function(){ OpenInABCRecorderFingeringPlayer(theABC,isFromPlayer); };
+
+  elem = document.getElementById("external_ocarina_player");
+  if (elem) elem.onclick = function(){ OpenInABCOcarinaFingeringPlayer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_tremolo_player");
   if (elem) elem.onclick = function(){ OpenInABCTremoloHarmonicaPlayer(theABC,isFromPlayer); };

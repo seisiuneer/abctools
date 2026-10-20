@@ -6,29 +6,14 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-// Updated 19 Oct 2026 1330
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 20 Oct 2026 1100
 //
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-3362';
+const cacheName = 'abctoolscache-3363';
 
 const contentToCache = [
     'abctools.html',
@@ -123,6 +108,7 @@ const contentToCache = [
     'img/tool-abc-comhaltas-player-1.jpg',
     'img/tool-abc-takadimi-player-1.jpg',
     'img/tool-abc-mountain-dulcimer-player-1.jpg',
+    'img/tool-abc-ocarina-player-1.jpg',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',
