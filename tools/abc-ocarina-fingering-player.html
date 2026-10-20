@@ -52,7 +52,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="ABC Ocarina Fingering Player" />
 <meta name="twitter:description" content="Play ABC tunes with synchronized notation, 12-hole ocarina tablature, selectable models and live fingerings." />
-<meta name="twitter:image" content="https://michaeleskin.com/tools/img/abc-ocarina-fingering-player-og1.jpg" />
+<meta name="twitter:image" content="https://michaeleskin.com/tools/img/abc-ocarina-fingering-player-og2.jpg" />
 <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
@@ -372,6 +372,17 @@ body.diagram-full .ocarinaStaffNote{width:clamp(145px,17vw,220px);height:clamp(1
 
 /* Let the notation actions reflow when the pane is too narrow. */
 #notationPanel .notationHeaderRight{flex-wrap:wrap;justify-content:flex-end}
+#solveMissingNotesBtn{white-space:nowrap;flex:0 0 auto}
+/* Keep the confirmation visible even though the completed tune disables solving. */
+#solveMissingNotesBtn.solved-success,
+#solveMissingNotesBtn.solved-success:disabled{
+  background:#178043 !important;
+  border-color:#0d5e31 !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  opacity:1 !important;
+  cursor:default;
+}
 @media(max-width:1350px){
   #notationPanel .panelHeader{flex-wrap:wrap}
   #notationPanel .notationHeaderRight{flex:1 1 auto}
@@ -990,7 +1001,7 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
 @media (orientation:landscape) and (min-width:900px) and (max-width:1400px) and (max-height:950px) and (hover:none) and (pointer:coarse){body:not(.diagram-full) .ocarinaLargeGlyph{font-size:clamp(155px,24vh,250px)}body:not(.diagram-full) .ocarinaLive{padding:8px 14px}body:not(.diagram-full) .ocarinaNoteGroup,body:not(.diagram-full) .ocarinaNoteGroup.showStaffNote{transform:none}}
 @media(max-width:650px){.diagramHeader{flex-wrap:wrap;align-items:center}.diagramHeaderRight{flex:1 1 100%;flex-wrap:wrap;justify-content:flex-end}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.3.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.3.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
 <div class="toolbar ocarinaToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="ocarina-tab" selected>Notation + Ocarina Tab</option></select></div>
@@ -1014,7 +1025,7 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
  <div class="leftPane" id="leftPane">
   <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="solveMissingNotesBtn" class="notationHeaderBtn" type="button" disabled aria-live="polite" title="Find playable fingerings at +1, -1, -2, then +2 octaves">Solve Missing Notes</button><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Ocarina Fingering</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
@@ -1054,6 +1065,7 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fingering Display and Navigation</p>
       <p>Click a note in the notation to display its fingering and select the corresponding ABC text. Use the <b>←</b> and <b>→</b> buttons beneath the fingering pane to step through notes without playback.</p>
+      <p>When no note is selected, the fingering pane shows an ocarina with all holes open. The note name and small staff note appear only when a note is selected.</p>
       <p>Leave <b>Use arrow keys?</b> checked to step with the Left and Right Arrow keys, or use Home and End to jump to the first or last note. These shortcuts also work with compatible Bluetooth keyboard controllers. Uncheck the option to use the keys normally.</p>
       <p><b>Show note</b> displays the selected written pitch on a small staff below its note name. This preference is remembered in your browser.</p>
       <p><b>Hide</b> temporarily conceals the fingering pane contents for practice. Uncheck it to show them again. Your normal preference is remembered; students may change it temporarily during lessons.</p>
@@ -1064,6 +1076,11 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
       <p>The audio uses an ocarina-like instrument sound. The selected ocarina model and <b>Octave Shift</b> determine the sounding register; changing either does not transpose the printed notation.</p>
       <p><b>Tempo</b> changes the playing speed from 10% to 200%. You can also use the tempo percentage box in the playback bar.</p>
       <p>Check <b>Metronome</b> for a metronome click and <b>Count in?</b> for a five-second countdown before starting playback from a stopped position.</p>
+      <p><b>Solve Missing Notes</b> is available when one or more notes in the current tune have no playable ocarina fingering (shown as an X when tablature is displayed).</p>
+      <p>It tries moving each unavailable note up one octave, then down one octave, then down two octaves, then up two octaves, stopping at the first playable fingering. It preserves the intended sharps, flats, and naturals.</p>
+      <p>Already-playable notes keep their pitches, although the tool may add an explicit accidental to preserve a pitch.</p>
+      <p>If some unavailable notes cannot be moved into range, the playable corrections are still made and an alert explains that the tune is not completely solved.</p>
+      <p>Review the modified ABC before saving or sharing; these edits change the written notes and are limited to the selected tune.</p>
       <p><b>Mute Melody</b> silences the melody for practice. Click <b>Unmute Melody</b> to hear it again. Accompaniment, when available, can continue playing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
@@ -1323,6 +1340,227 @@ function ocarinaGlyphForMidi(midi){
   return OCARINA_MIDI_MAPS[selectedOcarinaModel().key].get(fingeringMidi(midi))||'x';
 }
 
+
+/* Solve only the current tune. Work from resolved ABC pitches, not note letters:
+   accidentals are octave-specific within a measure. The rewritten stream also
+   protects *unmodified* notes from accidental changes introduced by a shift. */
+const OCARINA_NATURAL_PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+function ocarinaKeySignature(keyText){
+  const m=String(keyText||'C').trim().match(/^([A-Ga-g])([#b]?)(.*)$/);
+  if(!m)return {};
+  const tonic=m[1].toUpperCase()+m[2];
+  const tail=m[3]||'';
+  const mode=(tail.trim().match(/^([a-z]+)/i)||['',''])[1].toLowerCase();
+  let offset=0;
+  if(mode==='m'||mode.startsWith('min')||mode.startsWith('aeo'))offset=-3;
+  else if(mode.startsWith('mix'))offset=-1;
+  else if(mode.startsWith('dor'))offset=-2;
+  else if(mode.startsWith('phr'))offset=-4;
+  else if(mode.startsWith('loc'))offset=-5;
+  else if(mode.startsWith('lyd'))offset=1;
+  const majors={Cb:-7,Gb:-6,Db:-5,Ab:-4,Eb:-3,Bb:-2,F:-1,C:0,G:1,D:2,A:3,E:4,B:5,'F#':6,'C#':7};
+  const fifths=Math.max(-7,Math.min(7,(majors[tonic]??0)+offset));
+  const key={};
+  const ordered=fifths<0?'BEADGCF':'FCGDAEB';
+  for(let i=0;i<Math.abs(fifths);i++)key[ordered[i]]=Math.sign(fifths);
+  // Also honor explicit key-signature modifications such as K:G =f or K:C ^F.
+  for(const a of tail.matchAll(/(?:^|\s)(\^\^|__|\^|_|=)\s*([A-Ga-g])(?=\s|$)/g)){
+    key[a[2].toUpperCase()]=ocarinaAccidentalOffset(a[1]);
+  }
+  return key;
+}
+function ocarinaAccidentalOffset(symbol){
+  return symbol==='^^'?2:symbol==='__'?-2:symbol==='^'?1:symbol==='_'?-1:0;
+}
+function ocarinaAccidentalSymbol(offset){
+  return offset===2?'^^':offset===1?'^':offset===-1?'_':offset===-2?'__':'=';
+}
+function ocarinaShiftedABCNote(naturalMidi,letter,octaveDelta){
+  const octave=Math.floor((naturalMidi+octaveDelta)/12)-1;
+  const name=letter.toUpperCase();
+  return octave>=5?name.toLowerCase()+"'".repeat(octave-5):name+','.repeat(4-octave);
+}
+function ocarinaABCNoteEvents(abc){
+  const events=[];
+  const accidentals=new Map();
+  let signature={},voice='default',lineStart=true;
+  const reset=()=>{accidentals.clear()};
+  const lineEndAt=i=>{const end=abc.indexOf('\n',i);return end<0?abc.length:end};
+  for(let i=0;i<abc.length;){
+    const c=abc[i];
+    if(c==='\n'||c==='\r'){lineStart=true;i++;continue}
+    if(lineStart){
+      if(c===' '||c==='\t'){i++;continue}
+      lineStart=false;
+      if(c==='%'||/^[A-Za-z]:/.test(abc.slice(i,i+2))){
+        const end=lineEndAt(i),line=abc.slice(i,end);
+        if(/^K\s*:/.test(line)){
+          signature=ocarinaKeySignature(line.replace(/^K\s*:/,''));reset();
+          events.push({type:'key',signature});
+        }
+        if(/^V\s*:/.test(line)){voice=line.replace(/^V\s*:/,'').trim().split(/\s+/)[0];reset();events.push({type:'bar'})}
+        i=end;continue;
+      }
+    }
+    if(c==='%'){i=lineEndAt(i);continue}
+    if(c==='"'||c==='!'||c==='+'){
+      const delim=c;let j=i+1;
+      while(j<abc.length){if(abc[j]==='\\'&&j+1<abc.length){j+=2;continue}if(abc[j++]===delim)break}
+      i=j;continue;
+    }
+    if(c==='{'){const end=abc.indexOf('}',i+1);i=end<0?abc.length:end+1;continue}
+    if(c==='['){
+      const field=abc.slice(i).match(/^\[([A-Za-z]):([^\]]*)\]/);
+      if(field){
+        if(field[1]==='K'){signature=ocarinaKeySignature(field[2]);reset();events.push({type:'key',signature})}
+        else if(field[1]==='V'){voice=field[2].trim();reset();events.push({type:'bar'})}
+        i+=field[0].length;continue;
+      }
+    }
+    if(c==='|'){
+      reset();events.push({type:'bar'});i++;continue;
+    }
+    let j=i,accText='';
+    if(abc[j]==='='||abc[j]==='^'||abc[j]==='_'){
+      accText=abc[j++];
+      if((accText==='^'||accText==='_')&&abc[j]===accText)accText+=abc[j++];
+    }
+    const letter=abc[j];
+    if(!letter||!/[A-Ga-g]/.test(letter)){i++;continue}
+    j++;
+    const markStart=j;
+    while(abc[j]==="'"||abc[j]===',')j++;
+    const marks=abc.slice(markStart,j);
+    const headEnd=j;
+    while(/[0-9/]/.test(abc[j]||''))j++;
+    const naturalMidi=(letter===letter.toLowerCase()?72:60)+OCARINA_NATURAL_PC[letter.toUpperCase()]+[...marks].reduce((a,x)=>a+(x==="'"?12:-12),0);
+    const accidentalKey=voice+':'+naturalMidi;
+    const originalOffset=accText?ocarinaAccidentalOffset(accText):(accidentals.has(accidentalKey)?accidentals.get(accidentalKey):(signature[letter.toUpperCase()]||0));
+    if(accText)accidentals.set(accidentalKey,originalOffset);
+    events.push({type:'note',start:i,end:j,headEnd,accText,letter,marks,naturalMidi,originalOffset,midi:naturalMidi+originalOffset,signature,voice});
+    i=j;
+  }
+  return events;
+}
+function ocarinaMissingNotesPlan(source){
+  const events=ocarinaABCNoteEvents(String(source||''));
+  let missing=0,solved=0,unsolved=0;
+  const available=OCARINA_MIDI_MAPS[selectedOcarinaModel().key];
+  for(const event of events){
+    if(event.type!=='note')continue;
+    const transpose=notationVisualTransposeAtSource(source,event.start);
+    const playable=shift=>available.has(fingeringMidi(event.midi+shift+transpose));
+    event.shift=0;
+    if(playable(0))continue;
+    missing++;
+    // Try the nearest octaves first. The order is intentional: +1, -1, -2, +2.
+    const candidate=[12,-12,-24,24].find(playable);
+    if(candidate!==undefined){event.shift=candidate;solved++}
+    else unsolved++;
+  }
+  return {events,missing,solved,unsolved};
+}
+function notationVisualTransposeAtSource(source,position){
+  let transpose=0;
+  for(const match of source.slice(0,position).matchAll(/^[ \t]*%%visualtranspose[ \t]+([+-]?\d+(?:\.\d+)?)(?=\s|$)/gm))transpose=Number(match[1]);
+  return transpose;
+}
+function rewriteOcarinaMissingNotes(source,plan){
+  if(!plan.solved)return source;
+  const replacements=[];
+  const accidentals=new Map();
+  let signature={},voice='default';
+  for(const event of plan.events){
+    if(event.type==='key'){signature=event.signature;accidentals.clear();continue}
+    if(event.type==='bar'){accidentals.clear();continue}
+    const {shift=0,letter,naturalMidi,originalOffset,accText}=event;
+    const targetMidi=naturalMidi+shift;
+    const key=event.voice+':'+targetMidi;
+    const inherited=accidentals.has(key)?accidentals.get(key):(signature[letter.toUpperCase()]||0);
+    let newAcc='';
+    // Keep explicit accidentals on unshifted notes. Explicitly mark an octave
+    // substitution when required by its pitch or the original spelling.
+    if(accText&&shift===0)newAcc=accText;
+    else if(inherited!==originalOffset||(shift!==0&&!!accText))newAcc=ocarinaAccidentalSymbol(originalOffset);
+    if(newAcc)accidentals.set(key,originalOffset);
+    const pitch=shift?ocarinaShiftedABCNote(naturalMidi,letter,shift):letter+event.marks;
+    const replacement=newAcc+pitch+source.slice(event.headEnd,event.end);
+    if(replacement!==source.slice(event.start,event.end))replacements.push({start:event.start,end:event.end,replacement});
+  }
+  let result=source;
+  for(let i=replacements.length-1;i>=0;i--){const r=replacements[i];result=result.slice(0,r.start)+r.replacement+result.slice(r.end)}
+  return result;
+}
+let solveMissingSuccessTimer=null;
+let solveMissingSuccessActive=false;
+function clearSolveMissingNotesSuccess(){
+  if(solveMissingSuccessTimer!==null){clearTimeout(solveMissingSuccessTimer);solveMissingSuccessTimer=null}
+  solveMissingSuccessActive=false;
+  const btn=$('solveMissingNotesBtn');if(!btn)return;
+  btn.classList.remove('solved-success');
+  btn.textContent='Solve Missing Notes';
+  btn.style.minWidth='';
+}
+function showSolveMissingNotesSuccess(){
+  const btn=$('solveMissingNotesBtn');if(!btn)return;
+  clearSolveMissingNotesSuccess();
+  // Preserve the button's width while its short confirmation label is shown.
+  const width=btn.getBoundingClientRect().width;
+  if(width>0)btn.style.minWidth=Math.ceil(width)+'px';
+  solveMissingSuccessActive=true;
+  btn.classList.add('solved-success');
+  btn.textContent='✓ Solved!';
+  btn.disabled=true;
+  btn.title='All missing notes have playable fingerings';
+  solveMissingSuccessTimer=setTimeout(()=>{
+    clearSolveMissingNotesSuccess();
+    updateSolveMissingNotesButton();
+  },1500);
+}
+function updateSolveMissingNotesButton(){
+  const btn=$('solveMissingNotesBtn');if(!btn)return;
+  let missing=false;
+  if(tunes.length&&hasMinimumABCForRender($('abcText').value)){
+    try{missing=ocarinaMissingNotesPlan($('abcText').value).missing>0}catch(error){console.warn('Unable to inspect missing fingerings',error)}
+  }
+  if(solveMissingSuccessActive){
+    if(!missing){btn.disabled=true;return} // Preserve success through any delayed render.
+    clearSolveMissingNotesSuccess(); // A new unsupported note supersedes success.
+  }
+  btn.textContent='Solve Missing Notes';
+  btn.disabled=!missing;
+  btn.title=missing?'Try +1, -1, -2, then +2 octaves for unavailable notes':'All notes have playable fingerings for this model and octave shift';
+}
+let solvingOcarinaNotes=false;
+async function solveMissingOcarinaNotes(){
+  if(solvingOcarinaNotes||$('solveMissingNotesBtn').disabled)return;
+  solvingOcarinaNotes=true;
+  try{
+    const source=$('abcText').value;
+    const plan=ocarinaMissingNotesPlan(source);
+    if(!plan.missing)return;
+    const rewritten=rewriteOcarinaMissingNotes(source,plan);
+    if(rewritten!==source){
+      $('abcText').value=rewritten;
+      setAbcDirty(true);
+      syncCurrentTuneFromEditor();
+      instrumentNavAnchor=null;
+      refreshInstrumentNoteButtons();
+      updateShareButtons();
+      await rebuild();
+    }
+    updateSolveMissingNotesButton();
+    if(plan.unsolved){
+      const msg=`Not all notes can be solved for this Ocarina Model and Octave Shift.<br><br>${plan.solved} note(s) corrected; ${plan.unsolved} note(s) still have no playable fingering.`;
+      if(window.DayPilot?.Modal?.alert)await DayPilot.Modal.alert(msg,{top:120,width:480});
+      else window.alert(msg.replace(/<br\s*\/?\s*>/gi,'\n'));
+    }else if(plan.solved>0&&ocarinaMissingNotesPlan($('abcText').value).missing===0){
+      showSolveMissingNotesSuccess();
+    }
+  }catch(error){
+    void showPlayerAlert('Unable to solve missing notes: '+(error&&error.message||error));
+  }finally{solvingOcarinaNotes=false;updateSolveMissingNotesButton()}
+}
 
 function splitTunes(abc){
   const lines=String(abc||"").replace(/\r\n?/g,"\n").split("\n");
@@ -1714,7 +1952,10 @@ function showOcarinaLive(midi){
   const glyph=$("ocarinaLargeGlyph");
   const note=$("ocarinaLiveNote");
   if(midi==null){
-    glyph.textContent="";
+    // The original 12-hole ocarina font uses U for every hole open.
+    // It is a neutral illustration, not the fingering of a selected note.
+    glyph.textContent="U";
+    glyph.setAttribute("aria-label","Ocarina with all holes open; no note selected");
     glyph.style.color="#111";
     note.textContent="";
     renderOcarinaStaffNote(null);
@@ -1723,6 +1964,7 @@ function showOcarinaLive(midi){
 
   const n=currentLiveMidi;
   glyph.textContent=ocarinaGlyphForMidi(n);
+  glyph.setAttribute("aria-label","12-hole ocarina fingering for selected note");
   glyph.style.color=ocarinaGlyphColor(n);
   note.textContent=formattedOcarinaNoteName(n).replace(/#/g,"♯").replace(/b/g,"♭");
   renderOcarinaStaffNote(n);
@@ -2720,6 +2962,7 @@ async function rebuild(){
     if(!visual||!visual.length)throw new Error("No notation was rendered.");
 
     if(showOcarinaTab)postProcessOcarinaTab(visual,"notation");
+    updateSolveMissingNotesButton();
 
     if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function"){
       throw new Error("abcjs audio is unavailable.");
@@ -2815,6 +3058,7 @@ function scheduleRebuild(){
 }
 
 function loadTune(index,syncEditor=true){
+  clearSolveMissingNotesSuccess();
   const notationViewport=$("notation").parentElement;
   if(notationViewport)notationViewport.scrollTop=0;
   if(syncEditor)syncCurrentTuneFromEditor();
@@ -2826,6 +3070,7 @@ function loadTune(index,syncEditor=true){
   $("abcText").disabled=false;
   $("tuneSelect").value=String(index);
   updateMuteMelodyButton();
+  updateSolveMissingNotesButton();
   scheduleRebuild();
   updateShareButtons();
 }
@@ -3005,6 +3250,7 @@ function initializeActionButtonStates(){
   $("saveAbcBtn").disabled=!hasTunes;
   // Firefox may restore a stale enabled state on reload. With no tune loaded,
   // force Tempo back to its true startup state after form-state restoration.
+  updateSolveMissingNotesButton();
   if(!hasTunes)$("tempoBtn").disabled=true;
   else updateTempoButtonState();
 }
@@ -3102,9 +3348,11 @@ $("abcText").addEventListener("paste",e=>{
 });
 
 $("abcText").addEventListener("input",()=>{
+  clearSolveMissingNotesSuccess();
   setAbcDirty(true);
   updateMuteMelodyButton();
   beginManualTuneIfNeeded();
+  updateSolveMissingNotesButton();
   syncCurrentTuneFromEditor();
   const value=$("abcText").value;
 
@@ -3130,6 +3378,7 @@ $("abcText").addEventListener("input",()=>{
 
 $("metronomeCheck").addEventListener("change",toggleMetronome);
 $("countInCheck").addEventListener("change",saveCountInPreference);
+$("solveMissingNotesBtn").addEventListener("click",solveMissingOcarinaNotes);
 $("muteMelodyBtn").addEventListener("click",toggleMelodyMute);
 $("tempoBtn").addEventListener("click",()=>{
   const input=findTempoInput();
@@ -3177,20 +3426,26 @@ $("editorTextSize").addEventListener("change",e=>{
 });
 
 $("notationDisplay").addEventListener("change",()=>{
+  clearSolveMissingNotesSuccess();
   saveOcarinaDisplayPrefs();
   if(tunes.length)scheduleRebuild();
+  updateSolveMissingNotesButton();
   updateShareButtons();
 });
 
 $('ocarinaKey').addEventListener("change",()=>{
+    clearSolveMissingNotesSuccess();
     saveOcarinaDisplayPrefs();
     if(tunes.length)scheduleRebuild();
+    updateSolveMissingNotesButton();
     if(currentLiveMidi!=null)showOcarinaLive(currentLiveMidi);
     updateShareButtons();
 });
 $("ocarinaPlayOctave").addEventListener("change",()=>{
+  clearSolveMissingNotesSuccess();
   saveOcarinaDisplayPrefs();
   if(tunes.length)scheduleRebuild();
+  updateSolveMissingNotesButton();
   if(currentLiveMidi!=null)showOcarinaLive(currentLiveMidi);
   updateShareButtons();
 });
@@ -3537,7 +3792,7 @@ function moveInstrumentNote(direction){
 $("abcPrevNoteBtn").addEventListener("click",()=>moveInstrumentNote(-1));
 $("abcNextNoteBtn").addEventListener("click",()=>moveInstrumentNote(1));
 $("abcText").addEventListener("input",()=>{instrumentNavAnchor=null;refreshInstrumentNoteButtons()});
-$("abcText").addEventListener("click",()=>{instrumentNavAnchor=null});
+$("abcText").addEventListener("click",()=>{instrumentNavAnchor=null;if(!playbackActive)showOcarinaLive(null)});
 setInterval(refreshInstrumentNoteButtons,700);
 
 
