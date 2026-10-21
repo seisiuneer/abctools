@@ -29,8 +29,9 @@
  * SOFTWARE.
  * 
  * Fingering data/font diagrams adapted from Mathias Panzenböck's 12-Hole Ocarina
- * Tab Creator, updated by Michael Eskin. The ocarina fonts are SIL Open Font License 1.1.
+ * Tab Creator, updated by Michael Eskin. The ocarina fons are SIL Open Font License 1.1.
  *
+
 -->
 <head>
 <meta charset="utf-8">
@@ -75,7 +76,7 @@
 .app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
 .toolbar{flex:0 0 auto;display:grid;grid-template-columns:minmax(190px,1.35fr) minmax(105px,.62fr) minmax(105px,.62fr) minmax(120px,.72fr) minmax(160px,1fr) auto;gap:10px;align-items:end;padding:12px var(--page);border-bottom:1px solid var(--border);background:#f8fbf9}.control label{display:block;font-weight:650;font-size:.82rem;margin:0 0 4px}.control select,.control input[type=file]{width:100%;font:inherit;min-height:38px}.control select{appearance:none;padding:7px 36px 7px 10px;border:1px solid #b8c7bd;border-radius:7px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1.5 7 7.5 13 1.5' fill='none' stroke='%230d4c2f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center}.toolbar button,.bottomBar button,.diagramHeader button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:8px;padding:8px 11px;font-weight:650;cursor:pointer}.toolbar button:disabled,.diagramHeader button:disabled{opacity:.45;cursor:default}
 .toolbar button:not(:disabled):hover,.bottomBar button:not(:disabled):hover,.diagramHeader button:not(:disabled):hover,#helpClose:hover{background:#d6e6ff;border-color:#6f99e8}.modal_default_main input[type="button"]:hover,.modal_default_main input[type="submit"]:hover,.modal_default_main button:hover,.modal_default_button:hover{background:#e4e8e5 !important;border-color:#81968a !important}.shareButtons{display:flex;gap:8px;align-items:end}.shareButtons button{white-space:nowrap}.diagramHeaderRight{display:flex;align-items:center;gap:10px;min-width:0}
-.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) 5px minmax(440px,.95fr);gap:5px;padding:12px var(--page) 8px}.leftPane{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(150px,.6fr) 5px minmax(180px,1.4fr);gap:5px}.card{border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;min-height:0;overflow:hidden}.panel{display:flex;flex-direction:column}.panelHeader,.diagramHeader{flex:0 0 auto;padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}.abcWrap{flex:1;min-height:0;padding:1px}.abcWrap textarea{width:100%;height:100%;border:0;resize:none;padding:11px;font:16px/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;outline:none}
 .abcWrap textarea.editorTextSmall{font-size:14px}
 .abcWrap textarea.editorTextMedium{font-size:16px}
 .abcWrap textarea.editorTextLarge{font-size:17px}
@@ -1037,10 +1038,10 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
   #notationPanel .countInLabel input{width:14px;height:14px}
   #notationPanel .audioRow{padding:5px 7px 6px}
 }
-/* iPad portrait: trade some editor height for an additional notation staff. */
+/* iPad portrait: retain a compact editor and taller notation pane. */
 @media (orientation:portrait) and (min-width:700px) and (max-width:1050px)
        and (hover:none) and (pointer:coarse) {
-  .leftPane{grid-template-rows:minmax(185px,.65fr) 5px minmax(300px,1.35fr)}
+  .leftPane{grid-template-rows:minmax(185px,.6fr) 5px minmax(300px,1.4fr)}
 }
 /* On 11-inch and smaller iPads, avoid the inherited three-row toolbar. */
 @media (orientation:landscape) and (min-width:900px) and (max-width:1250px)
@@ -1062,7 +1063,7 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
   .ocarinaToolbar .shareButtons button{padding:6px 9px}
 }
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.3.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.3.11</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
 <div class="toolbar ocarinaToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="ocarina-tab" selected>Notation + Ocarina Tab</option></select></div>
@@ -2290,7 +2291,7 @@ function savedSplitters(){
   }
 }
 
-const DEFAULT_SPLIT_V=52.5,DEFAULT_SPLIT_H=45;
+const DEFAULT_SPLIT_V=52.5,DEFAULT_SPLIT_H=30;
 const IPAD_LANDSCAPE_LAYOUT="(orientation:landscape) and (min-width:900px) and (max-width:1400px) and (max-height:950px) and (hover:none) and (pointer:coarse)";
 const DEFAULT_IPAD_LANDSCAPE_SPLIT_H=30;
 function defaultHorizontalSplit(){
@@ -2323,8 +2324,13 @@ function restoreSplitters(){
   if(Number.isFinite(p.v))splitVPercent=clamp(p.v,25,75);
   horizontalSplitSaved=Number.isFinite(p.h);
   splitHPercent=horizontalSplitSaved ? clamp(p.h,25,75) : defaultHorizontalSplit();
-  // Load saved preferences in portrait, too, so rotation to landscape honors them.
-  if(window.matchMedia("(max-width:1050px)").matches)return;
+  // In stacked layouts the vertical separator is hidden, but the horizontal
+  // divider remains adjustable and honors the saved position.
+  if(window.matchMedia("(max-width:1050px)").matches){
+    $("workspace").style.removeProperty("grid-template-columns");
+    setHorizontalSplit(splitHPercent);
+    return;
+  }
   setVerticalSplit(splitVPercent);
   setHorizontalSplit(splitHPercent);
 }
@@ -2334,7 +2340,8 @@ function installSplitters(){
 
   function begin(e,kind){
     if(e.button!==undefined&&e.button!==0)return;
-    if(window.matchMedia("(max-width:1050px)").matches)return;
+    // Only the vertical separator is unavailable in stacked layouts.
+    if(kind==="v"&&window.matchMedia("(max-width:1050px)").matches)return;
     e.preventDefault();
     document.body.classList.add("resizing");
 
@@ -2370,7 +2377,6 @@ function installSplitters(){
     saveSplitterPercents();
   });
   sh.addEventListener("dblclick",()=>{
-    if(window.matchMedia("(max-width:1050px)").matches)return;
     setHorizontalSplit(defaultHorizontalSplit());
     saveSplitterPercents();
   });
@@ -2379,18 +2385,16 @@ function installSplitters(){
     // measured height is zero. Do not recalculate splitter pixel sizes until
     // the normal layout has been restored.
     if(document.body.classList.contains("diagram-full"))return;
+    // A never-adjusted divider follows the default for the current orientation.
+    // Dragged/saved divider proportions remain exactly as the user set them.
+    if(!horizontalSplitSaved)splitHPercent=defaultHorizontalSplit();
     if(!window.matchMedia("(max-width:1050px)").matches){
-      // A never-adjusted divider follows the default for the current orientation.
-      // Dragged/saved divider proportions remain exactly as the user set them.
-      if(!horizontalSplitSaved)splitHPercent=defaultHorizontalSplit();
       setVerticalSplit(splitVPercent);
-      setHorizontalSplit(splitHPercent);
     }else{
-      // Clear landscape-only inline dimensions on rotation into the stacked layout.
-      // This allows the iPad portrait notation proportions to take effect.
+      // The stacked layout has no visible vertical divider.
       $("workspace").style.removeProperty("grid-template-columns");
-      $("leftPane").style.removeProperty("grid-template-rows");
     }
+    setHorizontalSplit(splitHPercent);
   });
 }
 
@@ -3291,12 +3295,11 @@ function setPaneFull(kind,on){
     if(on)return;
     if(window.matchMedia("(max-width:1050px)").matches){
       $("workspace").style.removeProperty("grid-template-columns");
-      $("leftPane").style.removeProperty("grid-template-rows");
     }else{
-      if(!horizontalSplitSaved)splitHPercent=defaultHorizontalSplit();
       setVerticalSplit(splitVPercent);
-      setHorizontalSplit(splitHPercent);
     }
+    if(!horizontalSplitSaved)splitHPercent=defaultHorizontalSplit();
+    setHorizontalSplit(splitHPercent);
   });
 }
 $("abcFullBtn").addEventListener("click",()=>{
@@ -3323,12 +3326,11 @@ function setFull(on){
     requestAnimationFrame(()=>{
       if(window.matchMedia("(max-width:1050px)").matches){
         $("workspace").style.removeProperty("grid-template-columns");
-        $("leftPane").style.removeProperty("grid-template-rows");
       }else{
-        if(!horizontalSplitSaved)splitHPercent=defaultHorizontalSplit();
         setVerticalSplit(splitVPercent);
-        setHorizontalSplit(splitHPercent);
       }
+      if(!horizontalSplitSaved)splitHPercent=defaultHorizontalSplit();
+      setHorizontalSplit(splitHPercent);
     });
   }
 }
