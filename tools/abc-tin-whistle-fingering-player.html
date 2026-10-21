@@ -964,7 +964,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 /* Preserve the existing stacked/tablet default; 30/70 is desktop-only. */
 @media (max-width:1050px){.leftPane{grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr)}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.11</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
+<header class="app-header"><div class="version">Version 3.1.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Tin Whistle Fingering Player</h1><p>Play ABC tunes with synchronized notation, D tin whistle tablature, and live whistle fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
@@ -1619,7 +1619,8 @@ function showWhistleLive(midi){
   const glyph=$("whistleLargeGlyph");
   const note=$("whistleLiveNote");
   if(midi==null){
-    glyph.textContent="";
+    // All six holes open when no note is selected.
+    glyph.textContent="j";
     glyph.style.color="#111";
     note.textContent="";
     renderWhistleStaffNote(null);

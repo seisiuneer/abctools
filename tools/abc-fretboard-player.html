@@ -1393,7 +1393,7 @@ body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote{
 /* Preserve the existing stacked/tablet default; 30/70 is desktop-only. */
 @media (max-width:1050px){.leftPane{grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr)}}
 </style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.0.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -2035,8 +2035,8 @@ function renderGDAEFingering(midi){
   host.classList.toggle("fullFretboardMode",!!showFretboardEnabled);
   host.classList.toggle("horizontalFretboard",!!showFretboardEnabled&&fretboardOrientation==="horizontal");
   $("whistleNoteGroup")?.classList.toggle("horizontalFretboardLayout",!!showFretboardEnabled&&fretboardOrientation==="horizontal");
-  if(midi==null)return;
-  const pos=gdaePositionForMidi(midi);
+  // Even without an active note, show the configured strings and fretboard.
+  const pos=midi==null?null:gdaePositionForMidi(midi);
   const strings=selectedStrings();
   const group=$("whistleNoteGroup");
   if(group){
@@ -3971,7 +3971,7 @@ if(document.readyState==="complete"){
 /* UI-only playback-permission synchronization for notation-header controls.
    The Tempo implementation and audio/playback code are intentionally untouched. */
 function syncPlaybackPermissionHeaderControls(){
-  syncArrowKeyNavigationIdle();
+  if(typeof syncArrowKeyNavigationIdle==="function")syncArrowKeyNavigationIdle();
   const permissionPending=!!$("enablePlaybackBtn");
   const hasTunes=tunes.length>0;
   const muteBtn=$("muteMelodyBtn");

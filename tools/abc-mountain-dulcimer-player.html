@@ -1729,7 +1729,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -5873,13 +5873,13 @@ function mdRenderScoreTab(){
 function mdClearScoreTab(){mdMarkMissingNavigationTarget(null);MD.noteMarkers=[]}
 function mdRenderBoard(midi){
   const host=$("mandolinFingering");if(!host)return;host.innerHTML="";host.className="mandolinFingering mdDulcimer";
-  if(midi==null)return;
-  const chosen=mdDisplayPosition(midi),strings=mdCapoOpen(),max=Number($("capoSelect").value)||14;
+  // The same live board is the no-note placeholder; omit only the fingering markers.
+  const chosen=midi==null?null:mdDisplayPosition(midi),strings=mdCapoOpen(),max=Number($("capoSelect").value)||14;
   const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
   svg.classList.add("mdBoard");svg.setAttribute("viewBox","0 0 820 240");svg.setAttribute("role","img");
-  const event=mdEventAtEditorSelection(midi);
+  const event=midi==null?null:mdEventAtEditorSelection(midi);
   const played=event?.chord?.positions?.length>1?event.chord.positions:(chosen?[chosen]:[]);
-  svg.setAttribute("aria-label",played.length?played.map(p=>`${mdNoteName(p.midi)} on ${["bass","middle","melody"][p.course]} at fret ${p.fret}`).join(", "):`${mdNoteName(midi)} cannot be played`);
+  svg.setAttribute("aria-label",midi==null?"Mountain dulcimer fretboard with no note selected":played.length?played.map(p=>`${mdNoteName(p.midi)} on ${["bass","middle","melody"][p.course]} at fret ${p.fret}`).join(", "):`${mdNoteName(midi)} cannot be played`);
   const add=(tag,att,t)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(att||{}))n.setAttribute(k,String(v));if(t!=null)n.textContent=t;svg.appendChild(n);return n};
   const left=72,right=792,ys=[55,103,151],capo=mdCapoFret();
   // The capo becomes the visual nut: always start the displayed board at left.
@@ -5935,7 +5935,7 @@ function mdRenderBoard(midi){
     add("circle",{cx,cy,r:16,class:open?"mdBoardOpen":"mdBoardMarker"});
     if(!open)add("text",{x:cx,y:cy+5,"text-anchor":"middle","font-size":14,"font-weight":600,fill:"white"},String(chosen.fret).replace(".5","½"));
     }
-  }else add("text",{x:410,y:229,"text-anchor":"middle",class:"mdBoardMissing","font-size":15},`${mdNoteName(midi)} — NOT PLAYABLE`);
+  }else if(midi!=null)add("text",{x:410,y:229,"text-anchor":"middle",class:"mdBoardMissing","font-size":15},`${mdNoteName(midi)} — NOT PLAYABLE`);
   host.appendChild(svg);
 }
 
