@@ -1729,7 +1729,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 2.5.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1768,7 +1768,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
 <!-- Playback settings are edited in the DayPilot Configure Sound and Tab dialog. -->
 <div id="mdPlaybackState" hidden>
   <select id="mdSoundSelect"><option value="148" selected>Mountain Dulcimer</option><option value="25">Guitar</option><option value="46">Harp</option></select>
-  <input type="checkbox" id="mdOctaveLower" checked>
+  <input type="checkbox" id="mdOctaveLower">
   <input type="checkbox" id="mdOpenStringsCheck" checked>
   <select id="mdChordPlaybackSelect"><option value="none">Don't Play Chords</option><option value="piano">Play Piano Bass and Chords</option><option value="dulcimer" selected>Build and Play Dulcimer-friendly Chords</option></select>
   <select id="mdChordStretchSelect"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
@@ -1848,7 +1848,7 @@ body.diagram-full #whistleLive:not([hidden]) #noteDisplayGroup .whistleLiveNote{
       <p>Click <b>Configure Tab</b> in the Notation header to open <b>Configure Sound and Tab</b>, where you can choose the <b>Sound</b> and adjust tablature and playback settings.</p>
       <p>Under <b>Sound</b>, choose <b>Mountain Dulcimer</b> (default), <b>Guitar</b>, or <b>Harp</b>.</p>
       <p>The selected <b>Sound</b> applies to both the melody and the open strings.</p>
-      <p><b>Play melody an octave lower?</b> plays the melody one octave below its written pitch without changing the displayed notation.</p>
+      <p><b>Play melody an octave lower?</b> is disabled by default. When enabled, it plays the melody one octave below its written pitch without changing the displayed notation.</p>
       <p>This option also uses the lower melody pitch when determining playable fretboard positions and generating tablature.</p>
       <p><b>Play open strings?</b> sounds the dulcimer's open strings along with each melody note when allowed by the chord playback setting, giving the tune the accompanying drone sound characteristic of the instrument.</p>
       <p>This option is enabled by default, and the open-string pitches follow the selected tuning and capo position.</p>
@@ -6055,7 +6055,7 @@ function generateShareLink(abc){
 }
 function mdDefaultConfig(){
   return {
-    tuning:"dad",max:14,capo:0,octaveLower:true,
+    tuning:"dad",max:14,capo:0,octaveLower:false,
     extra:Object.fromEntries(MD_EXTRA.map(f=>[
       String(f),[6.5,13.5].includes(f)?[true,true,true]:[false,false,false]
     ]))
