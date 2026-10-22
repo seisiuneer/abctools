@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta name="viewport" content="width=1280, initial-scale=1"/>
+		<meta name="description" content="Utility for creating fingering tab for 12 hole ocarinas."/>
+		<meta name="keywords" content="ocarina, tabs"/>
+		<meta name="author" content="Mathias Panzenb&ouml;ck, Updated 2025 by Michael Eskin"/>
+	    <meta property="og:type" content="website" />
+	    <meta property="og:title" content="12-Hole Ocarina Tab Creator" />
+	    <meta property="og:description" content="Utility for creating fingering tab for 12 hole ocarinas." />
+	    <meta property="og:url" content="https://michaeleskin.com/tools/ocarina/index.html" />
+	    <meta property="og:site_name" content="12-Hole Ocarina Tab Creator" />
+	    <meta property="og:image" content="https://michaeleskin.com/tools/ocarina/ocarina_fb.jpg" />
+	    <meta name="msapplication-TileColor" content="#ffffff">
+	    <meta name="msapplication-TileImage" content="https://michaeleskin.com/tools/ocarina/ocarina_tabs/app/ocarina_tabs/icon144.png">
+		<link rel="shortcut icon" href="https://michaeleskin.com/tools/ocarina/ocarina_tabs/app/ocarina_tabs/icon16.png" type="image/png"/>
+		<link rel="apple-touch-icon" sizes="32x32" href="https://michaeleskin.com/tools/ocarina/ocarina_tabs/app/ocarina_tabs/icon32.png"/>
+		<link rel="apple-touch-icon" sizes="48x48" href="https://michaeleskin.com/tools/ocarina/ocarina_tabs/app/ocarina_tabs/icon48.png"/>
+		<link rel="apple-touch-icon" sizes="64x64" href="https://michaeleskin.com/tools/ocarina/ocarina_tabs/app/ocarina_tabs/icon64.png"/>
+		<link rel="apple-touch-icon" sizes="128x128" href="https://michaeleskin.com/tools/ocarina/ocarina_tabs/app/ocarina_tabs/icon128.png"/>
+
+		<title>12-Hole Ocarina Tab Creator</title>
+
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+
+	    <script>
+	    window.dataLayer = window.dataLayer || [];
+	    function gtag(){dataLayer.push(arguments);}
+	    gtag('js', new Date());
+	    gtag('config', 'G-VM0N9HL3MK');
+	    </script>
+
+		<style type="text/css">
+			@font-face {
+				font-family: "Open 12 Hole Ocarina 1";
+				src: url("https://michaeleskin.com/tools/ocarina/ocarina_tabs/Open-12-Hole-Ocarina-1.ttf");
+			}
+
+			@font-face {
+				font-family: "Open 12 Hole Ocarina 2";
+				src: url("https://michaeleskin.com/tools/ocarina/ocarina_tabs/Open-12-Hole-Ocarina-2.ttf");
+			}
+
+			html, body {
+				margin: 0;
+				padding: 0;
+				font-family: sans-serif;
+				font-size: 16px;
+				height: 100%;
+				background: white;
+				color: black;
+			}
+
+			.tabs {
+				font-family: "Open 12 Hole Ocarina 1", monospace;
+				white-space: pre;
+				padding: 140px 20px 20px 20px;
+				outline: none;
+				box-sizing: border-box;
+				min-height: 100%;
+				line-height: 1.5;
+			}
+
+			.tabs div,
+			.tabs p {
+				margin: 0;
+				padding: 0;
+			}
+
+			input[type=number] {
+				text-align: right;
+				width: 4em;
+			}
+
+			.controls {
+				position: fixed;
+				left: 0;
+				right: 0;
+				top: 0;
+				background: white;
+				box-shadow: 0 0 20px rgba(0,0,0,0.5);
+				padding: 10px;
+				white-space: nowrap;
+				z-index: 100;
+			}
+
+			.controls-cell {
+				display: inline-block;
+			}
+
+			.controls-line {
+				display: block;
+				margin: 5px;
+			}
+
+			button, select {
+				cursor: pointer;
+			}
+
+			button:hover, select:hover, input:hover {
+				background: #eeeeee;
+			}
+
+			.btn, button, select, input {
+				padding: 0.1em 0.5em;
+				margin: 0;
+				border: 1px solid lightgray;
+				border-radius: 5px;
+				background: white;
+				vertical-align: top;
+				display: inline-block;
+				box-sizing: border-box;
+				height: 24px;
+			}
+
+			a {
+				text-decoration: none;
+				color: gray;
+				transition: color 250ms;
+			}
+
+			a:hover {
+				color: black;
+			}
+
+			.embed-link {
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				background: white;
+				padding: 2px 4px;
+				border: 1px solid lightgray;
+				border-left-style: none;
+				border-bottom-style: none;
+				border-top-right-radius: 5px;
+				font-size: 14px;
+				opacity: 0;
+				transition: opacity 250ms;
+			}
+
+			.embed-link img {
+				width: 16px;
+				height: 16px;
+				vertical-align: middle;
+				opacity: 0.7;
+				transition: opacity 250ms;
+			}
+
+			.embed-link:hover img {
+				opacity: 1;
+			}
+
+			body:hover .embed-link {
+				opacity: 1;
+			}
+			
+			.dropdown-button {
+				position: relative; */
+				display: inline;
+			}
+
+			.dropdown-button .dropdown-menu {
+				position: absolute;
+				top: 100%;
+				left: 0;
+				display: none;
+				background: white;
+				box-shadow: 0 0 10px rgba(0,0,0,0.5);
+			}
+			
+			.dropdown-button .dropdown-menu button {
+				border: none;
+				white-space: nowrap;
+				display: block;
+				border-radius: 0;
+				min-width: 100%;
+				text-align: left;
+			}
+
+			.openfile_fs{
+				display:none;
+			}
+
+			.controls-cell-buttons {
+				min-width: 30em;
+			}
+
+			#name {
+				text-align: center;
+				position:absolute;
+				top:100px;
+				right:50%;
+				transform: translate(50%, 0);
+			}
+
+			@media print {
+				.tabs {
+					padding: 85px 20px 20px 20px;
+				}
+
+				.controls {
+					display: none;
+				}
+
+				#name {
+					top:0px;
+				}
+			}
+
+			.readonly .tabs {
+				padding: 20px;
+			}
+
+			.readonly .controls {
+				display: none;
+			}
+
+			.injectbarlines{
+			    display: inline-block; /* Ensures block-level control of the label */
+			    margin: 0px;             /* Removes extra margin */
+			    vertical-align: middle; /* Aligns the text with the checkbox */			
+			}
+
+			.title_print{
+				margin-left: 8px;
+				font-size: 10pt;
+				vertical-align: middle;
+				border-width: 0px;
+			}
+
+			/* For modal dialog prompt replacement */
+			.modal_flat_background { background-color: #000; opacity: 0.4; }
+			.modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+
+			/* font size only */
+			.modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
+			.modal_flat_main button {  padding: 5px; box-sizing: border-box; }
+			.modal_flat_main input  {  padding: 18px 8px 18px 8px;box-sizing: border-box; }
+			.modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+			.modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+			.modal_flat_input { margin: 20px 0px;}
+			.modal_flat_buttons { text-align:center;margin-top: 40px; }
+			.modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px; height:36px;  }
+			.modal_flat_cancel {margin-left: 5px;}
+
+		</style>
+
+		<script type="text/javascript" src="main.js?v=41"></script>
+		<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=41"></script>
+
+	</head>
+
+	<body onload="init();">
+		<div class="controls">
+			<span class="controls-cell controls-cell-buttons">
+				<span class="controls-line" id="other_notes"></span>
+				<span class="controls-line" id="full_notes"></span>
+			</span>
+
+			<span class="controls-cell">
+				<span class="controls-line" style="margin-top:0px;height:21px">
+					<input type="number" id="font_size" onchange="updateStyle();" value="60" title="Display font size"/>
+					<select id="font_size_unit" onchange="updateStyle();" title="Font size unit">
+						<option value="px" selected>px</option>
+						<option value="mm">mm</option>
+						<option value="cm">cm</option>
+						<option value="in">in</option>
+						<option value="pt">pt</option>
+						<option value="pc">pc</option>
+					</select>
+
+					<select style="margin-left:12px;" id="font" onchange="updateStyle();" title="Display font variant">
+						<option value="1" selected>Font Style #1</option>
+						<option value="2">Font Style #2</option>
+					</select>
+
+					<select style="margin-left:12px;" id="key" onchange="updateButtons();" title="Select the key of your Ocarina">
+						<option value="C" selected>Key: C</option>
+						<option value="F">Key: F</option>
+						<option value="G">Key: G</option>
+					</select>
+
+					<button style="margin-left:12px;" type="button" onclick="changeTitle();" title="Click to edit the title">Edit Title</button>
+					<button id="title_print" class="title_print" type="button" onclick="changeTitle();" title="Click to edit the title">Title: New Tune</button>
+				</span>
+
+				<span class="controls-line" style="margin-top:6px;">
+					<button class="btn" type="button" onclick="clearAll();" title="Clear the tablature">Clear</button>
+					<button class="btn" type="button" onclick="undoEdit();" title="Undo">Undo</button>
+					<button style="margin-right:12px;" class="btn" type="button" onclick="redoEdit();" title="Redo">Redo</button>
+					<input id="injectbarlines" class="btn injectbarlines" type="checkbox" title="Inject bar lines for ABC" checked/><span style="font-size:10pt;margin-right:12px">&nbsp;&nbsp;Inject bar lines for ABC</span>
+					<input id="openfile_fs" class="openfile_fs" type="file" accept=".abc,.ABC,.txt,.TXT" onchange="openTextFile(this);" hidden />
+					<input style="margin-right:12px" class="btn" title="Opens an existing Text or ABC file." onclick="fileOpenIntercept(event);" type="button" value="Open Text or ABC File"/>
+					<span style="margin-right:12px;" class="dropdown-button" id="save-as-dropdown">
+						<button type="button" class="btn dropdown-button-arrow" title="Click to save the tablature as text or a PNG image" onclick="toggleMenu('save-as-dropdown');">Save As</button>
+						<span class="dropdown-menu">
+							<button type="button" title="Saves the tablature as a text file" onclick="saveAsTextFile();hideMenu('save-as-dropdown');">Save as Text</button>
+							<button type="button" title="Saves the tablature as a PNG image" onclick="saveAsImage();hideMenu('save-as-dropdown');">Save as Image</button>
+						</span>
+					</span>
+					<button style="margin-right:12px;" class="btn" type="button" onclick="shareLink();" title="Copy a share link to the tablature to the clipboard">Share</button>
+					<button style="margin-right:12px;" class="btn" type="button" onclick="window.print();" title="Print">Print</button>
+					<button style="margin-right:12px;" class="btn" type="button" onclick="window.open('https://michaeleskin.com/abctools/tipjars.html');" title="Michael Eskin's Online Tip Jars">Tip Jars</button>
+					<button class="btn" type="button" onclick="window.open('https://www.youtube.com/playlist?list=PLZvjgS80ixQtM1o10P1Y7lJCaV99lG6Aw');" title="Demo and Tutorial Videos on YouTube">?</button>
+				</span>
+			</span>
+
+		</div>
+		<div id="name" onclick="changeTitle();" title="Click to edit the title">New Tune</div>
+		<div class="tabs" id="editor" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contentEditable="true"></div>
+	</body>
+</html>

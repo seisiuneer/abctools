@@ -245,6 +245,115 @@
 			.modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px; height:36px;  }
 			.modal_flat_cancel {margin-left: 5px;}
 
+			/* One-time announcement for the ABC Ocarina Fingering Player */
+			#ocarina-player-announcement[hidden] {
+				display: none;
+			}
+
+			#ocarina-player-announcement {
+				position: fixed;
+				inset: 0;
+				z-index: 10000;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 24px;
+				box-sizing: border-box;
+				background: rgba(0, 0, 0, 0.48);
+			}
+
+			#ocarina-player-announcement .announcement-panel {
+				/* Center the dialog horizontally, 1/3 of the viewport down vertically. */
+				transform: translateY(-16.6667vh);
+				max-height: calc(100vh - 48px);
+				overflow-y: auto;
+				width: 100%;
+				max-width: 530px;
+				box-sizing: border-box;
+				padding: 26px 30px;
+				border-radius: 9px;
+				background: white;
+				box-shadow: 0 10px 34px rgba(0, 0, 0, 0.3);
+				color: #222;
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: 16px;
+				line-height: 1.45;
+				white-space: normal;
+			}
+
+			#ocarina-player-announcement h2 {
+				margin: 0 0 12px;
+				font-size: 21px;
+			}
+
+			#ocarina-player-announcement p {
+				margin: 0 0 12px;
+			}
+
+			#ocarina-player-announcement .announcement-optout {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 8px;
+				margin-top: 22px;
+				font-size: 15px;
+				cursor: pointer;
+			}
+
+			#ocarina-player-announcement .announcement-optout input[type="checkbox"] {
+				width: 18px;
+				height: 18px;
+				margin: 0;
+				flex-shrink: 0;
+				accent-color: #2366a6;
+				cursor: pointer;
+			}
+
+			#ocarina-player-announcement .announcement-actions {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 24px;
+				margin-top: 18px;
+			}
+
+			#ocarina-player-announcement button {
+				height: auto;
+				min-height: 40px;
+				padding: 10px 15px;
+				font-size: 15px;
+				line-height: 1.2;
+			}
+
+			#ocarina-player-announcement .announcement-open {
+				background: #2366a6;
+				border-color: #2366a6;
+				color: #fff;
+			}
+
+			#ocarina-player-announcement .announcement-open:hover {
+				background: #185287;
+			}
+
+			#ocarina-player-announcement button:focus-visible,
+			#ocarina-player-announcement input[type="checkbox"]:focus-visible {
+				outline: 3px solid #77b5ff;
+				outline-offset: 2px;
+			}
+
+			/* On short screens, keep the dialog fully visible and scrollable. */
+			@media (max-height: 600px) {
+				#ocarina-player-announcement .announcement-panel {
+					transform: none;
+				}
+			}
+
+			@media print {
+				#ocarina-player-announcement {
+					display: none;
+				}
+			}
+
 		</style>
 
 		<script type="text/javascript" src="main.js?v=41"></script>
@@ -310,5 +419,101 @@
 		</div>
 		<div id="name" onclick="changeTitle();" title="Click to edit the title">New Tune</div>
 		<div class="tabs" id="editor" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contentEditable="true"></div>
+		<!-- This announcement is independent of the tablature editor and its controls. -->
+		<div id="ocarina-player-announcement" hidden role="dialog" aria-modal="true"
+			 aria-labelledby="ocarina-player-announcement-title"
+			 aria-describedby="ocarina-player-announcement-description">
+			<div class="announcement-panel">
+				<h2 id="ocarina-player-announcement-title">Try the new ABC Ocarina Fingering Player</h2>
+				<div id="ocarina-player-announcement-description">
+					<p>If you find this 12-Hole Ocarina Tab Creator useful, you might also enjoy the new <strong>ABC Ocarina Fingering Player</strong>.</p>
+					<p>Load ABC tunes, view standard music notation, and follow along with fingering diagrams and playback. Choose soprano, alto, or bass ocarinas, navigate note by note, and use <strong>Solve Missing Notes</strong> to find playable alternatives when possible.</p>
+				</div>
+				<label class="announcement-optout">
+					<input type="checkbox" id="ocarina-player-announcement-optout" />
+					Don't show this again
+				</label>
+				<div class="announcement-actions">
+					<button type="button" class="announcement-open" id="ocarina-player-announcement-open">Open the New Player</button>
+					<button type="button" id="ocarina-player-announcement-dismiss">No Thanks</button>
+				</div>
+			</div>
+		</div>
+		<script>
+		(function () {
+			"use strict";
+			// v2: the announcement now repeats until the user explicitly opts out.
+			var storageKey = "ocarina_tab_creator_new_abc_player_announcement_v2";
+			var url = "https://michaeleskin.com/tools/abc-ocarina-fingering-player.html";
+			var overlay = document.getElementById("ocarina-player-announcement");
+			var openButton = document.getElementById("ocarina-player-announcement-open");
+			var dismissButton = document.getElementById("ocarina-player-announcement-dismiss");
+			var optOutCheckbox = document.getElementById("ocarina-player-announcement-optout");
+			var previousFocus = null;
+
+			function dismissAnnouncement() {
+				if (optOutCheckbox.checked) {
+					try {
+						localStorage.setItem(storageKey, "1");
+					} catch (error) {
+						// Browsers that block storage cannot persist the opt-out.
+					}
+				}
+				overlay.hidden = true;
+				document.removeEventListener("keydown", handleAnnouncementKeydown);
+				if (previousFocus && previousFocus.isConnected) {
+					previousFocus.focus();
+				}
+			}
+
+			function handleAnnouncementKeydown(event) {
+				if (event.key === "Escape") {
+					event.preventDefault();
+					dismissAnnouncement();
+				} else if (event.key === "Tab") {
+					// Keep keyboard navigation within the checkbox and both buttons.
+					if (event.shiftKey && document.activeElement === optOutCheckbox) {
+						event.preventDefault();
+						dismissButton.focus();
+					} else if (!event.shiftKey && document.activeElement === dismissButton) {
+						event.preventDefault();
+						optOutCheckbox.focus();
+					}
+				}
+			}
+
+			function showAnnouncement() {
+				// Do not interrupt embedded or read-only tablature views.
+				var editor = document.getElementById("editor");
+				if (window.self !== window.top || document.querySelector(".readonly") ||
+					!editor || !editor.isContentEditable) {
+					return;
+				}
+
+				try {
+					if (localStorage.getItem(storageKey) === "1") {
+						return;
+					}
+				} catch (error) {
+					// Show the dialog even when storage is unavailable.
+				}
+
+				optOutCheckbox.checked = false;
+				previousFocus = document.activeElement;
+				overlay.hidden = false;
+				document.addEventListener("keydown", handleAnnouncementKeydown);
+				openButton.focus();
+			}
+
+			openButton.addEventListener("click", function () {
+				window.open(url, "_blank", "noopener,noreferrer");
+				dismissAnnouncement();
+			});
+			dismissButton.addEventListener("click", dismissAnnouncement);
+			// Run after the page's existing onload=init() has set up the editor.
+			window.addEventListener("load", showAnnouncement);
+		})();
+		</script>
+
 	</body>
 </html>
