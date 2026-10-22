@@ -6413,6 +6413,9 @@ updateInstrumentUI();
     if (orientationSelect.value === 'landscape') dim.reverse();
     const [pageWidth,pageHeight] = dim;
     const margin = 36;
+    // A small amount of extra space between complete music/tab systems in
+    // Mountain Dulcimer PDFs. Count it when deciding whether to start a page.
+    const interSystemGap = 8; // PDF points (about 2.8 mm)
     const availableWidth = pageWidth - 2*margin;
     const availableHeight = pageHeight - 2*margin;
     const nominalScale = availableWidth / width;
@@ -6435,7 +6438,10 @@ updateInstrumentUI();
       // For a single over-height system, scale THAT complete system to a page.
       const scale = Math.min(nominalScale, availableHeight/slice.height);
       const drawHeight = slice.height * scale;
-      if (usedHeight > 0 && usedHeight + drawHeight > availableHeight + 0.01) newPage();
+      // Preserve the extra inter-system gap without allowing it to push a
+      // music/tab system past the bottom margin. Never add it on a new page.
+      if (usedHeight > 0 && usedHeight + interSystemGap + drawHeight > availableHeight + 0.01) newPage();
+      if (usedHeight > 0) usedHeight += interSystemGap;
 
       const renderHeight = Math.max(1, Math.ceil(renderWidth*slice.height/width));
       const clone = svg.cloneNode(true);
