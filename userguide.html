@@ -2625,7 +2625,7 @@
                 <p>Click <strong>Export Audio, Image, or PDF</strong> to bring up a dialog where you can export your tune as a file in various audio, MIDI, image, or PDF formats.</p>
                 <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a> section below.</p>
                 <hr>
-                <p>Click the <strong>Share</strong> icon at the top-right corner to bring up the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog where you can open the current tune in an external ABC tool.</p>
+                <p>Click the <strong>Other Tools</strong> label or the icon directly above it at the top-right corner to bring up the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog, where you can open the current tune in another ABC player or tool, including Tin Whistle, Concertina, Harmonica, Recorder, and more.</p>
                 <p>If you don't want to see this control, you can hide it from the <a style="text-decoration:none;" href="#player_settings">Player Settings</a> dialog.</p>
                 <hr id="player_settings">
                 <h1 class="page_break_always">Player Settings</h1>
@@ -2661,7 +2661,7 @@
                 <p class="code">%play_flatten_parts</p>
                 <hr>
                 <p><strong>Show "Open ABC in External Tool" icon at top right of the Player and Tune Trainer</strong></p>
-                <p>When checked, shows the icon for the <strong>Open ABC in External Tool</strong> dialog at the top right of the Player and Tune Trainer.</p>
+                <p>When checked, shows the <strong>Other Tools</strong> external-tool icon and label at the top right of the Player and Tune Trainer. Click the icon or label to open the <strong>Open ABC in External Tool</strong> dialog.</p>
                 <hr>
                 <p>The <strong>Player Settings</strong> dialog is also available from the main <strong>Settings</strong> dialog.</p>
                 <p>See <a style="text-decoration:none;" href="#default_player_settings">Select Default Player Instruments and Volumes</a> below for full details on the values in this dialog.</p>
@@ -2767,7 +2767,7 @@
                 <p>The <strong>Phrase Builder</strong> works with single voice tunes that don't have meter changes or other *: ABC tags (other than K: key changes) in the ABC notation itself after the tune header.</p>
                 <p>See the <a style="text-decoration:none;" href="#advanced_phrasebuilder">Phrase Builder</a> section below for more information.</p>
                 <hr>
-                <p>Click the <strong>Share</strong> icon at the top-right corner to bring up the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog where you can open the current tune in an external ABC tool.</p>
+                <p>Click the <strong>Other Tools</strong> label or the icon directly above it at the top-right corner to bring up the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog, where you can open the current tune in another ABC player or tool, including Tin Whistle, Concertina, Harmonica, Recorder, and more.</p>
                 <p>If you don't want to see this control, you can hide it from the <a style="text-decoration:none;" href="#player_settings">Player Settings</a> dialog.</p>
                 <hr>
                 <p>To exit the <strong>Tune Trainer</strong>, click <strong>Close</strong>.</p>
@@ -6893,7 +6893,7 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Clicking the <strong>Sharing</strong> button brings up the Sharing Controls dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" style="width:700px;"src="img/share_controls_8.jpg"/>
+                    <img class="image" loading="lazy" style="width:700px;"src="img/share_controls_9.jpg"/>
                 </div>
                 <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
                 <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
@@ -6927,9 +6927,9 @@
                 <p><strong>Add Hide UI</strong> - Adds &noui to the URL.</p>
                 <p>When the link is opened, hides the UI for responsive iframe embedding.</p>
                 <p>Overrides Add Open in Editor and Add Auto-Play.</p>
-                <p><strong>Use Deflate</strong> - If checked, compresses the URL using a Deflate algorithm instead of LZW (default: Deflate). </p>
+                <p><strong>Open ABC in External Tool</strong> - Click this button to open the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog, where you can send all the tunes in the editor to another ABC player or tool.</p>
+                <p><strong>Use Deflate</strong> - The checkbox beneath the Share URL options row. If checked, compresses the URL using a Deflate algorithm instead of LZW (default: Deflate).</p>
                 <p>In many cases, using Deflate instead of LZW as the URL compression algorithm may provide a 50% or greater reduction in share link size, but decodes slightly slower.</p>
-                <p><strong>Share icon (upper right corner)</strong> - Opens the <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a> dialog where you can open all the tunes in an external ABC tool.</p>
                 <hr>
                 <p>On desktop browsers you can double-click on an embedded tune to start/pause/resume play, or shift-click to rewind play.</p>
                 <p>On mobile browsers, you can double-tap on an embedded tune to start/pause/resume play or long press to rewind the tune to the beginning.</p>
@@ -7031,10 +7031,9 @@
                 </a>
                 <p>Brings up a tabbed dialog where you can open ABC tunes in an external ABC tool.</p>
                 <p>The <strong>Michael's Tools</strong> tab contains the twelve ABC tools developed by Michael Eskin for the ABC Transcription Tools ecosystem. The <strong>3rd-Party Tools</strong> tab contains supported third-party ABC tools. Click either tab to switch between the two groups of tools.</p>
-                <p>If this dialog is opened from the <strong>Player</strong> or <strong>Tune Trainer</strong>, you can open the currently displayed tune in the external tool.</p>
-                <p>If this dialog is opened from the <strong>Sharing Controls</strong> dialog, you can open all the tunes in the editor in the external tool.</p>
+                <p>From the <strong>Player</strong> or <strong>Tune Trainer</strong>, click the icon labelled <strong>Other Tools</strong> at the top right to open this dialog and send the currently displayed tune to another tool.</p>
+                <p>From the <strong>Sharing Controls</strong> dialog, click <strong>Open ABC in External Tool</strong>, the last button in the Share URL options row, to send all the tunes in the editor to another tool.</p>
                 <p>Depending on the tool selected, if the URL created for the external tool is over my hosting server's limit of 8100 characters, you may be alerted that the link is too long to open in the external tool.</p>
-                <p>The <strong>Michael's Tools</strong> tab scrolls vertically to show all twelve tools. Its scroll position is retained when switching tabs while the dialog is open.</p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tools.html" target="_blank">Michael Eskin's Music & Photography Tools</a></p>
                 <hr>
                 <p>Currently there are fifteen supported external ABC tools:</p>

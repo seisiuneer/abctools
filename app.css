@@ -418,6 +418,39 @@ margin-bottom:24px;
 text-align: center;
 }
 
+/* Sharing Controls: compact five-button URL options row sized for the 800px modal. */
+.sharing-url-options-row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 36px;
+}
+
+.sharing-url-options-row input[type="button"] {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  min-width: 0;
+  height: 42px;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  font-size: 11pt !important;
+  white-space: nowrap;
+}
+
+.sharing-url-compression-row {
+  margin-top: 18px;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.sharing-url-compression-row input[type="checkbox"] {
+  vertical-align: middle;
+  margin: 0 4px 0 0;
+}
+
 .full-screen-percentage {
 font-family:"Helvetica" !important;
 font-size:12pt !important;
@@ -5412,8 +5445,8 @@ body{
 position:absolute;
 width:30px;
 height:40px;
-right:16px;
-top:8px;
+right:30px;
+top:16px;
 padding:4px;
 z-index:101;
 display:block;

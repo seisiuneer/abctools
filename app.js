@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3364_102726_0930";
+var gVersionNumber = "3365_102726_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -78,6 +78,29 @@ const gPlayerSwipeThreshold = 50; // px
 var gPlayerScaling = 50;
 
 var gPlayerShowExternalToolsIcon = true;
+
+// Compact, labelled external-tool control shared by the Player and Tune Trainer.
+// The existing external_tools_share CSS keeps the icon in its original position.
+function BuildExternalToolsShareControl() {
+  const tooltip = "Open this tune in another ABC player or tool.";
+
+  return '<div id="external_tools_share" class="external_tools_share" role="button" tabindex="0" title="' + tooltip + '" aria-label="' + tooltip + '" style="box-sizing:content-box;cursor:pointer;overflow:visible;">' +
+    '<img src="img/external_share.png" alt="" aria-hidden="true" style="display:block;width:30px;height:40px;">' +
+    '<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font:11px/14px Helvetica,Arial,sans-serif;color:#222;text-align:center;">Other Tools</span>' +
+    '</div>';
+}
+
+// Give the icon and its label normal keyboard button behavior as well as click.
+function EnableExternalToolsShareKeyboard(elem) {
+  if (!elem) return;
+
+  elem.onkeydown = function(event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      elem.click();
+    }
+  };
+}
 
 var gRenderingPDF = false;
 
@@ -41373,7 +41396,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
     // Add the share controls
     if (gPlayerShowExternalToolsIcon){
-      modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool.&nbsp;&nbsp;This control can be shown/hidden in the Player by a setting in the Player Settings dialog."/>';
+      modal_msg += BuildExternalToolsShareControl();
     }
 
     if (gPlayABCTuneCount > 1) {
@@ -41450,6 +41473,8 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
         openInExternalTool(theABC, true);
       
       };
+
+      EnableExternalToolsShareKeyboard(elem);
 
     }
 
@@ -48943,7 +48968,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
     // Add the share controls
     if (gPlayerShowExternalToolsIcon){
-      modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool.&nbsp;&nbsp;This control can be shown/hidden in the Tune Trainer by a setting in the Player Settings dialog."/>';
+      modal_msg += BuildExternalToolsShareControl();
     }
 
     // Scale the player for larger screens
@@ -48994,6 +49019,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
         openInExternalTool(theOriginalABC, true);
       
       };
+
+      EnableExternalToolsShareKeyboard(elem);
 
     }
 
@@ -52741,9 +52768,16 @@ function SharingControlsDialog() {
   modal_msg += '<textarea id="urltextbox" rows="10" cols="80" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="URL for sharing will appear here" >';
   modal_msg += '</textarea>';
   modal_msg += '</p>';
-  modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the ABC in an external ABC tool"/>';
   modal_msg += '<p id="shareurlcaption">Share URL</p>';
-  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">&nbsp;&nbsp;&nbsp;&nbsp;<input id="urlallowdef" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link" checked/>&nbsp;Use Deflate</p>';
+  // Keep all five URL option buttons on one row in the 800px Sharing Controls dialog.
+  modal_msg += '<div class="sharing-url-options-row">';
+  modal_msg += '<input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player.">';
+  modal_msg += '<input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play.">';
+  modal_msg += '<input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor.">';
+  modal_msg += '<input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">';
+  modal_msg += '<input id="external_tools_share" class="btn btn-urlcontrols" type="button" value="Open ABC in External Tool" title="Open all your ABC tunes in another ABC player or tool.">';
+  modal_msg += '</div>';
+  modal_msg += '<p class="sharing-url-compression-row"><label><input id="urlallowdef" type="checkbox" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link" checked/>&nbsp;Use Deflate</label></p>';
 
   modal_msg += '</div>';
 
