@@ -67,7 +67,7 @@
 </script>
 <script src="pdf-lib-min.js"></script>
 <script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261022_sheetfont2"></script>
+<script src="abc-player-pdf-export.js?cb=20261027_abctt_play_titles"></script>
 <style>
      :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#d60062;--draw:#009e73;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -1488,7 +1488,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 3.1.5
+     Version 4.0
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1872,7 +1872,7 @@ Showing All Hole Numbers and Techniques for a Tune
 <p><b>Save</b> writes the current ABC collection to a file.</p>
 <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. <b>Share Current Tune</b> creates a share link for the displayed tune and <b>Share All Tunes</b> creates one for all loaded tunes when the resulting link fits within the allowed size.</p>
 <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
-<p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
+<p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab with an ABCTT-compatible MScore harmonica (MIDI program 22) in place of the player's custom instrument, retaining the selected playback transpose. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
 <p>The link includes the selected tremolo model, key, octave shift, and playback transpose.</p>
 <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
 <p>When opening a share link, click <b>Click to Enable Playback</b> before using the normal playback controls if your browser requires a user gesture to initialize audio.</p>
@@ -1924,6 +1924,8 @@ Then follow the displayed positions on your C tremolo.</p>
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>The tune title in the main notation PDF is clickable. Click it to open this tune in the <b>ABC Transcription Tools Player</b> using the same ABCTT-compatible MScore harmonica sound and transpose as <b>Open in ABCTT</b>. The separate <b>All Techniques</b> PDF export is unchanged.</p>
+      <p>The transferred melody uses <b>MScore MIDI program 22</b> with bass and chord programs 0, volumes 64, replacing conflicting source directives. The player's custom Super64 sound is not transferred.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
       <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
@@ -3027,14 +3029,48 @@ function updateShareButtons(){
   tuneBtn.title=tuneBtn.disabled?"Current tune share link exceeds 8100 characters.":"Create a share link for the current tune and copy it to the clipboard.";
   allBtn.title=allBtn.disabled?"All-tunes share link exceeds 8100 characters.":"Create a share link for all loaded tunes and copy it to the clipboard.";
 }
-function openShareInABCTranscriptionTools(allTunes,mode){
+// Transfer the same playback instrument settings to ABCTT without changing the editor ABC.
+// For the two harmonica players, ABCTT uses the requested MScore harmonica fallback.
+function prepareABCForABCTTPlayback(abc){
+  const transpose=(parseInt($("fingeringDisplay").value,10)||0)*12+
+    (parseInt($("playbackTranspose").value,10)||0);
+  const forced=[
+    "%soundfont mscore",
+    "%%MIDI program 22",
+    ...(transpose!==0?[`%%MIDI transpose ${transpose}`]:[]),
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0",
+    "%%MIDI bassvol 64",
+    "%%MIDI chordvol 64"
+  ].join("\n")+"\n";
+  // Neutralize old conflicting directives, including directives after the key.
+  const cleaned=String(abc||"").replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|transpose|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
+    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;
+      return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1));}
+  );
+  // Every tune in an all-tunes transfer needs its own header-level overrides.
+  let inserted=false;
+  const result=cleaned.replace(/^[ \t]*X:[^\r\n]*(?:\r?\n|$)/gm,header=>{
+    inserted=true;
+    return header+(header.endsWith("\n")?"":"\n")+forced;
+  });
+  return inserted?result:forced+cleaned;
+}
+
+function buildABCTTShareURL(allTunes,mode){
   syncCurrentTuneFromEditor();
   const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
-  if(!abc||!abc.trim())return;
+  if(!abc||!abc.trim())return '';
+  const def=compressABCDeflate(prepareABCForABCTTPlayback(abc));
+  const action=mode==="player"?"play=1":"editor=1";
+  return `${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+}
+
+function openShareInABCTranscriptionTools(allTunes,mode){
   try{
-    const def=compressABCDeflate(abc);
-    const action=mode==="player"?"play=1":"editor=1";
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+    const url=buildABCTTShareURL(allTunes,mode);
+    if(!url)return;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
     // Safari, Shift+window.open() can explicitly request a new window.
@@ -4757,7 +4793,7 @@ async function printCurrentTuneFingerings(){
 </script>
 <script>
 /* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
-window.ABCPlayerPDF.initNotation({playerId:'abc-tremolo-harmonica-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null});
+window.ABCPlayerPDF.initNotation({playerId:'abc-tremolo-harmonica-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null,getTitleURL:()=>buildABCTTShareURL(false,"player")});
 </script>
 </body>
 </html>

@@ -61,7 +61,7 @@
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 <script src="pdf-lib-min.js"></script>
 <script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261022_sheetfont2"></script>
+<script src="abc-player-pdf-export.js?cb=20261027_abctt_play_titles"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -1808,7 +1808,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.14</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1854,6 +1854,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="lessonDialog playerPdfDialog">
     <h2 id="playerPdfTitle">Export Notation PDF</h2>
     <p>Export the current notation pane. Complete stave and tablature systems stay together on the same page.</p>
+        <p>The PDF tune title will link to the ABC Transcription Tools Player.</p>
     <label for="playerPdfSize">Paper Size</label>
     <select id="playerPdfSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
     <label for="playerPdfOrientation">Orientation</label>
@@ -1993,7 +1994,8 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Share links and saved ABC files preserve the original ABC from the editor; generated chord notes and playback directives are not inserted into them.</p>
       <p>Use <b>Open in ABCTT</b> to transfer the tune to ABC Transcription Tools for further editing.</p>
       <p>When <b>Build and Play Dulcimer-friendly Chords</b> is selected, <b>Open in ABCTT</b> transfers the processed ABC for the chord solution, including generated bracketed note chords, injected MIDI commands, and notation layout directives.</p>
-      <p>In either of the other chord modes, <b>Open in ABCTT</b> transfers the current tune exactly as it appears in the ABC editor.</p>
+      <p>In either of the other chord modes, <b>Open in ABCTT</b> transfers the original tune without generated chord voicings.</p>
+      <p>In all chord modes, <b>Open in ABCTT</b> and clickable PDF tune titles use the FatBoy soundfont and MIDI bass/chord programs 0, overriding any conflicting source directives. <b>Play Piano Bass and Chords</b> transfers bass/chord volumes of 64; <b>Don't Play Chords</b> and <b>Build and Play Dulcimer-friendly Chords</b> transfer bass/chord volumes of 0. Every mode also transfers the selected melody program and optional octave-lower MIDI transpose.</p>
       <p><b>Open in ABCTT</b> is available for the current tune (including lesson links) only. The <b>Share All Tunes</b> option creates a normal share link if the tunes fit within the share-link length limit, but does not offer an ABCTT transfer.</p>
       <p>A received share link applies its settings for that visit without replacing your saved preferences unless you change a setting.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -2003,6 +2005,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
       <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
@@ -6284,31 +6287,67 @@ function mdABCTTChordStaffsep(playbackABC,sourceTune){
   return abc.slice(0,at)+`%%staffsep ${staffsep}\n`+abc.slice(at);
 }
 
+// These backing-instrument settings are required in every ABCTT transfer,
+// regardless of the chord playback mode. Retain any melody program/transpose
+// directives already established by the selected dulcimer sound settings.
+function mdABCTTFixedBackingSettings(abc){
+  const source=String(abc||"");
+  const cleaned=source.replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
+    line=>{const indent=(line.match(/^[ \t]*/)||[""])[0];return indent+"%"+" ".repeat(Math.max(0,line.length-indent.length-1));}
+  );
+  // Piano accompaniment remains audible only in Piano Bass and Chords mode.
+  // None and generated Dulcimer-friendly Chords modes suppress abcjs backing.
+  const backingVolume=mdChordPlaybackMode==="piano"?64:0;
+  const forced=[
+    "%soundfont fatboy",
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0",
+    `%%MIDI bassvol ${backingVolume}`,
+    `%%MIDI chordvol ${backingVolume}`
+  ].join("\n")+"\n";
+  const kMatch=/^K\s*:.*$/mi.exec(cleaned);
+  return kMatch
+    ? cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index)
+    : forced+cleaned;
+}
+
 function mdABCForABCTTTransfer(tune){
-  if(mdChordPlaybackMode!=="dulcimer")return tune;
   const oldPlans=MD.chordPlans;
   const oldEdits=MD.chordEdits;
   const oldPrefixLength=prefixLength;
   try{
-    // Preserve playback MIDI directives and solved notes, but use ABCTT's
+    if(mdChordPlaybackMode!=="dulcimer"){
+      // Transfer the original notes with the SAME selected melody program,
+      // mute and octave settings that playback injects. No solved chords
+      // or score-only staff spacing are added in these two modes.
+      return mdABCTTFixedBackingSettings(buildPlaybackABC(tune));
+    }
+    // Preserve playback melody program/transpose and solved notes, using ABCTT's
     // compact staff spacing when an actual bracket-note chord was generated.
     const {playbackABC}=mdPreparePlaybackScoreABC(tune,$("notationDisplay").value);
     const hasSolvedChords=MD.chordEdits.some(edit=>edit.replacement.startsWith("["));
-    return hasSolvedChords?mdABCTTChordStaffsep(playbackABC,tune):playbackABC;
+    const score=hasSolvedChords?mdABCTTChordStaffsep(playbackABC,tune):playbackABC;
+    return mdABCTTFixedBackingSettings(score);
   }finally{
     MD.chordPlans=oldPlans;
     MD.chordEdits=oldEdits;
     prefixLength=oldPrefixLength;
   }
 }
-function openShareInABCTranscriptionTools(){
+function buildABCTTShareURL(mode){
   syncCurrentTuneFromEditor();
   const sourceTune=$("abcText").value;
-  if(!sourceTune?.trim())return;
+  if(!sourceTune?.trim())return '';
+  const abc=mdABCForABCTTTransfer(sourceTune);
+  const def=compressABCDeflate(abc);
+  const action=mode==="player"?"play=1":"editor=1";
+  return `${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+}
+function openShareInABCTranscriptionTools(){
   try{
-    const abc=mdABCForABCTTTransfer(sourceTune);
-    const def=compressABCDeflate(abc);
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&editor=1&format=noten&ssp=10`;
+    const url=buildABCTTShareURL('editor');
+    if(!url)return;
     const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
   }catch(err){console.error("Cannot share to ABC Transcription Tools",err)}
 }
@@ -6338,7 +6377,7 @@ updateInstrumentUI();
 </script>
 <script>
 /* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
-window.ABCPlayerPDF.initNotation({playerId:'abc-mountain-dulcimer-player',hasTunes:()=>tunes.length,mode:'dulcimer',systemGap:16,glyphFont:null});
+window.ABCPlayerPDF.initNotation({playerId:'abc-mountain-dulcimer-player',hasTunes:()=>tunes.length,mode:'dulcimer',systemGap:16,glyphFont:null,getTitleURL:()=>buildABCTTShareURL("player")});
 
 </script>
 </body></html>

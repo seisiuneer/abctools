@@ -163,6 +163,38 @@ function initNotation(config) {
     }
   }
 
+  // Locate the visible first tune title in the same SVG coordinate space as
+  // the per-system raster captures. Handles titles inside transformed groups.
+  function pdfTitleBounds(svg) {
+    const title=svg.querySelector('text.abcjs-title, .abcjs-title');
+    if (!title || !title.getBBox) return null;
+    try {
+      const b=title.getBBox();
+      if (!(b.width>0 && b.height>0)) return null;
+      const from=title.getScreenCTM(), to=svg.getScreenCTM();
+      if (!from || !to || !global.DOMPoint) return {x:b.x,y:b.y,width:b.width,height:b.height};
+      const inv=to.inverse();
+      const pts=[[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]]
+        .map(([x,y])=>new global.DOMPoint(x,y).matrixTransform(from).matrixTransform(inv));
+      const minX=Math.min(...pts.map(p=>p.x)),maxX=Math.max(...pts.map(p=>p.x));
+      const minY=Math.min(...pts.map(p=>p.y)),maxY=Math.max(...pts.map(p=>p.y));
+      return [minX,minY,maxX,maxY].every(Number.isFinite)
+        ? {x:minX,y:minY,width:maxX-minX,height:maxY-minY} : null;
+    } catch (_) {return null;}
+  }
+
+  // pdf-lib doesn't expose a page link-rectangle convenience method. Use a
+  // standard invisible URI annotation, keeping the rendered title unchanged.
+  function addPdfTitleLink(pdf,page,url,rect){
+    const [left,bottom,right,top]=rect;
+    if (!(right>left && top>bottom)) return;
+    const annotation=pdf.context.register(pdf.context.obj({
+      Type:'Annot',Subtype:'Link',Rect:[left,bottom,right,top],Border:[0,0,0],
+      A:{S:'URI',URI:PDFLib.PDFString.of(url)}
+    }));
+    page.node.addAnnot(annotation);
+  }
+
   async function runPdfExport() {
     const notation = document.getElementById('notation');
     const svg = notation && notation.querySelector('svg');
@@ -182,6 +214,10 @@ function initNotation(config) {
     }
     if (document.fonts?.ready) await document.fonts.ready;
 
+    // This optional callback is supplied only by players that want ABCTT
+    // playback links on the main notation PDF title. No effect on All… sheets.
+    const titleURL=typeof config.getTitleURL==='function'?config.getTitleURL():'';
+    const titleBox=titleURL?pdfTitleBounds(svg):null;
     const {x,width,slices} = svgSlices(svg);
     const dim = sizeSelect.value === 'a4' ? [595.28,841.89] : [612,792];
     if (orientationSelect.value === 'landscape') dim.reverse();
@@ -246,11 +282,29 @@ function initNotation(config) {
         png = await htmlToImage.toPng(clone, captureOptions);
       } finally { sandbox.remove(); }
       const embedded = await pdf.embedPng(png);
+      const imageLeft=(pageWidth - width*scale)/2;
+      const imageBottom=pageHeight-margin-usedHeight-drawHeight;
       page.drawImage(embedded, {
-        x:(pageWidth - width*scale)/2,
-        y:pageHeight-margin-usedHeight-drawHeight,
+        x:imageLeft,
+        y:imageBottom,
         width:width*scale,height:drawHeight
       });
+      // The title appears in the first system. Convert its SVG-unit bounds
+      // to this slice's drawn PDF points after fitting and pagination.
+      if (index===0 && titleURL && titleBox) {
+        const left=Math.max(x,titleBox.x);
+        const right=Math.min(x+width,titleBox.x+titleBox.width);
+        const top=Math.max(slice.start,titleBox.y);
+        const bottom=Math.min(slice.start+slice.height,titleBox.y+titleBox.height);
+        if (right>left && bottom>top) {
+          addPdfTitleLink(pdf,page,titleURL,[
+            imageLeft+(left-x)*scale-2,
+            imageBottom+(slice.start+slice.height-bottom)*scale-2,
+            imageLeft+(right-x)*scale+2,
+            imageBottom+(slice.start+slice.height-top)*scale+2
+          ]);
+        }
+      }
       usedHeight += drawHeight;
     }
     // Page numbers are useful only when a tune spans more than one page.

@@ -59,7 +59,7 @@
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 <script src="pdf-lib-min.js"></script>
 <script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261022_sheetfont2"></script>
+<script src="abc-player-pdf-export.js?cb=20261027_abctt_play_titles"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -1472,7 +1472,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.0.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1516,6 +1516,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="lessonDialog playerPdfDialog">
     <h2 id="playerPdfTitle">Export Notation PDF</h2>
     <p>Export the current notation pane. Complete stave and tablature systems stay together on the same page.</p>
+        <p>The PDF tune title will link to the ABC Transcription Tools Player.</p>
     <label for="playerPdfSize">Paper Size</label>
     <select id="playerPdfSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
     <label for="playerPdfOrientation">Orientation</label>
@@ -1649,6 +1650,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
       <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
@@ -1973,7 +1975,7 @@ function buildPlaybackABC(abc){
   const source=String(abc||"");
   const forced=[
     "%soundfont fatboy",
-    melodyMuted?"%%MIDI program mute":(`%%MIDI program ${selectedMelodyProgram()}`),
+    selectedPlaybackMIDIProgramDirective(),
     ...((["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))?["%%MIDI transpose -12"]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
@@ -2790,11 +2792,48 @@ function updateShareButtons(){
   if(typeof refreshUnifiedShareState==="function")refreshUnifiedShareState();
 }
 
-function openShareInABCTranscriptionTools(allTunes,mode){
+// Keep ABCTT transfers on the same instrument/soundfont program as playback.
+// These functions operate only on the transferred ABC, never the editor score.
+function selectedPlaybackMIDIProgramDirective(){
+  return melodyMuted?"%%MIDI program mute":(`%%MIDI program ${selectedMelodyProgram()}`);
+}
+
+function prepareABCForABCTTPlayback(abc){
+  const forceOctaveDown=['guitar','guitar-dadgad','ukulele-baritone'].includes($("instrumentSelect").value);
+  const forced=[
+    "%soundfont fatboy",
+    selectedPlaybackMIDIProgramDirective(),
+    // Match the sounding octave of Guitar (both tunings) and Baritone Ukulele.
+    ...(forceOctaveDown?["%%MIDI transpose -12"]:[]),
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0"
+  ].join("\n")+"\n";
+
+  // Neutralize existing transposes only when forcing -12, so the ABCTT link
+  // has one unambiguous octave setting for Guitar and Baritone Ukulele.
+  // For other instruments, preserve source transpose directives as before.
+  const override=forceOctaveDown
+    ? /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|transpose)\b)[^\r\n]*/gmi
+    : /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi;
+  const cleaned=String(abc||"").replace(
+    override,
+    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;
+      return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1));}
+  );
+  // An all-tunes transfer needs the program attached to EVERY X: header,
+  // not just to the first tune. Preserve each tune's music and other metadata.
+  let inserted=false;
+  const transferred=cleaned.replace(/^[ \t]*X:[^\r\n]*(?:\r?\n|$)/gm,header=>{
+    inserted=true;
+    return header+(header.endsWith("\n")?"":"\n")+forced;
+  });
+  return inserted?transferred:forced+cleaned;
+}
+
+function buildABCTTShareURL(allTunes,mode){
   syncCurrentTuneFromEditor();
   const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
-  if(!abc||!abc.trim())return;
-  try{
+  if(!abc||!abc.trim())return '';
     const instrument=$("instrumentSelect").value;
     // Baritone Ukulele uses a custom four-string tablature definition in ABCTT.
     // Apply it only to the transferred copy, leaving the editor ABC untouched.
@@ -2805,14 +2844,20 @@ function openShareInABCTranscriptionTools(allTunes,mode){
       const tabDirective='%abcjs_render_params '+JSON.stringify({tablature:[{instrument:"violin",label,tuning:["D","G","B","e"],highestNote:"f'",capo}]});
       transferABC=transferABC.replace(/^(X:[^\r\n]*)(\r?\n|$)/gm,(_match,header,newline)=>header+(newline||"\n")+tabDirective+(newline||"\n"));
     }
-    const def=compressABCDeflate(transferABC);
+    const def=compressABCDeflate(prepareABCForABCTTPlayback(transferABC));
     const action=mode==="player"?"play=1":"editor=1";
     const attFormat = instrument === "bouzouki-gdad" ? "gdad"
       : instrument === "guitar" ? "guitare"
       : instrument === "guitar-dadgad" ? "guitard"
       : instrument === "ukulele" ? "uke"
       : instrument === "ukulele-baritone" ? "noten" : "mandolin";
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10&capo=${selectedCapo()}`;
+    return `${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=${attFormat}&ssp=10&capo=${selectedCapo()}`;
+ }
+
+function openShareInABCTranscriptionTools(allTunes,mode){
+  try{
+    const url=buildABCTTShareURL(allTunes,mode);
+    if(!url)return;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
     // Safari, Shift+window.open() can explicitly request a new window.
@@ -4720,7 +4765,7 @@ function jumpToInstrumentNoteBoundary(toEnd){
 </script>
 <script>
 /* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
-window.ABCPlayerPDF.initNotation({playerId:'abc-fretboard-player',hasTunes:()=>tunes.length,mode:'legacy-crop',systemGap:0,glyphFont:null});
+window.ABCPlayerPDF.initNotation({playerId:'abc-fretboard-player',hasTunes:()=>tunes.length,mode:'legacy-crop',systemGap:0,glyphFont:null,getTitleURL:()=>buildABCTTShareURL(false,"player")});
 
 </script>
 </body></html>

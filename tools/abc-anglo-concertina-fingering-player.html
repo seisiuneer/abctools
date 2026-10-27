@@ -59,7 +59,7 @@
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20261010_0240"></script>
 <script src="pdf-lib-min.js"></script>
 <script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261022_sheetfont2"></script>
+<script src="abc-player-pdf-export.js?cb=20261027_abctt_play_titles"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#b80054;--draw:#008762;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -1091,7 +1091,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 3.9.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -1357,6 +1357,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       
             <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>The tune title in the main notation PDF is clickable. Click it to open this tune in the <b>ABC Transcription Tools Player</b> with the current playback instrument settings. The separate <b>All Fingerings</b> PDF export is unchanged.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
       <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
@@ -3543,14 +3544,43 @@ function updateShareButtons(){
   tuneBtn.title=tuneBtn.disabled?"Current tune share link exceeds 8100 characters.":"Create a share link for the current tune and copy it to the clipboard.";
   allBtn.title=allBtn.disabled?"All-tunes share link exceeds 8100 characters.":"Create a share link for all loaded tunes and copy it to the clipboard.";
 }
-function openShareInABCTranscriptionTools(allTunes,mode){
+// Transfer the same playback instrument settings to ABCTT without changing the editor ABC.
+// For the two harmonica players, ABCTT uses the requested MScore harmonica fallback.
+function prepareABCForABCTTPlayback(abc){
+  const forced=[
+    "%soundfont fatboy",
+    melodyMuted?"%%MIDI program mute":"%%MIDI program 133",
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0"
+  ].join("\n")+"\n";
+  // Neutralize old conflicting directives, including directives after the key.
+  const cleaned=String(abc||"").replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;
+      return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1));}
+  );
+  // Every tune in an all-tunes transfer needs its own header-level overrides.
+  let inserted=false;
+  const result=cleaned.replace(/^[ \t]*X:[^\r\n]*(?:\r?\n|$)/gm,header=>{
+    inserted=true;
+    return header+(header.endsWith("\n")?"":"\n")+forced;
+  });
+  return inserted?result:forced+cleaned;
+}
+
+function buildABCTTShareURL(allTunes,mode){
   syncCurrentTuneFromEditor();
   const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
-  if(!abc||!abc.trim())return;
+  if(!abc||!abc.trim())return '';
+  const def=compressABCDeflate(prepareABCForABCTTPlayback(abc));
+  const action=mode==="player"?"play=1":"editor=1";
+  return `${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+}
+
+function openShareInABCTranscriptionTools(allTunes,mode){
   try{
-    const def=compressABCDeflate(abc);
-    const action=mode==="player"?"play=1":"editor=1";
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}&format=noten&ssp=10`;
+    const url=buildABCTTShareURL(allTunes,mode);
+    if(!url)return;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
     // Safari, Shift+window.open() can explicitly request a new window.
@@ -5481,6 +5511,6 @@ $("showAllFingeringsBtn").addEventListener("click",async()=>{
 })();
 </script><script>
 /* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
-window.ABCPlayerPDF.initNotation({playerId:'abc-anglo-concertina-fingering-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null});
+window.ABCPlayerPDF.initNotation({playerId:'abc-anglo-concertina-fingering-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null,getTitleURL:()=>buildABCTTShareURL(false,"player")});
 </script>
 </body></html>

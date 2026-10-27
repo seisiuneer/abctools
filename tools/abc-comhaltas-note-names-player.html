@@ -60,7 +60,7 @@
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 <script src="pdf-lib-min.js"></script>
 <script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261022_sheetfont2"></script>
+<script src="abc-player-pdf-export.js?cb=20261027_abctt_play_titles"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -1029,7 +1029,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
+<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names" selected>Notation + Note Names</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
@@ -1072,6 +1072,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="lessonDialog playerPdfDialog">
     <h2 id="playerPdfTitle">Export Notation PDF</h2>
     <p>Export the current notation pane. Complete stave and tablature systems stay together on the same page.</p>
+        <p>The PDF tune title will link to the ABC Transcription Tools Player.</p>
     <label for="playerPdfSize">Paper Size</label>
     <select id="playerPdfSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
     <label for="playerPdfOrientation">Orientation</label>
@@ -1169,7 +1170,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
-      <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, without instrument-specific formatting. For a Lesson Share Link, lesson-only information is omitted and only the tune is sent to ABC Transcription Tools.</p>
+      <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, without Comhaltas note-name formatting. The transferred ABC uses the FatBoy soundfont, piano melody program 0, bass/chord programs 0, and bass/chord volumes 64, overriding any corresponding source directives. This also applies to clickable titles in PDFs exported from the main <b>Export PDF</b> button. For a Lesson Share Link, lesson-only information is omitted and only the tune is sent to ABC Transcription Tools.</p>
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
       <p>The <b>Notation display</b> setting is not included in normal share links. Opening a normal share link retains your existing Notation display preference.</p>
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
@@ -1177,6 +1178,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
             <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
       <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
@@ -2089,14 +2091,44 @@ function updateShareButtons(){
     :"Create a share link for all loaded tunes and copy it to the clipboard.";
 }
 
-function openShareInABCTranscriptionTools(allTunes,mode){
+// ABCTT receives the same piano sound and backing levels for every tune,
+// regardless of pre-existing soundfont or MIDI instrument/volume directives.
+function comhaltasABCForABCTTTransfer(abc){
+  const source=String(abc||"");
+  const cleaned=source.replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|bassvol|chordvol)\b)[^\r\n]*/gmi,
+    line=>{const indent=(line.match(/^[ \t]*/)||[""])[0];return indent+"%"+" ".repeat(Math.max(0,line.length-indent.length-1));}
+  );
+  const forced=[
+    "%soundfont fatboy",
+    "%%MIDI program 0",
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0",
+    "%%MIDI bassvol 64",
+    "%%MIDI chordvol 64"
+  ].join("\n")+"\n";
+  const kMatch=/^K\s*:.*$/mi.exec(cleaned);
+  return kMatch
+    ? cleaned.slice(0,kMatch.index)+forced+cleaned.slice(kMatch.index)
+    : forced+cleaned;
+}
+
+function buildABCTTShareURL(allTunes,mode){
   syncCurrentTuneFromEditor();
-  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
-  if(!abc||!abc.trim())return;
+  const source=allTunes?tunes.join("\n\n"):$('abcText').value;
+  if(!source||!source.trim())return '';
+  const abc=allTunes
+    ? tunes.map(comhaltasABCForABCTTTransfer).join("\n\n")
+    : comhaltasABCForABCTTTransfer(source);
+  const def=compressABCDeflate(abc);
+  const action=mode==="player"?"play=1":"editor=1";
+  return `${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}`;
+}
+
+function openShareInABCTranscriptionTools(allTunes,mode){
   try{
-    const def=compressABCDeflate(abc);
-    const action=mode==="player"?"play=1":"editor=1";
-    const url=`${ABC_TOOLS_BASE_URL}?def=${encodeURIComponent(def)}&${action}`;
+    const url=buildABCTTShareURL(allTunes,mode);
+    if(!url)return;
     // Use a synthetic anchor click so the Shift/Alt modifier used to invoke
     // this feature is not inherited by window.open(). In browsers such as
     // Safari, Shift+window.open() can explicitly request a new window.
@@ -3987,6 +4019,6 @@ function jumpToInstrumentNoteBoundary(toEnd){
 })();
 </script><script>
 /* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
-window.ABCPlayerPDF.initNotation({playerId:'abc-comhaltas-note-names-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null});
+window.ABCPlayerPDF.initNotation({playerId:'abc-comhaltas-note-names-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null,getTitleURL:()=>buildABCTTShareURL(false,"player")});
 </script>
 </body></html>
