@@ -35589,11 +35589,14 @@ function DoInjectTablature_Anglo() {
   sendGoogleAnalytics("tablature", "Inject_Anglo");
 
   const concertina_fingerings = [{
-    name: "  On-Row",
+    name: "  On-Row (middle row)",
     id: "0"
   }, {
     name: "  Cross-Row",
     id: "1"
+  }, {
+    name: "  On-Row (inside row)",
+    id: "2"
   }, ];
 
   const concertina_styles = [{
@@ -35649,11 +35652,13 @@ function DoInjectTablature_Anglo() {
   }, {
     html: '<p style="margin-top:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Fingering solutions referenced to C/G tuning:</p>'
   }, {
-    html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'
+    html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row (middle row): Favors D5 and E5 on right-side C-row.</p>'
   }, {
     html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'
   }, {
-    html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'
+    html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'
+  }, {
+    html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row (inside row): Favors the G-row on both sides (D4, G4, A4, B4, C5, D5 and E5 on the left-side G-row).</p>'
   }, {
     name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)",
     id: "configure_gary_coover",

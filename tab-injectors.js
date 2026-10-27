@@ -208,6 +208,49 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     };
 
+    //
+    // On-row on the inside (G) row: the G row is preferred on both hands
+    // (costs: G row 1, C row 2, accidental row 10)
+    //
+    var baseMapInsideRow = {
+
+        // Top row, LH
+        "L1a": new Button("L1a", ["E,", "F,"], 10, "l4"),
+        "L2a": new Button("L2a", ["A,", "_B,"], 10, "l4"),
+        "L3a": new Button("L3a", ["^C", "_E"], 10, "l3"),
+        "L4a": new Button("L4a", ["A", "G"], 10, "l2"),
+        "L5a": new Button("L5a", ["^G", "_B"], 10, "l1"),
+
+        // Middle row, LH
+        "L1": new Button("L1", ["C,", "G,"], 2, "l4"),
+        "L2": new Button("L2", ["G,", "B,"], 2, "l4"),
+        "L3": new Button("L3", ["C", "D"], 2, "l3"),
+        "L4": new Button("L4", ["E", "F"], 2, "l2"),
+        "L5": new Button("L5", ["G", "A"], 2, "l1"),
+
+        // Bottom row, LH
+        "L6": new Button("L6", ["B,", "A,"], 1, "l4"),
+        "L7": new Button("L7", ["D", "^F"], 1, "l4"),
+        "L8": new Button("L8", ["G", "A"], 1, "l3"),
+        "L9": new Button("L9", ["B", "c"], 1, "l2"),
+        "L10": new Button("L10", ["d", "e"], 1, "l1"),
+
+        // Middle row, RH
+        "R1": new Button("R1", ["c", "B"], 2, "r1"),
+        "R2": new Button("R2", ["e", "d"], 2, "r2"),
+        "R3": new Button("R3", ["g", "f"], 2, "r3"),
+        "R4": new Button("R4", ["c'", "a"], 2, "r4"),
+        "R5": new Button("R5", ["e'", "b"], 2, "r4"),
+
+        // Bottom row, RH
+        "R6": new Button("R6", ["g", "^f"], 1, "r1"),
+        "R7": new Button("R7", ["b", "a"], 1, "r2"),
+        "R8": new Button("R8", ["d'", "c'"], 1, "r3"),
+        "R9": new Button("R9", ["g'", "e'"], 1, "r4"),
+        "R10": new Button("R10", ["b'", "^f'"], 1, "r4")
+
+    };
+
     var jeffriesRxMapOriginal = {
         // Top row, RH
         "R1a": new Button("R1a", ["^d", "^c"], 1, "r1"),
@@ -401,6 +444,24 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 for (var x in baseMapCrossRow) {
                       wheatstoneMap[x] = baseMapCrossRow[x];
+                }
+
+                break;
+
+            // On-row, inside (G) row
+            case 2:
+
+                for (var x in jeffriesRxMapAlt) {
+                    jeffriesMap[x] = jeffriesRxMapAlt[x];
+                }
+
+                for (var x in wheatstoneRxMapOriginal) {
+                    wheatstoneMap[x] = wheatstoneRxMapOriginal[x];
+                }
+
+                for (var x in baseMapInsideRow) {
+                    jeffriesMap[x] = baseMapInsideRow[x];
+                    wheatstoneMap[x] = baseMapInsideRow[x];
                 }
 
                 break;
