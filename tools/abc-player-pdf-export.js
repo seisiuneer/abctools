@@ -14,6 +14,8 @@ function initNotation(config) {
   const dialog = document.getElementById('playerPdfModal');
   const sizeSelect = document.getElementById('playerPdfSize');
   const orientationSelect = document.getElementById('playerPdfOrientation');
+  // Optional main-notation PDF option. Older players without this control are unchanged.
+  const clickTitleHeader = document.getElementById('playerPdfClickTitleHeader');
   const statusModal = document.getElementById('playerPdfStatusModal');
   const statusText = document.getElementById('playerPdfStatusText');
   if (!button || !dialog || !sizeSelect || !orientationSelect || !statusModal || !statusText) return;
@@ -27,18 +29,21 @@ function initNotation(config) {
       const p = JSON.parse(localStorage.getItem(storageKey) || '{}');
       if (supportedSizes.has(p.size)) sizeSelect.value = p.size;
       if (supportedOrientations.has(p.orientation)) orientationSelect.value = p.orientation;
+      if (clickTitleHeader && typeof p.clickTitleHeader === 'boolean')
+        clickTitleHeader.checked = p.clickTitleHeader;
     } catch (_) { /* Local storage may be unavailable. */ }
   };
   const savePreferences = () => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify({
-        size: sizeSelect.value, orientation: orientationSelect.value
-      }));
+      const prefs = {size: sizeSelect.value, orientation: orientationSelect.value};
+      if (clickTitleHeader) prefs.clickTitleHeader = clickTitleHeader.checked;
+      localStorage.setItem(storageKey, JSON.stringify(prefs));
     } catch (_) { /* PDF export remains available with storage disabled. */ }
   };
   restorePreferences();
   sizeSelect.addEventListener('change', savePreferences);
   orientationSelect.addEventListener('change', savePreferences);
+  if (clickTitleHeader) clickTitleHeader.addEventListener('change', savePreferences);
 
   const openDialog = () => {
     if (!document.querySelector('#notation svg') || !hasTunes()) {
@@ -237,6 +242,7 @@ function initNotation(config) {
     let page = null, usedHeight = 0;
     const newPage = () => { page = pdf.addPage(dim); usedHeight = 0; };
     newPage();
+    let titleLinkAdded = false;
 
     // Work from the original fully-rendered score, but capture only one
     // complete system at a time. This also avoids huge full-tune canvases.
@@ -303,10 +309,27 @@ function initNotation(config) {
             imageLeft+(right-x)*scale+2,
             imageBottom+(slice.start+slice.height-top)*scale+2
           ]);
+          titleLinkAdded = true;
         }
       }
       usedHeight += drawHeight;
     }
+    // The hint lives in the original 36pt top margin of page one, so
+    // title/music coordinates and system pagination remain exactly unchanged.
+    // Only draw it when a playable title link was actually attached.
+    if (titleLinkAdded && clickTitleHeader?.checked) {
+      const hint = 'Click the title to play';
+      const font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+      const fontSize = 11;
+      pdf.getPages()[0].drawText(hint, {
+        x: (pageWidth - font.widthOfTextAtSize(hint, fontSize)) / 2,
+        y: pageHeight - 24,
+        size: fontSize,
+        font,
+        color: PDFLib.rgb(0.32, 0.32, 0.32)
+      });
+    }
+
     // Page numbers are useful only when a tune spans more than one page.
     // Keep them outside the reserved 36pt music margin, 16pt from the edge.
     if (pdf.getPageCount() > 1) {
@@ -485,7 +508,9 @@ function attachSheet(sheetWindow, config) {
     if (['a4','letter'].includes(p.size))size.value=p.size;
     if (['landscape','portrait'].includes(p.orientation))orient.value=p.orientation;
   }catch(_){}
-  const persist=()=>{try{win.localStorage.setItem(settingKey,JSON.stringify({size:size.value,orientation:orient.value}))}catch(_){}};
+  // Preserve the main notation dialog's optional title-hint preference.
+  const persist=()=>{try{const previous=JSON.parse(win.localStorage.getItem(settingKey)||'{}')||{};
+     win.localStorage.setItem(settingKey,JSON.stringify({...previous,size:size.value,orientation:orient.value}))}catch(_){}};
   size.addEventListener('change',persist);orient.addEventListener('change',persist);
   const reset=()=>{ overlay.classList.remove('open');$('abcSharedPdfOptions').hidden=false;$('abcSharedPdfProgress').hidden=true;$('abcSharedPdfProgress').classList.remove('ready');
     $('abcSharedPdfConfirm').hidden=false;$('abcSharedPdfCancel').textContent='Cancel';$('abcSharedPdfCancel').disabled=false;$('abcSharedSheetPdfBtn').disabled=false;

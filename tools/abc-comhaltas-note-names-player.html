@@ -60,7 +60,7 @@
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
 <script src="pdf-lib-min.js"></script>
 <script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261027_abctt_play_titles"></script>
+<script src="abc-player-pdf-export.js?cb=20261027_pdf_title_header"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -972,7 +972,14 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
 }
 .playerPdfDialog select:focus-visible{outline:2px solid #176b43;outline-offset:2px}
 .playerPdfDialog select::-ms-expand{display:none}
-.playerPdfDialog .lessonActions{display:flex;justify-content:center;gap:14px;margin-top:19px}
+.playerPdfDialog .playerPdfHeaderOption{
+  display:flex;align-items:flex-start;gap:9px;margin:23px 0 20px;
+  font-weight:500;line-height:1.45;cursor:pointer;
+}
+.playerPdfDialog .playerPdfHeaderOption input[type="checkbox"]{
+  flex:0 0 auto;width:18px;height:18px;margin:2px 0 0;accent-color:#176b43;
+}
+.playerPdfDialog .lessonActions{display:flex;justify-content:center;gap:14px;margin-top:27px}
 #exportPdfBtn{white-space:nowrap}
 
 /* Modal displayed only while the notation PDF is being generated. */
@@ -1077,10 +1084,10 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
     <select id="playerPdfSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
     <label for="playerPdfOrientation">Orientation</label>
     <select id="playerPdfOrientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select>
+    <label class="playerPdfHeaderOption" for="playerPdfClickTitleHeader"><input id="playerPdfClickTitleHeader" type="checkbox" checked><span>Add &quot;Click the title to play&quot; on the first page header</span></label>
     <div class="lessonActions"><button id="playerPdfGo" type="button">Export PDF</button><button id="playerPdfCancel" type="button">Cancel</button></div>
   </div>
 </div>
-
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
@@ -1180,6 +1187,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
       <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
+      <p>By default, the PDF includes a centered <b>Click the title to play</b> instruction in the top margin of its first page. Uncheck <b>Add "Click the title to play" on the first page header</b> to omit it; the tune title and music do not move.</p>
       <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
       <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
       <p>A status dialog shows progress while the PDF is generated.</p>
