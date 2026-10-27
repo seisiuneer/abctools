@@ -515,6 +515,12 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
         // Generate an array of note objects. Each
         var notes = getAbcNotes(abcInput);
 
+        // Order in which the notes are played (repeats, 1st / 2nd endings)
+        notes.forEach(function(note, i) {
+            note.order = i;
+        });
+        playGraph = findPlayGraph(abcInput, notes);
+
         // Generate the inverse mapping
         var noteToButtonMap = generateNoteToButtonMap(buttonToNoteMap);
 
@@ -551,7 +557,97 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
         this.index = index; // Index of this note in the original ABC input string
         this.unNormalizedValue = unNormalizedValue;
         this.normalizedValue = normalizedValue;
+        this.order = 0; // Index of this note in the notes array
     };
+
+    //
+    // Notes played one after the other, in the order of the abcjs MIDI player (repeats, 1st / 2nd endings):
+    // in "|: A B |1 C :|2 D |", B is followed by C the first time and by D the second time, C by A, and C is never followed by D.
+    //
+    // The abcjs sequencer empties the midiPitches of a note element each time it plays it: the calls of a setter
+    // put on the first voice note elements give the play order. Each element covers the notes of its character
+    // range (grace notes and note).
+    //
+    // Returns null when the notes are played in the written order (or when the order can't be found), else:
+    //   linear[i]:     notes i and i + 1 are played one after the other
+    //   edgesTo[j]:    notes lo < j - 1 played right before or after note j
+    //   carryUntil[i]: last note j > i + 1 played right before or after note i
+    //
+    var playGraph = null;
+
+    function findPlayGraph(abcText, notes) {
+
+        if (typeof ABCJS === "undefined" || !ABCJS.parseOnly || notes.length < 2) {
+            return null;
+        }
+
+        var played = [];
+        try {
+            var tune = ABCJS.parseOnly(abcText)[0];
+            if (!tune || !tune.lines || !tune.setUpAudio) {
+                return null;
+            }
+
+            var n = 0;
+            tune.lines.forEach(function (line) {
+                if (!line.staff || !line.staff[0] || !line.staff[0].voices || !line.staff[0].voices[0]) {
+                    return;
+                }
+                line.staff[0].voices[0].forEach(function (el) {
+                    if (el.el_type !== "note" || el.rest) {
+                        return;
+                    }
+                    var inside = [];
+                    while (n < notes.length && notes[n].index < el.endChar) {
+                        if (notes[n].index >= el.startChar) {
+                            inside.push(n);
+                        }
+                        ++n;
+                    }
+                    var current = el.midiPitches;
+                    Object.defineProperty(el, "midiPitches", {
+                        configurable: true,
+                        get: function () { return current; },
+                        set: function (value) { current = value; played.push.apply(played, inside); }
+                    });
+                });
+            });
+
+            tune.setUpAudio();
+        }
+        catch (err) {
+            return null;
+        }
+
+        // Every note must be played
+        var seen = new Array(notes.length).fill(false);
+        played.forEach(function (i) { seen[i] = true; });
+        if (seen.indexOf(false) >= 0) {
+            return null;
+        }
+
+        var graph = { linear: new Array(notes.length).fill(false), edgesTo: {}, carryUntil: {} };
+        var extra = false;
+        var known = {};
+        for (var k = 1; k < played.length; ++k) {
+            var lo = Math.min(played[k - 1], played[k]);
+            var hi = Math.max(played[k - 1], played[k]);
+            if (hi == lo + 1) {
+                graph.linear[lo] = true;
+            }
+            else if (hi > lo + 1 && !known[lo + "," + hi]) {
+                known[lo + "," + hi] = true;
+                (graph.edgesTo[hi] = graph.edgesTo[hi] || []).push(lo);
+                graph.carryUntil[lo] = Math.max(graph.carryUntil[lo] || 0, hi);
+                extra = true;
+            }
+        }
+
+        if (!extra && graph.linear.slice(0, notes.length - 1).indexOf(false) < 0) {
+            return null;
+        }
+        return graph;
+    }
 
     // State constructor
     var State = function(note, button, direction) {
@@ -1002,11 +1098,12 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
     function chooseFingerings(stateTree) {
         bestCost = 100000000;
         bestPathFromState = {};
-        return chooseFingeringsRecursive(stateTree);
+        return chooseFingeringsRecursive(stateTree, {});
     }
 
     // Choose best fingerings for current state.
-    function chooseFingeringsRecursive(state) {
+    // carries: states of earlier notes played right before or after a later note (playGraph), by note index
+    function chooseFingeringsRecursive(state, carries) {
 
         if (state.nextStates.length == 0) {
             angloLog("Last state, note=" + state.note.normalizedValue + " button=" + state.button.name + ". Popping up the stack");
@@ -1023,9 +1120,28 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
 
         angloLog("Choosing: current note=" + normalizedValue + " button=" + state.button.name);
 
-        if (bestPathFromState[state]) {
+        // With repeats, the best path also depends on the buttons of the earlier notes
+        // played right before or after a later one
+        var memoKey = "" + state;
+        for (var c in carries) {
+            memoKey += "|" + c + ":" + carries[c].id;
+        }
+
+        if (bestPathFromState[memoKey]) {
             angloLog("Already visited state note=" + state.note.normalizedValue + " button=" + state.button.name);
-            return bestPathFromState[state];
+            return bestPathFromState[memoKey];
+        }
+
+        // Notes played one after the other (playGraph): this note and the next one, this note and later ones
+        var order = (note != null) ? note.order : -1;
+        var linearPlayed = (playGraph == null) || (order < 0) || playGraph.linear[order];
+        var nextCarries = carries;
+        if ((playGraph != null) && (order >= 0) && (playGraph.carryUntil[order] !== undefined)) {
+            nextCarries = {};
+            for (var c in carries) {
+                nextCarries[c] = carries[c];
+            }
+            nextCarries[order] = state;
         }
 
         var bestPath = new Path([], 10000000);
@@ -1037,8 +1153,18 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
 
             angloLog("Trying next [" + i + "/" + state.nextStates.length + "] note=" + nextState.note.normalizedValue + " button=" + nextState.button.name);
 
+            // Earlier notes still needed after the next one
+            var carriesAfter = {};
+            if (playGraph != null) {
+                for (var c in nextCarries) {
+                    if (playGraph.carryUntil[c] > nextState.note.order) {
+                        carriesAfter[c] = nextCarries[c];
+                    }
+                }
+            }
+
             // Recurse! Find the fingering for the rest of the tune.
-            var path = chooseFingeringsRecursive(nextState);
+            var path = chooseFingeringsRecursive(nextState, carriesAfter);
             if (path == null) {
                 angloLog("Could not get fingerings");
                 return null;
@@ -1047,7 +1173,20 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
             var myCost = state.button.cost;
             var HOP_COST = 100;
 
-            if (path.states.length != 0) {
+            // Earlier notes played right before or after the next one (repeats, endings)
+            if (playGraph != null) {
+                (playGraph.edgesTo[nextState.note.order] || []).forEach(function(lo) {
+                    var earlier = nextCarries[lo];
+                    if (earlier && isHop(earlier.button, nextState.button)) {
+                        angloLog("Penalizing finger hop across a repeat or ending for note " + nextState.note.normalizedValue);
+                        myCost += HOP_COST;
+                    }
+                });
+            }
+
+            // No hop cost when the next note is never played right after this one
+            // (e.g. last note of a 1st ending, then first note of the 2nd ending)
+            if (linearPlayed && (path.states.length != 0)) {
                 var nextButton = path.states[0].button;
 
                 if (isHop(state.button, nextButton)) {
@@ -1066,7 +1205,7 @@ var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultBut
 
         } // end for nextState
 
-        bestPathFromState[state] = bestPath;
+        bestPathFromState[memoKey] = bestPath;
 
         angloLog("Done choosing: current note=" + normalizedValue + " button=" + state.button.name + " best cost=" + bestPath.cost);
 
