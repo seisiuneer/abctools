@@ -59,7 +59,10 @@ function collectABCKeyChanges(originalInput, cleanedInput) {
     return events;
 }
 
-var angloFingeringsGenerator = function (theABC, callback){
+// showOnlyNonDefaultButtons: only inject the fingerings of the notes not played on their default button
+var angloFingeringsGenerator = function (theABC, callback, showOnlyNonDefaultButtons){
+
+    showOnlyNonDefaultButtons = (showOnlyNonDefaultButtons === true);
 
     var gAngloVerbose = false;
 
@@ -530,7 +533,7 @@ var angloFingeringsGenerator = function (theABC, callback){
         }
 
         // Merge the chosen fingerings with the ABC notation
-        abcOutput = mergeFingerings(abcInput, path, notes);
+        abcOutput = mergeFingerings(abcInput, path, notes, noteToButtonMap, showOnlyNonDefaultButtons);
 
         return abcOutput;
 
@@ -695,7 +698,9 @@ var angloFingeringsGenerator = function (theABC, callback){
     // Merges an array of Button objects with an array of Notes
     // with the original string input.
     // Returns a merged string.
-    function mergeFingerings(input, path, notes) {
+    // showOnlyNonDefaultButtons: no fingering for the notes played on their default button
+    // (the least costly button of the note in the selected fingering solution)
+    function mergeFingerings(input, path, notes, noteToButtonMap, showOnlyNonDefaultButtons) {
 
         // Drop the first state of the path - it's a dummy root state
         path.states.shift();
@@ -714,6 +719,15 @@ var angloFingeringsGenerator = function (theABC, callback){
             var index = notes[i].index + insertedTotal;
 
             var fingering = path.states[i].button.name;
+
+            if (showOnlyNonDefaultButtons) {
+
+                var defaultButtons = noteToButtonMap[notes[i].normalizedValue] || noteToButtonMap[respell(notes[i].normalizedValue)];
+
+                if (defaultButtons && (path.states[i].button === defaultButtons[0])) {
+                    continue;
+                }
+            }
 
             // *** CHANGE: mark tune if we render an x or if direction is invalid
             const dir = path.states[i].direction;

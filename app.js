@@ -35627,6 +35627,7 @@ function DoInjectTablature_Anglo() {
     configure_concertina_tuning: parseInt(gInjectTab_ConcertinaTuning),
     configure_concertina_fingering: parseInt(gInjectTab_ConcertinaFingering),
     configure_gary_coover: gInjectTab_GaryCoover,
+    configure_show_only_non_default_buttons: gInjectTab_ShowOnlyNonDefaultButtons,
   };
 
   const form = [{
@@ -35665,6 +35666,11 @@ function DoInjectTablature_Anglo() {
     type: "checkbox",
     cssClass: "configure_tab_settings_form_text"
   }, {
+    name: "    Show only non-default button fingerings",
+    id: "configure_show_only_non_default_buttons",
+    type: "checkbox",
+    cssClass: "configure_tab_settings_form_text"
+  }, {
     html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fingerings" class="btn btn-subdialog configure_anglo_fingerings" onclick="ConfigureAngloFingerings()" type="button" value="Configure Anglo Concertina Tablature Button Names" title="Configure the Anglo Concertina tablature button names"></p>'
   }, {
     html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'
@@ -35686,6 +35692,7 @@ function DoInjectTablature_Anglo() {
       gInjectTab_ConcertinaTuning = args.result.configure_concertina_tuning;
       gInjectTab_ConcertinaFingering = args.result.configure_concertina_fingering;
       gInjectTab_GaryCoover = args.result.configure_gary_coover;
+      gInjectTab_ShowOnlyNonDefaultButtons = (args.result.configure_show_only_non_default_buttons === true);
 
       // Save the settings, in case they were initialized
       SaveConfigurationSettings();
@@ -35798,7 +35805,7 @@ function DoInjectTablature_Anglo() {
 
         setABCEditorText(val);
 
-        angloFingeringsGenerator(val, callback);
+        angloFingeringsGenerator(val, callback, gInjectTab_ShowOnlyNonDefaultButtons);
 
         function callback(injectedABC, wasError, errorReport) {
 
@@ -49453,6 +49460,7 @@ var gInjectTab_ConcertinaStyle = 0;
 var gInjectTab_ConcertinaTuning = 0;
 var gInjectTab_ConcertinaFingering = 0;
 var gInjectTab_GaryCoover = false;
+var gInjectTab_ShowOnlyNonDefaultButtons = false;
 var gInjectTab_BoxTabStyle = 0;
 var gInjectTab_Colors = false;
 
@@ -49811,6 +49819,13 @@ function GetInitialConfigurationSettings() {
     gInjectTab_GaryCoover = (val == "true");
   } else {
     gInjectTab_GaryCoover = false;
+  }
+
+  val = localStorage.InjectTab_ShowOnlyNonDefaultButtons;
+  if (val) {
+    gInjectTab_ShowOnlyNonDefaultButtons = (val == "true");
+  } else {
+    gInjectTab_ShowOnlyNonDefaultButtons = false;
   }
 
   val = localStorage.InjectTab_Colors;
@@ -51068,6 +51083,7 @@ function SaveConfigurationSettings() {
     localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
     localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
     localStorage.InjectTab_GaryCoover = gInjectTab_GaryCoover;
+    localStorage.InjectTab_ShowOnlyNonDefaultButtons = gInjectTab_ShowOnlyNonDefaultButtons;
     localStorage.InjectTab_Colors = gInjectTab_Colors;
     localStorage.InjectTab_BoxTabStyle = gInjectTab_BoxTabStyle;
 
