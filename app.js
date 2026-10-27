@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3363_102026_1100";
+var gVersionNumber = "3364_102726_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31399,13 +31399,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_20Oct2026;
+        var updatePresented = localStorage.sawUpdate_27Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_20Oct2026 = true;
+          localStorage.sawUpdate_27Oct2026 = true;
 
         }
 
@@ -60938,24 +60938,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 20 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 27 October 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New Tool Added to <strong>Open ABC in External Tool</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>ABC Ocarina Fingering Player</strong> has been added to the <strong>Open ABC in External Tool</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">You can send the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all tunes from the <strong>Sharing Controls</strong> dialog directly to the new tool.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>Fixed Inline Key Changes for Tab Injectors</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">All of the tab injectors were not able to handle inline K: tag key changes.</p>';
-  modal_msg += '<p style="font-size:12pt;">They should be working now except for the Solfège and shape note injectors.</p>';
-  modal_msg += '<p style="font-size:12pt;">They are more complex to fix and still do not handle inline key changes.</p>';
+  modal_msg += '<p style="font-size:12pt;">New Option on the <strong>Phrase-by-Phrase Tune Trainer Builder</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">You can now specify how many times each phrase should be repeated before moving to the next one. Default is 1.</p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Phrase-by-Phrase Tune Trainer Builder</strong> is available as a button labeled <strong>Phrase Builder</strong> on both the <strong>Tune Trainer</strong> as well as the <strong>ABC Features</strong> tab of the <strong>More ABC Tools</strong> dialog.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67870,13 +67861,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_20Oct2026;
+    var updatePresented = localStorage.sawUpdate_27Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_20Oct2026 = true;
+      localStorage.sawUpdate_27Oct2026 = true;
 
     }
 
@@ -67890,13 +67881,17 @@ async function DoStartup() {
 //
 // Flatten repeats and break tune into phrases for the Tune Trainer
 //
-function processAbcPhrases(abcText, phraseBars, phrasePadding) {
+function processAbcPhrases(abcText, phraseBars, phrasePadding, phraseRepeats = 1) {
 
   if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
     return abcText;
   }
 
   if (!Number.isInteger(phrasePadding) || phrasePadding < 0) {
+    return abcText;
+  }
+
+  if (!Number.isInteger(phraseRepeats) || phraseRepeats < 1 || phraseRepeats > 32) {
     return abcText;
   }
 
@@ -67938,14 +67933,14 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
   const outputs = tunes
     .map(t => t.trim())
     .filter(t => t.length > 0)
-    .map(t => processSingleTune(t, phraseBars, phrasePadding));
+    .map(t => processSingleTune(t, phraseBars, phrasePadding, phraseRepeats));
 
   return outputs.join("\n\n");
 
   // ------------------------------------------------------------
   // Process a single tune
   // ------------------------------------------------------------
-  function processSingleTune(abcText, phraseBars, phrasePadding) {
+  function processSingleTune(abcText, phraseBars, phrasePadding, phraseRepeats) {
     const lines = abcText.replace(/\r\n/g, "\n").split("\n");
 
     // Reject multiple voices
@@ -68101,7 +68096,9 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
     );
 
     // ---- Rebuild body ----
-    const newBody = rebuildBodyFromMeasures(phrasedMeasures, phraseBars, phrasePadding, hasPickup);
+    const initialKeyLine = headerLines.filter(ln => /^K\s*:/i.test(ln)).pop();
+    const initialKey = initialKeyLine ? initialKeyLine.replace(/^K\s*:\s*/i, "").trim() : "";
+    const newBody = rebuildBodyFromMeasures(phrasedMeasures, phraseBars, phrasePadding, hasPickup, phraseRepeats, initialKey);
 
     return header + "\n" + newBody;
   }
@@ -68918,7 +68915,7 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   /* ----------------- Helper: rebuild body with wrapping & final |] ---- */
 
-  function rebuildBodyFromMeasures(measures, phraseBars, phrasePadding, hasPickup) {
+  function rebuildBodyFromMeasures(measures, phraseBars, phrasePadding, hasPickup, phraseRepeats, initialKey) {
 
     // Drop measures that have no notes
     measures = measures.filter((m) => {
@@ -68981,6 +68978,40 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
     out = out.replace(/\s{2,}/g, " ");
 
+    // The existing layout places each phrase and its following rests on one
+    // ABC line. Repeat that entire line so every pass has the same response
+    // interval, and the next phrase is not reached until all passes finish.
+    // Keep the one-repeat output byte-for-byte compatible with prior versions.
+    if (phraseRepeats > 1) {
+      const phraseLines = out.trim().split("\n").filter(line => line.trim());
+      const repeatedLines = [];
+      let activeKey = initialKey;
+
+      for (const line of phraseLines) {
+        const keyChanges = Array.from(line.matchAll(/\[K:([^\]\r\n]*)\]/gi));
+        // A line that changes key must also establish its starting key on
+        // each repeat; otherwise subsequent passes would start in the key
+        // left behind by the previous pass.
+        const repeatLine = keyChanges.length && activeKey
+          ? `[K:${activeKey}] ${line}` : line;
+        if (keyChanges.length) {
+          activeKey = keyChanges[keyChanges.length - 1][1].trim();
+        }
+
+        // Only the final line of the complete tune should end with |].
+        const unclosedLine = repeatLine.replace(/\|\]$/, "|");
+        for (let repeat = 0; repeat < phraseRepeats; repeat++) {
+          repeatedLines.push(unclosedLine);
+        }
+      }
+
+      if (repeatedLines.length) {
+        repeatedLines[repeatedLines.length - 1] =
+          repeatedLines[repeatedLines.length - 1].replace(/\|$/, "|]");
+      }
+      out = repeatedLines.join("\n");
+    }
+
     return out.trim() + "\n";
   }
 
@@ -69002,6 +69033,7 @@ function StripInlineAnnotations(abc){
 
 var gPhraseBuilderLength = 2;
 var gPhraseBuilderPadding = 0;
+var gPhraseBuilderRepeats = 1;
 
 //
 // Phrase builder dialog
@@ -69041,13 +69073,14 @@ function PhraseBuilder(theTrainerTune,callback){
   const theData = {
     phraseLength: gPhraseBuilderLength,
     phrasePadding: gPhraseBuilderPadding,
+    phraseRepeats: gPhraseBuilderRepeats,
     buildPhraseAll: false
   };
 
   var form = [{
      html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Phrase-by-Phrase Tune Trainer Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_phrasebuilder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   },{
-      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will break the tune(s) into groups of measures of the phrase length specified below followed by the same number of measures of rests.</p>'
+      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will break the tune(s) into groups of measures of the phrase length specified below followed by the same number of measures of rests. Each phrase and its rests can be repeated before moving to the next phrase.</p>'
   },{
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">If you want additional full-measure rest time between the phrases, set the rest padding value as desired.</p>'
   },{ 
@@ -69067,6 +69100,12 @@ function PhraseBuilder(theTrainerTune,callback){
  {
     name: "Additional full-measure rest padding between phrases:",
     id: "phrasePadding",
+    type: "number",
+    cssClass: "configure_phrase_length"
+  },
+  {
+    name: "Repeat each phrase (including rests) how many times?",
+    id: "phraseRepeats",
     type: "number",
     cssClass: "configure_phrase_length"
   }];
@@ -69169,6 +69208,19 @@ function PhraseBuilder(theTrainerTune,callback){
 
       gPhraseBuilderPadding = phrasePadding;
 
+      // Remember the repeat count between dialog openings, just like the
+      // phrase length and rest padding (both standalone and Tune Trainer).
+      var phraseRepeats = Number(args.result.phraseRepeats);
+
+      if (!Number.isInteger(phraseRepeats) || phraseRepeats < 1 || phraseRepeats > 32) {
+        if (callback) {
+          callback(null);
+        }
+        return;
+      }
+
+      gPhraseBuilderRepeats = phraseRepeats;
+
       var doAllTunes;
 
       if (callback){
@@ -69201,7 +69253,7 @@ function PhraseBuilder(theTrainerTune,callback){
 
             theTune = StripInlineAnnotations(theTune);
 
-            theTune = processAbcPhrases(theTune,gPhraseBuilderLength,gPhraseBuilderPadding)
+            theTune = processAbcPhrases(theTune,gPhraseBuilderLength,gPhraseBuilderPadding,gPhraseBuilderRepeats)
 
             output += theTune + "\n";
 
@@ -69329,7 +69381,7 @@ function PhraseBuilder(theTrainerTune,callback){
           
           thePhrases = StripInlineAnnotations(thePhrases);
 
-          thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength,gPhraseBuilderPadding);
+          thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength,gPhraseBuilderPadding,gPhraseBuilderRepeats);
 
           thePhrases = thePhrases.trim();
 
