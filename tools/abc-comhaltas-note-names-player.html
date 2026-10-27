@@ -58,6 +58,9 @@
 <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20261009_0540"></script>
 <script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+<script src="pdf-lib-min.js"></script>
+<script src="html2image.js"></script>
+<script src="abc-player-pdf-export.js?cb=20261022_sheetfont2"></script>
 <style>
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
@@ -949,13 +952,89 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
 
 /* Preserve the existing stacked/tablet default; 30/70 is desktop-only. */
 @media (max-width:1050px){.leftPane{grid-template-rows:minmax(150px,.9fr) 5px minmax(180px,1.1fr)}}
-</style></head><body><div class="app">
-<header class="app-header"><div class="version">Version 2.5.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
+
+/* PDF export options (local-only preferences; never included in sharing). */
+.playerPdfDialog{max-width:460px;text-align:left}
+.playerPdfDialog h2{text-align:center}
+.playerPdfDialog p{line-height:1.45;margin:12px 0 18px}
+/* Consistent closed-select styling across Safari/iOS, Android and desktop browsers. */
+.playerPdfDialog select{
+  display:block;width:100%;min-height:42px;margin:5px 0 13px;
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+  border:1px solid #b8c7bd;border-radius:7px;
+  padding:9px 40px 9px 12px;
+  background-color:#fff;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='m1 1.5 6 6 6-6' fill='none' stroke='%230d4c2f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;background-size:14px 9px;
+  color:#17241c;-webkit-text-fill-color:#17241c;
+  font-family:inherit;font-size:16px;font-weight:400;line-height:1.3;
+  box-shadow:none;cursor:pointer;
+}
+.playerPdfDialog select:focus-visible{outline:2px solid #176b43;outline-offset:2px}
+.playerPdfDialog select::-ms-expand{display:none}
+.playerPdfDialog .lessonActions{display:flex;justify-content:center;gap:14px;margin-top:19px}
+#exportPdfBtn{white-space:nowrap}
+
+/* Modal displayed only while the notation PDF is being generated. */
+.playerPdfStatusModal{position:fixed;inset:0;z-index:13000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.52)}
+.playerPdfStatusModal.open{display:flex}
+.playerPdfStatusDialog{position:absolute;top:33.333%;left:50%;transform:translate(-50%,-50%);width:min(380px,calc(100vw - 36px));border-radius:12px;background:#fff;color:#17241c;box-shadow:0 18px 55px rgba(0,0,0,.3);padding:26px 20px;text-align:center}
+.playerPdfStatusDialog h2{font-size:1.25rem;margin:12px 0}
+.playerPdfStatusDialog p{font-size:.96rem;min-height:1.5em;margin:0}
+.playerPdfSpinner{width:34px;height:34px;border:4px solid #d9e7de;border-top-color:#176b43;border-radius:50%;margin:0 auto;animation:playerPdfSpin .8s linear infinite}
+
+/* Keep the iOS file-sharing action within the existing PDF status dialog. */
+.playerPdfStatusDialog.ready .playerPdfSpinner{display:none}
+.playerPdfStatusActions{display:none;justify-content:center;align-items:center;gap:14px;margin-top:20px;flex-wrap:wrap}
+.playerPdfStatusDialog.ready .playerPdfStatusActions{display:flex}
+.playerPdfStatusActions button{font:inherit;font-size:1rem;font-weight:650;min-height:40px;padding:8px 16px;border-radius:8px;border:1px solid #9dbaf2;background:#e8f1ff;color:#17241c;cursor:pointer}
+.playerPdfStatusActions button:hover{background:#d6e6ff;border-color:#6f99e8}
+.playerPdfStatusActions button:focus-visible{outline:2px solid #176b43;outline-offset:2px}
+@keyframes playerPdfSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.playerPdfSpinner{animation:none;border-color:#176b43 #d9e7de #d9e7de #d9e7de}}
+@media print{.playerPdfStatusModal{display:none!important}}
+</style>
+<!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
+<style id="pdf-mobile-lesson-style">
+/* Restore a real gap when the toolbar becomes a single column on iPhone. */
+@media (max-width:650px) {
+  .toolbar .shareButtons {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr);
+    gap:10px !important;
+    width:100%;
+    min-width:0;
+  }
+  .toolbar .shareButtons > button {
+    width:100%;
+    min-width:0;
+    margin:0;
+  }
+}
+/* Lesson links show the toolbar but intentionally hide the sharing actions.
+   Keep Export PDF available there, subject to its normal tune-loaded idling. */
+body.lessonMode .toolbar .shareButtons {
+  display:flex !important;
+  align-items:end;
+  gap:8px !important;
+}
+body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
+  display:none !important;
+}
+@media (max-width:650px) {
+  body.lessonMode .toolbar .shareButtons {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+</style>
+</head><body><div class="app">
+<header class="app-header"><div class="version">Version 2.5.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Comhaltas Note Names Player</h1><p>Play ABC tunes with synchronized notation and large live Comhaltas ABC note names.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names" selected>Notation + Note Names</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
- <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
+ <div class="shareButtons"><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
@@ -977,6 +1056,29 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
+
+<div id="playerPdfStatusModal" class="playerPdfStatusModal" role="dialog" aria-modal="true" aria-labelledby="playerPdfStatusTitle" tabindex="-1">
+  <div class="playerPdfStatusDialog">
+    <div class="playerPdfSpinner" aria-hidden="true"></div>
+    <h2 id="playerPdfStatusTitle">Generating PDF</h2>
+    <p id="playerPdfStatusText" role="status" aria-live="polite" aria-atomic="true">Preparing notation…</p>
+      <div class="playerPdfStatusActions">
+      <button id="playerPdfSaveFile" type="button">Save PDF</button>
+      <button id="playerPdfCloseReady" type="button">Close</button>
+    </div>
+  </div>
+</div>
+<div id="playerPdfModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="playerPdfTitle">
+  <div class="lessonDialog playerPdfDialog">
+    <h2 id="playerPdfTitle">Export Notation PDF</h2>
+    <p>Export the current notation pane. Complete stave and tablature systems stay together on the same page.</p>
+    <label for="playerPdfSize">Paper Size</label>
+    <select id="playerPdfSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
+    <label for="playerPdfOrientation">Orientation</label>
+    <select id="playerPdfOrientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select>
+    <div class="lessonActions"><button id="playerPdfGo" type="button">Export PDF</button><button id="playerPdfCancel" type="button">Cancel</button></div>
+  </div>
+</div>
 
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
@@ -1055,6 +1157,7 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Showing All Note Names for a Tune</p>
       <p>Click <b>All Note Names</b> in the <b>Notation</b> pane header to view all note names for the current tune in a new browser tab.</p>
+      <p>The separate printable sheet now includes its own <b>Export PDF</b> button, with the same Letter/A4 paper and portrait/landscape preferences as the main notation exporter.</p>
       <p>The sheet shows Comhaltas note names, including barlines, repeats, and endings, with one row per notation staff and no music notation.</p>
       <p>The All Note Names sheet respects the current <b>Octave colors</b> setting, including when printing.</p>
       <p><b>All Note Names</b> supports single-voice melodies only. Tunes with multiple voices, multi-note chords (such as [AB]), or inline key changes (such as [K:G]) are not supported; an alert will appear instead.</p>
@@ -1072,7 +1175,18 @@ body.diagram-full .whistleLargeGlyph{font-size:clamp(130px,22vw,320px)!important
       <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
+            <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
+      <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
+      <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
+      <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
+      <p>A status dialog shows progress while the PDF is generated.</p>
+      <p>On an iPhone or iPad, tap <b>Save PDF</b> when the file is ready to open the iOS share sheet.</p>
+      <p>Choose <b>Save to Files</b> or another destination from that sheet.</p>
+      <p>On other devices, the PDF downloads automatically.</p>
+      <p>PDF export settings are saved locally and are not included in share or lesson links.</p>
+<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+<p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
       <p>While running this tool, you can use your browser's Print feature to print the music notation displayed in the notation pane.</p>
       <p>Tunes that are longer than one page may be cut off or clipped in the printout.</p>
       <p>The browser's print scaling controls will not affect the size of the printed notation.</p>
@@ -1947,6 +2061,12 @@ function generateShareLink(abc){
 }
 
 function updateShareButtons(){
+  // PDF export is available only for a loaded tune, independently of Share.
+  const exportBtn=document.getElementById('exportPdfBtn');
+  if(exportBtn && exportBtn.textContent === 'Export PDF') {
+    exportBtn.disabled = !tunes.length;
+    exportBtn.title = tunes.length ? 'Export the current notation as PDF' : 'Open or enter ABC first.';
+  }
   const tuneBtn=$("shareTuneBtn"),allBtn=$("shareAllBtn");
   if(!tunes.length){
     tuneBtn.disabled=true;
@@ -3784,6 +3904,7 @@ async function printCurrentTuneFingerings(){
   const w=window.open('','_blank');
   if(!w){await DayPilot.Modal.alert('Please allow pop-ups for this site to view the note-name sheet.',{top:100,width:520});return;}
   w.document.open();w.document.write(html);w.document.close();
+  ABCPlayerPDF.attachSheet(w,{playerId:'abc-comhaltas-note-names-player',kind:'rows'});
 }
 
 /* Keep keyboard navigation idling synchronized with the existing note and
@@ -3864,4 +3985,8 @@ function jumpToInstrumentNoteBoundary(toEnd){
     else button.click();
   },true);
 })();
-</script></body></html>
+</script><script>
+/* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
+window.ABCPlayerPDF.initNotation({playerId:'abc-comhaltas-note-names-player',hasTunes:()=>tunes.length,mode:'isolated',systemGap:8,glyphFont:null});
+</script>
+</body></html>
