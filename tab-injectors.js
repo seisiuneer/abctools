@@ -463,6 +463,12 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         var path = chooseFingerings(stateTree);
 
+        if (path != null) {
+            // Only reconsider the FIRST note of each second ending. Leave every
+            // other fingering chosen by the original solver untouched.
+            correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
+        }
+
         if (path == null) {
             angloLog("No fingerings generated!");
             return abcOutput;
@@ -999,6 +1005,51 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     } // end chooseFingeringsRecursive
 
+    // A second ending is played after the common bar BEFORE the first ending,
+    // not after the final note of the first ending as in the printed ABC order.
+    // Apply this correction only to its first note. In particular, do not
+    // re-optimize the rest of the tune or modify the normal cost/tie rules.
+    function correctSecondEndingEntryFingerings(path, notes, noteToButtonMap) {
+        var entries = notes.secondEndingEntries || [];
+        for (var e = 0; e < entries.length; ++e) {
+            var pair = entries[e];
+            var entryState = path.states[pair.entryNoteIndex + 1]; // root at 0
+            var beforeFirst = path.states[pair.beforeFirstNoteIndex + 1];
+            var afterEntry = path.states[pair.entryNoteIndex + 2];
+            if (!entryState || !beforeFirst) continue;
+
+            var entryNote = notes[pair.entryNoteIndex];
+            var buttons = noteToButtonMap[entryNote.normalizedValue];
+            if (!buttons || !buttons.length) {
+                buttons = noteToButtonMap[respell(entryNote.normalizedValue)];
+            }
+            if (!buttons || !buttons.length) continue;
+
+            // Match the original solver's button cost and 100-point finger-hop
+            // penalty, but use the *played* predecessor at this one entry.
+            // Preserve the original button when costs are equal.
+            var localCost = function (button) {
+                return button.cost +
+                    (isHop(beforeFirst.button, button) ? 100 : 0) +
+                    (afterEntry && isHop(button, afterEntry.button) ? 100 : 0);
+            };
+            var chosen = entryState.button;
+            var chosenCost = localCost(chosen);
+            for (var b = 0; b < buttons.length; ++b) {
+                var button = buttons[b];
+                var candidateCost = localCost(button);
+                if (candidateCost < chosenCost) {
+                    chosen = button;
+                    chosenCost = candidateCost;
+                }
+            }
+            if (chosen !== entryState.button) {
+                entryState.button = chosen;
+                entryState.direction = findBellowsDirection(entryNote, chosen);
+            }
+        }
+    }
+
     // Replaces parts of the given string with '*'
     function sanitizeString(input, start, len) {
         var s = "";
@@ -1100,6 +1151,33 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
         }
 
+        // Record only simple, paired [1 / [2 or |1 / |2 endings. The
+        // sanitized text excludes headers, quoted chords, and annotations,
+        // while all indexes still refer to the original input.
+        var endingMarkers = /(?:\[\s*([12])|\|\s*([12]))(?![0-9,\-])/g;
+        var pendingFirst = -1;
+        var entries = [];
+        while (m = endingMarkers.exec(sanitizedInput)) {
+            var number = m[1] || m[2];
+            if (number == '1') {
+                pendingFirst = m.index;
+            } else if (pendingFirst >= 0) {
+                var beforeFirst = -1;
+                var firstSecondNote = -1;
+                for (var n = 0; n < notes.length; ++n) {
+                    if (notes[n].index < pendingFirst) beforeFirst = n;
+                    if (firstSecondNote < 0 && notes[n].index >= m.index + m[0].length) {
+                        firstSecondNote = n;
+                    }
+                }
+                if (beforeFirst >= 0 && firstSecondNote >= 0) {
+                    entries.push({ beforeFirstNoteIndex: beforeFirst,
+                                   entryNoteIndex: firstSecondNote });
+                }
+                pendingFirst = -1;
+            }
+        }
+        notes.secondEndingEntries = entries;
         return notes;
     }
 
