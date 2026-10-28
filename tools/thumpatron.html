@@ -472,6 +472,27 @@
       box-shadow: 0px 0px 10px rgba(0,255,0,0.18);
     }
 
+    /* Tip Jars shares the help button styling and sits directly to its left. */
+    .tipjar-btn {
+      right: 72px;
+      width: auto;
+      padding: 0 12px;
+      font-size: 15px;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .tipjar-btn:visited {
+      color: white;
+    }
+
+    /* Keep the title clear of the header buttons on narrow phones. */
+    @media (max-width: 440px) {
+      .hero {
+        padding-top: 74px;
+      }
+    }
+
     .settings-btn {
       position: absolute;
       top: 18px;
@@ -768,6 +789,16 @@
       <div class="legend">
         Bodhrán backing tracks for tune practice
       </div>
+      <a
+        class="help-btn tipjar-btn"
+        href="https://michaeleskin.com/tipjars.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Tip Jars - support The Thumpatron (opens in a new tab)."
+        aria-label="Open Tip Jars in a new tab"
+      >
+        Tip Jars
+      </a>
       <button
         id="instructionsBtn"
         class="help-btn"
