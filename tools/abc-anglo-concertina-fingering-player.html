@@ -1098,7 +1098,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.1.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -1882,6 +1882,7 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Preserve the original fingering path except at the two repeat boundaries.
             correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
             correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+            correctTuneLoopExitFingering(path, notes, noteToButtonMap);
         }
 
         if (path == null) {
@@ -2511,6 +2512,64 @@ var angloFingeringsGenerator = function (theABC, callback){
         }
     }
 
+    // When the entire tune is played again, its final note leads directly
+    // back to the FIRST note, including when the tune ends in a second ending.
+    // Leave every other selected fingering unchanged, and keep original ties.
+    function correctTuneLoopExitFingering(path, notes, noteToButtonMap) {
+        if (notes.length < 2) return;
+
+        var lastIndex = notes.length - 1;
+        var finalState = path.states[lastIndex + 1]; // dummy root at 0
+        var previous = path.states[lastIndex];
+        var firstState = path.states[1];
+
+        // If the final note is ALSO the first note of a second ending,
+        // the first ending is skipped on that pass. Its actual predecessor
+        // is the common note immediately BEFORE the first ending.
+        // Otherwise keep the immediate written predecessor unchanged.
+        var entries = notes.secondEndingEntries || [];
+        for (var e = 0; e < entries.length; ++e) {
+            if (entries[e].entryNoteIndex === lastIndex) {
+                var precedingIndex = entries[e].beforeFirstNoteIndex;
+                if (precedingIndex >= 0 && precedingIndex < lastIndex) {
+                    previous = path.states[precedingIndex + 1];
+                }
+                break;
+            }
+        }
+        if (!finalState || !previous || !firstState) return;
+
+        var finalNote = notes[lastIndex];
+        var buttons = noteToButtonMap[finalNote.normalizedValue];
+        if (!buttons || !buttons.length) {
+            buttons = noteToButtonMap[respell(finalNote.normalizedValue)];
+        }
+        if (!buttons || !buttons.length) return;
+
+        // Use the existing button cost and 100-point same-finger hop cost.
+        // Only the final note is reconsidered, retaining the original
+        // selection when there is no strictly lower-cost alternative.
+        var localCost = function (button) {
+            return button.cost +
+                (isHop(previous.button, button) ? 100 : 0) +
+                (isHop(button, firstState.button) ? 100 : 0);
+        };
+        var chosen = finalState.button;
+        var chosenCost = localCost(chosen);
+        for (var b = 0; b < buttons.length; ++b) {
+            var candidate = buttons[b];
+            var candidateCost = localCost(candidate);
+            if (candidateCost < chosenCost) {
+                chosen = candidate;
+                chosenCost = candidateCost;
+            }
+        }
+        if (chosen !== finalState.button) {
+            finalState.button = chosen;
+            finalState.direction = findBellowsDirection(finalNote, chosen);
+        }
+    }
+
     // Replaces parts of the given string with '*'
     function sanitizeString(input, start, len) {
         var s = "";
@@ -2873,6 +2932,7 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Preserve the original fingering path except at the two repeat boundaries.
             correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
             correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+            correctTuneLoopExitFingering(path, notes, noteToButtonMap);
         }
         if (!path) throw new Error("No fingering solution could be generated.");
         var states = path.states.slice(1);
