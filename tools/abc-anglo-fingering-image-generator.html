@@ -165,7 +165,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.53</div>
+<header class="app-header"><div class="version">Version 1.6</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -642,6 +642,12 @@ var angloFingeringsGenerator = function (theABC, callback){
         var stateTree = generateStateTree(notes, noteToButtonMap);
 
         var path = chooseFingerings(stateTree);
+
+        if (path != null) {
+            // Preserve the original fingering path except at the two repeat boundaries.
+            correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
+            correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+        }
 
         if (path == null) {
             angloLog("No fingerings generated!");
@@ -1179,6 +1185,97 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     } // end chooseFingeringsRecursive
 
+    // A second ending is played after the common bar BEFORE the first ending,
+    // not after the final note of the first ending as in the printed ABC order.
+    // Apply this correction only to its first note. In particular, do not
+    // re-optimize the rest of the tune or modify the normal cost/tie rules.
+    function correctSecondEndingEntryFingerings(path, notes, noteToButtonMap) {
+        var entries = notes.secondEndingEntries || [];
+        for (var e = 0; e < entries.length; ++e) {
+            var pair = entries[e];
+            var entryState = path.states[pair.entryNoteIndex + 1]; // root at 0
+            var beforeFirst = path.states[pair.beforeFirstNoteIndex + 1];
+            var afterEntry = path.states[pair.entryNoteIndex + 2];
+            if (!entryState || !beforeFirst) continue;
+
+            var entryNote = notes[pair.entryNoteIndex];
+            var buttons = noteToButtonMap[entryNote.normalizedValue];
+            if (!buttons || !buttons.length) {
+                buttons = noteToButtonMap[respell(entryNote.normalizedValue)];
+            }
+            if (!buttons || !buttons.length) continue;
+
+            // Match the original solver's button cost and 100-point finger-hop
+            // penalty, but use the *played* predecessor at this one entry.
+            // Preserve the original button when costs are equal.
+            var localCost = function (button) {
+                return button.cost +
+                    (isHop(beforeFirst.button, button) ? 100 : 0) +
+                    (afterEntry && isHop(button, afterEntry.button) ? 100 : 0);
+            };
+            var chosen = entryState.button;
+            var chosenCost = localCost(chosen);
+            for (var b = 0; b < buttons.length; ++b) {
+                var button = buttons[b];
+                var candidateCost = localCost(button);
+                if (candidateCost < chosenCost) {
+                    chosen = button;
+                    chosenCost = candidateCost;
+                }
+            }
+            if (chosen !== entryState.button) {
+                entryState.button = chosen;
+                entryState.direction = findBellowsDirection(entryNote, chosen);
+            }
+        }
+    }
+
+    // On the first pass, a first ending leads back to the opening repeat.
+    // Correct only that ending's LAST note: the normal written-order solver
+    // mistakenly considers the first note of the second ending its successor.
+    // Keep the previous note, button costs, hop penalty and original tie choice.
+    function correctFirstEndingExitFingerings(path, notes, noteToButtonMap) {
+        var entries = notes.secondEndingEntries || [];
+        for (var e = 0; e < entries.length; ++e) {
+            var pair = entries[e];
+            if (pair.firstEndingLastNoteIndex == null ||
+                pair.repeatStartNoteIndex == null) continue;
+
+            var exitIndex = pair.firstEndingLastNoteIndex;
+            var exitState = path.states[exitIndex + 1]; // dummy root at 0
+            var previous = path.states[exitIndex];
+            var repeatStart = path.states[pair.repeatStartNoteIndex + 1];
+            if (!exitState || !previous || !repeatStart) continue;
+
+            var exitNote = notes[exitIndex];
+            var buttons = noteToButtonMap[exitNote.normalizedValue];
+            if (!buttons || !buttons.length) {
+                buttons = noteToButtonMap[respell(exitNote.normalizedValue)];
+            }
+            if (!buttons || !buttons.length) continue;
+
+            var localCost = function (button) {
+                return button.cost +
+                    (isHop(previous.button, button) ? 100 : 0) +
+                    (isHop(button, repeatStart.button) ? 100 : 0);
+            };
+            var chosen = exitState.button;
+            var chosenCost = localCost(chosen);
+            for (var b = 0; b < buttons.length; ++b) {
+                var button = buttons[b];
+                var candidateCost = localCost(button);
+                if (candidateCost < chosenCost) {
+                    chosen = button;
+                    chosenCost = candidateCost;
+                }
+            }
+            if (chosen !== exitState.button) {
+                exitState.button = chosen;
+                exitState.direction = findBellowsDirection(exitNote, chosen);
+            }
+        }
+    }
+
     // Replaces parts of the given string with '*'
     function sanitizeString(input, start, len) {
         var s = "";
@@ -1269,6 +1366,72 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
         }
 
+        // Record only simple, paired [1 / [2 or |1 / |2 endings. The
+        // sanitized text excludes headers, quoted chords, and annotations,
+        // while all indexes still refer to the original input.
+        var endingMarkers = /(?:\[\s*([12])|\|\s*([12]))(?![0-9,\-])/g;
+        var pendingFirst = -1;
+        var entries = [];
+        while (m = endingMarkers.exec(sanitizedInput)) {
+            var number = m[1] || m[2];
+            if (number == '1') {
+                pendingFirst = m.index;
+            } else if (pendingFirst >= 0) {
+                var beforeFirst = -1;
+                var firstSecondNote = -1;
+                for (var n = 0; n < notes.length; ++n) {
+                    if (notes[n].index < pendingFirst) beforeFirst = n;
+                    if (firstSecondNote < 0 && notes[n].index >= m.index + m[0].length) {
+                        firstSecondNote = n;
+                    }
+                }
+                if (beforeFirst >= 0 && firstSecondNote >= 0) {
+                    var pair = { beforeFirstNoteIndex: beforeFirst,
+                                 entryNoteIndex: firstSecondNote };
+
+                    // Only identify an exit when this first ending is followed
+                    // by a repeat-close (:|). Find its matching explicit |:
+                    // opener after any earlier :|, so a different tune part's
+                    // repeat cannot accidentally become the target.
+                    var between = sanitizedInput.slice(pendingFirst, m.index + m[0].length);
+                    if (/:\|/.test(between)) {
+                        var latestClose = -1;
+                        var closing = /:\|/g;
+                        var match;
+                        while ((match = closing.exec(sanitizedInput.slice(0, pendingFirst))) !== null) {
+                            latestClose = match.index;
+                        }
+                        var latestOpen = -1;
+                        var opening = /\|:/g;
+                        while ((match = opening.exec(sanitizedInput.slice(0, pendingFirst))) !== null) {
+                            if (match.index > latestClose) latestOpen = match.index;
+                        }
+                        // If this is the first repeated section and no |:
+                        // is written, ABC uses the beginning of the music as
+                        // an implicit repeat start.
+                        if (latestOpen >= 0 || latestClose < 0) {
+                            var repeatStartNote = latestOpen < 0 ? 0 : -1;
+                            var firstEndingLastNote = -1;
+                            for (var k = 0; k < notes.length; ++k) {
+                                if (latestOpen >= 0 && repeatStartNote < 0 &&
+                                    notes[k].index >= latestOpen + 2 &&
+                                    notes[k].index < pendingFirst) repeatStartNote = k;
+                                if (notes[k].index >= pendingFirst && notes[k].index < m.index)
+                                    firstEndingLastNote = k;
+                            }
+                            if (repeatStartNote >= 0 && firstEndingLastNote >= 0 &&
+                                firstEndingLastNote > beforeFirst) {
+                                pair.repeatStartNoteIndex = repeatStartNote;
+                                pair.firstEndingLastNoteIndex = firstEndingLastNote;
+                            }
+                        }
+                    }
+                    entries.push(pair);
+                }
+                pendingFirst = -1;
+            }
+        }
+        notes.secondEndingEntries = entries;
         return notes;
     }
 
@@ -1449,6 +1612,12 @@ var angloFingeringsGenerator = function (theABC, callback){
         sortButtonMap(noteToButtonMap);
         var stateTree = generateStateTree(notes, noteToButtonMap);
         var path = chooseFingerings(stateTree);
+
+        if (path != null) {
+            // Preserve the original fingering path except at the two repeat boundaries.
+            correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
+            correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+        }
         if (!path) throw new Error("No fingering solution could be generated.");
         var states = path.states.slice(1);
         if (states.length !== notes.length) throw new Error("Internal fingering length mismatch.");
