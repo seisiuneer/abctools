@@ -470,6 +470,9 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Separately correct only the LAST note of each first ending, using
             // the first note at the corresponding repeat start as its successor.
             correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+            // On subsequent playthroughs, the tune's final note leads back
+            // to its first note. Only revisit that final note's fingering.
+            correctTuneLoopExitFingering(path, notes, noteToButtonMap);
         }
 
         if (path == null) {
@@ -1096,6 +1099,64 @@ var angloFingeringsGenerator = function (theABC, callback){
                 exitState.button = chosen;
                 exitState.direction = findBellowsDirection(exitNote, chosen);
             }
+        }
+    }
+
+    // When the entire tune is played again, its final note leads directly
+    // back to the FIRST note, including when the tune ends in a second ending.
+    // Leave every other selected fingering unchanged, and keep original ties.
+    function correctTuneLoopExitFingering(path, notes, noteToButtonMap) {
+        if (notes.length < 2) return;
+
+        var lastIndex = notes.length - 1;
+        var finalState = path.states[lastIndex + 1]; // dummy root at 0
+        var previous = path.states[lastIndex];
+        var firstState = path.states[1];
+
+        // If the final note is ALSO the first note of a second ending,
+        // the first ending is skipped on that pass. Its actual predecessor
+        // is the common note immediately BEFORE the first ending.
+        // Otherwise keep the immediate written predecessor unchanged.
+        var entries = notes.secondEndingEntries || [];
+        for (var e = 0; e < entries.length; ++e) {
+            if (entries[e].entryNoteIndex === lastIndex) {
+                var precedingIndex = entries[e].beforeFirstNoteIndex;
+                if (precedingIndex >= 0 && precedingIndex < lastIndex) {
+                    previous = path.states[precedingIndex + 1];
+                }
+                break;
+            }
+        }
+        if (!finalState || !previous || !firstState) return;
+
+        var finalNote = notes[lastIndex];
+        var buttons = noteToButtonMap[finalNote.normalizedValue];
+        if (!buttons || !buttons.length) {
+            buttons = noteToButtonMap[respell(finalNote.normalizedValue)];
+        }
+        if (!buttons || !buttons.length) return;
+
+        // Use the existing button cost and 100-point same-finger hop cost.
+        // Only the final note is reconsidered, retaining the original
+        // selection when there is no strictly lower-cost alternative.
+        var localCost = function (button) {
+            return button.cost +
+                (isHop(previous.button, button) ? 100 : 0) +
+                (isHop(button, firstState.button) ? 100 : 0);
+        };
+        var chosen = finalState.button;
+        var chosenCost = localCost(chosen);
+        for (var b = 0; b < buttons.length; ++b) {
+            var candidate = buttons[b];
+            var candidateCost = localCost(candidate);
+            if (candidateCost < chosenCost) {
+                chosen = candidate;
+                chosenCost = candidateCost;
+            }
+        }
+        if (chosen !== finalState.button) {
+            finalState.button = chosen;
+            finalState.direction = findBellowsDirection(finalNote, chosen);
         }
     }
 
