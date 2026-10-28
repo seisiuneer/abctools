@@ -467,6 +467,9 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Only reconsider the FIRST note of each second ending. Leave every
             // other fingering chosen by the original solver untouched.
             correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
+            // Separately correct only the LAST note of each first ending, using
+            // the first note at the corresponding repeat start as its successor.
+            correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
         }
 
         if (path == null) {
@@ -1050,6 +1053,52 @@ var angloFingeringsGenerator = function (theABC, callback){
         }
     }
 
+    // On the first pass, a first ending leads back to the opening repeat.
+    // Correct only that ending's LAST note: the normal written-order solver
+    // mistakenly considers the first note of the second ending its successor.
+    // Keep the previous note, button costs, hop penalty and original tie choice.
+    function correctFirstEndingExitFingerings(path, notes, noteToButtonMap) {
+        var entries = notes.secondEndingEntries || [];
+        for (var e = 0; e < entries.length; ++e) {
+            var pair = entries[e];
+            if (pair.firstEndingLastNoteIndex == null ||
+                pair.repeatStartNoteIndex == null) continue;
+
+            var exitIndex = pair.firstEndingLastNoteIndex;
+            var exitState = path.states[exitIndex + 1]; // dummy root at 0
+            var previous = path.states[exitIndex];
+            var repeatStart = path.states[pair.repeatStartNoteIndex + 1];
+            if (!exitState || !previous || !repeatStart) continue;
+
+            var exitNote = notes[exitIndex];
+            var buttons = noteToButtonMap[exitNote.normalizedValue];
+            if (!buttons || !buttons.length) {
+                buttons = noteToButtonMap[respell(exitNote.normalizedValue)];
+            }
+            if (!buttons || !buttons.length) continue;
+
+            var localCost = function (button) {
+                return button.cost +
+                    (isHop(previous.button, button) ? 100 : 0) +
+                    (isHop(button, repeatStart.button) ? 100 : 0);
+            };
+            var chosen = exitState.button;
+            var chosenCost = localCost(chosen);
+            for (var b = 0; b < buttons.length; ++b) {
+                var button = buttons[b];
+                var candidateCost = localCost(button);
+                if (candidateCost < chosenCost) {
+                    chosen = button;
+                    chosenCost = candidateCost;
+                }
+            }
+            if (chosen !== exitState.button) {
+                exitState.button = chosen;
+                exitState.direction = findBellowsDirection(exitNote, chosen);
+            }
+        }
+    }
+
     // Replaces parts of the given string with '*'
     function sanitizeString(input, start, len) {
         var s = "";
@@ -1171,8 +1220,47 @@ var angloFingeringsGenerator = function (theABC, callback){
                     }
                 }
                 if (beforeFirst >= 0 && firstSecondNote >= 0) {
-                    entries.push({ beforeFirstNoteIndex: beforeFirst,
-                                   entryNoteIndex: firstSecondNote });
+                    var pair = { beforeFirstNoteIndex: beforeFirst,
+                                 entryNoteIndex: firstSecondNote };
+
+                    // Only identify an exit when this first ending is followed
+                    // by a repeat-close (:|). Find its matching explicit |:
+                    // opener after any earlier :|, so a different tune part's
+                    // repeat cannot accidentally become the target.
+                    var between = sanitizedInput.slice(pendingFirst, m.index + m[0].length);
+                    if (/:\|/.test(between)) {
+                        var latestClose = -1;
+                        var closing = /:\|/g;
+                        var match;
+                        while ((match = closing.exec(sanitizedInput.slice(0, pendingFirst))) !== null) {
+                            latestClose = match.index;
+                        }
+                        var latestOpen = -1;
+                        var opening = /\|:/g;
+                        while ((match = opening.exec(sanitizedInput.slice(0, pendingFirst))) !== null) {
+                            if (match.index > latestClose) latestOpen = match.index;
+                        }
+                        // If this is the first repeated section and no |:
+                        // is written, ABC uses the beginning of the music as
+                        // an implicit repeat start.
+                        if (latestOpen >= 0 || latestClose < 0) {
+                            var repeatStartNote = latestOpen < 0 ? 0 : -1;
+                            var firstEndingLastNote = -1;
+                            for (var k = 0; k < notes.length; ++k) {
+                                if (latestOpen >= 0 && repeatStartNote < 0 &&
+                                    notes[k].index >= latestOpen + 2 &&
+                                    notes[k].index < pendingFirst) repeatStartNote = k;
+                                if (notes[k].index >= pendingFirst && notes[k].index < m.index)
+                                    firstEndingLastNote = k;
+                            }
+                            if (repeatStartNote >= 0 && firstEndingLastNote >= 0 &&
+                                firstEndingLastNote > beforeFirst) {
+                                pair.repeatStartNoteIndex = repeatStartNote;
+                                pair.firstEndingLastNoteIndex = firstEndingLastNote;
+                            }
+                        }
+                    }
+                    entries.push(pair);
                 }
                 pendingFirst = -1;
             }
