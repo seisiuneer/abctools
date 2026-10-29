@@ -384,8 +384,9 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 break;
 
-            // Cross-row
+            // Cross-row: original G-row draw C5 (1), or alternate C-row push C5 (2).
             case 1:
+            case 2:
 
                 for (var x in jeffriesRxMapAlt) {
                     jeffriesMap[x] = jeffriesRxMapAlt[x];
@@ -401,6 +402,18 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 for (var x in baseMapCrossRow) {
                       wheatstoneMap[x] = baseMapCrossRow[x];
+                }
+
+                if (baseMapIndex === 2) {
+                    // Reverse ONLY the two C5 preference costs. All other
+                    // cross-row button mappings and weights stay unchanged.
+                    // L9a: left G-row draw C5; R1: right C-row push C5.
+                    var leftC5 = baseMapCrossRow["L9a"];
+                    var rightC5 = baseMapCrossRow["R1"];
+                    jeffriesMap["L9a"] = new Button(leftC5.name, leftC5.notes, rightC5.cost, leftC5.finger);
+                    jeffriesMap["R1"] = new Button(rightC5.name, rightC5.notes, leftC5.cost, rightC5.finger);
+                    wheatstoneMap["L9a"] = new Button(leftC5.name, leftC5.notes, rightC5.cost, leftC5.finger);
+                    wheatstoneMap["R1"] = new Button(rightC5.name, rightC5.notes, leftC5.cost, rightC5.finger);
                 }
 
                 break;

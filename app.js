@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3367_102826_1100";
+var gVersionNumber = "3368_102926_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -35592,8 +35592,11 @@ function DoInjectTablature_Anglo() {
     name: "  On-Row",
     id: "0"
   }, {
-    name: "  Cross-Row",
+    name: "  Cross-row (C5 on G-row draw)",
     id: "1"
+  }, {
+    name: "  Cross-row (C5 on C-row push)",
+    id: "2"
   }, ];
 
   const concertina_styles = [{
@@ -35645,15 +35648,17 @@ function DoInjectTablature_Anglo() {
     id: "configure_concertina_fingering",
     type: "select",
     options: concertina_fingerings,
-    cssClass: "configure_tab_settings_select"
+    cssClass: "configure_tab_settings_select_wide"
   }, {
-    html: '<p style="margin-top:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Fingering solutions referenced to C/G tuning:</p>'
+    html: '<p style="margin-top:36px;font-size:12pt;line-height:12pt;font-family:helvetica">Fingering solutions referenced to C/G tuning:</p>'
   }, {
     html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">On-Row: Favors D5 and E5 on right-side C-row.</p>'
   }, {
     html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Cross-Row: Favors D5 and E5 on the left-side G-row.</p>'
   }, {
-    html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors C5 on the left-side G-row draw, B4 on the right-side C-row draw.</p>'
+    html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica">Favors B4 on the right-side C-row draw.</p>'
+  }, {
+    html: '<p style="margin-top:12px;font-size:12pt;line-height:12pt;font-family:helvetica;margin-bottom:24px;">Options are either C5 on the left-side G-row draw or on the C-row right side press.</p>'
   }, {
     name: "    Gary Coover style tab (single notes only, overrides button name and direction settings)",
     id: "configure_gary_coover",
@@ -60972,14 +60977,14 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 October 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>Bug fix for the Anglo Concertina tab injector</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Fixed a long-standing issue with 1st and 2nd ending note order handling in the tab solver.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Cross-row solution for the Anglo Concertina tab injector</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Added a new Cross-row solution option that favors the C5 on the right side C-row instead of the left side G-row.</p>';
   modal_msg += '</div>';
 
   // Feature card
