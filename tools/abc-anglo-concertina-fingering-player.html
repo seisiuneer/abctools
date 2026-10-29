@@ -3026,6 +3026,9 @@ let lastDiagramIndex=-2,currentDiagramItem=null;
 let manualSelectedNoteStart=null,playbackActive=false,audioControllerInitializing=false,melodyMuted=false,metronomeEnabled=false,countInEnabled=false,countInTimer=null,countInToken=0,showNoteEnabled=false;
 const SHOW_NOTE_KEY="abcAngloShowNote";
 const PREF_SYSTEM_KEY="abcAngloFingeringSystem",PREF_STYLE_KEY="abcAngloFingeringStyle";
+// Programmatic share/lesson restores must also update the tab-change guard's
+// last accepted values, not only the visible select controls.
+let syncAcceptedInstrumentSelection = () => {};
 const BASE={common:{L1a:["E,","F,"],L2a:["A,","_B,"],L3a:["^C","^D"],L4a:["A","G"],L5a:["^G","_B"],L1:["C,","G,"],L2:["G,","B,"],L3:["C","D"],L4:["E","F"],L5:["G","A"],L6:["B,","A,"],L7:["D","^F"],L8:["G","A"],L9:["B","c"],L10:["d","e"],R1:["c","B"],R2:["e","d"],R3:["g","f"],R4:["c'","a"],R5:["e'","b"],R6:["g","^f"],R7:["b","a"],R8:["d'","c'"],R9:["g'","e'"],R10:["b'","^f'"]},jeffriesRx:{R1a:["^d","^c"],R2a:["^c","^d"],R3a:["^g","g"],R4a:["^c'","_b"],R5a:["a","d'"]},wheatstoneRx:{R1a:["^c","^d"],R2a:["a","g"],R3a:["^g","_b"],R4a:["^c'","_e'"],R5a:["a'","f'"]}};
 function mapFor(system){return Object.assign({},BASE.common,system==="wheatstone"?BASE.wheatstoneRx:BASE.jeffriesRx)}
 function abcPitchToMidi(s){
@@ -4121,6 +4124,7 @@ function loadShareLinkAfterStartup(){
       const system=params.get("system"),style=params.get("style");
       if(system==="jeffries"||system==="wheatstone")$("system").value=system;
       if(style==="onrow"||style==="cross"||style==="cross-cpush")$("style").value=style;
+      syncAcceptedInstrumentSelection();
 
       // Standard share-link settings remain session-only until the user changes a persistent setting.
       standardShareSettingsPending=params.get("lesson")!=="1";
@@ -5137,7 +5141,7 @@ function applyLessonSettingsParams(params){validateLessonSettingsParams(params);
   if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');
   if(style!==null&&!['onrow','cross','cross-cpush'].includes(style))throw new Error('Lesson fingering solution is invalid.');
   
-  if(system)$('system').value=system;if(style)$('style').value=style;savePrefs();}
+  if(system)$('system').value=system;if(style)$('style').value=style;syncAcceptedInstrumentSelection();savePrefs();}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
 function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
 function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('display',displayMode);u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
@@ -5261,6 +5265,11 @@ setupLessonMode();installUnifiedSharing();
 (function installTabSystemChangeProtection(){
   const ids=PLAYER_TAB_IS_ANGLO?['system','style']:['system'];
   const accepted=Object.fromEntries(ids.map(id=>[id,$(id).value]));
+  // Keep the confirmation guard synchronized after an external share link or
+  // saved lesson configuration restores the select values without a change event.
+  syncAcceptedInstrumentSelection=()=>{
+    for(const id of ids)accepted[id]=$(id).value;
+  };
   let applying=false;
   for(const id of ids){
     const select=$(id);
