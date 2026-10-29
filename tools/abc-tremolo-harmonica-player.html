@@ -1495,7 +1495,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 4.0
+     Version 4.1
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Tip Jars
@@ -1804,136 +1804,137 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
 <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.3)"><h2 style="flex:0 0 auto;text-align:center;margin:0;padding:20px 28px 24px">ABC Tremolo Harmonica Player Instructions</h2>
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
-<p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
-<p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
-<p>It supports many common standard tremolo harmonica models and tunings, as well as the option to define a custom tremolo harmonica.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Settings</p>
-<p><b>Tremolo model</b> selects one of the supported fixed model layouts. Each model uses a fixed note mapping rather than transposing a generic tuning.</p>
-<p><b>Suzuki SU-13M: 13-Hole</b> is available in C and Am.</p>
-<p><b>Tombo 3116: 16-Hole (Low G)</b> uses the Low G 16-hole layout and is available in C.</p>
-<p><b>Tombo 2116: 16-Hole (Low A)</b> uses the Low A 16-hole layout and is available in C.</p>
-<p><b>Tombo 1521: 21-Hole</b> provides all 12 major keys, all 12 harmonic minor keys, and all 12 natural minor keys. Natural minor tunings are labeled with <b>Nm</b> (for example, CNm).</p>
-<p><b>Tombo 3121: 21-Hole</b> is available in C, C#, Cm, G, G#, Gm, A, A#, and Am.</p>
-<p><b>Tombo 3124: 24-Hole</b> is available in C, C#, A, and A#.</p>
-<p><b>Key</b> shows only the mappings available for the selected model.</p>
-<p><b>Octave shift</b> shifts the tablature mapping by whole octaves from -3 through +3 without changing the written ABC notes.</p>
-<p><b>Playback transpose</b> shifts the playback pitch from -12 through +12 semitones without changing the written ABC notes or the displayed harmonica holes and blow/draw indications.</p>
-<p>This can make it possible and simple to play tunes on a tremolo harmonica in a key different from the tune.</p>
-<p>If the ABC contains a %%MIDI transpose directive, the Playback transpose setting takes precedence during playback; the original ABC is not changed.</p>
-<p>Tuning, key, octave shift, and playback transpose are remembered in this browser and included in share links.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Diagram</p>
-<p>The diagram represents the two rows of a tremolo harmonica. Each playable note uses a vertically aligned pair of reeds; both holes in the pair are highlighted together. Green indicates <b>blow</b> and magenta indicates <b>draw</b>.</p>
-<p><b>Display</b> chooses <b>Arrows</b> or <b>Text</b>. Arrows show breath direction. Text shows the position number, with a leading – for draw. Tremolo layouts in this player use only blow and draw; bends, overblows, and chromatic-slide techniques are not supported.</p>
-<p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
-<p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument play techniques. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
-<p>Editing the ABC rebuilds the notation and tremolo harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the tremolo display to that note.  Use the editor text-size menu to change the ABC editor text size.</p>
-<p>The <b>Full-Page View</b> buttons expand the ABC editor, notation, or tremolo display. Press Escape to leave a full-page view; the tremolo view also provides an <b>Exit Full-Page</b> button.</p>
-<p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
-<p>Leave <strong>Use arrow keys?</strong> checked at the lower right of the instrument panel to navigate with the Left and Right Arrow keys, or jump to the first or last note with Home or End (including compatible Bluetooth keyboard foot pedals).</p>
-<p>This option is on by default. Your choice is remembered in this browser.</p>
-<p>When enabled, unmodified Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
-<p>These keys navigate notes instead of moving the ABC editor cursor.</p>
-<p>Keyboard shortcuts are temporarily disabled while dialogs or controls that use these keys are active. When this option is enabled, the shortcuts also work while the ABC editor has focus.</p>
-<p>Uncheck the option to restore normal arrow-key behavior.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
-<p>Playback follows the notation cursor and tremolo display, highlighting the current position as the tune plays. The controls below the notation provide play/pause, restart, looping, seeking, and playback speed.</p>
-<p><b>Mute Melody</b> silences the melody while leaving accompaniment or metronome available. <b>Metronome</b> adds a click during playback. <b>Count in?</b> adds a five-second on-screen countdown.</p>
-<p>Click <b>Tempo</b> to set playback speed from 10% to 200% of the tune's normal tempo.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Tab Tools (Add Tab / Clear Tab)</p>
-<p>The <b>Tab Tools</b> button beside the Tune selector opens the <b>Tablature Tools</b> dialog for the current tune.</p>
-<p><b>Add Tab</b> inserts below-staff ABC tablature annotations for every note using the current harmonica model, key, and octave. It uses the same hole, breath direction, and supported playing techniques as the player display.</p>
-<p>Tablature uses the ABC Transcription Tools harmonica hole and technique symbols. The draw minus sign appears on a second line beneath the hole number and technique; blow notes have no plus sign.</p>
-<p>If the current tune already contains harmonica tab, <b>Add Tab</b> asks for confirmation before replacing it.</p>
-<p><b>Clear Tab</b> removes harmonica tab from the current tune after confirmation.</p>
-<p>To inspect or edit the tab note by note, click a note in the notation, then use the <b>←</b> and <b>→</b> buttons centered below the harmonica diagram to step through the tune and see each note’s hole number and technique on the diagram.</p>
-<p>Changing the harmonica model, key, or octave checks <b>all loaded tunes</b> for harmonica tab. If any tune contains harmonica tab, the player asks for confirmation before clearing it from <b>every affected tune</b>. Canceling preserves the previous settings and all tunes.</p>
-<p>Adding or clearing tablature marks the ABC as modified. Save the ABC file to retain the changes.</p>
-<p><b>Playback tablature overrides:</b> The tablature inserted by Add Tab shows the built-in solution for the selected harmonica model, key, and octave. You can edit any individual harmonica note tab in the ABC to override the hole and technique displayed while that note plays. Notes without a valid override continue to use the built-in solution. Harmonica tab with invalid tablature syntax or hole numbers outside the selected instrument’s hole count is ignored during playback. The player does not check whether an override produces the written pitch; the user is responsible for choosing suitable hole numbers and techniques. Overrides affect the displayed hole number and technique, not the audio pitch.</p>
-<p><b>Reading and editing harmonica tab in ABC:</b> Each hole number and technique appears in double quotes just before its ABC note. The leading <code>_</code> places the tab below the staff.</p>
-<table class="tabSyntaxTable"><thead><tr><th>Symbol / Technique</th><th>ABC Example</th><th>Meaning</th></tr></thead><tbody>
-<tr><td>Hole number / blow</td><td><code>"_4"</code></td><td>Blow hole 4 (no draw mark).</td></tr>
-<tr><td>Draw: <code>-</code></td><td><code>"_4;-"</code></td><td>Draw hole 4. <code>;-</code> puts the draw mark below the hole number.</td></tr>
-<tr><td>No hole number and technique: <code>x</code></td><td><code>"_x"</code></td><td>No available hole number and technique.</td></tr>
-</tbody></table>
-<p>Edit only the text between the quotes; leave the ABC note in place. Only hole number, blow, and draw can override playback in this player. Unsupported or out-of-range hole numbers or techniques are ignored.</p>
-<p><b>Tab Tools</b> is also available when running lessons.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">
-Showing All Hole Numbers and Techniques for a Tune
-</p>      
-<p>Click <b>All Techniques</b> in the <b>Notation</b> pane header to view all hole numbers and techniques for the current tune in a new browser tab.</p>
+      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
+      <p>It supports many common standard tremolo harmonica models and tunings, as well as the option to define a custom tremolo harmonica.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Settings</p>
+      <p><b>Tremolo model</b> selects one of the supported fixed model layouts. Each model uses a fixed note mapping rather than transposing a generic tuning.</p>
+      <p><b>Suzuki SU-13M: 13-Hole</b> is available in C and Am.</p>
+      <p><b>Tombo 3116: 16-Hole (Low G)</b> uses the Low G 16-hole layout and is available in C.</p>
+      <p><b>Tombo 2116: 16-Hole (Low A)</b> uses the Low A 16-hole layout and is available in C.</p>
+      <p><b>Tombo 1521: 21-Hole</b> provides all 12 major keys, all 12 harmonic minor keys, and all 12 natural minor keys. Natural minor tunings are labeled with <b>Nm</b> (for example, CNm).</p>
+      <p><b>Tombo 3121: 21-Hole</b> is available in C, C#, Cm, G, G#, Gm, A, A#, and Am.</p>
+      <p><b>Tombo 3124: 24-Hole</b> is available in C, C#, A, and A#.</p>
+      <p><b>Key</b> shows only the mappings available for the selected model.</p>
+      <p><b>Octave shift</b> shifts the tablature mapping by whole octaves from -3 through +3 without changing the written ABC notes.</p>
+      <p><b>Playback transpose</b> shifts the playback pitch from -12 through +12 semitones without changing the written ABC notes or the displayed harmonica holes and blow/draw indications.</p>
+      <p>This can make it possible and simple to play tunes on a tremolo harmonica in a key different from the tune.</p>
+      <p>If the ABC contains a %%MIDI transpose directive, the Playback transpose setting takes precedence during playback; the original ABC is not changed.</p>
+      <p>Tuning, key, octave shift, and playback transpose are remembered in this browser and included in share links.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tremolo Diagram</p>
+      <p>The diagram represents the two rows of a tremolo harmonica. Each playable note uses a vertically aligned pair of reeds; both holes in the pair are highlighted together. Green indicates <b>blow</b> and magenta indicates <b>draw</b>.</p>
+      <p><b>Display</b> chooses <b>Arrows</b> or <b>Text</b>. Arrows show breath direction. Text shows the position number, with a leading – for draw. Tremolo layouts in this player use only blow and draw; bends, overblows, and chromatic-slide techniques are not supported.</p>
+      <p><b>Show note</b> displays the current note on a staff beside the note name and is remembered in this browser.</p>
+      <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument play techniques. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+      <p>Editing the ABC rebuilds the notation and tremolo harmonica solution. Clicking a rendered note selects the complete ABC note token and updates the tremolo display to that note.  Use the editor text-size menu to change the ABC editor text size.</p>
+      <p>The <b>Full-Page View</b> buttons expand the ABC editor, notation, or tremolo display. Press Escape to leave a full-page view; the tremolo view also provides an <b>Exit Full-Page</b> button.</p>
+      <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
+      <p>Leave <strong>Use arrow keys?</strong> checked at the lower right of the instrument panel to navigate with the Left and Right Arrow keys, or jump to the first or last note with Home or End (including compatible Bluetooth keyboard foot pedals).</p>
+      <p>This option is on by default. Your choice is remembered in this browser.</p>
+      <p>When enabled, unmodified Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
+      <p>These keys navigate notes instead of moving the ABC editor cursor.</p>
+      <p>Keyboard shortcuts are temporarily disabled while dialogs or controls that use these keys are active. When this option is enabled, the shortcuts also work while the ABC editor has focus.</p>
+      <p>Uncheck the option to restore normal arrow-key behavior.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
+      <p>Playback follows the notation cursor and tremolo display, highlighting the current position as the tune plays. The controls below the notation provide play/pause, restart, looping, seeking, and playback speed.</p>
+      <p><b>Mute Melody</b> silences the melody while leaving accompaniment or metronome available. <b>Metronome</b> adds a click during playback. <b>Count in?</b> adds a five-second on-screen countdown.</p>
+      <p>Click <b>Tempo</b> to set playback speed from 10% to 200% of the tune's normal tempo.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Tab Tools (Add Tab / Clear Tab)</p>
+      <p>The <b>Tab Tools</b> button beside the Tune selector opens the <b>Tablature Tools</b> dialog for the current tune.</p>
+      <p><b>Add Tab</b> inserts below-staff ABC tablature annotations for every note using the current harmonica model, key, and octave. It uses the same hole, breath direction, and supported playing techniques as the player display.</p>
+      <p>Tablature uses the ABC Transcription Tools harmonica hole and technique symbols. The draw minus sign appears on a second line beneath the hole number and technique; blow notes have no plus sign.</p>
+      <p>If the current tune already contains harmonica tab, <b>Add Tab</b> asks for confirmation before replacing it.</p>
+      <p><b>Clear Tab</b> removes harmonica tab from the current tune after confirmation.</p>
+      <p>To inspect or edit the tab note by note, click a note in the notation, then use the <b>←</b> and <b>→</b> buttons centered below the harmonica diagram to step through the tune and see each note’s hole number and technique on the diagram.</p>
+      <p>Changing the harmonica model, key, or octave checks <b>all loaded tunes</b> for harmonica tab. If any tune contains harmonica tab, the player asks for confirmation before clearing it from <b>every affected tune</b>. Canceling preserves the previous settings and all tunes.</p>
+      <p>Adding or clearing tablature marks the ABC as modified. Save the ABC file to retain the changes.</p>
+      <p><b>Playback tablature overrides:</b> The tablature inserted by Add Tab shows the built-in solution for the selected harmonica model, key, and octave. You can edit any individual harmonica note tab in the ABC to override the hole and technique displayed while that note plays. Notes without a valid override continue to use the built-in solution. Harmonica tab with invalid tablature syntax or hole numbers outside the selected instrument’s hole count is ignored during playback. The player does not check whether an override produces the written pitch; the user is responsible for choosing suitable hole numbers and techniques. Overrides affect the displayed hole number and technique, not the audio pitch.</p>
+      <p><b>Reading and editing harmonica tab in ABC:</b> Each hole number and technique appears in double quotes just before its ABC note. The leading <code>_</code> places the tab below the staff.</p>
+      <table class="tabSyntaxTable"><thead><tr><th>Symbol / Technique</th><th>ABC Example</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td>Hole number / blow</td><td><code>"_4"</code></td><td>Blow hole 4 (no draw mark).</td></tr>
+          <tr><td>Draw: <code>-</code></td><td><code>"_4;-"</code></td><td>Draw hole 4. <code>;-</code> puts the draw mark below the hole number.</td></tr>
+          <tr><td>No hole number and technique: <code>x</code></td><td><code>"_x"</code></td><td>No available hole number and technique.</td></tr>
+        </tbody></table>
+      <p>Edit only the text between the quotes; leave the ABC note in place. Only hole number, blow, and draw can override playback in this player. Unsupported or out-of-range hole numbers or techniques are ignored.</p>
+      <p><b>Tab Tools</b> is also available when running lessons.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">
+        Showing All Hole Numbers and Techniques for a Tune
+      </p>      
+      <p>Click <b>All Techniques</b> in the <b>Notation</b> pane header to view all hole numbers and techniques for the current tune in a new browser tab.</p>
       <p>The separate printable sheet now includes its own <b>Export PDF</b> button, with the same Letter/A4 paper and portrait/landscape preferences as the main notation exporter.</p>
-<p><b>All Techniques</b> is available only with a graphical instrument <b>Display</b> style. When <b>Display</b> is set to <b>Text</b>, the button is disabled. Select a graphical display style to enable it again.</p>
-<p>The sheet shows harmonica hole numbers and techniques and note names, including barlines, repeats, and endings, with one row per notation staff and no music notation.</p>
-<p><b>All Techniques</b> supports single-voice melodies only. Tunes with multiple voices, multi-note chords (such as [AB]), or inline key changes (such as [K:G]) are not supported; an alert will appear instead.</p>
-<p>Use your browser’s print controls to print the sheet or save it as a PDF.</p>
-<p>For best results with dense tunes, use landscape orientation when printing.</p>
-<p>This feature requires pop-ups to be allowed on your browser.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
-<p><b>Save</b> writes the current ABC collection to a file.</p>
-<p><b>Share</b> opens the <b>Sharing Controls</b> dialog. <b>Share Current Tune</b> creates a share link for the displayed tune and <b>Share All Tunes</b> creates one for all loaded tunes when the resulting link fits within the allowed size.</p>
-<p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
-<p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab with an ABCTT-compatible MScore harmonica (MIDI program 22) in place of the player's custom instrument, retaining the selected playback transpose. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
-<p>The link includes the selected tremolo model, key, octave shift, and playback transpose.</p>
-<p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
-<p>When opening a share link, click <b>Click to Enable Playback</b> before using the normal playback controls if your browser requires a user gesture to initialize audio.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the Tune Trainer and Phrase Builder</p>
-<p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab.</p>
-<p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
-<p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Files and Tune Selection</p>
-<p>Open an <b>.abc</b> or <b>.txt</b> file, or paste ABC directly into the editor. Multi-tune files are supported; use the <b>Tune</b> menu to select the tune to display and play.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Layout Compatibility</p>
-<p>Other Suzuki and Easttop 21- and 24-hole tremolo harmonica models should be compatible with the equivalent-key Tombo layouts in this player when they use the same note arrangement.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p id="custom-tuning-instructions" style="text-align:left;font-weight:700;margin:18px 0 6px">Custom Tremolo Harmonica</p>
-<p>The <b>Custom Tremolo</b> option lets you create and save a 12-, 13-, 16-, 20-, 21-, 23-, or 24-hole tremolo layout. Choose <b>Configure Custom Tremolo...</b> in the Tremolo model menu to edit it.</p>
-<p>The custom editor uses a five-octave, 60-note map.</p>
-<p>The custom tuning initially matches the Tombo 1521 21-hole in C.</p>
-<p>Each entry may be a hole number for blow (for example <b>4</b>), a hole number preceded by <b>-</b> for draw (for example <b>-4</b>), or <b>x</b> for an unavailable note. Other harmonica technique indications as used in the diatonic harmonica player, for example bends and overblows, are invalid.</p>
-<p><b>Initialize from Preset</b> can start from any built-in model and any key available for that model, within the custom editor's five-octave range, or choose <b>Reset All to x</b> from the Model menu to reset every entry to <b>x</b>. When that option is selected, Key is set to <b>None</b>. The key choices change with the selected source model.</p>
-<p><b>Load Tuning File</b> accepts compatible custom harmonica settings from this player, the standard <b>ABC Harmonica Player</b>, or <b>ABC Transcription Tools</b> when all assigned notes use only blow and draw.</p>
-<p>If the file has no usable tremolo hole count, the player infers the smallest suitable choice from 12, 13, 16, 20, 21, 23, or 24 holes; you may change it before saving.</p>
-<p>The name, hole count, tablature entries, and every hole reference are validated when you save the custom tuning to the player or save a tuning file.</p>
-<p><b>Save</b> stores the custom tuning in this browser and makes it the active Custom Tremolo. <b>Save Tuning File</b> exports the tuning to a <b>.txt</b> file without changing the tuning saved in the browser. Changes made in the custom editor are not applied to the player or stored in this browser unless you click <b>Save</b>.</p>
-<p>When a share link uses a custom tremolo definition, the complete custom definition is included in the link. The shared custom tuning is initially temporary and does not replace the custom tuning already saved in the recipient’s browser. If the recipient changes a player setting, the current share-link settings, including the shared custom tuning, become their saved preferences. The tuning can also be saved explicitly from the custom tuning editor.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Using Playback Transpose</p>
-<p><b>Playback Transpose</b> can be useful in many situations where you want the playback pitch to match the tremolo harmonica you actually have while keeping the displayed blow/draw positions appropriate for the tune. The following example uses a <b>C tremolo harmonica</b> because it is a straightforward way to see how the feature works.</p>
-<p>It's especially useful if the only tremolo harmonica you have is in <b>C</b>, but you want to play along with tunes in other common keys.</p>
-<p>Unlike a diatonic, you can't bend your way to missing notes on a tremolo, so choosing the appropriate instrument layout is particularly important.</p>
-<p>For a tune in <b>D major</b>:</p>
-<p>Select the equivalent <b>D tremolo</b> in the player.<br/>
-Set <b>Playback Transpose to -2</b>.<br/>
-Then play the displayed blow and draw positions on your <b>C tremolo</b>.</p>
-<p>The playback is shifted to match your C instrument, while the hole display continues to show the appropriate relative positions for the tune.</p>
-<p>Here's another example.</p>
-<p>For an <b>E Dorian</b> tune, use the instrument that matches the major key of its key signature, which is <b>D</b>.</p>
-<p>Select the equivalent <b>D tremolo</b>.<br/>
-Set <b>Playback Transpose to -2</b>.<br/>
-Then follow the displayed positions on your C tremolo.</p>
-<p>This lets the player choose a layout containing all the notes required by the tune, while <b>Playback Transpose</b> lets you actually play along using your C instrument.</p>
-<p>A simple rule for some common Irish tune keys is:</p>
-<p><b>D major / E Dorian → D tremolo → Playback Transpose -2</b><br/>
-<b>G major / A Dorian / D Mixolydian → G tremolo → Playback Transpose -7 (or +5)</b></p>
-<p>So if the only tremolo you own is in C, you can still use the player with a much wider range of tunes without running into notes that aren't available on your instrument.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Harmonica Player</p>
-<p>For diatonic and chromatic harmonicas, try the <a href="https://michaeleskin.com/tools/abc-harmonica-player.html" rel="noopener noreferrer" target="_blank"><b>ABC Harmonica Player</b></a>. It supports common diatonic and chromatic harmonica tunings as well as custom tunings.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Trademarks</p>
-<p>Tombo, Suzuki, Easttop, and the referenced model names are trademarks of their respective owners. This independent tool is not affiliated with or endorsed by Tombo Musical Instrument Co., Ltd., Suzuki Musical Instrument Mfg. Co., Ltd., or Jiangsu East Musical Instrument Co., Ltd (Easttop). Brand and model names are used solely to identify supported or compatible harmonica layouts.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p><b>All Techniques</b> is available only with a graphical instrument <b>Display</b> style. When <b>Display</b> is set to <b>Text</b>, the button is disabled. Select a graphical display style to enable it again.</p>
+      <p>The sheet shows harmonica hole numbers and techniques and note names, including barlines, repeats, and endings, with one row per notation staff and no music notation.</p>
+      <p><b>All Techniques</b> supports single-voice melodies only. Tunes with multiple voices, multi-note chords (such as [AB]), or inline key changes (such as [K:G]) are not supported; an alert will appear instead.</p>
+      <p>Use your browser’s print controls to print the sheet or save it as a PDF.</p>
+      <p>For best results with dense tunes, use landscape orientation when printing.</p>
+      <p>This feature requires pop-ups to be allowed on your browser.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+      <p><b>Save</b> writes the current ABC collection to a file.</p>
+      <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. <b>Share Current Tune</b> creates a share link for the displayed tune and <b>Share All Tunes</b> creates one for all loaded tunes when the resulting link fits within the allowed size.</p>
+      <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
+      <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
+      <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab with an ABCTT-compatible MScore harmonica (MIDI program 22) in place of the player's custom instrument, retaining the selected playback transpose. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
+      <p>The link includes the selected tremolo model, key, octave shift, and playback transpose.</p>
+      <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
+      <p>When opening a share link, click <b>Click to Enable Playback</b> before using the normal playback controls if your browser requires a user gesture to initialize audio.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the Tune Trainer and Phrase Builder</p>
+      <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
+      <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
+      <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Files and Tune Selection</p>
+      <p>Open an <b>.abc</b> or <b>.txt</b> file, or paste ABC directly into the editor. Multi-tune files are supported; use the <b>Tune</b> menu to select the tune to display and play.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Layout Compatibility</p>
+      <p>Other Suzuki and Easttop 21- and 24-hole tremolo harmonica models should be compatible with the equivalent-key Tombo layouts in this player when they use the same note arrangement.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p id="custom-tuning-instructions" style="text-align:left;font-weight:700;margin:18px 0 6px">Custom Tremolo Harmonica</p>
+      <p>The <b>Custom Tremolo</b> option lets you create and save a 12-, 13-, 16-, 20-, 21-, 23-, or 24-hole tremolo layout. Choose <b>Configure Custom Tremolo...</b> in the Tremolo model menu to edit it.</p>
+      <p>The custom editor uses a five-octave, 60-note map.</p>
+      <p>The custom tuning initially matches the Tombo 1521 21-hole in C.</p>
+      <p>Each entry may be a hole number for blow (for example <b>4</b>), a hole number preceded by <b>-</b> for draw (for example <b>-4</b>), or <b>x</b> for an unavailable note. Other harmonica technique indications as used in the diatonic harmonica player, for example bends and overblows, are invalid.</p>
+      <p><b>Initialize from Preset</b> can start from any built-in model and any key available for that model, within the custom editor's five-octave range, or choose <b>Reset All to x</b> from the Model menu to reset every entry to <b>x</b>. When that option is selected, Key is set to <b>None</b>. The key choices change with the selected source model.</p>
+      <p><b>Load Tuning File</b> accepts compatible custom harmonica settings from this player, the standard <b>ABC Harmonica Player</b>, or <b>ABC Transcription Tools</b> when all assigned notes use only blow and draw.</p>
+      <p>If the file has no usable tremolo hole count, the player infers the smallest suitable choice from 12, 13, 16, 20, 21, 23, or 24 holes; you may change it before saving.</p>
+      <p>The name, hole count, tablature entries, and every hole reference are validated when you save the custom tuning to the player or save a tuning file.</p>
+      <p><b>Save</b> stores the custom tuning in this browser and makes it the active Custom Tremolo. <b>Save Tuning File</b> exports the tuning to a <b>.txt</b> file without changing the tuning saved in the browser. Changes made in the custom editor are not applied to the player or stored in this browser unless you click <b>Save</b>.</p>
+      <p>When a share link uses a custom tremolo definition, the complete custom definition is included in the link. The shared custom tuning is initially temporary and does not replace the custom tuning already saved in the recipient’s browser. If the recipient changes a player setting, the current share-link settings, including the shared custom tuning, become their saved preferences. The tuning can also be saved explicitly from the custom tuning editor.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Using Playback Transpose</p>
+      <p><b>Playback Transpose</b> can be useful in many situations where you want the playback pitch to match the tremolo harmonica you actually have while keeping the displayed blow/draw positions appropriate for the tune. The following example uses a <b>C tremolo harmonica</b> because it is a straightforward way to see how the feature works.</p>
+      <p>It's especially useful if the only tremolo harmonica you have is in <b>C</b>, but you want to play along with tunes in other common keys.</p>
+      <p>Unlike a diatonic, you can't bend your way to missing notes on a tremolo, so choosing the appropriate instrument layout is particularly important.</p>
+      <p>For a tune in <b>D major</b>:</p>
+      <p>Select the equivalent <b>D tremolo</b> in the player.<br/>
+        Set <b>Playback Transpose to -2</b>.<br/>
+      Then play the displayed blow and draw positions on your <b>C tremolo</b>.</p>
+      <p>The playback is shifted to match your C instrument, while the hole display continues to show the appropriate relative positions for the tune.</p>
+      <p>Here's another example.</p>
+      <p>For an <b>E Dorian</b> tune, use the instrument that matches the major key of its key signature, which is <b>D</b>.</p>
+      <p>Select the equivalent <b>D tremolo</b>.<br/>
+        Set <b>Playback Transpose to -2</b>.<br/>
+      Then follow the displayed positions on your C tremolo.</p>
+      <p>This lets the player choose a layout containing all the notes required by the tune, while <b>Playback Transpose</b> lets you actually play along using your C instrument.</p>
+      <p>A simple rule for some common Irish tune keys is:</p>
+      <p><b>D major / E Dorian → D tremolo → Playback Transpose -2</b><br/>
+      <b>G major / A Dorian / D Mixolydian → G tremolo → Playback Transpose -7 (or +5)</b></p>
+      <p>So if the only tremolo you own is in C, you can still use the player with a much wider range of tunes without running into notes that aren't available on your instrument.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Harmonica Player</p>
+      <p>For diatonic and chromatic harmonicas, try the <a href="https://michaeleskin.com/tools/abc-harmonica-player.html" rel="noopener noreferrer" target="_blank"><b>ABC Harmonica Player</b></a>. It supports common diatonic and chromatic harmonica tunings as well as custom tunings.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Trademarks</p>
+      <p>Tombo, Suzuki, Easttop, and the referenced model names are trademarks of their respective owners. This independent tool is not affiliated with or endorsed by Tombo Musical Instrument Co., Ltd., Suzuki Musical Instrument Mfg. Co., Ltd., or Jiangsu East Musical Instrument Co., Ltd (Easttop). Brand and model names are used solely to identify supported or compatible harmonica layouts.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
@@ -1948,59 +1949,59 @@ Then follow the displayed positions on your C tremolo.</p>
       <p>Choose <b>Save to Files</b> or another destination from that sheet.</p>
       <p>On other devices, the PDF downloads automatically.</p>
       <p>PDF export settings are saved locally and are not included in share or lesson links.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
-<p>While running this tool, you can use your browser's Print feature to print the music notation displayed in the notation pane.</p>
-<p>Tunes that are longer than one page may be cut off or clipped in the printout.</p>
-<p>The browser's print scaling controls will not affect the size of the printed notation.</p>
-<p>Experimenting with other paper sizes, such as Tabloid instead of Letter, may allow a longer tune to fit on a single page.</p>
-<p>Manually setting larger left and right margins in the browser's Print dialog can often allow more staves to fit on a single page or possibly help with cleaner pagination.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
+      <p>While running this tool, you can use your browser's Print feature to print the music notation displayed in the notation pane.</p>
+      <p>Tunes that are longer than one page may be cut off or clipped in the printout.</p>
+      <p>The browser's print scaling controls will not affect the size of the printed notation.</p>
+      <p>Experimenting with other paper sizes, such as Tabloid instead of Letter, may allow a longer tune to fit on a single page.</p>
+      <p>Manually setting larger left and right margins in the browser's Print dialog can often allow more staves to fit on a single page or possibly help with cleaner pagination.</p>
 
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-<p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
-      
-<p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
-<p>A lesson uses the <b>current tune only</b>.</p>
-<p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
-<p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
-<p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Tremolo Harmonica Player share link.</p>
-<p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
-<p>Those saved player settings are <b>Tremolo model, Key, Octave shift, and Playback transpose</b>.</p>
-<p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
-<p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
-<p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
-<p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
-<p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument play techniques. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
 
-<p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
-      
-<p>Your music teacher may provide you with a Tremolo Harmonica Player lesson link.</p>
-<p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
-<p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
-<p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
-<p>The lesson setup controls and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
-<p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
-<p>You can use the normal notation, hole number and technique display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
-<p>You can edit the ABC if your teacher asks you to make changes.</p>
-<p>Click <b>Save</b> to save your edited ABC.</p>
-<p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-<p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument play techniques. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
+      <p>A lesson uses the <b>current tune only</b>.</p>
+      <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
+      <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
+      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Tremolo Harmonica Player share link.</p>
+      <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
+      <p>Those saved player settings are <b>Tremolo model, Key, Octave shift, and Playback transpose</b>.</p>
+      <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
+      <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
+      <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
+      <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
+      <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
+      <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument play techniques. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
-<p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
-<p style="text-align: center">
-This tool was created by
-<a href="https://michaeleskin.com" rel="noopener noreferrer" target="_blank">Michael Eskin</a>
-<br/><br/>
-If you find it useful, please consider a contribution via
-<br/><br/>
-<a href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">Michael Eskin's Tip Jars</a>
-<br/><br/>
-</p>
+      <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
 
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p>Your music teacher may provide you with a Tremolo Harmonica Player lesson link.</p>
+      <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
+      <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
+      <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
+      <p>The lesson setup controls and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
+      <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
+      <p>You can use the normal notation, hole number and technique display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
+      <p>You can edit the ABC if your teacher asks you to make changes.</p>
+      <p>Click <b>Save</b> to save your edited ABC.</p>
+      <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's player settings remain locked. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
+      <p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument play techniques. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+
+      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
+      <p style="text-align: center">
+        This tool was created by
+        <a href="https://michaeleskin.com" rel="noopener noreferrer" target="_blank">Michael Eskin</a>
+        <br/><br/>
+        If you find it useful, please consider a contribution via
+        <br/><br/>
+        <a href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">Michael Eskin's Tip Jars</a>
+        <br/><br/>
+      </p>
+
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 </div>
 <div style="flex:0 0 auto;padding:16px 28px 20px;background:#fff;text-align:center"><button id="helpClose" style="margin:0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button></div>
 </div>
@@ -3021,7 +3022,17 @@ function generateShareLink(abc){
     return "";
   }
 }
+function updateUnifiedShareTooltip(){
+  const btn=$('shareBtn');
+  if(!btn)return;
+  btn.title=tunes.length
+    ? 'Share tunes or create/load a lesson. Option/Alt-click Share to open the current tune in ABC Transcription Tools.'
+    : 'Load a lesson configuration.';
+}
+
 function updateShareButtons(){
+  // Keep the visible Share tooltip synchronized with the loaded-tune state.
+  updateUnifiedShareTooltip();
   // PDF export is available only for a loaded tune, independently of Share.
   const exportBtn=document.getElementById('exportPdfBtn');
   if(exportBtn && exportBtn.textContent === 'Export PDF') {
@@ -4072,7 +4083,14 @@ function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
 function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
 function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
-function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
+function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;updateUnifiedShareTooltip();}const has=!!tunes.length;
+  // Use live source ABC, not the hidden legacy buttons' possibly stale disabled states.
+  if(has)syncCurrentTuneFromEditor();
+  const currentABC=String($('abcText')?.value||'').trim();
+  const currentURL=currentABC?generateShareLink(currentABC):'';
+  const allURL=has?generateShareLink(tunes.join('\n\n')):'';
+  $('shareCurrentDialogBtn').disabled=!currentURL||currentURL.length>SHARE_LINK_MAX_LEN;
+  $('shareAllDialogBtn').disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
 function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-tremolo-harmonica-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-tremolo-harmonica-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
@@ -4154,7 +4172,15 @@ function openDisplayedShareInABCTT(){
   // deliberately uses only the lesson tune and omits ldata/lesson parameters.
   openShareInABCTranscriptionTools(shareLinkDialogKind==='all','editor');
 }
-function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';oldTune.parentElement.appendChild(btn)}btn.disabled=false;btn.onclick=()=>{refreshUnifiedShareState();setModal('shareModal',true)};$('shareCloseBtn').onclick=()=>setModal('shareModal',false);
+function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';oldTune.parentElement.appendChild(btn)}btn.disabled=false;btn.onclick=event=>{
+    refreshUnifiedShareState();
+    if(event.altKey && String($('abcText')?.value||'').trim()){
+      event.preventDefault();
+      openShareInABCTranscriptionTools(false,'editor');
+      return;
+    }
+    setModal('shareModal',true);
+  };$('shareCloseBtn').onclick=()=>setModal('shareModal',false);
   $('shareHelpBtn').onclick=()=>openInstructionsAt('sharingInstructionsSection');
   $('lessonHelpBtn').onclick=()=>openInstructionsAt('teacherLessonInstructionsSection');
   $('studentLessonHelpBtn').onclick=()=>openInstructionsAt('studentLessonInstructionsSection');$('shareCurrentDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(false)};$('shareAllDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(true)};$('configureLessonBtn').onclick=()=>{setModal('shareModal',false);refreshUnifiedShareState();setModal('lessonModal',true)};$('lessonCloseBtn').onclick=()=>setModal('lessonModal',false);restoreLessonDraftPreferences();$('lessonTitleInput').oninput=saveLessonDraftPreferences;$('lessonInstructionsInput').oninput=saveLessonDraftPreferences;$('lessonSaveConfigBtn').onclick=saveLessonConfig;$('lessonLoadConfigBtn').onclick=()=>$('lessonConfigFile').click();if(lessonIsIOS())$('lessonConfigFile').removeAttribute('accept');$('lessonConfigFile').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const text=String(await f.text()).trim();let c=null;try{c=JSON.parse(text)}catch(_){const u=new URL(text);const lessonPlayer=u.pathname.split('/').pop();

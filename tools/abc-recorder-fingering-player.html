@@ -1114,7 +1114,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="recorder-tab" selected>Notation + Recorder Tab</option></select></div>
@@ -1237,8 +1237,8 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>You can also click the <b>tempo percentage</b> box on the playback control bar:</p>
       <div style="text-align: center; margin: 12px 0;">
         <img src="img/tempobox.jpg"
-             alt="Tempo control"
-             style="max-width: 100%; height: auto;">
+        alt="Tempo control"
+        style="max-width: 100%; height: auto;">
       </div>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
@@ -1258,16 +1258,17 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits. On mobile devices the saved file uses a <b>.txt</b> extension.</p>
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
+      <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>In the <b>ABC Transcription Tools</b> you can switch between showing Baroque or German recorder fingerings on the <b>Tabs & Layout</b> tab in the tool's <b>Settings</b> dialog.</p>
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p><p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the Tune Trainer and Phrase Builder</p>
-      <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab.</p>
+      <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
       <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
       <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      
+
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
       <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
@@ -1287,10 +1288,10 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>The browser's print scaling controls will not affect the size of the printed notation.</p>
       <p>Experimenting with other paper sizes, such as Tabloid instead of Letter, may allow a longer tune to fit on a single page.</p>
       <p>Manually setting larger left and right margins in the browser's Print dialog can often allow more staves to fit on a single page or possibly help with cleaner pagination.</p>
-      
+
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
-      
+
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
       <p>A lesson uses the <b>current tune only</b>.</p>
       <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
@@ -1307,7 +1308,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
-      
+
       <p>Your music teacher may provide you with a Recorder Player lesson link.</p>
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
@@ -1324,7 +1325,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-    </div>
+</div>
     <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
   </div>
 </div>
@@ -2233,7 +2234,17 @@ function generateShareLink(abc){
   }
 }
 
+function updateUnifiedShareTooltip(){
+  const btn=$('shareBtn');
+  if(!btn)return;
+  btn.title=tunes.length
+    ? 'Share tunes or create/load a lesson. Option/Alt-click Share to open the current tune in ABC Transcription Tools.'
+    : 'Load a lesson configuration.';
+}
+
 function updateShareButtons(){
+  // Keep the visible Share tooltip synchronized with the loaded-tune state.
+  updateUnifiedShareTooltip();
   // Keep Export PDF idled whenever the player has no loaded ABC tunes.
   // Share has separate lesson-configuration functionality and is unchanged.
   const exportBtn=$("exportPdfBtn");
@@ -3497,7 +3508,14 @@ function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
 function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
 function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
-function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.'}const has=!!tunes.length;$('shareCurrentDialogBtn').disabled=!has||$('shareTuneBtn').disabled;$('shareAllDialogBtn').disabled=!has||$('shareAllBtn').disabled;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
+function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;updateUnifiedShareTooltip();}const has=!!tunes.length;
+  // Use live source ABC, not the hidden legacy buttons' possibly stale disabled states.
+  if(has)syncCurrentTuneFromEditor();
+  const currentABC=String($('abcText')?.value||'').trim();
+  const currentURL=currentABC?generateShareLink(currentABC):'';
+  const allURL=has?generateShareLink(tunes.join('\n\n')):'';
+  $('shareCurrentDialogBtn').disabled=!currentURL||currentURL.length>SHARE_LINK_MAX_LEN;
+  $('shareAllDialogBtn').disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
 function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-recorder-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-recorder-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
@@ -3579,7 +3597,15 @@ function openDisplayedShareInABCTT(){
   // deliberately uses only the lesson tune and omits ldata/lesson parameters.
   openShareInABCTranscriptionTools(shareLinkDialogKind==='all','editor');
 }
-function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';oldTune.parentElement.appendChild(btn)}btn.disabled=false;btn.onclick=()=>{refreshUnifiedShareState();setModal('shareModal',true)};$('shareCloseBtn').onclick=()=>setModal('shareModal',false);
+function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';oldTune.parentElement.appendChild(btn)}btn.disabled=false;btn.onclick=event=>{
+    refreshUnifiedShareState();
+    if(event.altKey && String($('abcText')?.value||'').trim()){
+      event.preventDefault();
+      openShareInABCTranscriptionTools(false,'editor');
+      return;
+    }
+    setModal('shareModal',true);
+  };$('shareCloseBtn').onclick=()=>setModal('shareModal',false);
   $('shareHelpBtn').onclick=()=>openInstructionsAt('sharingInstructionsSection');
   $('lessonHelpBtn').onclick=()=>openInstructionsAt('teacherLessonInstructionsSection');
   $('studentLessonHelpBtn').onclick=()=>openInstructionsAt('studentLessonInstructionsSection');$('shareCurrentDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(false)};$('shareAllDialogBtn').onclick=()=>{setModal('shareModal',false);showStandardShareLink(true)};$('configureLessonBtn').onclick=()=>{setModal('shareModal',false);refreshUnifiedShareState();setModal('lessonModal',true)};$('lessonCloseBtn').onclick=()=>setModal('lessonModal',false);restoreLessonDraftPreferences();$('lessonTitleInput').oninput=saveLessonDraftPreferences;$('lessonInstructionsInput').oninput=saveLessonDraftPreferences;$('lessonSaveConfigBtn').onclick=saveLessonConfig;$('lessonLoadConfigBtn').onclick=()=>$('lessonConfigFile').click();if(lessonIsIOS())$('lessonConfigFile').removeAttribute('accept');$('lessonConfigFile').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const text=String(await f.text()).trim();let c=null;try{c=JSON.parse(text)}catch(_){const u=new URL(text);const lessonPlayer=u.pathname.split('/').pop();

@@ -1815,7 +1815,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 4.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1997,6 +1997,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to download the loaded ABC tunes, including your edits.</p>
       <p>Click <b>Share</b> to open <b>Sharing Controls</b> and choose <b>Share Current Tune</b> or <b>Share All Tunes</b>.</p>
+      <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
       <p>In the Share Link dialog, you can copy the link, save it, or test it in a new browser tab.</p>
       <p>Share links carry the selected tuning, capo, highest fret, extra frets, notation display, <b>Sound</b>, <b>Play open strings?</b>, <b>Play melody an octave lower?</b>, <b>Chord Playback and Display</b>, <b>Chord Voicing</b>, and <b>Maximum Chord Fret Stretch</b> settings so the recipient can use the same setup.</p>
       <p>Share links and saved ABC files preserve the original ABC from the editor; generated chord notes and playback directives are not inserted into them.</p>
@@ -2008,7 +2009,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>A received share link applies its settings for that visit without replacing your saved preferences unless you change a setting.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the Tune Trainer and Phrase Builder</p>
-      <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab.</p>
+      <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
       <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
       <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -2061,7 +2062,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:center">If you find it useful, please consider a contribution.</p>
       <p style="text-align:center;margin:22px 0 16px"><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a></p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-    </div>
+</div>
     <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
   </div>
 </div>
@@ -3044,7 +3045,17 @@ function generateShareLink(abc){
   }
 }
 
+function updateUnifiedShareTooltip(){
+  const btn=$('shareBtn');
+  if(!btn)return;
+  btn.title=tunes.length
+    ? 'Share tunes or create/load a lesson. Option/Alt-click Share to open the current tune in ABC Transcription Tools.'
+    : 'Load a lesson configuration.';
+}
+
 function updateShareButtons(){
+  // Keep the visible Share tooltip synchronized with the loaded-tune state.
+  updateUnifiedShareTooltip();
   // Keep Export PDF idled whenever the player has no loaded ABC tunes.
   // Share has separate lesson-configuration functionality and is unchanged.
   const exportBtn=$("exportPdfBtn");
@@ -4714,9 +4725,10 @@ function refreshUnifiedShareState(){
   // Share must always remain available so a teacher can open Configure Lesson
   // and load a saved lesson configuration even when no ABC is currently loaded.
   btn.disabled=false;
-  btn.title=tunes.length?'Share tunes or create/load a lesson.':'Load a lesson configuration.';
+  updateUnifiedShareTooltip();
 
   const hasTune=!!tunes.length;
+  const currentABC=String($('abcText')?.value||'').trim();
   const currentBtn=$('shareCurrentDialogBtn');
   const allBtn=$('shareAllDialogBtn');
   const saveLessonBtn=$('lessonSaveConfigBtn');
@@ -4731,17 +4743,18 @@ function refreshUnifiedShareState(){
     lessonSizeHint.hidden=!lessonTuneTitle;
   }
 
+  // Directly verify the editor's current tune; the old hidden Share
+  // buttons can be stale when the tune was entered or restored separately.
+  if(hasTune)syncCurrentTuneFromEditor();
+  const current=currentABC?generateShareLink(currentABC):'';
+  const currentOK=!!current&&current.length<=LESSON_LINK_MAX_LEN;
   if(!hasTune){
-    if(currentBtn)currentBtn.disabled=true;
+    if(currentBtn)currentBtn.disabled=!currentOK;
     if(allBtn)allBtn.disabled=true;
     if(saveLessonBtn)saveLessonBtn.disabled=true;
     if(createLessonBtn)createLessonBtn.disabled=true;
     return;
   }
-
-  syncCurrentTuneFromEditor();
-  const current=generateShareLink($('abcText').value);
-  const currentOK=!!current&&current.length<=LESSON_LINK_MAX_LEN;
   const all=generateShareLink(tunes.join('\n\n'));
   const allOK=!!all&&all.length<=LESSON_LINK_MAX_LEN;
 
@@ -4998,7 +5011,15 @@ function installUnifiedSharing(){
   const lessonFile=$('lessonConfigFile');if(lessonFile&&lessonIsIOS())lessonFile.removeAttribute('accept');
   const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;
   const host=oldTune.parentElement;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';host.appendChild(btn)}
-  btn.addEventListener('click',()=>{refreshUnifiedShareState();setModal('shareModal',true)});
+  btn.addEventListener('click',event=>{
+    refreshUnifiedShareState();
+    if(event.altKey && String($('abcText')?.value||'').trim()){
+      event.preventDefault();
+      openShareInABCTranscriptionTools();
+      return;
+    }
+    setModal('shareModal',true);
+  });
   $('shareCloseBtn').onclick=()=>setModal('shareModal',false);
   $('shareHelpBtn').onclick=()=>openInstructionsAt('sharingInstructionsSection');
   $('lessonHelpBtn').onclick=()=>openInstructionsAt('teacherLessonInstructionsSection');
