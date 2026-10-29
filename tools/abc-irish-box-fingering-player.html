@@ -202,6 +202,15 @@ body.diagram-full .app-header,body.diagram-full .toolbar,body.diagram-full .left
   margin-right: auto !important;
 }
 
+/* DayPilot puts the OK and Cancel buttons inside the same button container.
+   Add spacing to the actual controls, rather than spacing table cells. */
+.modal_default_main .modal_default_buttons input[type="button"],
+.modal_default_main .modal_default_buttons input[type="submit"],
+.modal_default_main .modal_default_buttons button {
+  margin-left: 9px !important;
+  margin-right: 9px !important;
+}
+
 /* Slightly taller, consistent panel headers with compact Fingering Diagram actions. */
 .panelHeader,
 .diagramHeader {
