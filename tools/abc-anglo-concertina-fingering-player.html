@@ -1142,7 +1142,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.4</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -1945,6 +1945,7 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Preserve the original fingering path except at the two repeat boundaries.
             correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
             correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+            correctStandardRepeatExitFingerings(path, notes, noteToButtonMap);
             correctTuneLoopExitFingering(path, notes, noteToButtonMap);
         }
 
@@ -2578,10 +2579,90 @@ var angloFingeringsGenerator = function (theABC, callback){
     // When the entire tune is played again, its final note leads directly
     // back to the FIRST note, including when the tune ends in a second ending.
     // Leave every other selected fingering unchanged, and keep original ties.
+    // A written repeat-close (:|) has TWO played exits: back to its matched
+    // repeat opening on the first pass, then onward on the subsequent pass.
+    // This targeted pass adjusts only the note immediately before :|.
+    // First endings remain under the dedicated first-ending correction; the
+    // following [2 note is not their played successor on the first pass.
+    function correctStandardRepeatExitFingerings(path, notes, noteToButtonMap) {
+        var exits = notes.standardRepeatExits || [];
+        var pairs = notes.secondEndingEntries || [];
+        for (var e = 0; e < exits.length; ++e) {
+            var exit = exits[e];
+            var index = exit.exitNoteIndex;
+            if (index < 0 || index >= notes.length) continue;
+            // Keep the established first-ending patch in sole control of these notes.
+            var isFirstEndingExit = pairs.some(function(pair) {
+                return pair.firstEndingLastNoteIndex === index;
+            });
+            if (isFirstEndingExit) continue;
+
+            var exitState = path.states[index + 1];
+            var repeatState = path.states[exit.repeatStartNoteIndex + 1];
+            var nextState = exit.nextNoteIndex < notes.length ? path.states[exit.nextNoteIndex + 1] : null;
+            if (!nextState && index === notes.length - 1) nextState = path.states[1];
+            var previous = index > 0 ? path.states[index] : null;
+            // A one-note second ending skips the intervening first-ending notes.
+            for (var p = 0; p < pairs.length; ++p) {
+                if (pairs[p].entryNoteIndex === index) {
+                    previous = path.states[pairs[p].beforeFirstNoteIndex + 1];
+                    break;
+                }
+            }
+            if (!exitState || !repeatState || !previous) continue;
+            var note = notes[index];
+            var buttons = noteToButtonMap[note.normalizedValue];
+            if (!buttons || !buttons.length) buttons = noteToButtonMap[respell(note.normalizedValue)];
+            if (!buttons || !buttons.length) continue;
+
+            // A final :| can lead either into its section repeat or into the
+            // start of the entire tune. If no button avoids both finger hops,
+            // explicitly prefer the section-repeat transition.
+            var finalRepeat = index === notes.length - 1;
+            var allowsBoth = false;
+            for (var b = 0; b < buttons.length; ++b) {
+                if (!isHop(buttons[b], repeatState.button) &&
+                    (!nextState || !isHop(buttons[b], nextState.button))) {
+                    allowsBoth = true;
+                    break;
+                }
+            }
+            var localCost = function(button) {
+                var predecessorHop = isHop(previous.button, button) ? 100 : 0;
+                var repeatHop = isHop(button, repeatState.button) ? 100 : 0;
+                var continuationHop = nextState && isHop(button, nextState.button) ? 100 : 0;
+                if (finalRepeat && !allowsBoth) {
+                    // Repeat jump wins only when both successor paths cannot be smooth.
+                    return repeatHop * 1000 + button.cost + predecessorHop + continuationHop;
+                }
+                return button.cost + predecessorHop + repeatHop + continuationHop;
+            };
+            var chosen = exitState.button;
+            var bestCost = localCost(chosen);
+            for (var c = 0; c < buttons.length; ++c) {
+                var candidate = buttons[c];
+                var candidateCost = localCost(candidate);
+                if (candidateCost < bestCost) {
+                    chosen = candidate;
+                    bestCost = candidateCost;
+                }
+            }
+            if (chosen !== exitState.button) {
+                exitState.button = chosen;
+                exitState.direction = findBellowsDirection(note, chosen);
+            }
+        }
+    }
+
     function correctTuneLoopExitFingering(path, notes, noteToButtonMap) {
         if (notes.length < 2) return;
 
         var lastIndex = notes.length - 1;
+        // If the tune itself ends at :|, the repeat-aware correction has
+        // already evaluated both the section restart and tune restart.
+        if ((notes.standardRepeatExits || []).some(function(exit) {
+            return exit.exitNoteIndex === lastIndex;
+        })) return;
         var finalState = path.states[lastIndex + 1]; // dummy root at 0
         var previous = path.states[lastIndex];
         var firstState = path.states[1];
@@ -2789,6 +2870,44 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
         }
         notes.secondEndingEntries = entries;
+        // Pair explicit |: / :| repeat markers, including :|: and implicit
+        // beginnings of a repeated part. Track actual closing-note locations;
+        // do not treat barlines inside annotations, headers, or comments as repeats.
+        var repeatExits = [];
+        var repeatOpenStack = [];
+        var repeatPartStart = 0;
+        var repeatMarkers = /:\|:|\|:|:\|/g;
+        while (m = repeatMarkers.exec(sanitizedInput)) {
+            var token = m[0];
+            var markerIndex = m.index;
+            if (token === '|:') {
+                repeatOpenStack.push(markerIndex + token.length);
+                continue;
+            }
+            var exitNoteIndex = -1;
+            var nextNoteIndex = notes.length;
+            for (var r = 0; r < notes.length; ++r) {
+                if (notes[r].index < markerIndex) exitNoteIndex = r;
+                else { nextNoteIndex = r; break; }
+            }
+            var openIndex = repeatOpenStack.length ? repeatOpenStack.pop() : repeatPartStart;
+            var repeatStartNoteIndex = -1;
+            for (var s = 0; s < notes.length; ++s) {
+                if (notes[s].index >= openIndex && notes[s].index < markerIndex) {
+                    repeatStartNoteIndex = s;
+                    break;
+                }
+            }
+            if (repeatStartNoteIndex >= 0 && exitNoteIndex >= repeatStartNoteIndex) {
+                repeatExits.push({ exitNoteIndex: exitNoteIndex,
+                    repeatStartNoteIndex: repeatStartNoteIndex,
+                    nextNoteIndex: nextNoteIndex });
+            }
+            repeatPartStart = markerIndex + (token === ':|:' ? 3 : 2);
+            if (token === ':|:') repeatOpenStack.push(repeatPartStart);
+        }
+        notes.standardRepeatExits = repeatExits;
+
         return notes;
     }
 
@@ -2995,6 +3114,7 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Preserve the original fingering path except at the two repeat boundaries.
             correctSecondEndingEntryFingerings(path, notes, noteToButtonMap);
             correctFirstEndingExitFingerings(path, notes, noteToButtonMap);
+            correctStandardRepeatExitFingerings(path, notes, noteToButtonMap);
             correctTuneLoopExitFingering(path, notes, noteToButtonMap);
         }
         if (!path) throw new Error("No fingering solution could be generated.");
