@@ -32,7 +32,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Anglo Concertina Fingering Player</title>
-<meta name="description" content="Play ABC tunes while following synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams using On-Row or Cross-Row fingering solutions." />
+<meta name="description" content="Play ABC tunes while following synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams using On-Row or either Cross-row fingering solution." />
 <meta name="keywords" content="ABC notation, Anglo concertina, concertina fingering, Jeffries concertina, Wheatstone concertina, Cross-Row fingering, On-Row fingering, concertina playback, Irish traditional music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
@@ -1098,11 +1098,11 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
- <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
+ <div class="control"><label for="style">Fingering solution</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-row (C5 on G-row draw)</option><option value="cross-cpush">Cross-row (C5 on C-row push)</option></select></div>
  
  <div class="control tuneWithTab"><button id="tabBtn" type="button" disabled>Tab Tools</button><div class="tuneSelectWrap"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div></div>
  <div class="shareButtons"><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
@@ -1114,7 +1114,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-Row</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div><div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
+ <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-row (C5 on G-row draw)</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div><div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
 </div>
 <div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
 </div>
@@ -1169,7 +1169,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play the tunes with synchronized standard notation and Anglo concertina fingerings.</p>
-      <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or Cross-Row fingering solutions.</p>
+      <p>Choose Jeffries or Wheatstone concertina layouts and On-Row or either Cross-row fingering solution.</p>
       <p>Play tunes with synchronized notation highlighting and a fingering diagram that shows the required button and <b>Push</b> or <b>Draw</b> direction.</p>
       <p>Edit the ABC directly, click rendered notes to locate them in the editor, and use manual tablature overrides when you want to specify particular fingerings.</p>
       <p>Load and work with multi-tune ABC collections, save your edited ABC, and create share links for one tune or the complete collection.</p>
@@ -1191,7 +1191,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Concertina and Fingering Settings</p>
-      <p>Select the <b>Concertina type</b> (Jeffries or Wheatstone) and <b>Fingering solution</b> (On-Row or Cross-Row).</p>
+      <p>Select the <b>Concertina type</b> (Jeffries or Wheatstone) and <b>Fingering solution</b> (On-Row or either Cross-row option).</p>
       <p>The button for the playing note is highlighted on its <b>Upper Half</b> for <b>Push</b> or <b>Lower Half</b> for <b>Draw</b>.</p>
       <p><b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>.</p>      
       <p>The bellows-direction arrow points <b>Down</b> for <b>Push</b> or <b>Up</b> for <b>Draw</b>.</p>
@@ -1219,13 +1219,13 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Favors playing D' and E' on the right-side C-row.</p>
       <p>For Jeffries-style instruments:</p>
       <p>Favors right-side top-row 2nd button for C♯' and D♯'.</p>
-      <p><strong>Cross-Row:</strong></p>
-      <p>A more cross-row friendly fingering solution:</p>
-      <p>Favors playing the D' and E' on the left-side G-row.</p>
-      <p>Favors playing C' on the left-side G-row draw.</p>
-      <p>Favors playing B on the right-side C-row draw.</p>
-      <p>For Jeffries-style instruments:</p>
-      <p>Favors right-side top-row 2nd button for C♯' and D♯'.</p>
+      <p><strong>Cross-row (C5 on G-row draw):</strong></p>
+      <p>A cross-row fingering solution favoring D5 and E5 on the left-side G-row, B4 on the right-side C-row first button draw, and C5 on the left-side G-row fourth button draw.</p>
+      <p>For Jeffries-style instruments, favors the right-side top-row 2nd button for C♯5 and D♯5.</p>
+      <p><strong>Cross-row (C5 on C-row push):</strong></p>
+      <p>A cross-row fingering solution favoring D5 and E5 on the left-side G-row, B4 on the right-side C-row first button draw, and C5 on the right-side C-row first button push.</p>
+      <p>For Jeffries-style instruments, favors the right-side top-row 2nd button for C♯5 and D♯5.</p>
+      <p>These are preferences rather than forced fingerings; the solver also considers finger transitions.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing, Notation, and Fingering Display</p>
@@ -1299,7 +1299,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>The injected tablature uses the same fingering solutions as the ABC Transcription Tools.</p>
       <p>If the current tune already contains instrument tablature, <b>Add Tab</b> asks for confirmation before replacing it, including any manual tab overrides.</p>
       <p><b>Clear Tab</b> removes instrument tablature annotations from the current tune only, after confirmation.</p>
-      <p>Changing the instrument type or the On-Row/Cross-Row fingering solution checks <b>all loaded tunes</b> for existing instrument tablature.</p>
+      <p>Changing the instrument type or the selected fingering solution checks <b>all loaded tunes</b> for existing instrument tablature.</p>
       <p>If any loaded tune contains tablature, the player asks for confirmation before clearing instrument tablature from <b>every loaded tune that contains it</b>.</p>
       <p>Canceling the confirmation preserves all tunes and the previous instrument settings.</p>
       <p>These changes mark the ABC as modified, so save the ABC file to keep them.</p>
@@ -1331,7 +1331,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>A share button
       is disabled when its resulting link would exceed the maximum allowed of 8100 characters.</p>
-      <p>Opening a share link restores its Concertina type (Jeffries or Wheatstone) and Fingering solution (Cross-Row or On-Row), and displays the
+      <p>Opening a share link restores its Concertina type (Jeffries or Wheatstone) and Fingering solution (On-Row or either Cross-row option), and displays the
       first tune encoded in the link.</p><p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
       <p>When tunes are opened from a share link or transferred directly from <b>ABC Transcription Tools</b>, click the
       <b>Click to Enable Playback</b> button in the playback area before using the normal playback controls.</p>
@@ -1805,8 +1805,9 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 break;
 
-            // Cross-row
+            // Cross-row: original G-row draw C5 (1), or alternate C-row push C5 (2).
             case 1:
+            case 2:
 
                 for (var x in jeffriesRxMapAlt) {
                     jeffriesMap[x] = jeffriesRxMapAlt[x];
@@ -1822,6 +1823,18 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 for (var x in baseMapCrossRow) {
                       wheatstoneMap[x] = baseMapCrossRow[x];
+                }
+
+                if (baseMapIndex === 2) {
+                    // Reverse ONLY the two C5 preference costs. All other
+                    // cross-row button mappings and weights stay unchanged.
+                    // L9a: left G-row draw C5; R1: right C-row push C5.
+                    var leftC5 = baseMapCrossRow["L9a"];
+                    var rightC5 = baseMapCrossRow["R1"];
+                    jeffriesMap["L9a"] = new Button(leftC5.name, leftC5.notes, rightC5.cost, leftC5.finger);
+                    jeffriesMap["R1"] = new Button(rightC5.name, rightC5.notes, leftC5.cost, rightC5.finger);
+                    wheatstoneMap["L9a"] = new Button(leftC5.name, leftC5.notes, rightC5.cost, leftC5.finger);
+                    wheatstoneMap["R1"] = new Button(rightC5.name, rightC5.notes, leftC5.cost, rightC5.finger);
                 }
 
                 break;
@@ -2909,7 +2922,7 @@ var angloFingeringsGenerator = function (theABC, callback){
     }
     window.solveAngloTune = function(abc, system, fingeringStyle) {
         gInjectTab_ConcertinaStyle = system === "wheatstone" ? 1 : 0;
-        gInjectTab_ConcertinaFingering = fingeringStyle === "cross" ? 1 : 0;
+        gInjectTab_ConcertinaFingering = fingeringStyle === "cross-cpush" ? 2 : (fingeringStyle === "cross" ? 1 : 0);
         PUSH_NAME = "push";
         DRAW_NAME = "draw";
         setButtonToNoteMap();
@@ -2955,13 +2968,15 @@ var angloFingeringsGenerator = function (theABC, callback){
         });
     };
     return window.solveAngloTune(theABC, gInjectTab_ConcertinaStyle ? "wheatstone" : "jeffries",
-        gInjectTab_ConcertinaFingering ? "cross" : "onrow");
+        gInjectTab_ConcertinaFingering === 2 ? "cross-cpush" : (gInjectTab_ConcertinaFingering === 1 ? "cross" : "onrow"));
 };
 
 
 </script>
 <script>
 const $=id=>document.getElementById(id);
+const angloFingeringMode = style => style === "cross-cpush" ? 2 : style === "cross" ? 1 : 0;
+const angloFingeringLabel = style => style === "cross-cpush" ? "Cross-row (C5 on C-row push)" : style === "cross" ? "Cross-row (C5 on G-row draw)" : "On-Row";
 
 // On iOS/iPadOS, omit the accept filter so the native file picker can select
 // .abc as well as .txt files. Validate the selected filename after selection.
@@ -3336,7 +3351,7 @@ function prepareDiagramBase(){
   drawPushDrawLegend(ctx);
 
   $("diagramStack").hidden=false;$("emptyDiagram").hidden=true;$("fullBtn").disabled=false;
-  $("diagramMeta").textContent=`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}`;
+  $("diagramMeta").textContent=`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${angloFingeringLabel(style)}`;
   lastDiagramIndex=-2;
 }
 function drawPushDrawLegend(ctx){
@@ -4069,7 +4084,7 @@ function loadShareLinkAfterStartup(){
       if(params.get('lesson')==='1'){if(window.INVALID_LESSON_ERROR)throw new Error(window.INVALID_LESSON_ERROR);validateLessonURLParams(params);}
       const system=params.get("system"),style=params.get("style");
       if(system==="jeffries"||system==="wheatstone")$("system").value=system;
-      if(style==="onrow"||style==="cross")$("style").value=style;
+      if(style==="onrow"||style==="cross"||style==="cross-cpush")$("style").value=style;
 
       // Standard share-link settings remain session-only until the user changes a persistent setting.
       standardShareSettingsPending=params.get("lesson")!=="1";
@@ -4437,7 +4452,7 @@ function moveTabOverrideToNote(direction){
   tabOverrideAnchorPos=target;refreshTabOverrideIdling();
 }
 
-function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross")$("style").value=p.style;}catch(_){}}
+function restorePrefs(){try{const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"{}");if(p.system==="jeffries"||p.system==="wheatstone")$("system").value=p.system;if(p.style==="onrow"||p.style==="cross"||p.style==="cross-cpush")$("style").value=p.style;}catch(_){}}
 function savedTempo(){try{const n=Math.round(Number(localStorage.getItem(TEMPO_KEY)));return Number.isFinite(n)&&n>=10&&n<=200?n:100}catch(_){return 100}}
 function saveTempo(n){commitStandardShareSettingsIfPending();try{localStorage.setItem(TEMPO_KEY,String(n))}catch(_){}}
 function updateTempoButtonState(){
@@ -4564,7 +4579,7 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken)showManualFingeringForNote(clickedToken.start,false);
 }
 
-async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=$("style").value==="cross"?1:0;solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);gInjectTab_ConcertinaStyle=$("system").value==="wheatstone"?1:0;gInjectTab_ConcertinaFingering=angloFingeringMode($("style").value);solution=angloFingeringsGenerator(stripChordSymbols(tune));applyInjectedTabOverrides(tune,solution);solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));prepareDiagramBase();drawDiagram(null,true);const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
   selectionColor:"#ff0000",
@@ -4872,7 +4887,7 @@ function openInstructionsAt(sectionId){
 }
 $("instructionsBtn").addEventListener("click",()=>$("helpOverlay").style.display="block");$("helpClose").addEventListener("click",()=>$("helpOverlay").style.display="none");$("helpOverlay").addEventListener("click",e=>{if(e.target===$("helpOverlay"))$("helpOverlay").style.display="none"});restoreSplitters();installSplitters();restorePrefs();restoreShowNotePreference();
 restoreDisplayModePreference();restoreMetronomePreference();
-restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${$("style").value==="cross"?"Cross-Row":"On-Row"}`;updateShareButtons();startABCTranscriptionToolsHandshake();
+restoreCountInPreference();installCountInPlayHandler();$("diagramMeta").textContent=`${$("system").value==="jeffries"?"Jeffries":"Wheatstone"} • ${angloFingeringLabel($("style").value)}`;updateShareButtons();startABCTranscriptionToolsHandshake();
 // This script is at the end of the document and the portable abcjs library may
 // already be cached. In that case window.load can fire before this listener is
 // installed. Handle both states so share links are always consumed.
@@ -4995,7 +5010,7 @@ function stripPlayerTabDirectives(abc){
 function currentTabSolution(abc){
   if(PLAYER_TAB_IS_ANGLO){
     gInjectTab_ConcertinaStyle=$('system').value==='wheatstone'?1:0;
-    gInjectTab_ConcertinaFingering=$('style').value==='cross'?1:0;
+    gInjectTab_ConcertinaFingering=angloFingeringMode($('style').value);
     return angloFingeringsGenerator(stripChordSymbols(abc));
   }
   return window.solveBoxTune(stripChordSymbols(abc),$('system').value);
@@ -5080,11 +5095,11 @@ installTabDialog();
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const display=params.get("display");if(display!==null&&!DISPLAY_MODES.has(display))throw new Error('Lesson Display setting is invalid.');const system=params.get('system'),style=params.get('style');if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');if(style!==null&&!['onrow','cross'].includes(style))throw new Error('Lesson fingering solution is invalid.');}
+function validateLessonSettingsParams(params){const display=params.get("display");if(display!==null&&!DISPLAY_MODES.has(display))throw new Error('Lesson Display setting is invalid.');const system=params.get('system'),style=params.get('style');if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');if(style!==null&&!['onrow','cross','cross-cpush'].includes(style))throw new Error('Lesson fingering solution is invalid.');}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
 function applyLessonSettingsParams(params){validateLessonSettingsParams(params);applyLessonDisplayMode(new URLSearchParams("lesson=1&"+params.toString()));const system=params.get('system'),style=params.get('style');
   if(system!==null&&!['jeffries','wheatstone'].includes(system))throw new Error('Lesson concertina type is invalid.');
-  if(style!==null&&!['onrow','cross'].includes(style))throw new Error('Lesson fingering solution is invalid.');
+  if(style!==null&&!['onrow','cross','cross-cpush'].includes(style))throw new Error('Lesson fingering solution is invalid.');
   
   if(system)$('system').value=system;if(style)$('style').value=style;savePrefs();}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}

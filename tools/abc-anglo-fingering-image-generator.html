@@ -165,7 +165,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
 </style>
 </head>
 <body>
-<header class="app-header"><div class="version">Version 1.6.1</div>
+<header class="app-header"><div class="version">Version 1.7</div>
 <a class="tipJarButton" href="https://michaeleskin.com/abctools/tipjars.html" rel="noopener noreferrer" target="_blank">Tip Jars</a><h1>ABC Anglo Concertina Fingering Image Generator</h1>
 <p>Open an ABC file, solve Anglo concertina fingerings, and export one JPEG fingering diagram per note.</p></header>
 <main>
@@ -174,7 +174,7 @@ button{border:1px solid #9dbaf2;background:#e8f1ff;border-radius:10px;padding:11
     <div class="filepick"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><div id="fileInfo" class="muted">No ABC file loaded.</div></div>
     <div class="grid">
       <div><label for="system">Fingering system</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
-      <div><label for="style">Fingering style</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-Row</option></select></div>
+      <div><label for="style">Fingering style</label><select id="style"><option value="onrow">On-Row</option><option value="cross" selected>Cross-row (C5 on G-row draw)</option><option value="cross-cpush">Cross-row (C5 on C-row push)</option></select></div>
     </div>
     <label for="level">Level to show on tune</label>
     <select id="level">
@@ -564,8 +564,9 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 break;
 
-            // Cross-row
+            // Cross-row: original G-row draw C5 (1), or alternate C-row push C5 (2).
             case 1:
+            case 2:
 
                 for (var x in jeffriesRxMapAlt) {
                     jeffriesMap[x] = jeffriesRxMapAlt[x];
@@ -581,6 +582,18 @@ var angloFingeringsGenerator = function (theABC, callback){
 
                 for (var x in baseMapCrossRow) {
                       wheatstoneMap[x] = baseMapCrossRow[x];
+                }
+
+                if (baseMapIndex === 2) {
+                    // Reverse ONLY the two C5 preference costs. All other
+                    // cross-row button mappings and weights stay unchanged.
+                    // L9a: left G-row draw C5; R1: right C-row push C5.
+                    var leftC5 = baseMapCrossRow["L9a"];
+                    var rightC5 = baseMapCrossRow["R1"];
+                    jeffriesMap["L9a"] = new Button(leftC5.name, leftC5.notes, rightC5.cost, leftC5.finger);
+                    jeffriesMap["R1"] = new Button(rightC5.name, rightC5.notes, leftC5.cost, rightC5.finger);
+                    wheatstoneMap["L9a"] = new Button(leftC5.name, leftC5.notes, rightC5.cost, leftC5.finger);
+                    wheatstoneMap["R1"] = new Button(rightC5.name, rightC5.notes, leftC5.cost, rightC5.finger);
                 }
 
                 break;
@@ -1660,7 +1673,7 @@ var angloFingeringsGenerator = function (theABC, callback){
     // Generate Anglo Concertina Tablature
     window.solveAngloTune = function(abc, system, fingeringStyle) {
         gInjectTab_ConcertinaStyle = system === "wheatstone" ? 1 : 0;
-        gInjectTab_ConcertinaFingering = fingeringStyle === "cross" ? 1 : 0;
+        gInjectTab_ConcertinaFingering = fingeringStyle === "cross-cpush" ? 2 : (fingeringStyle === "cross" ? 1 : 0);
         PUSH_NAME = "push";
         DRAW_NAME = "draw";
         setButtonToNoteMap();
@@ -1693,11 +1706,14 @@ var angloFingeringsGenerator = function (theABC, callback){
         });
     };
     return window.solveAngloTune(theABC, gInjectTab_ConcertinaStyle ? "wheatstone" : "jeffries",
-        gInjectTab_ConcertinaFingering ? "cross" : "onrow");
+        gInjectTab_ConcertinaFingering === 2 ? "cross-cpush" : (gInjectTab_ConcertinaFingering === 1 ? "cross" : "onrow"));
 };
 
 </script>
 <script>
+const angloFingeringMode = style => style === "cross-cpush" ? 2 : style === "cross" ? 1 : 0;
+const angloFingeringLabel = style => style === "cross-cpush" ? "Cross-row (C5 on C-row push)" : style === "cross" ? "Cross-row (C5 on G-row draw)" : "On-Row";
+
 
 const $ = id => document.getElementById(id);
 const SUPPRESS_WATERMARK = new URLSearchParams(location.search).get("nowatermark") === "1";
@@ -1727,7 +1743,7 @@ function restoreFingeringPreferences() {
     const savedSystem = localStorage.getItem(PREF_SYSTEM_KEY);
     const savedStyle = localStorage.getItem(PREF_STYLE_KEY);
     if (savedSystem === "jeffries" || savedSystem === "wheatstone") system = savedSystem;
-    if (savedStyle === "onrow" || savedStyle === "cross") style = savedStyle;
+    if (savedStyle === "onrow" || savedStyle === "cross" || savedStyle === "cross-cpush") style = savedStyle;
   } catch (_) {}
   $("system").value = system;
   $("style").value = style;
@@ -1763,22 +1779,22 @@ async function showInstructions() {
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
     <h3>3. Choose the fingering style</h3>
-    <p>Select <b>On-Row</b> or <b>Cross-Row</b>.</p>
+    <p>Select <b>On-Row</b>, <b>Cross-row (C5 on G-row draw)</b>, or <b>Cross-row (C5 on C-row push)</b>.</p>
     <p>The tool remembers your most recent fingering system and style in this browser.</p>
-    <p>The initial defaults are <b>Jeffries</b> and <b>Cross-Row</b>.</p>
+    <p>The initial defaults are <b>Jeffries</b> and <b>Cross-row (C5 on G-row draw)</b>.</p>
     <p>The fingering solution descriptions below are relative to C/G tuning.</p>
     <p><strong>On-Row:</strong></p>
     <p>Jim Van Donsel's original fingering solution, favors center row:</p>
     <p>Favors playing D' and E' on the right-side C-row.</p>
     <p>For Jeffries-style instruments:</p>
     <p>Favors right-side top-row 2nd button for C#' and D#'.</p>
-    <p><strong>Cross-Row:</strong></p>
-    <p>A more cross-row friendly fingering solution:</p>
-    <p>Favors playing the D' and E' on the left-side G-row.</p>
-    <p>Favors playing C' on the left-side G-row draw.</p>
-    <p>Favors playing B on the right-side C-row draw.</p>
-    <p>For Jeffries-style instruments:</p>
-    <p>Favors right-side top-row 2nd button for C#' and D#'.</p>
+    <p><strong>Cross-row (C5 on G-row draw):</strong></p>
+    <p>A cross-row fingering solution favoring D5 and E5 on the left-side G-row, B4 on the right-side C-row first button draw, and C5 on the left-side G-row fourth button draw.</p>
+    <p>For Jeffries-style instruments, favors the right-side top-row 2nd button for C#5 and D#5.</p>
+    <p><strong>Cross-row (C5 on C-row push):</strong></p>
+    <p>A cross-row fingering solution favoring D5 and E5 on the left-side G-row, B4 on the right-side C-row first button draw, and C5 on the right-side C-row first button push.</p>
+    <p>For Jeffries-style instruments, favors the right-side top-row 2nd button for C#5 and D#5.</p>
+    <p>These are preferences, not mandatory fingerings; finger transitions are also considered.</p>
 
     <hr style="border:0;border-top:1px solid #c5c5c5;margin:18px 0">
     <h3>4. Choose a difficulty level (optional)</h3>
@@ -2115,7 +2131,7 @@ function makeCanvas(title, solution, item, system, style, playedIndex, tune) {
   const repeatLabel = location.partPasses > 1 ? ` - ${ordinal(location.pass)} Repeat` : "";
   ctx.fillText(`${location.name} Part${repeatLabel} - Note ${location.index} of ${location.total}`,28,47);
   ctx.textAlign="right";
-  ctx.fillText(`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${style==="cross"?"Cross-Row":"On-Row"}${solution.some(note=>note.injectedTabOverride)?" + Overrides":""}`,1252,47);
+  ctx.fillText(`${system==="jeffries"?"Jeffries":"Wheatstone"} • ${angloFingeringLabel(style)}${solution.some(note=>note.injectedTabOverride)?" + Overrides":""}`,1252,47);
 
   // Tune title centered at the top.
   ctx.textAlign="center";
@@ -2408,7 +2424,7 @@ $("generateBtn").addEventListener("click", async()=>{
         // publishes solveAngloTune when invoked. Set the requested options
         // before entering it so the first tune works as well as later tunes.
         gInjectTab_ConcertinaStyle = system === "wheatstone" ? 1 : 0;
-        gInjectTab_ConcertinaFingering = style === "cross" ? 1 : 0;
+        gInjectTab_ConcertinaFingering = angloFingeringMode(style);
         const tuneForSolver = stripChordSymbols(tune);
         solution = angloFingeringsGenerator(tuneForSolver);
         applyInjectedTabOverrides(tune, solution);
@@ -2436,7 +2452,7 @@ $("generateBtn").addEventListener("click", async()=>{
     if (!totalImages) throw new Error(skipped.length ? "No images generated. "+skipped.join(" | ") : "No notes found.");
     const zipFirst = exportTunes.length > 1 ? "Multiple" : sanitize(firstTitle(exportTunes[0], 1)).replace(/\s+/g, "_");
     const zipSystem = system === "jeffries" ? "Jeffries" : "Wheatstone";
-    const zipStyle = style === "cross" ? "Cross-Row" : "On-Row";
+    const zipStyle = style === "cross-cpush" ? "Cross-Row-C5-C-Row-Push" : (style === "cross" ? "Cross-Row" : "On-Row");
     const suggested = `${zipFirst}_${zipSystem}_${zipStyle}.zip`;
     const zipName=await askZipName(suggested);
     if (!zipName) { setStatus("Save canceled."); return; }
