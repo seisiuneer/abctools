@@ -16,7 +16,7 @@
         <meta property="og:description" content="A simple-to-use ABC to standard music notation converter featuring tune play, transposition, tab generation, PDF export and much more!" />
         <meta property="og:url" content="https://michaeleskin.com/abctools/userguide.html" />
         <meta property="og:site_name" content="Michael Eskin's ABC Transcription Tools User Guide" />
-        <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon-user-guide-basic.png" />
+        <meta property="og:image" content="https://michaeleskin.com/img/abctools_ug_og1.jpg" />
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
         <meta name="theme-color" content="#ffffff">
@@ -2893,10 +2893,11 @@
                 <p class="code">%%MIDI beat a b c n</p>
                 <p>As described at:</p>
                 <p><a href="https://abcmidi.sourceforge.io/#beat" target="_blank">abc2midi info on %%MIDI beat</a></p>
+                <p>The first three numbers specify MIDI velocities for the first beat of the measure, subsequent strong beats, and notes between those beats, respectively. Accents are determined by rhythmic position within the measure, not by the order of individual notes. The fourth number controls the spacing of secondary strong beats in units of the meter denominator. A value of 1 retains the normal abcjs automatic beat-accent behavior.</p>
                 <p>For example:</p>
                 <p class="code">%%MIDI beat 16 16 16 1</p>
                 <p>This allows control of dynamics without adding dynamic marks and works with abcjs.</p>
-                <p>The volume specifiers !ppppp! to !ffff! are equivalent to the following:</p>
+                <p>The standard dynamic markings !ppppp! through !ffff! use the following MIDI beat velocity settings:</p>
                 <p>!ppppp! = %%MIDI beat 0 0 0 1 (mutes the voice)</p>
                 <p>!pppp! = %%MIDI beat 15 10 5 1</p>
                 <p>!ppp! = %%MIDI beat 30 20 10 1</p>
@@ -2908,7 +2909,6 @@
                 <p>!ff! = %%MIDI beat 120 110 95 1</p>
                 <p>!fff! = %%MIDI beat 127 125 110 1</p>
                 <p>!ffff! = %%MIDI beat 127 125 110 1</p>
-                <p>First number is the volume of the first note in the bar. Second number, second note, third number all following notes. Last number is which note in the set gets the first emphasis (n=1 would be first note of the measure).</p>
                 <p>Both discrete and inline MIDI versions work in my tool.</p>
                 <p>Discrete MIDI version (on it's own ABC line):</p>
                 <p class="code">%%MIDI beat 16 16 16 1</p>
@@ -4221,20 +4221,20 @@
                 <p><strong>Example: Masters Polka #1 — Offbeat Pulse</strong></p>
                 <p>In this 2/4 polka, there are four eighth-note positions per measure. The <strong>fmfm</strong> pattern and the specified velocities make the second and fourth eighth-note positions louder than the first and third: <strong>56, 115, 56, 115</strong>. Copy the complete ABC below into the editor to hear the effect.</p>
                 <p class="code">X:1<br/>
-T:Masters Polka #1<br/>
-T:Offbeat Pulse Example<br/>
-L:1/8<br/>
-M:2/4<br/>
-Q:1/4=120<br/>
-K:D<br/>
-%%MIDI program 21<br/>
-%%MIDI beat 56 115 56 1<br/>
-%%MIDI beatstring fmfm<br/>
-%%text Demonstrates strong pulse on the offbeat<br/>
-|:DF FA|Ad dc/d/|ed BG|BA A/G/F/E/|<br/>
-DF FA|Ad d2|BA AC|ED D2:|<br/>
-|:EA AF|Ee ec|de/d/ cB|c/d/e/f/ e2|<br/>
-EA AF|Ee ec|de/d/ cB|1 A2 A2 :|2 AGFE|]</p>
+                T:Masters Polka<br/>
+                T:Offbeat Pulse Example<br/>
+                L:1/8<br/>
+                M:2/4<br/>
+                Q:1/4=120<br/>
+                K:D<br/>
+                %%MIDI program 21<br/>
+                %%MIDI beat 56 115 56 1<br/>
+                %%MIDI beatstring fmfm<br/>
+                %%text Demonstrates strong pulse on the offbeat<br/>
+                |:DF FA|Ad dc/d/|ed BG|BA A/G/F/E/|<br/>
+                DF FA|Ad d2|BA AC|ED D2:|<br/>
+                |:EA AF|Ee ec|de/d/ cB|c/d/e/f/ e2|<br/>
+                EA AF|Ee ec|de/d/ cB|1 A2 A2 :|2 AGFE|]</p>
                 <p>For additional details about these directives, see the <a href="https://abcmidi.sourceforge.io/#beat" target="_blank" rel="noopener noreferrer">abcMIDI beat and beatstring specification</a>.</p>
                 <hr class="hidden-print" id="export_audio_image">
                 <h1 class="page_break_always">Exporting Tune Audio, Image, or PDF Files from the Player</h1>
