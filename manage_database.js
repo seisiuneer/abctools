@@ -56,7 +56,6 @@ function UpdateToLatestVersion(){
 	}
 }
 
-
 function ForceUpdate(callback){
 
 	var thePrompt = "This will force the version of the tool stored in<br/>your browser to be updated to the latest after a restart.<br/><br/>After the restart, wait 10 seconds and then hard refresh<br/>the page one more time to use the update.<br/><br/>Are you sure?";

@@ -5,28 +5,14 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-// Updated 29 Oct 2026 2330
-//
-//
-//
-//
-//
-//
-//
+// Updated 30 Oct 2026 0730
 //
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-3370';
+const cacheName = 'abctoolscache-3371';
 
 const contentToCache = [
     'abctools.html',
@@ -164,7 +150,8 @@ self.addEventListener('install', (e) => {
     e.waitUntil((async () => {
       const cache = await caches.open(cacheName);
       console.log('[Service Worker] Caching all: app shell and content');
-      await cache.addAll(contentToCache);
+      // Fetch fresh copies from the server instead of reusing the browser HTTP cache.
+      await cache.addAll(contentToCache.map(url => new Request(url, { cache: 'reload' })));
       console.log('[Service Worker] Cache addAll complete!');
     })());
 
@@ -175,20 +162,18 @@ self.addEventListener('activate', event => {
 
     console.log("[Service Worker] Activate event");
 
-    clients.claim().then(() => {
-        //claim means that the html file will use this new service worker.
-        console.log(
-          '[Service Worker] - The service worker has now claimed all pages so they use the new service worker.'
+    event.waitUntil((async () => {
+        const keys = await caches.keys();
+        await Promise.all(
+            keys.filter((key) => key !== cacheName &&
+                (key.indexOf("abctoolscache") !== -1 || key.indexOf("cache-20") !== -1))
+                .map(key => caches.delete(key))
         );
-    });
 
-    event.waitUntil(
-        caches.keys().then((keys) => {
-          return Promise.all(
-            keys.filter((key) => key != cacheName).map((key) => {if ((key.indexOf("abctoolscache") != -1) || (key.indexOf("cache-20") != -1)){caches.delete(key)}})
-          );
-        })
-    );
+        // Claim open pages only after all previous caches have been deleted.
+        await clients.claim();
+        console.log('[Service Worker] - The service worker has now claimed all pages so they use the new service worker.');
+    })());
 
 });
   
@@ -206,7 +191,8 @@ self.addEventListener('fetch', (e) => {
 
     e.respondWith((async () => {
 
-        const r = await caches.match(e.request,{ignoreSearch: true, ignoreVary:true});
+        const cache = await caches.open(cacheName);
+        const r = await cache.match(e.request,{ignoreSearch: true, ignoreVary:true});
 
         if (r){
 
