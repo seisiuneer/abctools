@@ -746,6 +746,7 @@
             <a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a>
             <a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a>
             <a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a>
+            <a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</a>
             </details>
 
             <details>
@@ -1342,6 +1343,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</a></p>
 
                     </div>
 
@@ -4203,6 +4205,37 @@
                 <hr>
                 <p>percussionVolumeScale and  percussionRelease may also be combined:</p>
                 <p class="code">%abcjs_render_params {"percussionVolumeScale":3.5,"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600, "52":3000,"55":1800,"57":3000,"59":2600}}</p>
+                <hr class="hidden-print" id="midi_beat_accents">
+                <h1 class="page_break_always">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>The <strong>%%MIDI beat</strong> and <strong>%%MIDI beatstring</strong> directives let you control how strongly individual melody notes are played by changing their MIDI velocity (loudness). You can use them to accent particular beats, create an offbeat pulse, or emphasize a custom rhythmic pattern without changing the written notes or their durations.</p>
+                <p><strong>%%MIDI beat</strong> sets three MIDI velocities and a fourth beat-accent interval parameter:</p>
+                <p class="code">%%MIDI beat 70 115 70 1</p>
+                <p>The first three numbers are <strong>a</strong>, <strong>b</strong>, and <strong>c</strong>: <strong>a</strong> is used for the start of a measure, <strong>b</strong> for other strong beat positions, and <strong>c</strong> for unaccented notes. Velocities range from 0 to 127. The fourth number, <strong>n</strong>, must be a positive whole number and controls the spacing of strong beats when no beatstring is specified. A value of 1 retains the tool's usual automatic accent behavior.</p>
+                <p><strong>%%MIDI beatstring</strong> lets you select exactly where the accents fall within each measure:</p>
+                <p class="code">%%MIDI beatstring fmfm</p>
+                <p>Each character represents an equally spaced position within the measure. Use lowercase <strong>f</strong> for velocity <strong>a</strong>, <strong>m</strong> for velocity <strong>b</strong>, and <strong>p</strong> for velocity <strong>c</strong>. Do not put spaces between the characters. Notes that begin between the specified positions use the soft velocity <strong>c</strong>. A sustained note or rest does not create an additional note attack.</p>
+                <p>You can use <strong>%%MIDI beatstring</strong> on its own. Without an explicit <strong>%%MIDI beat</strong>, its default velocities are <strong>105</strong> (f), <strong>95</strong> (m), and <strong>85</strong> (p). Using both directives gives you more control over how noticeable the accents are. When a beatstring is present, its pattern takes precedence over the automatic beat positions.</p>
+                <p><strong>Example: Masters Polka #1 — Offbeat Pulse</strong></p>
+                <p>In this 2/4 polka, there are four eighth-note positions per measure. The <strong>fmfm</strong> pattern and the specified velocities make the second and fourth eighth-note positions louder than the first and third: <strong>56, 115, 56, 115</strong>. Copy the complete ABC below into the editor to hear the effect.</p>
+                <p class="code">X:1<br/>
+T:Masters Polka #1<br/>
+T:Offbeat Pulse Example<br/>
+L:1/8<br/>
+M:2/4<br/>
+Q:1/4=120<br/>
+K:D<br/>
+%%MIDI program 21<br/>
+%%MIDI beat 56 115 56 1<br/>
+%%MIDI beatstring fmfm<br/>
+%%text Demonstrates strong pulse on the offbeat<br/>
+|:DF FA|Ad dc/d/|ed BG|BA A/G/F/E/|<br/>
+DF FA|Ad d2|BA AC|ED D2:|<br/>
+|:EA AF|Ee ec|de/d/ cB|c/d/e/f/ e2|<br/>
+EA AF|Ee ec|de/d/ cB|1 A2 A2 :|2 AGFE|]</p>
+                <p>For additional details about these directives, see the <a href="https://abcmidi.sourceforge.io/#beat" target="_blank" rel="noopener noreferrer">abcMIDI beat and beatstring specification</a>.</p>
                 <hr class="hidden-print" id="export_audio_image">
                 <h1 class="page_break_always">Exporting Tune Audio, Image, or PDF Files from the Player</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -9147,6 +9180,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_copy_all">Copy All Tunes</a></p>

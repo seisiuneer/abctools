@@ -13788,6 +13788,12 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   var stressBeat1 = 105;
   var stressBeatDown = 95;
   var stressBeatUp = 85;
+  // %%MIDI beat a b c n: spacing of secondary stresses, in meter-denominator units.
+  // n=1 keeps the existing abcjs accent behavior, including compound meters.
+  var beatAccentInterval = 1;
+  // Optional abc2midi-style velocity grid, independent of L: and tempo.
+  // A null value retains the original abcjs beat-accent algorithm.
+  var beatString = null;
   var beatFraction = 0.25;
   var nextVolume;
   var nextVolumeDelta;
@@ -14059,6 +14065,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     stressBeat1 = 105;
     stressBeatDown = 95;
     stressBeatUp = 85;
+    beatAccentInterval = 1;
+    beatString = null;
     beatFraction = 0.25;
     nextVolume = undefined;
     nextVolumeDelta = undefined;
@@ -14134,6 +14142,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
         instrument: instrument
       }];
       currentTrackName = undefined;
+      beatAccentInterval = 1;
+      beatString = null; // Each voice replays its own beatstring directives.
       lastBarTime = 0;
       if (gUseGChord){
         chordTrack.setLastBarTime(0);
@@ -14294,7 +14304,16 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             stressBeat1 = element.beats[0];
             stressBeatDown = element.beats[1];
             stressBeatUp = element.beats[2];
-            // TODO-PER: also use the last parameter - which changes which beats are strong.
+            // The fourth value specifies the interval of secondary strong beats.
+            // Invalid/absent values fall back to legacy n=1 behavior.
+            beatAccentInterval = Number.isInteger(element.beats[3]) && element.beats[3] > 0
+              ? element.beats[3] : 1;
+            break;
+          case "beatstring":
+            // Invalid strings are ignored rather than affecting ordinary playback.
+            // An explicit new valid string replaces the previous pattern.
+            beatString = typeof element.pattern === 'string' && /^[fmp]+$/.test(element.pattern)
+              ? element.pattern : null;
             break;
           case "vol":
             nextVolume = element.volume;
@@ -14643,12 +14662,50 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       nextVolume = undefined;
     } else if (!doBeatAccents) {
       volume = stressBeatDown;
+    } else if (beatString) {
+      // A beatstring divides the current measure into beatString.length equal
+      // slots, regardless of L: or the tempo. Only notes on slot boundaries
+      // receive the slot velocity; subdivisions between boundaries get the
+      // soft (third %%MIDI beat) velocity.
+      var barLength = meter.num / meter.den;
+      var positionInBar = beat - lastBarTime;
+      if (lastBarTime === 0 && pickupLength > 0 && pickupLength < barLength) {
+        // The initial anacrusis occupies the final part of a nominal bar.
+        positionInBar += barLength - pickupLength;
+      }
+      var slotWidth = barLength / beatString.length;
+      var slotIndex = Math.round(positionInBar / slotWidth);
+      var onSlot = Math.abs(positionInBar - slotIndex * slotWidth) < 0.00001;
+      if (onSlot && slotIndex >= 0 && slotIndex < beatString.length) {
+        switch (beatString.charAt(slotIndex)) {
+          case 'f': volume = stressBeat1; break;
+          case 'm': volume = stressBeatDown; break;
+          default: volume = stressBeatUp; break; // 'p'
+        }
+      } else {
+        volume = stressBeatUp;
+      }
     } else if (pickupLength > beat) {
       volume = stressBeatUp;
     } else {
       var barLength = meter.num / meter.den;
       var barBeat = calcBeat(lastBarTime, getBeatFraction(meter), beat);
-      if (barBeat === 0) volume = stressBeat1;else if (parseInt(barBeat, 10) === barBeat) volume = stressBeatDown;else volume = stressBeatUp;
+      if (barBeat === 0) {
+        volume = stressBeat1;
+      } else if (beatAccentInterval === 1) {
+        // Preserve previous abcjs playback exactly when n=1 (or omitted).
+        volume = parseInt(barBeat, 10) === barBeat ? stressBeatDown : stressBeatUp;
+      } else {
+        // abc2midi defines n in denominator units (e.g. eighths in 6/8),
+        // not in abcjs's compound-meter beat units (dotted quarters in 6/8).
+        var meterDenominator = parseInt(meter.den, 10);
+        var position = (beat - lastBarTime) * meterDenominator;
+        var wholePosition = Math.round(position);
+        // Ignore notes between denominator-unit positions; allow rounding noise.
+        var onUnit = Math.abs(position - wholePosition) < 0.00001;
+        volume = onUnit && wholePosition > 0 && wholePosition % beatAccentInterval === 0
+          ? stressBeatDown : stressBeatUp;
+      }
     }
     if (nextVolumeDelta) {
       volume += nextVolumeDelta;
@@ -16648,6 +16705,10 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
         el_type: 'beat',
         beats: globals.beat
       });
+      if (globals.beatstring) startingMidi.push({
+        el_type: 'beatstring',
+        pattern: globals.beatstring[0]
+      });
       if (globals.nobeataccents) startingMidi.push({
         el_type: 'beataccents',
         value: false
@@ -17094,6 +17155,12 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       voices[voiceNumber].push({
                         el_type: 'beat',
                         beats: elem.params
+                      });
+                      break;
+                    case "beatstring":
+                      voices[voiceNumber].push({
+                        el_type: 'beatstring',
+                        pattern: elem.params[0]
                       });
                       break;
                     case "nobeataccents":

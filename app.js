@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3369_102926_1200";
+var gVersionNumber = "3370_102926_2330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31422,13 +31422,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_27Oct2026;
+        var updatePresented = localStorage.sawUpdate_29Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_27Oct2026 = true;
+          localStorage.sawUpdate_29Oct2026 = true;
 
         }
 
@@ -60983,16 +60983,16 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Cross-row solution for the Anglo Concertina tab injector</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Added a new Cross-row solution option that favors the C5 on the right side C-row instead of the left side G-row.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added more robust support for <strong>%%MIDI beat</strong> and <strong>%%MIDI beatstring</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Allows for more precise control of beat pulse feel within tunes.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added a new section to the <strong>Advanced Playback Features</strong> section in the <strong>User Guide</strong>explaining the two directives along with an example polka with a strong backbeat feel.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New Option on the <strong>Phrase-by-Phrase Tune Trainer Builder</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">You can now specify how many times each phrase should be repeated before moving to the next one. Default is 1.</p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Phrase-by-Phrase Tune Trainer Builder</strong> is available as a button labeled <strong>Phrase Builder</strong> on both the <strong>Tune Trainer</strong> as well as the <strong>ABC Features</strong> tab of the <strong>More ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Cross-row solution for the Anglo Concertina tab injector</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Added a new Cross-row solution option that favors the C5 on the right side C-row instead of the left side G-row.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67907,13 +67907,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_27Oct2026;
+    var updatePresented = localStorage.sawUpdate_29Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_27Oct2026 = true;
+      localStorage.sawUpdate_29Oct2026 = true;
 
     }
 
