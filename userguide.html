@@ -746,7 +746,7 @@
             <a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a>
             <a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a>
             <a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a>
-            <a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</a>
+            <a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat, %%MIDI beatstring, and %%MIDI beatpulse</a>
             </details>
 
             <details>
@@ -1343,7 +1343,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_percussion_volume_and_release">Custom Percussion Instrument (%%MIDI program 128) Volume Scale and Release Times</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat, %%MIDI beatstring, and %%MIDI beatpulse</a></p>
 
                     </div>
 
@@ -4206,7 +4206,7 @@
                 <p>percussionVolumeScale and  percussionRelease may also be combined:</p>
                 <p class="code">%abcjs_render_params {"percussionVolumeScale":3.5,"percussionRelease":{"42":350,"44":500,"46":1800,"49":3000,"51":2600, "52":3000,"55":1800,"57":3000,"59":2600}}</p>
                 <hr class="hidden-print" id="midi_beat_accents">
-                <h1 class="page_break_always">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</h1>
+                <h1 class="page_break_always">Controlling Beat Accents with %%MIDI beat, %%MIDI beatstring, and %%MIDI beatpulse</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
@@ -4235,7 +4235,34 @@
                 DF FA|Ad d2|BA AC|ED D2:|<br/>
                 |:EA AF|Ee ec|de/d/ cB|c/d/e/f/ e2|<br/>
                 EA AF|Ee ec|de/d/ cB|1 A2 A2 :|2 AGFE|]</p>
-                <p>For additional details about these directives, see the <a href="https://abcmidi.sourceforge.io/#beat" target="_blank" rel="noopener noreferrer">abcMIDI beat and beatstring specification</a>.</p>
+                <p><strong>Sustained note beat accents with %%MIDI beatpulse (private directive)</strong></p>
+                <p>Normally, <strong>%%MIDI beat</strong> and <strong>%%MIDI beatstring</strong> set a note's velocity when it begins. A note held across several accent positions keeps its initial volume.</p>
+                <p>The optional, tool-specific <strong>%%MIDI beatpulse</strong> directive makes sustained notes follow the beat-accent pattern while they are held, smoothly changing their volume without retriggering the note or changing its pitch or duration.</p>
+                <p>Beat pulsing is <strong>disabled by default</strong> (<strong>0</strong>). To enable it for a tune, add:</p>
+                <p class="code">%%MIDI beatpulse 1</p>
+                <p>To turn it off again later in the same tune, use:</p>
+                <p class="code">%%MIDI beatpulse 0</p>
+                <p>The setting can be changed during a tune.</p>
+                <p><strong>Example: Masters Polka — Offbeat Pulse Including Sustained Notes</strong></p>
+                <p>This version of the polka adds <strong>%%MIDI beatpulse 1</strong> to the <strong>fmfm</strong> offbeat pattern. In addition to accenting individual notes, notes held across multiple eighth-note positions now rise and fall with the pattern. Copy the complete ABC below into the editor to hear the difference.</p>
+                <p class="code">X:1<br/>
+                T:Masters Polka<br/>
+                T:Offbeat Pulse Including Sustained Notes<br/>
+                L:1/8<br/>
+                M:2/4<br/>
+                Q:1/4=120<br/>
+                K:D<br/>
+                %%MIDI program 110<br/>
+                %%MIDI beat 56 115 56 1<br/>
+                %%MIDI beatstring fmfm<br/>
+                %%MIDI beatpulse 1<br/>
+                %%text Demonstrates strong pulse on the offbeat including sustained notes<br/>
+                %%vskip 10<br/>
+                |:DF FA|Ad dc/d/|ed BG|BA A/G/F/E/|<br/>
+                DF FA|Ad d2|BA AC|ED D2:|<br/>
+                |:EA AF|Ee ec|de/d/ cB|c/d/e/f/ e2|<br/>
+                EA AF|Ee ec|de/d/ cB|1 A2 A2 :|2 AGFE|]</p>
+                <p>For additional details about the standard <strong>%%MIDI beat</strong> and <strong>%%MIDI beatstring</strong> directives, see the <a href="https://abcmidi.sourceforge.io/#beat" target="_blank" rel="noopener noreferrer">abcMIDI beat and beatstring specification</a>.</p>
                 <hr class="hidden-print" id="export_audio_image">
                 <h1 class="page_break_always">Exporting Tune Audio, Image, or PDF Files from the Player</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -9180,7 +9207,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#clearing_tablature">Clearing the Injected Tablature</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#tablature_settings">Configuring Tablature Fonts and Settings</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat and %%MIDI beatstring</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat, %%MIDI beatstring, and %%MIDI beatpulse</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_copy_all">Copy All Tunes</a></p>

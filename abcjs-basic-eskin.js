@@ -6018,6 +6018,14 @@ var parseDirective = {};
       if (midi_cmd == "abctt:strum_chords"){
         midi_cmd = "strum_chords";
       }
+    } else if (midi_cmd === "beatpulse") {
+      if (midi.length !== 1 || midi[0].type !== "number" ||
+          midi[0].intt === undefined ||
+          (midi[0].intt !== 0 && midi[0].intt !== 1)) {
+        warn("Expected 0 or 1 in MIDI beatpulse", restOfString, 0);
+        return;
+      }
+      midi_params.push(midi[0].intt);
     } else if (midiCmdParam1Integer.indexOf(midi_cmd) >= 0) {
       // MAE 17 May 2024
       if (midi_cmd == "abctt:boomchick_fraction"){
@@ -13794,6 +13802,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
   // Optional abc2midi-style velocity grid, independent of L: and tempo.
   // A null value retains the original abcjs beat-accent algorithm.
   var beatString = null;
+  var beatPulseEnabled = false; // Reset separately for every playback voice.
   var beatFraction = 0.25;
   var nextVolume;
   var nextVolumeDelta;
@@ -14067,6 +14076,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     stressBeatUp = 85;
     beatAccentInterval = 1;
     beatString = null;
+    beatPulseEnabled = false;
     beatFraction = 0.25;
     nextVolume = undefined;
     nextVolumeDelta = undefined;
@@ -14144,7 +14154,10 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       currentTrackName = undefined;
       beatAccentInterval = 1;
       beatString = null; // Each voice replays its own beatstring directives.
+      beatPulseEnabled = false;
       lastBarTime = 0;
+      var pulseFrames = [beatPulseSnapshot(0, beatPulseEnabled)];
+      var pulseWasEnabled = false;
       if (gUseGChord){
         chordTrack.setLastBarTime(0);
       }
@@ -14181,6 +14194,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
               chordTrack.setMeter(meter);
             }
             beatFraction = getBeatFraction(meter);
+            recordBeatPulseFrame(pulseFrames, element.time, beatPulseEnabled);
             alignDrumToMeter();
 
             // Dont change the boom chick fractions from the default if using gchord
@@ -14263,6 +14277,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
               chordLastBar = lastChord;
             }
             lastBarTime = timeToRealTime(element.time);
+            recordBeatPulseFrame(pulseFrames, element.time, beatPulseEnabled);
             if (gUseGChord){
               chordTrack.setLastBarTime(lastBarTime);
             }
@@ -14308,12 +14323,19 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             // Invalid/absent values fall back to legacy n=1 behavior.
             beatAccentInterval = Number.isInteger(element.beats[3]) && element.beats[3] > 0
               ? element.beats[3] : 1;
+            recordBeatPulseFrame(pulseFrames, element.time, beatPulseEnabled);
             break;
           case "beatstring":
             // Invalid strings are ignored rather than affecting ordinary playback.
             // An explicit new valid string replaces the previous pattern.
             beatString = typeof element.pattern === 'string' && /^[fmp]+$/.test(element.pattern)
               ? element.pattern : null;
+            recordBeatPulseFrame(pulseFrames, element.time, beatPulseEnabled);
+            break;
+          case "beatpulse":
+            beatPulseEnabled = element.value === 1;
+            if (beatPulseEnabled) pulseWasEnabled = true;
+            recordBeatPulseFrame(pulseFrames, element.time, beatPulseEnabled);
             break;
           case "vol":
             nextVolume = element.volume;
@@ -14323,6 +14345,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
           case "beataccents":
             doBeatAccents = element.value;
+            recordBeatPulseFrame(pulseFrames, element.time, beatPulseEnabled);
             break;
 
           // MAE 21 Jun 2024 - Adding pattern scale
@@ -14439,6 +14462,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
             break;
         }
       }
+      // Attach per-note gain envelopes only if this voice explicitly enabled
+      // beatpulse. With beatpulse off, all original MIDI events are untouched.
+      if (pulseWasEnabled) addBeatPulseEnvelopes(currentTrack, pulseFrames);
       if (currentTrack[0].instrument === undefined) currentTrack[0].instrument = instrument ? instrument : 0;
       if (currentTrackName) currentTrack.unshift(currentTrackName);
       tracks.push(currentTrack);
@@ -14653,6 +14679,134 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     return distanceFromStart / beatLength;
   }
   
+
+  // %%MIDI beatpulse 0|1: optional sustained-note volume automation.
+  // Keep this state in the flattener, not in host globals or the audio renderer.
+  // All timing values are in the existing flattened, tempo-adjusted whole-note units.
+  function beatPulseSnapshot(time, enabled) {
+    return {
+      time: timeToRealTime(time),
+      enabled: enabled && doBeatAccents,
+      a: stressBeat1, b: stressBeatDown, c: stressBeatUp,
+      interval: beatAccentInterval, pattern: beatString,
+      num: Number(meter.num), den: Number(meter.den),
+      beatLength: getBeatFraction(meter),
+      barStart: lastBarTime, pickup: pickupLength
+    };
+  }
+
+  function recordBeatPulseFrame(frames, time, enabled) {
+    var frame = beatPulseSnapshot(time, enabled);
+    var last = frames[frames.length - 1];
+    // Several directives at the same musical instant represent one final state.
+    if (last && Math.abs(last.time - frame.time) < 0.0000001)
+      frames[frames.length - 1] = frame;
+    else frames.push(frame);
+  }
+
+  function beatPulseStep(frame) {
+    var length = frame.num / frame.den;
+    if (!(length > 0)) return 0;
+    if (frame.pattern) return length / frame.pattern.length;
+    // Include weaker subdivisions between ordinary accented beats. This
+    // yields eighths in 2/4 and 4/4, and eighths in a compound 6/8 measure.
+    return Math.min(frame.beatLength / 2, 1 / frame.den);
+  }
+
+  function beatPulsePosition(frame, time) {
+    var position = time - frame.barStart;
+    var length = frame.num / frame.den;
+    if (frame.barStart === 0 && frame.pickup > 0 && frame.pickup < length)
+      position += length - frame.pickup;
+    return position;
+  }
+
+  function beatPulseVelocity(frame, time) {
+    var position = beatPulsePosition(frame, time);
+    if (frame.pattern) {
+      var width = (frame.num / frame.den) / frame.pattern.length;
+      var slot = Math.round(position / width);
+      if (slot >= 0 && slot < frame.pattern.length &&
+          Math.abs(position - slot * width) < 0.00001) {
+        var letter = frame.pattern.charAt(slot);
+        return letter === 'f' ? frame.a : letter === 'm' ? frame.b : frame.c;
+      }
+      return frame.c;
+    }
+    if (position < -0.000001) return frame.c;
+    if (Math.abs(position) < 0.000001) return frame.a;
+    if (frame.interval === 1) {
+      var beat = position / frame.beatLength;
+      return Math.abs(beat - Math.round(beat)) < 0.00001 ? frame.b : frame.c;
+    }
+    var unit = position * frame.den;
+    var rounded = Math.round(unit);
+    return rounded > 0 && Math.abs(unit - rounded) < 0.00001 &&
+      rounded % frame.interval === 0 ? frame.b : frame.c;
+  }
+
+  function addBeatPulseEnvelopes(track, frames) {
+    if (!frames.length) return;
+    var EPS = 0.0000001;
+    for (var n = 0; n < track.length; n++) {
+      var note = track[n];
+      if (note.cmd !== 'note' || !(note.duration > 0) || !(note.volume > 0)) continue;
+      var begin = note.start;
+      var end = begin + Math.max(0, note.duration - (note.gap || 0));
+      if (end - begin < 0.00001) continue;
+      var changes = [];
+      // Frames are in nondecreasing musical time within one expanded voice.
+      var idx = 0;
+      while (idx + 1 < frames.length && frames[idx + 1].time <= begin + EPS) idx++;
+      for (var j = idx; j < frames.length; j++) {
+        var frame = frames[j];
+        var segStart = Math.max(begin, frame.time);
+        var segEnd = Math.min(end, j + 1 < frames.length ? frames[j + 1].time : end);
+        if (segStart >= end - EPS) break;
+        if (segStart >= segEnd - EPS) continue;
+        // A mid-note MIDI directive takes effect at its own musical time.
+        if (frame.time > begin + EPS) {
+          var previous = j > 0 ? frames[j - 1] : null;
+          if (frame.enabled || (previous && previous.enabled))
+            changes.push([+(frame.time - begin).toFixed(6),
+              frame.enabled ? beatPulseVelocity(frame, frame.time) : note.volume]);
+        }
+        if (!frame.enabled) continue;
+        var step = beatPulseStep(frame);
+        if (!(step > 0.0000001)) continue;
+        var length = frame.num / frame.den;
+        var pickupShift = frame.barStart === 0 && frame.pickup > 0 && frame.pickup < length
+          ? length - frame.pickup : 0;
+        var gridOrigin = frame.barStart - pickupShift;
+        var k = Math.floor((segStart - gridOrigin) / step + 0.00000001) + 1;
+        // Guard against pathological meter or beatstrings that yield enormous
+        // gain automation lists for one note.
+        for (; changes.length < 1024; k++) {
+          var t = gridOrigin + k * step;
+          if (t >= segEnd - EPS) break;
+          if (t <= begin + EPS) continue;
+          changes.push([+(t - begin).toFixed(6), beatPulseVelocity(frame, t)]);
+        }
+      }
+      if (changes.length) {
+        changes.sort(function (a, b) { return a[0] - b[0]; });
+        // Coalesce repeated instants and unchanged levels (especially at bars).
+        var clean = [];
+        var current = note.volume;
+        for (var m = 0; m < changes.length; m++) {
+          var change = changes[m];
+          if (clean.length && Math.abs(change[0] - clean[clean.length - 1][0]) < 0.000001) {
+            clean[clean.length - 1][1] = change[1];
+          } else if (change[1] !== current) {
+            clean.push(change);
+          }
+          current = change[1];
+        }
+        if (clean.length) note.beatPulse = clean;
+      }
+    }
+  }
+
   function processVolume(beat, voiceOff) {
     if (voiceOff) return 0;
     var volume;
@@ -16709,6 +16863,10 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
         el_type: 'beatstring',
         pattern: globals.beatstring[0]
       });
+      if (globals.beatpulse && (globals.beatpulse[0] === 0 || globals.beatpulse[0] === 1)) startingMidi.push({
+        el_type: 'beatpulse',
+        value: globals.beatpulse[0]
+      });
       if (globals.nobeataccents) startingMidi.push({
         el_type: 'beataccents',
         value: false
@@ -17161,6 +17319,12 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                       voices[voiceNumber].push({
                         el_type: 'beatstring',
                         pattern: elem.params[0]
+                      });
+                      break;
+                    case "beatpulse":
+                      voices[voiceNumber].push({
+                        el_type: 'beatpulse',
+                        value: elem.params[0]
                       });
                       break;
                     case "nobeataccents":
@@ -18923,6 +19087,7 @@ var createNoteMap = function createNoteMap(sequence) {
             if (ev.endChar) obj.endChar = ev.endChar;
             if (ev.style) obj.style = ev.style;
             if (ev.cents) obj.cents = ev.cents;
+            if (ev.beatPulse && ev.beatPulse.length) obj.beatPulse = ev.beatPulse;
             map[i].push(obj);
           }
           break;
@@ -19989,6 +20154,9 @@ function CreateSynth(theABC) {
           
           }
 
+          // Pulse automation is part of the sample identity. Never reuse a
+          // pre-rendered plain note or a different pulse envelope by accident.
+          if (note.beatPulse && note.beatPulse.length) key += ':' + JSON.stringify(note.beatPulse);
           if (self.debugCallback) self.debugCallback("noteMapTrack " + key);
           if (!uniqueSounds[key]) uniqueSounds[key] = [];
           uniqueSounds[key].push(note.start);
@@ -20020,7 +20188,8 @@ function CreateSynth(theABC) {
             tempoMultiplier: parseFloat(parts[5]),
             startChar: parseInt(parts[6]),
             endChar: parseInt(parts[7]),
-            cents: cents
+            cents: cents,
+            beatPulse: parts[9] ? JSON.parse(parts[9]) : undefined
           };
         }
         else{
@@ -20032,7 +20201,8 @@ function CreateSynth(theABC) {
             len: parseFloat(parts[3]),
             pan: parseFloat(parts[4]),
             tempoMultiplier: parseFloat(parts[5]),
-            cents: cents   
+            cents: cents,
+            beatPulse: parts[7] ? JSON.parse(parts[7]) : undefined
           };
 
         }
@@ -22353,7 +22523,32 @@ function placeNote(outputAudioBuffer, sampleRate, sound, startArray, volumeMulti
       source.panNode.pan.setValueAtTime(sound.pan, 0);
     }
     source.gainNode.gain.value = volume; // Math.min(2, Math.max(0, volume));
-    source.gainNode.gain.linearRampToValueAtTime(source.gainNode.gain.value, len);
+    if (sound.beatPulse && sound.beatPulse.length) {
+      // Sustain accents are gain changes on ONE sounding sample. No MIDI
+      // retriggering, pitch change, or extra note-on event is introduced.
+      var lastGain = volume;
+      for (var pulseIdx = 0; pulseIdx < sound.beatPulse.length; pulseIdx++) {
+        var pulse = sound.beatPulse[pulseIdx];
+        var pulseTime = pulse[0] * sound.tempoMultiplier;
+        if (!(pulseTime > 0) || pulseTime >= len) continue;
+        var targetGain = pulse[1] / 96 * volumeMultiplier;
+        // Smooth each accent over up to 20 ms, clamped to leave room for
+        // the next pulse and the note's release. This prevents sharp gain
+        // transitions without delaying note-on timing or retriggering notes.
+        var nextPulseTime = pulseIdx + 1 < sound.beatPulse.length
+          ? sound.beatPulse[pulseIdx + 1][0] * sound.tempoMultiplier : len;
+        var rampSpace = Math.min(len, nextPulseTime) - pulseTime;
+        if (!(rampSpace > 0)) continue;
+        var smooth = Math.min(0.020, rampSpace / 2);
+        source.gainNode.gain.setValueAtTime(lastGain, pulseTime);
+        source.gainNode.gain.linearRampToValueAtTime(targetGain, pulseTime + smooth);
+        lastGain = targetGain;
+      }
+      source.gainNode.gain.setValueAtTime(lastGain, len);
+    } else {
+      // Exactly preserve the historical envelope with beatpulse disabled.
+      source.gainNode.gain.linearRampToValueAtTime(source.gainNode.gain.value, len);
+    }
     source.gainNode.gain.linearRampToValueAtTime(0.0, len + fadeTimeSec);
 
     // MAE 13 Mar 2024 - Now able to set tuning 
