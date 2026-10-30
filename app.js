@@ -60985,7 +60985,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;">Added more robust support for <strong>%%MIDI beat</strong> and <strong>%%MIDI beatstring</strong></p>';
   modal_msg += '<p style="font-size:12pt;">Allows for more precise control of beat pulse feel within tunes.</p>';
-  modal_msg += '<p style="font-size:12pt;">Added a new section to the <strong>Advanced Playback Features</strong> section in the <strong>User Guide</strong>explaining the two directives along with an example polka with a strong backbeat feel.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added a new section to the <strong>Advanced Playback Features</strong> section in the <strong>User Guide</strong> explaining the two directives along with an example polka with a strong backbeat feel.</p>';
   modal_msg += '</div>';
 
   // Feature card
