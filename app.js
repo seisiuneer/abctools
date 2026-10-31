@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3374_103026_1300";
+var gVersionNumber = "3375_103126_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -86,7 +86,7 @@ function BuildExternalToolsShareControl() {
 
   return '<div id="external_tools_share" class="external_tools_share" role="button" tabindex="0" title="' + tooltip + '" aria-label="' + tooltip + '" style="box-sizing:content-box;cursor:pointer;overflow:visible;">' +
     '<img src="img/external_share.png" alt="" aria-hidden="true" style="display:block;width:30px;height:40px;">' +
-    '<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font:11px/14px Helvetica,Arial,sans-serif;color:#222;text-align:center;">Other Tools</span>' +
+    '<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font:11px/14px Helvetica,Arial,sans-serif;color:#222;text-align:center;">Other ABC Tools</span>' +
     '</div>';
 }
 
@@ -31422,13 +31422,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_29Oct2026;
+        var updatePresented = localStorage.sawUpdate_31Oct2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_29Oct2026 = true;
+          localStorage.sawUpdate_31Oct2026 = true;
 
         }
 
@@ -60983,16 +60983,16 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added robust support for <strong>%%MIDI beat</strong>, <strong>%%MIDI beatstring</strong> and <strong>%%MIDI beatpulse</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Allows for more precise control of beat pulse feel within tunes.</p>';
-  modal_msg += '<p style="font-size:12pt;">Added a new section to the <strong>Advanced Playback Features</strong> section in the <strong>User Guide</strong> explaining the three directives along with example polkas with a strong backbeat feel.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Irish Fiddle Fingering Player</strong> to the <strong>Open ABC in External Tool</strong> dialog</p>';
+  modal_msg += '<p style="font-size:12pt;">You can send the current tune to it from the <strong>Player</strong> or <strong>Tune Trainer</strong> or all the loaded tunes from the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Cross-row solution for the Anglo Concertina tab injector</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Added a new Cross-row solution option that favors the C5 on the right side C-row instead of the left side G-row.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added robust support for <strong>%%MIDI beat</strong>, <strong>%%MIDI beatstring</strong> and <strong>%%MIDI beatpulse</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Allows for more precise control of beat pulse feel within tunes.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added a new section to the <strong>Advanced Playback Features</strong> section in the <strong>User Guide</strong> explaining the three directives along with example polkas with a strong backbeat feel.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67907,13 +67907,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_29Oct2026;
+    var updatePresented = localStorage.sawUpdate_31Oct2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_29Oct2026 = true;
+      localStorage.sawUpdate_31Oct2026 = true;
 
     }
 
@@ -71584,6 +71584,10 @@ function OpenInAdditionalFingeringPlayer(abcText, isFromPlayer, name, url, analy
   timers.push(setTimeout(function(){if(!acknowledged)fail(!ready ? 'The ' + name + ' did not send its ready message.' : attempted ? 'The ' + name + ' did not confirm the ABC was loaded.' : 'The transfer to the ' + name + ' could not be completed.');},15000));
 }
 
+function OpenInABCIrishFiddleFingeringPlayer(abcText,isFromPlayer){
+  OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Irish Fiddle Fingering Player','https://michaeleskin.com/tools/abc-irish-fiddle-fingering-player.html','OpenInABCIrishFiddleFingeringPlayer');
+}
+
 function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Recorder Fingering Player','https://michaeleskin.com/tools/abc-recorder-fingering-player.html','OpenInABCRecorderFingeringPlayer');
 }
@@ -71637,9 +71641,10 @@ function openInExternalTool(theABC, isFromPlayer){
         '<button id="external_tools_tab_abc" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-radius:4px 0 0 4px;background:#1b3f8b;color:white;font-size:12pt;cursor:pointer;">Michael\'s Tools</button>' +
         '<button id="external_tools_tab_other" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-left:0;border-radius:0 4px 4px 0;background:#eee;color:black;font-size:12pt;cursor:pointer;">3rd-Party Tools</button>' +
       '</div>' +
-      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:repeat(6,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
+      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:repeat(7,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
         toolCard('external_chord_chart', 'img/tool_chordchart_other_1.jpg', 'Open the ABC in the ABC Chord Chart Generator', 'ABC Chord Chart Generator', 'ABC Chord Chart Generator') +
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
+        toolCard('external_irish_fiddle_player', 'img/tool-abc-irish-fiddle-player-1.jpg', 'Open the ABC in the ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player') +
         toolCard('external_tin_whistle', 'img/tool-abc-tin-whistle-player-1.jpg', 'Open the ABC in the ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player') +
         toolCard('external_irish_box', 'img/tool-abc-box-1.jpg', 'Open the ABC in the ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player') +
         toolCard('external_anglo_concertina', 'img/tool-abc-anglo-player-1.jpg', 'Open the ABC in the ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player') +
@@ -71708,6 +71713,9 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_fretboard_player");
   if (elem) elem.onclick = function(){ OpenInABCFretboardPlayer(theABC,isFromPlayer); };
+
+  elem = document.getElementById("external_irish_fiddle_player");
+  if (elem) elem.onclick = function(){ OpenInABCIrishFiddleFingeringPlayer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_irish_box");
   if (elem) elem.onclick = function(){ OpenInABCIrishButtonBoxFingeringPlayer(theABC,isFromPlayer); };
