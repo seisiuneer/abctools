@@ -1815,7 +1815,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 4.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Tip Jars</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -1929,6 +1929,8 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>Edit the ABC text in the upper-left pane to change notes, titles, keys, or other tune details.</p>
       <p>The notation and, when enabled, tablature update to reflect your edits.</p>
+      <p>During notation rendering, the player hides the ABC information and lyric fields <b>A:</b>, <b>B:</b>, <b>D:</b>, <b>F:</b>, <b>G:</b>, <b>H:</b>, <b>N:</b>, <b>O:</b>, <b>S:</b>, <b>W:</b>, <b>w:</b>, and <b>Z:</b> so their text cannot overlap the tablature.</p>
+      <p>These fields remain unchanged in the ABC editor, saved files, and shared tunes.</p>
       <p>This single-melody player rejects tunes containing voice declarations (V: or [V:]), multiple staves, bracketed note chords such as [CEG], or inline key changes such as [K:G]. An unsupported tune displays a warning instead of notation, tablature, or playback controls.</p>
       <p>Use the editor text-size menu to make the ABC text easier to read.</p>
       <p>Click a note in the notation to show its fingering on the dulcimer display.</p>
@@ -3754,6 +3756,17 @@ function mdPreparePlaybackScoreABC(tune,notationMode){
   return {playbackABC,generatedChordsActive,showWhistleTab};
 }
 
+// Suppress information and lyric fields that abcjs would draw below the
+// stave, where they would overlap our custom tablature. Operate only on the
+// temporary ABC passed to renderAbc; preserve every UTF-16 character offset
+// and newline so notation clicks, navigation, and the original ABC still agree.
+function hideUnderStaffABCFieldsForRender(abc){
+  return String(abc ?? "").replace(
+    /^([ \t]*)[ABDFGHNOSWwZ]:[^\r\n]*/gm,
+    (line,indent)=>indent+"%"+" ".repeat(line.length-indent.length-1)
+  );
+}
+
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
@@ -3795,7 +3808,7 @@ async function rebuild(){
       paddingbottom:showWhistleTab?75:16
     };
 
-    const visual=ABCJS.renderAbc("notation",playbackABC,renderParams);
+    const visual=ABCJS.renderAbc("notation",hideUnderStaffABCFieldsForRender(playbackABC),renderParams);
     instrumentNavVisual=visual&&visual[0]||null;
     if(gen!==renderGeneration)return;
     if(!visual||!visual.length)throw new Error("No notation was rendered.");
