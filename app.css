@@ -5463,17 +5463,11 @@ padding-left:10px;
 margin-top:-7px;
 }
 
-/*
-body{
-	color:green;
-}
-*/
-
 .external_tools_share{
 position:absolute;
 width:30px;
 height:40px;
-right:30px;
+right:16px;
 top:16px;
 padding:4px;
 z-index:101;

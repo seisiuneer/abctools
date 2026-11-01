@@ -79,27 +79,31 @@ var gPlayerScaling = 50;
 
 var gPlayerShowExternalToolsIcon = true;
 
-// Compact, labelled external-tool control shared by the Player and Tune Trainer.
-// The existing external_tools_share CSS keeps the icon in its original position.
+// Compact native button for opening the current tune in another player or tool.
+// Retain the existing ID/class so positioning and the persisted visibility setting
+// continue to work in both the Player and Tune Trainer.
 function BuildExternalToolsShareControl() {
-  const tooltip = "Open this tune in another ABC player or tool.";
+  const tooltip = "Open the current tune in another instrument player or ABC tool.";
 
-  return '<div id="external_tools_share" class="external_tools_share" role="button" tabindex="0" title="' + tooltip + '" aria-label="' + tooltip + '" style="box-sizing:content-box;cursor:pointer;overflow:visible;">' +
-    '<img src="img/external_share.png" alt="" aria-hidden="true" style="display:block;width:30px;height:40px;">' +
-    '<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font:11px/14px Helvetica,Arial,sans-serif;color:#222;text-align:center;">Other ABC Tools</span>' +
-    '</div>';
-}
+  // Apply the standard green rollover only to this Player/Tune Trainer button, not the
+  // similarly named button in Sharing Controls. Touch devices are unaffected.
+  if (!document.getElementById("open-tune-in-hover-style")) {
+    const style = document.createElement("style");
+    style.id = "open-tune-in-hover-style";
+    style.textContent = '@media (hover: hover) {' +
+      'button#external_tools_share.external_tools_share:hover {' +
+      'background-color:#9f9 !important;' +
+      '}}';
+    document.head.appendChild(style);
+  }
 
-// Give the icon and its label normal keyboard button behavior as well as click.
-function EnableExternalToolsShareKeyboard(elem) {
-  if (!elem) return;
-
-  elem.onkeydown = function(event) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      elem.click();
-    }
-  };
+  return '<button id="external_tools_share" class="external_tools_share" type="button" ' +
+    'title="' + tooltip + '" aria-label="' + tooltip + '" ' +
+    'style="box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;' +
+    'width:auto;height:30px;min-height:30px;padding:4px 10px;white-space:nowrap;cursor:pointer;' +
+    'background:#f2f2f2;color:#222;border:1px solid #888;border-radius:5px;' +
+    'font:12px/18px Helvetica,Arial,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,0.08);' +
+    'outline-offset:2px;transition:background-color 150ms ease,border-color 150ms ease;">Open Tune in...</button>';
 }
 
 var gRenderingPDF = false;
@@ -41467,7 +41471,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       scrollWithPage: (isMobileBrowser())
     });
 
-    // Add external tools icon?
+    // Add external tools button?
     if (gPlayerShowExternalToolsIcon){
 
       var elem = document.getElementById("external_tools_share");
@@ -41479,7 +41483,6 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       
       };
 
-      EnableExternalToolsShareKeyboard(elem);
 
     }
 
@@ -49013,7 +49016,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       scrollWithPage: (isMobileBrowser())
     });
 
-    // Add external tools icon?
+    // Add external tools button?
     if (gPlayerShowExternalToolsIcon){
 
       var elem = document.getElementById("external_tools_share");
@@ -49025,7 +49028,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       
       };
 
-      EnableExternalToolsShareKeyboard(elem);
 
     }
 
@@ -51340,7 +51342,7 @@ function SaveConfigurationSettings() {
     // Number of measures to add
     localStorage.LooperAddMeasureCount = gLooperAddMeasureCount;
 
-    // Show external tools icon on Player
+    // Show external tools button on Player
     localStorage.PlayerShowExternalToolsIcon = gPlayerShowExternalToolsIcon;
 
     // Flat mode buttons
@@ -52780,7 +52782,7 @@ function SharingControlsDialog() {
   modal_msg += '<input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play.">';
   modal_msg += '<input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor.">';
   modal_msg += '<input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">';
-  modal_msg += '<input id="external_tools_share" class="btn btn-urlcontrols" type="button" value="Open ABC in External Tool" title="Open all your ABC tunes in another ABC player or tool.">';
+  modal_msg += '<input id="external_tools_share" class="btn btn-urlcontrols" type="button" value="Open Tunes in Another Tool" title="Open all your ABC tunes in another ABC player or tool.">';
   modal_msg += '</div>';
   modal_msg += '<p class="sharing-url-compression-row"><label><input id="urlallowdef" type="checkbox" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link" checked/>&nbsp;Use Deflate</label></p>';
 
@@ -56529,7 +56531,7 @@ function ConfigurePlayerSettings(player_callback) {
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox_fs"
   },{
-    name: '            Show "Open ABC in External Tool" icon at top right of the Player and Tune Trainer',
+    name: '            Show "Open Tune in..." button at top right of the Player and Tune Trainer',
     id: "configure_show_external_tools",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox_fs"
@@ -56583,7 +56585,7 @@ function ConfigurePlayerSettings(player_callback) {
         }
       }
 
-      // Show external tools icon
+      // Show external tools button
       gPlayerShowExternalToolsIcon = args.result.configure_show_external_tools
 
       // Always flatten parts?
@@ -60983,7 +60985,7 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Irish Fiddle Fingering Player</strong> to the <strong>Open ABC in External Tool</strong> dialog</p>';
+  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Irish Fiddle Fingering Player</strong> to the <strong>Open Tune in Another Tool</strong> dialog</p>';
   modal_msg += '<p style="font-size:12pt;">You can send the current tune to it from the <strong>Player</strong> or <strong>Tune Trainer</strong> or all the loaded tunes from the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
@@ -71301,7 +71303,7 @@ function launchAbcHarmonicaPlayer(){
 //
 // Hidden direct transfer to the MusicXML to ABC Optimizer.
 // Launched only by Alt/Option+Shift-clicking the ABC Chord Chart Generator image
-// in the Open ABC in External Tool dialog.
+// in the Open Tune in Another Tool / Open Tunes in Another Tool dialog.
 //
 var gMusicXMLToABCOptimizerURL = "https://michaeleskin.com/tools/musicxml-to-abc-optimizer.html";
 
@@ -71628,10 +71630,12 @@ function openInExternalTool(theABC, isFromPlayer){
 
   var blankCard = '<div style="width:310px;height:196px;"></div>';
 
+  var dialogTitle = isFromPlayer ? 'Open Tune in Another Tool' : 'Open Tunes in Another Tool';
+
   var modal_msg =
     '<div id="ceoltasanchor">' +
       '<p style="text-align:center;margin-bottom:18px;font-size:16pt;font-family:helvetica;">' +
-        'Open ABC in External Tool&nbsp;&nbsp;' +
+        dialogTitle + '&nbsp;&nbsp;' +
         '<span style="font-size:24pt;" title="View documentation in new tab">' +
           '<a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" ' +
              'style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' +
