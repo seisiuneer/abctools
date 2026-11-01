@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3376_103126_1830";
+var gVersionNumber = "3377_110126_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31426,13 +31426,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_31Oct2026;
+        var updatePresented = localStorage.sawUpdate_1Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_31Oct2026 = true;
+          localStorage.sawUpdate_1Nov2026 = true;
 
         }
 
@@ -60979,7 +60979,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 30 October 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 1 November 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">New <strong>My Tools</strong> tab on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">You now have your own personal tab where you can keep just the external ABC tools you commonly use rather than having to scroll through the full list of external tools each time.</p>';
+  modal_msg += '<p style="font-size:12pt;">Full details in the <strong>User Guide</strong>.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60989,13 +60997,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">You can send the current tune to it from the <strong>Player</strong> or <strong>Tune Trainer</strong> or all the loaded tunes from the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added robust support for <strong>%%MIDI beat</strong>, <strong>%%MIDI beatstring</strong> and <strong>%%MIDI beatpulse</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Allows for more precise control of beat pulse feel within tunes.</p>';
-  modal_msg += '<p style="font-size:12pt;">Added a new section to the <strong>Advanced Playback Features</strong> section in the <strong>User Guide</strong> explaining the three directives along with example polkas with a strong backbeat feel.</p>';
-  modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
 
@@ -67909,13 +67910,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_31Oct2026;
+    var updatePresented = localStorage.sawUpdate_1Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_31Oct2026 = true;
+      localStorage.sawUpdate_1Nov2026 = true;
 
     }
 
@@ -71618,6 +71619,372 @@ function OpenInABCTakadimiPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Takadimi Player','https://michaeleskin.com/tools/abc-takadimi-player.html','OpenInABCTakadimiPlayer');
 }
 
+// ------------------------------------------------------------
+// Open Tune(s) in Another Tool - independent My Tools favorites
+// ------------------------------------------------------------
+var EXTERNAL_TOOL_FAVORITES_STORAGE_KEY = "ABCTranscriptionTools_ExternalToolFavorites";
+var gExternalToolFavorites = [];
+var gExternalToolFavoritesEditSelection = null;
+var gExternalToolFavoritesMobileItem = null;
+var gExternalToolFavoritesMobileOrder = [];
+var gExternalToolsLastTab = "mytools";
+
+// Match the neutral dialog-control styling used elsewhere in the application.
+// Scoped to the Open Tune(s) dialog so the existing More ABC Tools controls and
+// the tool-card buttons are not affected.
+function ExternalToolFavorites_EnsureButtonStyles() {
+  if (document.getElementById("external-favorites-button-styles")) return;
+  var style = document.createElement("style");
+  style.id = "external-favorites-button-styles";
+  style.textContent =
+    '#external_tools_panel_mytools .external-favorites-management-button {' +
+      '-webkit-appearance:none;appearance:none;box-sizing:border-box;' +
+      'min-width:175px;height:38px;padding:6px 14px;' +
+      'background-color:#f2f2f2;color:#111;border:1px solid #aaa;' +
+      'border-radius:8px;font:11pt/1.2 Helvetica,Arial,sans-serif;' +
+      'box-shadow:0 1px 2px rgba(0,0,0,.12);cursor:pointer;' +
+      'transition:background-color .12s ease,transform .1s ease;}' +
+    '#external_tools_favorites_order.external-favorites-management-button {min-width:155px;}' +
+    '#external_tools_panel_mytools .external-favorites-management-button:focus-visible {' +
+      'outline:2px solid #226bcc;outline-offset:2px;}' +
+    '@media (hover:hover) {' +
+      '#external_tools_panel_mytools .external-favorites-management-button:hover {' +
+        'background-color:palegreen;transform:scale(1.04);}' +
+    '}';
+  document.head.appendChild(style);
+}
+
+function ExternalToolFavorites_EscapeHTML(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function ExternalToolFavorites_Load() {
+  // Preserve session-only selections when browser storage is unavailable.
+  try {
+    var saved = localStorage.getItem(EXTERNAL_TOOL_FAVORITES_STORAGE_KEY);
+    if (saved === null) return;
+    var parsed = JSON.parse(saved);
+    if (Array.isArray(parsed)) {
+      gExternalToolFavorites = Array.from(new Set(parsed.filter(function(id) {
+        return typeof id === "string" && id.startsWith("external_");
+      })));
+    }
+  } catch (e) {
+    // Invalid or disabled localStorage must not interfere with opening the tools.
+  }
+}
+
+function ExternalToolFavorites_Save() {
+  try {
+    localStorage.setItem(EXTERNAL_TOOL_FAVORITES_STORAGE_KEY, JSON.stringify(gExternalToolFavorites));
+  } catch (e) {
+    // Keep the in-memory list even when localStorage cannot be written.
+  }
+}
+
+function ExternalToolFavorites_GetCatalog() {
+  var items = [];
+  [
+    { panel: "external_tools_panel_abc", group: "Michael's Tools" },
+    { panel: "external_tools_panel_other", group: "3rd-Party Tools" }
+  ].forEach(function(source) {
+    var panel = document.getElementById(source.panel);
+    if (!panel) return;
+    panel.querySelectorAll(".external-tool > img[id]").forEach(function(img) {
+      var caption = img.parentElement.querySelector("div");
+      items.push({
+        id: img.id,
+        group: source.group,
+        label: caption ? caption.textContent.trim() : img.alt,
+        img: img
+      });
+    });
+  });
+  return items;
+}
+
+function ExternalToolFavorites_RenderPanel() {
+  var panel = document.getElementById("external_tools_favorites_grid");
+  var orderButton = document.getElementById("external_tools_favorites_order");
+  if (!panel) return;
+
+  var catalog = ExternalToolFavorites_GetCatalog();
+  var byId = new Map(catalog.map(function(item) { return [item.id, item]; }));
+  var selected = gExternalToolFavorites.filter(function(id) { return byId.has(id); });
+
+  if (orderButton) orderButton.style.display = selected.length > 1 ? "inline-block" : "none";
+  panel.replaceChildren();
+
+  if (!selected.length) {
+    var empty = document.createElement("p");
+    empty.style.cssText = "grid-column:1/-1;text-align:center;font:12pt/1.5 Helvetica,Arial,sans-serif;margin:48px 10px 0;";
+    empty.textContent = "No tools selected. Click Edit My Tools to choose your favorite tools.";
+    panel.appendChild(empty);
+    return;
+  }
+
+  selected.forEach(function(id) {
+    var item = byId.get(id);
+    // Reuse the exact existing tool card and its click handler. Do not create a
+    // second transfer path or duplicate an HTML ID in the same modal.
+    var copy = item.img.parentElement.cloneNode(true);
+    var image = copy.querySelector("img");
+    image.id = "external_favorite_" + id;
+    copy.id = "external_favorite_card_" + id;
+    copy.style.cursor = "pointer";
+    copy.setAttribute("role", "button");
+    copy.setAttribute("tabindex", "0");
+    copy.setAttribute("aria-label", item.img.title || ("Open " + item.label));
+    copy.onclick = function() {
+      var original = document.getElementById(id);
+      if (original) original.click();
+    };
+    copy.onkeydown = function(event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        copy.click();
+      }
+    };
+    panel.appendChild(copy);
+  });
+}
+
+function ExternalToolFavorites_ClearEditSelection() {
+  if (!gExternalToolFavoritesEditSelection) return;
+  gExternalToolFavoritesEditSelection.clear();
+  document.querySelectorAll("#external_favorites_edit_list .external-favorites-edit-check").forEach(function(box) {
+    box.checked = false;
+  });
+}
+
+function ExternalToolFavorites_EditDialog() {
+  sendGoogleAnalytics("action", "EditExternalToolFavorites");
+  var catalog = ExternalToolFavorites_GetCatalog();
+  var current = new Set(gExternalToolFavorites);
+  gExternalToolFavoritesEditSelection = new Set(gExternalToolFavorites);
+  var mobile = isMobileBrowser();
+  var html = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:18px;">Edit My Tools</p>' +
+    '<p style="font:12pt/1.5 helvetica;margin-bottom:12px;">Select the external tools you want displayed on the My Tools tab.</p>' +
+    '<div id="external_favorites_edit_list" style="max-height:' + Math.max(240, window.innerHeight - 390) + 'px;overflow-y:auto;padding:4px 8px 8px 2px;">';
+
+  ["Michael's Tools", "3rd-Party Tools"].forEach(function(group) {
+    var tools = catalog.filter(function(t) { return t.group === group; });
+    if (!tools.length) return;
+    html += '<div style="font:bold 13pt helvetica;margin:18px 0 16px;">' + ExternalToolFavorites_EscapeHTML(group) + '</div>';
+    html += '<div style="display:grid;grid-template-columns:' + (mobile ? '1fr' : 'repeat(2,minmax(0,1fr))') + ';gap:9px 18px;">';
+    tools.forEach(function(tool) {
+      html += '<label style="display:flex;gap:10px;align-items:flex-start;font:11pt/1.35 helvetica;cursor:pointer;">' +
+        '<input class="external-favorites-edit-check" type="checkbox" data-tool-id="' + tool.id + '"' +
+        (current.has(tool.id) ? ' checked' : '') + ' style="flex:0 0 auto;margin-top:2px;">' +
+        '<span>' + ExternalToolFavorites_EscapeHTML(tool.label) + '</span></label>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  var editPromise = DayPilot.Modal.form([{ html: html }], {}, {
+    theme: "modal_flat",
+    top: 35,
+    width: mobile ? Math.max(300, Math.min(700, window.innerWidth - 24)) : 700,
+    scrollWithPage: false,
+    autoFocus: false,
+    okText: "Save"
+  });
+
+  var editList = document.getElementById("external_favorites_edit_list");
+  if (editList) {
+    editList.querySelectorAll(".external-favorites-edit-check").forEach(function(box) {
+      box.onchange = function() {
+        if (!gExternalToolFavoritesEditSelection) return;
+        var id = box.getAttribute("data-tool-id");
+        if (box.checked) gExternalToolFavoritesEditSelection.add(id);
+        else gExternalToolFavoritesEditSelection.delete(id);
+      };
+    });
+  }
+
+  // Like the existing More ABC Tools editor: Save | Clear All | Cancel.
+  setTimeout(function() {
+    var list = document.getElementById("external_favorites_edit_list");
+    var modal = list && list.closest(".modal_flat_main");
+    var cancel = modal && modal.querySelector(".modal_flat_cancel");
+    if (!cancel || !cancel.parentNode) return;
+    var clear = document.createElement("button");
+    clear.type = "button";
+    clear.textContent = "Clear All";
+    clear.className = "external-favorites-clear";
+    clear.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      ExternalToolFavorites_ClearEditSelection();
+    };
+    var buttonRow = cancel.parentNode;
+    buttonRow.insertBefore(clear, cancel);
+
+    // DayPilot's default 100px button width can wrap "Clear All". Give only
+    // this editor's footer three equal-size, no-wrap buttons; flex shrink keeps
+    // them on one line on narrower phones as well.
+    buttonRow.style.display = "flex";
+    buttonRow.style.justifyContent = "center";
+    buttonRow.style.alignItems = "center";
+    buttonRow.style.flexWrap = "nowrap";
+    buttonRow.style.gap = mobile ? "6px" : "12px";
+    buttonRow.style.whiteSpace = "nowrap";
+    buttonRow.querySelectorAll("button").forEach(function(button) {
+      button.style.boxSizing = "border-box";
+      button.style.flex = "0 1 112px";
+      button.style.width = "112px";
+      button.style.minWidth = "0";
+      button.style.maxWidth = "112px";
+      button.style.whiteSpace = "nowrap";
+      button.style.margin = "0";
+      button.style.fontSize = mobile ? "13px" : "16px";
+      button.style.padding = mobile ? "10px 3px" : "10px 12px";
+    });
+  }, 0);
+
+  editPromise.then(function(result) {
+    if (!result || result.canceled) {
+      gExternalToolFavoritesEditSelection = null;
+      return;
+    }
+    var checked = gExternalToolFavoritesEditSelection || new Set();
+    var available = new Set(catalog.map(function(t) { return t.id; }));
+    // Keep the current ordering of surviving favorites; append new selections
+    // in the same sequence as the two source tabs.
+    var next = gExternalToolFavorites.filter(function(id) {
+      return available.has(id) && checked.has(id);
+    });
+    catalog.forEach(function(t) {
+      if (checked.has(t.id) && next.indexOf(t.id) === -1) next.push(t.id);
+    });
+    gExternalToolFavoritesEditSelection = null;
+    gExternalToolFavorites = next;
+    ExternalToolFavorites_Save();
+    ExternalToolFavorites_RenderPanel();
+  });
+}
+
+function ExternalToolFavorites_MobileSelect(item) {
+  if (gExternalToolFavoritesMobileItem) {
+    gExternalToolFavoritesMobileItem.classList.remove("draggable_tune_mobile_selected");
+  }
+  gExternalToolFavoritesMobileItem = item;
+  if (item) item.classList.add("draggable_tune_mobile_selected");
+}
+
+function ExternalToolFavorites_RefreshMobileOrder() {
+  var list = document.getElementById("external_favorites_mobile_sortable");
+  if (!list) return;
+  gExternalToolFavoritesMobileOrder = Array.from(list.children).map(function(el) {
+    return el.getAttribute("data-tool-id");
+  });
+}
+
+function ExternalToolFavorites_MobileUp() {
+  var item = gExternalToolFavoritesMobileItem;
+  if (!item || !item.previousElementSibling) return;
+  item.parentElement.insertBefore(item, item.previousElementSibling);
+  ExternalToolFavorites_RefreshMobileOrder();
+}
+
+function ExternalToolFavorites_MobileDown() {
+  var item = gExternalToolFavoritesMobileItem;
+  if (!item || !item.nextElementSibling) return;
+  var after = item.nextElementSibling.nextElementSibling;
+  if (after) item.parentElement.insertBefore(item, after);
+  else item.parentElement.appendChild(item);
+  ExternalToolFavorites_RefreshMobileOrder();
+}
+
+function ExternalToolFavorites_OrderDialog() {
+  var catalog = ExternalToolFavorites_GetCatalog();
+  var byId = new Map(catalog.map(function(t) { return [t.id, t]; }));
+  var initial = gExternalToolFavorites.filter(function(id) { return byId.has(id); });
+  if (initial.length < 2) return;
+  sendGoogleAnalytics("action", "ReorderExternalToolFavorites");
+
+  var mobile = isMobileBrowser();
+  var currentOrder = initial.slice();
+  var listId = mobile ? "external_favorites_mobile_sortable" : "external_favorites_desktop_sortable";
+  var html = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:18px;">Change My Tools Order</p>' +
+    '<p style="font:12pt/1.5 helvetica;">' + (mobile
+      ? 'Select a tool, then use Move Up or Move Down to change its position on the My Tools tab:'
+      : 'Drag and drop the tools to change their order on the My Tools tab:') + '</p>' +
+    '<div id="' + listId + '" style="height:' + Math.max(220, window.innerHeight - 420) + 'px;overflow-y:auto;margin-top:12px;">';
+
+  initial.forEach(function(id) {
+    html += '<div class="' + (mobile ? 'draggable_tune_mobile' : 'draggable_tune') + ' external-favorites-sort-item"' +
+      ' data-tool-id="' + id + '"' + (mobile
+        ? ' onclick="ExternalToolFavorites_MobileSelect(this)"'
+        : ' draggable="true"') + '>' +
+      ExternalToolFavorites_EscapeHTML(byId.get(id).label) + '</div>';
+  });
+  html += '</div>';
+  if (mobile) {
+    gExternalToolFavoritesMobileItem = null;
+    gExternalToolFavoritesMobileOrder = currentOrder.slice();
+    html += '<p style="text-align:center;margin-top:20px;display:flex;justify-content:center;gap:15px;">' +
+      '<button type="button" class="advancedcontrols btn" onclick="ExternalToolFavorites_MobileUp();">Move Up</button>' +
+      '<button type="button" class="advancedcontrols btn" onclick="ExternalToolFavorites_MobileDown();">Move Down</button></p>';
+  }
+
+  var promise = DayPilot.Modal.form([{ html: html }], {}, {
+    theme: mobile ? "modal_flat" : "modal_flat_wide",
+    top: 25,
+    width: mobile ? Math.max(300, Math.min(650, window.innerWidth - 24)) : 650,
+    scrollWithPage: false,
+    autoFocus: false,
+    okText: "Change Order"
+  });
+
+  var list = document.getElementById(listId);
+  if (!mobile && list) {
+    var dragging = null;
+    list.addEventListener("dragstart", function(e) {
+      dragging = e.target.closest(".external-favorites-sort-item");
+      if (!dragging) return;
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", dragging.getAttribute("data-tool-id"));
+      dragging.classList.add("draggable_tune_selected");
+    });
+    list.addEventListener("dragover", function(e) {
+      if (!dragging) return;
+      e.preventDefault();
+      var target = e.target.closest(".external-favorites-sort-item");
+      if (!target || target === dragging || !list.contains(target)) return;
+      var rect = target.getBoundingClientRect();
+      var after = (e.clientY - rect.top) > rect.height / 2;
+      list.insertBefore(dragging, after ? target.nextElementSibling : target);
+      currentOrder = Array.from(list.children).map(function(el) { return el.getAttribute("data-tool-id"); });
+    });
+    list.addEventListener("dragend", function() {
+      if (dragging) dragging.classList.remove("draggable_tune_selected");
+      dragging = null;
+    });
+  }
+
+  // Keep the longer action button label on one line in both modal themes.
+  var orderModal = list && list.closest(mobile ? ".modal_flat_main" : ".modal_flat_wide_main");
+  var ok = orderModal && orderModal.querySelector(mobile ? ".modal_flat_ok" : ".modal_flat_wide_ok");
+  if (ok) { ok.style.minWidth = "150px"; ok.style.whiteSpace = "nowrap"; }
+
+  promise.then(function(result) {
+    var next = mobile ? gExternalToolFavoritesMobileOrder.slice() : currentOrder.slice();
+    gExternalToolFavoritesMobileItem = null;
+    gExternalToolFavoritesMobileOrder = [];
+    if (!result || result.canceled || next.length !== initial.length) return;
+    if (new Set(next).size !== initial.length || next.some(function(id) { return !byId.has(id); })) return;
+    gExternalToolFavorites = next;
+    ExternalToolFavorites_Save();
+    ExternalToolFavorites_RenderPanel();
+  });
+}
+
 function openInExternalTool(theABC, isFromPlayer){
 
   var toolCard = function(id, src, title, alt, label){
@@ -71629,6 +71996,9 @@ function openInExternalTool(theABC, isFromPlayer){
   };
 
   var blankCard = '<div style="width:310px;height:196px;"></div>';
+
+  ExternalToolFavorites_Load();
+  ExternalToolFavorites_EnsureButtonStyles();
 
   var dialogTitle = isFromPlayer ? 'Open Tune in Another Tool' : 'Open Tunes in Another Tool';
 
@@ -71642,10 +72012,18 @@ function openInExternalTool(theABC, isFromPlayer){
         '</span>' +
       '</p>' +
       '<div style="display:flex;justify-content:center;margin-bottom:14px;font-family:helvetica;">' +
-        '<button id="external_tools_tab_abc" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-radius:4px 0 0 4px;background:#1b3f8b;color:white;font-size:12pt;cursor:pointer;">Michael\'s Tools</button>' +
+        '<button id="external_tools_tab_mytools" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-radius:4px 0 0 4px;background:#1b3f8b;color:white;font-size:12pt;cursor:pointer;">My Tools</button>' +
+        '<button id="external_tools_tab_abc" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-left:0;background:#eee;color:black;font-size:12pt;cursor:pointer;">Michael\'s Tools</button>' +
         '<button id="external_tools_tab_other" type="button" style="box-sizing:border-box;width:180px;height:38px;padding:0 12px;line-height:36px;border:1px solid #777;border-left:0;border-radius:0 4px 4px 0;background:#eee;color:black;font-size:12pt;cursor:pointer;">3rd-Party Tools</button>' +
       '</div>' +
-      '<div id="external_tools_panel_abc" style="display:grid;grid-template-columns:310px 310px;grid-template-rows:repeat(7,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
+      '<div id="external_tools_panel_mytools" style="height:604px;overflow:hidden;">' +
+        '<div style="height:72px;box-sizing:border-box;padding-top:12px;display:flex;justify-content:center;align-items:flex-start;gap:16px;">' +
+          '<button id="external_tools_favorites_edit" type="button" class="external-favorites-management-button">Edit My Tools</button>' +
+          '<button id="external_tools_favorites_order" type="button" class="external-favorites-management-button" style="display:none;">Change Order</button>' +
+        '</div>' +
+        '<div id="external_tools_favorites_grid" style="display:grid;grid-template-columns:310px 310px;grid-auto-rows:196px;column-gap:32px;row-gap:8px;justify-content:center;height:532px;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;"></div>' +
+      '</div>' +
+      '<div id="external_tools_panel_abc" style="display:none;grid-template-columns:310px 310px;grid-template-rows:repeat(7,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
         toolCard('external_chord_chart', 'img/tool_chordchart_other_1.jpg', 'Open the ABC in the ABC Chord Chart Generator', 'ABC Chord Chart Generator', 'ABC Chord Chart Generator') +
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
         toolCard('external_irish_fiddle_player', 'img/tool-abc-irish-fiddle-player-1.jpg', 'Open the ABC in the ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player') +
@@ -71676,26 +72054,39 @@ function openInExternalTool(theABC, isFromPlayer){
   });
 
   function selectExternalToolsTab(which){
-    var abcPanel = document.getElementById("external_tools_panel_abc");
-    var otherPanel = document.getElementById("external_tools_panel_other");
-    var abcTab = document.getElementById("external_tools_tab_abc");
-    var otherTab = document.getElementById("external_tools_tab_other");
-    if (!abcPanel || !otherPanel || !abcTab || !otherTab) return;
-
-    var showABC = (which === "abc");
-    abcPanel.style.display = showABC ? "grid" : "none";
-    otherPanel.style.display = showABC ? "none" : "grid";
-    abcTab.style.background = showABC ? "#1b3f8b" : "#eee";
-    abcTab.style.color = showABC ? "white" : "black";
-    otherTab.style.background = showABC ? "#eee" : "#1b3f8b";
-    otherTab.style.color = showABC ? "black" : "white";
+    var panels = {
+      mytools: document.getElementById("external_tools_panel_mytools"),
+      abc: document.getElementById("external_tools_panel_abc"),
+      other: document.getElementById("external_tools_panel_other")
+    };
+    var tabs = {
+      mytools: document.getElementById("external_tools_tab_mytools"),
+      abc: document.getElementById("external_tools_tab_abc"),
+      other: document.getElementById("external_tools_tab_other")
+    };
+    if (!panels.mytools || !panels.abc || !panels.other) return;
+    gExternalToolsLastTab = which;
+    Object.keys(panels).forEach(function(key) {
+      panels[key].style.display = which === key ? (key === "mytools" ? "block" : "grid") : "none";
+      if (tabs[key]) {
+        tabs[key].style.background = which === key ? "#1b3f8b" : "#eee";
+        tabs[key].style.color = which === key ? "white" : "black";
+        tabs[key].setAttribute("aria-selected", which === key ? "true" : "false");
+      }
+    });
+    if (which === "mytools") ExternalToolFavorites_RenderPanel();
   }
 
-  var elem = document.getElementById("external_tools_tab_abc");
+  var elem = document.getElementById("external_tools_tab_mytools");
+  if (elem) elem.onclick = function(){ selectExternalToolsTab("mytools"); };
+  elem = document.getElementById("external_tools_tab_abc");
   if (elem) elem.onclick = function(){ selectExternalToolsTab("abc"); };
-
   elem = document.getElementById("external_tools_tab_other");
   if (elem) elem.onclick = function(){ selectExternalToolsTab("other"); };
+  elem = document.getElementById("external_tools_favorites_edit");
+  if (elem) elem.onclick = ExternalToolFavorites_EditDialog;
+  elem = document.getElementById("external_tools_favorites_order");
+  if (elem) elem.onclick = ExternalToolFavorites_OrderDialog;
 
   elem = document.getElementById("external_pureocarinas");
   if (elem) elem.onclick = function(){ OpenInPureOcarinas(theABC); };
@@ -71744,6 +72135,9 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_harmonica_player");
   if (elem) elem.onclick = function(){ OpenInABCHarmonicaPlayer(theABC,isFromPlayer); };
+
+  // Source tool handlers are installed before favorites relay clicks to them.
+  selectExternalToolsTab(gExternalToolsLastTab);
 }
 
 
