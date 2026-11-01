@@ -5467,11 +5467,23 @@ margin-top:-7px;
 position:absolute;
 width:30px;
 height:40px;
-right:16px;
+right:26px;
 top:16px;
 padding:4px;
 z-index:101;
 display:block;
+}
+
+/* Player and Tune Trainer: the notation scrollbar is owned by #playerholder,
+   not by .modal_flat_content. On desktop, extend that scrollport 24px into
+   the modal's right padding, keeping its inner notation width unchanged.
+   The Open Tune in... button remains fixed at right:16px. */
+@media (min-width: 850px) and (hover: hover) {
+  .modal_flat_main:has(button#external_tools_share) #playerholder {
+    box-sizing: border-box;
+    width: calc(100% + 24px);
+    padding-right: 24px;
+  }
 }
 
 @media (hover: hover) {
