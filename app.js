@@ -71928,9 +71928,16 @@ function ExternalToolFavorites_OrderDialog() {
   if (mobile) {
     gExternalToolFavoritesMobileItem = null;
     gExternalToolFavoritesMobileOrder = currentOrder.slice();
-    html += '<p style="text-align:center;margin-top:20px;display:flex;justify-content:center;gap:15px;">' +
-      '<button type="button" class="advancedcontrols btn" onclick="ExternalToolFavorites_MobileUp();">Move Up</button>' +
-      '<button type="button" class="advancedcontrols btn" onclick="ExternalToolFavorites_MobileDown();">Move Down</button></p>';
+    // Match the standard My Tools mobile reorder controls (appearance, size and spacing).
+    html += '<p style="text-align:center;margin-top:36px;">' +
+      '<input id="mobile_external_favorites_order_up" class="advancedcontrols btn btn-injectcontrols-headers" ' +
+      'style="height:42px;padding:12px;margin-right:24px;white-space:nowrap;" ' +
+      'onclick="ExternalToolFavorites_MobileUp();" type="button" value="Move Up" ' +
+      'title="Moves the currently selected tool up one position">' +
+      '<input id="mobile_external_favorites_order_down" class="advancedcontrols btn btn-injectcontrols-headers" ' +
+      'style="height:42px;padding:12px;white-space:nowrap;" ' +
+      'onclick="ExternalToolFavorites_MobileDown();" type="button" value="Move Down" ' +
+      'title="Moves the currently selected tool down one position"></p>';
   }
 
   var promise = DayPilot.Modal.form([{ html: html }], {}, {
