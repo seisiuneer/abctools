@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3377_110126_0700";
+var gVersionNumber = "3378_110226_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31426,13 +31426,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_1Nov2026;
+        var updatePresented = localStorage.sawUpdate_2Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_1Nov2026 = true;
+          localStorage.sawUpdate_2Nov2026 = true;
 
         }
 
@@ -52803,14 +52803,7 @@ function SharingControlsDialog() {
 
     var elem = document.getElementById("external_tools_share");
     
-    elem.onclick = function(){
-
-      sendGoogleAnalytics("dialog", "ExternalToolsShareDialog");
-
-      var theABC = getABCEditorText();
-      openInExternalTool(theABC, false);
-
-    };
+    elem.onclick = OpenAllTunesInAnotherTool;
 
   }, 200);
 
@@ -55017,6 +55010,9 @@ function AdvancedControlsDialog() {
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="normalizevoicekeysignatures" class="advancedcontrols btn btn-normalizevoicekeysignatures" onclick="NormalizeVoiceKeySignaturesAndDynamics()" type="button" value="Normalize Voice Keys/Dynamics">';
   modal_msg += '<input id="musescorexml" class="advancedcontrols btn btn-musescorexml" onclick="launchMusicXMLToABCOptimizer()" type="button" value="Launch MuseScore MusicXML to ABC Optimizer">';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="moretools_open_tunes_external" class="advancedcontrols btn btn-openexternaltools" onclick="OpenAllTunesInAnotherTool()" type="button" value="Open Tunes in Another Tool" title="Open all tunes in the ABC editor in another player or tool">';
   modal_msg += '</p>';
   modal_msg += '</div>';
 
@@ -60985,18 +60981,17 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New <strong>My Tools</strong> tab on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">You now have your own personal tab where you can keep just the external ABC tools you commonly use rather than having to scroll through the full list of external tools each time.</p>';
-  modal_msg += '<p style="font-size:12pt;">Full details in the <strong>User Guide</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Open Tunes in Another Tool</strong> to the <strong>Other ABC Tools</strong> tab on the <strong>More ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">Works exactly the same as the identically named button on the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Irish Fiddle Fingering Player</strong> to the <strong>Open Tune in Another Tool</strong> dialog</p>';
-  modal_msg += '<p style="font-size:12pt;">You can send the current tune to it from the <strong>Player</strong> or <strong>Tune Trainer</strong> or all the loaded tunes from the <strong>Sharing Controls</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">New <strong>My Tools</strong> tab on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">You now have your own personal tab where you can keep just the external ABC tools you commonly use rather than having to scroll through the full list of external tools each time.</p>';
+  modal_msg += '<p style="font-size:12pt;">Full details in the <strong>User Guide</strong>.</p>';
   modal_msg += '</div>';
-
 
   modal_msg += '</div>'; // wrapper
 
@@ -67910,13 +67905,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_1Nov2026;
+    var updatePresented = localStorage.sawUpdate_2Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_1Nov2026 = true;
+      localStorage.sawUpdate_2Nov2026 = true;
 
     }
 
@@ -71990,6 +71985,14 @@ function ExternalToolFavorites_OrderDialog() {
     ExternalToolFavorites_Save();
     ExternalToolFavorites_RenderPanel();
   });
+}
+
+// Open all ABC tunes in another tool. Shared by Sharing Controls and
+// the More ABC Tools dialog (including its My Tools shortcuts).
+function OpenAllTunesInAnotherTool() {
+  sendGoogleAnalytics("dialog", "ExternalToolsShareDialog");
+  var theABC = getABCEditorText();
+  openInExternalTool(theABC, false);
 }
 
 function openInExternalTool(theABC, isFromPlayer){
