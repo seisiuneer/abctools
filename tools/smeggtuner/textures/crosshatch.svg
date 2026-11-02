@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8">
+  <!-- Hatching at right angles to itself; each diagonal has corner stubs so it joins across tiles. -->
+  <path d="M0 8 L8 0 M-1 1 L1 -1 M7 9 L9 7
+           M0 0 L8 8 M-1 7 L1 9 M7 -1 L9 1"
+        stroke="#000" stroke-width="0.75" fill="none"/>
+</svg>

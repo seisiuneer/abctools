@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3" height="3" viewBox="0 0 3 3">
+  <!-- One dark line and two clear, like CRT scanlines. -->
+  <path d="M0 0.5 H3" stroke="#000" stroke-width="1" fill="none"/>
+</svg>

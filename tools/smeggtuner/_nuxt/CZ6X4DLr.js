@@ -1,0 +1,1 @@
+var e={workshop:{exit:{t:0,b:{t:2,i:[{t:3}],s:`Wyjdź z sesji`}},import:{t:0,b:{t:2,i:[{t:3}],s:`Importuj`}},open:{t:0,b:{t:2,i:[{t:3}],s:`Otwórz`}},print:{t:0,b:{t:2,i:[{t:3}],s:`Drukuj kartę`}}}};export{e as default};

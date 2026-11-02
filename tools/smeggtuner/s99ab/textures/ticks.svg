@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Four corner brackets, inset so each is whole inside its tile. -->
+  <g stroke="#000" stroke-width="1" fill="none">
+    <path d="M4.5 10 V4.5 H10"/>
+    <path d="M22 4.5 H27.5 V10"/>
+    <path d="M27.5 22 V27.5 H22"/>
+    <path d="M10 27.5 H4.5 V22"/>
+  </g>
+</svg>

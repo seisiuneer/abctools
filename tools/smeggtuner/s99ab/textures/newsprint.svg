@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4">
+  <!-- A fine halftone screen: two dots on the diagonal give a 45 degree lattice. -->
+  <circle cx="1" cy="1" r="0.62"/>
+  <circle cx="3" cy="3" r="0.62"/>
+</svg>

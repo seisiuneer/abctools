@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- Steep streaks of uneven length and spacing, all inside the tile so none are drawn twice. -->
+  <g stroke="#000" stroke-width="1.1" stroke-linecap="round" fill="none">
+    <path d="M4 2 L7 11"/>
+    <path d="M14 6 L17 18"/>
+    <path d="M25 1 L27 8"/>
+    <path d="M34 5 L37 15"/>
+    <path d="M9 18 L11 25"/>
+    <path d="M21 22 L24 33"/>
+    <path d="M31 20 L33 27"/>
+    <path d="M2 28 L5 37"/>
+    <path d="M15 31 L17 38"/>
+    <path d="M36 30 L38 37"/>
+    <path d="M28 12 L30 17"/>
+  </g>
+</svg>

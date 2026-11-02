@@ -1,0 +1,1 @@
+var e={sessionPage:{mobile:{curve:{t:0,b:{t:2,i:[{t:3}],s:`Targets`}},recorded:{t:0,b:{t:2,i:[{t:3}],s:`Readings`}}},tabs:{accordion:{t:0,b:{t:2,i:[{t:3}],s:`Accordion`}},curve:{t:0,b:{t:2,i:[{t:3}],s:`Desired beatings`}},recorded:{t:0,b:{t:2,i:[{t:3}],s:`Recorded tuning`}}}}};export{e as default};

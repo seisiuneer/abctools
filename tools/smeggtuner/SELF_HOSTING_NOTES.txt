@@ -1,0 +1,36 @@
+SmeggTuner v1.4.1 — self-hosted under /tools/smeggtuner/
+
+DEPLOYMENT
+Upload the complete smeggtuner folder from this ZIP into your site's
+/tools/ directory. All included files and directories must remain together.
+
+Expected entry points:
+ https://michaeleskin.com/tools/smeggtuner/index.html
+ https://michaeleskin.com/tools/smeggtuner/
+
+MODIFICATIONS
+- Updated generated HTML asset URLs and Nuxt's app.baseURL for /tools/smeggtuner/.
+- Added the /index.html client-side route alias so the exact entry URL works.
+- Updated in-app WASM engine path, service-worker registration, manifest, icons,
+  Wails stub paths, and optional library endpoint paths to the new subdirectory.
+- Restricted the service worker to the tuner subdirectory and gave its offline
+  cache a namespace unique to this deployment.
+- Updated the PWA start URL, scope, and icon URLs.
+- Rebuilt matching gzip/Brotli sidecar files for each modified asset.
+- Kept all other assets, JS chunks, CSS, WASM, and texture folders unchanged.
+
+TESTS
+- Nuxt JS and service-worker syntax validation passed.
+- All 18 HTML external asset references resolve within this folder.
+- 42 dynamic JS imports, 152 CSS local references and three PWA icons exist.
+- 224 precompressed sidecars match the corresponding uncompressed source.
+- 10 critical asset requests returned HTTP 200 from a local static server.
+
+LIMITATION
+Browser-level microphone/audio functionality must be tested in the deployed
+HTTPS environment; browser automation was blocked in the test environment.
+
+FOR FUTURE DEPLOYS
+If you patch and redeploy this prebuilt app without rebuilding from its source,
+remember to update the service worker's CACHE version so clients refresh
+unchanged asset filenames. Keep the new Nuxt base path and scoped paths.

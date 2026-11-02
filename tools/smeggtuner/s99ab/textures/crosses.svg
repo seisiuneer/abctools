@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Plus marks at lattice intersections: one centred, a quarter at each corner, so the lattice is half the tile. -->
+  <g stroke="#000" stroke-width="1" fill="none">
+    <path d="M12 8.5 V15.5 M8.5 12 H15.5"/>
+    <path d="M0 -3.5 V3.5 M-3.5 0 H3.5"/>
+    <path d="M24 -3.5 V3.5 M20.5 0 H27.5"/>
+    <path d="M0 20.5 V27.5 M-3.5 24 H3.5"/>
+    <path d="M24 20.5 V27.5 M20.5 24 H27.5"/>
+  </g>
+</svg>

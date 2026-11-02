@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <!-- Two screens slightly out of register; the second at half strength. Both passes are
+       drawn four times so dots near an edge wrap. -->
+  <g>
+    <circle cx="3" cy="3" r="1.5"/>
+    <circle cx="9" cy="9" r="1.5"/>
+  </g>
+  <g opacity="0.55">
+    <circle cx="4.1" cy="1.9" r="1.5"/>
+    <circle cx="10.1" cy="7.9" r="1.5"/>
+    <circle cx="-1.9" cy="7.9" r="1.5"/>
+    <circle cx="4.1" cy="13.9" r="1.5"/>
+  </g>
+</svg>

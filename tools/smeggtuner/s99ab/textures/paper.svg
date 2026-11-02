@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
+  <!-- Coarse blurred noise: half grain's frequency, one fewer octave. -->
+  <filter id="p" filterUnits="userSpaceOnUse" x="0" y="0" width="220" height="220">
+    <feTurbulence type="fractalNoise" baseFrequency="0.42" numOctaves="2" seed="3" stitchTiles="stitch"/>
+    <feGaussianBlur stdDeviation="0.4"/>
+    <feColorMatrix values="0 0 0 0 0
+                           0 0 0 0 0
+                           0 0 0 0 0
+                           1 0 0 0 0"/>
+  </filter>
+  <rect width="220" height="220" filter="url(#p)"/>
+</svg>

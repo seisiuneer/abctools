@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <!-- High-frequency single-octave noise with a steep transfer, close to on-and-off pixels. -->
+  <filter id="t" filterUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="5" stitchTiles="stitch"/>
+    <feColorMatrix values="0 0 0 0 0
+                           0 0 0 0 0
+                           0 0 0 0 0
+                           1 0 0 0 0"/>
+    <feComponentTransfer>
+      <feFuncA type="linear" slope="3" intercept="-0.9"/>
+    </feComponentTransfer>
+  </filter>
+  <rect width="120" height="120" filter="url(#t)"/>
+</svg>

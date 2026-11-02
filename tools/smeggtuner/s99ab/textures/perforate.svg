@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Rings on a half-drop lattice: one centred, quartered rings on the corners. -->
+  <g stroke="#000" stroke-width="1.2" fill="none">
+    <circle cx="8" cy="8" r="3"/>
+    <circle cx="0" cy="0" r="3"/>
+    <circle cx="16" cy="0" r="3"/>
+    <circle cx="0" cy="16" r="3"/>
+    <circle cx="16" cy="16" r="3"/>
+  </g>
+</svg>

@@ -1,0 +1,1 @@
+var e={routes:{navigation:{t:0,b:{t:2,i:[{t:3}],s:`Main navigation`}},settings:{t:0,b:{t:2,i:[{t:3}],s:`Settings`}},tune:{t:0,b:{t:2,i:[{t:3}],s:`Tune`}},workshop:{t:0,b:{t:2,i:[{t:3}],s:`Workshop`}}}};export{e as default};

@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <!-- A checkerboard covering half the surface; weighted low to compensate. -->
+  <path d="M0 0h6v6H0zM6 6h6v6H6z"/>
+</svg>

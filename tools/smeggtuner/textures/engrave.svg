@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+  <!-- Alternating heavy and light rules, giving the surface a direction. -->
+  <g stroke="#000" fill="none">
+    <path stroke-width="1" d="M0 10 L10 0 M-1 1 L1 -1 M9 11 L11 9"/>
+    <path stroke-width="0.5" opacity="0.55" d="M0 5 L5 0 M5 10 L10 5"/>
+  </g>
+</svg>

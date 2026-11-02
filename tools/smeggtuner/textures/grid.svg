@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- A plain square lattice: the quietest way to say a surface has structure.
+
+       Top and left edges only. A tile drawing all four puts two 1px lines
+       against each other at every boundary, which reads as a 2px lattice with a
+       1px one crossing it - the single most common way a CSS grid pattern comes
+       out wrong. -->
+  <path d="M0 0.5 H16 M0.5 0 V16" stroke="#000" stroke-width="1" fill="none"/>
+</svg>
