@@ -579,42 +579,62 @@
       filter: brightness(1.08);
     }
 
-    #helpButton {
+    /* Header controls: Tip Jars mirrors the Instructions button on the left. */
+    #helpButton,
+    #tipJarsButton {
       position: absolute;
       top: 20px;
-      right: 20px;
-
-      width: 42px;
       height: 42px;
       border-radius: 10px;
-
-      font-size: 20px;
       font-weight: bold;
-
       background: #1f2a3a;
       color: #fff;
-      padding:12px;
-
       border: 1px solid rgba(255,255,255,0.15);
       box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-
       cursor: pointer;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       transition: all 0.2s ease;
       z-index: 10;
     }
 
-    #helpButton:hover {
+    #helpButton {
+      right: 20px;
+      width: 42px;
+      font-size: 20px;
+      padding: 12px;
+    }
+
+    #tipJarsButton {
+      left: 20px;
+      padding: 0 13px;
+      font-size: 14px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    #helpButton:hover,
+    #tipJarsButton:hover {
       background: #2f3d52;
       transform: scale(1.08);
     }
 
-    #helpButton:active {
+    #helpButton:active,
+    #tipJarsButton:active {
       transform: scale(0.96);
+    }
+
+    #tipJarsButton:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 680px) {
+      /* Keep the title clear of the two header buttons on narrow screens. */
+      .wrap > h1 {
+        padding-top: 54px;
+      }
     }
 
     @media (max-width: 840px) {
@@ -652,6 +672,7 @@
 
     <div class="wrap">
       <h1>UltraBox Sample Extractor</h1>
+      <a id="tipJarsButton" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer" title="Tip Jars">Tip Jars</a>
       <button id="helpButton" title="Instructions">?</button>
       <p class="sub">
         Extract samples from .sf2 soundfont files, preview them, and export loop-aware WAV files.
@@ -935,7 +956,7 @@
 
               <h3 style="text-align: center;">Tip Jars</h3>
               <div style="text-align: center;margin-bottom:20px;">
-                <p class="instructions-title"> This tool was created by</p>
+                <p class="instructions-title"> This tool was enhanced from the original by</p>
                 <p class="instructions-title"> <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">Michael Eskin</a></p>
                 <div style="margin-top:10px;">
                   If the tool has been useful to you, please consider supporting ongoing<br/>development by tossing a few bucks into one of my online tip jars.
