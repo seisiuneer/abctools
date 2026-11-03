@@ -1250,6 +1250,18 @@
           if (!AudioContextClass) {
             throw new Error('Web Audio is not supported in this browser.');
           }
+          // On iOS/iPadOS, allow Web Audio playback even when Silent Mode is enabled.
+          // Also recognize iPads that identify themselves as desktop Macs.
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+          if (isIOS && navigator.audioSession) {
+            try {
+              navigator.audioSession.type = 'playback';
+            } catch (err) {
+              // If unsupported or rejected, proceed with normal audio initialization.
+            }
+          }
+
           state.audioCtx = new AudioContextClass();
           state.gainNode = state.audioCtx.createGain();
           state.gainNode.gain.value = state.volume;
