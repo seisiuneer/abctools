@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3378_110226_0800";
+var gVersionNumber = "3379_110226_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -65280,50 +65280,6 @@ function LaunchQuickEditorHelp() {
   window.open(url, '_blank');
 }
 
-// Open the Chromatic tuner
-function LaunchChromaticTuner(){
-
-  sendGoogleAnalytics("action", "LaunchChromaticTuner");
-
-  var url = "https://michaeleskin.com/tools/tuner.html";
-  window.open(url, '_blank');
-}
-
-// Open the RTTA tuner
-function LaunchRTTA(){
-
-  sendGoogleAnalytics("action", "LaunchRTTA");
-
-  var url = "https://michaeleskin.com/tools/rtta.html";
-  window.open(url, '_blank');
-}
-
-// Open the RTTVA tuner
-function LaunchRTTVA(){
-
-  sendGoogleAnalytics("action", "LaunchRTTVA");
-
-  var url = "https://michaeleskin.com/tools/rttva.html";
-  window.open(url, '_blank');
-}
-
-// Open the tone generator
-function LaunchToneGen(){
-
-  sendGoogleAnalytics("action", "LaunchToneGen");
-
-  var url = "https://michaeleskin.com/tools/tonegen.html";
-  window.open(url, '_blank');
-}
-
-// Open the audio tester
-function LaunchAudioTester(){
-  
-  sendGoogleAnalytics("action", "LaunchAudioTester");
-
-  var url = "https://michaeleskin.com/tools/audiotest.html";
-  window.open(url, '_blank');
-}
 
 // Open thesession.org power tools
 function LaunchTheSessionPowerTools(){
@@ -65332,33 +65288,6 @@ function LaunchTheSessionPowerTools(){
 
   var url = "https://michaeleskin.com/tools/thesession_power_tools.html";
   window.open(url, '_blank');
-}
-
-// Open the chord chart generatior
-function LaunchChordChartGenerator(){
-  
-  sendGoogleAnalytics("action", "LaunchChordChartGenerator");
-
-  var url = "https://michaeleskin.com/tools/abc_to_chord_chart.html";
-  window.open(url, '_blank');
-}
-
-// Open the abcjs-eskin-portable website builder
-function LaunchABCJSWebsiteBuilder(){
-
-  sendGoogleAnalytics("action", "LaunchABCJSWebsiteBuilder");
-
-  var url = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html";
-  window.open(url, '_blank');
-}
-
-// Open the chord grid builder
-function LaunchChordGridBuilder(){
-  sendGoogleAnalytics("action", "LaunchChordGridBuilder");
-
-  var url = "https://michaeleskin.com/tools/chord-grid-builder.html";
-  window.open(url, '_blank');
-
 }
 
 //
@@ -65497,11 +65426,6 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Advanced Settings',
             fn: function(target) {
               AdvancedSettings();
-            }
-          }, {}, {
-            name: 'Other ABC Tools',
-            fn: function(target) {
-              OtherABCTools();
             }
           }, {}, {
             name: 'Launch Standard Editor',
@@ -65681,11 +65605,6 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
-          name: 'Other ABC Tools',
-          fn: function(target) {
-            OtherABCTools();
-          }
-        }, {}, {
         name: 'Launch Standard Editor',
         fn: function(target) {
             LaunchStandardEditor();
@@ -65799,11 +65718,6 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Advanced Settings',
             fn: function(target) {
               AdvancedSettings();
-            }
-          }, {}, {
-            name: 'Other ABC Tools',
-            fn: function(target) {
-              OtherABCTools();
             }
           }, {}, {
             name: 'Launch Quick Editor',
@@ -65977,11 +65891,6 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
-          name: 'Other ABC Tools',
-          fn: function(target) {
-            OtherABCTools();
-          }
-        }, {}, {
           name: 'Launch Quick Editor',
           fn: function(target) {
             LaunchQuickEditor();
@@ -66087,11 +65996,6 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Advanced Settings',
         fn: function(target) {
           AdvancedSettings();
-        }
-      }, {}, {
-        name: 'Other ABC Tools',
-        fn: function(target) {
-          OtherABCTools();
         }
       }, {}, {
         name: 'Launch Standard Editor',
@@ -66203,11 +66107,6 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Advanced Settings',
         fn: function(target) {
           AdvancedSettings();
-        }
-      },  {}, {
-        name: 'Other ABC Tools',
-        fn: function(target) {
-          OtherABCTools();
         }
       }, {}, {
         name: 'Launch Quick Editor',
@@ -72367,105 +72266,6 @@ function OpenCurrentTuneInNewTab() {
     theURL,
     "_blank"
   );
-}
-
-function OtherABCTools(){
-
-  // Keep track of dialogs
-  sendGoogleAnalytics("dialog", "OtherABCTools");
-
-  var modal_msg =
-    '<div id="otherabctoolsanchor">'
-  + '  <p style="text-align:center;margin-bottom:12px;font-size:16pt;font-family:helvetica;">Other ABC Tools&nbsp;&nbsp;' 
-  + '    <span style="font-size:24pt;" title="View documentation in new tab">'
-  + '    <a href="https://michaeleskin.com/abctools/userguide.html#hamburger_other_abc_tools" target="_blank" ' 
-  + '    style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' 
-  + '    </span>' 
-  + '  </p>'
-  + '  <p style="text-align:center;margin-bottom:10px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
-  + 'These are additional useful standalone web-based ABC tools I\'ve built.<br/>' 
-  + '  </p>'
-
-  // Outer layout: two explicit rows
-  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:0 15px 0px 15px;">'
-
-  // Row 1 (3 items)
-  + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
-
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_tspt" src="img/tool_scraper_2.jpg" title="thesession.org Power Tools" alt="thesession.org Power Tools"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">thesession.org<br/>Power Tools</div>'
-  + '      </div>'
-
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_chordchart" src="img/tool_chordchart_2.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Chord Chart Generator</div>'
-  + '      </div>'
-
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_abc2csv" src="img/tool_abc2csv_2.jpg" title="ABC Tags to CSV Extractor Utilities" alt="ABC Tags to CSV Extractor Utilities"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Tags to CSV Extractor Utilities</div>'
-  + '      </div>'
-
-  + '    </div>'
-
-  // Row 2 (3 items)
-  + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
-
- 
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_websitebuilder" src="img/abcjs-eskin-portable-website_1.jpg" title="abcjs-eskin-portable Website Builder" alt="abcjs-eskin Website Builder"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">abcjs-eskin Website Builder</div>'
-  + '      </div>'
-  
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_custominstrument" src="img/tool_custominstrument_2.jpg" title="Custom Instrument Builder" alt="Custom Instrument Builder"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">Custom Instrument Builder</div>'
-  + '      </div>'
-
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_chord_grid_builder" src="img/tool_chord_grid_1.jpg" title="ABC Custom Chord Grid Builder" alt="ABC Custom Chord Grid Builder"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Custom Chord Grid Builder</div>'
-  + '      </div>'
-
-  + '    </div>'
-
-  + '  </div>'
-
-  + '</div>';
-
-  DayPilot.Modal.alert(modal_msg, {
-    theme: "modal_flat",
-    top: 25,
-    width: 680,
-    scrollWithPage: (AllowDialogsToScroll())
-  });
-
-  elem = document.getElementById("other_tools_tspt");
-  if (elem) elem.onclick = function(){ LaunchTheSessionPowerTools(); };
-
-  elem = document.getElementById("other_tools_chordchart");
-  if (elem) elem.onclick = function(){ LaunchChordChartGenerator(); };
-
-  elem = document.getElementById("other_tools_abc2csv");
-  if (elem) elem.onclick = function(){ LaunchCSVTagExtractor(); };
-
-  elem = document.getElementById("other_tools_websitebuilder");
-  if (elem) elem.onclick = function(){ LaunchABCJSWebsiteBuilder(); };
-
-  elem = document.getElementById("other_tools_custominstrument");
-  if (elem) elem.onclick = function(){ launchCustomInstrumentBuilder(); };
-
-  elem = document.getElementById("other_tools_chord_grid_builder");
-  if (elem) elem.onclick = function(){ LaunchChordGridBuilder(); };
-
-
 }
 
 // abcjs Custom CSS Generator
