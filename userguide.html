@@ -1042,6 +1042,7 @@
             <a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a>
             <a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a>
             <a style="text-decoration:none;" href="#chord_grid_diagrams">Displaying Chord Grid Diagrams</a>
+            <a style="text-decoration:none;" href="#writefields">Controlling Displayed ABC Metadata Tags with %%writefields</a>
             </details>
             
             <details>
@@ -1642,6 +1643,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#chord_grid_diagrams">Displaying Chord Grid Diagrams</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#writefields">Controlling Displayed ABC Metadata Tags with %%writefields</a></p>
 
                     </div>
                     
@@ -8505,6 +8507,26 @@
                 <p>The same custom-definition mechanism can be used for instruments with 3, 4, 5, or 6 strings. This makes it possible to create chord grids for instruments such as dulcimer, mandolin, tenor guitar, guitar in alternate tunings, and other custom stringed instruments.</p>
                 <p>If you add, edit, or remove a <strong>%%begin_chord_grid_definitions /<br/>%%end_chord_grid_definitions</strong> block in the ABC file header, you'll need to force a full redraw of the tunes. The easiest way to do this is to click the <strong>Notation</strong> button.</p>
                 <p>Chord grids are supported throughout the tool wherever the tune notation is rendered, including the standard editor, Quick Editor, Player, Tune Trainer, player-based explorer dialogs, PDF notation export, and supported website rendering/export workflows.</p>
+                <hr class="hidden-print" id="writefields">
+                <h1 class="page_break_always">Controlling Displayed ABC Metadata Tags with %%writefields</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p><strong>%%writefields</strong> is a standard <strong>ABC 2.1</strong> directive for controlling which ABC information fields are printed with the music. It lets you selectively hide or show the title, composer, rhythm, tempo, notes, lyrics, and other metadata without deleting those fields from the ABC.</p>
+                <p>The syntax is:</p>
+                <p class="code">%%writefields FIELDLETTERS [true|false]</p>
+                <p>Use one or more field letters together, without spaces, followed optionally by <strong>true</strong> to display them or <strong>false</strong> to hide them. If the value is omitted, <strong>true</strong> is assumed. Uppercase <strong>W</strong> (words printed below the tune) and lowercase <strong>w</strong> (lyrics aligned with notes) are separate fields.</p>
+                <p><strong>Legacy-compatible defaults:</strong> ABC Transcription Tools deliberately differs from the ABC 2.1 default field list. To preserve the way existing tunes have always been displayed, introducing <strong>%%writefields</strong> does <strong>not</strong> automatically hide normally visible metadata. Titles (<strong>T:</strong>), composers (<strong>C:</strong>), rhythms (<strong>R:</strong>), notes (<strong>N:</strong>), parts (<strong>P:</strong>), tempos (<strong>Q:</strong>), lyrics, and other fields that the tool previously displayed remain visible unless explicitly suppressed. The <strong>F:</strong> (URL), <strong>G:</strong> (group), and <strong>X:</strong> (reference number) fields remain hidden by default because the older abcjs renderer did not normally print them; use <strong>%%writefields FGX</strong> to display them. With no <strong>%%writefields</strong> directive, existing rendering behavior is unchanged.</p>
+                <p>For example, hide only the titles while retaining the composer, rhythm, and tempo:</p>
+                <p class="code">X:1<br/>%%writefields T false<br/>T:Cooley's<br/>C:Traditional<br/>R:Reel<br/>M:4/4<br/>L:1/8<br/>Q:1/2=90<br/>K:Edor<br/>|:EBBA B2 EB|B2 AB dBAG:|</p>
+                <p>You can combine field letters and use multiple directives. Their settings are <strong>cumulative</strong>: each directive changes only the fields named in it, and a later directive for the same field overrides an earlier one.</p>
+                <p class="code">%%writefields CR false<br/>%%writefields R true</p>
+                <p>In this example, the composer remains hidden while the rhythm is displayed. To hide printed parts, tempo, and both kinds of lyrics, use <strong>%%writefields PQwW false</strong>. To display the normally hidden URL, group, and reference number, use <strong>%%writefields FGX</strong>.</p>
+                <p><strong>File-header and tune-level use:</strong> Place <strong>%%writefields</strong> in the ABC file header, before the first <strong>X:</strong> field, to establish display settings for the tunes in that file. An individual tune can then add its own <strong>%%writefields</strong> directives to override selected settings. File-header settings are inherited by each tune, while changes made within one tune do not carry over to the next tune.</p>
+                <p class="code">% ABC file header: hide composers for all tunes<br/>%%writefields C false<br/><br/>X:1<br/>T:First Tune<br/>C:Traditional<br/>M:4/4<br/>L:1/8<br/>K:D<br/>DEFG ABcd|<br/><br/>X:2<br/>%%writefields C true<br/>T:Second Tune<br/>C:Traditional<br/>M:4/4<br/>L:1/8<br/>K:G<br/>GABc d2ed|</p>
+                <p>In this example, the first tune's composer is hidden, while the second tune explicitly displays its composer. If you change a <strong>%%writefields</strong> directive in the ABC file header and the display does not update immediately, force a full notation redraw by clicking the <strong>Notation</strong> button.</p>
+                <p><strong>Interaction with tool-private directives:</strong> The older ABC Transcription Tools directives such as <strong>%hide_composer_tag</strong>, <strong>%hide_rhythm_tag</strong>, and <strong>%hide_part_tags</strong> (also supported as <strong>%hide_parts_tag</strong>) still work and take precedence if they conflict with <strong>%%writefields</strong> in the same tune. For example, <strong>%%writefields C true</strong> cannot make a composer appear when <strong>%hide_composer_tag</strong> has already suppressed it. Private directives may suppress information earlier in processing, while <strong>%%writefields</strong> controls the notation's displayed fields.</p>
+                <p><strong>Recommendation:</strong> Within an individual tune, use either the tool-private hiding directives <em>or</em> <strong>%%writefields</strong> to control metadata visibility, <strong>not both</strong>. For new ABC tunes, prefer the standard <strong>%%writefields</strong> directive. The private directives remain supported for compatibility with existing tunebooks.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always">Transposing Notation Independent of Tablature</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -9196,6 +9218,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#midi_beat_accents">Controlling Beat Accents with %%MIDI beat, %%MIDI beatstring, and %%MIDI beatpulse</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#midigchorddynamics">Controlling %%MIDI gchord-based Backup Dynamics</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#writefields">Controlling Displayed ABC Metadata Tags with %%writefields</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_copy_all">Copy All Tunes</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom Instruments</a></p>

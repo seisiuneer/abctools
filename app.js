@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3380_110326_1800";
+var gVersionNumber = "3381_110426_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26896,6 +26896,7 @@ function GetABCFileHeader() {
     /^%%staffwidth.*$/,
     /^%%stretchlast.*$/,
     /^%%stanzas\s+[12]\s*$/i,
+    /^%%writefields(?:\s|$)/i,
     /^%%leftmargin.*$/,
     /^%%rightmargin.*$/,
     /^%%scale.*$/,
@@ -31426,13 +31427,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_2Nov2026;
+        var updatePresented = localStorage.sawUpdate_4Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_2Nov2026 = true;
+          localStorage.sawUpdate_4Nov2026 = true;
 
         }
 
@@ -60975,7 +60976,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 3 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 4 November 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">Added support for <strong>%%writefields</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">This standard ABC 2.1 directive can be used to suppress or show specific ABC metadata tags on the tunes.</p>';
+  modal_msg += '<p style="font-size:12pt;">Check the <strong>Controlling Displayed ABC Metadata Tags with %%writefields</strong> section in the <strong>User Guide</strong> for full details.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60983,14 +60992,6 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;">Added <strong>Open Tunes in Another Tool</strong> to the <strong>Other ABC Tools</strong> tab on the <strong>More ABC Tools</strong> dialog.</p>';
   modal_msg += '<p style="font-size:12pt;">Works exactly the same as the identically named button on the <strong>Sharing Controls</strong> dialog.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">New <strong>My Tools</strong> tab on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">You now have your own personal tab where you can keep just the external ABC tools you commonly use rather than having to scroll through the full list of external tools each time.</p>';
-  modal_msg += '<p style="font-size:12pt;">Full details in the <strong>User Guide</strong>.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67804,13 +67805,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_2Nov2026;
+    var updatePresented = localStorage.sawUpdate_4Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_2Nov2026 = true;
+      localStorage.sawUpdate_4Nov2026 = true;
 
     }
 

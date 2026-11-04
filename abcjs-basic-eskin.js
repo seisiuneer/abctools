@@ -5043,6 +5043,7 @@ var bookParser = function bookParser(book) {
       /^%%staffwidth.*$/,
       /^%%stretchlast.*$/,
       /^%%stanzas\s+[12]\s*$/i,
+      /^%%writefields(?:\s|$)/i,
       /^%%leftmargin.*$/,
       /^%%rightmargin.*$/,
       /^%%scale.*$/,
@@ -6428,6 +6429,35 @@ var parseDirective = {};
     var scratch = "";
     var line;
     switch (cmd) {
+      // ABC 2.1 section 11.4.6: cumulative field-by-field visibility.
+      // Only score-visible information fields are accepted; structural fields
+      // such as K:, M:, L:, V:, U: and I: are deliberately not affected.
+      case "writefields":
+        var writeFieldsArgs = /^\s*([A-Za-z]+)(?:\s+(true|false))?\s*$/i.exec(restOfString);
+        var writeFieldsSupported = "ABCDFGHNOPQRSTWwXZ";
+        if (!writeFieldsArgs) return "Directive writefields requires field letters and optional true or false";
+        for (var writeFieldIndex = 0; writeFieldIndex < writeFieldsArgs[1].length; writeFieldIndex++) {
+          if (writeFieldsSupported.indexOf(writeFieldsArgs[1].charAt(writeFieldIndex)) === -1)
+            return "Directive writefields has unsupported field: " + writeFieldsArgs[1].charAt(writeFieldIndex);
+        }
+        if (!tune.formatting.writeFields) {
+          tune.formatting.writeFields = {};
+          // Legacy-friendly default: a writefields directive starts from the
+          // visibility abcjs used before writefields support, rather than the
+          // ABC 2.1 TCOPQwW list. Thus T false only hides titles; the
+          // normally rendered R:, N:, B:, etc. stay visible.
+          for (var supportedIndex = 0; supportedIndex < writeFieldsSupported.length; supportedIndex++)
+            tune.formatting.writeFields[writeFieldsSupported.charAt(supportedIndex)] = true;
+          // Historically F:, G: and X: were parsed but not printed by abcjs.
+          // Keep them opt-in to avoid adding unexpected text to legacy scores.
+          tune.formatting.writeFields.F = false;
+          tune.formatting.writeFields.G = false;
+          tune.formatting.writeFields.X = false;
+        }
+        var writeFieldsValue = !writeFieldsArgs[2] || writeFieldsArgs[2].toLowerCase() === "true";
+        for (var fieldIndex = 0; fieldIndex < writeFieldsArgs[1].length; fieldIndex++)
+          tune.formatting.writeFields[writeFieldsArgs[1].charAt(fieldIndex)] = writeFieldsValue;
+        break;
       // The following directives were added to abc_parser_lint, but haven't been implemented here.
       // Most of them are direct translations from the directives that will be parsed in. See abcm2ps's format.txt for info on each of these.
       //          alignbars: { type: "number", optional: true },
@@ -7653,6 +7683,11 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
             words: true
           };
         case 'X':
+          // Retain the reference number for %%writefields X (normally hidden).
+          tuneBuilder.addMetaText('reference', tokenizer.translateString(tokenizer.stripComment(line.substring(2))), {
+            startChar: multilineVars.iChar,
+            endChar: multilineVars.iChar + line.length
+          });
           break;
         case 'E':
         case 'm':
@@ -25827,6 +25862,7 @@ var AbstractEngraver = function AbstractEngraver(getTextSize, tuneNumber, option
   this.initialClef = options.initialClef;
   this.jazzchords = !!options.jazzchords;
   this.germanAlphabet = !!options.germanAlphabet;
+  this.writeFields = options.writeFields || null;
   this.reset();
 };
 AbstractEngraver.prototype.reset = function () {
@@ -25872,6 +25908,7 @@ AbstractEngraver.prototype.popCrossLineElems = function (s, v) {
   this.voiceColor = this.colorByVoice[this.getCurrentVoiceId(s, v)];
 };
 AbstractEngraver.prototype.containsLyrics = function (staves) {
+  if (this.writeFields && !this.writeFields.w) return;
   for (var i = 0; i < staves.length; i++) {
     for (var j = 0; j < staves[i].voices.length; j++) {
       for (var k = 0; k < staves[i].voices[j].length; k++) {
@@ -26109,6 +26146,7 @@ AbstractEngraver.prototype.createABCElement = function (isFirstStaff, isSingleLi
       this.stemdir = elem.direction === "auto" ? undefined : elem.direction;
       break;
     case "part":
+      if (this.writeFields && !this.writeFields.P) break;
       var abselem = new AbsoluteElement(elem, 0, 0, 'part', this.tuneNumber);
       var dim = this.getTextSize.calc(elem.title, 'partsfont', "part");
       abselem.addFixedX(new RelativeElement(elem.title, 0, 0, undefined, {
@@ -26118,6 +26156,7 @@ AbstractEngraver.prototype.createABCElement = function (isFirstStaff, isSingleLi
       elemset[0] = abselem;
       break;
     case "tempo":
+      if (this.writeFields && !this.writeFields.Q) break;
       // MAE 20 Nov 2025 For %%printtempo after initial header
       var abselem3 = new AbsoluteElement(elem, 0, 0, 'tempo', this.tuneNumber);
       if (!elem.suppress){
@@ -26726,7 +26765,7 @@ AbstractEngraver.prototype.createNote = function (elem, nostem, isSingleLineStaf
     dir = ret2.dir;
     symbolWidth = ret2.symbolWidth;
   }
-  if (elem.lyric !== undefined) {
+  if (elem.lyric !== undefined && (!this.writeFields || this.writeFields.w)) {
     this.addLyric(abselem, elem);
   }
   // MAE 28 Dec 2023 - To offset downslides left by grace width now passing grace width to createDecoration
@@ -28425,7 +28464,7 @@ function BottomText(metaText, width, isPrint, paddingLeft, spacing, getTextSize,
       this.unalignedWords(metaText.unalignedWords, paddingLeft, spacing, getTextSize);
     }
   }
-  this.extraText(metaText, paddingLeft, spacing, getTextSize);
+  this.extraText(metaText, paddingLeft, spacing, getTextSize, formatting);
   if (metaText.footer && isPrint) this.footer(metaText.footer, width, paddingLeft, getTextSize);
 }
 
@@ -28752,7 +28791,7 @@ BottomText.prototype.unalignedWords = function (unalignedWords, paddingLeft, spa
     name: "unalignedWords"
   });
 };
-BottomText.prototype.extraText = function (metaText, marginLeft, spacing, getTextSize) {
+BottomText.prototype.extraText = function (metaText, marginLeft, spacing, getTextSize, formatting) {
   var extraText = "";
 
   if (gHideInformationLabels){
@@ -28778,6 +28817,14 @@ BottomText.prototype.extraText = function (metaText, marginLeft, spacing, getTex
     if (metaText['abc-edited-by']) extraText += "Edited By: " + metaText['abc-edited-by'] + "\n";
   }
 
+  // F: and G: were not printed by this abcjs build. Print them only when
+  // the writefields directive explicitly enables them.
+  if (formatting && formatting.writeFields) {
+    if (formatting.writeFields.F && metaText.url)
+      extraText += (gHideInformationLabels ? "" : "File URL: ") + metaText.url + "\n";
+    if (formatting.writeFields.G && metaText.group)
+      extraText += (gHideInformationLabels ? "" : "Group: ") + metaText.group + "\n";
+  }
   if (extraText.length > 0) {
     addTextIf(this.rows, {
       marginLeft: marginLeft,
@@ -29669,9 +29716,23 @@ function TopText(metaText, metaTextInfo, formatting, lines, width, isPrint, padd
       name: "title"
     }, getTextSize);
   }
+  if (formatting.writeFields && formatting.writeFields.X && metaText.reference !== undefined && metaText.reference !== '') {
+    addTextIf(this.rows, {
+      marginLeft: paddingLeft,
+      text: "X: " + metaText.reference,
+      font: 'infofont',
+      klass: 'meta-top reference',
+      marginTop: spacing.subtitle,
+      anchor: 'start',
+      absElemType: "reference",
+      info: metaTextInfo.reference,
+      name: "reference"
+    }, getTextSize);
+  }
   if (lines.length) {
     var index = 0;
     while (index < lines.length && lines[index].subtitle) {
+      if (formatting.writeFields && !formatting.writeFields.T) { index++; continue; }
       addTextIf(this.rows, {
         marginLeft: tLeft,
         text: lines[index].subtitle.text,
@@ -32984,7 +33045,8 @@ EngraverController.prototype.setupTune = function (abcTune, tuneNumber) {
     percmap: abcTune.formatting.percmap,
     initialClef: this.initialClef,
     jazzchords: this.jazzchords,
-    germanAlphabet: this.germanAlphabet
+    germanAlphabet: this.germanAlphabet,
+    writeFields: abcTune.formatting.writeFields
   });
   this.engraver.setStemHeight(this.renderer.spacing.stemHeight);
   this.engraver.measureLength = abcTune.getMeterFraction().num / abcTune.getMeterFraction().den;
@@ -33001,8 +33063,27 @@ EngraverController.prototype.setupTune = function (abcTune, tuneNumber) {
   this.adjustNonScaledItems(scale);
   return scale;
 };
+// Construct a score-only metadata view. The original parsed data, including
+// Q: tempo, remains available for playback, tune information and export.
+function writeFieldsScoreMetaText(abcTune) {
+  var fields = abcTune.formatting && abcTune.formatting.writeFields;
+  if (!fields) return abcTune.metaText;
+  var visible = Object.assign({}, abcTune.metaText);
+  var fieldKeys = {
+    A: 'author', B: 'book', C: 'composer', D: 'discography',
+    F: 'url', G: 'group', H: 'history', N: 'notes', O: 'origin',
+    P: 'partOrder', Q: 'tempo', R: 'rhythm', S: 'source',
+    T: 'title', W: 'unalignedWords', X: 'reference', Z: 'transcription'
+  };
+  for (var letter in fieldKeys) {
+    if (Object.prototype.hasOwnProperty.call(fieldKeys, letter) && fields[letter] !== true)
+      delete visible[fieldKeys[letter]];
+  }
+  return visible;
+}
 EngraverController.prototype.constructTuneElements = function (abcTune) {
-  abcTune.topText = new TopText(abcTune.metaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, this.width, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
+  var scoreMetaText = writeFieldsScoreMetaText(abcTune);
+  abcTune.topText = new TopText(scoreMetaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, this.width, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
 
   // Generate the raw staff line data
   var i;
@@ -33096,7 +33177,7 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
       var isFirstRenderedStaff = !hasPrintedTempo;
       abcLine.staffGroup = this.engraver.createABCLine(
         abcLine.staff,
-        isFirstRenderedStaff ? abcTune.metaText.tempo : null,
+        isFirstRenderedStaff && (!abcTune.formatting.writeFields || abcTune.formatting.writeFields.Q) ? abcTune.metaText.tempo : null,
         i
       );
 
@@ -33117,7 +33198,7 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
       hasPrintedTempo = true;
     } else if (abcLine.subtitle) {
       // If the subtitle is at the top, then it was already accounted for. So skip all subtitles until the first non-subtitle line.
-      if (hasSeenNonSubtitle) {
+      if (hasSeenNonSubtitle && (!abcTune.formatting.writeFields || abcTune.formatting.writeFields.T)) {
         var center = this.width / 2 + this.renderer.padding.left;
         abcLine.nonMusic = new Subtitle(this.renderer.spacing.subtitle, abcTune.formatting, abcLine.subtitle, center, this.renderer.padding.left, this.getTextSize);
       }
@@ -33208,7 +33289,7 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
   }
 
   abcTune.bottomText = new BottomText(
-    abcTune.metaText,
+    scoreMetaText,
     this.width,
     this.renderer.isPrint,
     this.renderer.padding.left,
@@ -33251,7 +33332,7 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
 
     //debugger;
 
-    abcTune.topText = new TopText(abcTune.metaText, abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, maxWidth, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
+    abcTune.topText = new TopText(writeFieldsScoreMetaText(abcTune), abcTune.metaTextInfo, abcTune.formatting, abcTune.lines, maxWidth, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
 
     // Bottom text is normally created before horizontal layout. If this tune
     // expands beyond the nominal staff width, rebuild it with the actual final
@@ -33259,7 +33340,7 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
     // rendered notation rather than on the original 740px nominal width.
     if (abcTune.formatting && abcTune.formatting.stanzasTwoColumn) {
       abcTune.bottomText = new BottomText(
-        abcTune.metaText,
+        writeFieldsScoreMetaText(abcTune),
         maxWidth,
         this.renderer.isPrint,
         this.renderer.padding.left,
