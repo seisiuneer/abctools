@@ -1,10 +1,10 @@
-// SmeggTuner web edition: service worker scoped to /tools/smeggtuner/.
-// Cache name is isolated from other SmeggTuner deployments on the same domain.
+// SmeggTuner v1.4.2: service worker isolated to /tools/smeggtuner/
+// Its cache prefix is unique to this deployment; it does not delete caches
+// belonging to ABC Transcription Tools or other service workers.
 const BASE = '/tools/smeggtuner/';
 const PREFIX = 'smeggtuner-tools-smeggtuner-';
-const CACHE = `${PREFIX}1.4.1-subdir1`;
+const CACHE = `${PREFIX}1.4.2-39420754be4a-subdir1`;
 const SHELL = [
-  BASE,
   `${BASE}index.html`,
   `${BASE}engine/smeggtuner.wasm`,
   `${BASE}engine/wasm_exec.js`,
@@ -33,7 +33,7 @@ self.addEventListener('fetch', event => {
       !url.pathname.startsWith(BASE)) return;
 
   if (request.mode === 'navigate') {
-    // Prefer fresh HTML when online; use the locally cached index when offline.
+    // Network-first documents; fallback to the precached entry offline.
     event.respondWith(fetch(request).then(async response => {
       if (response.ok) {
         const cache = await caches.open(CACHE);
@@ -47,7 +47,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Hashed assets and local engine files: cache first, then network.
+  // Keep all runtime assets and caches within this deployment's namespace.
   event.respondWith(caches.open(CACHE).then(async cache => {
     const cached = await cache.match(request);
     if (cached) return cached;

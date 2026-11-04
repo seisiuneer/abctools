@@ -1,1 +1,0 @@
-var e={sessionPage:{mobile:{curve:{t:0,b:{t:2,i:[{t:3}],s:`Cele`}},recorded:{t:0,b:{t:2,i:[{t:3}],s:`Pomiary`}}},tabs:{accordion:{t:0,b:{t:2,i:[{t:3}],s:`Akordeon`}},curve:{t:0,b:{t:2,i:[{t:3}],s:`Żądane dudnienia`}},recorded:{t:0,b:{t:2,i:[{t:3}],s:`Nagrane strojenie`}}}}};export{e as default};
