@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3382_110526_0900";
+var gVersionNumber = "3383_110526_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25421,15 +25421,9 @@ function CreateURLfromHTML() {
 
   urltextbox = document.getElementById("urltextbox");
 
-  var urlallowdef = false;
-
-  var elem = document.getElementById("urlallowdef");
-
-  if (elem){
-    urlallowdef = elem.checked;
-  }
-
-  FillUrlBoxWithAbcInLZWOrDef(null, true, null, urlallowdef);
+  // Sharing Controls always generates Deflate-compressed share links.
+  // Other callers of FillUrlBoxWithAbcInLZWOrDef retain their own format choice.
+  FillUrlBoxWithAbcInLZWOrDef(null, true, null, true);
 
   urltextbox.focus();
   urltextbox.setSelectionRange(0, 0);
@@ -25448,7 +25442,7 @@ function CreateURLfromHTML() {
     }
     else{
 
-      elem = document.getElementById("shareurlcaption");
+      var elem = document.getElementById("shareurlcaption");
 
       if (elem){
         elem.innerText = "Share URL";
@@ -52785,22 +52779,12 @@ function SharingControlsDialog() {
   modal_msg += '<input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">';
   modal_msg += '<input id="external_tools_share" class="btn btn-urlcontrols" type="button" value="Open Tunes in Another Tool" title="Open all your ABC tunes in another ABC player or tool.">';
   modal_msg += '</div>';
-  modal_msg += '<p class="sharing-url-compression-row"><label><input id="urlallowdef" type="checkbox" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link" checked/>&nbsp;Use Deflate</label></p>';
 
   modal_msg += '</div>';
 
   setTimeout(function() {
 
     CreateURLfromHTML();
-
-    // Toggle compression mode
-    var allowdef = document.getElementById("urlallowdef");
-    if (allowdef){
-      allowdef.onchange = 
-      function(){
-        CreateURLfromHTML();
-      };
-    }
 
     var elem = document.getElementById("external_tools_share");
     
