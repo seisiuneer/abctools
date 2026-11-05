@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3381_110426_1500";
+var gVersionNumber = "3382_110526_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59822,7 +59822,7 @@ function DoMultiReadCommon(the_files, fileElement) {
           if (nTunes > 1000) {
             showTheSpinner("Processing Tunes");
           }
-          fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
+          fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the first tune...";
         }
       } else {
         if (importedTunes !== "" && nTunes > 0) {
@@ -59849,21 +59849,27 @@ function DoMultiReadCommon(the_files, fileElement) {
         // If was from a share, fix the spacing
         RestoreSavedStaffSpacing();
 
+        // Open and Add both start at the first tune in the resulting editor.
+        // Set the caret before rendering so Quick Editor also renders tune 0.
+        var tuneOffset = CountTunes() > 0 ? findTuneOffsetByIndex(0) : 0;
+        gCurrentTune = 0;
+        if (gEnableSyntax) {
+          gTheCM.setSelectionRange(tuneOffset, tuneOffset);
+        } else {
+          gTheABC.setSelectionRange(tuneOffset, tuneOffset);
+        }
+
         // Render the tunes
         RenderAsync(true, null, function() {
 
           UpdateNotationTopPosition();
-
-          var nTunes = CountTunes();
-          var theTune = getTuneByIndex(nTunes - 1);
-          var tuneOffset = getABCEditorText().length - theTune.length;
 
           if (!gIsMaximized) {
 
             if (gEnableSyntax){
               ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
-              if (!isMobileBrowser) {
+              if (!isMobileBrowser()) {
                 gTheCM.getInputField().blur();
                 gTheCM.focus();
               }
@@ -59871,7 +59877,7 @@ function DoMultiReadCommon(the_files, fileElement) {
             else{
               ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
 
-                if (!isMobileBrowser) {
+                if (!isMobileBrowser()) {
                   gTheABC.blur();
                   gTheABC.focus();
                 }              
@@ -60976,7 +60982,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 4 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 5 November 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
