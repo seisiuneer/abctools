@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3383_110526_1000";
+var gVersionNumber = "3384_110626_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -61090,8 +61090,8 @@ function TipJarReminderDialog() {
 
   var modal_msg = '<p style="text-align:center;font-size:22pt;font-family:helvetica">Thank You!</p>';
   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">I hope my ABC Transcription Tools have been useful to you!</p>';
-  modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
-  modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a></strong></p>';
+  modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider supporting continued development of my tools through a donation.</p>';
+  modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="Support Michael Eskin\'s Music Tools">Support Michael Eskin\'s Music Tools</a></strong></p>';
   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael2.jpg"/></div>';
   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
