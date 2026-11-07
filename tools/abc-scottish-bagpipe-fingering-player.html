@@ -34,12 +34,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Scottish Bagpipe Fingering Player</title>
-<meta name="description" content="Play Highland bagpipe tunes with synchronized ABC notation, fingerings, and audio. Import .bww files from Bagpipe Writer and Bagpipe Reader." />
+<meta name="description" content="Play Highland bagpipe and smallpipes tunes with synchronized ABC notation, fingerings, and audio. Import .bww files from Bagpipe Writer and Bagpipe Reader." />
 <meta name="keywords" content="ABC notation, Highland bagpipe, bagpipe fingering, Highland bagpipe tablature, bagpipe playback, .bww import, BWW files, Bagpipe Writer, Bagpipe Music Writer, Bagpipe Reader, Irish traditional music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ABC Scottish Bagpipe Fingering Player" />
-<meta property="og:description" content="Play Highland bagpipe tunes with synchronized ABC notation, fingerings, and audio. Import .bww files from Bagpipe Writer and Bagpipe Reader." />
+<meta property="og:description" content="Play Highland bagpipe and smallpipes tunes with synchronized ABC notation, fingerings, and audio. Import .bww files from Bagpipe Writer and Bagpipe Reader." />
 <meta property="og:site_name" content="ABC Scottish Bagpipe Fingering Player" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-scottish-bagpipe-fingering-player.html" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-scottish-bagpipe-fingering-player-og2.jpg"/>
@@ -1858,11 +1858,11 @@ const WARBL_INLINE_FONT_DATA_URL = WARBL_INLINE_FONT_BASE64
 }
 </script>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Scottish Bagpipe Fingering Player</h1><p>Play ABC tunes with synchronized notation, Great Highland bagpipe tablature, and live bagpipe fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Scottish Bagpipe Fingering Player</h1><p>Play ABC tunes with synchronized notation, Great Highland bagpipe tablature, and live bagpipe fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC / BWW file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,.bww,.ABC,.TXT,.BWW,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Bagpipe Tab</option></select></div>
- <div class="control"><label for="bagpipePitch">Chanter pitch</label><select id="bagpipePitch"><option value="440">A=440 Hz (Concert A)</option><option value="454" selected>A=454 Hz (Practice chanter)</option><option value="466">A=466 Hz (Standard B-flat)</option><option value="480">A=480 Hz (Pipe band)</option></select></div>
+ <div class="control"><label for="bagpipePitch">Chanter pitch</label><select id="bagpipePitch"><option value="440">A=440 Hz (Concert A)</option><option value="454" selected>A=454 Hz (Practice chanter)</option><option value="466">A=466 Hz (Standard B-flat)</option><option value="480">A=480 Hz (Pipe band)</option><option value="" disabled>────────</option><option value="smallpipes-a">A=440 Hz (Smallpipes in A)</option><option value="smallpipes-d">D=293.66 Hz (Smallpipes in D)</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
@@ -1964,7 +1964,7 @@ const WARBL_INLINE_FONT_DATA_URL = WARBL_INLINE_FONT_BASE64
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Bagpipe Fingering pane updates to that note.</p>
-      <p>Playback uses <b>MIDI program 109</b> for the melody, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+      <p>For Highland chanter pitches, playback uses <b>MIDI program 109</b>. The <b>Smallpipes in D</b> and <b>Smallpipes in A</b> options use MIDI programs <b>130</b> and <b>131</b>, respectively.</p>
       <p><b>Show graces</b> in the Notation header controls whether the small grace notes receive bagpipe fingering symbols. It is checked by default and remembered on this device. Unchecking it hides only the grace <em>fingering symbols</em>: the written grace notes and playback are unchanged, and PDF exports follow the current setting.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
       <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
@@ -1985,7 +1985,7 @@ const WARBL_INLINE_FONT_DATA_URL = WARBL_INLINE_FONT_BASE64
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
       <p>On wide screens, drag the vertical divider to resize the left and bagpipe-fingering panes, and drag the horizontal divider to resize the ABC and notation panes. Double-click a divider to reset it.</p>
       <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Bagpipe Fingering</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
       <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits and tunes converted from BWW. Saved files contain ABC, not BWW. On mobile devices the saved file uses a <b>.txt</b> extension. On iPhone and iPad, choose a destination from the native share sheet (for example, <b>Save to Files</b>).</p>
@@ -2000,11 +2000,13 @@ const WARBL_INLINE_FONT_DATA_URL = WARBL_INLINE_FONT_BASE64
       <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
       <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Highland Bagpipe Pitch and Range</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Highland Bagpipe and Smallpipes Pitch and Range</p>
       <p>The Highland bagpipe chanter has nine standard fingerings, from <b>G4</b> through <b>A5</b>. C and F in the traditional scale sound as C-sharp and F-sharp. Notes outside the standard fingering set display x.</p>
-      <p>Choose the pitch under <b>Chanter pitch</b>. The default is <b>A=454 Hz</b> for practice chanters. The other options are <b>A=440, 466, and 480 Hz</b>. Changing pitch leaves the notation and source ABC unchanged and rebuilds playback using the same <b>%voice_tuning_cents</b> offsets as ABC Transcription Tools' Inject Bagpipe Sounds feature.</p>
-      <p>Playback uses <b>%%MIDI program 109</b>. The pitch choice is saved locally, and included in tune share links and lesson settings.</p>
-      <p>Fingering diagrams use Clint Goss's <a href="https://flutopedia.com/warbl_fonts.htm" target="_blank" rel="noopener noreferrer">WARBL Font Folio</a>, licensed under the SIL Open Font License 1.1. The font is embedded directly in this player, so no separate WOFF2 file is needed.</p>
+      <p>Choose the instrument and pitch using <b>Chanter pitch</b>. The default is <b>A=454 Hz</b> for practice chanters. The Highland choices <b>A=440, 454, 466, and 480 Hz</b> use <b>%%MIDI program 109</b> with the same <b>%voice_tuning_cents</b> offsets as ABC Transcription Tools' Inject Bagpipe Sounds feature.</p>
+      <p>The two Smallpipes choices are separated from the Highland pitches in the dropdown: <b>A=440 Hz (Smallpipes in A)</b> and <b>D=293.66 Hz (Smallpipes in D)</b>. Smallpipes in A uses <b>%%MIDI program 131</b>, while Smallpipes in D uses <b>%%MIDI program 130</b>.</p>
+      <p>The selected Highland or Smallpipes option is <b>remembered in this browser</b> and included in <b>tune share links</b>, <b>lesson share links</b>, and <b>saved lesson configurations</b>. When you open a tune or an entire tunebook in <b>ABC Transcription Tools</b>, the player's selected program and playback tuning or transposition are included for each transferred tune. These playback directives do not modify the editable ABC in this player.</p>
+      <p>All pitch choices affect playback only and never modify the editable ABC or saved ABC files. The selected choice is remembered locally and included in tune share links and lesson settings. The PDF title's link to ABC Transcription Tools also carries the selected sound and transposition.</p>
+      <p>Fingering diagrams use Clint Goss's <a href="https://flutopedia.com/warbl_fonts.htm" target="_blank" rel="noopener noreferrer">WARBL Font Folio</a>, licensed under the SIL Open Font License 1.1.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
@@ -2137,16 +2139,54 @@ const BAGPIPE_GLYPH_MAP=Array.from({length:15},(_,index)=>{
   const bits=BAGPIPE_FINGERINGS[index+67];
   return bits===undefined?"x":String.fromCharCode(0xEE00+bits);
 });
+// Distinct string identifiers are essential: Smallpipes in A and Highland
+// concert A both show 440 Hz but select different samples/transpositions.
 const BAGPIPE_PITCH_CENTS=Object.freeze({440:0,454:54,466:100,480:148});
+const BAGPIPE_SMALLPIPES_PROGRAMS=Object.freeze({"smallpipes-d":130,"smallpipes-a":131});
+const BAGPIPE_PITCH_OPTIONS=new Set([...Object.keys(BAGPIPE_PITCH_CENTS),...Object.keys(BAGPIPE_SMALLPIPES_PROGRAMS)]);
 const BAGPIPE_PITCH_KEY="abcScottishBagpipePitch";
 function selectedBagpipePitch(){
   const value=String($("bagpipePitch")?.value||"454");
-  return Object.prototype.hasOwnProperty.call(BAGPIPE_PITCH_CENTS,value)?value:"454";
+  return BAGPIPE_PITCH_OPTIONS.has(value)?value:"454";
+}
+function selectedBagpipeIsSmallpipes(){
+  return Object.prototype.hasOwnProperty.call(BAGPIPE_SMALLPIPES_PROGRAMS,selectedBagpipePitch());
+}
+function selectedBagpipeProgram(){
+  return BAGPIPE_SMALLPIPES_PROGRAMS[selectedBagpipePitch()]||109;
 }
 function bagpipeTuningDirective(){
-  // The exact integer offsets used by ABC Transcription Tools Inject Bagpipe Sounds.
+  // The four Highland pitches use the exact offsets from ABCTT. Smallpipes
+  // never inject voice_tuning_cents; their samples use MIDI transposition.
   const cents=BAGPIPE_PITCH_CENTS[selectedBagpipePitch()];
-  return `%voice_tuning_cents ${cents} ${cents}`;
+  return Number.isInteger(cents)?`%voice_tuning_cents ${cents} ${cents}`:"";
+}
+function bagpipeMidiTransposeDirective(){
+  return selectedBagpipeIsSmallpipes()?"%%MIDI transpose -7":"";
+}
+function forcedBagpipePlaybackHeader(){
+  return [
+    "%soundfont fatboy",
+    selectedPlaybackMIDIProgramDirective(),
+    "%%MIDI bassprog 0",
+    "%%MIDI chordprog 0",
+    bagpipeMidiTransposeDirective(),
+    bagpipeTuningDirective()
+  ].filter(Boolean).join("\n")+"\n";
+}
+function commentOverriddenBagpipePlaybackDirectives(abc){
+  const smallpipes=selectedBagpipeIsSmallpipes();
+  // Neutralize existing sound and tuning overrides without changing the length
+  // of the original lines. Preserve original MIDI transpose directives for
+  // Highland modes (legacy behavior); override them for Smallpipes modes.
+  return String(abc||"").replace(
+    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|transpose|rtranspose)\b|%voice_tuning_cents\b)[^\r\n]*/gmi,
+    m=>{
+      if(!smallpipes && /^[ \t]*%%MIDI[ \t]+(?:transpose|rtranspose)\b/i.test(m))return m;
+      const n=(m.match(/^[ \t]*/)||[""])[0].length;
+      return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1));
+    }
+  );
 }
 function saveBagpipePitch(){
   commitStandardShareSettingsIfPending();
@@ -2160,9 +2200,9 @@ function restoreBagpipePitch(){
   try{
     let prefs={};
     try{prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}")||{};}catch(_){}
-    if(prefs&&Object.prototype.hasOwnProperty.call(BAGPIPE_PITCH_CENTS,String(prefs.pitch)))return;
+    if(prefs&&BAGPIPE_PITCH_OPTIONS.has(String(prefs.pitch)))return;
     const saved=localStorage.getItem(BAGPIPE_PITCH_KEY);
-    if(saved!==null&&Object.prototype.hasOwnProperty.call(BAGPIPE_PITCH_CENTS,saved))$("bagpipePitch").value=saved;
+    if(saved!==null&&BAGPIPE_PITCH_OPTIONS.has(saved))$("bagpipePitch").value=saved;
   }catch(_){}
 }
 
@@ -2307,22 +2347,11 @@ async function toggleMetronome(){
 
 function buildPlaybackABC(abc){
   const source=String(abc||"");
-  const forced=[
-    "%soundfont fatboy",
-    selectedPlaybackMIDIProgramDirective(),
-    "%%MIDI bassprog 0",
-    "%%MIDI chordprog 0",
-    bagpipeTuningDirective()
-  ].join("\n")+"\n";
+  const forced=forcedBagpipePlaybackHeader();
 
-  // Preserve K:HP verbatim in the temporary playback/rendering ABC.
-  // The portable abcjs library handles its traditional Highland sounding
-  // pitches. Its notation uses no printed key signature and reserves no
-  // space for one. Only the custom fingering tab needs HP-aware postprocessing.
-  const cleaned=source.replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b|%voice_tuning_cents\b)[^\r\n]*/gmi,
-    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
-  );
+  // Preserve K:HP verbatim. Only the temporary playback/parser copy receives
+  // the -7 MIDI semitone transpose; notation and editable ABC never change.
+  const cleaned=commentOverriddenBagpipePlaybackDirectives(source);
 
   const kMatch=/^K\s*:.*$/mi.exec(cleaned);
   let playback=kMatch
@@ -3556,25 +3585,15 @@ function updateShareButtons(){
 // Keep ABCTT transfers on the same instrument/soundfont program as playback.
 // These functions operate only on the transferred ABC, never the editor score.
 function selectedPlaybackMIDIProgramDirective(){
-  return melodyMuted?"%%MIDI program mute":"%%MIDI program 109";
+  return melodyMuted?"%%MIDI program mute":`%%MIDI program ${selectedBagpipeProgram()}`;
 }
 
 function prepareABCForABCTTPlayback(abc){
-  const forced=[
-    "%soundfont fatboy",
-    selectedPlaybackMIDIProgramDirective(),
-    "%%MIDI bassprog 0",
-    "%%MIDI chordprog 0",
-    bagpipeTuningDirective()
-  ].join("\n")+"\n";
+  const forced=forcedBagpipePlaybackHeader();
 
-  // Match buildPlaybackABC's MIDI/soundfont override rules. This also prevents
-  // original %%MIDI program directives from superseding the selected instrument.
-  const cleaned=String(abc||"").replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b|%voice_tuning_cents\b)[^\r\n]*/gmi,
-    m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;
-      return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1));}
-  );
+  // Match the player, injecting the selected program and pitch directives
+  // into each X: header of an ABCTT transfer (including all-tunes links).
+  const cleaned=commentOverriddenBagpipePlaybackDirectives(abc);
   // An all-tunes transfer needs the program attached to EVERY X: header,
   // not just to the first tune. Preserve each tune's music and other metadata.
   let inserted=false;
@@ -3917,7 +3936,7 @@ function restoreWhistleDisplayPrefs(){
   try{
     const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
     if(prefs.notation==="notation"||prefs.notation==="whistle-tab")$("notationDisplay").value=prefs.notation;
-    if(String(prefs.pitch) in BAGPIPE_PITCH_CENTS)$("bagpipePitch").value=String(prefs.pitch);
+    if(BAGPIPE_PITCH_OPTIONS.has(String(prefs.pitch)))$("bagpipePitch").value=String(prefs.pitch);
   }catch(_){}
 }
 
@@ -3926,7 +3945,7 @@ function applyWhistleShareSettings(){
   const notation=params.get("notation");
   const pitch=params.get("pitch");
   if(notation==="notation"||notation==="whistle-tab")$("notationDisplay").value=notation;
-  if(pitch!==null&&pitch in BAGPIPE_PITCH_CENTS)$("bagpipePitch").value=pitch;
+  if(pitch!==null&&BAGPIPE_PITCH_OPTIONS.has(pitch))$("bagpipePitch").value=pitch;
   standardShareSettingsPending=!!params.get("def")&&params.get("lesson")!=="1";
 }
 
@@ -4210,7 +4229,11 @@ async function rebuild(){
           keepCursorVisible(event);
         }
         const midi=eventMidi(event);
-        if(midi!=null)showWhistleLive(midi);
+        if(midi!=null){
+          // Audio-only -7 semitone transposition must not change the fingering
+          // shown in the large live display, which tracks the notated chanter.
+          showWhistleLive(midi+(selectedBagpipeIsSmallpipes()?7:0));
+        }
       },
       onFinished(){
         if(audioControllerInitializing||!playbackActive)return;
@@ -4810,7 +4833,7 @@ function validateLessonSettingsParams(params){
   if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');
   const notation=params.get("notation"),pitch=params.get("pitch");
   if(notation!==null&&!['notation','whistle-tab'].includes(notation))throw new Error('Lesson notation setting is invalid.');
-  if(pitch!==null&&!(pitch in BAGPIPE_PITCH_CENTS))throw new Error('Lesson pitch setting is invalid.');
+  if(pitch!==null&&!BAGPIPE_PITCH_OPTIONS.has(pitch))throw new Error('Lesson pitch setting is invalid.');
 }
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
 function applyLessonSettingsParams(params){
