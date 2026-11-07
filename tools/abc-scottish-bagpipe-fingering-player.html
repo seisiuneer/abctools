@@ -1858,7 +1858,7 @@ const WARBL_INLINE_FONT_DATA_URL = WARBL_INLINE_FONT_BASE64
 }
 </script>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 1.0</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Scottish Bagpipe Fingering Player</h1><p>Play ABC tunes with synchronized notation, Great Highland bagpipe tablature, and live bagpipe fingerings.</p></header>
+<header class="app-header"><div class="version">Version 1.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Scottish Bagpipe Fingering Player</h1><p>Play ABC tunes with synchronized notation, Great Highland bagpipe tablature, and live bagpipe fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC / BWW file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,.bww,.ABC,.TXT,.BWW,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Bagpipe Tab</option></select></div>
@@ -2834,9 +2834,21 @@ function compactBagpipeNotationSystems(renderDivID){
     });
     const staffTop=Math.min(...staffRects.map(rect=>rect.top));
     if(!roots.length||!Number.isFinite(staffTop))continue;
-    let inkBottom=-Infinity;
-    for(const el of matches){const b=bounds(el);if(b)inkBottom=Math.max(inkBottom,b.bottom);}
-    if(Number.isFinite(inkBottom))systems.push({id,roots,staffTop,inkBottom});
+    let inkBottom=-Infinity, chordTop=Infinity, endingTop=Infinity;
+    for(const el of matches){
+      const b=bounds(el);
+      if(!b)continue;
+      inkBottom=Math.max(inkBottom,b.bottom);
+      // Chord names sit above their own staff. Reserve enough clearance from
+      // the previous system's fingering diagrams when arranging on-screen SVGs.
+      if(el.classList?.contains('abcjs-chord'))chordTop=Math.min(chordTop,b.top);
+      if(el.classList?.contains('abcjs-ending'))endingTop=Math.min(endingTop,b.top);
+    }
+    if(Number.isFinite(inkBottom))systems.push({
+      id,roots,staffTop,inkBottom,
+      chordTop:Number.isFinite(chordTop)?chordTop:null,
+      endingTop:Number.isFinite(endingTop)?endingTop:null
+    });
   }
   systems.sort((a,b)=>a.staffTop-b.staffTop);
   if(!systems.length)return;
@@ -2879,10 +2891,19 @@ function compactBagpipeNotationSystems(renderDivID){
     if(i>=1){
       const previous=systems[i-1];
       const rawGap=system.staffTop-previous.inkBottom;
-      // Move the whole current and following systems enough to provide the
-      // target clearance. A small tolerance prevents 1px layout jitter.
-      if(i>1||rawGap<targetGap-5){
-        const adjust=targetGap-rawGap;
+      // Chord symbols and first/second-ending brackets can rise above their
+      // staff into the preceding line of eight-hole WARBL fingering diagrams.
+      // Reserve slightly less than the previous 34-unit chord gap (30 units),
+      // with a modest 26-unit minimum for the top of an ending bracket.
+      // The extra space is measured only where such annotations are present.
+      const chordClearance=system.chordTop===null?-Infinity:
+        30-(system.chordTop-previous.inkBottom);
+      const endingClearance=system.endingTop===null?-Infinity:
+        26-(system.endingTop-previous.inkBottom);
+      // Move complete SVG systems without changing note, tab, or cursor
+      // alignment; chord-free / ending-free systems remain as compact as before.
+      if(i>1||rawGap<targetGap-5||chordClearance>2||endingClearance>2){
+        const adjust=Math.max(targetGap-rawGap,chordClearance,endingClearance);
         if(Math.abs(adjust)>2)shift+=adjust;
       }
     }
