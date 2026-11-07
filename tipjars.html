@@ -25,6 +25,14 @@
         <link rel="icon" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png" type="image/png">
         <link rel="icon" href="https://michaeleskin.com/abctools/img/abc-favicon.ico">
         <link rel="apple-touch-icon" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+        <!-- Google Analytics 4: same property as the music tools. -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){ dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'G-VM0N9HL3MK');
+        </script>
         <style>
 
         p {
@@ -121,6 +129,54 @@
         outline-offset: 3px;
         }
 
+        /* Simple, unobtrusive summary of what donations support. */
+        .support-uses {
+        margin: 24px auto 22px;
+        max-width: 640px;
+        }
+
+        .support-uses-title {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 15pt;
+        font-weight: 700;
+        margin: 0 0 12px;
+        }
+
+        .support-uses-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        }
+
+        .support-use {
+        background: #fff;
+        border: 1px solid #d4e5d8;
+        border-radius: 9px;
+        padding: 13px 10px;
+        font-family: Helvetica, Arial, sans-serif;
+        line-height: 1.35;
+        }
+
+        .support-use strong {
+        display: block;
+        font-size: 12.5pt;
+        margin-bottom: 6px;
+        }
+
+        .support-use span {
+        display: block;
+        font-size: 11pt;
+        }
+
+        .venmo-link {
+        color: #5a189a;
+        }
+
+        .venmo-link:focus-visible {
+        outline: 3px solid #5a189a;
+        outline-offset: 3px;
+        }
+
         .thanks {
         font-weight: 700;
         margin-bottom: 8px;
@@ -197,6 +253,23 @@
                 font-size: 12.5pt;
             }
 
+            .support-uses {
+                margin-top: 20px;
+            }
+
+            .support-uses-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .support-use {
+                padding: 10px 12px;
+            }
+
+            .support-use strong {
+                margin-bottom: 3px;
+            }
+
             .thanks {
                 margin-top: 18px !important;
             }
@@ -239,15 +312,24 @@
 
                 <p class="paypal-label"><strong>Donate with PayPal</strong></p>
                 <div class="paypal-amounts notranslate" aria-label="Choose a PayPal donation amount">
-                    <a class="tip-button" href="https://paypal.me/MichaelEskin/5USD" target="_blank" rel="noopener noreferrer">$5</a>
-                    <a class="tip-button" href="https://paypal.me/MichaelEskin/10USD" target="_blank" rel="noopener noreferrer">$10</a>
-                    <a class="tip-button" href="https://paypal.me/MichaelEskin/25USD" target="_blank" rel="noopener noreferrer">$25</a>
-                    <a class="tip-button" href="https://paypal.me/MichaelEskin/50USD" target="_blank" rel="noopener noreferrer">$50</a>
-                    <a class="tip-button" href="https://paypal.me/MichaelEskin/100USD" target="_blank" rel="noopener noreferrer">$100</a>
-                    <a class="tip-button" href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer">Other Amount</a>
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin/5USD" target="_blank" rel="noopener noreferrer" data-donation-method="paypal" data-donation-amount="5">$5</a>
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin/10USD" target="_blank" rel="noopener noreferrer" data-donation-method="paypal" data-donation-amount="10">$10</a>
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin/25USD" target="_blank" rel="noopener noreferrer" data-donation-method="paypal" data-donation-amount="25">$25</a>
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin/50USD" target="_blank" rel="noopener noreferrer" data-donation-method="paypal" data-donation-amount="50">$50</a>
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin/100USD" target="_blank" rel="noopener noreferrer" data-donation-method="paypal" data-donation-amount="100">$100</a>
+                    <a class="tip-button" href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" data-donation-method="paypal" data-donation-amount="other">Other Amount</a>
                 </div>
 
-                <p class="notranslate"><strong>Venmo</strong><br>@MichaelEskin</p>
+                <p class="notranslate"><strong>Venmo</strong><br><a class="venmo-link" href="https://venmo.com/u/MichaelEskin" target="_blank" rel="noopener noreferrer" data-donation-method="venmo" data-donation-amount="other">@MichaelEskin</a></p>
+
+                <div class="support-uses" aria-labelledby="support-uses-title">
+                    <div class="support-uses-title" id="support-uses-title">What Your Support Helps With</div>
+                    <div class="support-uses-grid">
+                        <div class="support-use"><strong>Hosting</strong><span>Keeping the tools online and accessible.</span></div>
+                        <div class="support-use"><strong>Maintenance</strong><span>Fixing bugs and keeping things working.</span></div>
+                        <div class="support-use"><strong>New Features</strong><span>Continuing to build and improve tools for musicians.</span></div>
+                    </div>
+                </div>
 
                 <p class="thanks">Thank you for supporting my work!</p>
                 <p style="margin-top:0;">— Michael</p>
@@ -262,6 +344,30 @@
     </body>
     <script>
     
+    /* Donation-link clicks only; these events do not indicate completed payments. */
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        var rawSource = params.get('src') || params.get('utm_source') || '';
+        var source = /^[a-zA-Z0-9_-]{1,64}$/.test(rawSource) ? rawSource : 'unspecified';
+
+        if (typeof gtag === 'function') {
+            gtag('event', 'support_page_view', { support_source: source });
+        }
+
+        document.querySelectorAll('[data-donation-method]').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'donation_link_click', {
+                        donation_method: link.getAttribute('data-donation-method'),
+                        donation_amount: link.getAttribute('data-donation-amount'),
+                        support_source: source,
+                        transport_type: 'beacon'
+                    });
+                }
+            });
+        });
+    })();
+
     //
     // Are we on iOS?
     //
