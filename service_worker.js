@@ -6,7 +6,13 @@
 //
 //
 //
-// Updated 6 Nov 2026 1500
+//
+//
+//
+// Updated 6 Nov 2026 1630
+//
+//
+//
 //
 //
 //
@@ -14,7 +20,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3384';
+const cacheName = 'abctoolscache-3385';
 
 const contentToCache = [
     'abctools.html',
@@ -111,6 +117,7 @@ const contentToCache = [
     'img/tool-abc-mountain-dulcimer-player-1.jpg',
     'img/tool-abc-ocarina-player-1.jpg',
     'img/tool-abc-irish-fiddle-player-1.jpg',
+    'img/tool-bagpipes-1.jpg',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',

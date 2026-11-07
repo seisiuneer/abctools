@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3384_110626_1500";
+var gVersionNumber = "3385_110626_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60966,7 +60966,13 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 5 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 6 November 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Scottish Bagpipe Fingering Player</strong> to the tools available on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -60975,13 +60981,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">Added support for <strong>%%writefields</strong>.</p>';
   modal_msg += '<p style="font-size:12pt;">This standard ABC 2.1 directive can be used to suppress or show specific ABC metadata tags on the tunes.</p>';
   modal_msg += '<p style="font-size:12pt;">Check the <strong>Controlling Displayed ABC Metadata Tags with %%writefields</strong> section in the <strong>User Guide</strong> for full details.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added <strong>Open Tunes in Another Tool</strong> to the <strong>Other ABC Tools</strong> tab on the <strong>More ABC Tools</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">Works exactly the same as the identically named button on the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -71476,6 +71475,10 @@ function OpenInABCIrishFiddleFingeringPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Irish Fiddle Fingering Player','https://michaeleskin.com/tools/abc-irish-fiddle-fingering-player.html','OpenInABCIrishFiddleFingeringPlayer');
 }
 
+function OpenInABCScottishBagpipeFingeringPlayer(abcText,isFromPlayer){
+  OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Scottish Bagpipe Fingering Player','https://michaeleskin.com/tools/abc-scottish-bagpipe-fingering-player.html','OpenInABCScottishBagpipeFingeringPlayer');
+}
+
 function OpenInABCRecorderFingeringPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Recorder Fingering Player','https://michaeleskin.com/tools/abc-recorder-fingering-player.html','OpenInABCRecorderFingeringPlayer');
 }
@@ -71928,6 +71931,7 @@ function openInExternalTool(theABC, isFromPlayer){
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
         toolCard('external_irish_fiddle_player', 'img/tool-abc-irish-fiddle-player-1.jpg', 'Open the ABC in the ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player') +
         toolCard('external_tin_whistle', 'img/tool-abc-tin-whistle-player-1.jpg', 'Open the ABC in the ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player', 'ABC Tin Whistle Fingering Player') +
+        toolCard('external_scottish_bagpipe', 'img/tool-bagpipes-1.jpg', 'Open the ABC in the ABC Scottish Bagpipe Fingering Player', 'ABC Scottish Bagpipe Fingering Player', 'ABC Scottish Bagpipe Fingering Player') +
         toolCard('external_irish_box', 'img/tool-abc-box-1.jpg', 'Open the ABC in the ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player', 'ABC Irish Button Box Fingering Player') +
         toolCard('external_anglo_concertina', 'img/tool-abc-anglo-player-1.jpg', 'Open the ABC in the ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player', 'ABC Anglo Concertina Fingering Player') +
         toolCard('external_harmonica_player', 'img/tool-abc-harmonica-player-1.jpg', 'Open the ABC in the ABC Harmonica Player', 'ABC Harmonica Player', 'ABC Harmonica Player') +
@@ -71999,6 +72003,9 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_tin_whistle");
   if (elem) elem.onclick = function(){ OpenInABCTinWhistleFingeringPlayer(theABC,isFromPlayer); };
+
+  elem = document.getElementById("external_scottish_bagpipe");
+  if (elem) elem.onclick = function(){ OpenInABCScottishBagpipeFingeringPlayer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_anglo_concertina");
   if (elem) elem.onclick = function(){ OpenInABCAngloConcertinaFingeringPlayer(theABC,isFromPlayer); };
