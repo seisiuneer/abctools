@@ -4379,15 +4379,20 @@ function insertTabOverrideCharacter(ch){
   if(notePos==null)return;
   const old=tabAnnotationForNote(value,notePos);
   const annotation='"_'+ch+';'+(direction==="push"?'↓':'↑')+'"';
+  let replaceStart=notePos,replaceEnd=notePos,replaceText=annotation;
   if(old){
     // Replace the complete annotation, preserving the original placement marker.
     const existing=value.slice(old.start,old.end);
     const prefix=existing.trim().startsWith('^')?'^':'_';
-    const newAnnotation='"'+prefix+ch+';'+(direction==="push"?'↓':'↑')+'"';
-    ta.setRangeText(newAnnotation,old.start-1,old.end+1,'end');
-  }else ta.setRangeText(annotation,notePos,notePos,'end');
-  const newNotePos=abcNoteStarts(ta.value).find(n=>n>=Math.max(0,notePos-1));
-  tabOverrideAnchorPos=Number.isInteger(newNotePos)?newNotePos:null;
+    replaceStart=old.start-1;
+    replaceEnd=old.end+1;
+    replaceText='"'+prefix+ch+';'+(direction==="push"?'↓':'↑')+'"';
+  }
+  ta.setRangeText(replaceText,replaceStart,replaceEnd,'end');
+  // Keep the edited note selected using its exact new source position.
+  // Searching from notePos-1 could select a preceding adjacent note (e.g. ABd).
+  const newNotePos=notePos+replaceText.length-(replaceEnd-replaceStart);
+  tabOverrideAnchorPos=newNotePos;
   manualSelectedNoteStart=tabOverrideAnchorPos;
   if(tabOverrideAnchorPos!=null)ta.setSelectionRange(tabOverrideAnchorPos,tabOverrideAnchorPos);
   ta.focus({preventScroll:true});
