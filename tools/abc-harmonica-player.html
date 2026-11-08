@@ -1589,7 +1589,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 4.3
+     Version 4.4
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Donate
@@ -4831,7 +4831,33 @@ function anyFullPageMode(){
          document.body.classList.contains("abc-full") ||
          document.body.classList.contains("notation-full");
 }
-function setPaneFull(kind,on){
+// Preserve the ABC editor selection across Full-Page View transitions.
+// Capture before pointer focus moves to the toggle, then restore after layout.
+function captureAbcFullPageSelection(){
+  const ta=$("abcText");
+  if(!ta)return null;
+  return {
+    start:ta.selectionStart,end:ta.selectionEnd,
+    direction:ta.selectionDirection,
+    scrollTop:ta.scrollTop,scrollLeft:ta.scrollLeft
+  };
+}
+function restoreAbcFullPageSelection(selection){
+  const ta=$("abcText");
+  if(!ta||!selection)return;
+  // On touch screens, avoid unexpectedly opening the software keyboard after
+  // exiting the full-page editor. The selection offsets still remain intact.
+  if(selection.start!==selection.end&&!window.matchMedia("(pointer:coarse)").matches){
+    ta.focus({preventScroll:true});
+  }
+  const len=ta.value.length;
+  ta.setSelectionRange(Math.min(selection.start,len),Math.min(selection.end,len),selection.direction);
+  ta.scrollTop=selection.scrollTop;
+  ta.scrollLeft=selection.scrollLeft;
+  updatePlaybackRangeButtons();
+}
+function setPaneFull(kind,on,abcSelection){
+  const savedAbcSelection=kind==="abc"?(abcSelection||captureAbcFullPageSelection()):null;
   const cls=kind==="abc"?"abc-full":"notation-full";
   const btn=$(kind==="abc"?"abcFullBtn":"notationFullBtn");
   if(on){
@@ -4846,13 +4872,26 @@ function setPaneFull(kind,on){
       setVerticalSplit(splitVPercent);
       setHorizontalSplit(splitHPercent);
     }
+    if(savedAbcSelection)restoreAbcFullPageSelection(savedAbcSelection);
   });
 }
 $("abcPrevNoteBtn").addEventListener("click",()=>moveHarmonicaNote(-1));
 $("abcNextNoteBtn").addEventListener("click",()=>moveHarmonicaNote(1));
-$("abcFullBtn").addEventListener("click",()=>{
-  if($("abcFullBtn").disabled)return;
-  setPaneFull("abc",!document.body.classList.contains("abc-full"));
+let abcFullPagePointerSelection=null;
+$("abcFullBtn").addEventListener("pointerdown",()=>{
+  abcFullPagePointerSelection=captureAbcFullPageSelection();
+});
+// If touch/pointer activation is cancelled, do not reuse the previous selection.
+$("abcFullBtn").addEventListener("pointercancel",()=>{
+  abcFullPagePointerSelection=null;
+});
+$("abcFullBtn").addEventListener("click",(event)=>{
+  if($("abcFullBtn").disabled){abcFullPagePointerSelection=null;return;}
+  // Keyboard/accessibility clicks have detail=0 and must use the CURRENT
+  // editor selection, even if an earlier pointer press was abandoned.
+  const selection=(event.detail>0&&abcFullPagePointerSelection)||captureAbcFullPageSelection();
+  abcFullPagePointerSelection=null;
+  setPaneFull("abc",!document.body.classList.contains("abc-full"),selection);
 });
 $("notationFullBtn").addEventListener("click",()=>{
   if($("notationFullBtn").disabled)return;
