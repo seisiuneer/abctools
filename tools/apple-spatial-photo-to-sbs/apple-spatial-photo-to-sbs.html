@@ -107,6 +107,30 @@
     position: relative;
   }
 
+  /* Compact Donate link, styled to match the other music tools. */
+  .donate-link {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 6px 12px;
+    border: 1px solid #c8fff1;
+    border-radius: 7px;
+    background: #7fffd4;
+    color: #12382d;
+    font-size: .82rem;
+    font-weight: 750;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .donate-link:hover { background: #adffe6; }
+  .donate-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
   button.fullscreenButton {
     position: absolute;
     top: 10px;
@@ -1065,6 +1089,8 @@
 </head>
 
 <body>
+
+<a class="donate-link" href="https://michaeleskin.com/tipjars_photo.html" target="_blank" rel="noopener noreferrer" title="Support Michael Eskin’s Stereo Photography Tools">Donate</a>
 
 <div class="wrap">
   <header>
@@ -5280,21 +5306,11 @@
 
         <hr style="margin-top:20px;">
 
-        <h4 style="text-align: center;">Tip Jars</h4>
+        <h4 style="text-align: center;">Support</h4>
         <div style="text-align: center;margin-bottom:20px;">
-          <p class="instructions-title"> This tool was created by</p>
-          <p class="instructions-title"> <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">Michael Eskin</a></p>
-          <div style="margin-top:10px;">
-            If the tool has been useful to you, please consider supporting ongoing<br/>development by tossing a few bucks into one of my online tip jars.
-          </div>
-          <div style="margin-top:10px;">
-            <b>PayPal</b><br/>
-            <a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>
-          </div>
-          <div style="margin-top:10px;">
-            <b>Venmo</b><br/>
-            @MichaelEskin
-          </div>
+          <p class="instructions-title">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">Michael Eskin</a>.</p>
+          <p>If you find it useful, please consider a contribution via</p>
+          <p><a href="https://michaeleskin.com/tipjars_photo.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Stereo Photography Tools</a></p>
         </div>
 
         <hr>
