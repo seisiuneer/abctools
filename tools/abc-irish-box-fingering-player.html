@@ -3874,14 +3874,22 @@ function setPlaybackRangeFromSelection(){
   }
   const header=visibleABC.slice(0,selected.headerEnd);
   const separator=/[\r\n]$/.test(header)?"":"\n";
+  // Carry forward all complete % comment/directive lines and standalone ABC
+  // fields before the selected passage, not just the first X:/T:/K: header.
+  // Keeping later Q:/L:/V:/P: fields also preserves tempo, note lengths, voice
+  // definitions and part changes. Exclude preceding music and w: lyric lines.
+  // The original order, whitespace, and line endings remain unchanged.
+  const preceding=visibleABC.slice(selected.headerEnd,selected.start);
+  const priorControlLines=preceding.match(/^[ \t]*(?:%|[A-Z][ \t]*:)[^\r\n]*(?:\r\n|\n|\r)/gm)||[];
+  const prefix=header+separator+priorControlLines.join("");
   const excerpt=visibleABC.slice(selected.start,selected.end);
-  ta.value=header+separator+excerpt+(excerpt.endsWith("\n")?"":"\n");
+  ta.value=prefix+excerpt+(excerpt.endsWith("\n")?"":"\n");
   // This editor is a disposable view: editing or narrowing the excerpt never
   // modifies playbackRangeOriginalABC or the stored full tune. Clear Range
   // discards any temporary edits and restores the exact original source.
   ta.readOnly=false;
   ta.title="Temporary playback range. Edits here will be discarded by Clear Range and are not saved or shared.";
-  ta.setSelectionRange(selected.headerEnd+separator.length,selected.headerEnd+separator.length);
+  ta.setSelectionRange(prefix.length,prefix.length);
   if(typeof instrumentNavAnchor!=="undefined")instrumentNavAnchor=null;
   updatePlaybackRangeButtons();
   if(typeof refreshInstrumentNoteButtons==="function")refreshInstrumentNoteButtons();
