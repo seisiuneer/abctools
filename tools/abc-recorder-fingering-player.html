@@ -1078,6 +1078,16 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 @keyframes playerPdfSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.playerPdfSpinner{animation:none;border-color:#176b43 #d9e7de #d9e7de #d9e7de}}
 @media print{.playerPdfStatusModal{display:none!important}}
+
+/* Temporary playback-range actions: wrap on desktop, two columns on mobile. */
+.playbackRangeButtons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;min-width:0}
+.playbackRangeButtons .notationHeaderBtn{white-space:normal;text-align:center;min-width:0}
+@media(max-width:760px){
+  #notationPanel .panelHeader{flex-wrap:wrap;align-items:flex-start}
+  #notationPanel .notationHeaderRight{flex:1 1 100%;justify-content:flex-start}
+  #notationPanel .playbackRangeButtons{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #notationPanel .playbackRangeButtons button{width:100%}
+}
 </style>
 <!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
 <style id="pdf-mobile-lesson-style">
@@ -1114,7 +1124,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Recorder Fingering Player</h1><p>Play ABC tunes with synchronized notation, recorder tablature, and live recorder fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="recorder-tab" selected>Notation + Recorder Tab</option></select></div>
@@ -1126,7 +1136,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
  <div class="leftPane" id="leftPane">
   <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><label class="countInLabel" for="foldOctavesCheck"><input id="foldOctavesCheck" type="checkbox" disabled>Fold low notes</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><label class="countInLabel" for="foldOctavesCheck"><input id="foldOctavesCheck" type="checkbox" disabled>Fold low notes</label><span class="playbackRangeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Clear Range</button></span><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Recorder Fingering</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
@@ -1208,6 +1218,25 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <p>Uncheck the option to restore normal arrow-key behavior.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback Range</p>
+      <p>Select one or more notes in the ABC editor, or click a note in the rendered notation to select it.</p>
+      <p>The previous and next note buttons can also select notes without rebuilding the player until you click <b>Set Playback Range</b>.</p>
+      <p>The <b>Set Playback Range</b> button in the Notation header becomes available when your selection includes notes.</p>
+      <p><b>Clear Range</b> becomes available once a playback range is active.</p>
+      <p>Click <b>Set Playback Range</b> to temporarily replace the visible ABC, notation, and audio with the selected passage while retaining the tune's complete header.</p>
+      <p>Any part of the selection within the tune header is ignored.</p>
+      <p>Use the normal <b>Play</b> and <b>Loop</b> controls to practice just that passage.</p>
+      <p>To narrow the passage further, select notes within the currently displayed range and click <b>Set Playback Range</b> again.</p>
+      <p>You can repeat this process to create smaller nested playback ranges without changing the preserved original tune.</p>
+      <p>You can edit the temporary ABC while a range is active, and its notation and audio will update as you type.</p>
+      <p><b>Any changes you make to the ABC within a playback range are temporary and are not saved when the full tune is restored.</b></p>
+      <p>Click <b>Clear Range</b> to discard all temporary range edits and restore the entire original tune, not just the previous range.</p>
+      <p>Saving ABC, creating share or lesson links, and opening tunes in ABC Transcription Tools always use the preserved full tune rather than the temporary range.</p>
+      <p>Clicking the main <b>Export PDF</b> button automatically clears the playback range and restores the full tune before preparing the PDF.</p>
+      <p>Changing tunes or loading another ABC file also clears the playback range and discards temporary range edits.</p>
+      <p>Changing recorder type or fingering system clears the playback range and discards temporary edits.</p>
+
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Recorder Fingering Display</p>
       <p>The display uses the selected Baroque or German recorder fingering. The note name appears to the right of the fingering symbol.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
@@ -1272,6 +1301,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+      <p>If a playback range is active, clicking the main <b>Export PDF</b> button first clears the range, discards temporary range edits, and restores the full tune before preparing the PDF.</p>
       <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>By default, the PDF includes a centered <b>Click the title to play</b> instruction in the top margin of its first page. Uncheck <b>Add "Click the title to play" on the first page header</b> to omit it; the tune title and music do not move.</p>
@@ -1325,6 +1355,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
       <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
+      
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 </div>
     <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
@@ -2050,6 +2081,102 @@ function clickedNotationMidi(clickedToken){
   return midi+accidental;
 }
 
+let playbackRangeOriginalABC=null;
+// Return the complete tune even when the visible editor is showing a temporary
+// playback excerpt. Never persist the excerpt in tunes[] or loadedABC.
+function currentFullTuneABC(){
+  return playbackRangeOriginalABC!==null
+    ? playbackRangeOriginalABC : $("abcText").value;
+}
+
+// The tune header runs through the first complete K: field. Selection inside
+// that header is ignored, but all of its metadata is preserved in the excerpt.
+function playbackRangeHeaderEnd(abc){
+  const match=/^[ \t]*K[ \t]*:[^\r\n]*(?:\r\n|\n|\r|$)/m.exec(abc);
+  return match?match.index+match[0].length:-1;
+}
+
+function selectedPlaybackNotes(abc,start,end){
+  const headerEnd=playbackRangeHeaderEnd(abc);
+  if(headerEnd<0||start>=end||end<=headerEnd)return null;
+  // Keep the user's selected ABC verbatim (including barlines, repeats,
+  // chords and comments) while expanding only incomplete note tokens.
+  const notes=abcNoteTokens(abc).filter(t=>
+    t.start>=headerEnd && t.start<end && t.end>Math.max(start,headerEnd)
+  );
+  if(!notes.length)return null;
+  return {
+    headerEnd,
+    start:Math.max(headerEnd,Math.min(start,notes[0].start)),
+    end:Math.max(end,notes[notes.length-1].end)
+  };
+}
+
+function updatePlaybackRangeButtons(){
+  const set=$("setPlaybackRangeBtn"),clear=$("clearPlaybackRangeBtn");
+  if(!set||!clear)return;
+  const active=playbackRangeOriginalABC!==null;
+  const ta=$("abcText");
+  // Both full tunes and temporary excerpts can be narrowed. An active range
+  // does not disable Set: the next valid selection creates a nested subrange.
+  const hasSelectedNotes=tunes.length>0&&
+    ta.selectionEnd>ta.selectionStart&&
+    !!selectedPlaybackNotes(ta.value,ta.selectionStart,ta.selectionEnd);
+  set.disabled=!hasSelectedNotes;
+  clear.disabled=!active;
+}
+
+// Drop only the temporary view state; the caller is loading a different tune
+// or an entirely new ABC collection and will populate the editor separately.
+function discardPlaybackRangeView(){
+  playbackRangeOriginalABC=null;
+  const ta=$("abcText");
+  ta.readOnly=false;
+  ta.removeAttribute("title");
+  updatePlaybackRangeButtons();
+}
+
+function setPlaybackRangeFromSelection(){
+  if(!tunes.length)return;
+  const ta=$("abcText"),visibleABC=ta.value;
+  const selected=selectedPlaybackNotes(visibleABC,ta.selectionStart,ta.selectionEnd);
+  if(!selected)return;
+
+  // Capture the original tune only when first entering range mode. When a
+  // further selection narrows an existing range, keep the original intact;
+  // the new excerpt is cut from the currently displayed excerpt, never from
+  // the stored full tune. Clearing any nested range restores that full tune.
+  if(playbackRangeOriginalABC===null){
+    syncCurrentTuneFromEditor();
+    playbackRangeOriginalABC=visibleABC;
+  }
+  const header=visibleABC.slice(0,selected.headerEnd);
+  const separator=/[\r\n]$/.test(header)?"":"\n";
+  const excerpt=visibleABC.slice(selected.start,selected.end);
+  ta.value=header+separator+excerpt+(excerpt.endsWith("\n")?"":"\n");
+  // This editor is a disposable view: editing or narrowing the excerpt never
+  // modifies playbackRangeOriginalABC or the stored full tune. Clear Range
+  // discards any temporary edits and restores the exact original source.
+  ta.readOnly=false;
+  ta.title="Temporary playback range. Edits here will be discarded by Clear Range and are not saved or shared.";
+  ta.setSelectionRange(selected.headerEnd+separator.length,selected.headerEnd+separator.length);
+  if(typeof instrumentNavAnchor!=="undefined")instrumentNavAnchor=null;
+  updatePlaybackRangeButtons();
+  if(typeof refreshInstrumentNoteButtons==="function")refreshInstrumentNoteButtons();
+  scheduleRebuild();
+}
+
+function clearPlaybackRange(){
+  if(playbackRangeOriginalABC===null)return;
+  const fullABC=playbackRangeOriginalABC;
+  discardPlaybackRangeView();
+  $("abcText").value=fullABC;
+  if(typeof instrumentNavAnchor!=="undefined")instrumentNavAnchor=null;
+  updatePlaybackRangeButtons();
+  if(typeof refreshInstrumentNoteButtons==="function")refreshInstrumentNoteButtons();
+  scheduleRebuild();
+}
+
 function selectClickedNotationNote(abcelem){
   if(!abcelem||!Number.isInteger(abcelem.startChar)||!Number.isInteger(abcelem.endChar))return;
 
@@ -2075,6 +2202,7 @@ function selectClickedNotationNote(abcelem){
 
   ta.focus({preventScroll:true});
   ta.setSelectionRange(start,end);
+  updatePlaybackRangeButtons();
   const line=ta.value.slice(0,start).split(/\r?\n/).length;
   const lineHeight=parseFloat(getComputedStyle(ta).lineHeight)||20;
   ta.scrollTop=Math.max(0,((line-1)*lineHeight)-(ta.clientHeight/2)+(lineHeight/2));
@@ -2216,7 +2344,7 @@ function decompressABCDeflate(payload){
 
 function syncCurrentTuneFromEditor(){
   if(tunes.length&&currentTune>=0&&currentTune<tunes.length&&!$("abcText").disabled){
-    tunes[currentTune]=$("abcText").value;
+    tunes[currentTune]=currentFullTuneABC();
     loadedABC=tunes.join("\n\n");
   }
 }
@@ -2264,7 +2392,7 @@ function updateShareButtons(){
   }
 
   syncCurrentTuneFromEditor();
-  const tuneURL=generateShareLink($("abcText").value);
+  const tuneURL=generateShareLink(currentFullTuneABC());
   const allURL=generateShareLink(tunes.join("\n\n"));
 
   tuneBtn.disabled=!tuneURL||tuneURL.length>SHARE_LINK_MAX_LEN;
@@ -2310,7 +2438,7 @@ function prepareABCForABCTTPlayback(abc){
 
 function buildABCTTShareURL(allTunes,mode){
   syncCurrentTuneFromEditor();
-  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
+  const abc=allTunes?tunes.join("\n\n"):currentFullTuneABC();
   if(!abc||!abc.trim())return '';
     const def=compressABCDeflate(prepareABCForABCTTPlayback(abc));
     const action=mode==="player"?"play=1":"editor=1";
@@ -2342,7 +2470,7 @@ function handleShareButtonClick(event,allTunes){
 
 async function copyShareLink(allTunes){
   syncCurrentTuneFromEditor();
-  const abc=allTunes?tunes.join("\n\n"):$("abcText").value;
+  const abc=allTunes?tunes.join("\n\n"):currentFullTuneABC();
   const url=generateShareLink(abc);
   if(!url||url.length>SHARE_LINK_MAX_LEN)return;
 
@@ -2368,7 +2496,7 @@ async function copyShareLink(allTunes){
   }
 
   if(copied){
-    const tuneName=firstTitle($("abcText").value,currentTune+1);
+    const tuneName=firstTitle(currentFullTuneABC(),currentTune+1);
     const message=allTunes
       ?"Share link for all tunes copied to the clipboard."
       :`Share link for the current tune <b>${escapeHTML(tuneName)}</b> copied to the clipboard.`;
@@ -2397,7 +2525,7 @@ function populateTuneSelector(label){
   $("tuneSelect").disabled=false;
 }
 
-function setAbcDirty(dirty=true){abcDirty=!!dirty}
+function setAbcDirty(dirty=true){if(dirty&&playbackRangeOriginalABC!==null)return;abcDirty=!!dirty}
 
 async function confirmDiscardDirtyForOpen(){
   if(!abcDirty||!tunes.length)return true;
@@ -2496,6 +2624,7 @@ async function saveCurrentCollection(){
 }
 
 function processLoadedABC(abc,label){
+  discardPlaybackRangeView();
   melodyMuted=false;
   updateMuteMelodyButton();
   loadedABC=abc;
@@ -3010,6 +3139,7 @@ function loadTune(index,syncEditor=true){
   const notationViewport=$("notation").parentElement;
   if(notationViewport)notationViewport.scrollTop=0;
   if(syncEditor)syncCurrentTuneFromEditor();
+  discardPlaybackRangeView();
   cancelCountIn();
   playbackActive=false;
   melodyMuted=false;
@@ -3020,6 +3150,7 @@ function loadTune(index,syncEditor=true){
   updateMuteMelodyButton();
   scheduleRebuild();
   updateShareButtons();
+  updatePlaybackRangeButtons();
 }
 function updateMuteMelodyButton(){
   const btn=$("muteMelodyBtn");
@@ -3218,6 +3349,40 @@ function initializeActionButtonStates(){
   else updateTempoButtonState();
 }
 
+// PDF export consumes the currently rendered notation, not only the ABC
+// returned by currentFullTuneABC(). When a temporary practice range is shown,
+// restore AND finish rendering the full tune before letting the shared PDF
+// exporter open its options dialog. This listener runs in the capture phase so
+// the exporter never sees the initial click with the shortened notation.
+let playbackRangePdfRestoring=false;
+$("exportPdfBtn").addEventListener("click",async event=>{
+  if(playbackRangePdfRestoring){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    return;
+  }
+  if(playbackRangeOriginalABC===null)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  const exportBtn=$("exportPdfBtn");
+  playbackRangePdfRestoring=true;
+  exportBtn.disabled=true;
+  try{
+    clearPlaybackRange();
+    // clearPlaybackRange() normally schedules a debounced rebuild; PDF must
+    // instead wait for the full notation to finish rendering immediately.
+    clearTimeout(rebuildTimer);
+    await rebuild();
+  }finally{
+    playbackRangePdfRestoring=false;
+    exportBtn.disabled=!tunes.length;
+  }
+  // Forward one click to the existing exporter after range mode is cleared.
+  // The exporter will show its usual PDF settings and use the full notation.
+  if(!exportBtn.disabled)exportBtn.click();
+},true);
+
 $("saveAbcBtn").addEventListener("click",saveCurrentCollection);
 
 $("openFile").addEventListener("change",async e=>{
@@ -3311,13 +3476,14 @@ $("abcText").addEventListener("paste",e=>{
 });
 
 $("abcText").addEventListener("input",()=>{
-  setAbcDirty(true);
+  const editingTemporaryRange=playbackRangeOriginalABC!==null;
+  if(!editingTemporaryRange)setAbcDirty(true);
   updateMuteMelodyButton();
-  beginManualTuneIfNeeded();
-  syncCurrentTuneFromEditor();
+  if(!editingTemporaryRange)beginManualTuneIfNeeded();
+  if(!editingTemporaryRange)syncCurrentTuneFromEditor();
   const value=$("abcText").value;
 
-  if(!value.trim()){
+  if(!value.trim()&&!editingTemporaryRange){
     if(manualEntryCollection){
       tunes=[];
       loadedABC="";
@@ -3331,11 +3497,30 @@ $("abcText").addEventListener("input",()=>{
       $("audio").innerHTML="";
       showWhistleLive(null);
     }
-  }else if(hasMinimumABCForRender(value)){
+  }else if(editingTemporaryRange||hasMinimumABCForRender(value)){
     scheduleRebuild();
   }
   updateShareButtons();
+  updatePlaybackRangeButtons();
 });
+
+
+// Selection changes only update button states; rendering happens on Set/Clear.
+for(const type of ["select","keyup","mouseup","touchend"]){
+  $("abcText").addEventListener(type,updatePlaybackRangeButtons);
+}
+$("setPlaybackRangeBtn").addEventListener("click",setPlaybackRangeFromSelection);
+$("clearPlaybackRangeBtn").addEventListener("click",clearPlaybackRange);
+
+// Instrument setup changes are equivalent to switching tunes for an active
+// practice range. Capture-phase ensures the original ABC is restored before
+// existing instrument/tuning handlers read the editor and rebuild notation.
+const playbackRangeResetControls=new Set(["instrumentSelect"]);
+document.addEventListener("change",event=>{
+  if(playbackRangeOriginalABC!==null && playbackRangeResetControls.has(event.target?.id)){
+    clearPlaybackRange();
+  }
+},true);
 
 $("metronomeCheck").addEventListener("change",toggleMetronome);
 $("countInCheck").addEventListener("change",saveCountInPreference);
@@ -3536,14 +3721,14 @@ function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearc
   if(fold!==null&&!['0','1'].includes(fold))throw new Error('Lesson fold-octaves setting is invalid.');
   if(notation)$('notationDisplay').value=notation;if(instrument)$('instrumentSelect').value=instrument;if(fold!==null){foldOctavesEnabled=fold==='1';$('foldOctavesCheck').checked=foldOctavesEnabled;saveFoldOctavesPreference();}saveWhistleDisplayPrefs();}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
-function lessonABC(){syncCurrentTuneFromEditor();return $('abcText').value}
+function lessonABC(){syncCurrentTuneFromEditor();return currentFullTuneABC()}
 function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
 function setModal(id,on){const e=$(id);if(e)e.classList.toggle('open',!!on)}
-function lessonTuneTitle(){const m=String($('abcText')?.value||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
+function lessonTuneTitle(){const m=String(currentFullTuneABC()||'').match(/^\s*T\s*:\s*(.+?)\s*$/m);return m?m[1].trim():''}
 function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled=false;updateUnifiedShareTooltip();}const has=!!tunes.length;
   // Use live source ABC, not the hidden legacy buttons' possibly stale disabled states.
   if(has)syncCurrentTuneFromEditor();
-  const currentABC=String($('abcText')?.value||'').trim();
+  const currentABC=String(currentFullTuneABC()||'').trim();
   const currentURL=currentABC?generateShareLink(currentABC):'';
   const allURL=has?generateShareLink(tunes.join('\n\n')):'';
   $('shareCurrentDialogBtn').disabled=!currentURL||currentURL.length>SHARE_LINK_MAX_LEN;
@@ -3597,7 +3782,7 @@ function showShareLinkDialog(kind,url){
 }
 function showStandardShareLink(allTunes){
   syncCurrentTuneFromEditor();
-  const abc=allTunes?tunes.join("\n\n"):$('abcText').value;
+  const abc=allTunes?tunes.join("\n\n"):currentFullTuneABC();
   const url=generateShareLink(abc);
   if(!url||url.length>SHARE_LINK_MAX_LEN)return;
   setModal('shareModal',false);
@@ -3611,8 +3796,8 @@ function shareLinkCopyMessage(copied){
 }
 async function askCurrentShareLinkFileName(){
   syncCurrentTuneFromEditor();
-  const title=firstTitle($('abcText').value,1);
-  const namedTitle=/^T:\s*.*\S.*$/m.test($('abcText').value)?String(title).trim():'';
+  const title=firstTitle(currentFullTuneABC(),1);
+  const namedTitle=/^T:\s*.*\S.*$/m.test(currentFullTuneABC())?String(title).trim():'';
   return askLessonTextFileName('Save current tune share link file name:',namedTitle?namedTitle+' Share Link':'current_tune_share_link');
 }
 async function askAllShareLinkFileName(){
@@ -3631,7 +3816,7 @@ function openDisplayedShareInABCTT(){
 }
 function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('shareAllBtn');if(!oldTune||!oldAll)return;let btn=$('shareBtn');if(!btn){btn=document.createElement('button');btn.id='shareBtn';btn.textContent='Share';oldTune.parentElement.appendChild(btn)}btn.disabled=false;btn.onclick=event=>{
     refreshUnifiedShareState();
-    if(event.altKey && String($('abcText')?.value||'').trim()){
+    if(event.altKey && String(currentFullTuneABC()||'').trim()){
       event.preventDefault();
       openShareInABCTranscriptionTools(false,'editor');
       return;
@@ -3745,6 +3930,7 @@ function moveInstrumentNote(direction){
  }
  scrollNavigatedNotationNoteIntoView();
  ta.focus({preventScroll:true});ta.setSelectionRange(target.start,target.end);
+  updatePlaybackRangeButtons();
  const line=ta.value.slice(0,target.start).split(/\r?\n/).length-1;
  const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;
  ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
@@ -3784,6 +3970,7 @@ function jumpToInstrumentNoteBoundary(toEnd){
   scrollNavigatedNotationNoteIntoView();
   ta.focus({preventScroll:true});
   ta.setSelectionRange(target.start,target.end);
+  updatePlaybackRangeButtons();
   const line=ta.value.slice(0,target.start).split(/\r?\n/).length-1;
   const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;
   ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
