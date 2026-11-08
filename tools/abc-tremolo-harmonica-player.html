@@ -3487,6 +3487,8 @@ function installTempoDialog(){
   const input=findTempoInput();
   if(!input){updateTempoButtonState();return false;}
   applyTempoToInput(input,savedTempo());
+  // Tempo application may reset the Loop highlight; keep it synchronized.
+  restorePersistentPlaybackLoop(controller);
   updateTempoButtonState();
   if(input.dataset.tempoDialogInstalled==="true")return true;
   input.dataset.tempoDialogInstalled="true";input.readOnly=true;input.setAttribute("readonly","readonly");input.title="Click to set tempo percentage";input.setAttribute("aria-label","Open tempo percentage dialog");input.style.cursor="pointer";

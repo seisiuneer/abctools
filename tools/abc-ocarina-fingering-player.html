@@ -3109,6 +3109,8 @@ function installTempoDialog(){
   }
 
   applyTempoToInput(input,savedTempo());
+  // Tempo application may reset the Loop highlight; keep it synchronized.
+  restorePersistentPlaybackLoop(controller);
   updateTempoButtonState();
   if(input.dataset.tempoDialogInstalled==="true")return true;
 
