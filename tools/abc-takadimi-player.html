@@ -3601,10 +3601,12 @@ async function rebuild(){
     }finally{
       audioControllerInitializing=false;
     }
-    if(gen!==renderGeneration)return;restorePersistentPlaybackLoop(controller);
+    if(gen!==renderGeneration)return;
     syncPlaybackPermissionHeaderControls();
 
     installTempoDialogWhenReady();
+    // Tempo setup may reset abcjs button highlights; restore Loop afterward.
+    restorePersistentPlaybackLoop(controller);
 
     if(initialAudioRetry){
       initialAudioRetry=false;
