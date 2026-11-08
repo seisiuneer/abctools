@@ -1479,7 +1479,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.3</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1613,6 +1613,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>As each melody note plays, the notation cursor follows the tune and the fretboard pane updates to that note.</p>
       <p>Playback uses the ABC Transcription Tools custom <b>MIDI program 141</b> for Mandolin, <b>MIDI program 105</b> for Tenor Banjo, the ABC Transcription Tools custom <b>MIDI program 140</b> for either Bouzouki tuning, <b>MIDI program 25</b> for either Guitar tuning, or <b>MIDI program 25</b> for either Ukulele, with program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback.</p>
@@ -3552,6 +3553,33 @@ $("showAllFingeringsBtn").addEventListener("click",async()=>{
   }finally{scratch.remove();}
 });
 
+// The playback Loop button is a per-player browser preference, never part of ABC or lessons.
+// Manage this locally rather than using abcjs's shared LastPlayerRepeat storage key.
+const PLAYER_LOOP_STORAGE_KEY = "abc-fretboard-player:playback-loop";
+let playerLoopEnabled = (() => {
+  try { return localStorage.getItem(PLAYER_LOOP_STORAGE_KEY) === "true"; }
+  catch (_) { return false; }
+})();
+function installPersistentPlaybackLoop(audioController) {
+  // abcjs otherwise resets the button and writes its generic repeat key.
+  if (ABCJS.eskinConfig && typeof ABCJS.eskinConfig.setLoopStateCaching === "function")
+    ABCJS.eskinConfig.setLoopStateCaching(false);
+  // Wrap the actual handler, not the button click: audio initialization may be async.
+  const originalToggleLoop = audioController.toggleLoop;
+  audioController.toggleLoop = function () {
+    const result = originalToggleLoop.apply(audioController, arguments);
+    playerLoopEnabled = !!audioController.isLooping;
+    try { localStorage.setItem(PLAYER_LOOP_STORAGE_KEY, String(playerLoopEnabled)); }
+    catch (_) { /* Local storage may be unavailable; keep current-session state. */ }
+    return result;
+  };
+}
+function restorePersistentPlaybackLoop(audioController) {
+  audioController.isLooping = playerLoopEnabled;
+  if (audioController.control && typeof audioController.control.pushLoop === "function")
+    audioController.control.pushLoop(playerLoopEnabled);
+}
+
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
@@ -3661,7 +3689,7 @@ async function rebuild(){
       }
     };
 
-    controller=new ABCJS.synth.SynthController(playbackABC);
+    controller=new ABCJS.synth.SynthController(playbackABC);installPersistentPlaybackLoop(controller);
     controller.load("#audio",cursorControl,{
       displayLoop:true,
       displayRestart:true,
@@ -3676,7 +3704,7 @@ async function rebuild(){
     }finally{
       audioControllerInitializing=false;
     }
-    if(gen!==renderGeneration)return;
+    if(gen!==renderGeneration)return;restorePersistentPlaybackLoop(controller);
 
     installTempoDialogWhenReady();
 

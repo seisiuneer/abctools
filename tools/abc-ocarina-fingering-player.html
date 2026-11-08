@@ -1149,7 +1149,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.1</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
 <div class="toolbar ocarinaToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="ocarina-tab" selected>Notation + Ocarina Tab</option></select></div>
@@ -1244,6 +1244,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>The ABC text-size selector (Small, Medium, Large, Largest) changes only the editor text size. Use the pane dividers to resize the display on a wide screen, or <b>Full-Page View</b> to enlarge any pane.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>Press Play in the Notation pane to hear the tune. The highlighted notation and live fingering display follow the melody as it plays.</p>
       <p>The audio uses an ocarina-like instrument sound. The selected ocarina model and <b>Octave Shift</b> determine the sounding register; changing either does not transpose the printed notation.</p>
       <p><b>Tempo</b> changes the playing speed from 10% to 200%. You can also use the tempo percentage box in the playback bar.</p>
@@ -3182,6 +3183,33 @@ function showEnablePlaybackButton(){
   updateTempoButtonState();
 }
 
+// The playback Loop button is a per-player browser preference, never part of ABC or lessons.
+// Manage this locally rather than using abcjs's shared LastPlayerRepeat storage key.
+const PLAYER_LOOP_STORAGE_KEY = "abc-ocarina-fingering-player:playback-loop";
+let playerLoopEnabled = (() => {
+  try { return localStorage.getItem(PLAYER_LOOP_STORAGE_KEY) === "true"; }
+  catch (_) { return false; }
+})();
+function installPersistentPlaybackLoop(audioController) {
+  // abcjs otherwise resets the button and writes its generic repeat key.
+  if (ABCJS.eskinConfig && typeof ABCJS.eskinConfig.setLoopStateCaching === "function")
+    ABCJS.eskinConfig.setLoopStateCaching(false);
+  // Wrap the actual handler, not the button click: audio initialization may be async.
+  const originalToggleLoop = audioController.toggleLoop;
+  audioController.toggleLoop = function () {
+    const result = originalToggleLoop.apply(audioController, arguments);
+    playerLoopEnabled = !!audioController.isLooping;
+    try { localStorage.setItem(PLAYER_LOOP_STORAGE_KEY, String(playerLoopEnabled)); }
+    catch (_) { /* Local storage may be unavailable; keep current-session state. */ }
+    return result;
+  };
+}
+function restorePersistentPlaybackLoop(audioController) {
+  audioController.isLooping = playerLoopEnabled;
+  if (audioController.control && typeof audioController.control.pushLoop === "function")
+    audioController.control.pushLoop(playerLoopEnabled);
+}
+
 async function rebuild(){
   cancelCountIn();
   const gen=++renderGeneration;
@@ -3286,7 +3314,7 @@ async function rebuild(){
       }
     };
 
-    controller=new ABCJS.synth.SynthController(playbackABC);
+    controller=new ABCJS.synth.SynthController(playbackABC);installPersistentPlaybackLoop(controller);
     controller.load("#audio",cursorControl,{
       displayLoop:true,
       displayRestart:true,
@@ -3301,7 +3329,7 @@ async function rebuild(){
     }finally{
       audioControllerInitializing=false;
     }
-    if(gen!==renderGeneration)return;
+    if(gen!==renderGeneration)return;restorePersistentPlaybackLoop(controller);
 
     installTempoDialogWhenReady();
 
