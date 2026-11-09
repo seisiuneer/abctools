@@ -61,6 +61,142 @@
 <script src="html2image.js"></script>
 <script src="abc-player-pdf-export.js?cb=20261027_pdf_title_header"></script>
 <style>
+
+/* Phrase Builder: self-contained ABC Transcription Tools-style form.
+   Uses its own classes so player-wide and browser modal styles cannot leak in. */
+.playerPhraseOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 15000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 18px 12px;
+  background: rgba(0, 0, 0, .42);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.playerPhraseDialog {
+  box-sizing: border-box;
+  width: min(600px, 100%);
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+  padding: 28px 30px 30px;
+  border: 1px solid #858585;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: 0 7px 25px rgba(0,0,0,.32);
+  color: #111;
+  font: 16px/1.5 Helvetica, Arial, sans-serif;
+  text-align: left;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: contain;
+}
+.playerPhraseDialog, .playerPhraseDialog * {box-sizing: border-box;}
+.playerPhraseDialog h2 {
+  margin: 4px 0 24px;
+  padding: 0;
+  color: #111;
+  font: normal 23px/1.3 Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+.playerPhraseDialog p {
+  margin: 0 0 19px;
+  color: #111;
+  font: inherit;
+}
+.playerPhraseDialog .playerPhraseFields {margin-top: 27px;}
+.playerPhraseDialog .playerPhraseField {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  margin: 0 0 16px;
+}
+.playerPhraseDialog .playerPhraseField label {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: #111;
+  font: 16px/1.4 Helvetica, Arial, sans-serif;
+}
+.playerPhraseDialog .playerPhraseField input[type="number"] {
+  display: block;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 34px;
+  min-width: 0;
+  margin: 0;
+  padding: 3px 7px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  outline-offset: 1px;
+  background: #fff;
+  color: #111;
+  -webkit-text-fill-color: #111;
+  font: 16px/1.3 Helvetica, Arial, sans-serif;
+  text-align: left;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  box-shadow: none;
+}
+.playerPhraseDialog .playerPhraseField input[type="number"]::-webkit-inner-spin-button,
+.playerPhraseDialog .playerPhraseField input[type="number"]::-webkit-outer-spin-button {
+  display: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+.playerPhraseDialog .playerPhraseButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 29px;
+}
+.playerPhraseDialog .playerPhraseButtons button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100px;
+  min-height: 39px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid #c6c6c6;
+  border-radius: 0;
+  background: #ccc;
+  box-shadow: none;
+  color: #111;
+  -webkit-text-fill-color: #111;
+  font: 16px/1.3 Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  cursor: pointer;
+}
+.playerPhraseDialog .playerPhraseButtons button:hover {background: #bdbdbd;}
+.playerPhraseDialog :focus-visible {outline: 2px solid #1673d4;outline-offset: 2px;}
+@media (max-width: 500px) {
+  .playerPhraseOverlay {padding: 10px 8px;}
+  .playerPhraseDialog {
+    width: 100%;
+    max-height: calc(100vh - 20px);
+    max-height: calc(100dvh - 20px);
+    padding: 18px 16px 22px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .playerPhraseDialog h2 {font-size: 20px;margin: 2px 0 18px;}
+  .playerPhraseDialog p {margin-bottom: 14px;}
+  .playerPhraseDialog .playerPhraseFields {margin-top: 22px;}
+  .playerPhraseDialog .playerPhraseField {gap: 6px;margin-bottom: 13px;}
+  .playerPhraseDialog .playerPhraseField label {font-size: 14px;}
+  .playerPhraseDialog .playerPhraseField input[type="number"] {flex-basis: 60px;width: 60px;font-size: 16px;}
+  .playerPhraseDialog .playerPhraseButtons {margin-top: 22px;}
+}
+
+
 :root{--green:#176b43;--gold:#e2ad3b;--border:rgba(127,127,127,.35);--push:#b80054;--draw:#008762;--page:22px}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#17241c;background:#fff;overflow:hidden}
 .app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}.app-header{position:relative;flex:0 0 auto;color:#fff;background:linear-gradient(135deg,rgba(11,55,34,.97),rgba(23,107,67,.96));border-bottom:5px solid var(--gold);padding:14px 20px 12px;text-align:center}.app-header h1{margin:0;font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.1}.app-header p{margin:7px auto 0;color:#dcebe2;max-width:900px}.version{position:absolute;right:22px;top:12px;font-size:.76rem;color:#dcebe2;font-weight:600}.tip{position:absolute;left:22px;top:11px;padding:6px 10px;border:1px solid #c8fff1;border-radius:6px;background:#7fffd4;color:#12382d;text-decoration:none;font-size:.8rem;font-weight:750}
@@ -1116,6 +1252,65 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #notationPanel .playbackRangeButtons{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   #notationPanel .playbackRangeButtons button{width:100%}
 }
+
+/* ABC editor practice actions: keep the working controls together by the
+   full-page toggle, allowing sensible wrapping only when space is tight. */
+#abcPanel .abcHeaderRight{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;min-width:0}
+#abcPanel .abcPracticeButtons{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;min-width:0}
+#abcPanel .abcPracticeButtons button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:6px;padding:5px 8px;font-size:12px;font-weight:650;line-height:1.2;cursor:pointer;color:#17241c;-webkit-text-fill-color:#17241c;white-space:nowrap}
+#abcPanel .abcPracticeButtons button:disabled{opacity:.45;cursor:default}
+#abcPanel .abcPracticeButtons button:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
+#abcPanel #fileLabel{margin-right:2px;white-space:nowrap}
+@media(max-width:650px){
+  #abcPanel .panelHeader{flex-wrap:wrap;align-items:flex-start;gap:6px}
+  #abcPanel .abcHeaderRight{flex:1 1 100%;justify-content:flex-start}
+  #abcPanel .abcPracticeButtons button{font-size:11px;padding:5px 7px}
+}
+
+
+/* Flexible panel headers: let individual controls share the title row when they
+   fit instead of forcing the entire right-hand group onto another line. Keep
+   the three practice buttons together until the panel is genuinely too narrow. */
+#abcPanel .panelHeader,
+#notationPanel .panelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  column-gap: 7px;
+  row-gap: 6px;
+}
+#abcPanel .panelHeader > span:first-child,
+#notationPanel .panelHeader > span:first-child {
+  margin-right: auto;
+  flex: 0 0 auto;
+}
+#abcPanel .abcHeaderRight,
+#notationPanel .notationHeaderRight {
+  display: contents;
+}
+#abcPanel .abcPracticeButtons {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  gap: 6px;
+}
+#abcPanel .panelHeader select,
+#abcPanel .panelHeader button,
+#notationPanel .panelHeader button,
+#notationPanel .panelHeader label {
+  flex-shrink: 0;
+}
+@media (max-width: 650px) {
+  #abcPanel .panelHeader,
+  #notationPanel .panelHeader {
+    align-items: center;
+  }
+}
 </style>
 <!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
 <style id="pdf-mobile-lesson-style">
@@ -1152,7 +1347,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.8</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -1163,9 +1358,9 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">No file loaded</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">0 tunes</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><button id="tabOverrideBtn" type="button" disabled>Tab Override</button><span class="abcPracticeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="phraseBuilderBtn" type="button" disabled title="Build temporary call-and-response practice phrases">Phrase Builder</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Restore</button></span><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><span class="playbackRangeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Clear Range</button></span><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
+  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled hidden>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Fingering Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">Jeffries • Cross-row (C5 on G-row draw)</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="670"></canvas><canvas id="diagramOverlay" width="1280" height="670"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="concertinaStaffNote" class="concertinaStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark">Visual design by Ephraim Schafli</div></div><div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
@@ -1311,19 +1506,19 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback Range</p>
       <p>Select one or more notes in the ABC editor, or click a note in the rendered notation to select it.</p>
       <p>The previous and next note buttons can also select notes without rebuilding the player until you click <b>Set Playback Range</b>.</p>
-      <p>The <b>Set Playback Range</b> button in the Notation header becomes available when your selection includes notes.</p>
-      <p><b>Clear Range</b> becomes available once a playback range is active.</p>
-      <p>Click <b>Set Playback Range</b> to temporarily replace the visible ABC, notation, and audio with the selected passage while retaining the tune's complete header.</p>
+      <p>The <b>Set Playback Range</b> button in the ABC editor header becomes available when your selection includes notes.</p>
+      <p><b>Restore</b> becomes available whenever a playback range or Phrase Builder result is active.</p>
+      <p>Click <b>Set Playback Range</b> to temporarily replace the visible ABC, notation, and audio with the selected passage while retaining the tune's complete header and preceding comments, directives, and ABC fields.</p>
       <p>Any part of the selection within the tune header is ignored.</p>
       <p>Use the normal <b>Play</b> and <b>Loop</b> controls to practice just that passage.</p>
       <p>To narrow the passage further, select notes within the currently displayed range and click <b>Set Playback Range</b> again.</p>
       <p>You can repeat this process to create smaller nested playback ranges without changing the preserved original tune.</p>
       <p>You can edit the temporary ABC while a range is active, and its notation and audio will update as you type.</p>
       <p><b>Any changes you make to the ABC within a playback range are temporary and are not saved when the full tune is restored.</b></p>
-      <p>Click <b>Clear Range</b> to discard all temporary range edits and restore the entire original tune, not just the previous range.</p>
+      <p>Click <b>Restore</b> to discard temporary Playback Range or Phrase Builder edits and restore the entire original tune, not just the previous range.</p>
       <p>Saving ABC, creating share or lesson links, and opening tunes in ABC Transcription Tools always use the preserved full tune rather than the temporary range.</p>
-      <p>Clicking the main <b>Export PDF</b> button automatically clears the playback range and restores the full tune before preparing the PDF.</p>
-      <p>Changing tunes or loading another ABC file also clears the playback range and discards temporary range edits.</p>
+      <p>Clicking the main <b>Export PDF</b> button automatically discards any temporary Playback Range or Phrase Builder result and restores the full tune before preparing the PDF.</p>
+      <p>Changing tunes or loading another ABC file also discards any temporary Playback Range or Phrase Builder result and its edits.</p>
       <p>You can use <b>Tab Tools</b> to inject tablature into the temporary ABC while a playback range is active.</p>
       <p><b>Tab Tools changes made inside a playback range are temporary and are lost when the range is cleared or the tune is changed.</b></p>
       <p>You can apply <b>Tab Override</b> while a playback range is active.</p>
@@ -1332,6 +1527,20 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>If you cancel an instrument or tuning change that requires a tablature-removal confirmation, the current playback range and its temporary edits remain unchanged.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Phrase Builder</p>
+            <p><b>Phrase Builder</b> creates a temporary call-and-response practice version of the ABC currently shown.</p>
+      <p>Choose the phrase length, extra rest measures, and number of times to repeat each phrase.</p>
+      <p>Your Phrase Builder settings are saved in this browser and are not included in share or lesson links.</p>
+      <p>Chord symbols are removed from the result.</p>
+      <p>You can first use <b>Set Playback Range</b> to select part of a tune, then use <b>Phrase Builder</b> on that passage.</p>
+      <p>After building phrases, <b>Phrase Builder</b> is disabled until you click <b>Restore</b>.</p>
+      <p>You can still use <b>Set Playback Range</b> as many times as you like on the phrase-built ABC.</p>
+      <p><b>Restore</b> discards all temporary changes and brings back the complete original tune.</p>
+      <p>Saving, sharing, creating lessons, and opening a tune in ABC Transcription Tools always use the original tune.</p>
+      <p>Changing tunes or using the main <b>Export PDF</b> also restores the original ABC.</p>
+      <p>Phrase Builder cannot process tunes with <b>V:</b> voices or unsupported body-level ABC fields other than <b>K:</b>.</p>
+      <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
+<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing the Panels</p>
       <p>
         On wide screens you can drag the divider between the left and right sides to resize the ABC/notation area and fingering diagram.
@@ -1417,7 +1626,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the Tune Trainer and Phrase Builder</p>
+      <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
       <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
       <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
       <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
@@ -1450,7 +1659,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
-      <p>If a playback range is active, clicking the main <b>Export PDF</b> button first clears the range, discards temporary range edits, and restores the full tune before preparing the PDF.</p>
+      <p>If a Playback Range or Phrase Builder result is active, clicking the main <b>Export PDF</b> button first discards the temporary ABC and restores the full tune before preparing the PDF.</p>
       <p>The tune title in the main notation PDF is clickable. Click it to open this tune in the <b>ABC Transcription Tools Player</b> with the current playback instrument settings. The separate <b>All Fingerings</b> PDF export is unchanged.</p>
       <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
       <p>By default, the PDF includes a centered <b>Click the title to play</b> instruction in the top margin of its first page. Uncheck <b>Add "Click the title to play" on the first page header</b> to omit it; the tune title and music do not move.</p>
@@ -4117,7 +4326,7 @@ async function copyShareLink(allTunes){
   }
 }
 function populateTuneSelector(label){
-  $("fileLabel").textContent=`${label} — ${tunes.length} tune${tunes.length===1?"":"s"}`;
+  $("fileLabel").textContent=`${tunes.length} tune${tunes.length===1?"":"s"}`;
   $("tuneSelect").innerHTML=tunes.map((t,i)=>`<option value="${i}">${firstTitle(t,i+1).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</option>`).join("");
   $("tuneSelect").disabled=false;
   $("fullBtn").disabled=true;
@@ -4738,13 +4947,18 @@ function showEnablePlaybackButton(){
       if(ctx&&ctx.state==="suspended")await ctx.resume();
       sharePlaybackNeedsGesture=false;
       await rebuild();
+      // rebuild() handles its own renderer/audio errors; confirm actual controls exist.
+      if(!$("audio").querySelector(".abcjs-midi-start"))throw new Error("Playback controls were not initialized.");
     }catch(e){
       sharePlaybackNeedsGesture=true;
+      // A failed rebuild can remove the permission button. Restore it for retry.
+      $("audio").replaceChildren(btn);
       btn.disabled=false;
       btn.textContent="Click to Enable Playback";
+      updatePlaybackRangeButtons();
       void showPlayerAlert("Unable to enable playback: "+(e&&e.message||e));
     }
-  },{once:true});
+  });
   audio.appendChild(btn);
   updateTempoButtonState();
 }
@@ -4752,6 +4966,1392 @@ function showEnablePlaybackButton(){
 let playbackRangeOriginalABC=null;
 // Return the complete tune even when the visible editor is showing a temporary
 // playback excerpt. Never persist the excerpt in tunes[] or loadedABC.
+
+// Phrase Builder operates on the currently visible ABC and never commits its
+// output to the stored tune. The algorithm and defaults are from the ABC
+// Transcription Tools Phrase Builder (user-supplied 1-app(3).js).
+let playerPhraseLength=2;
+let playerPhrasePadding=0;
+let playerPhraseRepeats=1;
+// The user's local Phrase Builder preferences are never part of share/lesson links.
+const PLAYER_PHRASE_SETTINGS_KEY="abc-anglo-concertina-fingering-player:phrase-builder-settings";
+function restorePlayerPhraseSettings(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(PLAYER_PHRASE_SETTINGS_KEY)||"null");
+    if(!saved||typeof saved!=="object")return;
+    const length=Number(saved.phraseLength),padding=Number(saved.phrasePadding),repeats=Number(saved.phraseRepeats);
+    if(Number.isInteger(length)&&length>=1&&length<=32)playerPhraseLength=length;
+    if(Number.isInteger(padding)&&padding>=0&&padding<=32)playerPhrasePadding=padding;
+    if(Number.isInteger(repeats)&&repeats>=1&&repeats<=32)playerPhraseRepeats=repeats;
+  }catch(_){/* Local storage might be unavailable or contain invalid data. */}
+}
+function savePlayerPhraseSettings(){
+  try{
+    localStorage.setItem(PLAYER_PHRASE_SETTINGS_KEY,JSON.stringify({
+      phraseLength:playerPhraseLength,phrasePadding:playerPhrasePadding,phraseRepeats:playerPhraseRepeats
+    }));
+  }catch(_){/* The current-session settings continue to work. */}
+}
+restorePlayerPhraseSettings();
+let playerPhraseDialogOpen=false;
+// A successful Phrase Builder application is allowed only once per Restore.
+// Playback Range can still be narrowed repeatedly without clearing this flag.
+let playerPhraseBuilderApplied=false;
+
+function playerPhraseHasProblemTags(abc){
+  // Match ABCTT's restrictions: a V: field anywhere is unsupported; after
+  // music starts, standalone ABC fields other than K: are unsupported.
+  if(/^[ \t]*V\s*:/im.test(abc))return true;
+  const lines=abc.replace(/\r\n?/g,"\n").split("\n");
+  let afterKey=false, inMusic=false;
+  for(const line of lines){
+    const t=line.trim();
+    if(!afterKey){if(/^K\s*:/i.test(t))afterKey=true;continue;}
+    if(!inMusic){
+      if(!t||t.startsWith("%")||/^[A-Za-z]\s*:/.test(t))continue;
+      inMusic=true;
+    }
+    if(/^[A-Za-z+]\s*:/.test(t)&&!/^K\s*:/i.test(t))return true;
+  }
+  return false;
+}
+
+// A scoped, responsive Phrase Builder dialog. Unlike the shared DayPilot forms,
+// its layout does not depend on an ABCTT-only modal_flat stylesheet.
+// This dialog intentionally has no documentation icon or all-tunes option.
+function playerPhraseBuilderForm(data){
+  return new Promise(resolve=>{
+    const previousFocus=document.activeElement;
+    const overlay=document.createElement('div');
+    overlay.className='playerPhraseOverlay';
+    overlay.innerHTML=`
+      <section class="playerPhraseDialog" role="dialog" aria-modal="true" aria-labelledby="playerPhraseBuilderTitle">
+        <h2 id="playerPhraseBuilderTitle">Phrase-by-Phrase Tune Trainer Builder</h2>
+        <p>This will break the tune into groups of measures of the phrase length specified below, followed by the same number of measures of rests. Each phrase and its rests can be repeated before moving to the next phrase.</p>
+        <p>If you want additional full-measure rest time between the phrases, set the rest padding value as desired.</p>
+        <p>The resulting ABC can be used for &quot;Call and Response&quot; style phrase-by-phrase tune training.</p>
+        <p>All chords in the tune will be stripped.</p>
+        <p>Tunes with V: tags or other ABC tags (except K: key changes) at the start of lines outside the header cannot be expanded.</p>
+        <form id="playerPhraseDialogForm" novalidate>
+          <div class="playerPhraseFields">
+            <div class="playerPhraseField">
+              <label for="playerPhraseLengthInput">Phrase length in measures:</label>
+              <input id="playerPhraseLengthInput" type="number" min="1" max="32" step="1" inputmode="numeric" />
+            </div>
+            <div class="playerPhraseField">
+              <label for="playerPhrasePaddingInput">Additional full-measure rest padding between phrases:</label>
+              <input id="playerPhrasePaddingInput" type="number" min="0" max="32" step="1" inputmode="numeric" />
+            </div>
+            <div class="playerPhraseField">
+              <label for="playerPhraseRepeatsInput">Repeat each phrase (including rests) how many times?</label>
+              <input id="playerPhraseRepeatsInput" type="number" min="1" max="32" step="1" inputmode="numeric" />
+            </div>
+          </div>
+          <div class="playerPhraseButtons">
+            <button type="submit">Build</button>
+            <button type="button" class="playerPhraseCancel">Cancel</button>
+          </div>
+        </form>
+      </section>`;
+    const dialog=overlay.querySelector('.playerPhraseDialog');
+    const form=overlay.querySelector('#playerPhraseDialogForm');
+    const length=overlay.querySelector('#playerPhraseLengthInput');
+    const padding=overlay.querySelector('#playerPhrasePaddingInput');
+    const repeats=overlay.querySelector('#playerPhraseRepeatsInput');
+    length.value=String(data.phraseLength);
+    padding.value=String(data.phrasePadding);
+    repeats.value=String(data.phraseRepeats);
+    let finished=false;
+    const finish=(canceled)=>{
+      if(finished)return;
+      finished=true;
+      const result=canceled?null:{
+        phraseLength:length.value,
+        phrasePadding:padding.value,
+        phraseRepeats:repeats.value
+      };
+      overlay.remove();
+      if(previousFocus&&typeof previousFocus.focus==='function'&&previousFocus.isConnected){
+        previousFocus.focus({preventScroll:true});
+      }
+      resolve({canceled,result});
+    };
+    form.addEventListener('submit',e=>{e.preventDefault();finish(false);});
+    overlay.querySelector('.playerPhraseCancel').addEventListener('click',()=>finish(true));
+    overlay.addEventListener('click',e=>{if(e.target===overlay)finish(true);});
+    overlay.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){
+        e.preventDefault();e.stopPropagation();finish(true);return;
+      }
+      if(e.key!=='Tab')return;
+      const elements=[length,padding,repeats,...form.querySelectorAll('button')];
+      const first=elements[0],last=elements[elements.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    });
+    document.body.appendChild(overlay);
+    // Match the ABCTT modal's autofocus without scrolling the underlying page.
+    length.focus({preventScroll:true});
+    length.select();
+  });
+}
+
+async function showPlayerPhraseBuilder(){
+  const ta=$("abcText");
+  if(playerPhraseDialogOpen||playerPhraseBuilderApplied||playbackPracticeControlsIdle()||!hasMinimumABCForRender(ta.value))return;
+  // Capture the visible source for this operation; the original remains in
+  // playbackRangeOriginalABC if a previous range/phrase already exists.
+  const source=ta.value;
+  const tuneAtOpen=currentTune;
+  const collectionAtOpen=tunes;
+  const originalAtOpen=playbackRangeOriginalABC;
+  const phraseWasAppliedAtOpen=playerPhraseBuilderApplied;
+  playerPhraseDialogOpen=true;
+  try{
+    // Phrase Builder is limited to the current editor tune; no all-tunes option.
+    const data={phraseLength:playerPhraseLength,phrasePadding:playerPhrasePadding,phraseRepeats:playerPhraseRepeats};
+    const args=await playerPhraseBuilderForm(data);
+    if(!args||args.canceled||!args.result)return;
+    // Discard the result if the user changed tune or edited/replaced the ABC
+    // while the dialog was open; never apply a stale transform to new content.
+    if(tuneAtOpen!==currentTune||tunes!==collectionAtOpen||ta.value!==source||playbackRangeOriginalABC!==originalAtOpen||playerPhraseBuilderApplied!==phraseWasAppliedAtOpen)return;
+    const length=Number(args.result.phraseLength);
+    const padding=Number(args.result.phrasePadding);
+    const repeats=Number(args.result.phraseRepeats);
+    if(!Number.isInteger(length)||length<1||length>32 ||
+       !Number.isInteger(padding)||padding<0||padding>32 ||
+       !Number.isInteger(repeats)||repeats<1||repeats>32){
+      await showPlayerAlert('Phrase length and repeats must be from 1 to 32, and rest padding from 0 to 32.');
+      return;
+    }
+    playerPhraseLength=length;
+    playerPhrasePadding=padding;
+    playerPhraseRepeats=repeats;
+    savePlayerPhraseSettings();
+    if(playerPhraseHasProblemTags(source)){
+      await showPlayerAlert('This tune has V: fields or ABC fields after the header (other than K:) and cannot be expanded by Phrase Builder.');
+      return;
+    }
+    const stripped=playerStripInlineAnnotations(playerStripChordsOne(source));
+    const transformed=playerProcessAbcPhrases(stripped,length,padding,repeats).trim();
+    if(!transformed || transformed===source.trim()){
+      await showPlayerAlert('Phrase Builder could not create phrases for this tune. Check that it has a supported M: meter and musical content.');
+      return;
+    }
+    if(playbackRangeOriginalABC===null){
+      syncCurrentTuneFromEditor();
+      playbackRangeOriginalABC=source;
+    }
+    ta.value=transformed+'\n';
+    playerPhraseBuilderApplied=true;
+    ta.readOnly=false;
+    ta.title='Temporary Phrase Builder result. Restore returns to the full original tune; this version is not saved or shared.';
+    ta.setSelectionRange(0,0);
+    if(typeof instrumentNavAnchor!=="undefined")instrumentNavAnchor=null;
+    updatePlaybackRangeButtons();
+    if(typeof refreshInstrumentNoteButtons==="function")refreshInstrumentNoteButtons();
+    scheduleRebuild();
+  }finally{
+    playerPhraseDialogOpen=false;
+  }
+}
+
+function playerStripChordsOne(theNotes) {
+
+  function match_callback(match) {
+
+    // Don't strip tab annotations, only chords
+    if ((match.indexOf('"_') == -1) && (match.indexOf('"^') == -1)) {
+
+      // Try and avoid stripping long text strings that aren't chords
+      if (match.length > 9) {
+        return match;
+      } else
+        // If there are spaces in the match, also probably not a chord
+        if (match.indexOf(" ") != -1) {
+          return match;
+        }
+      else {
+        return "";
+      }
+    } else {
+      return match;
+    }
+
+  }
+
+  // Strip out chord markings and not text annotations
+  var searchRegExp = /"[^"]*"/gm
+
+  const output = theNotes
+    .split('\n')
+    .map(line => {
+      // If line starts with one of the forbidden prefixes, skip replacement
+      if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+        return line;
+      } else {
+        return line.replace(searchRegExp, match_callback);
+      }
+    })
+    .join('\n');
+
+  // Replace the ABC
+  return output;
+
+}
+
+
+// 
+// Are there chords in a match regex?
+//
+
+function playerStripInlineAnnotations(abc){
+
+  // Keep inline key changes for Phrase Builder while removing other
+  // inline fields as before.
+  abc = abc.replace(/\[[A-Za-z]:[^\]\r\n]*\]/g, match =>
+    /^\[K:/i.test(match) ? match : "");
+  
+  return abc;
+
+}
+
+function playerProcessAbcPhrases(abcText, phraseBars, phrasePadding, phraseRepeats = 1) {
+
+  if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
+    return abcText;
+  }
+
+  if (!Number.isInteger(phrasePadding) || phrasePadding < 0) {
+    return abcText;
+  }
+
+  if (!Number.isInteger(phraseRepeats) || phraseRepeats < 1 || phraseRepeats > 32) {
+    return abcText;
+  }
+
+  // Strip all ! at the end of lines
+  abcText = abcText.replace(/!+$/gm, "");
+
+  // Strip all \ at the end of lines
+  abcText = abcText.replace(/\\$/gm, "");
+
+  // Normalize line endings
+  let norm = abcText.replace(/\r\n/g, "\n");
+
+  // Ignore any text before the first X:
+  const firstX = norm.search(/^\s*X\s*:/m);
+  if (firstX === -1) {
+    return abcText;
+  }
+  norm = norm.slice(firstX);
+
+  const lines = norm.split("\n");
+
+  const tunes = [];
+  let cur = [];
+
+  for (const ln of lines) {
+    if (/^\s*X\s*:/i.test(ln)) {
+      if (cur.length > 0) {
+        tunes.push(cur.join("\n").trim());
+      }
+      cur = [ln];
+    } else {
+      cur.push(ln);
+    }
+  }
+  if (cur.length > 0) {
+    tunes.push(cur.join("\n").trim());
+  }
+
+  const outputs = tunes
+    .map(t => t.trim())
+    .filter(t => t.length > 0)
+    .map(t => processSingleTune(t, phraseBars, phrasePadding, phraseRepeats));
+
+  return outputs.join("\n\n");
+
+  // ------------------------------------------------------------
+  // Process a single tune
+  // ------------------------------------------------------------
+  function processSingleTune(abcText, phraseBars, phrasePadding, phraseRepeats) {
+    const lines = abcText.replace(/\r\n/g, "\n").split("\n");
+
+    // Reject multiple voices
+    for (const ln of lines) {
+      if (/^\s*V\s*:/i.test(ln)) {
+        return abcText;
+      }
+    }
+
+    // ---- Separate header and body ----
+    let headerLines = [];
+    let bodyLines = [];
+    let inBody = false;
+    let sawK = false;
+
+    for (const ln of lines) {
+
+      const trimmed = ln.trim();
+
+      if (!inBody) {
+        // Still in header region
+        if (/^\s*K\s*:/i.test(trimmed)) {
+          sawK = true;
+          headerLines.push(trimmed);
+          continue;
+        }
+
+        if (!sawK) {
+          // Before K:, everything is header
+          headerLines.push(trimmed);
+        } else {
+          // After K:, still treat % / %% / field lines / blanks as header
+          if (
+            /^\s*[%]/.test(trimmed) ||          // % or %%
+            /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
+            /^\s*$/.test(trimmed)               // blank
+          ) {
+            headerLines.push(trimmed);
+          } else {
+            // First real music line -> body starts here
+            inBody = true;
+            bodyLines.push(trimmed);
+          }
+        }
+      } else {
+        // ---- We are in the body (music region) ----
+
+        // Skip any % line after the header (e.g. %newpage)
+        if (/^\s*%/.test(trimmed)) {
+          continue;
+        }
+
+        // Body-level K: fields must survive bar/repeat expansion. An inline
+        // key change can travel with its measure when phrases are rebuilt.
+        if (/^K\s*:/i.test(trimmed)) {
+          const keyValue = trimmed.replace(/^K\s*:\s*/i, "").trim();
+          if (keyValue) bodyLines.push(`[K:${keyValue}]`);
+        } else {
+          bodyLines.push(trimmed);
+        }
+      }
+    }
+
+    if (!sawK) {
+      return abcText;
+    }
+
+    // Only offer barsperstaff if no padding
+    if (phrasePadding == 0){
+      headerLines.push("%");
+      headerLines.push("% Remove the x from the start of the next line to display");
+      headerLines.push("% the ABC with alternating staves of notation and rests:");
+      headerLines.push("%");
+      headerLines.push("%%xbarsperstaff "+phraseBars);
+      headerLines.push("%%stretchlast 1");
+      headerLines.push("%");
+      headerLines.push("% If there is a partial measure pickup before the tune, to use");
+      headerLines.push("% barsperstaff you will need to manually delete the pickup from the ABC.");
+      headerLines.push("%");
+    }
+
+    const header = headerLines.join("\n");
+    let body = bodyLines.join("\n").trim();
+
+    if (!body) {
+      return abcText; // no notes, just return tune as-is
+    }
+
+    // ---- Extract M: and L: for pickup/rest calculations ----
+    // Handle numeric meters AND M:C / M:C|
+    const mLineMatch = abcText.match(/^\s*M\s*:\s*([^\r\n]+)/im);
+    if (!mLineMatch) {
+      return abcText;
+    }
+
+    const mValueRaw = mLineMatch[1].trim();
+    let meterNum, meterDen;
+
+    if (/^C\|$/i.test(mValueRaw)) {
+      // Cut time: M:C|  -> 2/2
+      meterNum = 2;
+      meterDen = 2;
+    } else if (/^C$/i.test(mValueRaw)) {
+      // Common time: M:C  -> 4/4
+      meterNum = 4;
+      meterDen = 4;
+    } else {
+      // Standard numeric meter like 4/4, 6/8, etc.
+      const mMatch = mValueRaw.match(/^(\d+)\s*\/\s*(\d+)$/);
+      if (!mMatch) {
+        // Unrecognized meter format, bail out and leave tune unchanged
+        return abcText;
+      }
+      meterNum = parseInt(mMatch[1], 10);
+      meterDen = parseInt(mMatch[2], 10);
+    }
+
+    const lMatch = abcText.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
+    let lNum, lDen;
+    if (lMatch) {
+      lNum = parseInt(lMatch[1], 10);
+      lDen = parseInt(lMatch[2], 10);
+    } else {
+      // ABC default
+      lNum = 1;
+      lDen = 8;
+    }
+
+    // ---- One-bar rest string ----
+    const oneBarRest = computeOneBarRest(meterNum, meterDen, lNum, lDen);
+
+    // ---- Normalize [1/[2 endings to |1/|2 ----
+    body = normalizeEndings(body);
+
+    // ---- Parse body into measures ----
+    const measures = parseMeasures(body);
+
+    // ---- Expand repeats & first/second endings ----
+    let flatMeasures = expandRepeatsAndEndings(measures);
+
+    // ---- Regroup into full-length bars (only a single initial pickup may remain partial)
+    let fullBarMeasures = resegmentIntoFullBars(flatMeasures, meterNum, meterDen, lNum, lDen);
+
+    // ---- Detect if the very first note measure is a partial pickup ----
+    const hasPickup = detectInitialPickupMeasure(fullBarMeasures, meterNum, meterDen, lNum, lDen);
+
+    // ---- Insert phrase-length rest measures after each phrase ----
+    let phrasedMeasures = injectPhraseRests(fullBarMeasures, phraseBars, phrasePadding, oneBarRest, hasPickup);
+
+    // ---- Clear any internal |]; final |] will be added in rebuild ----
+    phrasedMeasures = phrasedMeasures.map(m =>
+      m.bar === "|]" ? { ...m, bar: "|" } : m
+    );
+
+    // ---- Rebuild body ----
+    const initialKeyLine = headerLines.filter(ln => /^K\s*:/i.test(ln)).pop();
+    const initialKey = initialKeyLine ? initialKeyLine.replace(/^K\s*:\s*/i, "").trim() : "";
+    const newBody = rebuildBodyFromMeasures(phrasedMeasures, phraseBars, phrasePadding, hasPickup, phraseRepeats, initialKey);
+
+    return header + "\n" + newBody;
+  }
+
+  /* ----------------- Helper: compute one bar rest ------------------ */
+
+  function computeOneBarRest(mNum, mDen, lNum, lDen) {
+    const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+
+    if (!Number.isFinite(unitsPerBar) || unitsPerBar <= 0) {
+      // Fallback
+      return "z4";
+    }
+
+    const rounded = Math.round(unitsPerBar);
+    if (Math.abs(unitsPerBar - rounded) > 1e-6) {
+      // Non-integer bar length in L: units – fallback
+      return "z4";
+    }
+
+    if (rounded === 1) return "z";
+    return "z" + rounded; // e.g. z4 for 2/4 with L:1/8
+  }
+
+  /* ----------------- Helper: note length parsing ------------------ */
+
+  function parseAbcLength(s, pos) {
+    let numStr = "";
+    while (pos < s.length && /\d/.test(s[pos])) {
+      numStr += s[pos++];
+    }
+
+    let num = numStr ? parseInt(numStr, 10) : 1;
+    let denom = 1;
+
+    let slashCount = 0;
+    while (pos < s.length && s[pos] === "/") {
+      slashCount++;
+      pos++;
+    }
+
+    if (slashCount > 0) {
+      denom = Math.pow(2, slashCount);
+    }
+
+    const value = num / denom;
+    return { value, newPos: pos };
+  }
+
+  /**
+   * Compute the length (in L: units) of a measure's notes.
+   * Ignores decorations, chords, grace notes, etc.
+   * Simple support for triplets: (3ABC = 3 notes in the time of 2.
+   */
+  function computeMeasureUnits(text) {
+    let s = text || "";
+
+    // Key changes affect pitch, not duration. Leave them in the music
+    // elsewhere, but never count the key letter as a sounded note.
+    s = s.replace(/\[K:[^\]\r\n]*\]/gi, "");
+
+    // Remove grace notes { ... }
+    s = s.replace(/\{[^}]*\}/g, "");
+
+    let pos = 0;
+    let totalUnits = 0;
+
+    let tupletNotesLeft = 0;
+    let tupletFactor = 1; // multiply note length by this inside tuplet
+
+    while (pos < s.length) {
+      const ch = s[pos];
+
+      // Whitespace or simple decorations
+      if (
+        /\s/.test(ch) ||
+        ch === "!" || ch === "\"" ||
+        ch === "[" || ch === "]"
+      ) {
+        pos++;
+        continue;
+      }
+
+      // Tuplet start: (3 -> next 3 notes in the time of 2
+      if (ch === "(") {
+        const next = s[pos + 1];
+        if (next && /[2-9]/.test(next)) {
+          const n = parseInt(next, 10);
+          if (n === 3) {
+            tupletNotesLeft = 3;
+            tupletFactor = 2 / 3; // 3 notes in time of 2
+          } else {
+            tupletNotesLeft = 0;
+            tupletFactor = 1;
+          }
+          pos += 2;
+          continue;
+        } else {
+          pos++;
+          continue;
+        }
+      }
+
+      // Accidentals
+      if (ch === "^" || ch === "_" || ch === "=") {
+        pos++;
+        continue;
+      }
+
+      if (/[A-Ga-gzZxY]/.test(ch)) {
+        pos++;
+        // Skip octave marks , ' ’
+        while (pos < s.length && /[,'’]/.test(s[pos])) pos++;
+
+        const { value: baseUnits, newPos } = parseAbcLength(s, pos);
+        pos = newPos;
+
+        let lengthUnits = baseUnits;
+        if (tupletNotesLeft > 0) {
+          lengthUnits *= tupletFactor;
+          tupletNotesLeft--;
+          if (tupletNotesLeft === 0) {
+            tupletFactor = 1;
+          }
+        }
+
+        totalUnits += lengthUnits;
+        continue;
+      }
+
+      // Anything else: skip
+      pos++;
+    }
+
+    return totalUnits;
+  }
+
+  /* ----------------- Helper: detect initial pickup measure ------------------ */
+
+  function detectInitialPickupMeasure(measures, mNum, mDen, lNum, lDen) {
+    const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+    const EPS = 1e-6;
+
+    const firstNoteIdx = measures.findIndex(
+      (m) => m.notes && m.notes.trim().length > 0
+    );
+    if (firstNoteIdx === -1) return false;
+
+    const firstLen = computeMeasureUnits(measures[firstNoteIdx].notes || "");
+    if (firstLen > EPS && firstLen < unitsPerBar - EPS) {
+      // true => there is a pickup at the very start of the tune
+      return true;
+    }
+    return false;
+  }
+
+  /* ----------------- Helper: normalize [1/[2 and spaced endings ------ */
+
+  function normalizeEndings(body) {
+    let out = body;
+
+    // Collapse spaces between barlines and 1/2 so parseMeasures sees |1, |2, :|1, :|2
+    out = out.replace(/(\|\s+)([12])/g, "|$2");
+    out = out.replace(/(:\|\s+)([12])/g, ":|$2");
+
+    // Convert [1 / [2 forms to |1 / |2 so they’re also recognized
+    out = out.replace(/(\||:)\[([12])/g, "$1$2");
+    out = out.replace(/(^|\s)\[([12])/g, "$1|$2");
+
+    return out;
+  }
+
+  /* ----------------- Helper: parse measures (no original newlines) ---- */
+
+  function parseMeasures(body) {
+    const measures = [];
+    let cur = "";
+
+    function pushMeasure(barToken) {
+      const notes = cur.replace(/\s+$/g, ""); // trim right
+      measures.push({
+        notes,
+        bar: barToken
+      });
+      cur = "";
+    }
+
+    let i = 0;
+    while (i < body.length) {
+      const ch = body[i];
+
+      // Normalize original newlines to at most a single space
+      if (ch === "\n" || ch === "\r") {
+        if (cur && !/\s$/.test(cur)) {
+          cur += " ";
+        }
+        i++;
+        continue;
+      }
+
+      if (ch === "|") {
+        const next = body[i + 1] || "";
+
+        if (next === ":") {
+          pushMeasure("|:");
+          i += 2;
+        } else if (next === "|") {
+          pushMeasure("||");
+          i += 2;
+        } else if (next === "1" || next === "2") {
+          pushMeasure("|" + next);
+          i += 2;
+        } else if (next === "]") {
+          pushMeasure("|]");
+          i += 2;
+        } else {
+          pushMeasure("|");
+          i += 1;
+        }
+      } else if (ch === ":") {
+        const next = body[i + 1] || "";
+        const next2 = body[i + 2] || "";
+
+        if (next === "|") {
+          if (next2 === "1" || next2 === "2") {
+            pushMeasure(":|" + next2);
+            i += 3;
+          } else {
+            pushMeasure(":|");
+            i += 2;
+          }
+        } else {
+          cur += ch;
+          i++;
+        }
+      } else {
+        cur += ch;
+        i++;
+      }
+    }
+
+    if (cur.trim().length > 0) {
+      const notes = cur.replace(/\s+$/g, "");
+      measures.push({ notes, bar: "" });
+    }
+
+    // A key change between a repeat end and the following |: belongs to
+    // the next *sounding* measure, not the preceding empty repeat marker.
+    // Attach it before expanding repeats so every pass gets the new key.
+    for (let j = 0; j < measures.length; j++) {
+      const onlyKeyFields = (measures[j].notes || "").trim();
+      if (!/^(?:\[K:[^\]\r\n]+\]\s*)+$/i.test(onlyKeyFields)) continue;
+      let next = j + 1;
+      while (next < measures.length && !(measures[next].notes || "").trim()) next++;
+      if (next < measures.length) {
+        measures[next].notes = onlyKeyFields + " " + measures[next].notes.trimStart();
+        measures[j].notes = "";
+      }
+    }
+
+    return measures;
+  }
+
+  /* ----------------- Helper: normalize bars for playback --------------- */
+
+  function normalizeBarPlayback(bar) {
+    if (!bar) return bar;
+    if (bar === "||") return "|";
+    if (
+      bar === "|1" || bar === "|2" ||
+      bar === ":|1" || bar === ":|2" ||
+      bar === ":|"
+    ) {
+      return "|";
+    }
+    if (bar.indexOf(":|") !== -1) {
+      // handles combined tokens like ":|2"
+      return "|";
+    }
+    return bar;
+  }
+
+  /* ----------------- Helper: expand repeats & endings ------------------ */
+
+  function expandRepeatsAndEndings(measures) {
+    // Find first explicit start repeat |:
+    const firstStartIdx = measures.findIndex(m => m.bar === "|:");
+
+    // No explicit start repeats anywhere → all :| are "repeat from section start"
+    if (firstStartIdx === -1) {
+      return expandUnmatchedEndRepeats(measures);
+    }
+
+    // Prefix (before the first |:) may contain orphan :| repeats (A parts)
+    const prefix = measures.slice(0, firstStartIdx);
+    const suffix = measures.slice(firstStartIdx);
+
+    const expandedPrefix = expandUnmatchedEndRepeats(prefix);
+    const expandedSuffix = expandWithExplicitStarts(suffix);
+
+    return expandedPrefix.concat(expandedSuffix);
+  }
+
+  // ----- Smarter handling of :| with 1st/2nd endings and no |: -----
+
+  function expandUnmatchedEndRepeats(measures) {
+    const out = [];
+    const n = measures.length;
+    let i = 0;
+    let sectionStart = 0;
+
+    function copySimple(start, end) {
+      for (let j = start; j <= end; j++) {
+        const m = measures[j];
+        out.push({
+          notes: m.notes,
+          bar: normalizeBarPlayback(m.bar)
+        });
+      }
+    }
+
+    while (i < n) {
+      const bar = measures[i].bar || "";
+      if (bar.indexOf(":|") !== -1) {
+        // We reached the end (i) of a repeating block [sectionStart..i].
+        const start = sectionStart;
+        const end = i;
+
+        // Look for |1 and |2 within this block
+        let marker1 = -1;
+        let marker2 = -1;
+        for (let j = start; j <= end; j++) {
+          const b = measures[j].bar || "";
+          if (marker1 === -1 && b.indexOf("1") !== -1) {
+            marker1 = j;
+          }
+          if (marker2 === -1 && b.indexOf("2") !== -1) {
+            marker2 = j;
+          }
+          if (marker1 !== -1 && marker2 !== -1) break;
+        }
+
+        // Try to find second-ending notes AFTER the :|2 bar if marker2 == end
+        let secondStart = -1;
+        let secondEnd = -1;
+
+        if (marker2 !== -1) {
+          if (marker2 === end && end + 1 < n) {
+            // Typical Cooley's-style: |1 ... :|2 <2nd-ending-notes>...
+            secondStart = end + 1;
+
+            // Extend second ending until strong boundary
+            let j = secondStart;
+            while (j < n) {
+              const b = measures[j].bar || "";
+              if (
+                j > secondStart &&
+                (b.indexOf(":|") !== -1 || measures[j].bar === "|:" || b === "||" || b === "|]")
+              ) {
+                break;
+              }
+              secondEnd = j;
+              if (b === "||" || b === "|]") {
+                j++;
+                break;
+              }
+              j++;
+            }
+            if (secondEnd === -1) {
+              secondEnd = secondStart;
+            }
+          } else if (marker2 + 1 <= end) {
+            // Weird but possible: |2 is inside the section and second-ending notes follow it
+            secondStart = marker2 + 1;
+            secondEnd = end;
+          }
+        }
+
+        // If we can't sensibly identify a 1st+2nd ending, fall back to simple double repeat
+        if (marker1 === -1 || marker2 === -1 || secondStart === -1) {
+          copySimple(start, end);
+          copySimple(start, end);
+          i = end + 1;
+          sectionStart = i;
+          continue;
+        }
+
+        // ABC semantics: "1" attaches to the following bar, so the measure
+        // that carries "|1" belongs to the body; first-ending notes begin at marker1+1.
+        const bodyStart = start;
+        const bodyEnd = marker1;
+        const firstStart = marker1 + 1;
+        const firstEnd = end;
+
+        if (firstStart > firstEnd || firstStart >= n) {
+          // Degrade to simple repeat
+          copySimple(start, end);
+          copySimple(start, end);
+          i = end + 1;
+          sectionStart = i;
+          continue;
+        }
+
+        // --- First pass: body + first ending
+        for (let j = bodyStart; j <= bodyEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+        for (let j = firstStart; j <= firstEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+
+        // --- Second pass: body + second ending
+        for (let j = bodyStart; j <= bodyEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+        for (let j = secondStart; j <= secondEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+
+        // Advance past the second-ending measures
+        i = secondEnd + 1;
+        sectionStart = i;
+      } else {
+        i++;
+      }
+    }
+
+    // Any leftover measures after the last :|
+    if (sectionStart < n) {
+      for (let j = sectionStart; j < n; j++) {
+        const m = measures[j];
+        out.push({
+          notes: m.notes,
+          bar: normalizeBarPlayback(m.bar)
+        });
+      }
+    }
+
+    return out;
+  }
+
+  // ----- EXPLICIT |: HANDLING + buffering of unmatched segments -----
+
+  function expandWithExplicitStarts(measures) {
+    const out = [];
+    const n = measures.length;
+
+    function isStrongEnd(bar) {
+      return !!bar && (bar.indexOf(":|") !== -1 || bar === "||" || bar === "|]");
+    }
+
+    // Buffer for regions *without* explicit |:
+    let buffer = [];
+
+    function flushBuffer() {
+      if (!buffer.length) return;
+      const expanded = expandUnmatchedEndRepeats(buffer);
+      for (const m of expanded) {
+        out.push(m);
+      }
+      buffer = [];
+    }
+
+    function simpleRepeat(startIdx, repeatStart, repeatEndIdx) {
+      // |: becomes |
+      out.push({ notes: measures[startIdx].notes, bar: "|" });
+      for (let j = repeatStart; j <= repeatEndIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      for (let j = repeatStart; j <= repeatEndIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+    }
+
+    let i = 0;
+
+    while (i < n) {
+      const m = measures[i];
+
+      if (m.bar !== "|:") {
+        // Part of a non-explicit segment; buffer it.
+        buffer.push({ notes: m.notes, bar: m.bar });
+        i++;
+        continue;
+      }
+
+      // We hit an explicit |:; first flush any buffered unmatched segment.
+      flushBuffer();
+
+      const startIdx = i;
+      const repeatStart = i + 1;
+
+      // 1) Find the local end of this repeat block (first strong end after |:)
+      let repeatEndIdx = -1;
+      for (let j = repeatStart; j < n; j++) {
+        if (isStrongEnd(measures[j].bar)) {
+          repeatEndIdx = j;
+          break;
+        }
+      }
+
+      if (repeatEndIdx === -1) {
+        // Malformed: treat |: as normal bar and continue
+        out.push({ notes: m.notes, bar: "|" });
+        i++;
+        continue;
+      }
+
+      // 2) Search for |1 and |2 markers
+      let marker1 = -1;
+      let marker2 = -1;
+
+      for (let j = repeatStart; j <= repeatEndIdx; j++) {
+        const b = measures[j].bar || "";
+        if (marker1 === -1 && b.indexOf("1") !== -1) {
+          marker1 = j;
+        }
+        if (marker2 === -1 && b.indexOf("2") !== -1) {
+          marker2 = j;
+        }
+        if (marker1 !== -1 && marker2 !== -1) break;
+      }
+
+      // If we didn't find a 2 in the block, look just after it
+      if (marker2 === -1) {
+        for (let j = repeatEndIdx + 1; j < n; j++) {
+          const b = measures[j].bar || "";
+          if (measures[j].bar === "|:") break;    // next repeat start
+          if (isStrongEnd(b)) break;              // next strong break
+          if (b.indexOf("2") !== -1) {
+            marker2 = j;
+            break;
+          }
+        }
+      }
+
+      // 3) No |1 marker -> simple |: ... :| repeat
+      if (marker1 === -1) {
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      // NOTE: In ABC, the "1" attaches to the *following* bar.
+      // The measure that carries "|1" belongs to the BODY, and
+      // the first-ending notes start in the next measure.
+      const bodyStart = repeatStart;
+      const bodyEnd = Math.max(bodyStart, marker1); // body includes the marker1 measure
+
+      const firstEndingStart = marker1 + 1;
+      const firstEndingEnd = repeatEndIdx; // up to the :| (or ||, etc.)
+
+      if (firstEndingStart > firstEndingEnd || firstEndingStart >= n) {
+        // No usable first ending; degrade to a simple repeat
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      // Still no |2 marker -> treat as simple repeat of everything
+      if (marker2 === -1) {
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      // In ABC, the "2" also attaches to the following bar, so the
+      // second-ending notes begin at marker2 + 1.
+      let secondEndingStart = marker2 + 1;
+      if (secondEndingStart >= n) {
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      let secondEndingEnd = -1;
+      for (let j = secondEndingStart; j < n; j++) {
+        const b = measures[j].bar || "";
+        if (isStrongEnd(b) || (j > secondEndingStart && measures[j].bar === "|:")) {
+          secondEndingEnd = j;
+          break;
+        }
+      }
+      if (secondEndingEnd === -1) {
+        secondEndingEnd = n - 1;
+      }
+
+      // 4) Expand: body + firstEnding, body + secondEnding
+      out.push({ notes: measures[startIdx].notes, bar: "|" }); // |: becomes |
+
+      // body
+      for (let j = bodyStart; j <= bodyEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      // first ending
+      for (let j = firstEndingStart; j <= firstEndingEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+
+      // body again
+      for (let j = bodyStart; j <= bodyEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      // second ending
+      for (let j = secondEndingStart; j <= secondEndingEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+
+      i = secondEndingEnd + 1;
+    }
+
+    // Flush any leftover unmatched segment after the last |:
+    flushBuffer();
+
+    return out;
+  }
+
+  /* ----------------- Helper: resegment into full bars ------------------ */
+  // After repeats are flattened:
+  // - Turn the entire tune into a single sequence of note "events" (in order).
+  // - Re-bucket that sequence into bars of length unitsPerBar.
+  // - Allow at most one partial: an initial pickup at the very start of the tune.
+  // - Avoid ever exceeding unitsPerBar; do NOT glue a short bar to a full bar.
+  function resegmentIntoFullBars(measures, mNum, mDen, lNum, lDen) {
+    const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+    const EPS = 1e-6;
+
+    // 1) Flatten all note-bearing measures into a linear sequence of events.
+    //    Ignore original bar tokens here; they were only needed for repeats.
+    const events = [];
+    for (const m of measures) {
+      const notes = (m.notes || "").trim();
+      if (!notes) continue;
+
+      const len = computeMeasureUnits(notes);
+      if (!Number.isFinite(len) || len <= 0) continue;
+
+      events.push({ notes, len });
+    }
+
+    const out = [];
+    let pickupHandled = false;
+    let curNotes = "";
+    let curLen = 0;
+
+    function flushCur() {
+      if (curNotes.trim()) {
+        out.push({
+          notes: curNotes.trim(),
+          bar: "|"
+        });
+      }
+      curNotes = "";
+      curLen = 0;
+    }
+
+    for (let idx = 0; idx < events.length; idx++) {
+      const ev = events[idx];
+      const notes = ev.notes;
+      const len = ev.len;
+
+      const isFull = Math.abs(len - unitsPerBar) <= EPS;
+      const isPartial = len < unitsPerBar - EPS;
+
+      // Tune-level pickup: only allowed as the very first short event
+      if (
+        !pickupHandled &&
+        out.length === 0 &&
+        curLen === 0 &&
+        isPartial
+      ) {
+        out.push({
+          notes,
+          bar: "|"
+        });
+        pickupHandled = true;
+        continue;
+      }
+
+      if (curLen === 0) {
+        // No partial in progress
+        if (isFull || len > unitsPerBar + EPS) {
+          // Treat as a full bar on its own
+          out.push({
+            notes,
+            bar: "|"
+          });
+        } else {
+          // Start a new partial bar
+          curNotes = notes;
+          curLen = len;
+        }
+      } else {
+        // We have a partial bar in progress
+        if (isPartial) {
+          const sum = curLen + len;
+          if (sum <= unitsPerBar + EPS) {
+            // Combine partial+partial if they fit into one bar
+            curNotes = curNotes + " " + notes;
+            curLen = sum;
+            if (Math.abs(curLen - unitsPerBar) <= EPS) {
+              flushCur();
+            }
+          } else {
+            // Would overshoot -> flush current partial, start anew
+            flushCur();
+            if (isFull || len > unitsPerBar + EPS) {
+              out.push({
+                notes,
+                bar: "|"
+              });
+            } else {
+              curNotes = notes;
+              curLen = len;
+            }
+          }
+        } else {
+          // Current event is a full bar while a partial is open:
+          // close the partial as its own (short) bar, then add this full bar.
+          flushCur();
+          out.push({
+            notes,
+            bar: "|"
+          });
+        }
+      }
+    }
+
+    // Any leftover (normally zero or a single short bar at the end)
+    flushCur();
+
+    return out;
+  }
+
+  /* ----------------- Helper: phrase rest injection ------------------ */
+
+  function injectPhraseRests(measures, phraseBars, phrasePadding, oneBarRest, hasPickup) {
+    const result = [];
+
+    let firstNoteIdx = measures.findIndex(
+      (m) => m.notes && m.notes.trim().length > 0
+    );
+    if (firstNoteIdx === -1) {
+      return measures.slice();
+    }
+
+    // If hasPickup, skip counting this first partial bar.
+    let phraseStartIndex = firstNoteIdx + (hasPickup ? 1 : 0);
+    if (phraseStartIndex >= measures.length) {
+      phraseStartIndex = measures.length;
+    }
+
+    let barCounter = 0;
+
+    for (let idx = 0; idx < measures.length; idx++) {
+      const m = measures[idx];
+      result.push({ ...m });
+
+      const hasNotes = m.notes && m.notes.trim().length > 0;
+      const hasBar = !!m.bar;
+
+      const countable =
+        idx >= phraseStartIndex &&
+        hasBar &&
+        hasNotes;
+
+      if (countable) {
+        barCounter++;
+
+        if (barCounter === phraseBars) {
+          for (let k = 0; k < (phraseBars + phrasePadding); k++) {
+            result.push({
+              notes: oneBarRest,
+              bar: "|"
+            });
+          }
+          barCounter = 0;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /* ----------------- Helper: rebuild body with wrapping & final |] ---- */
+
+  function rebuildBodyFromMeasures(measures, phraseBars, phrasePadding, hasPickup, phraseRepeats, initialKey) {
+
+    // Drop measures that have no notes
+    measures = measures.filter((m) => {
+      const hasNotes = m.notes && m.notes.trim().length > 0;
+      const hasBar = !!m.bar;
+      if (!hasNotes && hasBar) return false;
+      if (!hasNotes && !hasBar) return false;
+      return true;
+    });
+
+    if (!measures.length) {
+      return "\n";
+    }
+
+    // Force final bar to |]
+    const lastIdx = measures.length - 1;
+    measures[lastIdx].bar = "|]";
+
+    let out = "";
+    let barCount = 0;
+
+    let firstLine = true;
+
+    // If we have a pickup, allow an extra bar on the first line
+
+    let maxBarsThisLine = (phraseBars * 2) + phrasePadding;
+
+    if (hasPickup){
+      maxBarsThisLine += 1;
+    }
+
+    measures.forEach((m, idx) => {
+      const notes = m.notes.trim() || "";
+      let bar = m.bar || "";
+
+      if (bar === "||") bar = "|";
+
+      if (notes) {
+        if (out && !/\s|\|$/.test(out[out.length - 1])) {
+          out += " ";
+        }
+        out += notes;
+      }
+
+      if (bar) {
+        out += bar;
+        barCount++;
+
+        if (barCount === maxBarsThisLine && idx < measures.length - 1) {
+          out += "\n";
+          barCount = 0;
+
+          if (firstLine) {
+            firstLine = false;
+            maxBarsThisLine = (phraseBars * 2) + phrasePadding;
+          }
+        }
+      }
+    });
+
+    out = out.replace(/\s{2,}/g, " ");
+
+    // The existing layout places each phrase and its following rests on one
+    // ABC line. Repeat that entire line so every pass has the same response
+    // interval, and the next phrase is not reached until all passes finish.
+    // Keep the one-repeat output byte-for-byte compatible with prior versions.
+    if (phraseRepeats > 1) {
+      const phraseLines = out.trim().split("\n").filter(line => line.trim());
+      const repeatedLines = [];
+      let activeKey = initialKey;
+
+      for (const line of phraseLines) {
+        const keyChanges = Array.from(line.matchAll(/\[K:([^\]\r\n]*)\]/gi));
+        // A line that changes key must also establish its starting key on
+        // each repeat; otherwise subsequent passes would start in the key
+        // left behind by the previous pass.
+        const repeatLine = keyChanges.length && activeKey
+          ? `[K:${activeKey}] ${line}` : line;
+        if (keyChanges.length) {
+          activeKey = keyChanges[keyChanges.length - 1][1].trim();
+        }
+
+        // Only the final line of the complete tune should end with |].
+        const unclosedLine = repeatLine.replace(/\|\]$/, "|");
+        for (let repeat = 0; repeat < phraseRepeats; repeat++) {
+          repeatedLines.push(unclosedLine);
+        }
+      }
+
+      if (repeatedLines.length) {
+        repeatedLines[repeatedLines.length - 1] =
+          repeatedLines[repeatedLines.length - 1].replace(/\|$/, "|]");
+      }
+      out = repeatedLines.join("\n");
+    }
+
+    return out.trim() + "\n";
+  }
+
+}
+
 function currentFullTuneABC(){
   return playbackRangeOriginalABC!==null
     ? playbackRangeOriginalABC : $("abcText").value;
@@ -4780,24 +6380,33 @@ function selectedPlaybackNotes(abc,start,end){
   };
 }
 
+function playbackPracticeControlsIdle(){
+  // For share/lesson/ABCTT launches, keep the three ABC practice actions idle
+  // until the user has completed the explicit playback-enabling gesture.
+  return !tunes.length||sharePlaybackNeedsGesture||!!$("enablePlaybackBtn");
+}
+
 function updatePlaybackRangeButtons(){
-  const set=$("setPlaybackRangeBtn"),clear=$("clearPlaybackRangeBtn");
+  const set=$("setPlaybackRangeBtn"),clear=$("clearPlaybackRangeBtn"),phrase=$("phraseBuilderBtn");
   if(!set||!clear)return;
   const active=playbackRangeOriginalABC!==null;
+  const idle=playbackPracticeControlsIdle();
   const ta=$("abcText");
   // Both full tunes and temporary excerpts can be narrowed. An active range
   // does not disable Set: the next valid selection creates a nested subrange.
   const hasSelectedNotes=tunes.length>0&&
     ta.selectionEnd>ta.selectionStart&&
     !!selectedPlaybackNotes(ta.value,ta.selectionStart,ta.selectionEnd);
-  set.disabled=!hasSelectedNotes;
-  clear.disabled=!active;
+  set.disabled=idle||!hasSelectedNotes;
+  clear.disabled=idle||!active;
+  if(phrase)phrase.disabled=idle||playerPhraseBuilderApplied;
 }
 
 // Drop only the temporary view state; the caller is loading a different tune
 // or an entirely new ABC collection and will populate the editor separately.
 function discardPlaybackRangeView(){
   playbackRangeOriginalABC=null;
+  playerPhraseBuilderApplied=false;
   const ta=$("abcText");
   ta.readOnly=false;
   ta.removeAttribute("title");
@@ -4805,7 +6414,7 @@ function discardPlaybackRangeView(){
 }
 
 function setPlaybackRangeFromSelection(){
-  if(!tunes.length)return;
+  if(playbackPracticeControlsIdle())return;
   const ta=$("abcText"),visibleABC=ta.value;
   const selected=selectedPlaybackNotes(visibleABC,ta.selectionStart,ta.selectionEnd);
   if(!selected)return;
@@ -4831,10 +6440,10 @@ function setPlaybackRangeFromSelection(){
   const excerpt=visibleABC.slice(selected.start,selected.end);
   ta.value=prefix+excerpt+(excerpt.endsWith("\n")?"":"\n");
   // This editor is a disposable view: editing or narrowing the excerpt never
-  // modifies playbackRangeOriginalABC or the stored full tune. Clear Range
+  // modifies playbackRangeOriginalABC or the stored full tune. Restore
   // discards any temporary edits and restores the exact original source.
   ta.readOnly=false;
-  ta.title="Temporary playback range. Edits here will be discarded by Clear Range and are not saved or shared.";
+  ta.title="Temporary playback range. Edits here will be discarded by Restore and are not saved or shared.";
   ta.setSelectionRange(prefix.length,prefix.length);
   if(typeof instrumentNavAnchor!=="undefined")instrumentNavAnchor=null;
   updatePlaybackRangeButtons();
@@ -5036,6 +6645,7 @@ for(const type of ["select","keyup","mouseup","touchend"]){
 }
 $("setPlaybackRangeBtn").addEventListener("click",setPlaybackRangeFromSelection);
 $("clearPlaybackRangeBtn").addEventListener("click",clearPlaybackRange);
+$("phraseBuilderBtn").addEventListener("click",showPlayerPhraseBuilder);
 
 // Instrument setup changes are equivalent to switching tunes for an active
 // practice range. Capture-phase ensures the original ABC is restored before
@@ -5376,6 +6986,8 @@ function syncPlaybackPermissionHeaderControls(){
 
   // Tempo has an additional dependency on the abcjs tempo input.
   updateTempoButtonState();
+
+  updatePlaybackRangeButtons();
 
   if(permissionPending){
     if(muteBtn)muteBtn.disabled=true;
