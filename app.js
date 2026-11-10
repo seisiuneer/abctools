@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3387_111026_0900";
+var gVersionNumber = "3388_111026_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31435,13 +31435,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_4Nov2026;
+        var updatePresented = localStorage.sawUpdate_10Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_4Nov2026 = true;
+          localStorage.sawUpdate_10Nov2026 = true;
 
         }
 
@@ -61015,7 +61015,15 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 10 November 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>New Export All Tunes Text Format Options</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Export All Tunes as Text</strong> and <strong>Export All Tunes as Text (Comhaltas)</strong> to the <strong>Text</strong> tab on the <strong>Export All Tunes</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">This allows for text-only file export of all the tune titles and note names using the same format as the PDF export format equivalents.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -61024,13 +61032,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Scottish Bagpipe Fingering Player</strong> to the tools available on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
   modal_msg += '</div>';
 
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added support for <strong>%%writefields</strong>.</p>';
-  modal_msg += '<p style="font-size:12pt;">This standard ABC 2.1 directive can be used to suppress or show specific ABC metadata tags on the tunes.</p>';
-  modal_msg += '<p style="font-size:12pt;">Check the <strong>Controlling Displayed ABC Metadata Tags with %%writefields</strong> section in the <strong>User Guide</strong> for full details.</p>';
-  modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
 
@@ -67843,13 +67844,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_4Nov2026;
+    var updatePresented = localStorage.sawUpdate_10Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_4Nov2026 = true;
+      localStorage.sawUpdate_10Nov2026 = true;
 
     }
 
