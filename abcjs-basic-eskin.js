@@ -4402,7 +4402,20 @@ var Parse = function Parse() {
           break;
         case '_':
           if (!escNext) {
-            addWord(i);
+            // MAE 9 Nov 2026 - Spaced ABC lyric underscores ("word _ _")
+            // extend the preceding syllable just like the attached form
+            // ("word_ _"). addWord only assigns divider '_' when the
+            // underscore directly follows the syllable without a space.
+            var addedLyric = addWord(i);
+            if (!addedLyric && word_list.length) {
+              var preceding = word_list.length - 1;
+              // Consecutive underscores can be separated by whitespace.
+              // Do not cross a '*' skip, '|' bar skip, or '-' hyphen skip.
+              while (preceding >= 0 && word_list[preceding].skip && word_list[preceding].to === 'slur') preceding--;
+              if (preceding >= 0 && !word_list[preceding].skip && word_list[preceding].syllable) {
+                word_list[preceding].divider = '_';
+              }
+            }
             word_list.push({
               skip: true,
               to: 'slur'
@@ -4439,25 +4452,30 @@ var Parse = function Parse() {
     line.forEach(function (el) {
       if (word_list.length !== 0) {
         if (word_list[0].skip) {
+          // MAE 9 Nov 2026 - Record which note is actually covered by an ABC
+          // lyric underscore. Skipped notes for * and - are not melismas.
+          var lyricExtensionNote = false;
           switch (word_list[0].to) {
             case 'next':
               if (el.el_type === 'note' && el.pitches !== null && !inSlur) word_list.shift();
               break;
             case 'slur':
-              if (el.el_type === 'note' && el.pitches !== null) word_list.shift();
+              if (el.el_type === 'note' && el.pitches !== null) {
+                lyricExtensionNote = true;
+                word_list.shift();
+              }
               break;
             case 'bar':
               if (el.el_type === 'bar') word_list.shift();
               break;
           }
           if (el.el_type !== 'bar') {
-            if (el.lyric === undefined) el.lyric = [{
+            var skippedLyric = {
               syllable: "",
               divider: " "
-            }];else el.lyric.push({
-              syllable: "",
-              divider: " "
-            });
+            };
+            if (lyricExtensionNote) skippedLyric.melisma = true;
+            if (el.lyric === undefined) el.lyric = [skippedLyric];else el.lyric.push(skippedLyric);
           }
         } else {
           if (el.el_type === 'note' && el.rest === undefined && !inSlur) {
@@ -26704,7 +26722,9 @@ AbstractEngraver.prototype.addNoteToAbcElement = function (abselem, elem, dot, s
 AbstractEngraver.prototype.addLyric = function (abselem, elem) {
   var lyricStr = "";
   elem.lyric.forEach(function (ly) {
-    var div = ly.divider === ' ' ? "" : ly.divider;
+    // MAE 9 Nov 2026 - Hyphens remain text, but an underscore is rendered
+    // as a true SVG melisma line after the horizontal layout is complete.
+    var div = ly.divider === '-' ? '-' : '';
     lyricStr += ly.syllable + div + "\n";
   });
   var lyricDim = this.getTextSize.calc(lyricStr, 'vocalfont', "lyric");
@@ -30966,6 +30986,57 @@ var setPaperSize = __webpack_require__(/*! ./set-paper-size */ "./src/write/draw
 var nonMusic = __webpack_require__(/*! ./non-music */ "./src/write/draw/non-music.js");
 var spacing = __webpack_require__(/*! ../helpers/spacing */ "./src/write/helpers/spacing.js");
 var Selectables = __webpack_require__(/*! ./selectables */ "./src/write/draw/selectables.js");
+// MAE 9 Nov 2026 - Pair lyric continuations before any staff system is drawn.
+// A matched verse must finish one system on an underscore-covered note (or
+// a syllable ending with '_') AND begin the next on an underscore-covered
+// note. This prevents unrelated lyrics on adjacent systems from joining.
+// The flags are per engraved voice and per stacked w: verse, not global.
+function linkLyricExtensionSystems(previous, next) {
+  if (!previous || !next || !previous.voices || !next.voices) return;
+
+  function lastPitched(voice) {
+    for (var i = voice.children.length - 1; i >= 0; i--) {
+      var abs = voice.children[i];
+      if (abs.type === 'note' && abs.abcelem && !abs.invisible) return abs;
+    }
+    return null;
+  }
+  function firstPitched(voice) {
+    for (var i = 0; i < voice.children.length; i++) {
+      var abs = voice.children[i];
+      if (abs.type === 'note' && abs.abcelem && !abs.invisible) return abs;
+    }
+    return null;
+  }
+
+  for (var i = 0; i < previous.voices.length; i++) {
+    var a = previous.voices[i];
+    if (!a || !a.staff || a.staff.isTabStaff) continue;
+    var staffIndex = previous.staffs.indexOf(a.staff);
+    var last = lastPitched(a);
+    if (!last || !last.abcelem.lyric) continue;
+
+    for (var j = 0; j < next.voices.length; j++) {
+      var b = next.voices[j];
+      if (!b || !b.staff || b.staff.isTabStaff || b.voicenumber !== a.voicenumber ||
+          next.staffs.indexOf(b.staff) !== staffIndex) continue;
+      var first = firstPitched(b);
+      if (!first || !first.abcelem.lyric) continue;
+      for (var v = 0; v < last.abcelem.lyric.length; v++) {
+        var endLyric = last.abcelem.lyric[v];
+        var startLyric = first.abcelem.lyric[v];
+        if (endLyric && (endLyric.melisma || (endLyric.syllable && endLyric.divider === '_')) &&
+            startLyric && startLyric.melisma) {
+          if (!a.lyricExtensionOutgoing) a.lyricExtensionOutgoing = [];
+          if (!b.lyricExtensionIncoming) b.lyricExtensionIncoming = [];
+          a.lyricExtensionOutgoing[v] = true;
+          b.lyricExtensionIncoming[v] = true;
+        }
+      }
+      break;
+    }
+  }
+}
 function draw(renderer, classes, abcTune, width, maxWidth, responsive, scale, selectTypes, tuneNumber, lineOffset) {
   var selectables = new Selectables(renderer.paper, selectTypes, tuneNumber);
   renderer.paper.openGroup();
@@ -30975,6 +31046,25 @@ function draw(renderer, classes, abcTune, width, maxWidth, responsive, scale, se
   renderer.moveY(renderer.spacing.music);
   var staffgroups = [];
   var nStaves = 0;
+  // Prepare page-break melismas before drawing the first system, since its
+  // final extension endpoint depends on whether the next system continues it.
+  // Respect the same maxStaves limit used by the real drawing loop.
+  var lyricSystems = [];
+  for (var li = 0; li < abcTune.lines.length; li++) {
+    var group = abcTune.lines[li].staffGroup;
+    if (!abcTune.lines[li].staff || !group) continue;
+    if (abcTune.formatting.maxStaves && lyricSystems.length >= abcTune.formatting.maxStaves) break;
+    lyricSystems.push(group);
+    // In case a caller re-engraves an existing tune object, discard state
+    // from the prior rendering before pairing systems again.
+    for (var vi = 0; vi < group.voices.length; vi++) {
+      delete group.voices[vi].lyricExtensionIncoming;
+      delete group.voices[vi].lyricExtensionOutgoing;
+    }
+  }
+  for (var linkIndex = 1; linkIndex < lyricSystems.length; linkIndex++) {
+    linkLyricExtensionSystems(lyricSystems[linkIndex - 1], lyricSystems[linkIndex]);
+  }
   for (var line = 0; line < abcTune.lines.length; line++) {
     classes.incrLine();
     var abcLine = abcTune.lines[line];
@@ -32764,6 +32854,162 @@ var drawTie = __webpack_require__(/*! ./tie */ "./src/write/draw/tie.js");
 var drawBeam = __webpack_require__(/*! ./beam */ "./src/write/draw/beam.js");
 var renderText = __webpack_require__(/*! ./text */ "./src/write/draw/text.js");
 var drawAbsolute = __webpack_require__(/*! ./absolute */ "./src/write/draw/absolute.js");
+// MAE 9 Nov 2026 - Engrave continuous lyric melisma lines from the end of
+// the syllable through its underscore-covered notes. ABCJS previously printed
+// a literal underscore in the lyric text, regardless of the note spacing.
+// This pass runs after the note layout and text have been drawn, so it uses
+// their actual SVG positions and works for several lyric verses independently.
+function drawLyricExtensions(renderer, voice) {
+  var children = voice.children;
+  var active = [];
+  var extensions = [];
+  // These flags are computed from adjacent staff systems in draw(). They
+  // belong to this particular engraved voice and to each lyric verse.
+  var incoming = voice.lyricExtensionIncoming || [];
+  var outgoing = voice.lyricExtensionOutgoing || [];
+
+  function lyricGraphic(abs) {
+    for (var i = 0; i < abs.children.length; i++) {
+      if (abs.children[i].type === 'lyric') return abs.children[i].graphelem;
+    }
+    return null;
+  }
+
+  function lyricLine(abs, verse) {
+    var graphic = lyricGraphic(abs);
+    if (!graphic) return null; // e.g. %%writefields w false
+    var spans = graphic.getElementsByTagName('tspan');
+    return verse < spans.length ? spans[verse] : null;
+  }
+
+  function finishExtension(verse) {
+    var ext = active[verse];
+    if (ext) extensions.push(ext);
+    active[verse] = null;
+  }
+
+  for (var ci = 0; ci < children.length; ci++) {
+    var abs = children[ci];
+    if (!abs.abcelem || !abs.abcelem.lyric || abs.invisible) continue;
+    for (var verse = 0; verse < abs.abcelem.lyric.length; verse++) {
+      var ly = abs.abcelem.lyric[verse];
+      if (!ly) continue;
+      if (ly.syllable) {
+        finishExtension(verse);
+        if (ly.divider === '_') {
+          var span = lyricLine(abs, verse);
+          if (!span) continue;
+          var graphic = span.parentNode;
+          var fontSize = parseFloat(graphic.getAttribute('font-size')) || 16;
+          var baseline = parseFloat(graphic.getAttribute('y')) + verse * fontSize * 1.2;
+          var textWidth = typeof span.getComputedTextLength === 'function' ? span.getComputedTextLength() : 0;
+          var center = parseFloat(span.getAttribute('x'));
+          if (!isFinite(center) || !isFinite(baseline)) continue;
+          active[verse] = {
+            x1: center + textWidth / 2 + 3,
+            y: baseline + 2,
+            lastIndex: ci,
+            hasExtensionNote: false,
+            verse: verse
+          };
+        }
+      } else if (ly.melisma) {
+        // MAE 9 Nov 2026 - An underscore at the start of the next system
+        // continues the syllable on the preceding system. The underline
+        // starts just before this first covered note (past the clef/key).
+        // Use the real lyric baseline from this voice AND this verse.
+        if (!active[verse] && incoming[verse]) {
+          var continuationSpan = lyricLine(abs, verse);
+          if (continuationSpan) {
+            var continuationGraphic = continuationSpan.parentNode;
+            var continuationFontSize = parseFloat(continuationGraphic.getAttribute('font-size')) || 16;
+            var continuationBaseline = parseFloat(continuationGraphic.getAttribute('y')) + verse * continuationFontSize * 1.2;
+            if (isFinite(continuationBaseline)) {
+              active[verse] = {
+                x1: Math.max(voice.startx + 8, abs.x - 12),
+                y: continuationBaseline + 2,
+                lastIndex: ci,
+                hasExtensionNote: true,
+                verse: verse
+              };
+            }
+          }
+        }
+        if (active[verse]) {
+          active[verse].lastIndex = ci;
+          active[verse].hasExtensionNote = true;
+        }
+      }
+    }
+  }
+  for (var ai = 0; ai < active.length; ai++) {
+    if (active[ai] && outgoing[ai]) active[ai].continueToNextSystem = true;
+    finishExtension(ai);
+  }
+
+  for (var ei = 0; ei < extensions.length; ei++) {
+    var ext = extensions[ei];
+    var last = children[ext.lastIndex];
+    if (!last) continue;
+    // Let the underline track the spacing of the covered notes and end
+    // comfortably before the next syllable in THIS verse, not another verse.
+    var x2 = Math.max(ext.x1 + 9, last.x + (last.w || 0) + 4);
+    if (ext.hasExtensionNote) {
+      for (var ni = ext.lastIndex + 1; ni < children.length; ni++) {
+        var next = children[ni];
+        if (next.type !== 'note' && next.type !== 'rest') continue;
+        if (next.abcelem && next.abcelem.rest &&
+            (next.abcelem.rest.type === 'spacer' || next.abcelem.rest.type === 'spacer_zero')) continue;
+        if (next.x > last.x) {
+          x2 = Math.max(x2, next.x - 12);
+          var nextLy = next.abcelem && next.abcelem.lyric && next.abcelem.lyric[ext.verse];
+          if (nextLy && nextLy.syllable) {
+            var nextSpan = lyricLine(next, ext.verse);
+            if (nextSpan) {
+              var nextWidth = typeof nextSpan.getComputedTextLength === 'function' ? nextSpan.getComputedTextLength() : 0;
+              x2 = Math.min(x2, parseFloat(nextSpan.getAttribute('x')) - nextWidth / 2 - 7);
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    // MAE 9 Nov 2026 - A melisma that finishes before the next barline
+    // must not protrude into the following measure. But if ANY underscore-
+    // covered note lies beyond a barline, render one continuous underline
+    // through that barline: never break it into separate line segments.
+    // Each extension has its own lastIndex, so stacked w: verses can end at
+    // different barlines without affecting each other.
+    for (var bi = ext.lastIndex + 1; bi < children.length; bi++) {
+      var bar = children[bi];
+      if (bar.type !== 'bar' || bar.invisible) continue;
+      if (bar.x > last.x) x2 = Math.min(x2, bar.x - 5);
+      break;
+    }
+
+    // For a syllable that also covers notes on the next staff system,
+    // continue this segment to the end of the CURRENT staff. The next staff
+    // gets its own segment at its own verse-specific baseline. No gap is
+    // introduced inside a system, including at internal barlines.
+    if (ext.continueToNextSystem) {
+      x2 = voice.w - 5;
+    } else {
+      x2 = Math.min(x2, voice.w - 5);
+    }
+    if (x2 <= ext.x1 + 2) continue;
+    renderer.paper.path({
+      path: 'M ' + ext.x1 + ' ' + ext.y + ' L ' + x2 + ' ' + ext.y,
+      stroke: renderer.foregroundColor,
+      'stroke-width': 1,
+      'stroke-linecap': 'butt',
+      fill: 'none',
+      'class': renderer.controller.classes.generate('lyric-extension'),
+      'data-name': 'lyric-extension'
+    });
+  }
+}
+
 function drawVoice(renderer, params, bartop, selectables, staffPos) {
   var width = params.w - 1;
   renderer.staffbottom = params.staff.bottom;
@@ -32852,6 +33098,8 @@ function drawVoice(renderer, params, bartop, selectables, staffPos) {
       }
     }
   }
+  // Draw melismas after all text and note X positions are final.
+  drawLyricExtensions(renderer, params);
   renderer.foregroundColor = saveColor;
 }
 function isNonSpacerRest(elem) {
