@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3386_110926_1730";
+var gVersionNumber = "3387_111026_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -5799,34 +5799,17 @@ var FULLTEXTINCIPITFONTSIZE = 11;
 var FULLTEXTINCIPITLINESPACING = 9;
 var FULLTEXTINCIPITLEFTMARGIN = 45;
 
-function GenerateFullTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, tunePageMap, sortTunes, bDoCCETransform) {
+// Build the complete tune text once for both PDF and plain-text exports.
+// Preserve the existing PDF cleanup, line splitting, key abbreviations, and Comhaltas transformation.
+function BuildFullTextIncipitData(bDoCCETransform) {
 
-  var thePaperHeight = thePDF.internal.pageSize.getHeight();
-  var thePaperWidth = thePDF.internal.pageSize.getWidth() / 1.55;
-
-  var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
-
-  var curTop = gTEXTINCIPITTOPOFFSET;
-
-  // Comhaltas tunes are wider, so make the font smaller
-  FULLTEXTINCIPITFONTSIZE = 11;
-  FULLTEXTINCIPITLINESPACING = 9;
-  FULLTEXTINCIPITLEFTMARGIN = 35;
-
-  if (bDoCCETransform) {
-    FULLTEXTINCIPITFONTSIZE = 10;
-    FULLTEXTINCIPITLINESPACING = 8;
-    FULLTEXTINCIPITLEFTMARGIN = 30;
-  }
+  // GetTunebookIndexTitles reads the shared totalTunes value.
+  totalTunes = CountTunes();
 
   // Get all the tune titles (uses first T: tag found)
   var theTitles = GetTunebookIndexTitles();
 
   var i, j, k;
-
-  // Set the font size
-  thePDF.setFont(gPDFFont, gPDFFontStyle, "normal");
-  thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
 
   var theTune;
   var theTextIncipit;
@@ -5982,6 +5965,37 @@ function GenerateFullTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hi
       incipits: theTextIncipits
     });
   }
+
+  return theIncipits;
+}
+
+function GenerateFullTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, tunePageMap, sortTunes, bDoCCETransform) {
+
+  var thePaperHeight = thePDF.internal.pageSize.getHeight();
+  var thePaperWidth = thePDF.internal.pageSize.getWidth() / 1.55;
+
+  var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
+
+  var curTop = gTEXTINCIPITTOPOFFSET;
+
+  // Comhaltas tunes are wider, so make the font smaller
+  FULLTEXTINCIPITFONTSIZE = 11;
+  FULLTEXTINCIPITLINESPACING = 9;
+  FULLTEXTINCIPITLEFTMARGIN = 35;
+
+  if (bDoCCETransform) {
+    FULLTEXTINCIPITFONTSIZE = 10;
+    FULLTEXTINCIPITLINESPACING = 8;
+    FULLTEXTINCIPITLEFTMARGIN = 30;
+  }
+
+  var i, thisTitle;
+
+  // Set the font size
+  thePDF.setFont(gPDFFont, gPDFFontStyle, "normal");
+  thePDF.setFontSize(FULLTEXTINCIPITFONTSIZE);
+
+  var theIncipits = BuildFullTextIncipitData(bDoCCETransform);
 
   for (i = 0; i < totalTunes; ++i) {
 
@@ -37096,7 +37110,7 @@ function ExportAll() {
   modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-audio" ? ' active' : '') + '" data-tab="exportall-tab-audio" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-audio\')">Audio/MIDI</button>';
   modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-image" ? ' active' : '') + '" data-tab="exportall-tab-image" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-image\')">Image</button>';
   modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-abcmxl" ? ' active' : '') + '" data-tab="exportall-tab-abcmxl" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-abcmxl\')">ABC/MusicXML</button>';
-  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-titles" ? ' active' : '') + '" data-tab="exportall-tab-titles" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-titles\')">Titles</button>';
+  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-titles" ? ' active' : '') + '" data-tab="exportall-tab-titles" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-titles\')">Text</button>';
   modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-dev" ? ' active' : '') + '" data-tab="exportall-tab-dev" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-dev\')">Developer Tools</button>';
 
   modal_msg += '  </div>';
@@ -37141,11 +37155,15 @@ function ExportAll() {
   modal_msg += '    </div>';
 
   // -------------------------------------------------------------------
-  // Titles tab
+  // Text tab (keep the existing tab ID for persistence)
   // -------------------------------------------------------------------
   modal_msg += '    <div id="exportall-tab-titles" class="adv-tab-panel' + (initialTab === "exportall-tab-titles" ? ' active' : '') + '">';
-  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Export All Tunes Titles</p>';
+  // Match the Developer Tools tab's two-button first row and centered second row.
   modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '        <input id="export_all_tunes_textbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTunesAsText(false);" type="button" value="Export All Tunes as Text" title="Saves every tune as formatted note-name text">';
+  modal_msg += '        <input id="export_all_tunes_text_comhaltasbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTunesAsText(true);" type="button" value="Export All Tunes as Text (Comhaltas)" title="Saves every tune as formatted Comhaltas note-name text">';
+  modal_msg += '      </p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
   modal_msg += '        <input id="export_tunetitlesbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTuneTitles();" type="button" value="Export All Tune Titles" title="Saves a text file with all the tune titles">';
   modal_msg += '      </p>';
   modal_msg += '    </div>';
@@ -38354,6 +38372,37 @@ function BatchCSVExport() {
 
 }
 
+
+// Export the same complete tune note-name lines used by the PDF's
+// "ABC Text Complete Tunes" layouts, with a blank line between tunes.
+// This is non-destructive: the source ABC in the editor is never modified.
+function ExportAllTunesAsText(bDoCCETransform) {
+
+  if (CountTunes() === 0) {
+    return;
+  }
+
+  sendGoogleAnalytics("export", bDoCCETransform ? "ExportAllTunesAsTextComhaltas" : "ExportAllTunesAsText");
+
+  // Keep the PDF's tune title/key and line cleanup logic in one place.
+  var theTunes = BuildFullTextIncipitData(bDoCCETransform);
+  var theText = theTunes.map(function(tune) {
+    // PDF section headers are displayed without their leading '*'.
+    var title = tune.title;
+    if (title.indexOf("*") === 0) {
+      title = title.replaceAll("*", "").trim();
+    }
+    return [title].concat(tune.incipits).join("\n");
+  }).join("\n\n") + "\n";
+
+  saveTextFileDeveloper(
+    "Please enter a filename for your full tune text file:",
+    bDoCCETransform ? "All_Tunes_Text_Comhaltas.txt" : "All_Tunes_Text.txt",
+    theText
+  );
+
+  clearGetTuneByIndexCache();
+}
 
 //
 // Export all the tunes names as a text file

@@ -175,6 +175,8 @@ body.flat-buttons #exportall_jsonbutton,
 body.flat-buttons #exportall_csvbutton,
 body.flat-buttons #exportall_musicxmlbutton,
 body.flat-buttons #exportall_abcbutton,
+body.flat-buttons #export_all_tunes_textbutton,
+body.flat-buttons #export_all_tunes_text_comhaltasbutton,
 body.flat-buttons #export_tunetitlesbutton,
 body.flat-buttons #export_smartdrawbutton,
 body.flat-buttons #launchcsvextractor,
@@ -965,9 +967,17 @@ padding:12px;
 margin-right:30px;
 }
 
-#export_tunetitlesbutton{
+/* Use the standard .btn font size and identical styling for all three text-export buttons. */
+#export_tunetitlesbutton,
+#export_all_tunes_textbutton,
+#export_all_tunes_text_comhaltasbutton {
 height:42px;
 padding:12px;
+}
+
+/* Match the first-row button separation in Export All Tunes > Developer Tools. */
+#export_all_tunes_textbutton {
+  margin-right:30px;
 }
 
 #export_smartdrawbutton{
