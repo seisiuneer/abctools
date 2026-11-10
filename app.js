@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3389_111026_1100";
+var gVersionNumber = "3390_111026_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -676,7 +676,9 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
   }
 
   function sliceMeasures(music) {
-    let s = music.replace(/\r/g, "");
+    // Comments can contain note letters and barlines but aren't music.
+    // Filter only the working body so header directives are preserved.
+    let s = StripABCCommentsForTextIncipits(music);
 
     s = s.replace(/(^|\n)\s*[A-Za-z]\s*:[^\n]*/g, "$1");
     s = s.replace(/[!\\]+\s*(?=\n|$)/g, "");
@@ -5304,6 +5306,42 @@ function fitIncipitsTitle(thePDF, title, key, widthToFit) {
 
 }
 
+// Remove ABC comments from a temporary copy used for note-text extraction.
+// Both full-line comments (including %% directives) and trailing inline
+// comments must be excluded before searching for barlines or note names.
+// Preserve quoted/escaped percent signs and line boundaries; do not alter
+// the original ABC stored in the editor.
+function StripABCCommentsForTextIncipits(abcText) {
+  // Keep the original LF/CRLF/CR separators intact to avoid unrelated
+  // differences in existing PDF layouts (some tunebooks use CRLF).
+  var linesAndSeparators = abcText.split(/(\r\n|\n|\r)/);
+  for (var lineIndex = 0; lineIndex < linesAndSeparators.length; lineIndex += 2) {
+    var line = linesAndSeparators[lineIndex];
+    var inQuotes = false;
+    var escaped = false;
+
+    for (var i = 0; i < line.length; ++i) {
+      var ch = line[i];
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escaped = true;
+        continue;
+      }
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === "%" && !inQuotes) {
+        linesAndSeparators[lineIndex] = line.substring(0, i).replace(/[ \t]+$/, "");
+        break;
+      }
+    }
+  }
+
+  return linesAndSeparators.join("");
+}
+
 //
 // Clean an incipit line
 //
@@ -5354,6 +5392,77 @@ function cleanIncipitLine(theTextIncipit) {
   return theTextIncipit;
 }
 
+// Format a complete-tune note line without discarding any ABC barline syntax.
+// Unlike cleanIncipitLine(), which intentionally simplifies short incipits,
+// complete tune exports must retain repeats (|: :| ::), double/final bars
+// (|| |] [| [|]), and numbered endings (|1 [1 :|2, etc.).
+// Return null for lines without real barlines; quoted annotations do not count.
+function formatFullTuneTextLine(theLine) {
+  // Header fields and directives are not music, even if their text contains bars.
+  // A note at the start of a staff can be immediately followed by a repeat
+  // (for example, B:|). Do not confuse that with an ABC metadata field.
+  if (/^\s*%/.test(theLine) ||
+      (/^\s*[A-Za-z]\s*:/.test(theLine) &&
+       !/^\s*[A-Ga-g]:(?:\||:)/.test(theLine))) return null;
+
+  var pieces = [];
+  var fragment = "";
+  var foundBarline = false;
+  var inQuotes = false;
+  var escaped = false;
+
+  function flushFragment() {
+    var cleaned = cleanIncipitLine(fragment).trim();
+    if (cleaned) pieces.push(cleaned);
+    fragment = "";
+  }
+
+  for (var i = 0; i < theLine.length;) {
+    var ch = theLine[i];
+
+    if (!inQuotes && (ch === "|" ||
+        (ch === ":" && (theLine[i + 1] === "|" || theLine[i + 1] === ":")) ||
+        (ch === "[" && (theLine[i + 1] === "|" || /[0-9]/.test(theLine[i + 1] || ""))))) {
+      foundBarline = true;
+      flushFragment();
+
+      // Consume the complete, contiguous barline/ending marker, rather than
+      // splitting at every | and losing double bars or attached ending numbers.
+      var start = i;
+      ++i;
+      while (i < theLine.length) {
+        ch = theLine[i];
+        var prev = theLine[i - 1];
+        if (ch === "|" || ch === ":" ||
+            (ch === "[" && (theLine[i + 1] === "|" || /[0-9]/.test(theLine[i + 1] || ""))) ||
+            (ch === "]" && prev === "|") ||
+            (/[0-9]/.test(ch) && (prev === "|" || prev === "[" || /[0-9,-]/.test(prev))) ||
+            ((ch === "," || ch === "-") && /[0-9]/.test(prev) && /[0-9]/.test(theLine[i + 1] || ""))) {
+          ++i;
+        } else {
+          break;
+        }
+      }
+      pieces.push(theLine.slice(start, i));
+      escaped = false;
+      continue;
+    }
+
+    fragment += ch;
+    if (escaped) {
+      escaped = false;
+    } else if (ch === "\\") {
+      escaped = true;
+    } else if (ch === '"') {
+      inQuotes = !inQuotes;
+    }
+    ++i;
+  }
+
+  flushFragment();
+  return foundBarline ? pieces.join(" ").trim() : null;
+}
+
 // Prepare the same three-measure / 40-character text incipits used by the
 // PDF "ABC Text Incipits" layouts. For plain-text exports, omit only the
 // PDF-specific title-width truncation. Comhaltas conversion is performed on a
@@ -5367,6 +5476,10 @@ function BuildTextIncipitData(bDoCCETransform, sortTunes, thePDF) {
 
   for (var i = 0; i < totalTunes; ++i) {
     var theTune = getTuneByIndex(i);
+    // Comments must be removed BEFORE Comhaltas conversion too: inline
+    // comments are otherwise scanned as notes by the converter.
+    // Remove %%begintext blocks first, while their delimiters still exist.
+    theTune = StripABCCommentsForTextIncipits(StripTextAnnotationsOne(theTune));
     var thisTitle = theTitles[i];
     var isSectionHeader = thisTitle.indexOf("*") === 0;
 
@@ -5378,6 +5491,9 @@ function BuildTextIncipitData(bDoCCETransform, sortTunes, thePDF) {
 
     theTune = StripAnnotationsOneForIncipits(theTune);
     theTune = StripTextAnnotationsOne(theTune);
+    // Strip %%begintext blocks before removing their delimiters, then
+    // discard all remaining ABC comments and directives before scanning bars.
+    theTune = StripABCCommentsForTextIncipits(theTune);
     theTune = StripChordsOne(theTune);
     theTune = StripTabOne(theTune);
     theTune = theTune.replace(/^M:.*[\r\n]*/gm, "");
@@ -5727,8 +5843,14 @@ function BuildFullTextIncipitData(bDoCCETransform) {
   // Add the tunes by name and page number
   for (i = 0; i < totalTunes; ++i) {
 
-    // Get the raw tune ABC
-    theTune = getTuneByIndex(i);
+    // Work on a private copy. Remove %%begintext blocks before their
+    // delimiters are stripped, then remove every ABC comment before running
+    // general text cleanup. In particular, StripTextAnnotationsOne() searches
+    // for %%text within a line: running it on a %%%text comment first leaves
+    // a lone % immediately before the following music line and would delete
+    // that line (including pickups and repeat barlines) as a comment.
+    theTune = getTuneByIndex(i).replace(/^%%begintext[\s\S]*?^%%endtext.*(\r?\n)?/gm, '');
+    theTune = StripABCCommentsForTextIncipits(theTune);
 
     // If requested, transform it to Comhaltas ABC format
     // Don't transform section headers
@@ -5743,8 +5865,11 @@ function BuildFullTextIncipitData(bDoCCETransform) {
     // Strip out annotations
     theTune = StripAnnotationsOneForIncipits(theTune);
 
-    // Strip out atextnnotations
+    // Strip %%begintext blocks before stripping their percent-prefixed
+    // delimiters; then remove comments from the local working copy so that
+    // barlines or note letters inside comments cannot become printed music.
     theTune = StripTextAnnotationsOne(theTune);
+    theTune = StripABCCommentsForTextIncipits(theTune);
 
     // Strip out chord markings
     theTune = StripChordsOne(theTune);
@@ -5793,61 +5918,12 @@ function BuildFullTextIncipitData(bDoCCETransform) {
 
     var theTextIncipits = [];
 
-    // Find the first line of the tune that has measure separators
+    // Preserve all repeat, double, final, and numbered-ending barlines.
+    // The short-incipit generator deliberately uses its original cleaner;
+    // only the complete-tune text paths use this formatter.
     for (k = 0; k < nLines; ++k) {
-
-      theTextIncipit = theLines[k];
-
-      // Skip lines that don't have bar lines
-      if (theTextIncipit.indexOf("|") == -1) {
-        continue;
-      }
-
-      // Clean out the incipit line of any annotations besides notes and bar lines
-      theTextIncipit = cleanIncipitLine(theTextIncipit);
-
-      // Split the incipit
-      theRawSplits = theTextIncipit.split("|");
-
-      theSplitIncipit = [];
-
-      nSplits = theRawSplits.length;
-
-      // Strip out any blank splits
-      for (j = 0; j < nSplits; ++j) {
-
-        if (theRawSplits[j] != "") {
-
-          theSplitIncipit.push(theRawSplits[j]);
-
-        }
-
-      }
-
-      // Use just the first few measures
-      nSplits = theSplitIncipit.length;
-
-      splitAcc = "";
-
-      for (j = 0; j < nSplits; ++j) {
-
-        theSplitIncipit[j] = theSplitIncipit[j].trim();
-
-        splitAcc += theSplitIncipit[j];
-
-        if (j != (nSplits - 1)) {
-          splitAcc += " | ";
-        }
-      }
-
-      theTextIncipit = splitAcc;
-
-      // Strip initial bar line
-      if (theTextIncipit.indexOf(" | ") == 0) {
-        theTextIncipit = theTextIncipit.substring(3, theTextIncipit.length);
-      }
-
-      theTextIncipits.push(theTextIncipit);
+      var formattedLine = formatFullTuneTextLine(theLines[k]);
+      if (formattedLine !== null) theTextIncipits.push(formattedLine);
     }
 
     thisTitle = theTitles[i];
