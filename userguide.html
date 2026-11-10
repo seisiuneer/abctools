@@ -885,6 +885,8 @@
             <a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a>
             <a style="text-decoration:none;" href="#export_all_tunes_text">Export All Tunes as Text</a>
             <a style="text-decoration:none;" href="#export_all_tunes_text_comhaltas">Export All Tunes as Text (Comhaltas)</a>
+            <a style="text-decoration:none;" href="#export_all_tunes_text_incipits">Export All Tunes as Text Incipits</a>
+            <a style="text-decoration:none;" href="#export_all_tunes_text_incipits_comhaltas">Export All Tunes as Text Incipits (Comhaltas)</a>
             <a style="text-decoration:none;" href="#export_all_tune_titles">Export All Tune Titles</a>
             <a style="text-decoration:none;" href="#export_all_developer">Developer Share URL Batch Export Tools</a>
             <a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a>
@@ -1489,6 +1491,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text">Export All Tunes as Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text_comhaltas">Export All Tunes as Text (Comhaltas)</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text_incipits">Export All Tunes as Text Incipits</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text_incipits_comhaltas">Export All Tunes as Text Incipits (Comhaltas)</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_tune_titles">Export All Tune Titles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_developer">Developer Share URL Batch Export Tools</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_all_as_json">Export all Share URLs as JSON</a></p>
@@ -6183,6 +6187,16 @@
                 <p>Each tune has its title and key in parentheses, followed by each line of ABC note names with bar separators.</p>
                 <p>This export omits ABC header fields, chord symbols, tablature, and annotations.</p>
                 <p>When prompted, enter the output filename; the suggested name is <strong>All_Tunes_Text_Comhaltas.txt</strong>.</p>
+                <hr id="export_all_tunes_text_incipits">
+                <p style="text-align: center;"><strong>Export All Tunes as Text Incipits</strong></p>
+                <p>On the <strong>Text</strong> tab, click <strong>Export All Tunes as Text Incipits</strong> to save a single plain-text (.txt) file with the title and key of each tune on one line, followed by its note-name incipit on the next line, and one blank line between tunes.</p>
+                <p>Incipits use the same extraction as the PDF tunebook <strong>ABC Text Incipits</strong> layout: the first two lines containing barlines are considered, up to three measures are used, and the resulting incipit is limited to 40 characters. Full tune titles are retained in text files rather than shortened to fit a PDF column.</p>
+                <p>The export removes annotations, chord symbols, and tablature and does not change the original ABC in the editor. The suggested filename is <strong>All_Tunes_Text_Incipits.txt</strong>.</p>
+                <hr id="export_all_tunes_text_incipits_comhaltas">
+                <p style="text-align: center;"><strong>Export All Tunes as Text Incipits (Comhaltas)</strong></p>
+                <p>On the <strong>Text</strong> tab, click <strong>Export All Tunes as Text Incipits (Comhaltas)</strong> for the same title-and-incipit layout using Comhaltas note names (for example, <strong>D' E' F'</strong> instead of <strong>d e f</strong>).</p>
+                <p>Each tune is temporarily converted to Comhaltas ABC <strong>before</strong> extracting its incipit, using the same three-measure and 40-character limits as the standard text and PDF incipits. The ABC editor is not modified.</p>
+                <p>The suggested filename is <strong>All_Tunes_Text_Incipits_Comhaltas.txt</strong>.</p>
                 <hr id="export_all_tune_titles">
                 <p style="text-align: center;"><strong>Export All Tune Titles</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/0xmWOvNfBIw" title="Export All Tune Titles" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -9291,6 +9305,8 @@
                 <p class="toc"><a style="text-decoration:none;" href="#export_all_musicxml">Export All Tunes as MusicXML</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text">Export All Tunes as Text</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text_comhaltas">Export All Tunes as Text (Comhaltas)</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text_incipits">Export All Tunes as Text Incipits</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#export_all_tunes_text_incipits_comhaltas">Export All Tunes as Text Incipits (Comhaltas)</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_export_pdf">Export PDF</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#generate_website">Export Website</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_export_website">Export Website</a></p>

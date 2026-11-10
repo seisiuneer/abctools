@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3388_111026_0930";
+var gVersionNumber = "3389_111026_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -5354,6 +5354,116 @@ function cleanIncipitLine(theTextIncipit) {
   return theTextIncipit;
 }
 
+// Prepare the same three-measure / 40-character text incipits used by the
+// PDF "ABC Text Incipits" layouts. For plain-text exports, omit only the
+// PDF-specific title-width truncation. Comhaltas conversion is performed on a
+// local copy of each tune BEFORE any incipit extraction; editor ABC is untouched.
+function BuildTextIncipitData(bDoCCETransform, sortTunes, thePDF) {
+
+  totalTunes = CountTunes();
+  var theTitles = GetTunebookIndexTitles();
+  var theIncipits = [];
+  var thePaperWidth = thePDF ? thePDF.internal.pageSize.getWidth() / 1.55 : 0;
+
+  for (var i = 0; i < totalTunes; ++i) {
+    var theTune = getTuneByIndex(i);
+    var thisTitle = theTitles[i];
+    var isSectionHeader = thisTitle.indexOf("*") === 0;
+
+    // Convert a private copy before removing annotations or identifying bars.
+    // Section headings are not tunes and must not be converted.
+    if (bDoCCETransform && !isSectionHeader) {
+      theTune = ceoltasABCTransformer(theTune, false, true);
+    }
+
+    theTune = StripAnnotationsOneForIncipits(theTune);
+    theTune = StripTextAnnotationsOne(theTune);
+    theTune = StripChordsOne(theTune);
+    theTune = StripTabOne(theTune);
+    theTune = theTune.replace(/^M:.*[\r\n]*/gm, "");
+
+    var theLines = theTune.split("\n");
+    var nLines = theLines.length;
+    var theKey = "";
+
+    // Match the PDF incipit key detection and key/mode abbreviation.
+    for (var j = 0; j < nLines; ++j) {
+      theKey = theLines[j];
+      if (theKey.indexOf("K:") !== -1) break;
+    }
+
+    theKey = theKey.replace("K:", "").trim();
+    theKey = theKey.replace("Major", "maj").replace("Minor", "min")
+      .replace("Dorian", "dor").replace("Mixolydian", "mix")
+      .replace("major", "maj").replace("minor", "min")
+      .replace("dorian", "dor").replace("mixolydian", "mix")
+      .replace(" ", "");
+
+    // As in the PDF incipit exporter, use the first two bar-bearing lines.
+    // The second line covers the case where the first is a pickup line.
+    var theTextIncipit = "";
+    var foundBars = false;
+    for (j = 0; j < nLines; ++j) {
+      theTextIncipit = theLines[j];
+      if (theTextIncipit.indexOf("%%score") !== -1) continue;
+      if (theTextIncipit.indexOf("|") !== -1) {
+        foundBars = true;
+        if (j <= nLines - 2) {
+          for (var k = j + 1; k < nLines; ++k) {
+            var theSecondTextIncipit = theLines[k];
+            if (theSecondTextIncipit.indexOf("|") !== -1) {
+              theTextIncipit += theSecondTextIncipit;
+              break;
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    // Section headers have no music. Do not accidentally output K: or T:
+    // as a note incipit when no bar-containing line was found.
+    if (!foundBars || isSectionHeader) theTextIncipit = "";
+
+    theTextIncipit = cleanIncipitLine(theTextIncipit);
+    var theRawSplits = theTextIncipit.split("|");
+    var theSplitIncipit = [];
+    for (j = 0; j < theRawSplits.length; ++j) {
+      if (theRawSplits[j] !== "") theSplitIncipit.push(theRawSplits[j]);
+    }
+
+    // Exactly the PDF's first three (nonempty) measure fragments.
+    var nSplits = Math.min(theSplitIncipit.length, 3);
+    var splitAcc = "";
+    for (j = 0; j < nSplits; ++j) {
+      splitAcc += theSplitIncipit[j].trim();
+      if (j !== nSplits - 1) splitAcc += " | ";
+    }
+    theTextIncipit = splitAcc;
+    if (theTextIncipit.indexOf(" | ") === 0) {
+      theTextIncipit = theTextIncipit.substring(3);
+    }
+    theTextIncipit = theTextIncipit.replaceAll("  ", " ");
+    theTextIncipit = theTextIncipit.substring(0, 40).trim();
+
+    if (sortTunes) thisTitle = processTitleForSorting(thisTitle);
+
+    if (thePDF) {
+      // Keep the PDF's exact title fitting, which depends on PDF font metrics.
+      thisTitle = fitIncipitsTitle(thePDF, thisTitle, theKey,
+        ((thePaperWidth - gTEXTINCIPITRIGHTMARGIN) - gTEXTINCIPITLEFTMARGIN) - TEXTINCIPITGUTTER);
+    } else {
+      // Plain text has no fixed title column, so retain the full title.
+      thisTitle = thisTitle.trim();
+      if (theKey !== "" && !isSectionHeader) thisTitle += " (" + theKey + ")";
+    }
+
+    theIncipits.push({ title: thisTitle, incipit: theTextIncipit, index: i });
+  }
+
+  return theIncipits;
+}
+
 function GenerateTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hideFirstPageNumber, paperStyle, tunePageMap, sortTunes) {
 
   var thePaperHeight = thePDF.internal.pageSize.getHeight();
@@ -5363,223 +5473,11 @@ function GenerateTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hideFi
 
   var curTop = gTEXTINCIPITTOPOFFSET;
 
-  // Get all the tune titles (uses first T: tag found)
-  var theTitles = GetTunebookIndexTitles();
-
-  var i, j, k;
-
-  // Set the font size
-  thePDF.setFont(gPDFFont, gPDFFontStyle, "normal");
-  thePDF.setFontSize(TEXTINCIPITFONTSIZE);
-
-  var theTune;
-  var theTextIncipit;
-  var theRawSplits;
-  var theSplitIncipit;
-  var searchRegExp;
-  var theLines;
-  var nLines;
-  var nSplits;
-  var splitAcc;
-  var thisTitle;
-  var searchRegExp;
-  var theKey;
-
-  var theIncipits = [];
-
-  // Add the tunes by name and page number
-  for (i = 0; i < totalTunes; ++i) {
-
-    // Get the raw tune ABC
-    theTune = getTuneByIndex(i);
-
-    // Strip out annotations
-    theTune = StripAnnotationsOneForIncipits(theTune);
-
-    // Strip out text annotations
-    theTune = StripTextAnnotationsOne(theTune);
-
-    // Strip out chord markings
-    theTune = StripChordsOne(theTune);
-
-    // Strip out injected tab
-    theTune = StripTabOne(theTune);
-
-    // We also need to strip the meter markings:
-    searchRegExp = /^M:.*[\r\n]*/gm
-
-    // Strip out tempo markings
-    theTune = theTune.replace(searchRegExp, "");
-
-    theLines = theTune.split("\n");
-
-    nLines = theLines.length;
-
-    // Find the key
-    theKey = "";
-
-    // Find the key
-    for (j = 0; j < nLines; ++j) {
-
-      theKey = theLines[j];
-
-      if (theKey.indexOf("K:") != -1) {
-        break;
-      }
-
-    }
-
-    theKey = theKey.replace("K:", "");
-    theKey = theKey.trim();
-
-    // Shorten the mode
-    theKey = theKey.replace("Major", "maj");
-    theKey = theKey.replace("Minor", "min");
-    theKey = theKey.replace("Dorian", "dor");
-    theKey = theKey.replace("Mixolydian", "mix");
-    theKey = theKey.replace("major", "maj");
-    theKey = theKey.replace("minor", "min");
-    theKey = theKey.replace("dorian", "dor");
-    theKey = theKey.replace("mixolydian", "mix");
-    theKey = theKey.replace(" ", "");
-
-    //debugger;
-    //var gotSecondLine = false;
-
-    // Find the first line of the tune that has measure separators
-    for (j = 0; j < nLines; ++j) {
-
-      theTextIncipit = theLines[j];
-
-      // Score directives can have bar characters, reject them
-      if (theTextIncipit.indexOf("%%score") != -1) {
-        continue;
-      }
-
-      if (theTextIncipit.indexOf("|") != -1) {
-
-        //debugger;
-        //console.log("Incipit first line: "+theTextIncipit);
-
-        // Add on the second line line just in case it's a pickup line (KSS case)
-        if (j <= (nLines - 2)) {
-
-          // Find the second line of the tune that has measure separators
-          for (k = j + 1; k < nLines; ++k) {
-
-            var theSecondTextIncipit = theLines[k];
-
-            if (theSecondTextIncipit.indexOf("|") != -1) {
-
-              //debugger;
-
-              //console.log("Incipit second line: "+theSecondTextIncipit);
-
-              //gotSecondLine = true;
-
-              // Add on the second line line just in case it's a pickup line
-              theTextIncipit = theTextIncipit + theSecondTextIncipit;
-
-              break;
-            }
-
-          }
-
-        }
-
-        break;
-      }
-
-    }
-
-    // if (!gotSecondLine){
-    //  debugger;
-    // }
-
-    // Clean out the incipit line of any annotations besides notes and bar lines
-    theTextIncipit = cleanIncipitLine(theTextIncipit);
-
-    //console.log("Final raw incipit : "+theTextIncipit);
-
-    // Split the incipit
-    theRawSplits = theTextIncipit.split("|");
-
-    theSplitIncipit = [];
-
-    nSplits = theRawSplits.length;
-
-    // Strip out any blank splits
-    for (j = 0; j < nSplits; ++j) {
-
-      if (theRawSplits[j] != "") {
-
-        theSplitIncipit.push(theRawSplits[j]);
-
-      }
-
-    }
-
-    // Use just the first few measures
-    nSplits = theSplitIncipit.length;
-
-    if (nSplits > 3) {
-      nSplits = 3;
-    }
-
-    splitAcc = "";
-
-    for (j = 0; j < nSplits; ++j) {
-
-      theSplitIncipit[j] = theSplitIncipit[j].trim();
-
-      splitAcc += theSplitIncipit[j];
-
-      if (j != (nSplits - 1)) {
-        splitAcc += " | ";
-      }
-    }
-
-    theTextIncipit = splitAcc;
-
-    // Strip initial bar line
-    if (theTextIncipit.indexOf(" | ") == 0) {
-      theTextIncipit = theTextIncipit.substring(3, theTextIncipit.length);
-    }
-
-    // Collapse double spaces to a single space
-    theTextIncipit = theTextIncipit.replaceAll("  ", " ");
-
-    //console.log("Final incipit : "+theTextIncipit);
-
-    //console.log("-------------------------");
-
-    thisTitle = theTitles[i];
-
-    // Limit the incipit length
-    if (theTextIncipit.length > 40) {
-      theTextIncipit = theTextIncipit.substring(0, 40);
-      theTextIncipit = theTextIncipit.trim();
-    } else {
-      theTextIncipit = theTextIncipit.trim();
-    }
-
-
-    // If sorting incipits, do the The, Da, A, and An replacement before appending the key
-    if (sortTunes) {
-
-      thisTitle = processTitleForSorting(thisTitle);
-
-    }
-
-    // Fit the title in the available space
-    thisTitle = fitIncipitsTitle(thePDF, thisTitle, theKey, ((thePaperWidth - gTEXTINCIPITRIGHTMARGIN) - gTEXTINCIPITLEFTMARGIN) - TEXTINCIPITGUTTER);
-
-    theIncipits.push({
-      title: thisTitle,
-      incipit: theTextIncipit,
-      index: i
-    });
-  }
+  // Shared with Export All Tunes as Text Incipits to keep the PDF and text
+  // exports in sync, including pickup handling and the three-measure limit.
+  var theIncipits = BuildTextIncipitData(false, sortTunes, thePDF);
+  var i, j;
+  var thisTitle, theTextIncipit;
 
   // Sorted incipipits requested?
   if (sortTunes) {
@@ -37164,6 +37062,10 @@ function ExportAll() {
   modal_msg += '        <input id="export_all_tunes_text_comhaltasbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTunesAsText(true);" type="button" value="Export All Tunes as Text (Comhaltas)" title="Saves every tune as formatted Comhaltas note-name text">';
   modal_msg += '      </p>';
   modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
+  modal_msg += '        <input id="export_all_tunes_text_incipitsbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTunesAsTextIncipits(false);" type="button" value="Export All Tunes as Text Incipits" title="Saves the PDF-style text incipit for every tune">';
+  modal_msg += '        <input id="export_all_tunes_text_incipits_comhaltasbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTunesAsTextIncipits(true);" type="button" value="Export All Tunes as Text Incipits (Comhaltas)" title="Saves the PDF-style text incipit for every tune in Comhaltas notation">';
+  modal_msg += '      </p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
   modal_msg += '        <input id="export_tunetitlesbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTuneTitles();" type="button" value="Export All Tune Titles" title="Saves a text file with all the tune titles">';
   modal_msg += '      </p>';
   modal_msg += '    </div>';
@@ -38398,6 +38300,33 @@ function ExportAllTunesAsText(bDoCCETransform) {
   saveTextFileDeveloper(
     "Please enter a filename for your full tune text file:",
     bDoCCETransform ? "All_Tunes_Text_Comhaltas.txt" : "All_Tunes_Text.txt",
+    theText
+  );
+
+  clearGetTuneByIndexCache();
+}
+
+// Export the three-measure, 40-character ABC note-name incipits used by the
+// PDF "ABC Text Incipits" export, with title/incipit on separate lines.
+// Both variants work only on per-tune local copies and leave editor ABC intact.
+function ExportAllTunesAsTextIncipits(bDoCCETransform) {
+
+  if (CountTunes() === 0) return;
+
+  sendGoogleAnalytics("export", bDoCCETransform ?
+    "ExportAllTunesAsTextIncipitsComhaltas" : "ExportAllTunesAsTextIncipits");
+
+  var theTunes = BuildTextIncipitData(bDoCCETransform, false, null);
+  var theText = theTunes.map(function(tune) {
+    var title = tune.title;
+    if (title.indexOf("*") === 0) title = title.replaceAll("*", "").trim();
+    // Section headings are emitted as headings, not as fake ABC note lines.
+    return tune.incipit ? title + "\n" + tune.incipit : title;
+  }).join("\n\n") + "\n";
+
+  saveTextFileDeveloper(
+    "Please enter a filename for your tune text incipits file:",
+    bDoCCETransform ? "All_Tunes_Text_Incipits_Comhaltas.txt" : "All_Tunes_Text_Incipits.txt",
     theText
   );
 
@@ -61022,8 +60951,8 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;"><strong>New Export All Tunes Text Format Options</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Added <strong>Export All Tunes as Text</strong> and <strong>Export All Tunes as Text (Comhaltas)</strong> to the <strong>Text</strong> tab on the <strong>Export All Tunes</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">This allows for text-only file export of all the tune titles and note names using the same format as the PDF export format equivalents.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Export All Tunes as Text</strong>, <strong>Export All Tunes as Text (Comhaltas)</strong>, <strong>Export All Tunes as Text Incipits</strong>, and <strong>Export All Tunes as Text Incipits (Comhaltas)</strong> to the <strong>Text</strong> tab on the <strong>Export All Tunes</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">This allows for text-only file export of all the tune titles and note names or incipits using the same format as the PDF export format equivalents.</p>';
   modal_msg += '</div>';
 
   // Feature card
