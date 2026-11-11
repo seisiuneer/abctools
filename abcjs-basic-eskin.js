@@ -5968,7 +5968,7 @@ var parseDirective = {};
   };
   var getRequiredMeasurement = function getRequiredMeasurement(cmd, tokens) {
     var points = tokenizer.getMeasurement(tokens);
-    if (points.used === 0 || tokens.length !== 0) return {
+    if (points.used === 0 || tokens.length !== 0 || !isFinite(points.value)) return {
       error: "Directive \"" + cmd + "\" requires a measurement as a parameter."
     };
     return points.value;
@@ -6602,9 +6602,10 @@ var parseDirective = {};
         }
         return null;
       case "vskip":
-        var vskip = Math.round(getRequiredMeasurement(cmd, tokens));
+        // Validate before rounding: Math.round({error: ...}) yields NaN.
+        var vskip = getRequiredMeasurement(cmd, tokens);
         if (vskip.error) return vskip.error;
-        tuneBuilder.addSpacing(vskip);
+        tuneBuilder.addSpacing(Math.round(vskip));
         return null;
       case "scale":
         return setScale(cmd, tokens);
@@ -11450,6 +11451,11 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
     var num = '';
     if (tokens[0].token === '-') {
       tokens.shift();
+      // A lone minus sign is common during live editing of %%vskip.
+      // Do not try to read a missing number token.
+      if (tokens.length === 0 || tokens[0].type !== 'number') return {
+        used: 0
+      };
       num = '-';
       used++;
     } else if (tokens[0].type !== 'number') return {
