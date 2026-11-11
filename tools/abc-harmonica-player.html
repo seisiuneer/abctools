@@ -1784,7 +1784,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 4.5
+     Version 4.6
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Donate
@@ -3055,6 +3055,16 @@ function harmonicaFingeringsGenerator(abc){
 // .abc as well as .txt files. Validate the selected filename after selection.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+// On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
+if (IS_IOS && navigator.audioSession) {
+  try {
+    navigator.audioSession.type = 'playback';
+  } catch (err) {
+    // Leave audio behavior unchanged if the Audio Session API is restricted.
+  }
+}
+
 if(IS_IOS)$("openFile").removeAttribute("accept");
 if(IS_IOS)$("customTuningFile")?.removeAttribute("accept");
 const CUSTOM_HARMONICA_KEY="abcHarmonicaCustomTuning";

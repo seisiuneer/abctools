@@ -1709,7 +1709,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div class="app">
 <header class="app-header">
 <div class="version">
-     Version 4.5
+     Version 4.6
     </div>
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Donate
@@ -2633,6 +2633,16 @@ function installCustomTuningEditor(){restoreCustomHarmonica();buildCustomMatrix(
 // .abc as well as .txt files. Validate the selected filename after selection.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+// On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
+if (IS_IOS && navigator.audioSession) {
+  try {
+    navigator.audioSession.type = 'playback';
+  } catch (err) {
+    // Leave audio behavior unchanged if the Audio Session API is restricted.
+  }
+}
+
 if(IS_IOS)$("openFile").removeAttribute("accept");
 const PUSH_COLOR="#d60062",DRAW_COLOR="#009e73";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null,lastAutoscrollSystemTop=null;
 // Current rendered tune used by the playback controller.

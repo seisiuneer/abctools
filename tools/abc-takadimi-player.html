@@ -1287,7 +1287,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Takadimi Player</h1><p>Play ABC tunes with synchronized note names and Takadimi rhythm syllables.</p></header>
+<header class="app-header"><div class="version">Version 4.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Takadimi Player</h1><p>Play ABC tunes with synchronized note names and Takadimi rhythm syllables.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names">Notation + Note Name</option><option value="rhythm" selected>Notation + Takadimi</option><option value="both">Notation + Note Name + Takadimi</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
@@ -1610,6 +1610,16 @@ const $=id=>document.getElementById(id);
 
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+// On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
+if (IS_IOS && navigator.audioSession) {
+  try {
+    navigator.audioSession.type = 'playback';
+  } catch (err) {
+    // Leave audio behavior unchanged if the Audio Session API is restricted.
+  }
+}
+
 if(IS_IOS)$("openFile").removeAttribute("accept");
 
 let currentSaveBaseName="";

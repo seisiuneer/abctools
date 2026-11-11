@@ -1684,7 +1684,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
@@ -1973,6 +1973,16 @@ const $=id=>document.getElementById(id);
 
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+// On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
+if (IS_IOS && navigator.audioSession) {
+  try {
+    navigator.audioSession.type = 'playback';
+  } catch (err) {
+    // Leave audio behavior unchanged if the Audio Session API is restricted.
+  }
+}
+
 if(IS_IOS)$("openFile").removeAttribute("accept");
 
 let currentSaveBaseName="";

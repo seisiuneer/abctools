@@ -1316,7 +1316,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
+<header class="app-header"><div class="version">Version 4.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Tuning</label><select id="system"><option value="bc">B/C</option><option value="cd">C#/D</option></select></div>
@@ -2489,6 +2489,16 @@ const $=id=>document.getElementById(id);
 // .abc as well as .txt files. Validate the selected filename after selection.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+
+// On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
+if (IS_IOS && navigator.audioSession) {
+  try {
+    navigator.audioSession.type = 'playback';
+  } catch (err) {
+    // Leave audio behavior unchanged if the Audio Session API is restricted.
+  }
+}
+
 if(IS_IOS)$("openFile").removeAttribute("accept");
 const PUSH_COLOR="#b80054",DRAW_COLOR="#008762";let currentSaveBaseName="",manualEntryCollection=false,loadedABC="",tunes=[],currentTune=0,abcDirty=false,solution=[],solutionByIndex=new Map(),controller=null,renderGeneration=0,prefixLength=0,playbackCursor=null,lastAutoscrollSystemTop=null;
 // Current rendered tune used by the playback controller.
