@@ -1873,7 +1873,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body class="fiddle-player"><div class="app">
-<header class="app-header"><div class="version">Version 1.5</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Fiddle Fingering Player</h1><p>Play ABC tunes with synchronized notation, fiddle finger numbers, and audio playback.</p></header>
+<header class="app-header"><div class="version">Version 1.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Fiddle Fingering Player</h1><p>Play ABC tunes with synchronized notation, fiddle finger numbers, and audio playback.</p></header>
 <div class="toolbar fiddleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="notation-names">Notation + Note Names</option><option value="fiddle-tab">Notation + Tab</option><option value="fiddle-tab-names" selected>Notation + Note Names + Tab</option></select></div>
@@ -1969,7 +1969,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Notation Display, Note Names, and Tablature</p>
       <p>The <b>Notation display</b> menu offers <b>Notation Only</b>, <b>Notation + Note Names</b>, <b>Notation + Tab</b>, and <b>Notation + Note Names + Tab</b>.</p>
       <p><b>Notation + Note Names + Tab</b> is the default when no preference has been saved.</p>
-      <p>The note names use the same pitch naming as the large note display beside the fingerboard.</p>
+      <p>Displayed note names use <b>Comhaltas-style note naming</b>, with uppercase letters and octave commas or apostrophes, matching the large note display beside the fingerboard. Sharps or flats are selected according to the tune's <b>K:</b> key and mode.</p>
       <p>When both note names and tablature are enabled, the note names appear between the standard notation and tablature.</p>
       <p>The tablature has four string lines, with <b>E</b> at the top followed by <b>A</b>, <b>D</b>, and <b>G</b>.</p>
       <p>Each number on a tablature string indicates the finger to use, with <b>0</b> meaning an open string.</p>
@@ -2450,17 +2450,24 @@ function displayedStringPitchName(str){
   return Number(str.midi)===76?"E":String(str.name||"");
 }
 
+// Match the Comhaltas naming tables in ABC Transcription Tools (MIDI 55 = G,).
+const COMHALTAS_NAMES={
+ sharps:["G,","G♯,","A,","A♯,","B,","C,","C♯,","D","D♯","E","F","F♯","G","G♯","A","A♯","B","C","C♯","D'","D♯'","E'","F'","F♯'","G'","G♯'","A'","A♯'","B'","C'","C♯'","D''","D♯''","E''","F''","F♯''","G''","G♯''","A''","A♯''","B''"],
+ flats:["G,","A♭,","A,","B♭,","B,","C,","D♭,","D","E♭","E","F","G♭","G","A♭","A","B♭","B","C","D♭","D'","E♭'","E'","F'","G♭'","G'","A♭'","A'","B♭'","B'","C'","D♭'","D''","E♭''","E''","F''","G♭''","G''","A♭''","A''","B''"]
+};
 function formattedFiddleNoteName(midi){
-  const n=Math.round(Number(midi));
-  if(!Number.isFinite(n))return "";
-  const base=midiPitchClassName(n);
-  const octave=Math.floor(n/12)-1;
-  if(octave===3)return base+",";
-  if(octave===4)return base;
-  if(octave===5)return base+"'";
-  if(octave===6)return base+"''";
-  return base+(octave<3?",":"''");
+ const n=Math.round(Number(midi));
+ if(!Number.isFinite(n))return '';
+ const map=COMHALTAS_NAMES[keyTagPrefersFlats($("abcText")?.value)?'flats':'sharps'];
+ if(n>=55&&n<55+map.length)return map[n-55];
+ // Outside the original ATTools table, continue its C-based octave convention.
+ const pc=((n%12)+12)%12;
+ const name=(keyTagPrefersFlats($("abcText")?.value)?['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B']:['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'])[pc];
+ const octave=Math.floor(n/12)-1;
+ if(octave<=3)return name+','.repeat(Math.max(0,4-octave));
+ return name+"'".repeat(Math.max(0,octave-4));
 }
+
 
 
 // Match the ABC Transcription Tools fiddle-fingering injector's standard
