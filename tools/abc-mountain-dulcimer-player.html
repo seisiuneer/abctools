@@ -30,22 +30,6 @@
  *
 -->
 <head>
-<script>
-// On iOS/iPadOS only, play audio even when Silent Mode is enabled.
-// Include iPadOS devices using desktop-class browser identification.
-(function () {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  if (isIOS && navigator.audioSession) {
-    try {
-      navigator.audioSession.type = 'playback';
-    } catch (err) {
-      // Continue with normal audio behavior if the API is unavailable or restricted.
-    }
-  }
-})();
-</script>
-
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Mountain Dulcimer Player</title>
 <meta name="description" content="Play ABC tunes with custom diatonic Mountain Dulcimer tablature, adaptive three-course fretboard fingering, and compatibility checking for supported tunings." />
@@ -2036,7 +2020,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.7</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 4.6</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>

@@ -30,22 +30,6 @@
  *
 -->
 <head>
-<script>
-// On iOS/iPadOS only, play audio even when Silent Mode is enabled.
-// Include iPadOS devices using desktop-class browser identification.
-(function () {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  if (isIOS && navigator.audioSession) {
-    try {
-      navigator.audioSession.type = 'playback';
-    } catch (err) {
-      // Continue with normal audio behavior if the API is unavailable or restricted.
-    }
-  }
-})();
-</script>
-
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Anglo Concertina Fingering Player</title>
 <meta name="description" content="Play ABC tunes while following synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams using On-Row or either Cross-row fingering solution." />
@@ -1363,7 +1347,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.8</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>

@@ -30,22 +30,6 @@
  *
 -->
  <head>
-<script>
-// On iOS/iPadOS only, play audio even when Silent Mode is enabled.
-// Include iPadOS devices using desktop-class browser identification.
-(function () {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  if (isIOS && navigator.audioSession) {
-    try {
-      navigator.audioSession.type = 'playback';
-    } catch (err) {
-      // Continue with normal audio behavior if the API is unavailable or restricted.
-    }
-  }
-})();
-</script>
-
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <title>
@@ -1800,7 +1784,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 4.6
+     Version 4.5
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Donate
