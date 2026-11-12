@@ -1,32 +1,32 @@
-SmeggTuner v1.4.2 — self-hosted under /tools/smeggtuner/
+SmeggTuner v1.4.5 — self-hosted under /tools/smeggtuner/
 
 DEPLOYMENT
-Upload the entire smeggtuner folder from this ZIP to /tools/ on your web server,
-replacing the previously deployed v1.4.1 files. Keep nested folders intact.
+Upload the contents of the included `smeggtuner` directory to /tools/smeggtuner/
+(or unzip the directory into your server's /tools/ directory).
+Replace the prior SmeggTuner installation; keep the nested directories intact.
 
-URLS
+URL
  https://michaeleskin.com/tools/smeggtuner/index.html
  https://michaeleskin.com/tools/smeggtuner/
 
-CHANGES
-- Patched fresh v1.4.2 Nuxt HTML asset paths and app.baseURL.
-- Added /index.html route alias for direct access using the specified URL.
-- Updated JS references to the WASM engine, SW registration, manifest/icons,
-  Wails helper paths, translation file path, and optional API base paths.
-- Scoped the v1.4.2 service worker, its navigation fallback, and cache key to
-  /tools/smeggtuner/. Cache rotation removes only same-prefix SmeggTuner caches.
-- Updated PWA manifest start URL, scope, and three icon URLs.
-- Carried over the attached index.html SEO, OG, Twitter metadata and Google
-  Analytics snippet, without retaining obsolete v1.4.1 JS/CSS build references.
-- og:image remains https://michaeleskin.com/tools/img/smeggtuner_og3.jpg
-- twitter:image remains https://michaeleskin.com/tools/img/smeggtuner_og2.jpg
-- Regenerated gzip and Brotli sidecars for changed files.
+PATCHES
+- Changed v1.4.5 HTML Nuxt asset references and runtime app.baseURL to /tools/smeggtuner/
+- Added Nuxt index.html route alias for explicit /index.html page requests.
+- Patched main JS bundle 5XIODmgb.js for engine, manifest, icons, service worker
+  scope/registration, translation assets and optional Wails/API URLs.
+- Isolated service worker fetch handling and offline fallback to /tools/smeggtuner/.
+- Uses a SmeggTuner-only cache prefix and versioned cache 1.4.5-a332e3c83b7d-subdir1.
+- Updated PWA manifest's start_url, scope, and icon paths.
+- Incorporated title, description, canonical, Open Graph and Twitter metadata
+  from the user's v1.4.2 index.html into v1.4.5 index.html and 200.html.
+- Maintained OG image https://michaeleskin.com/tools/img/smeggtuner_og3.jpg
+  and Twitter image https://michaeleskin.com/tools/img/smeggtuner_og2.jpg.
+- Preserved Google Analytics G-VM0N9HL3MK.
+- Regenerated gzip and Brotli sidecar files for all modified files.
 
-IMPORTANT
-This version replaces v1.4.1. Remove stale old files when practical; the
-new Nuxt chunk filenames must be deployed with the new HTML. If your hosting
-caches HTML or JS aggressively, invalidate it before retesting. Cache keys
-are versioned to encourage automatic service-worker upgrades.
-
-The browser WebAudio/microphone and WebAssembly tuning path should be verified
-on the live HTTPS site; static tests alone cannot prove audio behavior.
+TEST NOTES
+The direct /index.html route and dynamic assets must be verified with a
+browser after deployment, including microphone permission and WebAssembly
+engine analysis. Static asset checks cannot prove live microphone behavior.
+If your server caches HTML/JS or serves precompressed .gz/.br assets,
+replace/invalidate both old and new variants during upgrade.

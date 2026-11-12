@@ -1,1 +1,0 @@
-var e={shortcut:{key:{minus:{t:0,b:{t:2,i:[{t:3}],s:`-`}},plus:{t:0,b:{t:2,i:[{t:3}],s:`+`}}},or:{t:0,b:{t:2,i:[{t:3}],s:`lub`}}}};export{e as default};
