@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3391_111126_0730";
+var gVersionNumber = "3392_111226_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -424,6 +424,10 @@ var gIsFirstRun = false;
 // Raw mode?
 var gAllowRawMode = false;
 var gRawMode = false;
+// Once incomplete-measure highlighting has run, allow one cleanup pass when
+// Highlighting is switched off (or measure shading is disabled). Ordinary
+// renders do not need the expensive tooltip/handler/background DOM scans.
+var gIncompleteMeasureCleanupPending = false;
 var gRawVisual = null;
 var gRawIsDragging = false;
 var gRawLastIndex = -1;
@@ -15446,6 +15450,16 @@ function FindIncompleteMeasuresForHighlight(visual, tuneABC) {
 }
 function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, renderedABC) {
 
+  var shouldHighlight = gRawMode &&
+    gHighlightIncompleteMeasures &&
+    !gTemporarilyDisableMeasureHighlighting &&
+    !!visualObj;
+
+  // No measure highlighting is requested, and no previous highlighting needs
+  // removing. In particular, skip all DOM-wide cleanup on normal renders.
+  // The pending flag preserves one necessary cleanup when leaving Highlighting.
+  if (!shouldHighlight && !gIncompleteMeasureCleanupPending) return;
+
   var svgNS = "http://www.w3.org/2000/svg";
 
   // The editor-side hover highlight is CodeMirror-only. Keep its markers on
@@ -15624,8 +15638,8 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
     visualObj ? visualObj.length : 0
   );
 
-  // Always remove stale backgrounds, tooltip elements, and event handlers
-  // before deciding whether new measure highlights should be added.
+  // When highlighting is active, clear the previous overlays before redrawing.
+  // Otherwise, this is the one cleanup pass after highlighting was disabled.
   for (var cleanupIndex = 0; cleanupIndex < renderCount; ++cleanupIndex) {
     var cleanupRenderDivID =
       (renderDivs && renderDivs[cleanupIndex]) ||
@@ -15662,12 +15676,14 @@ function AddIncompleteMeasureBackgrounds(visualObj, startTune, renderDivs, rende
     if (oldTooltip) oldTooltip.remove();
   }
 
-  if (!gRawMode ||
-      !gHighlightIncompleteMeasures ||
-      gTemporarilyDisableMeasureHighlighting ||
-      !visualObj) {
+  if (!shouldHighlight) {
+    gIncompleteMeasureCleanupPending = false;
     return;
   }
+
+  // Cleanup will be needed on the next render that disables highlighting.
+  // Set before processing so even a partial draw is cleaned up later.
+  gIncompleteMeasureCleanupPending = true;
 
   function GetRenderedNodesForMeasuredElements(measuredElements) {
     var nodes = [];
@@ -61020,7 +61036,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 11 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 November 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
