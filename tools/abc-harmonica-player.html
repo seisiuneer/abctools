@@ -1740,6 +1740,81 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
     align-items: center;
   }
 }
+
+/* Large, discoverable playback unlock action for browsers requiring a user gesture. */
+#enablePlaybackModal {
+  position: fixed;
+  inset: 0;
+  z-index: 30000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+  background: rgba(0, 0, 0, .64);
+}
+#enablePlaybackModal .enablePlaybackDialog {
+  /* Position the dialog's center about one-third down the viewport. */
+  transform: translateY(-16.6667vh);
+  transform: translateY(-16.6667dvh);
+  width: min(380px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 30px 24px 28px;
+  border-radius: 16px;
+  background: #fff;
+  color: #17251d;
+  box-shadow: 0 22px 65px rgba(0, 0, 0, .38);
+  text-align: center;
+  font: 16px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+#enablePlaybackModal .enablePlaybackSymbol {
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+#enablePlaybackModal .enablePlaybackDialog h2 {
+  margin: 0 0 12px;
+  font-size: 1.42rem;
+  line-height: 1.2;
+}
+#enablePlaybackModal .enablePlaybackDialog p {
+  margin: 0 0 24px;
+  color: #46584b;
+}
+#enablePlaybackModal #enablePlaybackBtn {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  background: #176b43;
+  box-shadow: none;
+  font: 700 1.1rem/1.25 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+#enablePlaybackModal #enablePlaybackBtn:hover:not(:disabled),
+#enablePlaybackModal #enablePlaybackBtn:focus-visible {
+  background: #0d4c2f;
+  outline: 3px solid #92c4a6;
+  outline-offset: 2px;
+}
+#enablePlaybackModal #enablePlaybackBtn:disabled {
+  opacity: .72;
+  cursor: wait;
+}
+/* Keep the entire dialog visible in short or landscape viewports. */
+@media (max-height: 540px) {
+  #enablePlaybackModal .enablePlaybackDialog { transform: none; }
+}
+@media (max-width: 480px) {
+  #enablePlaybackModal .enablePlaybackDialog { padding: 26px 20px 24px; }
+}
+
 </style>
 </style>
    </meta>
@@ -1784,7 +1859,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <div class="app">
    <header class="app-header">
     <div class="version">
-     Version 4.6
+     Version 4.8
     </div>
     <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Donate
@@ -4274,6 +4349,8 @@ function processLoadedABC(abc,label){
   // Share-link loading occurs after Lesson mode is established. Keep the tune
   // selector locked after the normal loader repopulates and enables it.
   if(document.body.classList.contains("lessonMode"))$("tuneSelect").disabled=true;
+  // A received share/transfer requires an obvious activation gesture.
+  if(sharePlaybackNeedsGesture)showEnablePlaybackButton();
 }
 
 /* ============================================================
@@ -4306,7 +4383,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   if(!abcText.trim())return;
   try{
     if($("openFile"))$("openFile").value="";
-    sharePlaybackNeedsGesture=true;
+    sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
     manualEntryCollection=false;currentSaveBaseName="transferred-harmonica-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
@@ -4370,7 +4447,7 @@ function loadShareLinkAfterStartup(){
       // shared harmonica tuning, key, octave shift, or playback transpose as
       // the recipient's normal browser preferences.
       standardShareSettingsPending=params.get("lesson")!=="1";
-      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=true;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
       if(system==="8"&&sharedCustomTuningActive){
         const sharedTuningMessage =
           `<div style="max-width:100%;overflow-wrap:break-word;word-break:normal">` +
@@ -4538,41 +4615,93 @@ let initialAudioRetry=false;
 
 let sharePlaybackNeedsGesture=false;
 
+// A real tap is required on some browsers before shared/transferred audio can start.
+// Keep the gate as a modal rather than a hard-to-find button inside the audio bar.
+let playbackUnlockInProgress=false;
+let playbackUnlockedThisPage=false;
+let lessonPlaybackStartRequested=false;
+function removeEnablePlaybackModal(){
+  const modal=$("enablePlaybackModal");
+  if(modal)modal.remove();
+}
+
+async function enablePlaybackFromGesture(){
+  if(playbackUnlockInProgress)return;
+  playbackUnlockInProgress=true;
+  const btn=$("enablePlaybackBtn");
+  if(btn){btn.disabled=true;btn.textContent="Enabling Playback…";}
+  try{
+    // Invoke resume() synchronously from the button/Start Lesson click.
+    const ctx=window.abcjsAudioContext;
+    if(ctx&&ctx.state==="suspended")await ctx.resume();
+    sharePlaybackNeedsGesture=false;
+    await rebuild();
+    // rebuild() reports its own errors; also check that playable controls exist.
+    if(!$("audio").querySelector(".abcjs-midi-start"))
+      throw new Error("Playback controls were not initialized.");
+    playbackUnlockedThisPage=true;
+    removeEnablePlaybackModal();
+    updateTempoButtonState();
+    updatePlaybackRangeButtons();
+  }catch(e){
+    sharePlaybackNeedsGesture=true;
+    // Show the error first so the playback overlay never obscures the alert.
+    removeEnablePlaybackModal();
+    updatePlaybackRangeButtons();
+    await showPlayerAlert("Unable to enable playback: "+(e&&e.message||e));
+    if(document.body.classList.contains("lessonMode")){
+      lessonPlaybackStartRequested=false;
+      setModal("studentLessonModal",true);
+    }
+    showEnablePlaybackButton();
+  }finally{
+    playbackUnlockInProgress=false;
+  }
+}
+
 function showEnablePlaybackButton(){
   const audio=$("audio");
   audio.innerHTML="";
-  const btn=document.createElement("button");
-  btn.type="button";
-  btn.id="enablePlaybackBtn";
-  btn.className="primary";
-  btn.textContent="Click to Enable Playback";
-  btn.style.width="100%";
-  btn.style.minHeight="44px";
-  btn.addEventListener("click",async()=>{
-    btn.disabled=true;
-    btn.textContent="Enabling Playback…";
-    try{
-      // This is a genuine user gesture, satisfying browsers that prohibit
-      // automatic AudioContext startup.
-      const ctx=window.abcjsAudioContext;
-      if(ctx&&ctx.state==="suspended")await ctx.resume();
-      sharePlaybackNeedsGesture=false;
-      await rebuild();
-      // rebuild() handles its own renderer/audio errors; confirm actual controls exist.
-      if(!$("audio").querySelector(".abcjs-midi-start"))throw new Error("Playback controls were not initialized.");
-    }catch(e){
-      sharePlaybackNeedsGesture=true;
-      // A failed rebuild can remove the permission button. Restore it for retry.
-      $("audio").replaceChildren(btn);
-      btn.disabled=false;
-      btn.textContent="Click to Enable Playback";
-      updatePlaybackRangeButtons();
-      void showPlayerAlert("Unable to enable playback: "+(e&&e.message||e));
-    }
+  removeEnablePlaybackModal();
+
+  // Start Lesson itself is an explicit gesture; never cover its introduction.
+  // Keep an invisible marker for existing enable/disable checks until Start.
+  if(document.body.classList.contains("lessonMode")&&!lessonPlaybackStartRequested){
+    const marker=document.createElement("button");
+    marker.id="enablePlaybackBtn";
+    marker.type="button";
+    marker.hidden=true;
+    marker.style.display="none";
+    marker.disabled=true;
+    audio.appendChild(marker);
+    updateTempoButtonState();
+    return;
+  }
+
+  const modal=document.createElement("div");
+  modal.id="enablePlaybackModal";
+  modal.setAttribute("role","dialog");
+  modal.setAttribute("aria-modal","true");
+  modal.setAttribute("aria-labelledby","enablePlaybackTitle");
+  modal.innerHTML=`<div class="enablePlaybackDialog">
+    <div class="enablePlaybackSymbol" aria-hidden="true">&#128266;</div>
+    <h2 id="enablePlaybackTitle">Enable Audio Playback</h2>
+    <p>Tap the button below to enable sound and use the playback controls.</p>
+    <button id="enablePlaybackBtn" type="button">Enable Playback</button>
+  </div>`;
+  const btn=modal.querySelector("#enablePlaybackBtn");
+  btn.addEventListener("click",()=>{void enablePlaybackFromGesture();});
+  // This dialog has one action and intentionally no dismiss option.
+  btn.addEventListener("keydown",event=>{
+    if(event.key==="Tab"){event.preventDefault();btn.focus();}
   });
-  audio.appendChild(btn);
+  document.body.appendChild(modal);
+  try{btn.focus({preventScroll:true});}catch(_){btn.focus();}
   updateTempoButtonState();
+  updatePlaybackRangeButtons();
 }
+
+
 
 let playbackRangeOriginalABC=null;
 // Return the complete tune even when the visible editor is showing a temporary
@@ -6177,7 +6306,10 @@ function restorePersistentPlaybackLoop(audioController) {
     audioController.control.pushLoop(playerLoopEnabled);
 }
 
-async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=applyPlaybackTabOverrides(tune,harmonicaFingeringsGenerator(stripChordSymbols(tune)));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));refreshHarmonicaNoteButtons();prepareDiagramBase();drawDiagram(null,true);await loadSuper64Samples();if(gen!==renderGeneration)return;const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
+async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.length)return;try{playbackActive=false;if(controller&&controller.pause)try{controller.pause()}catch(_){}removeCursor();$("notation").innerHTML="";$("audio").innerHTML="";updateTempoButtonState();const tune=$("abcText").value;configureIrishRollsForTune(tune);solution=applyPlaybackTabOverrides(tune,harmonicaFingeringsGenerator(stripChordSymbols(tune)));solutionByIndex=new Map(solution.map(x=>[x.abcIndex,x]));refreshHarmonicaNoteButtons();prepareDiagramBase();drawDiagram(null,true);
+    // The audio permission prompt must not wait for sample downloads.
+    if(sharePlaybackNeedsGesture){showEnablePlaybackButton();return;}
+    await loadSuper64Samples();if(gen!==renderGeneration)return;const playbackABC=buildPlaybackABC(tune);if(typeof ABCJS==="undefined"||!ABCJS.renderAbc)throw new Error("Portable abcjs library did not load.");const visual=ABCJS.renderAbc("notation",playbackABC,{
   responsive:"resize",
   add_classes:true,
   selectionColor:"#ff0000",
@@ -6185,10 +6317,6 @@ async function rebuild(){cancelCountIn();const gen=++renderGeneration;if(!tunes.
     selectClickedNotationNote(abcelem);
   }
 });if(gen!==renderGeneration)return;if(!visual||!visual.length)throw new Error("No notation was rendered.");currentVisual=visual[0];restoreManualSelectionAfterRebuild();if(!ABCJS.synth||typeof ABCJS.synth.SynthController!=="function")throw new Error("abcjs audio is unavailable.");
-    if(sharePlaybackNeedsGesture){
-      showEnablePlaybackButton();
-      return;
-    }
     const cursorControl={onStart(){if(audioControllerInitializing)return;playbackActive=true;manualSelectedNoteStart=null;removeCursor();const svg=$("notation").querySelector("svg");if(svg){playbackCursor=document.createElementNS("http://www.w3.org/2000/svg","line");playbackCursor.setAttribute("class","abcjs-cursor");svg.appendChild(playbackCursor)}},onEvent(event){if(audioControllerInitializing||!playbackActive)return;if(playbackCursor&&event&&event.left!=null){playbackCursor.setAttribute("x1",String(event.left-2));playbackCursor.setAttribute("x2",String(event.left-2));playbackCursor.setAttribute("y1",String(event.top));playbackCursor.setAttribute("y2",String(event.top+event.height));keepCursorVisible(event)}const item=fingeringForEvent(event);if(item)drawDiagram(item)},onFinished(){
       // SynthController.setTune() can emit playback-style callbacks while it
       // prepares the tune. Ignore every such callback during initialization.
@@ -6862,7 +6990,11 @@ function installUnifiedSharing(){const oldTune=$('shareTuneBtn'),oldAll=$('share
   $('lessonSaveLinkBtn').onclick=async()=>{const filename=await askShareLinkFileName();if(!filename)return;await lessonSaveText(filename,$('lessonLinkOutput').value+'\n','text/plain')};
   $('lessonTestLinkBtn').onclick=()=>{const url=$('lessonLinkOutput').value.trim();if(url)window.open(url,'_blank','noopener')};
   $('lessonOpenABCTTBtn').onclick=openDisplayedShareInABCTT;
-  $('lessonLinkCloseBtn').onclick=()=>setModal('lessonLinkModal',false);$('studentLessonStartBtn').onclick=()=>setModal('studentLessonModal',false);refreshUnifiedShareState()}
+  $('lessonLinkCloseBtn').onclick=()=>setModal('lessonLinkModal',false);$('studentLessonStartBtn').onclick=()=>{
+    lessonPlaybackStartRequested=true;
+    setModal('studentLessonModal',false);
+    if(sharePlaybackNeedsGesture)void enablePlaybackFromGesture();
+  };refreshUnifiedShareState()}
 setupLessonMode();installUnifiedSharing();
 
 /* Tab Tools: derive every annotation from the same current tuning map and
