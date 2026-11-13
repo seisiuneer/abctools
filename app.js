@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3392_111226_1500";
+var gVersionNumber = "3393_111226_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16244,6 +16244,14 @@ function ParseShowChordGridsDirective(line) {
   };
 }
 
+// Fast, exact directive check before the optional post-render chord-grid pass.
+// Match the same complete lines and supported instrument names as
+// ParseShowChordGridsDirective(), including file-header and tune-level lines.
+// A general substring check would incorrectly accept comments/near matches.
+function HasShowChordGridsDirective(abcText) {
+  return /^[ \t]*%%show_chord_grids(?:[ \t]+(?:guitar|mandolin|ukulele|baritone-ukulele))?[ \t]*\r?$/im.test(abcText || "");
+}
+
 function GetChordGridDisplaySettings(fileHeader, tuneABC) {
   function scan(source) {
     var result = null;
@@ -17028,6 +17036,7 @@ function RenderChordGridsForRenderedABC(renderDivID, renderedABC) {
 }
 
 function RenderRequestedChordGrids(startTune, endTune, renderDivs) {
+
   var fileHeader = FindPreTuneHeader(getABCEditorText()) || "";
   var fileDefinitions = ParseChordGridDefinitions(fileHeader);
 
@@ -17215,8 +17224,12 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
   try {
     var visualObj = ABCJS.renderAbc(renderDivs, tune, params);
 
-    // Draw tool-specific chord grids after abcjs has created the tune SVG(s).
-    RenderRequestedChordGrids(startTune, endTune, renderDivs);
+    // Only perform optional chord-grid processing when the rendered ABC
+    // contains a valid directive. This also covers file-header directives
+    // and tune-specific overrides, while leaving the renderer untouched.
+    if (HasShowChordGridsDirective(tune)) {
+      RenderRequestedChordGrids(startTune, endTune, renderDivs);
+    }
   } catch (err) {
 
     var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Tune Rendering Issue</p>';
@@ -61984,14 +61997,16 @@ function inlinePlayback() {
       // Do not do this for Highlighting/Raw mode because that render is
       // intentionally offscreen and should remain free of normal post-render
       // presentation processing.
-      if (gIsQuickEditor && !gRawMode) {
-        RenderRequestedChordGrids(
-          0,
-          1,
-          [theRenderDivID]
-        );
-      }
 
+      if (gIsQuickEditor &&
+        !gRawMode &&
+        HasShowChordGridsDirective(chordGridRenderABC)) {
+          RenderRequestedChordGrids(
+            0,
+            1,
+            [theRenderDivID]
+          );
+      }
       var midiBuffer = new ABCJS.synth.CreateSynth(theABC);
 
       gMIDIbuffer = midiBuffer;
