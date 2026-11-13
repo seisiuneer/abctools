@@ -29,38 +29,38 @@
  * SOFTWARE.
  *
 -->
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ABC Fretboard Player</title>
-<meta name="description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, guitar, and ukulele." />
-<meta name="keywords" content="ABC notation, fretboard player, mandolin, tenor banjo, bouzouki, guitar, DADGAD, GDAE, GDAD, ukulele, tablature, fingering, Irish traditional music, ABC Transcription Tools" />
-<meta name="author" content="Michael Eskin" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="ABC Fretboard Player" />
-<meta property="og:description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, tenor banjo, bouzouki, guitar, and ukulele." />
-<meta property="og:site_name" content="ABC Fretboard Player" />
-<meta property="og:url" content="https://michaeleskin.com/tools/abc-fretboard-player.html" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-fretboard-player-2.jpg"/>
-<link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-<script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ABC Fretboard Player</title>
+    <meta name="description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, mandola, tenor banjo, bouzouki, guitar, and ukulele." />
+    <meta name="keywords" content="ABC notation, fretboard player, mandolin, mandola, tenor banjo, bouzouki, guitar, DADGAD, GDAE, GDAD, ukulele, tablature, fingering, Irish traditional music, ABC Transcription Tools" />
+    <meta name="author" content="Michael Eskin" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ABC Fretboard Player" />
+    <meta property="og:description" content="Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and a live fretboard display for mandolin, mandola, tenor banjo, bouzouki, guitar, and ukulele." />
+    <meta property="og:site_name" content="ABC Fretboard Player" />
+    <meta property="og:url" content="https://michaeleskin.com/tools/abc-fretboard-player.html" />
+    <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-fretboard-player-2.jpg"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-VM0N9HL3MK');
 </script>
-
-<link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20261009_0540" rel="stylesheet">
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20261104_2218"></script>
-<script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20261009_0540"></script>
-<script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
-<script src="pdf-lib-min.js"></script>
-<script src="html2image.js"></script>
-<script src="abc-player-pdf-export.js?cb=20261027_pdf_title_header"></script>
-<style>
+    <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20261009_0540" rel="stylesheet">
+    <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20261104_2218"></script>
+    <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20261009_0540"></script>
+    <script type="text/javascript" src="pako.min.js?cb=20260920_1125"></script>
+    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
+    <script src="pdf-lib-min.js"></script>
+    <script src="html2image.js"></script>
+    <script src="abc-player-pdf-export.js?cb=20261027_pdf_title_header"></script>
+    <style>
 
 /* Phrase Builder: self-contained ABC Transcription Tools-style form.
    Uses its own classes so player-wide and browser modal styles cannot leak in. */
@@ -464,7 +464,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 
 #editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;margin-left:-6px;margin-right:8px}
 
-/* Mandolin / Tenor Banjo player overrides */
+/* Fretted-instrument player overrides */
 .whistleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(150px,.72fr) minmax(145px,.7fr) minmax(82px,.42fr) minmax(220px,1.12fr) auto}
 .whistleToolbar .fileControl{grid-column:auto}
 .whistleDiagramWrap{overflow:auto}
@@ -1724,8 +1724,8 @@ body.diagram-full .whistleNoteGroup.horizontalFretboardLayout .whistleStaffNote{
 }
 
 </style>
-<!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
-<style id="pdf-mobile-lesson-style">
+    <!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
+    <style id="pdf-mobile-lesson-style">
 /* Restore a real gap when the toolbar becomes a single column on iPhone. */
 @media (max-width:650px) {
   .toolbar .shareButtons {
@@ -1758,292 +1758,466 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   }
 }
 </style>
-</head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Fretboard Player</h1><p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p></header>
-<div class="toolbar whistleToolbar">
- <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
- <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="tablature-only">Tablature Only</option><option value="mandolin-tab" selected>Notation + Tab</option></select></div>
- <div class="control"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="mandolin" selected>Mandolin</option><option value="tenor-banjo">Tenor Banjo</option><option value="bouzouki-gdae">Bouzouki (GDAE)</option><option value="bouzouki-gdad">Bouzouki (GDAD)</option><option value="guitar">Guitar (Standard)</option><option value="guitar-dadgad">Guitar (DADGAD)</option><option value="ukulele">Ukulele (Standard)</option><option value="ukulele-baritone">Ukulele (Baritone)</option></select></div>
- <div class="control"><label for="capoSelect">Capo</label><select id="capoSelect"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
- <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
- <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareBtn" disabled>Share</button></div>
-</div>
-<div class="workspace" id="workspace">
- <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">0 tunes</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span class="abcPracticeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="phraseBuilderBtn" type="button" disabled title="Build temporary call-and-response practice phrases">Phrase Builder</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Restore</button></span><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
-  <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
-  <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Tablature</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
- </div>
- <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span id="fingeringPanelLabel">GDAE Fingering</span><span class="diagramHeaderRight"><label class="fretboardOrientationLabel" for="fretboardOrientation">Orientation <select id="fretboardOrientation" disabled><option value="vertical">Vertical</option><option value="horizontal" selected>Horizontal</option></select></label><label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked disabled>Show Fretboard</label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
-  <div class="diagramWrap whistleDiagramWrap">
-   <div id="whistleLive" class="whistleLive" hidden>
-    <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
-    <div class="whistleLiveRow"><div class="whistleGlyphGroup"><div id="whistleNoteGroup" class="whistleNoteGroup"><div id="mandolinFingering" class="mandolinFingering" role="img" aria-label="GDAE fingering"></div><div id="noteDisplayGroup" class="noteDisplayGroup"><div id="whistleLiveNote" class="whistleLiveNote"></div><svg id="whistleStaffNote" class="whistleStaffNote" viewBox="0 0 160 220" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img" style="display:none"></svg></div></div></div></div>
-   </div>
-   <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
-  </div>
- <div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
-</div>
-<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
-</div>
-
-<div id="playerPdfStatusModal" class="playerPdfStatusModal" role="dialog" aria-modal="true" aria-labelledby="playerPdfStatusTitle" tabindex="-1">
-  <div class="playerPdfStatusDialog">
-    <div class="playerPdfSpinner" aria-hidden="true"></div>
-    <h2 id="playerPdfStatusTitle">Generating PDF</h2>
-    <p id="playerPdfStatusText" role="status" aria-live="polite" aria-atomic="true">Preparing notation…</p>
-      <div class="playerPdfStatusActions">
-      <button id="playerPdfSaveFile" type="button">Save PDF</button>
-      <button id="playerPdfCloseReady" type="button">Close</button>
-    </div>
-  </div>
-</div>
-<div id="playerPdfModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="playerPdfTitle">
-  <div class="lessonDialog playerPdfDialog">
-    <h2 id="playerPdfTitle">Export Notation PDF</h2>
-    <p>Export the current notation pane. Complete stave and tablature systems stay together on the same page.</p>
-        <p>The PDF tune title will link to the ABC Transcription Tools Player.</p>
-    <label for="playerPdfSize">Paper Size</label>
-    <select id="playerPdfSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
-    <label for="playerPdfOrientation">Orientation</label>
-    <select id="playerPdfOrientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select>
-    <label class="playerPdfHeaderOption" for="playerPdfClickTitleHeader"><input id="playerPdfClickTitleHeader" type="checkbox" checked><span>Add &quot;Click the title to play&quot; on the first page header</span></label>
-    <div class="lessonActions"><button id="playerPdfGo" type="button">Export PDF</button><button id="playerPdfCancel" type="button">Cancel</button></div>
-  </div>
-</div>
-<div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
-<div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
-<div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
-<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: You may change Notation display during the lesson. Instrument and Capo remain locked.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
-
-<div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
-
-<div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
-  <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
-    <h2 style="text-align:center;margin:0 0 24px">ABC Fretboard Player Instructions</h2>
-    <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
-      <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
-      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and optional tablature for the selected fretted instrument.</p>
-      <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to the right in Vertical orientation or below the fretboard in Horizontal orientation.</p>
-      <p>Use <b>Instrument</b> to select Mandolin, Tenor Banjo, Bouzouki (GDAE), Bouzouki (GDAD), Guitar (Standard), Guitar (DADGAD), Ukulele (Standard), or Ukulele (Baritone).</p>
-      <p>The instrument selection is saved and restored.</p>
-      <p>Ukulele (Standard) tablature is for GCEA-tuned instruments and treats the tuning as non-re-entrant. This provides a workable solution for playing traditional Irish tunes: notes below C are “folded” onto the G string, similar to how a whistle player may fold notes below D up an octave.</p>
-      <p>Ukulele (Baritone) uses DGBE tuning, the same pitches as the four highest strings of a standard guitar. This tuning is not re-entrant, so no note folding is required.</p>
-      <p>Use <b>Capo</b> to select a capo position from <b>0</b> through <b>12</b>.</p>
-      <p>The capo is applied to generated tablature and the live fretboard display, is saved and restored, and is included in share links and transfers back to ABC Transcription Tools.</p>
-      <p>The string labels in both fretboard views show the strings' actual sounding pitch with the selected capo, using sharps or flats according to the tune's <b>K:</b> key and mode.</p>
-      <p>The notation tablature and both live fingering views show fret numbers relative to the capo, so the capo is treated as fret <b>0</b>.</p>
-      <p>The string pitch labels still show the strings' actual sounding pitches at the selected capo position.</p>
-      <p>Use <b>Notation display</b> to choose <b>Notation Only</b>, <b>Tablature Only</b>, or <b>Notation + Tab</b>. Tablature Only shows the selected instrument’s tablature without the standard notation staff.</p>
-      <p>The default is <b>Notation + Tab</b>.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Showing All Tablature for a Tune</p>
-      <p>Click <b>All Tablature</b> in the <b>Notation</b> pane header to open a printable tablature-only sheet for the current tune in a new browser tab. This works regardless of the selected notation display mode.</p>
-      <p>The separate printable sheet now includes its own <b>Export PDF</b> button, with the same Letter/A4 paper and portrait/landscape preferences as the main notation exporter.</p>
-      <p>The sheet uses the selected instrument, tuning, and capo, with tablature-only rendering.</p>
-      <p>Use your browser’s <b>Print</b> command to print the sheet or save it as a PDF. Allow pop-ups for this site if the new tab does not open.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
-      <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or <b>.txt</b> file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
-      <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play.</p>
-      <p>Edits are retained when changing tunes.</p>
-      <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
-      <p>The upper-left panel contains editable ABC.</p>
-      <p>The lower-left panel shows abcjs notation and playback controls.</p>
-      <p>The <b>Notation display</b> selector chooses whether tablature for the selected instrument is also shown.</p>
-      <p>Editing the ABC rebuilds the notation and audio.</p>
-      <p>When tablature is enabled it is rebuilt at the same time.</p>
-      <p>Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
-      <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
-
-      <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
-
-      <p>Leave <strong>Use arrow keys?</strong> checked at the lower right of the instrument panel to navigate with the Left and Right Arrow keys, or jump to the first or last note with Home or End (including compatible Bluetooth keyboard foot pedals).</p>
-
-      <p>This option is on by default. Your choice is remembered in this browser.</p>
-
-      <p>When enabled, unmodified Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
-
-      <p>These keys navigate notes instead of moving the ABC editor cursor.</p>
-
-      <p>Keyboard shortcuts are temporarily disabled while dialogs or controls that use these keys are active. When this option is enabled, the shortcuts also work while the ABC editor has focus.</p>
-
-      <p>Uncheck the option to restore normal arrow-key behavior.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback Range</p>
-      <p>Select one or more notes in the ABC editor, or click a note in the rendered notation to select it.</p>
-      <p>The previous and next note buttons can also select notes without rebuilding the player until you click <b>Set Playback Range</b>.</p>
-      <p>The <b>Set Playback Range</b> button in the ABC editor header becomes available when your selection includes notes.</p>
-      <p><b>Restore</b> becomes available whenever a playback range or Phrase Builder result is active.</p>
-      <p>Click <b>Set Playback Range</b> to temporarily replace the visible ABC, notation, and audio with the selected passage while retaining the tune's complete header and preceding comments, directives, and ABC fields.</p>
-      <p>Any part of the selection within the tune header is ignored.</p>
-      <p>Use the normal <b>Play</b> and <b>Loop</b> controls to practice just that passage.</p>
-      <p>To narrow the passage further, select notes within the currently displayed range and click <b>Set Playback Range</b> again.</p>
-      <p>You can repeat this process to create smaller nested playback ranges without changing the preserved original tune.</p>
-      <p>You can edit the temporary ABC while a range is active, and its notation and audio will update as you type.</p>
-      <p><b>Any changes you make to the ABC within a playback range are temporary and are not saved when the full tune is restored.</b></p>
-      <p>Click <b>Restore</b> to discard temporary Playback Range or Phrase Builder edits and restore the entire original tune, not just the previous range.</p>
-      <p>Saving ABC, creating share or lesson links, and opening tunes in ABC Transcription Tools always use the preserved full tune rather than the temporary range.</p>
-      <p>Clicking the main <b>Export PDF</b> button automatically discards any temporary Playback Range or Phrase Builder result and restores the full tune before preparing the PDF.</p>
-      <p>Changing tunes or loading another ABC file also discards any temporary Playback Range or Phrase Builder result and its edits.</p>
-      <p>Changing the selected instrument or capo clears the playback range and discards temporary edits.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Phrase Builder</p>
-            <p><b>Phrase Builder</b> creates a temporary call-and-response practice version of the ABC currently shown.</p>
-      <p>Choose the phrase length, extra rest measures, and number of times to repeat each phrase.</p>
-      <p>Your Phrase Builder settings are saved in this browser and are not included in share or lesson links.</p>
-      <p>Chord symbols are removed from the result.</p>
-      <p>You can first use <b>Set Playback Range</b> to select part of a tune, then use <b>Phrase Builder</b> on that passage.</p>
-      <p>After building phrases, <b>Phrase Builder</b> is disabled until you click <b>Restore</b>.</p>
-      <p>You can still use <b>Set Playback Range</b> as many times as you like on the phrase-built ABC.</p>
-      <p><b>Restore</b> discards all temporary changes and brings back the complete original tune.</p>
-      <p>Saving, sharing, creating lessons, and opening a tune in ABC Transcription Tools always use the original tune.</p>
-      <p>Changing tunes or using the main <b>Export PDF</b> also restores the original ABC.</p>
-      <p>Phrase Builder cannot process tunes with <b>V:</b> voices or unsupported body-level ABC fields other than <b>K:</b>.</p>
-      <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
-      <p>Use <b>Orientation</b> to select <b>Vertical</b> (strings running top to bottom) or <b>Horizontal</b> (default, strings running left to right), then use <b>Show Fretboard</b> to display the complete fretboard instead of the compact string-and-fret view.</p>
-      <p>Orientation is included in regular share links and lesson links. It can be changed while using either link, but changes made in lesson mode are not saved as browser preferences.</p>
-      <p>Green filled circles show fretted notes; a green outlined, hollow circle shows the effective open-string position at the nut or capo in either orientation.</p>
-      <p>The nut or capo is treated as fret <b>0</b>, and all displayed fret numbers are relative to that position, matching the abcjs tablature.</p>
-      <p>Notes above the visible fretboard are also labeled with their capo-relative fret number.</p>
-      <p>The string labels (above the strings in <b>Vertical</b> orientation and to their left in <b>Horizontal</b> orientation) show the actual sounding pitches at the selected capo position.</p>
-      <p>Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; it uses the same capo-relative fret numbers and capo-adjusted sounding string pitches.</p>
-      <p>This setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
-      <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name; in Horizontal orientation the note name and staff appear below the fretboard.</p>
-      <p>The Show note setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
-      <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes.</p>
-      <p>When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
-      <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
-      <p>The <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> choices are remembered in this browser and are also included in generated share links.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
-      <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
-      <p>As each melody note plays, the notation cursor follows the tune and the fretboard pane updates to that note.</p>
-      <p>Playback uses the ABC Transcription Tools custom <b>MIDI program 141</b> for Mandolin, <b>MIDI program 105</b> for Tenor Banjo, the ABC Transcription Tools custom <b>MIDI program 140</b> for either Bouzouki tuning, <b>MIDI program 25</b> for either Guitar tuning, or <b>MIDI program 25</b> for either Ukulele, with program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
-      <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback.</p>
-      <p>Changing this setting stops and rewinds the current tune.</p>
-      <p>The metronome setting is remembered in this browser but is not included in share links.</p>
-      <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
-      <p>The Count in setting is remembered in this browser.</p>
-      <p>Click <b>Mute Melody</b> in the Notation header to mute the melody.</p>
-      <p>This is available for every tune, including tunes without chord symbols, so you can practice with the metronome alone.</p>
-      <p>If the tune contains chord symbols, chord and bass accompaniment remain audible.</p>
-      <p>Toggling <b>Mute Melody</b> or <b>Unmute Melody</b> stops and rewinds the tune.</p>
-      <p>If it was playing, playback restarts from the beginning after the five-second count-in when <b>Count in?</b> is enabled, or immediately when Count in is disabled.</p>
-      <p>If the tune was stopped, it remains stopped.</p>
-      <p>The button changes to <b>Unmute Melody</b>; click it again to restore the melody.</p>
-      <p>The melody always starts unmuted when the tool is opened, and the mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
-      <p>Click <b>Tempo</b> in the Notation header to set playback tempo from <b>10% to 200%</b> of the tune's original tempo. The value is remembered in this browser.</p>
-      <p>You can also click the <b>tempo percentage</b> box on the playback control bar:</p>
-      <div style="text-align: center; margin: 12px 0;">
-        <img src="img/tempobox.jpg"
-        alt="Tempo control"
-        style="max-width: 100%; height: auto;">
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <div class="version">Version 4.13</div>
+        <a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a>
+        <h1>ABC Fretboard Player</h1>
+        <p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p>
+      </header>
+      <div class="toolbar whistleToolbar">
+        <div class="control fileControl">
+          <label>ABC file</label>
+          <div class="fileControlRow">
+            <input id="openFile" type="file" accept=".abc,.txt,text/plain">
+            <button id="saveAbcBtn" type="button" disabled>Save</button>
+          </div>
+        </div>
+        <div class="control">
+          <label for="notationDisplay">Notation display</label>
+          <select id="notationDisplay">
+            <option value="notation">Notation Only</option>
+            <option value="tablature-only">Tablature Only</option>
+            <option value="mandolin-tab" selected>Notation + Tab</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="instrumentSelect">Instrument</label>
+          <select id="instrumentSelect">
+            <option value="mandolin" selected>Mandolin</option>
+            <option value="mandola">Mandola</option>
+            <option value="mandola-8va">Mandola (-8va)</option>
+            <option value="tenor-banjo">Tenor Banjo</option>
+            <option value="bouzouki-gdae">Bouzouki (GDAE)</option>
+            <option value="bouzouki-gdad">Bouzouki (GDAD)</option>
+            <option value="guitar">Guitar (Standard)</option>
+            <option value="guitar-dadgad">Guitar (DADGAD)</option>
+            <option value="ukulele">Ukulele (Standard)</option>
+            <option value="ukulele-baritone">Ukulele (Baritone)</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="capoSelect">Capo</label>
+          <select id="capoSelect">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div class="control tuneControl">
+          <label for="tuneSelect">Tune</label>
+          <select id="tuneSelect" disabled>
+            <option>No tune loaded</option>
+          </select>
+        </div>
+        <div class="shareButtons">
+          <button id="shareTuneBtn" disabled>Share Tune</button>
+          <button id="shareAllBtn" disabled>Share All Tunes</button>
+          <button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button>
+          <button id="shareBtn" disabled>Share</button>
+        </div>
       </div>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
-      <p>On wide screens, drag the vertical divider to resize the left and fretboard panes, and drag the horizontal divider to resize the ABC and notation panes.</p>
-      <p>Double-click a divider to reset it.</p>
-      <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Fretboard</b> pane to expand it to the full browser window.</p>
-      <p>Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
-      <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits.</p>
-      <p>On mobile devices the saved file uses a <b>.txt</b> extension.</p>
-      <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection.</p>
-      <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
-      <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
-      <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
-      <p>Fretboard Player share links include the current <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings so they are restored when the link is opened.</p><p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
-      <p>When sharing a <b>Baritone Ukulele</b> tune back to ABC Transcription Tools, the player uses custom tablature settings for the instrument.</p>
-      <p>The current capo value is passed to ABC Transcription Tools.</p>
-      <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
-      <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
-      <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
-      <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
-      <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
-      <p>If a Playback Range or Phrase Builder result is active, clicking the main <b>Export PDF</b> button first discards the temporary ABC and restores the full tune before preparing the PDF.</p>
-      <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
-      <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
-      <p>By default, the PDF includes a centered <b>Click the title to play</b> instruction in the top margin of its first page. Uncheck <b>Add "Click the title to play" on the first page header</b> to omit it; the tune title and music do not move.</p>
-      <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
-      <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
-      <p>A status dialog shows progress while the PDF is generated.</p>
-      <p>On an iPhone or iPad, tap <b>Save PDF</b> when the file is ready to open the iOS share sheet.</p>
-      <p>Choose <b>Save to Files</b> or another destination from that sheet.</p>
-      <p>On other devices, the PDF downloads automatically.</p>
-      <p>PDF export settings are saved locally and are not included in share or lesson links.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
-      <p>While running this tool, you can use your browser's Print feature to print the music notation displayed in the notation pane.</p>
-      <p>Tunes that are longer than one page may be cut off or clipped in the printout.</p>
-      <p>The browser's print scaling controls will not affect the size of the printed notation.</p>
-      <p>Experimenting with other paper sizes, such as Tabloid instead of Letter, may allow a longer tune to fit on a single page.</p>
-      <p>Manually setting larger left and right margins in the browser's Print dialog can often allow more staves to fit on a single page or possibly help with cleaner pagination.</p>
-
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-
-      <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
-
-      <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
-      <p>A lesson uses the <b>current tune only</b>.</p>
-      <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
-      <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
-      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Fretboard Player share link.</p>
-      <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
-      <p>Those saved player settings are <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b>.</p>
-      <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
-      <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
-      <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
-      <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings carried by a normal share link.</p>
-      <p>Students can change <b>Notation display</b> while practicing a lesson without changing their saved browser preference. The lesson link still sets the initial notation view; <b>Instrument</b> and <b>Capo</b> remain locked.</p>
-      <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
-      <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-
-      <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
-
-      <p>Your music teacher may provide you with a Fretboard Player lesson link.</p>
-      <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
-      <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
-      <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
-      <p>The lesson starts with your teacher's <b>Notation display</b> setting, but you can change it to <b>Notation Only</b>, <b>Tablature Only</b>, or <b>Notation + Tab</b> while practicing. Changes made during a lesson are temporary and do not change your saved browser preference.</p>
-      <p>The <b>Instrument</b> and <b>Capo</b> settings remain locked. The lesson tune selector is initially locked to the assigned tune.</p>
-      <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
-      <p>You can use the normal notation, fretboard, playback, tempo, metronome, count-in, display, and pane controls that remain available while practicing the lesson.</p>
-      <p>You can edit the ABC text during the lesson if needed.</p>
-      <p>Click <b>Save</b> to save your edited ABC.</p>
-      <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's Instrument and Capo settings remain locked, while Notation display remains adjustable. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
-      <p>To return to normal Fretboard Player operation, open the player normally rather than through the lesson link.</p>
-      <p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
-      <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>
-      <p style="text-align:center">If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
-      
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-</div>
-    <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
-  </div>
-</div>
-
-<script>
+      <div class="workspace" id="workspace">
+        <div class="leftPane" id="leftPane">
+          <section class="card panel" id="abcPanel">
+            <div class="panelHeader">
+              <span>ABC</span>
+              <span class="abcHeaderRight">
+                <span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">0 tunes</span>
+                <select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size">
+                  <option value="small">Small</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="large">Large</option>
+                  <option value="largest">Largest</option>
+                </select>
+                <span class="abcPracticeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="phraseBuilderBtn" type="button" disabled title="Build temporary call-and-response practice phrases">Phrase Builder</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Restore</button></span>
+                <button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button>
+              </span>
+            </div>
+            <div class="abcWrap">
+              <textarea id="abcText" spellcheck="false"></textarea>
+            </div>
+          </section>
+          <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset">
+          </div>
+          <section class="card panel" id="notationPanel">
+            <div class="panelHeader">
+              <span>Notation</span>
+              <span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Tablature</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span>
+            </div>
+            <div class="notationViewport">
+              <div id="notation" class="notation">
+              </div>
+            </div>
+            <div class="audioRow">
+              <div id="audio">
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset">
+        </div>
+        <section class="card diagramCard">
+          <div class="diagramHeader">
+            <span id="fingeringPanelLabel">GDAE Fingering</span>
+            <span class="diagramHeaderRight">
+              <label class="fretboardOrientationLabel" for="fretboardOrientation">Orientation <select id="fretboardOrientation" disabled><option value="vertical">Vertical</option><option value="horizontal" selected>Horizontal</option></select></label>
+              <label class="showFretboardLabel" for="showFretboardCheck"><input id="showFretboardCheck" type="checkbox" checked disabled>Show Fretboard</label>
+              <label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label>
+              <label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label>
+              <button id="fullBtn" class="fullBtn" disabled>Full-Page View</button>
+              <button id="exitFull" class="exitFull">Exit Full-Page</button>
+            </span>
+          </div>
+          <div class="diagramWrap whistleDiagramWrap">
+            <div id="whistleLive" class="whistleLive" hidden>
+              <div id="whistleTuneTitle" class="whistleTuneTitle">
+              </div>
+              <div class="whistleLiveRow">
+                <div class="whistleGlyphGroup">
+                  <div id="whistleNoteGroup" class="whistleNoteGroup">
+                    <div id="mandolinFingering" class="mandolinFingering" role="img" aria-label="GDAE fingering">
+                    </div>
+                    <div id="noteDisplayGroup" class="noteDisplayGroup">
+                      <div id="whistleLiveNote" class="whistleLiveNote">
+                      </div>
+                      <svg id="whistleStaffNote" class="whistleStaffNote" viewBox="0 0 160 220" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img" style="display:none">
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div>
+          </div>
+          <div class="diagramNoteNavigation" aria-label="Note navigation">
+            <button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button>
+            <button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button>
+            <label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label>
+          </div>
+        </section>
+      </div>
+      <div class="bottomBar">
+        <button id="instructionsBtn">Instructions</button>
+      </div>
+    </div>
+    <div id="playerPdfStatusModal" class="playerPdfStatusModal" role="dialog" aria-modal="true" aria-labelledby="playerPdfStatusTitle" tabindex="-1">
+      <div class="playerPdfStatusDialog">
+        <div class="playerPdfSpinner" aria-hidden="true">
+        </div>
+        <h2 id="playerPdfStatusTitle">Generating PDF</h2>
+        <p id="playerPdfStatusText" role="status" aria-live="polite" aria-atomic="true">Preparing notation…</p>
+        <div class="playerPdfStatusActions">
+          <button id="playerPdfSaveFile" type="button">Save PDF</button>
+          <button id="playerPdfCloseReady" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="playerPdfModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="playerPdfTitle">
+      <div class="lessonDialog playerPdfDialog">
+        <h2 id="playerPdfTitle">Export Notation PDF</h2>
+        <p>Export the current notation pane. Complete stave and tablature systems stay together on the same page.</p>
+        <p>The PDF tune title will link to the ABC Transcription Tools Player.</p>
+        <label for="playerPdfSize">Paper Size</label>
+        <select id="playerPdfSize">
+          <option value="letter">Letter</option>
+          <option value="a4">A4</option>
+        </select>
+        <label for="playerPdfOrientation">Orientation</label>
+        <select id="playerPdfOrientation">
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
+        </select>
+        <label class="playerPdfHeaderOption" for="playerPdfClickTitleHeader"><input id="playerPdfClickTitleHeader" type="checkbox" checked><span>Add &quot;Click the title to play&quot; on the first page header</span></label>
+        <div class="lessonActions">
+          <button id="playerPdfGo" type="button">Export PDF</button>
+          <button id="playerPdfCancel" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+      <div class="lessonDialog">
+        <button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button>
+        <h2 id="shareModalTitle">Sharing Controls</h2>
+        <div class="lessonActions">
+          <button id="shareCurrentDialogBtn">Share Current Tune</button>
+          <button id="shareAllDialogBtn">Share All Tunes</button>
+          <button id="configureLessonBtn">Configure Lesson…</button>
+        </div>
+        <div class="lessonCloseRow">
+          <button id="shareCloseBtn" class="lessonCloseBtn">Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle">
+      <div class="lessonDialog">
+        <button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button>
+        <h2 id="lessonModalTitle">Configure Lesson</h2>
+        <label for="lessonTitleInput">Lesson title</label>
+        <input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name">
+        <label for="lessonInstructionsInput">Instructions</label>
+        <textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea>
+        <div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div>
+        <input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden>
+        <div class="lessonActions">
+          <button id="lessonSaveConfigBtn">Save Lesson Configuration</button>
+          <button id="lessonLoadConfigBtn">Load Lesson Configuration</button>
+          <button id="lessonShareBtn">Create Lesson Link</button>
+        </div>
+        <div class="lessonCloseRow">
+          <button id="lessonCloseBtn" class="lessonCloseBtn">Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle">
+      <div class="lessonDialog">
+        <h2 id="lessonLinkTitle">Share Link</h2>
+        <textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea>
+        <div class="lessonActions">
+          <button id="lessonCopyLinkBtn">Copy Link</button>
+          <button id="lessonSaveLinkBtn">Save Link as Text File</button>
+          <button id="lessonTestLinkBtn">Test Link</button>
+          <button id="lessonOpenABCTTBtn">Open in ABCTT</button>
+        </div>
+        <div class="lessonCloseRow">
+          <button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button>
+        </div>
+      </div>
+    </div>
+    <div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle">
+      <div class="lessonDialog">
+        <button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button>
+        <h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2>
+        <div class="lessonStudentScroll">
+          <div id="studentLessonInstructions" class="lessonStudentText">
+          </div>
+        </div>
+        <div class="lessonLockedNote">Note: You may change Notation display during the lesson. Instrument and Capo remain locked.</div>
+        <div class="lessonActions">
+          <button id="studentLessonStartBtn">Start Lesson</button>
+        </div>
+      </div>
+    </div>
+    <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite">
+      <span id="countInNumber">5</span>
+    </div>
+    <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
+      <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
+        <h2 style="text-align:center;margin:0 0 24px">ABC Fretboard Player Instructions</h2>
+        <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
+          <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
+          <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and optional tablature for the selected fretted instrument.</p>
+          <p>The fretboard pane shows the current tune title and, during playback, the selected instrument’s fingering, with the note name and optional staff notation to the right in Vertical orientation or below the fretboard in Horizontal orientation.</p>
+          <p>Use <b>Instrument</b> to select <b>Mandolin</b>, <b>Mandola</b>, <b>Mandola (-8va)</b>, <b>Tenor Banjo</b>, <b>Bouzouki (GDAE)</b>, <b>Bouzouki (GDAD)</b>, <b>Guitar (Standard)</b>, <b>Guitar (DADGAD)</b>, <b>Ukulele (Standard)</b>, or <b>Ukulele (Baritone)</b>.</p>
+          <p><b>Mandola</b> and <b>Mandola (-8va)</b> both use C, G, D, A tuning. <b>Mandola</b> sounds at the written pitch. <b>Mandola (-8va)</b> plays and displays tablature one octave lower (MIDI transpose -12), without changing the standard notation.</p>
+          <p><b>Ukulele (Standard)</b> tablature is for GCEA-tuned instruments and treats the tuning as non-re-entrant. This provides a workable solution for playing traditional Irish tunes: notes below C are “folded” onto the G string, similar to how a whistle player may fold notes below D up an octave.</p>
+          <p><b>Ukulele (Baritone)</b> uses DGBE tuning, the same pitches as the four highest strings of a standard guitar. This tuning is not re-entrant, so no note folding is required.</p>
+          <p>The instrument selection is saved and restored.</p>
+          <p>Use <b>Capo</b> to select a capo position from <b>0</b> through <b>12</b>.</p>
+          <p>The capo is applied to generated tablature and the live fretboard display, is saved and restored, and is included in share links and transfers back to ABC Transcription Tools.</p>
+          <p>The string labels in both fretboard views show the strings' actual sounding pitch with the selected capo, using sharps or flats according to the tune's <b>K:</b> key and mode.</p>
+          <p>The notation tablature and both live fingering views show fret numbers relative to the capo, so the capo is treated as fret <b>0</b>.</p>
+          <p>The string pitch labels still show the strings' actual sounding pitches at the selected capo position.</p>
+          <p>Use <b>Notation display</b> to choose <b>Notation Only</b>, <b>Tablature Only</b>, or <b>Notation + Tab</b>. Tablature Only shows the selected instrument’s tablature without the standard notation staff.</p>
+          <p>The default is <b>Notation + Tab</b>.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Showing All Tablature for a Tune</p>
+          <p>Click <b>All Tablature</b> in the <b>Notation</b> pane header to open a printable tablature-only sheet for the current tune in a new browser tab. This works regardless of the selected notation display mode.</p>
+          <p>The separate printable sheet now includes its own <b>Export PDF</b> button, with the same Letter/A4 paper and portrait/landscape preferences as the main notation exporter.</p>
+          <p>The sheet uses the selected instrument, tuning, and capo, with tablature-only rendering.</p>
+          <p>Use your browser’s <b>Print</b> command to print the sheet or save it as a PDF. Allow pop-ups for this site if the new tab does not open.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
+          <p>Type or paste a single tune into the ABC editor, open an <b>.abc</b> or <b>.txt</b> file containing one or more tunes, or send tunes directly from <b>ABC Transcription Tools</b>.</p>
+          <p>For multi-tune files, use the <b>Tune</b> menu to select the tune to display and play.</p>
+          <p>Edits are retained when changing tunes.</p>
+          <p>The ABC editor intentionally accepts only one pasted tune at a time; multi-tune collections should be opened as a file or transferred from ABC Transcription Tools.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
+          <p>The upper-left panel contains editable ABC.</p>
+          <p>The lower-left panel shows abcjs notation and playback controls.</p>
+          <p>The <b>Notation display</b> selector chooses whether tablature for the selected instrument is also shown.</p>
+          <p>Editing the ABC rebuilds the notation and audio.</p>
+          <p>When tablature is enabled it is rebuilt at the same time.</p>
+          <p>Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
+          <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
+          <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
+          <p>Leave <strong>Use arrow keys?</strong> checked at the lower right of the instrument panel to navigate with the Left and Right Arrow keys, or jump to the first or last note with Home or End (including compatible Bluetooth keyboard foot pedals).</p>
+          <p>This option is on by default. Your choice is remembered in this browser.</p>
+          <p>When enabled, unmodified Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
+          <p>These keys navigate notes instead of moving the ABC editor cursor.</p>
+          <p>Keyboard shortcuts are temporarily disabled while dialogs or controls that use these keys are active. When this option is enabled, the shortcuts also work while the ABC editor has focus.</p>
+          <p>Uncheck the option to restore normal arrow-key behavior.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback Range</p>
+          <p>Select one or more notes in the ABC editor, or click a note in the rendered notation to select it.</p>
+          <p>The previous and next note buttons can also select notes without rebuilding the player until you click <b>Set Playback Range</b>.</p>
+          <p>The <b>Set Playback Range</b> button in the ABC editor header becomes available when your selection includes notes.</p>
+          <p><b>Restore</b> becomes available whenever a playback range or Phrase Builder result is active.</p>
+          <p>Click <b>Set Playback Range</b> to temporarily replace the visible ABC, notation, and audio with the selected passage while retaining the tune's complete header and preceding comments, directives, and ABC fields.</p>
+          <p>Any part of the selection within the tune header is ignored.</p>
+          <p>Use the normal <b>Play</b> and <b>Loop</b> controls to practice just that passage.</p>
+          <p>To narrow the passage further, select notes within the currently displayed range and click <b>Set Playback Range</b> again.</p>
+          <p>You can repeat this process to create smaller nested playback ranges without changing the preserved original tune.</p>
+          <p>You can edit the temporary ABC while a range is active, and its notation and audio will update as you type.</p>
+          <p><b>Any changes you make to the ABC within a playback range are temporary and are not saved when the full tune is restored.</b></p>
+          <p>Click <b>Restore</b> to discard temporary Playback Range or Phrase Builder edits and restore the entire original tune, not just the previous range.</p>
+          <p>Saving ABC, creating share or lesson links, and opening tunes in ABC Transcription Tools always use the preserved full tune rather than the temporary range.</p>
+          <p>Clicking the main <b>Export PDF</b> button automatically discards any temporary Playback Range or Phrase Builder result and restores the full tune before preparing the PDF.</p>
+          <p>Changing tunes or loading another ABC file also discards any temporary Playback Range or Phrase Builder result and its edits.</p>
+          <p>Changing the selected instrument or capo clears the playback range and discards temporary edits.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Phrase Builder</p>
+          <p><b>Phrase Builder</b> creates a temporary call-and-response practice version of the ABC currently shown.</p>
+          <p>Choose the phrase length, extra rest measures, and number of times to repeat each phrase.</p>
+          <p>Your Phrase Builder settings are saved in this browser and are not included in share or lesson links.</p>
+          <p>Chord symbols are removed from the result.</p>
+          <p>You can first use <b>Set Playback Range</b> to select part of a tune, then use <b>Phrase Builder</b> on that passage.</p>
+          <p>After building phrases, <b>Phrase Builder</b> is disabled until you click <b>Restore</b>.</p>
+          <p>You can still use <b>Set Playback Range</b> as many times as you like on the phrase-built ABC.</p>
+          <p><b>Restore</b> discards all temporary changes and brings back the complete original tune.</p>
+          <p>Saving, sharing, creating lessons, and opening a tune in ABC Transcription Tools always use the original tune.</p>
+          <p>Changing tunes or using the main <b>Export PDF</b> also restores the original ABC.</p>
+          <p>Phrase Builder cannot process tunes with <b>V:</b> voices or unsupported body-level ABC fields other than <b>K:</b>.</p>
+          <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fretboard Display</p>
+          <p>Use <b>Orientation</b> to select <b>Vertical</b> (strings running top to bottom) or <b>Horizontal</b> (default, strings running left to right), then use <b>Show Fretboard</b> to display the complete fretboard instead of the compact string-and-fret view.</p>
+          <p>Orientation is included in regular share links and lesson links. It can be changed while using either link, but changes made in lesson mode are not saved as browser preferences.</p>
+          <p>Green filled circles show fretted notes; a green outlined, hollow circle shows the effective open-string position at the nut or capo in either orientation.</p>
+          <p>The nut or capo is treated as fret <b>0</b>, and all displayed fret numbers are relative to that position, matching the abcjs tablature.</p>
+          <p>Notes above the visible fretboard are also labeled with their capo-relative fret number.</p>
+          <p>The string labels (above the strings in <b>Vertical</b> orientation and to their left in <b>Horizontal</b> orientation) show the actual sounding pitches at the selected capo position.</p>
+          <p>Uncheck <b>Show Fretboard</b> to use the compact string-and-fret display; it uses the same capo-relative fret numbers and capo-adjusted sounding string pitches.</p>
+          <p>This setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
+          <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff below the note name; in Horizontal orientation the note name and staff appear below the fretboard.</p>
+          <p>The Show note setting is remembered in this browser during normal use and is not included in share links; changes made during a lesson are temporary.</p>
+          <p>Note names use sharps or flats according to the tune's <b>K:</b> key and mode, with a fixed octave format: G3-B3 use a trailing comma, C4-B4 use capital letters, C5-B5 use a trailing apostrophe, and C6-B6 use two trailing apostrophes.</p>
+          <p>When <b>Show note</b> is enabled, the staff display uses the same sharp or flat naming.</p>
+          <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
+          <p>The <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> choices are remembered in this browser and are also included in generated share links.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+          <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
+          <p>As each melody note plays, the notation cursor follows the tune and the fretboard pane updates to that note.</p>
+          <p>Playback uses the ABC Transcription Tools custom <b>MIDI program 141</b> for <b>Mandolin</b>, <b>MIDI program 141</b> for both <b>Mandola</b> settings, <b>MIDI program 105</b> for <b>Tenor Banjo</b>, the ABC Transcription Tools custom <b>MIDI program 140</b> for either <b>Bouzouki</b> tuning, <b>MIDI program 25</b> for either <b>Guitar</b> tuning, or <b>MIDI program 25</b> for either <b>Ukulele</b>, with program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
+          <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback.</p>
+          <p>Changing this setting stops and rewinds the current tune.</p>
+          <p>The metronome setting is remembered in this browser but is not included in share links.</p>
+          <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
+          <p>The Count in setting is remembered in this browser.</p>
+          <p>Click <b>Mute Melody</b> in the Notation header to mute the melody.</p>
+          <p>This is available for every tune, including tunes without chord symbols, so you can practice with the metronome alone.</p>
+          <p>If the tune contains chord symbols, chord and bass accompaniment remain audible.</p>
+          <p>Toggling <b>Mute Melody</b> or <b>Unmute Melody</b> stops and rewinds the tune.</p>
+          <p>If it was playing, playback restarts from the beginning after the five-second count-in when <b>Count in?</b> is enabled, or immediately when Count in is disabled.</p>
+          <p>If the tune was stopped, it remains stopped.</p>
+          <p>The button changes to <b>Unmute Melody</b>; click it again to restore the melody.</p>
+          <p>The melody always starts unmuted when the tool is opened, and the mute setting resets to unmuted any time you change tunes or load a new tune collection.</p>
+          <p>Click <b>Tempo</b> in the Notation header to set playback tempo from <b>10% to 200%</b> of the tune's original tempo. The value is remembered in this browser.</p>
+          <p>You can also click the <b>tempo percentage</b> box on the playback control bar:</p>
+          <div style="text-align: center; margin: 12px 0;">
+            <img src="img/tempobox.jpg"
+            alt="Tempo control"
+            style="max-width: 100%; height: auto;">
+          </div>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Resizing and Full-Page View</p>
+          <p>On wide screens, drag the vertical divider to resize the left and fretboard panes, and drag the horizontal divider to resize the ABC and notation panes.</p>
+          <p>Double-click a divider to reset it.</p>
+          <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Fretboard</b> pane to expand it to the full browser window.</p>
+          <p>Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving and Sharing</p>
+          <p>Click <b>Save</b> to save the complete currently loaded tune collection, including edits.</p>
+          <p>On mobile devices the saved file uses a <b>.txt</b> extension.</p>
+          <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection.</p>
+          <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
+          <p>The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
+          <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings.</p>
+          <p>Fretboard Player share links include the current <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings so they are restored when the link is opened.</p>
+          <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
+          <p>The current capo value is passed to ABC Transcription Tools.</p>
+          <p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
+          <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
+          <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
+          <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
+          <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
+          <p>If a Playback Range or Phrase Builder result is active, clicking the main <b>Export PDF</b> button first discards the temporary ABC and restores the full tune before preparing the PDF.</p>
+          <p>In PDFs exported from this main <b>Export PDF</b> button, the tune title is a clickable link that opens the tune in the <b>ABC Transcription Tools Player</b>. The link uses the same tune transfer as <b>Current Tune Share Link &gt; Open in ABCTT</b>, but opens the Player rather than the Editor.</p>
+          <p>Choose Letter or A4 paper and Portrait or Landscape orientation.</p>
+          <p>By default, the PDF includes a centered <b>Click the title to play</b> instruction in the top margin of its first page. Uncheck <b>Add "Click the title to play" on the first page header</b> to omit it; the tune title and music do not move.</p>
+          <p>Each complete staff/tablature system stays together, with systems that do not fit moving to the next page.</p>
+          <p>For multipage tunes, page numbers appear centered at the bottom of each page.</p>
+          <p>A status dialog shows progress while the PDF is generated.</p>
+          <p>On an iPhone or iPad, tap <b>Save PDF</b> when the file is ready to open the iOS share sheet.</p>
+          <p>Choose <b>Save to Files</b> or another destination from that sheet.</p>
+          <p>On other devices, the PDF downloads automatically.</p>
+          <p>PDF export settings are saved locally and are not included in share or lesson links.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
+          <p>While running this tool, you can use your browser's Print feature to print the music notation displayed in the notation pane.</p>
+          <p>Tunes that are longer than one page may be cut off or clipped in the printout.</p>
+          <p>The browser's print scaling controls will not affect the size of the printed notation.</p>
+          <p>Experimenting with other paper sizes, such as Tabloid instead of Letter, may allow a longer tune to fit on a single page.</p>
+          <p>Manually setting larger left and right margins in the browser's Print dialog can often allow more staves to fit on a single page or possibly help with cleaner pagination.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p id="teacherLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Music Teachers</p>
+          <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Configure Lesson…</b> to create, edit, save, load, or share a lesson for your students.</p>
+          <p>A lesson uses the <b>current tune only</b>.</p>
+          <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
+          <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
+          <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Fretboard Player share link.</p>
+          <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
+          <p>Those saved player settings are <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b>.</p>
+          <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
+          <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
+          <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
+          <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same <b>Notation display</b>, <b>Instrument</b>, and <b>Capo</b> settings carried by a normal share link.</p>
+          <p>Students can change <b>Notation display</b> while practicing a lesson without changing their saved browser preference. The lesson link still sets the initial notation view; <b>Instrument</b> and <b>Capo</b> remain locked.</p>
+          <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
+          <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
+          <p>Your music teacher may provide you with a Fretboard Player lesson link.</p>
+          <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
+          <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
+          <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
+          <p>The lesson starts with your teacher's <b>Notation display</b> setting, but you can change it to <b>Notation Only</b>, <b>Tablature Only</b>, or <b>Notation + Tab</b> while practicing. Changes made during a lesson are temporary and do not change your saved browser preference.</p>
+          <p>The <b>Instrument</b> and <b>Capo</b> settings remain locked. The lesson tune selector is initially locked to the assigned tune.</p>
+          <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
+          <p>You can use the normal notation, fretboard, playback, tempo, metronome, count-in, display, and pane controls that remain available while practicing the lesson.</p>
+          <p>You can edit the ABC text during the lesson if needed.</p>
+          <p>Click <b>Save</b> to save your edited ABC.</p>
+          <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The lesson's Instrument and Capo settings remain locked, while Notation display remains adjustable. After you load an ABC file, the tune selector is unlocked so you can select any tune in that file.</p>
+          <p>To return to normal Fretboard Player operation, open the player normally rather than through the lesson link.</p>
+          <p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+          <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
+          <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>
+          <p style="text-align:center">If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
+          <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+        </div>
+        <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
+      </div>
+    </div>
+    <script>
 const $=id=>document.getElementById(id);
 
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -2101,34 +2275,55 @@ const WHISTLE_PREFS_KEY="abcGDAEPlayerPrefs";
 const GDAE_RENDER_TAB=[{
   instrument:"mandolin",
   label:"",
-  tuning:["G,","D","A","e"]
+  tuning:["G,","D","A","e"],
+  highestNote:"f''"
+}];
+const CGDA_RENDER_TAB=[{
+  instrument:"mandolin",
+  label:"",
+  tuning:["C,","G,","D","A"],
+  highestNote:"f''"
+}];
+// Both Mandola modes have physical C3-G3-D4-A4 tuning. For (-8va) alone,
+// abcjs tablature is calculated relative to a virtual tuning one octave up;
+// this gives the correct lower sounding fret positions against unchanged
+// written notation (%%MIDI transpose does not transpose abcjs tablature).
+// highestNote must stay ABOVE the highest virtual string, even at capo 12.
+const CGDA_8VA_RENDER_TAB=[{
+  instrument:"mandolin",
+  label:"",
+  tuning:["C","G","d","a"],
+  highestNote:"f''"
 }];
 const GDAD_RENDER_TAB=[{
   instrument:"mandolin",
   label:"",
-  tuning:["G,","D","A","d"]
+  tuning:["G,","D","A","d"],
+  highestNote:"f''"
 }];
 const UKULELE_RENDER_TAB=[{
   instrument:"violin",
   label:"",
   tuning:["G,","C","E","A"],
-  highestNote:"f'"
+  highestNote:"f''"
 }];
 const UKULELE_BARITONE_RENDER_TAB=[{
   instrument:"violin",
   label:"",
   tuning:["D","G","B","e"],
-  highestNote:"f'"
+  highestNote:"f''"
 }];
 const GUITAR_RENDER_TAB=[{
   instrument:"guitar",
   label:"",
-  tuning:["E,","A,","D","G","B","e"]
+  tuning:["E,","A,","D","G","B","e"],
+  highestNote:"f''"
 }];
 const GUITAR_DADGAD_RENDER_TAB=[{
   instrument:"guitar",
   label:"",
-  tuning:["D,","A,","D","G","A","d"]
+  tuning:["D,","A,","D","G","A","d"],
+  highestNote:"f''"
 }];
 
 const UKULELE_STRINGS=[
@@ -2140,6 +2335,11 @@ const UKULELE_BARITONE_STRINGS=[
 const GDAE_STRINGS=[
   {name:"E",midi:76}, {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}
 ];
+// Both mandola modes use the same physical sounding C3-G3-D4-A4 strings.
+// The (-8va) virtual tab tuning above changes fingerings, not physical tuning.
+const CGDA_STRINGS=[
+  {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}, {name:"C",midi:48}
+];
 const GDAD_STRINGS=[
   {name:"D",midi:74}, {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}
 ];
@@ -2149,14 +2349,37 @@ const GUITAR_STRINGS=[
 const GUITAR_DADGAD_STRINGS=[
   {name:"D",midi:62}, {name:"A",midi:57}, {name:"G",midi:55}, {name:"D",midi:50}, {name:"A",midi:45}, {name:"D",midi:38}
 ];
-function selectedStrings(){const v=$("instrumentSelect").value; return v==="ukulele"?UKULELE_STRINGS:(v==="ukulele-baritone"?UKULELE_BARITONE_STRINGS:(v==="guitar"?GUITAR_STRINGS:(v==="guitar-dadgad"?GUITAR_DADGAD_STRINGS:(v==="bouzouki-gdad"?GDAD_STRINGS:GDAE_STRINGS))));}
+function selectedStrings(){
+  const v=$("instrumentSelect").value;
+  if(v==="mandola"||v==="mandola-8va")return CGDA_STRINGS;
+  if(v==="ukulele")return UKULELE_STRINGS;
+  if(v==="ukulele-baritone")return UKULELE_BARITONE_STRINGS;
+  if(v==="guitar")return GUITAR_STRINGS;
+  if(v==="guitar-dadgad")return GUITAR_DADGAD_STRINGS;
+  return v==="bouzouki-gdad"?GDAD_STRINGS:GDAE_STRINGS;
+}
+// These modes sound one octave below the written music without changing the notation.
+function selectedPlaysOctaveDown(){
+  return ["mandola-8va","guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value);
+}
+// Standard Mandola needs no transpose directive (its default is 0).
+// Mandola (-8va) and the existing octave-down instruments require -12.
+function selectedForcedTransposeDirective(){
+  return selectedPlaysOctaveDown()?"%%MIDI transpose -12":null;
+}
 function selectedCapo(){
   const n=Math.round(Number($("capoSelect")?.value));
   return Number.isFinite(n)?Math.max(0,Math.min(12,n)):0;
 }
 function selectedRenderTab(){
   const v=$("instrumentSelect").value;
-  const base=v==="ukulele"?UKULELE_RENDER_TAB:(v==="ukulele-baritone"?UKULELE_BARITONE_RENDER_TAB:(v==="guitar"?GUITAR_RENDER_TAB:(v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB:(v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB))));
+  const base=v==="mandola"?CGDA_RENDER_TAB
+    :v==="mandola-8va"?CGDA_8VA_RENDER_TAB
+    :v==="ukulele"?UKULELE_RENDER_TAB
+    :v==="ukulele-baritone"?UKULELE_BARITONE_RENDER_TAB
+    :v==="guitar"?GUITAR_RENDER_TAB
+    :v==="guitar-dadgad"?GUITAR_DADGAD_RENDER_TAB
+    :v==="bouzouki-gdad"?GDAD_RENDER_TAB:GDAE_RENDER_TAB;
   const capo=selectedCapo();
   return base.map(tab=>({...tab,capo}));
 }
@@ -2165,11 +2388,12 @@ function selectedMelodyProgram(){
   if(v==="ukulele"||v==="ukulele-baritone")return 25;
   if(v==="guitar"||v==="guitar-dadgad")return 25;
   if(v==="tenor-banjo")return 105;
+  if(v==="mandola"||v==="mandola-8va")return 141;
   return v.startsWith("bouzouki-")?140:141;
 }
 function updateInstrumentUI(){
   const v=$("instrumentSelect").value;
-  const labels={mandolin:"Mandolin (GDAE)","tenor-banjo":"Tenor Banjo (GDAE)","bouzouki-gdae":"Bouzouki (GDAE)","bouzouki-gdad":"Bouzouki (GDAD)",ukulele:"Ukulele (Standard)","ukulele-baritone":"Ukulele (Baritone)",guitar:"Guitar (Standard)","guitar-dadgad":"Guitar (DADGAD)"};
+  const labels={mandolin:"Mandolin (GDAE)",mandola:"Mandola (CGDA)","mandola-8va":"Mandola (-8va)","tenor-banjo":"Tenor Banjo (GDAE)","bouzouki-gdae":"Bouzouki (GDAE)","bouzouki-gdad":"Bouzouki (GDAD)",ukulele:"Ukulele (Standard)","ukulele-baritone":"Ukulele (Baritone)",guitar:"Guitar (Standard)","guitar-dadgad":"Guitar (DADGAD)"};
   $("fingeringPanelLabel").textContent=labels[v]||"Mandolin (GDAE)";
   $("mandolinFingering").setAttribute("aria-label",(labels[v]||"Instrument")+" fingering");
 }
@@ -2314,16 +2538,22 @@ async function toggleMetronome(){
 
 function buildPlaybackABC(abc){
   const source=String(abc||"");
+  const transposeDirective=selectedForcedTransposeDirective();
   const forced=[
     "%soundfont fatboy",
     selectedPlaybackMIDIProgramDirective(),
-    ...((["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))?["%%MIDI transpose -12"]:[]),
+    ...(transposeDirective?[transposeDirective]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
+  // Both Mandola modes ignore source transposes: normal Mandola uses the
+  // default 0, while Mandola (-8va) explicitly injects -12.
+  const override=["mandola","mandola-8va"].includes($("instrumentSelect").value)
+    ? /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|transpose)\b)[^\r\n]*/gmi
+    : /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi;
   let cleaned=source.replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+    override,
     m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
   );
 
@@ -2736,8 +2966,8 @@ function renderWhistleStaffNote(midi){
   requestAnimationFrame(alignStaffCenterToFretStatus);
 }
 function showWhistleLive(midi){
-  // Playback is already transposed down an octave for Guitar and Baritone Ukulele modes by the
-  // injected %%MIDI transpose -12 directive. The playback callback therefore
+  // Octave-down modes (including Mandola -8va) already sound at the lower pitch
+  // via the injected %%MIDI transpose -12 directive. The playback callback therefore
   // supplies the sounding MIDI pitch; do not transpose it a second time here.
   const liveMidi=midi==null?null:Math.round(Number(midi));
   currentLiveMidi=liveMidi;
@@ -2764,10 +2994,9 @@ function showWhistleLive(midi){
   }
 
   const n=currentLiveMidi;
-  // Guitar sounds one octave below written pitch. Keep the live fret display
-  // on the sounding pitch, but show the note name/staff at written pitch so
-  // they agree with the notation and guitar tablature.
-  const displayMidi = ["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value) ? n + 12 : n;
+  // Display the written pitch on the note/staff while locating the sounding
+  // pitch on the physical strings. This also applies to Mandola (-8va).
+  const displayMidi = selectedPlaysOctaveDown() ? n + 12 : n;
   note.textContent=formattedWhistleNoteName(displayMidi).replace(/#/g,"♯").replace(/b/g,"♭");
   renderWhistleStaffNote(displayMidi);
   renderGDAEFingering(n);
@@ -4446,9 +4675,8 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken){
     let midi=clickedNotationMidi(clickedToken);
     if(midi!=null){
-      // Guitar/Baritone Ukulele playback sounds one octave below written notation; showWhistleLive()
-      // expects that sounding pitch and handles the written note-name/staff display.
-      if($("instrumentSelect")&&["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))midi-=12;
+      // Match playback pitch; the live note/staff still shows written notation.
+      if(selectedPlaysOctaveDown())midi-=12;
       showWhistleLive(midi);
     }
   }
@@ -4650,20 +4878,22 @@ function selectedPlaybackMIDIProgramDirective(){
 }
 
 function prepareABCForABCTTPlayback(abc){
-  const forceOctaveDown=['guitar','guitar-dadgad','ukulele-baritone'].includes($("instrumentSelect").value);
+  const forceOctaveDown=selectedPlaysOctaveDown();
+  const forceMandolaTranspose=["mandola","mandola-8va"].includes($("instrumentSelect").value);
+  const transposeDirective=selectedForcedTransposeDirective();
   const forced=[
     "%soundfont fatboy",
     selectedPlaybackMIDIProgramDirective(),
-    // Match the sounding octave of Guitar (both tunings) and Baritone Ukulele.
-    ...(forceOctaveDown?["%%MIDI transpose -12"]:[]),
+    // Mandola (-8va), guitar, and baritone ukulele: -12; standard Mandola: none.
+    ...(transposeDirective?[transposeDirective]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
-  // Neutralize existing transposes only when forcing -12, so the ABCTT link
-  // has one unambiguous octave setting for Guitar and Baritone Ukulele.
-  // For other instruments, preserve source transpose directives as before.
-  const override=forceOctaveDown
+  // Strip any source transpose for both Mandola modes to preserve their
+  // intended pitch; only (-8va) needs an explicit -12 directive. Existing
+  // octave-down modes remain enforced; other modes preserve source transposes.
+  const override=(forceOctaveDown||forceMandolaTranspose)
     ? /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog|transpose)\b)[^\r\n]*/gmi
     : /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi;
   const cleaned=String(abc||"").replace(
@@ -4686,18 +4916,22 @@ function buildABCTTShareURL(allTunes,mode){
   const abc=allTunes?tunes.join("\n\n"):currentFullTuneABC();
   if(!abc||!abc.trim())return '';
     const instrument=$("instrumentSelect").value;
-    // Baritone Ukulele uses a custom four-string tablature definition in ABCTT.
-    // Apply it only to the transferred copy, leaving the editor ABC untouched.
+    // Mandola (-8va) and Baritone Ukulele need custom ABCTT tablature.
+    // Standard Mandola uses only format=cgda (no explicit transpose or custom tab).
+    // Inject per X: header so every tune in a tunebook gets the correct tablature.
     let transferABC=abc;
-    if(instrument==="ukulele-baritone"){
+    if(instrument==="mandola-8va" || instrument==="ukulele-baritone"){
       const capo=selectedCapo();
-      const label=capo?`Baritone Ukulele (Capo ${capo})`:"Baritone Ukulele";
-      const tabDirective='%abcjs_render_params '+JSON.stringify({tablature:[{instrument:"violin",label,tuning:["D","G","B","e"],highestNote:"f'",capo}]});
+      const tab=instrument==="mandola-8va"
+        ? {instrument:"violin",label:"Mandola (-8va)",tuning:["C","G","d","a"],highestNote:"f''",capo}
+        : {instrument:"violin",label:capo?`Baritone Ukulele (Capo ${capo})`:"Baritone Ukulele",tuning:["D","G","B","e"],highestNote:"f''",capo};
+      const tabDirective='%abcjs_render_params '+JSON.stringify({tablature:[tab]});
       transferABC=transferABC.replace(/^(X:[^\r\n]*)(\r?\n|$)/gm,(_match,header,newline)=>header+(newline||"\n")+tabDirective+(newline||"\n"));
     }
     const def=compressABCDeflate(prepareABCForABCTTPlayback(transferABC));
     const action=mode==="player"?"play=1":"editor=1";
-    const attFormat = instrument === "bouzouki-gdad" ? "gdad"
+    const attFormat = (instrument === "mandola" || instrument === "mandola-8va") ? "cgda"
+      : instrument === "bouzouki-gdad" ? "gdad"
       : instrument === "guitar" ? "guitare"
       : instrument === "guitar-dadgad" ? "guitard"
       : instrument === "ukulele" ? "uke"
@@ -5049,7 +5283,7 @@ function restoreWhistleDisplayPrefs(){
   try{
     const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
     if(["notation","tablature-only","mandolin-tab"].includes(prefs.notation))$("notationDisplay").value=prefs.notation;
-    if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
+    if(["mandolin","mandola","mandola-8va","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
     if(Number.isFinite(Number(prefs.capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(prefs.capo)))));
   }catch(_){}
 }
@@ -5071,7 +5305,7 @@ function validateFretboardSettingsParams(params){const hide=params.get("hide");i
   const orientation=params.get("orientation");
   if(orientation!==null&&! ["vertical","horizontal"].includes(orientation))throw new Error("Lesson fretboard orientation is invalid.");
   if(notation!==null&&!["notation","tablature-only","mandolin-tab"].includes(notation))throw new Error("Lesson notation setting is invalid.");
-  if(instrument!==null&&!["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))throw new Error("Lesson instrument setting is invalid.");
+  if(instrument!==null&&!["mandolin","mandola","mandola-8va","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))throw new Error("Lesson instrument setting is invalid.");
   if(capo!==null&&(!Number.isFinite(Number(capo))||Number(capo)<0||Number(capo)>12))throw new Error("Lesson capo setting is invalid.");
 }
 function validateLessonURLParams(params){
@@ -5092,7 +5326,7 @@ function applyFretboardSettingsParams(params){
   const capo=params.get("capo");
 
   if(["notation","tablature-only","mandolin-tab"].includes(notation))$("notationDisplay").value=notation;
-  if(["mandolin","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
+  if(["mandolin","mandola","mandola-8va","tenor-banjo","bouzouki-gdae","bouzouki-gdad","ukulele","ukulele-baritone","guitar","guitar-dadgad"].includes(instrument))$("instrumentSelect").value=instrument;
   if(capo!==null&&Number.isFinite(Number(capo)))$("capoSelect").value=String(Math.max(0,Math.min(12,Math.round(Number(capo)))));
   if(["vertical","horizontal"].includes(params.get("orientation")))setFretboardOrientation(params.get("orientation"),false);
   updateInstrumentUI();
@@ -6117,7 +6351,7 @@ $("showNoteCheck").addEventListener("change",e=>{
   showNoteEnabled=!!e.target.checked;
   saveShowNotePreference();
   {
-    const staffMidi = currentLiveMidi==null ? null : ((["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value)) ? currentLiveMidi+12 : currentLiveMidi);
+    const staffMidi = currentLiveMidi==null ? null : (selectedPlaysOctaveDown() ? currentLiveMidi+12 : currentLiveMidi);
     renderWhistleStaffNote(staffMidi);
   }
 });
@@ -6235,7 +6469,8 @@ function installPlaybackPermissionHeaderControlSync(){
 }
 
 installPlaybackPermissionHeaderControlSync();
-</script><script>
+</script>
+    <script>
 
 /* Unified sharing and lesson support */
 const LESSON_LINK_MAX_LEN=SHARE_LINK_MAX_LEN||8100;
@@ -6729,7 +6964,7 @@ function moveInstrumentNote(direction){
  ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
  let midi=clickedNotationMidi(target);
  if(midi!=null){
-   if($("instrumentSelect")&&["guitar","guitar-dadgad","ukulele-baritone"].includes($("instrumentSelect").value))midi-=12;
+   if(selectedPlaysOctaveDown())midi-=12;
    showWhistleLive(midi);
  }
 }
@@ -6769,7 +7004,7 @@ function jumpToInstrumentNoteBoundary(toEnd){
   ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
   let midi=clickedNotationMidi(target);
   if(midi!=null){
-    if($('instrumentSelect')&&['guitar','guitar-dadgad','ukulele-baritone'].includes($('instrumentSelect').value))midi-=12;
+    if(selectedPlaysOctaveDown())midi-=12;
     showWhistleLive(midi);
   }
 }
@@ -6820,9 +7055,10 @@ function jumpToInstrumentNoteBoundary(toEnd){
   },true);
 })();
 </script>
-<script>
+    <script>
 /* Shared PDF export: the exporter is in abc-player-pdf-export.js. */
 window.ABCPlayerPDF.initNotation({playerId:'abc-fretboard-player',hasTunes:()=>tunes.length,mode:'legacy-crop',systemGap:0,glyphFont:null,getTitleURL:()=>buildABCTTShareURL(false,"player")});
 
 </script>
-</body></html>
+  </body>
+</html>
