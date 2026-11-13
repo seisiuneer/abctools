@@ -1429,7 +1429,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
+<header class="app-header"><div class="version">Version 4.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Ocarina Fingering Player</h1><p>Play ABC tunes with synchronized notation, 12-hole ocarina tablature, and live ocarina fingerings.</p></header>
 <div class="toolbar ocarinaToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="ocarina-tab" selected>Notation + Ocarina Tab</option></select></div>
@@ -4346,6 +4346,10 @@ function selectClickedNotationNote(abcelem){
     while(end>start&&/\s/.test(ta.value[end-1]))end--;
   }
   if(end<=start)return;
+
+  // A notation click is also the anchor for the first Next/Previous action.
+  // Keep unmatched non-note clicks from reusing a stale navigation position.
+  instrumentNavAnchor=clickedToken?clickedToken.start:null;
 
   ta.focus({preventScroll:true});
   ta.setSelectionRange(start,end);

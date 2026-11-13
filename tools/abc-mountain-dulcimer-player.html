@@ -2095,7 +2095,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 4.11</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -4838,6 +4838,10 @@ function selectClickedNotationNote(abcelem){
     while(end>start&&/\s/.test(ta.value[end-1]))end--;
   }
   if(end<=start)return;
+
+  // A notation click is also the anchor for the first Next/Previous action.
+  // Keep unmatched non-note clicks from reusing a stale navigation position.
+  instrumentNavAnchor=clickedToken?clickedToken.start:null;
 
   ta.focus({preventScroll:true});
   ta.setSelectionRange(start,end);

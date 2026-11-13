@@ -1762,7 +1762,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <body>
     <div class="app">
       <header class="app-header">
-        <div class="version">Version 4.14</div>
+        <div class="version">Version 4.15</div>
         <a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a>
         <h1>ABC Fretboard Player</h1>
         <p>Play ABC tunes with synchronized notation, instrument-specific tablature, audio playback, and live fretboard fingerings.</p>
@@ -4793,6 +4793,10 @@ function selectClickedNotationNote(abcelem){
     while(end>start&&/\s/.test(ta.value[end-1]))end--;
   }
   if(end<=start)return;
+
+  // A notation click is also the anchor for the first Next/Previous action.
+  // Keep unmatched non-note clicks from reusing a stale navigation position.
+  instrumentNavAnchor=clickedToken?clickedToken.start:null;
 
   ta.focus({preventScroll:true});
   ta.setSelectionRange(start,end);
