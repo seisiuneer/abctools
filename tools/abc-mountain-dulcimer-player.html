@@ -2095,7 +2095,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
+<header class="app-header"><div class="version">Version 4.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Mountain Dulcimer Player</h1><p>Play ABC tunes with diatonic tablature, optimized three-course fingerings, and a live Mountain Dulcimer fretboard.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"></div></div>
  <div class="control saveControl"><button id="saveAbcBtn" type="button" disabled>Save</button></div>
@@ -3060,6 +3060,127 @@ function eventMidi(event){
   return null;
 }
 
+// Key-change-only resolution for notation clicks, note navigation and exported
+// note diagrams. No additional K: fields means the original resolver is used.
+// Cache the last source so repeated navigation/print callbacks scan it once.
+let playerKeyChangeCacheSource = null;
+let playerKeyChangeCache = null;
+function playerKeyChangeData(abc){
+  if(abc===playerKeyChangeCacheSource && playerKeyChangeCache)return playerKeyChangeCache;
+  const keys=[],bars=[],ignored=[];
+  let textBlock=false;
+  for(const matched of abc.matchAll(/[^\r\n]*(?:\r\n|\r|\n|$)/g)){
+    const raw=matched[0].replace(/[\r\n]+$/,'');
+    if(!matched[0].length)break;
+    if(/^[ \t]*%%begin(?:text|ps|svg)\b/i.test(raw)){textBlock=true;continue}
+    if(/^[ \t]*%%end(?:text|ps|svg)\b/i.test(raw)){textBlock=false;continue}
+    if(textBlock||/^[ \t]*%/.test(raw))continue;
+    const standalone=/^[ \t]*K[ \t]*:[ \t]*(.*)$/i.exec(raw);
+    if(standalone){
+      keys.push({index:matched.index+raw.indexOf('K'),end:matched.index+raw.length,
+        value:standalone[1].replace(/%.*/,'').trim()});
+      continue;
+    }
+    // Other ABC fields (including titles/lyrics) are not music.
+    if(/^[ \t]*[A-Za-z][ \t]*:/.test(raw))continue;
+    for(let i=0;i<raw.length;i++){
+      const ch=raw[i];
+      if(ch==='%'){ignored.push({index:matched.index+i,end:matched.index+raw.length});break;}
+      if(ch==='"'||ch==='!'||ch==='+'){
+        const close=raw.indexOf(ch,i+1);
+        if(close<0)break;
+        i=close;continue;
+      }
+      if(ch==='{'){
+        const close=raw.indexOf('}',i+1);
+        if(close<0)break;
+        i=close;continue;
+      }
+      if(ch==='['){
+        const inline=/^\[[ \t]*K[ \t]*:[ \t]*([^\]\r\n]*)\]/i.exec(raw.slice(i));
+        if(inline){
+          keys.push({index:matched.index+i,end:matched.index+i+inline[0].length,
+            value:inline[1].replace(/%.*/,'').trim()});
+          i+=inline[0].length-1;continue;
+        }
+      }
+      if(ch==='|')bars.push(matched.index+i);
+    }
+  }
+  playerKeyChangeCacheSource=abc;
+  playerKeyChangeCache={keys,bars,ignored};
+  return playerKeyChangeCache;
+}
+
+function playerSignatureForKeyChange(value){
+  if(/^H[Pp](?=\s|$)/.test(value))return {F:1,C:1};
+  const match=/^([A-Ga-g])([#b]?)(.*)$/.exec(value);
+  if(!match)return {};
+  const tonic=match[1].toUpperCase()+(match[2]||'');
+  const extras=match[3]||'';
+  const modeToken=((extras.trim().toLowerCase().match(/^([a-z]+)/)||[])[1]||'');
+  let modeOffset=0;
+  if(modeToken==='m'||modeToken.startsWith('min')||modeToken.startsWith('aeo'))modeOffset=-3;
+  else if(modeToken.startsWith('mix'))modeOffset=-1;
+  else if(modeToken.startsWith('dor'))modeOffset=-2;
+  else if(modeToken.startsWith('phr'))modeOffset=-4;
+  else if(modeToken.startsWith('loc'))modeOffset=-5;
+  else if(modeToken.startsWith('lyd'))modeOffset=1;
+  const fifthsForMajor={Cb:-7,Gb:-6,Db:-5,Ab:-4,Eb:-3,Bb:-2,F:-1,
+    C:0,G:1,D:2,A:3,E:4,B:5,'F#':6,'C#':7};
+  const fifths=Math.max(-7,Math.min(7,(fifthsForMajor[tonic]??0)+modeOffset));
+  const result={};
+  const sharps=['F','C','G','D','A','E','B'],flats=['B','E','A','D','G','C','F'];
+  if(fifths>0)for(let i=0;i<fifths;i++)result[sharps[i]]=1;
+  if(fifths<0)for(let i=0;i<-fifths;i++)result[flats[i]]=-1;
+  // Key-field accidentals take precedence over the basic key signature.
+  for(const a of extras.match(/\^\^[A-Ga-g]|__[A-Ga-g]|[=^_][A-Ga-g]/g)||[]){
+    const note=a[a.length-1].toUpperCase();
+    result[note]=a.startsWith('^^')?2:a.startsWith('__')?-2:
+      a[0]==='^'?1:a[0]==='_'?-1:0;
+  }
+  return result;
+}
+
+function playerNotationMidiWithKeyChanges(clickedToken,abc,keyData){
+  const token=abc.slice(clickedToken.start,clickedToken.end);
+  const m=/^([=_^]*)([A-Ga-g])([,']*)/.exec(token);
+  if(!m)return null;
+  const letter=m[2],marks=m[3]||'',upper=letter.toUpperCase();
+  const naturalPc={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[upper];
+  let midi=(letter===letter.toLowerCase()?72:60)+naturalPc;
+  for(const ch of marks)midi+=ch==="'"?12:-12;
+  const priorKeys=keyData.keys.filter(k=>k.index<clickedToken.start);
+  const key=priorKeys.length?priorKeys[priorKeys.length-1]:null;
+  let accidental=null;
+  const explicit=m[1]||'';
+  if(explicit)accidental=explicit.includes('=')?0:explicit.startsWith('^^')?2:
+    explicit.startsWith('__')?-2:explicit[0]==='^'?1:-1;
+  if(accidental===null){
+    let boundary=key?key.index:-1;
+    for(const pos of keyData.bars){
+      if(pos<clickedToken.start)boundary=Math.max(boundary,pos);
+      else break;
+    }
+    // Explicit accidentals persist for the same written pitch/octave only
+    // until the next barline or key change (whichever comes later).
+    const previous=abcNoteTokens(abc);
+    for(let i=previous.length-1;i>=0;i--){
+      const prev=previous[i];
+      if(prev.start>=clickedToken.start)continue;
+      if(prev.start<=boundary)break;
+      const pm=/^([=_^]*)([A-Ga-g])([,']*)/.exec(abc.slice(prev.start,prev.end));
+      if(!pm||pm[2]!==letter||pm[3]!==marks||!pm[1])continue;
+      const a=pm[1];
+      accidental=a.includes('=')?0:a.startsWith('^^')?2:a.startsWith('__')?-2:
+        a[0]==='^'?1:-1;
+      break;
+    }
+  }
+  if(accidental===null)accidental=key?(playerSignatureForKeyChange(key.value)[upper]??0):0;
+  return midi+accidental;
+}
+
 function abcNoteTokens(value){
   const tokens=[];
   let inQuote=false,inGrace=false,lineStart=true,headerLine=false;
@@ -3109,13 +3230,22 @@ function abcNoteTokens(value){
     }
     i++;
   }
-  return tokens;
+  const keyData=playerKeyChangeData(value);
+  if(keyData.keys.length<=1)return tokens;
+  // Keep ABC character positions intact while excluding the letters inside
+  // the standalone/inline key fields themselves from note navigation.
+  return tokens.filter(t=>
+    !keyData.keys.some(k=>t.start>=k.index&&t.start<k.end) &&
+    !keyData.ignored.some(r=>t.start>=r.index&&t.start<r.end));
 }
 
 
 function clickedNotationMidi(clickedToken,sourceABC){
   if(!clickedToken)return null;
   const abc=sourceABC===undefined?($("abcText")?.value||""):String(sourceABC);
+  const keyChangeData=playerKeyChangeData(abc);
+  if(keyChangeData.keys.length>1)
+    return playerNotationMidiWithKeyChanges(clickedToken,abc,keyChangeData);
   const token=abc.slice(clickedToken.start,clickedToken.end);
   const m=token.match(/^([=_^]*)([A-Ga-g])([,']*)/);
   if(!m)return null;
