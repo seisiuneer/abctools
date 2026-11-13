@@ -1422,7 +1422,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.11</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
+<header class="app-header"><div class="version">Version 4.12</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Anglo Concertina Fingering Player</h1><p>Play ABC tunes with synchronized Jeffries or Wheatstone Anglo concertina fingering diagrams.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Concertina type</label><select id="system"><option value="jeffries">Jeffries</option><option value="wheatstone">Wheatstone</option></select></div>
@@ -2315,85 +2315,31 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     // Determines the key signature
     function findKeySignature(abcInput) {
-
-        var myMap = null;
-
-        var keyMatch = abcInput.match(/^K: *([A-G])([b#])? *(.*?)$/m);
-        if (keyMatch == null || keyMatch.length < 3) {
-            return null;
+        var match = String(abcInput || "").match(/^[ \t]*K[ \t]*:[ \t]*([A-Ga-g])([b#])?[ \t]*(.*?)$/m);
+        if (!match) return null;
+        var tonic = match[1].toUpperCase() + (match[2] || "");
+        var extra = (match[3] || "").replace(/%.*/, "").trim();
+        var first = ((extra.toLowerCase().match(/^([^\s]+)/) || ["", ""])[1]);
+        var flatness = 0;
+        if (first === "m" || first.startsWith("min") || first.startsWith("aeo")) flatness = 3;
+        else if (first.startsWith("mix")) flatness = 1;
+        else if (first.startsWith("dor")) flatness = 2;
+        else if (first.startsWith("phr")) flatness = 4;
+        else if (first.startsWith("loc")) flatness = 5;
+        else if (first.startsWith("lyd")) flatness = -1;
+        else if (first.startsWith("exp")) tonic = "C";
+        var signature = keySignatureMap(tonic, flatness);
+        if (!signature) return null;
+        for (var accidental of extra.match(/[=^_][A-Ga-g]/g) || []) {
+            var name = accidental[1].toUpperCase();
+            signature.sharps = signature.sharps.replaceAll(name, "");
+            signature.flats = signature.flats.replaceAll(name, "");
+            if (accidental[0] === "^") signature.sharps += name;
+            else if (accidental[0] === "_") signature.flats += name;
         }
-
-        var keySignatureBase;
-        var keyExtra;
-
-        if (keyMatch[2] == undefined) {
-            keySignatureBase = keyMatch[1];
-        } else {
-            keySignatureBase = keyMatch[1] + keyMatch[2];
-        }
-        keyExtra = keyMatch[3].toLowerCase();
-
-        // Strip any trailing comments
-        var searchExp = /%.*/
-        keyExtra = keyExtra.replace(searchExp,"");
-        keyExtra = keyExtra.trim();
-
-        angloLog("Got base key of '" + keySignatureBase + "' and extra of '" + keyExtra + "'");
-        
-        // Determine musical mode
-        if (keyExtra == "" ||
-            keyExtra.search("maj") != -1 ||
-            keyExtra.search("ion") != -1) {
-            angloLog("Mode: Ionian (major)");
-            myMap = keySignatureMap(keySignatureBase, 0);
-        } else if (keyExtra.search("mix") != -1) {
-            angloLog("Mode: Mixolydian");
-            myMap = keySignatureMap(keySignatureBase, 1);
-        } else if (keyExtra.search("dor") != -1) {
-            angloLog("Mode: Dorian");
-            myMap = keySignatureMap(keySignatureBase, 2);
-        } else if ((keyExtra.search("m") != -1 && keyExtra.search("mix") == -1) ||
-            keyExtra.search("min") != -1 ||
-            keyExtra.search("aeo") != -1) {
-            angloLog("Mode: Aeolian (minor)");
-            myMap = keySignatureMap(keySignatureBase, 3);
-        } else if (keyExtra.search("phr") != -1) {
-            angloLog("Mode: Phrygian");
-            myMap = keySignatureMap(keySignatureBase, 4);
-        } else if (keyExtra.search("loc") != -1) {
-            angloLog("Mode: Locrian");
-            myMap = keySignatureMap(keySignatureBase, 5);
-        } else if (keyExtra.search("lyd") != -1) {
-            angloLog("Mode: Lydian");
-            myMap = keySignatureMap(keySignatureBase, -1);
-        } else if (keyExtra.search("exp") != -1) {
-            angloLog("(Accidentals to be explicitly specified)");
-            myMap = keySignatureMap("C", 0);
-        } else {
-            // Unknown
-            angloLog("Failed to determine key signature mode");
-            myMap = null;
-        }
-
-        if (myMap == null) {
-            return myMap;
-        }
-
-        //Handle explicit accidentals
-        var explicitFlats = keyExtra.match(/_./g);
-        var explicitSharps = keyExtra.match(/\^./g);
-
-        for (note in explicitFlats) {
-            myMap.flats += explicitFlats[note][1].toUpperCase();
-        }
-
-        for (note in explicitSharps) {
-            myMap.sharps += explicitSharps[note][1].toUpperCase();
-        }
-
-        return myMap;
-
+        return signature;
     }
+
 
     // Calculates a key signature map given a tonic and a mode
     function keySignatureMap(tonic, modeFlatness) {
@@ -3042,6 +2988,47 @@ var angloFingeringsGenerator = function (theABC, callback){
         return input.substr(0, start) + s + input.substr(start + len);
     }
 
+
+    // Resolve body and inline K: changes in source order, without altering ABC offsets.
+    // Quoted chords, decorations, comments, headers and text blocks are not key changes.
+    function collectFingeringKeyChanges(abc, parseKey) {
+        var changes = [];
+        var lineRegex = /[^\r\n]*(?:\r\n|\r|\n|$)/g;
+        var lineMatch, inTextBlock = false;
+        function addChange(index, value) {
+            var signature = parseKey("K:" + value.replace(/%.*/, "").trim());
+            if (!signature) throw new Error("Unknown or unsupported key change: K:" + value.trim());
+            changes.push({ index: index, signature: signature });
+        }
+        while ((lineMatch = lineRegex.exec(abc)) && lineMatch[0].length) {
+            var line = lineMatch[0].replace(/[\r\n]+$/, "");
+            if (/^[ \t]*%%begintext\b/i.test(line)) { inTextBlock = true; continue; }
+            if (/^[ \t]*%%endtext\b/i.test(line)) { inTextBlock = false; continue; }
+            if (inTextBlock || /^[ \t]*%/.test(line)) continue;
+            var field = /^[ \t]*K[ \t]*:[ \t]*(.*)$/i.exec(line);
+            if (field) { addChange(lineMatch.index, field[1]); continue; }
+            if (/^[ \t]*[A-Za-z][ \t]*:/.test(line)) continue;
+            for (var i = 0; i < line.length; i++) {
+                var ch = line[i];
+                if (ch === "%") break;
+                if (ch === '"' || ch === "!" || ch === "+") {
+                    var endDecoration = line.indexOf(ch, i + 1);
+                    if (endDecoration < 0) break;
+                    i = endDecoration;
+                    continue;
+                }
+                if (ch === "[") {
+                    var inline = /^\[\s*K\s*:\s*([^\]]*)\]/i.exec(line.slice(i));
+                    if (inline) {
+                        addChange(lineMatch.index + i, inline[1]);
+                        i += inline[0].length - 1;
+                    }
+                }
+            }
+        }
+        return changes;
+    }
+
     // Returns an array of Notes from the ABC string input
     function getAbcNotes(input) {
 
@@ -3108,11 +3095,18 @@ var angloFingeringsGenerator = function (theABC, callback){
         angloLog("orginal input:\n" + input);
         angloLog("sanitized input:\n" + sanitizedInput);
 
+        var keyChanges = collectFingeringKeyChanges(input, findKeySignature);
+        var nextKeyChange = 0;
+
         // Find all the notes
         var regex = /([=^_]?[a-gA-G][',]?|\|)/g;
         var notes = [];
         var m;
         while (m = regex.exec(sanitizedInput)) {
+            while (nextKeyChange < keyChanges.length &&
+                   keyChanges[nextKeyChange].index <= m.index) {
+                keySignature = keyChanges[nextKeyChange++].signature;
+            }
             var unNormalizedValue = m[1];
             if (unNormalizedValue == "|") {
                 keySignature.accidentalFlats = "";
@@ -3322,15 +3316,10 @@ var angloFingeringsGenerator = function (theABC, callback){
             return value;
         }
 
-        if (keySignature.sharps.search(baseName) != -1 ||
-            keySignature.accidentalSharps.search(baseName) != -1) {
-            return "^" + value;
-        }
-
-        if (keySignature.flats.search(baseName) != -1 ||
-            keySignature.accidentalFlats.search(baseName) != -1) {
-            return "_" + value;
-        }
+        if (keySignature.accidentalSharps.search(baseName) != -1) return "^" + value;
+        if (keySignature.accidentalFlats.search(baseName) != -1) return "_" + value;
+        if (keySignature.sharps.search(baseName) != -1) return "^" + value;
+        if (keySignature.flats.search(baseName) != -1) return "_" + value;
 
         return value;
     }
