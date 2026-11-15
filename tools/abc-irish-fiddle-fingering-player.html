@@ -32,12 +32,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Irish Fiddle Fingering Player</title>
-<meta name="description" content="Learn Irish fiddle fingerings with synchronized ABC notation, note names, finger-number tablature, audio playback, and an interactive fingerboard." />
-<meta name="keywords" content="ABC notation, Irish fiddle fingerings, fiddle player, violin, GDAE tuning, finger-number tablature, note names, Irish traditional music, ABC Transcription Tools" />
+<meta name="description" content="Learn fiddle and viola fingerings with synchronized ABC notation, note names, finger-number tablature, audio playback, and an interactive fingerboard." />
+<meta name="keywords" content="ABC notation, Irish fiddle fingerings, violin, viola, viola -8va, GDAE, CGDA, finger-number tablature, note names, Irish traditional music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ABC Irish Fiddle Fingering Player" />
-<meta property="og:description" content="Learn Irish fiddle fingerings with synchronized ABC notation, note names, finger-number tablature, audio playback, and an interactive fingerboard." />
+<meta property="og:description" content="Learn fiddle and viola fingerings with synchronized ABC notation, note names, finger-number tablature, audio playback, and an interactive fingerboard." />
 <meta property="og:site_name" content="ABC Irish Fiddle Fingering Player" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-irish-fiddle-fingering-player.html" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-irish-fiddle-fingering-player-og1.jpg"/>
@@ -464,7 +464,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 #editorTextSize{min-height:30px;padding:4px 28px 4px 8px;font:inherit;font-size:.82rem;color:#17251d;-webkit-text-fill-color:#17251d;background:#fff;border:1px solid #aebbb4;border-radius:7px;margin-left:-6px;margin-right:8px}
 
 /* Layout inherited from the original player, adapted for the fiddle. */
-.fiddleToolbar{grid-template-columns:minmax(260px,1.35fr) minmax(150px,.72fr) minmax(145px,.7fr) minmax(82px,.42fr) minmax(220px,1.12fr) auto}
+.fiddleToolbar{grid-template-columns:minmax(235px,1.3fr) minmax(132px,.66fr) minmax(150px,.72fr) minmax(135px,.7fr) minmax(220px,1.12fr) auto}
 .fiddleToolbar .fileControl{grid-column:auto}
 .fiddleDiagramWrap{overflow:auto}
 .fiddleLive{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(18px,3vw,42px)}
@@ -1580,8 +1580,15 @@ body.diagram-full .fiddleNoteGroup.horizontalFretboardLayout .fiddleStaffNote{
 @media(prefers-reduced-motion:reduce){.playerPdfSpinner{animation:none;border-color:#176b43 #d9e7de #d9e7de #d9e7de}}
 @media print{.playerPdfStatusModal{display:none!important}}
 
-/* Fixed GDAE fiddle: four toolbar controls (file, display, tune, sharing). */
-.fiddleToolbar{grid-template-columns:minmax(255px,1.3fr) minmax(160px,.66fr) minmax(190px,.9fr) auto}
+/* Five desktop controls: roomy ABC file and Tune, compact Instrument,
+   and enough space for Export PDF and Share on the same row. */
+.fiddleToolbar{
+  grid-template-columns:minmax(300px,1.45fr) minmax(145px,.48fr) minmax(270px,1.05fr) minmax(275px,1.3fr) minmax(204px,.66fr);
+}
+.fiddleToolbar > .control,.fiddleToolbar > .shareButtons{min-width:0}
+.fiddleToolbar .shareButtons{display:flex!important;flex-wrap:nowrap;align-items:end;gap:8px}
+.fiddleToolbar .shareButtons #exportPdfBtn{flex:0 0 auto}
+.fiddleToolbar .shareButtons #shareBtn{flex:1 1 auto;min-width:75px;width:auto}
 body.fiddle-player #showAllFingeringsBtn{display:none !important}
 body.fiddle-player .fiddleFingerboard.fiddle-compact{background:#111;border:2px solid #363636;border-radius:12px;padding:12px 15px;color:#fff}
 body.fiddle-player .fiddleFingerboard.fiddle-compact .tabStringName{color:#fff}
@@ -1591,8 +1598,15 @@ body.fiddle-player .fiddleFingerboard.fiddle-compact .tabFret.openString{
   width:1.3em;height:1.3em;padding:0;border:3px solid #65eeb0;
   background:#111;
 }
-@media(max-width:1050px){.fiddleToolbar{grid-template-columns:1fr 1fr}}
-@media(max-width:650px){.fiddleToolbar{grid-template-columns:1fr}}
+/* Stack into two columns before the five desktop controls become cramped. */
+@media(max-width:1320px){
+  .fiddleToolbar{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .fiddleToolbar .fileControl{grid-column:1 / -1}
+}
+@media(max-width:650px){
+  .fiddleToolbar{grid-template-columns:minmax(0,1fr)}
+  .fiddleToolbar .fileControl{grid-column:auto}
+}
 
 
 /* The fiddle's slender horizontal board needs less surrounding SVG whitespace. */
@@ -1694,7 +1708,7 @@ body.fiddle-player .fiddleNoteGroup:has(.fullFretboardMode:not(.horizontalFretbo
   paint-order:normal!important;
 }
 #notation .fiddleTabStringLabel,#notation .fiddleTabFinger{fill:#252b2c}
-#notation .fiddleTabMissing{fill:#ba1d1d}
+#notation .fiddleTabMissing{fill:#000}
 #notation .fiddleTabNumberBackground{fill:#fff;stroke:#fff}
 
 /* v1.0.7: center the horizontal layout vertically when the pane has spare
@@ -1722,7 +1736,7 @@ body.fiddle-player .fiddleLive:has(.horizontalFretboardLayout) > .fiddleLiveRow{
   stroke:none!important;
   paint-order:normal!important;
 }
-#notation .fiddleTabAdded text.fiddleTabMissing{fill:#ae2c2c!important}
+#notation .fiddleTabAdded text.fiddleTabMissing{fill:#000!important}
 #notation .fiddleTabAdded .fiddleNoteNameBackground{fill:#fff;stroke:none}
 #notation .fiddleTabAdded text{pointer-events:none}
 
@@ -1948,9 +1962,10 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body class="fiddle-player"><div class="app">
-<header class="app-header"><div class="version">Version 1.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Fiddle Fingering Player</h1><p>Play ABC tunes with synchronized notation, fiddle finger numbers, and audio playback.</p></header>
+<header class="app-header"><div class="version">Version 2.2</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Fiddle Fingering Player</h1><p>Play ABC tunes with synchronized notation, fiddle and viola fingerings, and audio playback.</p></header>
 <div class="toolbar fiddleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
+ <div class="control instrumentControl"><label for="instrumentSelect">Instrument</label><select id="instrumentSelect"><option value="fiddle" selected>Fiddle</option><option value="viola">Viola</option><option value="viola-8va">Viola (-8va)</option></select></div>
  <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="notation-names">Notation + Note Names</option><option value="fiddle-tab">Notation + Tab</option><option value="fiddle-tab-names" selected>Notation + Note Names + Tab</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareBtn" disabled>Share</button></div>
@@ -2002,7 +2017,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="shareModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle"><div class="lessonDialog"><button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button><h2 id="shareModalTitle">Sharing Controls</h2><div class="lessonActions"><button id="shareCurrentDialogBtn">Share Current Tune</button><button id="shareAllDialogBtn">Share All Tunes</button><button id="configureLessonBtn">Configure Lesson…</button></div><div class="lessonCloseRow"><button id="shareCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle"><div class="lessonDialog"><button id="lessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Teacher lesson help" title="Teacher lesson help">?</button><h2 id="lessonModalTitle">Configure Lesson</h2><label for="lessonTitleInput">Lesson title</label><input id="lessonTitleInput" type="text" maxlength="160" placeholder="Enter the lesson name"><label for="lessonInstructionsInput">Instructions</label><textarea id="lessonInstructionsInput" placeholder="Enter the lesson instructions"></textarea><div id="lessonSizeHint" class="lessonHint">Lesson tune: <span id="lessonTuneName"></span></div><input id="lessonConfigFile" type="file" accept=".txt,text/plain" hidden><div class="lessonActions"><button id="lessonSaveConfigBtn">Save Lesson Configuration</button><button id="lessonLoadConfigBtn">Load Lesson Configuration</button><button id="lessonShareBtn">Create Lesson Link</button></div><div class="lessonCloseRow"><button id="lessonCloseBtn" class="lessonCloseBtn">Close</button></div></div></div>
 <div id="lessonLinkModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="lessonLinkTitle"><div class="lessonDialog"><h2 id="lessonLinkTitle">Share Link</h2><textarea id="lessonLinkOutput" class="lessonLinkOutput" readonly></textarea><div class="lessonActions"><button id="lessonCopyLinkBtn">Copy Link</button><button id="lessonSaveLinkBtn">Save Link as Text File</button><button id="lessonTestLinkBtn">Test Link</button><button id="lessonOpenABCTTBtn">Open in ABCTT</button></div><div class="lessonCloseRow"><button id="lessonLinkCloseBtn" class="lessonCloseBtn">Back</button></div></div></div>
-<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: You may change notation display, orientation, and Show virtual frets during the lesson.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
+<div id="studentLessonModal" class="lessonModal" role="dialog" aria-modal="true" aria-labelledby="studentLessonTitle"><div class="lessonDialog"><button id="studentLessonHelpBtn" class="dialogHelpBtn" type="button" aria-label="Student lesson help" title="Student lesson help">?</button><h2 id="studentLessonTitle" class="lessonStudentTitle">Lesson</h2><div class="lessonStudentScroll"><div id="studentLessonInstructions" class="lessonStudentText"></div></div><div class="lessonLockedNote">Note: You may change notation display, orientation, and Show virtual frets during the lesson. The instrument is locked.</div><div class="lessonActions"><button id="studentLessonStartBtn">Start Lesson</button></div></div></div>
 
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
@@ -2011,8 +2026,8 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
     <h2 style="text-align:center;margin:0 0 24px">ABC Irish Fiddle Fingering Player Instructions</h2>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
-      <p>The <b>ABC Irish Fiddle Fingering Player</b> displays ABC music with synchronized notation, Irish fiddle fingerings, and audio playback.</p>
-      <p>It uses standard <b>GDAE</b> tuning and shows which string and left-hand finger to use for the selected melody note.</p>
+      <p>The <b>ABC Irish Fiddle Fingering Player</b> displays ABC music with synchronized notation, fiddle or viola fingerings, and audio playback.</p>
+      <p>Choose <b>Fiddle</b> (GDAE), <b>Viola</b> (CGDA), or <b>Viola (-8va)</b> (CGDA). The player shows the string and left-hand finger for the selected melody note.</p>
       <p>You can choose to display note names, finger-number tablature, or both alongside the standard notation.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Getting Started: Opening and Selecting Tunes</p>
@@ -2020,7 +2035,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>You can also type or paste an ABC tune into the editor or receive tunes from ABC Transcription Tools.</p>
       <p>When several tunes are loaded, use the <b>Tune</b> menu to select the tune to display and play.</p>
       <p>Edits to loaded tunes are retained when you switch between them.</p>
-      <p>The notation and fiddle fingerings update for the selected tune.</p>
+      <p>The notation and selected instrument fingerings update for the selected tune.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
       <p>Edit the ABC text in the upper-left pane to change notes or other tune details.</p>
@@ -2029,7 +2044,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Click <b>Full-Page View</b> in the ABC or Notation header to enlarge that pane.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Fiddle Fingerboard and Display Controls</p>
-      <p>The black fiddle fingerboard has four white strings in <b>GDAE</b> tuning and an ivory nut at the open-string end.</p>
+      <p>The black fingerboard has four white strings in <b>GDAE</b> for Fiddle or <b>CGDA</b> for Viola, and an ivory nut at the open-string end. Viola (-8va) uses the same physical CGDA tuning but fingers notes one octave below the written score.</p>
       <p>A green marker shows the selected pitch on the appropriate string.</p>
       <p>An empty outlined circle indicates an open string.</p>
       <p>The numbers <b>1–4</b> indicate which left-hand finger to use.</p>
@@ -2046,15 +2061,16 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p><b>Notation + Note Names + Tab</b> is the default when no preference has been saved.</p>
       <p>Displayed note names use <b>Comhaltas-style note naming</b>, with uppercase letters and octave commas or apostrophes, matching the large note display beside the fingerboard. Sharps or flats are selected according to the tune's <b>K:</b> key and mode.</p>
       <p>When both note names and tablature are enabled, the note names appear between the standard notation and tablature.</p>
-      <p>The tablature has four string lines, with <b>E</b> at the top followed by <b>A</b>, <b>D</b>, and <b>G</b>.</p>
+      <p>The tablature has four string lines, high to low: <b>E A D G</b> for Fiddle or <b>A D G C</b> for Viola. Viola (-8va) uses lower-octave finger positions while keeping the written notation and note names unchanged.</p>
       <p>Each number on a tablature string indicates the finger to use, with <b>0</b> meaning an open string.</p>
+      <p>A black <b>X</b> marks a note outside the instrument's playable range. Notes below its lowest open string place the X on the lowest string (G for Fiddle, C for Viola).</p>
       <p>The chosen notation display mode also determines which note names and tablature appear in exported PDFs.</p>
       <p>During notation rendering, the player hides the ABC information and lyric fields <b>A:</b>, <b>B:</b>, <b>D:</b>, <b>F:</b>, <b>G:</b>, <b>H:</b>, <b>N:</b>, <b>O:</b>, <b>S:</b>, <b>W:</b>, <b>w:</b>, and <b>Z:</b> so their text cannot overlap the tablature.</p>
       <p>These fields remain unchanged in the ABC editor, saved files, and shared tunes.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Note Navigation and Playback</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
-      <p>Click a note head in the notation to select that note and display its fiddle fingering.</p>
+      <p>Click a note head in the notation to select that note and display its selected instrument fingering.</p>
       <p>Use the previous and next note buttons beneath the fingerboard to step through the tune.</p>
       <p>When <b>Use arrow keys?</b> is checked, you can also navigate with the left/right arrow keys or <b>Home</b>/<b>End</b>.</p>
       <p>Use the audio controls beneath the notation to play, pause, or repeat the tune.</p>
@@ -2062,16 +2078,16 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Enable <b>Metronome</b> for an audible beat or <b>Count in?</b> for a countdown before playback.</p>
       <p>Use <b>Mute Melody</b> to silence the melody during practice.</p>
       <p>If the browser requests permission to start audio, click the playback-enabling button.</p>
-      <p>The melody uses <b>%%MIDI program 110</b> in a playback-only copy of the ABC.</p>
+      <p>Fiddle and both Viola modes use <b>%%MIDI program 110</b> in a playback-only copy of the ABC. <b>Viola (-8va)</b> adds <b>%%MIDI transpose -12</b> to sound an octave below the displayed notation; normal Viola is untransposed.</p>
       <p>An existing ABC melody-program directive is overridden only for playback, leaving the original ABC unchanged when editing, saving, or sharing.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="sharingInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Saving, Sharing, and ABC Transcription Tools</p>
       <p>Click <b>Save</b> to download the loaded ABC tunes, including your edits.</p>
       <p>Click <b>Share</b> to open Sharing Controls and choose <b>Share Current Tune</b>, <b>Share All Tunes</b>, or <b>Configure Lesson…</b>.</p>
-      <p>A share link carries the ABC data, notation display mode, fingerboard orientation, and <b>Show virtual frets</b> setting.</p>
+      <p>A share link carries the ABC data, selected instrument, notation display mode, fingerboard orientation, and <b>Show virtual frets</b> setting. Lesson links and saved lesson configurations retain the instrument as well.</p>
       <p>In the Share Link dialog, you can copy, save, or test the generated link.</p>
       <p>Click <b>Open in ABCTT</b> in the current-tune Share Link dialog to open the tune in ABC Transcription Tools.</p>
-      <p>On a desktop browser, <b>Option/Alt-click Share</b> to open the current tune directly in ABC Transcription Tools without opening the sharing dialogs.</p>
+      <p>On a desktop browser, <b>Option/Alt-click Share</b> to open the current tune directly in ABC Transcription Tools without opening the sharing dialogs. All three instruments use the fiddle melody program 110 and <b>format=noten</b>; Viola (-8va) also sends <b>%%MIDI transpose -12</b> for each transferred tune.</p>
       <p>A received share link applies its display settings for that visit without replacing your usual saved preferences unless you change them.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
@@ -2110,7 +2126,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Changing tunes or using the main <b>Export PDF</b> also restores the original ABC.</p>
       <p>Phrase Builder cannot process tunes with <b>V:</b> voices or unsupported body-level ABC fields other than <b>K:</b>.</p>
       <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
-<hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Click <b>Export PDF</b> to save the current notation display as a PDF.</p>
       <p>If a Playback Range or Phrase Builder result is active, clicking the main <b>Export PDF</b> button first discards the temporary ABC and restores the full tune before preparing the PDF.</p>
@@ -2150,8 +2166,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>To return to normal use, open the player without the lesson link.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
-      <p style="text-align:center">Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>
-      <p style="text-align:center">If this player is useful, see <a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a>.</p>
+      <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
       
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 </div>
@@ -2218,16 +2233,30 @@ const FIDDLE_PREFS_KEY="abcFiddlePlayerPrefs";
 const GDAE_STRINGS=[
   {name:"E",midi:76}, {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}
 ];
-function selectedStrings(){return GDAE_STRINGS;}
+const CGDA_STRINGS=[
+  {name:"A",midi:69}, {name:"D",midi:62}, {name:"G",midi:55}, {name:"C",midi:48}
+];
+const FIDDLE_INSTRUMENTS=["fiddle","viola","viola-8va"];
+function selectedInstrument(){return $("instrumentSelect").value;}
+function selectedPlaysOctaveDown(){return selectedInstrument()==="viola-8va";}
+// The octave-down mode uses the physical CGDA tuning, while its ABC notes
+// sound 12 semitones lower. Keep score notes at their written pitches.
+function soundingMidiForWritten(midi){return midi==null?null:Number(midi)-(selectedPlaysOctaveDown()?12:0);}
+function writtenMidiForSounding(midi){return midi==null?null:Number(midi)+(selectedPlaysOctaveDown()?12:0);}
+function selectedStrings(){return selectedInstrument()==="fiddle"?GDAE_STRINGS:CGDA_STRINGS;}
 function selectedRenderTab(){
-  // Native abcjs renders four GDAE string lines; the tab-number SVG labels
-  // are converted to first-position fiddle fingers immediately after rendering.
-  return [{instrument:"fiddle",label:"",tuning:["G,","D","A","e"],capo:0}];
+  // Used by the standalone All Tablature view. The -8va virtual tuning
+  // makes native abcjs show finger positions an octave below written notes.
+  const tuning=selectedInstrument()==="fiddle"?["G,","D","A","e"]:
+    selectedPlaysOctaveDown()?["C","G","d","a"]:["C,","G,","D","A"];
+  return [{instrument:"fiddle",label:"",tuning,highestNote:"f''",capo:0}];
 }
+// Viola uses the same melody soundfont instrument as Fiddle.
 function selectedMelodyProgram(){return 110;}
 function updateInstrumentUI(){
-  $("fingeringPanelLabel").textContent="Fiddle Fingerings";
-  $("fiddleFingerboard").setAttribute("aria-label","Fiddle fingerboard");
+  const name=selectedInstrument()==="fiddle"?"Fiddle":"Viola";
+  $("fingeringPanelLabel").textContent=name+" Fingerings";
+  $("fiddleFingerboard").setAttribute("aria-label",name+" fingerboard");
 }
 
 function splitTunes(abc){
@@ -2373,12 +2402,17 @@ function buildPlaybackABC(abc){
   const forced=[
     "%soundfont fatboy",
     selectedPlaybackMIDIProgramDirective(),
+    ...(selectedPlaysOctaveDown()?["%%MIDI transpose -12"]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
+  // In -8va mode, source transpose instructions cannot override the forced
+  // octave-down pitch. Normal Fiddle and Viola preserve source directives.
+  const overrideNames=selectedPlaysOctaveDown()?"program|bassprog|chordprog|transpose":"program|bassprog|chordprog";
+  const override=new RegExp("^([ \t]*)(%(?:soundfont|abcjs_soundfont)\\b|%%MIDI[ \t]+(?:"+overrideNames+")\\b)[^\\r\\n]*","gmi");
   let cleaned=source.replace(
-    /^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi,
+    override,
     m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;return m.slice(0,n)+"%"+" ".repeat(Math.max(0,m.length-n-1))}
   );
 
@@ -2568,7 +2602,7 @@ function renderGDAEFingering(midi){
   host.classList.toggle("fiddle-full",!!showFretboardEnabled);
   $("fiddleNoteGroup")?.classList.toggle("horizontalFretboardLayout",!!showFretboardEnabled&&fretboardOrientation==="horizontal");
 
-  const strings=selectedStrings(); // E5, A4, D4, G3 high to low
+  const strings=selectedStrings(); // high-to-low; depends on Fiddle/Viola selection
   const pos=midi==null?null:gdaePositionForMidi(midi);
   const group=$("fiddleNoteGroup");
   if(group){group.classList.add("fourString");group.classList.remove("sixString");}
@@ -2602,7 +2636,7 @@ function renderGDAEFingering(midi){
   svg.setAttribute("viewBox",horizontal?"0 55 510 190":"0 0 300 500");
   svg.setAttribute("preserveAspectRatio","xMidYMid meet");
   svg.setAttribute("role","img");
-  svg.setAttribute("aria-label","Fiddle fingerboard");
+  svg.setAttribute("aria-label",selectedInstrument()==="fiddle"?"Fiddle fingerboard":"Viola fingerboard");
 
   const add=(name,attrs,text)=>{
     const el=document.createElementNS(NS,name);
@@ -2655,7 +2689,7 @@ function renderGDAEFingering(midi){
   ].join(" ");
   add("path",{d:outline,fill:"#111",stroke:"#363636","stroke-width":2});
 
-  const displayStrings=[...strings].reverse(); // G, D, A, e
+  const displayStrings=[...strings].reverse(); // low-to-high: GDAE or CGDA
   const last=displayStrings.length-1;
   // The strings fan out slightly along the tapered black board. Keep their
   // tops aligned with the G/D/A/e labels, and centers aligned in both views.
@@ -2886,7 +2920,7 @@ function showFiddleLive(midi){
   }
 
   const n=currentLiveMidi;
-  const displayMidi=n;
+  const displayMidi=writtenMidiForSounding(n);
   note.textContent=formattedFiddleNoteName(displayMidi).replace(/#/g,"♯").replace(/b/g,"♭");
   renderFiddleStaffNote(displayMidi);
   renderGDAEFingering(n);
@@ -2902,7 +2936,7 @@ function fiddleTabText(parent,make,x,y,value,cls,anchor="middle"){
     x,y,"text-anchor":anchor,class:cls,
     "font-family":"Arial, Helvetica, sans-serif",
     "font-size":12.6,"font-weight":"400",
-    fill:cls.includes("fiddleTabMissing")?"#ae2c2c":"#252b2c",stroke:"none",
+    fill:cls.includes("fiddleTabMissing")?"#000":"#252b2c",stroke:"none",
     style:"font-weight:400!important;font-synthesis:none!important;stroke:none!important;paint-order:normal"
   },value);
 }
@@ -2940,7 +2974,7 @@ function fiddleScoreTabEvents(visual){
       const token=tokens[idx];
       const midi=clickedNotationMidi(token);
       if(!Number.isInteger(midi))continue;
-      events.push({start:token.start,end:token.end,lineIndex,midi,position:gdaePositionForMidi(midi)});
+      events.push({start:token.start,end:token.end,lineIndex,midi,position:gdaePositionForMidi(soundingMidiForWritten(midi))});
       searchFrom=idx+1;
     }
   }
@@ -2952,7 +2986,7 @@ function fiddleScoreTabEvents(visual){
       const midi=clickedNotationMidi(token);
       if(!Number.isInteger(midi))continue;
       events.push({start:token.start,end:token.end,lineIndex:0,midi,
-        position:gdaePositionForMidi(midi)});
+        position:gdaePositionForMidi(soundingMidiForWritten(midi))});
     }
   }
   return events;
@@ -2983,7 +3017,9 @@ function fiddleRenderScoreTab(visual){
     if(!byLine.has(line))byLine.set(line,[]);
     byLine.get(line).push(group);
   }
-  const labels=["E","A","D","G"];
+  const strings=selectedStrings();
+  const labels=strings.map(str=>displayedStringPitchName(str));
+  const lowestStringMidi=strings[strings.length-1].midi;
   const view=svg.viewBox.baseVal;
   for(const [line,engraved] of byLine){
     let notes=events.filter(e=>e.lineIndex===line).sort((a,b)=>a.start-b.start);
@@ -3044,7 +3080,11 @@ function fiddleRenderScoreTab(visual){
       }
       if(showTab){
         const pos=evt.position;
-        const row=pos?pos.stringIndex:1;
+        // For notes below the lowest open string, place the out-of-range X
+        // on that lowest string (G for Fiddle; C for either Viola mode).
+        // Keep the existing fallback row for other unplayable pitches.
+        const soundingMidi=soundingMidiForWritten(evt.midi);
+        const row=pos?pos.stringIndex:(Number.isFinite(soundingMidi)&&soundingMidi<lowestStringMidi?strings.length-1:1);
         const number=pos?fiddleFingerForOffset(pos.fret):"X";
         const y=firstY+row*spacing;
         make(layer,"rect",{x:x-7.25,y:y-6.5,width:14.5,height:13,rx:1,
@@ -4871,9 +4911,9 @@ function selectClickedNotationNote(abcelem){
   if(clickedToken){
     let midi=clickedNotationMidi(clickedToken);
     if(midi!=null){
-      // Guitar/Baritone Ukulele playback sounds one octave below written notation; showFiddleLive()
-      // expects that sounding pitch and handles the written note-name/staff display.
-      showFiddleLive(midi);
+      // Manual notation clicks provide written MIDI; the live fingerboard
+      // needs the sounding MIDI pitch for Viola (-8va).
+      showFiddleLive(soundingMidiForWritten(midi));
     }
   }
 }
@@ -5013,6 +5053,7 @@ function generateShareLink(abc){
   try{
     const params=new URLSearchParams();
     params.set("def",compressABCDeflate(abc));
+    params.set("instrument",selectedInstrument());
     params.set("notation",$("notationDisplay").value);
     params.set("orientation",fretboardOrientation);
     params.set("vfrets",showVirtualFretsEnabled?"1":"0");
@@ -5076,12 +5117,15 @@ function prepareABCForABCTTPlayback(abc){
   const forced=[
     "%soundfont fatboy",
     selectedPlaybackMIDIProgramDirective(),
+    ...(selectedPlaysOctaveDown()?["%%MIDI transpose -12"]:[]),
     "%%MIDI bassprog 0",
     "%%MIDI chordprog 0"
   ].join("\n")+"\n";
 
-  // The fiddle stays at written pitch; leave source transposition directives intact.
-  const override=/^([ \t]*)(%(?:soundfont|abcjs_soundfont)\b|%%MIDI[ \t]+(?:program|bassprog|chordprog)\b)[^\r\n]*/gmi;
+  // Preserve ordinary source transpose directives unless Viola (-8va)
+  // explicitly forces -12. Never change the user's original ABC.
+  const overrideNames=selectedPlaysOctaveDown()?"program|bassprog|chordprog|transpose":"program|bassprog|chordprog";
+  const override=new RegExp("^([ \t]*)(%(?:soundfont|abcjs_soundfont)\\b|%%MIDI[ \t]+(?:"+overrideNames+")\\b)[^\\r\\n]*","gmi");
   const cleaned=String(abc||"").replace(
     override,
     m=>{const n=(m.match(/^[ \t]*/)||[""])[0].length;
@@ -5432,14 +5476,14 @@ function commitStandardShareSettingsIfPending(){
   if(lessonModeActive())return;
   if(!standardShareSettingsPending)return;
   standardShareSettingsPending=false;
-  try{localStorage.setItem(FIDDLE_PREFS_KEY,JSON.stringify({notation:$("notationDisplay").value}))}catch(_){}
+  try{localStorage.setItem(FIDDLE_PREFS_KEY,JSON.stringify({notation:$("notationDisplay").value,instrument:selectedInstrument()}))}catch(_){}
 }
 
 function saveFiddleDisplayPrefs(){
   if(lessonModeActive())return;
   commitStandardShareSettingsIfPending();
   try{
-    localStorage.setItem(FIDDLE_PREFS_KEY,JSON.stringify({notation:$("notationDisplay").value}));
+    localStorage.setItem(FIDDLE_PREFS_KEY,JSON.stringify({notation:$("notationDisplay").value,instrument:selectedInstrument()}));
   }catch(_){}
 }
 
@@ -5447,6 +5491,7 @@ function restoreFiddleDisplayPrefs(){
   try{
     const prefs=JSON.parse(localStorage.getItem(FIDDLE_PREFS_KEY)||"{}");
     if(["notation","fiddle-tab","notation-names","fiddle-tab-names"].includes(prefs.notation))$("notationDisplay").value=prefs.notation;
+    if(FIDDLE_INSTRUMENTS.includes(prefs.instrument))$("instrumentSelect").value=prefs.instrument;
   }catch(_){}
 }
 
@@ -5461,6 +5506,8 @@ function validateLessonABCText(abc){
   return abc;
 }
 function validateFretboardSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!(["0","1"].includes(hide)))throw new Error("Lesson Hide setting is invalid.");
+  const instrument=params.get("instrument");
+  if(instrument!==null&&!FIDDLE_INSTRUMENTS.includes(instrument))throw new Error("Lesson instrument setting is invalid.");
   const notation=params.get("notation");
   const orientation=params.get("orientation");
   const vfrets=params.get("vfrets");
@@ -5481,6 +5528,10 @@ function validateLessonURLParams(params){
 }
 
 function applyFretboardSettingsParams(params){
+  const instrument=params.get("instrument");
+  // Old fiddle share/lesson URLs predate this setting and remain fiddle links.
+  if(FIDDLE_INSTRUMENTS.includes(instrument))$("instrumentSelect").value=instrument;
+  else if(params.has("def"))$("instrumentSelect").value="fiddle";
   const notation=params.get("notation");
 
   if(["notation","fiddle-tab","notation-names","fiddle-tab-names"].includes(notation))$("notationDisplay").value=notation;
@@ -6659,7 +6710,7 @@ $("showNoteCheck").addEventListener("change",e=>{
   saveShowNotePreference();
   {
     const staffMidi=currentLiveMidi;
-    renderFiddleStaffNote(staffMidi);
+    renderFiddleStaffNote(writtenMidiForSounding(staffMidi));
     scheduleFiddleVerticalNoteClearance();
   }
 });
@@ -6671,6 +6722,14 @@ $("editorTextSize").addEventListener("change",e=>{
 $("notationDisplay").addEventListener("change",()=>{
   saveFiddleDisplayPrefs();
   if(tunes.length)scheduleRebuild();
+  updateShareButtons();
+});
+$("instrumentSelect").addEventListener("change",()=>{
+  saveFiddleDisplayPrefs();
+  updateInstrumentUI();
+  // The previous sounding pitch belongs to the previous tuning; clear it.
+  currentLiveMidi=null;
+  if(tunes.length){showFiddleLive(null);scheduleRebuild();}
   updateShareButtons();
 });
 
@@ -6968,6 +7027,7 @@ function populateLessonConfigObject(c){
   // Apply the saved player settings directly. Do not alter the page URL and
   // do not enter student Lesson mode.
   q.delete('def');q.delete('lesson');q.delete('ldata');q.delete('lessonconfig');
+  if(!q.has('instrument'))q.set('instrument','fiddle');
   applyFretboardSettingsParams(q);
   // Loading a Lesson Configuration is a teacher action: make its player settings
   // the normal saved preferences. Direct student Lesson Links do not use this path.
@@ -7005,8 +7065,8 @@ function setupLessonMode(){
   const file=$('lessonConfigFile');if(file&&lessonIsIOS())file.removeAttribute('accept');
 
   // Let students change the notation view for this lesson only.
-  // The fixed fiddle tuning and initial tune remain locked.
-  ['tuneSelect'].forEach(id=>{
+  // Students may adjust notation but not the instrument or initial tune.
+  ['tuneSelect','instrumentSelect'].forEach(id=>{
     const el=$(id);
     if(el)el.disabled=true;
   });
@@ -7256,7 +7316,7 @@ function moveInstrumentNote(direction){
  ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
  let midi=clickedNotationMidi(target);
  if(midi!=null){
-   showFiddleLive(midi);
+   showFiddleLive(soundingMidiForWritten(midi));
  }
 }
 $("abcPrevNoteBtn").addEventListener("click",()=>moveInstrumentNote(-1));
@@ -7295,7 +7355,7 @@ function jumpToInstrumentNoteBoundary(toEnd){
   ta.scrollTop=Math.max(0,line*lh-ta.clientHeight/2+lh/2);
   let midi=clickedNotationMidi(target);
   if(midi!=null){
-    showFiddleLive(midi);
+    showFiddleLive(soundingMidiForWritten(midi));
   }
 }
 
