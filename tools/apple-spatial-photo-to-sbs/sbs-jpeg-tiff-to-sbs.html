@@ -131,6 +131,36 @@
   .donate-link:hover { background: #adffe6; }
   .donate-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
+  /* Mirror the Donate button at the upper-right page corner. */
+  button.instructions-corner {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-height: 32px;
+    padding: 6px 12px;
+    border: 1px solid #c8fff1;
+    border-radius: 7px;
+    background: #7fffd4;
+    color: #12382d;
+    font-size: .82rem;
+    font-weight: 750;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  button.instructions-corner:hover { background: #adffe6; }
+  button.instructions-corner:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  /* Keep the header title clear of the two corner buttons on narrow screens. */
+  @media (max-width: 1100px) {
+    .wrap > header { padding-top: 64px; }
+  }
+
+
   button.fullscreenButton {
     position: absolute;
     top: 10px;
@@ -1141,6 +1171,7 @@
 <body>
 
 <a class="donate-link" href="https://michaeleskin.com/tipjars_photo.html" target="_blank" rel="noopener noreferrer" title="Support Michael Eskin’s Stereo Photography Tools">Donate</a>
+<button id="showInstructionsButton" class="instructions-corner" type="button" title="Open detailed instructions for using the tool and choosing output modes.">Instructions</button>
 
 <div class="wrap">
   <header>
@@ -1369,10 +1400,6 @@
     </div>
 
   </section>
-
-  <div class="card">
-    <button id="showInstructionsButton" type="button" title="Open detailed instructions for using the tool and choosing output modes.">Instructions</button>
-  </div>
 
 </div>
 
