@@ -1355,6 +1355,15 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #enablePlaybackModal .enablePlaybackDialog { padding: 26px 20px 24px; }
 }
 
+
+/* Instructions is a header action; removing the bottom action bar returns
+   its full flex height to the notation and fingering workspace. */
+.app-header #instructionsBtn { position:absolute; left:auto; right:22px; top:11px;
+  display:inline-flex; align-items:center; justify-content:center;
+  appearance:none; -webkit-appearance:none; cursor:pointer; font-family:inherit; line-height:normal; }
+@media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
+#helpOverlay .help-version-subtitle { flex:0 0 auto; text-align:center;
+  margin:-17px 0 19px; color:#64717c; font-size:.87rem; font-weight:600; line-height:1.3; }
 </style>
 <!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
 <style id="pdf-mobile-lesson-style">
@@ -1391,7 +1400,8 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.9</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
+<header class="app-header"><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a>
+<button id="instructionsBtn" class="tip" type="button" aria-label="Open instructions">Instructions</button><h1>ABC Irish Button Box Fingering Player</h1><p>Play ABC tunes with synchronized Irish button accordion fingerings in B/C or C#/D tuning.</p></header>
 <div class="toolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="system">Tuning</label><select id="system"><option value="bc">B/C</option><option value="cd">C#/D</option></select></div>
@@ -1407,7 +1417,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
  <section class="card diagramCard"><div class="diagramHeader"><span>Button Diagram</span><span class="diagramHeaderRight"><span class="meta" id="diagramMeta">B/C</span><label class="showNoteLabel" for="displayMode">Mode: <select id="displayMode" disabled aria-label="Instrument display mode"><option value="all">Show All</option><option value="focus">Focus</option><option value="buttons">Diagram Only</option><option value="none">Hide All</option></select></label><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div><div class="diagramWrap"><div id="diagramStack" class="diagramStack" hidden><canvas id="diagram" width="1280" height="840"></canvas><canvas id="diagramOverlay" width="1280" height="840"></canvas><div id="liveNoteName" class="liveNoteName"></div><svg id="boxStaffNote" class="boxStaffNote" viewBox="0 15 160 200" preserveAspectRatio="xMidYMid meet" aria-label="Current note on staff" role="img"></svg></div><div id="emptyDiagram" class="emptyDiagram">Enter or paste a single ABC tune, or open an ABC file to begin.</div><div id="diagramWatermark" class="diagramWatermark"></div></div><div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
 </div>
-<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
+
 </div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
@@ -1453,6 +1463,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Irish Button Box Fingering Player Instructions</h2>
+ <p class="help-version-subtitle">Version 4.9</p>
 
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>

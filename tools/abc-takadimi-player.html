@@ -1326,6 +1326,15 @@ body.diagram-full .whistleLargeGlyph{max-width:100%}
   #enablePlaybackModal .enablePlaybackDialog { padding: 26px 20px 24px; }
 }
 
+
+/* Instructions is a header action; removing the bottom action bar returns
+   its full flex height to the notation and fingering workspace. */
+.app-header #instructionsBtn { position:absolute; left:auto; right:22px; top:11px;
+  display:inline-flex; align-items:center; justify-content:center;
+  appearance:none; -webkit-appearance:none; cursor:pointer; font-family:inherit; line-height:normal; }
+@media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
+#helpOverlay .help-version-subtitle { flex:0 0 auto; text-align:center;
+  margin:-17px 0 19px; color:#64717c; font-size:.87rem; font-weight:600; line-height:1.3; }
 </style>
 <!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
 <style id="pdf-mobile-lesson-style">
@@ -1362,7 +1371,8 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 }
 </style>
 </head><body><div class="app">
-<header class="app-header"><div class="version">Version 4.10</div><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>ABC Takadimi Player</h1><p>Play ABC tunes with synchronized note names and Takadimi rhythm syllables.</p></header>
+<header class="app-header"><a class="tip" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a>
+<button id="instructionsBtn" class="tip" type="button" aria-label="Open instructions">Instructions</button><h1>ABC Takadimi Player</h1><p>Play ABC tunes with synchronized note names and Takadimi rhythm syllables.</p></header>
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div><div class="control notationModeControl"><label for="notationMode">Notation display</label><select id="notationMode" aria-label="Notation display"><option value="only">Notation Only</option><option value="names">Notation + Note Name</option><option value="rhythm" selected>Notation + Takadimi</option><option value="both">Notation + Note Name + Takadimi</option></select></div>
  <div class="control"><label for="octaveColors">Octave colors</label><select id="octaveColors"><option value="1" selected>With Colors</option><option value="0">Without Colors</option></select></div>
@@ -1386,7 +1396,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   </div>
  <div class="diagramNoteNavigation" aria-label="Note navigation"><button class="paneFullBtn" id="abcPrevNoteBtn" type="button" disabled aria-label="Previous note" title="Previous note">←</button><button class="paneFullBtn" id="abcNextNoteBtn" type="button" disabled aria-label="Next note" title="Next note">→</button><label class="arrowKeyNavLabel" for="arrowKeyNavCheck"><input id="arrowKeyNavCheck" type="checkbox" checked disabled>Use arrow keys?</label></div></section>
 </div>
-<div class="bottomBar"><button id="instructionsBtn">Instructions</button></div>
+
 </div>
 <div id="countInOverlay" class="countInOverlay" hidden aria-live="polite"><span id="countInNumber">5</span></div>
 
@@ -1422,6 +1432,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Takadimi Player Instructions</h2>
+ <p class="help-version-subtitle">Version 4.10</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard music notation, standard note names, and Takadimi rhythm syllables.</p>

@@ -1742,6 +1742,15 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
   #enablePlaybackModal .enablePlaybackDialog { padding: 26px 20px 24px; }
 }
 
+
+/* Instructions is a header action; removing the bottom action bar returns
+   its full flex height to the notation and fingering workspace. */
+.app-header #instructionsBtn { position:absolute; left:auto; right:22px; top:11px;
+  display:inline-flex; align-items:center; justify-content:center;
+  appearance:none; -webkit-appearance:none; cursor:pointer; font-family:inherit; line-height:normal; }
+@media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
+#helpOverlay .help-version-subtitle { flex:0 0 auto; text-align:center;
+  margin:-17px 0 19px; color:#64717c; font-size:.87rem; font-weight:600; line-height:1.3; }
 </style>
 </style>
 
@@ -1783,12 +1792,11 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <body>
 <div class="app">
 <header class="app-header">
-<div class="version">
-     Version 4.9
-    </div>
+
 <a class="tip" href="https://michaeleskin.com/tipjars.html" rel="noopener noreferrer" target="_blank">
      Donate
     </a>
+<button id="instructionsBtn" class="tip" type="button" aria-label="Open instructions">Instructions</button>
 <h1>
      ABC Tremolo Harmonica Player
     </h1>
@@ -2043,11 +2051,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 </div>
 </section>
 </div>
-<div class="bottomBar">
-<button id="instructionsBtn">
-     Instructions
-    </button>
-</div>
+
 </div>
 <div aria-live="polite" class="countInOverlay" hidden="" id="countInOverlay">
 <span id="countInNumber">
@@ -2090,6 +2094,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
 <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.3)"><h2 style="flex:0 0 auto;text-align:center;margin:0;padding:20px 28px 24px">ABC Tremolo Harmonica Player Instructions</h2>
+ <p class="help-version-subtitle">Version 4.9</p>
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
