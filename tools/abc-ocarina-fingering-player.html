@@ -1402,6 +1402,20 @@ body.diagram-full .ocarinaStaffNote{width:165px;height:200px}
 @media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
 #helpOverlay .help-version-subtitle { flex:0 0 auto; text-align:center;
   margin:-17px 0 19px; color:#64717c; font-size:.87rem; font-weight:600; line-height:1.3; }
+
+/* One-column layout: equal-height ABC and notation panels on phone and tablet.
+   Two-column layouts (above 1050px) are deliberately unchanged. */
+@media (max-width: 1050px) {
+  .leftPane {
+    height: max(1040px, 118dvh);
+    grid-template-rows: minmax(0, 1fr) 5px minmax(0, 1fr);
+  }
+}
+/* Phone layout remains equal-height by default.
+   User-adjusted splitter ratios remain independently saved by screen size. */
+@media (max-width: 650px) {
+  .leftPane { grid-template-rows: minmax(0, 1fr) 5px minmax(0, 1fr); }
+}
 </style>
 <!-- Mobile button spacing and PDF export in lessons (2026-10-22). -->
 <style id="pdf-mobile-lesson-style">
@@ -1512,7 +1526,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Ocarina Fingering Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.10</p>
+ <p class="help-version-subtitle">Version 4.14</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Getting Started</p>
       <p>Open an <b>.abc</b> or <b>.txt</b> file with <b>Browse</b>, paste a single ABC tune in the editor, or open a tune sent from <b>ABC Transcription Tools</b>.</p>
@@ -4398,8 +4412,25 @@ function defaultHorizontalSplit(){
 }
 let splitVPercent=DEFAULT_SPLIT_V,splitHPercent=DEFAULT_SPLIT_H;
 let horizontalSplitSaved=false;
+const DEFAULT_STACKED_SPLIT_H=50;
+const phoneStackedLayout=()=>window.matchMedia("(max-width:650px)").matches;
+const stackedSplitStorageKey=()=>SPLIT_KEY+(phoneStackedLayout()?"_phone":"_stacked");
+const defaultStackedSplit=()=>phoneStackedLayout()?50:DEFAULT_STACKED_SPLIT_H;
+let stackedSplitHPercent=DEFAULT_STACKED_SPLIT_H;
+function savedStackedSplit(){
+  try {
+    const raw=localStorage.getItem(stackedSplitStorageKey());
+    return raw===null || !Number.isFinite(Number(raw))
+      ? defaultStackedSplit() : clamp(Number(raw),25,75);
+  } catch(_) { return defaultStackedSplit(); }
+}
 
 function saveSplitterPercents(){commitStandardShareSettingsIfPending();
+  if(window.matchMedia("(max-width:1050px)").matches){
+    // Keep the stacked pane ratio separate from the desktop preferences.
+    try{ localStorage.setItem(stackedSplitStorageKey(),String(stackedSplitHPercent)); }catch(_){}
+    return;
+  }
   horizontalSplitSaved=true;
   try{
     localStorage.setItem(SPLIT_KEY,JSON.stringify({v:splitVPercent,h:splitHPercent}));
@@ -4413,9 +4444,12 @@ function setVerticalSplit(percent){
 }
 
 function setHorizontalSplit(percent){
-  splitHPercent=clamp(percent,25,75);
+  const stacked=window.matchMedia("(max-width:1050px)").matches;
+  const value=clamp(percent,25,75);
+  if(stacked)stackedSplitHPercent=value;
+  else splitHPercent=value;
   const avail=Math.max(1,$("leftPane").clientHeight-15);
-  $("leftPane").style.gridTemplateRows=`${avail*splitHPercent/100}px 5px minmax(180px,1fr)`;
+  $("leftPane").style.gridTemplateRows=`${avail*value/100}px 5px minmax(${stacked?0:180}px,1fr)`;
 }
 
 function restoreSplitters(){
@@ -4423,11 +4457,12 @@ function restoreSplitters(){
   if(Number.isFinite(p.v))splitVPercent=clamp(p.v,25,75);
   horizontalSplitSaved=Number.isFinite(p.h);
   splitHPercent=horizontalSplitSaved ? clamp(p.h,25,75) : defaultHorizontalSplit();
-  // In stacked layouts the vertical separator is hidden, but the horizontal
-  // divider remains adjustable and honors the saved position.
+  // In stacked layouts the vertical separator is hidden. Use an independent,
+  // initially equal split; the desktop split remains saved and unchanged.
   if(window.matchMedia("(max-width:1050px)").matches){
+    stackedSplitHPercent=savedStackedSplit();
     $("workspace").style.removeProperty("grid-template-columns");
-    setHorizontalSplit(splitHPercent);
+    setHorizontalSplit(stackedSplitHPercent);
     return;
   }
   setVerticalSplit(splitVPercent);
@@ -4445,7 +4480,8 @@ function installSplitters(){
     document.body.classList.add("resizing");
 
     const startX=e.clientX,startY=e.clientY;
-    const startV=splitVPercent,startH=splitHPercent;
+    const startV=splitVPercent;
+    const startH=window.matchMedia("(max-width:1050px)").matches ? stackedSplitHPercent : splitHPercent;
     const r=kind==="v"?$("workspace").getBoundingClientRect():$("leftPane").getBoundingClientRect();
     const avail=Math.max(1,(kind==="v"?r.width:r.height)-15);
 
@@ -4476,7 +4512,8 @@ function installSplitters(){
     saveSplitterPercents();
   });
   sh.addEventListener("dblclick",()=>{
-    setHorizontalSplit(defaultHorizontalSplit());
+    setHorizontalSplit(window.matchMedia("(max-width:1050px)").matches
+      ? DEFAULT_STACKED_SPLIT_H : defaultHorizontalSplit());
     saveSplitterPercents();
   });
   window.addEventListener("resize",()=>{
@@ -4493,7 +4530,8 @@ function installSplitters(){
       // The stacked layout has no visible vertical divider.
       $("workspace").style.removeProperty("grid-template-columns");
     }
-    setHorizontalSplit(splitHPercent);
+    setHorizontalSplit(window.matchMedia("(max-width:1050px)").matches
+      ? stackedSplitHPercent : splitHPercent);
   });
 }
 

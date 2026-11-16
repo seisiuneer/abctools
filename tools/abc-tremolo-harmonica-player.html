@@ -1751,6 +1751,19 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 @media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
 #helpOverlay .help-version-subtitle { flex:0 0 auto; text-align:center;
   margin:-17px 0 19px; color:#64717c; font-size:.87rem; font-weight:600; line-height:1.3; }
+
+/* One-column layout: equal-height ABC and notation panels on phone and tablet.
+   Two-column layouts (above 1050px) are deliberately unchanged. */
+@media (max-width: 1050px) {
+  .leftPane {
+    height: max(920px, 105dvh);
+    grid-template-rows: minmax(0, 1fr) 5px minmax(0, 1fr) !important;
+  }
+}
+/* Phone layout continues to use the same balanced ABC/notation split. */
+@media (max-width: 650px) {
+  .leftPane { grid-template-rows: minmax(0, 1fr) 5px minmax(0, 1fr) !important; }
+}
 </style>
 </style>
 
@@ -2094,7 +2107,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
 <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.3)"><h2 style="flex:0 0 auto;text-align:center;margin:0;padding:20px 28px 24px">ABC Tremolo Harmonica Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.9</p>
+ <p class="help-version-subtitle">Version 4.13</p>
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>

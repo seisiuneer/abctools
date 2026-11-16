@@ -1824,6 +1824,19 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 @media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
 #helpOverlay .help-version-subtitle { flex:0 0 auto; text-align:center;
   margin:-17px 0 19px; color:#64717c; font-size:.87rem; font-weight:600; line-height:1.3; }
+
+/* One-column layout: equal-height ABC and notation panels on phone and tablet.
+   Two-column layouts (above 1050px) are deliberately unchanged. */
+@media (max-width: 1050px) {
+  .leftPane {
+    height: max(920px, 105dvh);
+    grid-template-rows: minmax(0, 1fr) 5px minmax(0, 1fr) !important;
+  }
+}
+/* Phone layout continues to use the same balanced ABC/notation split. */
+@media (max-width: 650px) {
+  .leftPane { grid-template-rows: minmax(0, 1fr) 5px minmax(0, 1fr) !important; }
+}
 </style>
 </style>
    </meta>
@@ -2319,7 +2332,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
     <h2 style="text-align:center;margin:0 0 24px">
      ABC Harmonica Player Instructions
     </h2>
- <p class="help-version-subtitle">Version 4.9</p>
+ <p class="help-version-subtitle">Version 4.13</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">
         Overview
