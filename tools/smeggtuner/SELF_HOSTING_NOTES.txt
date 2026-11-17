@@ -1,32 +1,29 @@
-SmeggTuner v1.4.5 — self-hosted under /tools/smeggtuner/
+SmeggTuner v1.4.6 - self-hosted at /tools/smeggtuner/
 
 DEPLOYMENT
-Upload the contents of the included `smeggtuner` directory to /tools/smeggtuner/
-(or unzip the directory into your server's /tools/ directory).
-Replace the prior SmeggTuner installation; keep the nested directories intact.
+Place the included smeggtuner folder into your server's /tools/ directory,
+replacing the prior SmeggTuner installation. Keep all subdirectories.
 
 URL
- https://michaeleskin.com/tools/smeggtuner/index.html
- https://michaeleskin.com/tools/smeggtuner/
+https://michaeleskin.com/tools/smeggtuner/index.html
+https://michaeleskin.com/tools/smeggtuner/
 
-PATCHES
-- Changed v1.4.5 HTML Nuxt asset references and runtime app.baseURL to /tools/smeggtuner/
-- Added Nuxt index.html route alias for explicit /index.html page requests.
-- Patched main JS bundle 5XIODmgb.js for engine, manifest, icons, service worker
-  scope/registration, translation assets and optional Wails/API URLs.
-- Isolated service worker fetch handling and offline fallback to /tools/smeggtuner/.
-- Uses a SmeggTuner-only cache prefix and versioned cache 1.4.5-a332e3c83b7d-subdir1.
-- Updated PWA manifest's start_url, scope, and icon paths.
-- Incorporated title, description, canonical, Open Graph and Twitter metadata
-  from the user's v1.4.2 index.html into v1.4.5 index.html and 200.html.
-- Maintained OG image https://michaeleskin.com/tools/img/smeggtuner_og3.jpg
-  and Twitter image https://michaeleskin.com/tools/img/smeggtuner_og2.jpg.
-- Preserved Google Analytics G-VM0N9HL3MK.
-- Regenerated gzip and Brotli sidecar files for all modified files.
+CHANGES
+- Updated all v1.4.6 HTML Nuxt asset URLs and app.baseURL.
+- Patched main JS bundle IToh6blh.js for the engine, service worker, manifest,
+  favicon/Apple icon, i18n, optional Wails/API paths and an /index.html route alias.
+- Replaced root-scoped service worker with /tools/smeggtuner/-limited handling.
+  Versioned SmeggTuner-only cache: 1.4.6-2496e676452c-subdir1.
+  Cache cleanup intentionally leaves unrelated apps such as ABC Tools untouched.
+- Updated PWA manifest scope, start_url and icon references.
+- Carried forward SEO, Open Graph and Twitter metadata from the supplied
+  customized v1.4.5 index.html to v1.4.6 index.html and 200.html.
+  Open Graph image: https://michaeleskin.com/tools/img/smeggtuner_og3.jpg
+  Twitter image: https://michaeleskin.com/tools/img/smeggtuner_og2.jpg
+- Preserved Google Analytics ID G-VM0N9HL3MK.
+- Regenerated matching .gz and .br assets for all modified files.
 
-TEST NOTES
-The direct /index.html route and dynamic assets must be verified with a
-browser after deployment, including microphone permission and WebAssembly
-engine analysis. Static asset checks cannot prove live microphone behavior.
-If your server caches HTML/JS or serves precompressed .gz/.br assets,
-replace/invalidate both old and new variants during upgrade.
+NOTE
+Static validation does not establish microphone/audio-analysis functionality.
+After deploying, verify microphone, worker, WASM, routing and offline loading
+in a browser. Existing cached files may require a hard refresh on upgrade.
