@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3393_111226_1830";
+var gVersionNumber = "3394_111826_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31438,13 +31438,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_10Nov2026;
+        var updatePresented = localStorage.sawUpdate_18Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_10Nov2026 = true;
+          localStorage.sawUpdate_18Nov2026 = true;
 
         }
 
@@ -61049,23 +61049,16 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 18 November 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;"><strong>New Export All Tunes Text Format Options</strong></p>';
-  modal_msg += '<p style="font-size:12pt;">Added <strong>Export All Tunes as Text</strong>, <strong>Export All Tunes as Text (Comhaltas)</strong>, <strong>Export All Tunes as Text Incipits</strong>, and <strong>Export All Tunes as Text Incipits (Comhaltas)</strong> to the <strong>Text</strong> tab on the <strong>Export All Tunes</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">This allows for text-only file export of all the tune titles and note names or incipits using the same format as the PDF export format equivalents.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Open in Tunebook Viewer</strong> on the <strong>☰</strong> menu.</p>';
+  modal_msg += '<p style="font-size:12pt;">The new <strong>ABC Tunebook Viewer</strong> is a quick and easy way to navigate and play tunes in ABC tunebooks that have multiple ABC tunes.</p>';
+  modal_msg += '<p style="font-size:12pt;">Click the new menu item to open all the tunes in the <strong>ABC Tunebook Viewer</strong>.</p>'
   modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added the <strong>ABC Scottish Bagpipe Fingering Player</strong> to the tools available on the <strong>Open Tune in Another Tool</strong> dialog.</p>';
-  modal_msg += '</div>';
-
 
   modal_msg += '</div>'; // wrapper
 
@@ -66213,6 +66206,11 @@ function SetupContextMenu(showUpdateItem) {
     }
   }
 
+  items.unshift({
+    name: 'Open in Tunebook Viewer',
+    fn: function(target) { OpenABCTunebookMode(); }
+  }, {});
+
   MyTools_CaptureTopBarCommands(items);
   var cm1 = new ContextMenu('.context-menu', items);
 }
@@ -67880,13 +67878,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_10Nov2026;
+    var updatePresented = localStorage.sawUpdate_18Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_10Nov2026 = true;
+      localStorage.sawUpdate_18Nov2026 = true;
 
     }
 
@@ -73701,3 +73699,89 @@ function WaitForReady(fn) {
 //
 
 WaitForReady(DoStartup);
+
+
+// ---------------------------------------------------------------------------
+// ABC Tunebook Viewer: full-editor tune collection transfer to the standalone player.
+// Keep this separate from the long-URL single-tune share helpers.
+// ---------------------------------------------------------------------------
+function OpenABCTunebookMode() {
+  // Use the same compact text treatment as the other tool-transfer alerts.
+  // Without an explicit line-height, bare text inherits the much larger
+  // default DayPilot dialog typography on some layouts.
+  function showTunebookViewerAlert(message, top, width) {
+    var options = { theme: 'modal_flat', top: top, scrollWithPage: false };
+    if (width) options.width = width;
+    DayPilot.Modal.alert(
+      '<p style="margin:0;text-align:center;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:24px;">' + message + '</p>',
+      options
+    );
+  }
+
+  if (!navigator.onLine) {
+    showTunebookViewerAlert('The ABC Tunebook Viewer is only available when online.', 190);
+    return;
+  }
+
+  var abcText = '';
+  try { abcText = getABCEditorText(); } catch (error) { abcText = ''; }
+  if (!/^\s*X\s*:/m.test(abcText)) {
+    showTunebookViewerAlert('There are no ABC tunes in the editor to show in the Tunebook Viewer.', 190);
+    return;
+  }
+
+  var mode = 'noten';
+  try { mode = GetRadioValue('notenodertab') || 'noten'; } catch (error) {}
+  var url = 'https://michaeleskin.com/tools/abc-tunebook-viewer.html?cb=' + Date.now();
+  var targetOrigin = new URL(url).origin;
+  var messageId = 'abc-tunebook-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  var tab = null, completed = false, failed = false;
+  var scheduled = [];
+  var payload = {
+    type: 'abcTunebookLoadABC',
+    messageId: messageId,
+    abc: abcText,
+    displayMode: mode,
+    replaceExisting: true
+  };
+
+  function cleanup() {
+    window.removeEventListener('message', handleMessage);
+    scheduled.forEach(function(timer) { clearTimeout(timer); });
+    scheduled = [];
+  }
+  function showFailure(message) {
+    if (completed || failed) return;
+    failed = true;
+    cleanup();
+    showTunebookViewerAlert(message, 170, 590);
+  }
+  function sendTunes() {
+    if (completed || failed || !tab || tab.closed) return;
+    try { tab.postMessage(payload, targetOrigin); }
+    catch (error) { showFailure('Unable to transfer tunes to ABC Tunebook Viewer. Check your browser popup and security settings.'); }
+  }
+  function handleMessage(event) {
+    if (!tab || event.source !== tab || event.origin !== targetOrigin) return;
+    var data = event.data || {};
+    if (data.type === 'abcTunebookReady') sendTunes();
+    if (data.type === 'abcTunebookABCLoaded' && data.messageId === messageId) {
+      completed = true;
+      cleanup();
+    }
+  }
+  window.addEventListener('message', handleMessage);
+  tab = window.open(url, '_blank');
+  if (!tab) {
+    cleanup();
+    showTunebookViewerAlert('The new ABC Tunebook Viewer tab was blocked. Please allow popups for this site.', 190);
+    return;
+  }
+  [800, 1700, 3000, 4700].forEach(function(delay) {
+    scheduled.push(setTimeout(sendTunes, delay));
+  });
+  scheduled.push(setTimeout(function() {
+    if (!completed) showFailure('ABC Tunebook Viewer opened, but the tunes were not transferred. If the page is still loading, you can open your saved ABC file using its Open button.');
+  }, 11500));
+  if (typeof sendGoogleAnalytics === 'function') sendGoogleAnalytics('action','OpenABCTunebookMode');
+}
