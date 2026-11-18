@@ -63,7 +63,7 @@
     }
     .app button.subtle,.app button.corner {color:#25362e;-webkit-text-fill-color:#25362e;background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;font-size:13px;font-weight:600;}
     .app button.primary {background-color:#176b43;color:#fff;-webkit-text-fill-color:#fff;}
-    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:15px;font-weight:400;}
+    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:16px;font-weight:400;}
     .app button.tune.active {background-color:#dceee0;color:#0c4c29;-webkit-text-fill-color:#0c4c29;font-weight:400;}
     .app button.tune:hover {background-color:#f0f5f1;}
     .app button.tune.active:hover {background-color:#dceee0;}
@@ -73,6 +73,8 @@
     #searchInput {appearance:none;-webkit-appearance:none;color:#25362e;-webkit-text-fill-color:#25362e;}
     #tempoBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
     .count {margin-left:auto;color:#667b6c;font-size:12px;white-space:nowrap}
+    .showTuneInfoOption {display:flex;align-items:center;gap:7px;flex:0 0 auto;margin:4px 8px 10px;padding:2px 0;font-size:13px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
+    .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent)}
     #fileInput {display:none}
     .search {position:relative;margin:0 8px 7px;flex:0 0 auto}
     #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:15px}
@@ -81,6 +83,9 @@
     .tune {display:block;width:100%;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;text-align:left;background:transparent;padding:9px 8px;min-height:38px;line-height:1.3;color:#23382c;overflow-wrap:anywhere;font-size:15px}
     .tune:hover {background:#f0f5f1}
     .tune.active {background:#dceee0;color:#0c4c29;font-weight:400}
+    .tuneTitle {display:block}
+    .tuneInfo {display:block;margin-top:2px;color:#66796e;font-size:13px;line-height:1.3;font-weight:400}
+    .tune.active .tuneInfo {color:#42664e}
     .emptyList {color:#77857b;font-size:13px;text-align:center;padding:23px 10px}
     .scorePane {display:flex;flex-direction:column}
     /* In-page full view is supported on iPad/iPhone where the Fullscreen API is limited. */
@@ -111,6 +116,8 @@
     .overlay.open {display:flex}
     .dialog {box-shadow:0 10px 36px #0004;border:1px solid #acb5af;background:white;border-radius:8px;width:min(530px,95vw);padding:22px 25px 24px;text-align:left;max-height:78vh;overflow:auto}
     .dialog h2 {margin:0 0 14px;text-align:center;font-size:21px}
+    #instructionsOverlay .dialog h2 {margin-bottom:3px}
+    #instructionsOverlay .viewerVersion {margin:0 0 16px;text-align:center;font-size:12px;line-height:1.4;color:#60746a}
     .dialog p {margin:0 0 12px}
     .dialog ul {padding-left:24px;line-height:1.55}
     .dialog .buttons {display:flex;justify-content:center;margin-top:20px}
@@ -138,6 +145,7 @@
  <main class="workspace">
   <aside aria-label="Tune list">
    <div class="listActions"><button id="openBtn" type="button" class="primary">Open</button><span id="tuneCount" class="count">0 tunes</span></div>
+   <label class="showTuneInfoOption"><input type="checkbox" id="showTuneInfo" checked>Show tune info</label>
    <input type="file" id="fileInput" accept=".abc,.ABC,.txt,.TXT,text/plain" multiple>
    <div class="search"><input id="searchInput" type="search" placeholder="Find a tune…" aria-label="Find a tune" autocomplete="off" spellcheck="false"><button id="clearSearch" type="button" aria-label="Clear search">×</button></div>
    <nav id="tuneList" aria-label="Tunebook tunes"><div class="emptyList">Open one or more ABC files, or drop them here.</div></nav>
@@ -156,12 +164,15 @@
 <div id="dragOverlay">Drop ABC files to replace the tunebook</div>
 <div id="instructionsOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="dialog">
  <h2 id="helpTitle">ABC Tunebook Viewer — Instructions</h2>
+ <p id="viewerVersion" class="viewerVersion"></p>
  <p>Browse a collection of ABC tunes with the list on the left and the selected tune's notation and playback on the right.</p>
- <ul><li><b>Open:</b> Choose one or more .abc or .txt files. Their tunes replace the current tunebook. Drag and drop files anywhere on the page to do the same.</li><li><b>Find:</b> Filter the list by title, then click a title to show that tune.</li><li><b>Display mode:</b> Choose notation, names, or instrument tablature. A manual choice is saved for your next visit. A mode sent from ABC Transcription Tools is temporary until you change it yourself.</li><li><b>Playback:</b> Use the controls below the notation to play/pause, restart, loop and seek. Click the tempo percentage field to set a value from 10% to 200%. Tempo is saved in this browser.</li><li><b>Tempo:</b> Opens the same tempo percentage dialog as the field in the playback bar.</li><li><b>Full page:</b> Expand the notation and playback across the page, then click Close full page or press Escape to return.</li></ul>
+ <ul><li><b>Open:</b> Choose one or more .abc or .txt files. Their tunes replace the current tunebook. Drag and drop files anywhere on the page to do the same.</li><li><b>Show tune info:</b> When checked, show the meter (M:), rhythm (R:), and normalized key (K:) below each tune title when available, for example 6/8 - Jig - E Dorian. Uncheck to show only titles. This preference is saved in your browser.</li><li><b>Find:</b> Filter the list by title, then click a title to show that tune.</li><li><b>Display mode:</b> Choose notation, names, or instrument tablature. A manual choice is saved for your next visit. A mode sent from ABC Transcription Tools is temporary until you change it yourself.</li><li><b>Playback:</b> Use the controls below the notation to play/pause, restart, loop and seek. Click the tempo percentage field to set a value from 10% to 200%. Tempo is saved in this browser.</li><li><b>Tempo:</b> Opens the same tempo percentage dialog as the field in the playback bar.</li><li><b>Full page:</b> Expand the notation and playback across the page, then click Close full page or press Escape to return.</li></ul>
  <div class="buttons"><button id="closeInstructions" class="primary" type="button">Close</button></div></div></div>
 <div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><div class="dialog"><h2 id="enableTitle">Enable Playback</h2><p>Tap below to enable audio playback for the tunes received from ABC Transcription Tools.</p><div class="buttons"><button id="enableBtn" class="primary" type="button">Enable Playback</button></div></div></div>
 <script>
 'use strict';
+const VIEWER_VERSION = '1.0.0';
+document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -180,12 +191,14 @@ const $ = id => document.getElementById(id);
 const DISPLAY_KEY = 'abc-tunebook:display-mode';
 const TEMPO_KEY = 'abc-tunebook:tempo-percent';
 const LOOP_KEY = 'abc-tunebook:loop';
+const SHOW_TUNE_INFO_KEY = 'abc-tunebook:show-tune-info';
 const VALID_MODES = new Set([...$('displayMode').options].map(option => option.value));
 let tunes = [], currentIndex = -1, player = null, playbackCursor = null;
 let generation = 0, playing = false, needsGesture = false, unlocked = false;
 let loopEnabled = false, lastSystemTop = null;
 let transferredIds = new Set(), fileLoadSerial = 0;
 try { loopEnabled = localStorage.getItem(LOOP_KEY) === 'true'; } catch (_) {}
+try { $('showTuneInfo').checked = localStorage.getItem(SHOW_TUNE_INFO_KEY) !== 'false'; } catch (_) {}
 function getSavedTempo() {
   try { const n = Number(localStorage.getItem(TEMPO_KEY)); if (Number.isFinite(n) && n >= 10 && n <= 200) return Math.round(n); } catch (_) {}
   return 100;
@@ -219,6 +232,50 @@ function tuneTitle(abc, i) {
   const match = abc.match(/^\s*T\s*:\s*(.*?)\s*$/m);
   return match && match[1].trim() || `Tune ${i+1}`;
 }
+// Normalize ABC key shorthand (Edor, Am, Dmix, etc.) for the tune list.
+// Keep unusual/nonstandard key signatures intelligible rather than guessing.
+function normalizedKey(value) {
+  const key=String(value||'').trim();
+  if (!key) return '';
+  if (/^none(?:\s|$)/i.test(key)) return 'None';
+  if (/^HP(?:\s|$)/i.test(key)) return 'HP';
+  if (/^Hp(?:\s|$)/.test(key)) return 'Hp';
+  const match=/^([A-G])([#b]?)(.*)$/i.exec(key);
+  if (!match) return key;
+  const root=match[1].toUpperCase()+match[2];
+  const token=(match[3].trim().match(/^[a-z]+/i)||[])[0]?.toLowerCase()||'';
+  const modes={
+    '':'Major',maj:'Major',major:'Major',ion:'Ionian',ionian:'Ionian',
+    m:'Minor',min:'Minor',minor:'Minor',aeo:'Aeolian',aeolian:'Aeolian',
+    dor:'Dorian',dorian:'Dorian',mix:'Mixolydian',mixolydian:'Mixolydian',
+    phr:'Phrygian',phrygian:'Phrygian',lyd:'Lydian',lydian:'Lydian',
+    loc:'Locrian',locrian:'Locrian',modal:'Modal',exp:'Explicit',explicit:'Explicit'
+  };
+  const modifiers=new Set(['clef','middle','transpose','octave','stafflines','bass','treble','alto','tenor','percussion']);
+  const mode=Object.prototype.hasOwnProperty.call(modes,token)?modes[token]
+    :modifiers.has(token)?'Major'
+    :token?token.charAt(0).toUpperCase()+token.slice(1):'Major';
+  return root+' '+mode;
+}
+// Use the first K: as the start of the tune body; later K:/M: changes should
+// not change the metadata shown for the tune's initial key and meter.
+// File-header values are fallbacks, while tune-specific fields take precedence.
+function tuneInfo(abc) {
+  const x=/^\s*X\s*:/mi.exec(abc);
+  const fileHeader=x?abc.slice(0,x.index):'';
+  const tuneText=x?abc.slice(x.index):abc;
+  const firstKey=/^\s*K\s*:\s*([^\r\n]*)/mi.exec(tuneText);
+  const tuneHeader=firstKey?tuneText.slice(0,firstKey.index):tuneText;
+  const field=(text,tag)=>{
+    const m=new RegExp('^\\s*'+tag+'\\s*:\\s*([^\\r\\n]*)','mi').exec(text);
+    return m?m[1].split('%')[0].trim():'';
+  };
+  const meter=field(tuneHeader,'M')||field(fileHeader,'M');
+  const rhythm=field(tuneHeader,'R')||field(fileHeader,'R');
+  const key=firstKey?firstKey[1].split('%')[0].trim():field(fileHeader,'K');
+  const titleCasedRhythm=rhythm.replace(/\p{L}+/gu,w=>w.charAt(0).toLocaleUpperCase()+w.slice(1).toLocaleLowerCase());
+  return [meter,titleCasedRhythm,normalizedKey(key)].filter(Boolean).join(' - ');
+}
 function renderList() {
   const list=$('tuneList'), query=$('searchInput').value.toLocaleLowerCase().trim();
   $('tuneCount').textContent = `${tunes.length} ${tunes.length === 1 ? 'tune' : 'tunes'}`;
@@ -230,7 +287,12 @@ function renderList() {
     if (!tune.title.toLocaleLowerCase().includes(query)) return;
     const btn=document.createElement('button');
     btn.type='button';btn.className='tune'+(index===currentIndex?' active':'');
-    btn.textContent=tune.title;btn.title=tune.title;
+    const title=document.createElement('span');title.className='tuneTitle';title.textContent=tune.title;
+    btn.appendChild(title);btn.title=tune.title;
+    if ($('showTuneInfo').checked && tune.info) {
+      const info=document.createElement('span');info.className='tuneInfo';info.textContent=tune.info;
+      btn.appendChild(info);
+    }
     if (index===currentIndex) btn.setAttribute('aria-current','true');
     btn.addEventListener('click',()=>selectTune(index));
     fragment.appendChild(btn);found++;
@@ -247,7 +309,7 @@ function appendABC(text,{replace=false,source='ABC file'}={}) {
   if (!parts.length) throw new Error(`No ABC tunes were found in ${source}.`);
   if (replace) { tunes=[]; currentIndex=-1; $('searchInput').value=''; }
   const initial=tunes.length;
-  for (const part of parts) tunes.push({abc:part,title:tuneTitle(part,tunes.length)});
+  for (const part of parts) tunes.push({abc:part,title:tuneTitle(part,tunes.length),info:tuneInfo(part)});
   renderList();
   if (currentIndex<0) selectTune(0);
   return tunes.length-initial;
@@ -460,7 +522,7 @@ async function addFiles(files) {
     try {
       const parts=splitTunes(await file.text());
       if(!parts.length)throw new Error('No ABC tunes were found');
-      for(const abc of parts)next.push({abc,title:tuneTitle(abc,next.length)});
+      for(const abc of parts)next.push({abc,title:tuneTitle(abc,next.length),info:tuneInfo(abc)});
     } catch(error){errors.push(`${file.name}: ${error?.message||error}`);}
   }
   if(serial!==fileLoadSerial)return 0; // A newer load or transfer superseded this one.
@@ -479,6 +541,10 @@ $('fileInput').addEventListener('change',async ev=>{const files=[...ev.target.fi
 // iOS Safari sometimes hides otherwise valid ABC files when an accept attribute is present.
 if(IS_IOS)$('fileInput').removeAttribute('accept');
 $('searchInput').addEventListener('input',renderList);
+$('showTuneInfo').addEventListener('change',()=>{
+  try{localStorage.setItem(SHOW_TUNE_INFO_KEY,String($('showTuneInfo').checked));}catch(_){}
+  renderList();
+});
 $('clearSearch').addEventListener('click',()=>{$('searchInput').value='';renderList();$('searchInput').focus();});
 $('displayMode').addEventListener('change',()=>{
   // Only direct user changes persist. Transfer-supplied modes are session-only.
