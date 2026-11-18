@@ -16,8 +16,8 @@
   <meta property="og:title" content="ABC Tunebook Viewer">
   <meta property="og:description" content="Browse, display, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
   <meta property="og:url" content="https://michaeleskin.com/tools/abc-tunebook-viewer.html">
-  <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og1.jpg">
-  <meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og1.jpg">
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tunebook-og1.jpg">
+  <meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/abc-tunebook-og1.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:alt" content="ABC Tunebook Viewer music notation and searchable tune list">
 
@@ -25,7 +25,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ABC Tunebook Viewer">
   <meta name="twitter:description" content="Browse, display, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
-  <meta name="twitter:image" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og1.jpg">
+  <meta name="twitter:image" content="https://michaeleskin.com/tools/img/abc-tunebook-og1.jpg">
   <meta name="twitter:image:alt" content="ABC Tunebook Viewer music notation and searchable tune list">
   <link rel="icon" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
   <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20261010_0240" rel="stylesheet">
@@ -63,8 +63,8 @@
     }
     .app button.subtle,.app button.corner {color:#25362e;-webkit-text-fill-color:#25362e;background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;font-size:13px;font-weight:600;}
     .app button.primary {background-color:#176b43;color:#fff;-webkit-text-fill-color:#fff;}
-    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:14px;font-weight:400;}
-    .app button.tune.active {background-color:#dceee0;color:#0c4c29;-webkit-text-fill-color:#0c4c29;font-weight:650;}
+    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:15px;font-weight:400;}
+    .app button.tune.active {background-color:#dceee0;color:#0c4c29;-webkit-text-fill-color:#0c4c29;font-weight:400;}
     .app button.tune:hover {background-color:#f0f5f1;}
     .app button.tune.active:hover {background-color:#dceee0;}
     #displayMode {appearance:none;-webkit-appearance:none;
@@ -75,12 +75,12 @@
     .count {margin-left:auto;color:#667b6c;font-size:12px;white-space:nowrap}
     #fileInput {display:none}
     .search {position:relative;margin:0 8px 7px;flex:0 0 auto}
-    #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:14px}
+    #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:15px}
     #clearSearch {position:absolute;right:3px;top:3px;border:0;background:transparent;font-size:19px;line-height:28px;width:28px;height:29px;color:#777;display:none}
     #tuneList {overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;min-height:0;flex:1;padding:1px 5px 7px}
-    .tune {display:block;width:100%;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;text-align:left;background:transparent;padding:9px 8px;min-height:38px;line-height:1.3;color:#23382c;overflow-wrap:anywhere;font-size:14px}
+    .tune {display:block;width:100%;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;text-align:left;background:transparent;padding:9px 8px;min-height:38px;line-height:1.3;color:#23382c;overflow-wrap:anywhere;font-size:15px}
     .tune:hover {background:#f0f5f1}
-    .tune.active {background:#dceee0;color:#0c4c29;font-weight:650}
+    .tune.active {background:#dceee0;color:#0c4c29;font-weight:400}
     .emptyList {color:#77857b;font-size:13px;text-align:center;padding:23px 10px}
     .scorePane {display:flex;flex-direction:column}
     /* In-page full view is supported on iPad/iPhone where the Fullscreen API is limited. */
@@ -278,8 +278,10 @@ function tabParam(mode) {
     case 'guitard':chosen=tab('guitar',['D,','A,','D','G','A','d'],'DADGAD');break;
     case 'uke':chosen=tab('violin',['G,','C','E','A'],'Ukulele');break;
     case 'notenames':chosen=tab('violin',['G,,,','G,,','G,'],' ',{highestNote:"b'",hideTabSymbol:true,linePitch:2});break;
-    case 'whistle':chosen=tab('violin',['G,,,'],' ',{highestNote:"^a'",hideTabSymbol:true});break;
-    case 'recorder':chosen=tab('violin',['C,,'],' ',{highestNote:"^a'",hideTabSymbol:true});break;
+    // Match the reference fingering maps: G3 for whistle and C4 for recorder.
+    // These are tabulation anchors only; notation and playback pitches are unchanged.
+    case 'whistle':chosen=tab('violin',['G,'],' ',{highestNote:"^a'",hideTabSymbol:true});break;
+    case 'recorder':chosen=tab('violin',['C'],' ',{highestNote:"^a'",hideTabSymbol:true});break;
   }
   // Each voice needs its own tablature definition, as in ABC Transcription Tools.
   if (chosen) params.tablature=Array.from({length:8},()=>({...chosen,tuning:[...chosen.tuning]}));
