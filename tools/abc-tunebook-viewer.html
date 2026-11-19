@@ -77,6 +77,17 @@
       background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%2325362e' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 9px center;
       padding-right:27px;color:#25362e;-webkit-text-fill-color:#25362e;}
     #searchInput {appearance:none;-webkit-appearance:none;color:#25362e;-webkit-text-fill-color:#25362e;}
+    /* Normalize the new button across Safari/iPadOS and desktop browsers. */
+    .app button#instrumentsBtn {
+      -webkit-appearance:none;appearance:none;flex:0 0 auto;
+      min-height:32px;padding:4px 10px;white-space:nowrap;
+      background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;
+      color:#25362e;-webkit-text-fill-color:#25362e;
+      box-shadow:none;text-shadow:none;letter-spacing:normal;
+      font:600 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    .app button#instrumentsBtn:hover {background-color:#e6f0e8}
+    .scoreHeader {flex-wrap:wrap;row-gap:6px}
     #tempoBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
     .count {margin-left:auto;color:#667b6c;font-size:12px;white-space:nowrap}
     .showTuneInfoOption {display:flex;align-items:center;gap:7px;flex:0 0 auto;margin:4px 8px 10px;padding:2px 0;font-size:13px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
@@ -125,6 +136,94 @@
     .dialog p {margin:0 0 12px}
     .dialog ul {padding-left:24px;line-height:1.55}
     .dialog .buttons {display:flex;justify-content:center;margin-top:20px}
+
+    /* Instruments DayPilot dialog: match the compact ABC Transcription Tools Player Settings.
+       Scoped to its modal_flat theme; the Viewer's Tempo/alert dialogs are unaffected. */
+    .modal_flat_background {background-color:#000;opacity:.42}
+    .modal_flat_main {
+      box-sizing:border-box;max-width:calc(100vw - 20px);max-height:calc(100dvh - 74px);
+      overflow:auto;border:1px solid #333;box-shadow:0 0 15px -2px rgba(0,0,0,.65);
+      background:#fff;color:#111;font:16px/1.4 Helvetica,Arial,sans-serif;
+      -webkit-text-size-adjust:100%;
+    }
+    .modal_flat_inner {box-sizing:border-box;padding:16px 28px 24px;background:#fff;color:#111}
+    .modal_flat_content {font-family:Helvetica,Arial,sans-serif;margin:0}
+    .modal_flat_input {margin:0}
+    .modal_flat_main .viewerInstrumentsTitle {
+      margin:4px 0 26px;text-align:center;font:normal 24px/1.3 Helvetica,Arial,sans-serif
+    }
+    .modal_flat_main .viewerInstrumentsIntro,
+    .modal_flat_main .viewerInstrumentsOverrideNote {
+      margin:0 0 24px;font:16px/1.5 Helvetica,Arial,sans-serif
+    }
+    .modal_flat_main .viewerInstrumentsOverrideNote {margin:26px 0 12px}
+    .modal_flat_main .viewerInstrumentsSelect,
+    .modal_flat_main .viewerInstrumentsSoundfont,
+    .modal_flat_main .viewerInstrumentsVolume {
+      display:flex;flex-wrap:wrap;align-items:center;column-gap:9px;row-gap:6px;
+      margin:0 0 17px;font:16px/1.4 Helvetica,Arial,sans-serif;
+    }
+    .modal_flat_main .viewerInstrumentsSelect select,
+    .modal_flat_main .viewerInstrumentsSoundfont select {
+      box-sizing:border-box;-webkit-appearance:none;-moz-appearance:none;appearance:none;
+      width:min(245px,100%);max-width:100%;height:34px;min-height:34px;margin:0;
+      border:2px solid #999;border-radius:0;padding:4px 30px 4px 10px;
+      background-color:#efefef;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238C98F2' d='M0 0h12L6 7z'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-size:12px 8px;background-position:right 10px center;
+      color:#111;-webkit-text-fill-color:#111;font:16px/1.25 Helvetica,Arial,sans-serif;
+      cursor:pointer;
+    }
+    .modal_flat_main .viewerInstrumentsSoundfont select {width:min(165px,100%)}
+    /* Separate the volume settings slightly from the instrument dropdowns. */
+    .modal_flat_main .viewerInstrumentsFirstVolume {margin-top:11px}
+    .modal_flat_main .viewerInstrumentsVolume input[type=number] {
+      box-sizing:border-box;-webkit-appearance:none;-moz-appearance:textfield;appearance:textfield;
+      width:66px;height:32px;min-height:32px;margin:0;padding:3px 7px;
+      border:1px solid #999;border-radius:4px;background:#fff;
+      color:#111;-webkit-text-fill-color:#111;font:16px/1.2 Helvetica,Arial,sans-serif;
+    }
+    .modal_flat_main .viewerInstrumentsCheckbox {
+      display:flex;align-items:flex-start;gap:9px;margin:4px 0 0;
+      font:16px/1.45 Helvetica,Arial,sans-serif;
+    }
+    .modal_flat_main .viewerInstrumentsCheckbox input[type=checkbox] {
+      -webkit-appearance:checkbox;appearance:checkbox;order:-1;
+      flex:0 0 18px;width:18px;height:18px;margin:2px 9px 0 0;
+      accent-color:#176b43;cursor:pointer;
+    }
+    .modal_flat_buttons {
+      display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;
+      margin:30px 0 0;text-align:center;
+    }
+    .modal_flat_buttons table {margin-left:auto;margin-right:auto}
+    .modal_flat_main button,
+    .modal_flat_main .modal_flat_ok,
+    .modal_flat_main .modal_flat_cancel,
+    .modal_flat_main input[type=button],
+    .modal_flat_main input[type=submit] {
+      box-sizing:border-box;-webkit-appearance:none;appearance:none;
+      min-width:105px;min-height:42px;margin:0;padding:8px 18px;
+      border:0;border-radius:0;box-shadow:none;background:#ccc;
+      color:#111;-webkit-text-fill-color:#111;font:16px/1.3 Helvetica,Arial,sans-serif;
+      cursor:pointer;
+    }
+    .modal_flat_main button:hover,.modal_flat_main input[type=button]:hover,
+    .modal_flat_main input[type=submit]:hover {background:#bcbcbc}
+    .modal_flat_main select:focus-visible,.modal_flat_main input:focus-visible,
+    .modal_flat_main button:focus-visible {outline:2px solid #176b43;outline-offset:2px}
+    @media(max-width:600px) {
+      .modal_flat_inner {padding:15px 16px 18px}
+      .modal_flat_main .viewerInstrumentsTitle {margin:3px 0 18px;font-size:22px}
+      .modal_flat_main .viewerInstrumentsIntro,
+      .modal_flat_main .viewerInstrumentsOverrideNote {font-size:15px;margin-bottom:17px}
+      .modal_flat_main .viewerInstrumentsSelect,
+      .modal_flat_main .viewerInstrumentsSoundfont,
+      .modal_flat_main .viewerInstrumentsVolume {font-size:15px;margin-bottom:15px}
+      .modal_flat_main .viewerInstrumentsCheckbox {font-size:15px}
+      .modal_flat_buttons {margin-top:22px}
+    }
+
     /* Instructions follow the standalone players: fixed heading/footer, scrolling body. */
     #instructionsOverlay {padding:50px 12px 24px;overflow:hidden}
     #instructionsOverlay .dialog {
@@ -183,8 +282,8 @@
       .paneDivider::before {left:7px;right:7px;top:50%;bottom:auto;width:auto;height:2px;transform:translateY(-50%)}
       .paneDivider::after {width:38px;height:5px}
     }
-    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
-    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
+    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
+    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
     @media(max-height:540px) and (orientation:landscape) {header{flex-basis:42px;height:42px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
   </style>
 </head>
@@ -208,7 +307,7 @@
    <div class="scoreHeader"><label for="displayMode">Display mode</label>
     <select id="displayMode" aria-label="Display mode">
      <option value="noten">Notation</option><option value="notenames">Names</option><option value="mandolin">Mandolin (GDAE)</option><option value="gdad">GDAD</option><option value="cgda">CGDA</option><option value="cgdae">CGDAE</option><option value="dgdae">DGDAE</option><option value="guitare">Guitar</option><option value="guitard">DADGAD</option><option value="uke">Uke</option><option value="whistle">Whistle</option><option value="recorder">Recorder</option>
-    </select><span id="selectedName"></span><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage">Tempo</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
+    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage">Tempo</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
    </div>
    <div id="scoreScroll"><div id="placeholder">Select a tune from the list to view its notation.</div><div id="score"></div></div>
    <div id="audioHolder"><div id="audio" aria-label="Playback controls"></div></div>
@@ -262,6 +361,15 @@
     <p>The tempo setting is saved in this browser.</p>
 
     <hr>
+    <h3>Instruments</h3>
+    <p>Choose the playback soundfont and the melody, bass, and chords MIDI instruments.</p>
+    <p>Set the bass and chords volumes from 0 to 127.</p>
+    <p>With <b>Override all MIDI programs and volumes</b> checked (the default), the selected values replace MIDI programs and volumes specified in each tune during playback.</p>
+    <p>Uncheck it to keep any MIDI programs or volumes already present in a tune and use your selected defaults only for missing settings.</p>
+    <p>These changes apply only during playback; the original ABC is never modified.</p>
+    <p>Your instrument choices and override setting are saved and restored on your next visit.</p>
+
+    <hr>
     <h3>Tempo</h3>
     <p>The Tempo button opens the same tempo percentage dialog as the playback bar.</p>
 
@@ -284,7 +392,7 @@
 <div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><div class="dialog"><h2 id="enableTitle">Enable Playback</h2><p>Tap below to enable audio playback for the tunes received from ABC Transcription Tools.</p><div class="buttons"><button id="enableBtn" class="primary" type="button">Enable Playback</button></div></div></div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.0.0';
+const VIEWER_VERSION = '1.0.2';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -301,6 +409,7 @@ fingeringCSS.textContent=gWhistleFont+gRecorderFont+
 document.head.appendChild(fingeringCSS);
 
 const $ = id => document.getElementById(id);
+const INSTRUMENTS_KEY = 'abc-tunebook:instruments';
 const DISPLAY_KEY = 'abc-tunebook:display-mode';
 const TEMPO_KEY = 'abc-tunebook:tempo-percent';
 const LOOP_KEY = 'abc-tunebook:loop';
@@ -724,6 +833,269 @@ $('tempoBtn').addEventListener('click',()=>{
   if(!input){reportError('Playback controls are not ready yet.');return;}
   void promptTempo(input);
 });
+// Use the same seven soundfonts and GM/extended program names as ABC Transcription Tools.
+// DayPilot's program select values are 1-based; MIDI directives are zero-based.
+const VIEWER_MIDI_PROGRAM_NAMES = [
+  "Mute",
+  "Acoustic Grand Piano",
+  "Bright Acoustic Piano",
+  "Electric Grand Piano",
+  "Honky-tonk Piano",
+  "Electric Piano 1",
+  "Electric Piano 2",
+  "Harpsichord",
+  "Clavi",
+  "Celesta",
+  "Glockenspiel",
+  "Music Box",
+  "Vibraphone",
+  "Marimba",
+  "Xylophone",
+  "Tubular Bells",
+  "Dulcimer",
+  "Drawbar Organ",
+  "Percussive Organ",
+  "Rock Organ",
+  "Church Organ",
+  "Reed Organ",
+  "Accordion",
+  "Harmonica",
+  "Tango Accordion",
+  "Acoustic Guitar (nylon)",
+  "Acoustic Guitar (steel)",
+  "Electric Guitar (jazz)",
+  "Electric Guitar (clean)",
+  "Electric Guitar (muted)",
+  "Overdriven Guitar",
+  "Distortion Guitar",
+  "Guitar Harmonics",
+  "Acoustic Bass",
+  "Electric Bass (finger)",
+  "Electric Bass (pick)",
+  "Fretless Bass",
+  "Slap Bass 1",
+  "Slap Bass 2",
+  "Synth Bass 1",
+  "Synth Bass 2",
+  "Violin",
+  "Viola",
+  "Cello",
+  "Contrabass",
+  "Tremolo Strings",
+  "Pizzicato Strings",
+  "Orchestral Harp",
+  "Timpani",
+  "String Ensemble 1",
+  "String Ensemble 2",
+  "SynthStrings 1",
+  "SynthStrings 2",
+  "Choir Aahs",
+  "Voice Oohs",
+  "Synth Voice",
+  "Orchestra Hit",
+  "Trumpet",
+  "Trombone",
+  "Tuba",
+  "Muted Trumpet",
+  "French Horn",
+  "Brass Section",
+  "SynthBrass 1",
+  "SynthBrass 2",
+  "Soprano Sax",
+  "Alto Sax",
+  "Tenor Sax",
+  "Baritone Sax",
+  "Oboe",
+  "English Horn",
+  "Bassoon",
+  "Clarinet",
+  "Piccolo",
+  "Flute",
+  "Recorder",
+  "Pan Flute",
+  "Blown Bottle",
+  "Shakuhachi",
+  "Tin Whistle",
+  "Ocarina",
+  "Lead 1 (square)",
+  "Lead 2 (sawtooth)",
+  "Lead 3 (calliope)",
+  "Lead 4 (chiff)",
+  "Lead 5 (charang)",
+  "Lead 6 (voice)",
+  "Lead 7 (fifths)",
+  "Lead 8 (bass + lead)",
+  "Pad 1 (new age)",
+  "Pad 2 (warm)",
+  "Pad 3 (polysynth)",
+  "Pad 4 (choir)",
+  "Pad 5 (bowed)",
+  "Pad 6 (metallic)",
+  "Pad 7 (halo)",
+  "Pad 8 (sweep)",
+  "FX 1 (rain)",
+  "FX 2 (soundtrack)",
+  "FX 3 (crystal)",
+  "FX 4 (atmosphere)",
+  "FX 5 (brightness)",
+  "FX 6 (goblins)",
+  "FX 7 (echoes)",
+  "FX 8 (sci-fi)",
+  "Sitar",
+  "Banjo",
+  "Shamisen",
+  "Koto",
+  "Kalimba",
+  "Bagpipe",
+  "Fiddle",
+  "Shanai",
+  "Tinkle Bell",
+  "Agogo",
+  "Steel Drums",
+  "Woodblock",
+  "Taiko Drum",
+  "Bodhran",
+  "Synth Drum",
+  "Reverse Cymbal",
+  "Guitar Fret Noise",
+  "Breath Noise",
+  "Seashore",
+  "Bird Tweet",
+  "Telephone Ring",
+  "Helicopter",
+  "Applause",
+  "Gunshot",
+  //
+  // Expanded GM sounds, specific to this tool
+  //
+  "abcjs Percussion", // 128
+  "Uilleann Pipes", // 129
+  "Smallpipes (D)", // 130
+  "Smallpipes (A)", // 131
+  "Säckpipa", // 132
+  "Concertina", // 133
+  "Melodica", // 134
+  "Cajun Accordion", // 135
+  "Solfège", // 136
+  "Chorused Guitar (nylon)", // 137
+  "Chorused Guitar (steel)", // 138
+  "Irish Bouzouki", // 139
+  "Irish Bouzouki 2", // 140
+  "Mandolin", // 141
+  "Marching Drums", // 142
+  "Border Pipes", // 143
+  "Soprano Recorder", // 144
+  "Alto Recorder", // 145
+  "Tenor Recorder", // 146
+  "Bass Recorder", // 147
+  "Mountain Dulcimer (Solo)", // 148
+  "Mountain Dulcimer (DAD)" // 149
+];
+const VIEWER_SOUNDFONTS = [
+  {name:'Fluid',token:'fluid',url:'https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/'},
+  {name:'Musyng Kite',token:'musyng',url:'https://paulrosen.github.io/midi-js-soundfonts/MusyngKite/'},
+  {name:'FatBoy',token:'fatboy',url:'https://michaeleskin.com/abctools/soundfonts/fatboy_4/'},
+  {name:'Canvas',token:'canvas',url:'https://michaeleskin.com/abctools/soundfonts/canvas/'},
+  {name:'MScore',token:'mscore',url:'https://michaeleskin.com/abctools/soundfonts/mscore_2/'},
+  {name:'Arachno',token:'arachno',url:'https://michaeleskin.com/abctools/soundfonts/arachno_3/'},
+  {name:'FluidHQ',token:'fluidhq',url:'https://michaeleskin.com/abctools/soundfonts/fluidhq_1/'}
+];
+const DEFAULT_INSTRUMENTS = Object.freeze({soundfont:'fatboy',melody:1,bass:1,chords:1,bassvol:64,chordvol:64,override:true});
+function instrumentSelection(value, fallback) {
+  const n = Number(value);
+  return value !== null && value !== undefined && value !== '' &&
+    Number.isInteger(n) && n >= 0 && n < VIEWER_MIDI_PROGRAM_NAMES.length ? n : fallback;
+}
+function instrumentVolume(value, fallback) {
+  const n = Number(value);
+  return value !== null && value !== undefined && value !== '' &&
+    Number.isInteger(n) && n >= 0 && n <= 127 ? n : fallback;
+}
+function normalizeInstruments(value) {
+  const obj=value && typeof value==='object'?value:{};
+  return {
+    soundfont:VIEWER_SOUNDFONTS.some(item=>item.token===obj.soundfont)?obj.soundfont:DEFAULT_INSTRUMENTS.soundfont,
+    melody:instrumentSelection(obj.melody,DEFAULT_INSTRUMENTS.melody),
+    bass:instrumentSelection(obj.bass,DEFAULT_INSTRUMENTS.bass),
+    chords:instrumentSelection(obj.chords,DEFAULT_INSTRUMENTS.chords),
+    bassvol:instrumentVolume(obj.bassvol,DEFAULT_INSTRUMENTS.bassvol),
+    chordvol:instrumentVolume(obj.chordvol,DEFAULT_INSTRUMENTS.chordvol),
+    override:typeof obj.override==='boolean'?obj.override:DEFAULT_INSTRUMENTS.override
+  };
+}
+let instruments={...DEFAULT_INSTRUMENTS};
+try { instruments=normalizeInstruments(JSON.parse(localStorage.getItem(INSTRUMENTS_KEY))); } catch (_) {}
+function programDirective(selected) { return selected===0?'mute':String(selected-1); }
+// Create a playback-only copy. When overriding, discard existing MIDI program/volume
+// directives everywhere (file header, tune header and music body). Otherwise keep
+// them intact, adding defaults only for parameters not specified anywhere in the tune.
+// The chosen soundfont is always used; the source ABC is never changed.
+function withInstrumentOverrides(originalABC) {
+  const source=normalizeABC(originalABC);
+  const directiveRe=/^[ \t]*%%MIDI[ \t]+(program|bassprog|chordprog|bassvol|chordvol)\b[^\n]*(?:\n|$)/gmi;
+  const existing=new Set();
+  for(const match of source.matchAll(directiveRe))existing.add(match[1].toLowerCase());
+  let abc=source.replace(/^[ \t]*%(?:abcjs_soundfont|soundfont)\b[^\n]*(?:\n|$)/gmi,'');
+  if(instruments.override)abc=abc.replace(directiveRe,'');
+  const params=[
+    ['program',programDirective(instruments.melody)],
+    ['bassprog',programDirective(instruments.bass)],
+    ['chordprog',programDirective(instruments.chords)],
+    ['bassvol',String(instruments.bassvol)],
+    ['chordvol',String(instruments.chordvol)]
+  ];
+  const lines=[
+    '%abcjs_soundfont '+instruments.soundfont,
+    ...params.filter(([name])=>instruments.override||!existing.has(name))
+      .map(([name,value])=>'%%MIDI '+name+' '+value)
+  ].join('\n');
+  return abc.replace(/^([ \t]*X[ \t]*:[^\n]*)(?:\n|$)/m,(_whole,x)=>x+'\n'+lines+'\n');
+}
+async function showInstrumentsDialog() {
+  if(!window.DayPilot?.Modal?.form){reportError('Instrument settings dialog is unavailable.');return;}
+  const options=VIEWER_MIDI_PROGRAM_NAMES.map((name,id)=>({name:'  '+name,id}));
+  const soundfonts=VIEWER_SOUNDFONTS.map(({name,url})=>({name:'  '+name,id:url}));
+  const current=VIEWER_SOUNDFONTS.find(item=>item.token===instruments.soundfont)||VIEWER_SOUNDFONTS[2];
+  const data={
+    soundfont:current.url,
+    melody:instruments.melody,bass:instruments.bass,chords:instruments.chords,
+    bassvol:instruments.bassvol,chordvol:instruments.chordvol,
+    override:instruments.override
+  };
+  const form=[
+    {html:'<p class="viewerInstrumentsTitle">Instruments</p>'},
+    {html:'<p class="viewerInstrumentsIntro">The following values are used as the instrument and volume defaults if not already specified in a tune:</p>'},
+    {name:'Default MIDI Soundfont:',id:'soundfont',type:'select',options:soundfonts,cssClass:'viewerInstrumentsSoundfont'},
+    {name:'Default Melody MIDI program:',id:'melody',type:'select',options,cssClass:'viewerInstrumentsSelect'},
+    {name:'Default Bass MIDI program:',id:'bass',type:'select',options,cssClass:'viewerInstrumentsSelect'},
+    {name:'Default Chords MIDI program:',id:'chords',type:'select',options,cssClass:'viewerInstrumentsSelect'},
+    {name:'Default Bass MIDI volume (0-127):',id:'bassvol',type:'number',cssClass:'viewerInstrumentsVolume viewerInstrumentsFirstVolume'},
+    {name:'Default Chords MIDI volume (0-127):',id:'chordvol',type:'number',cssClass:'viewerInstrumentsVolume'},
+    {html:'<p class="viewerInstrumentsOverrideNote">Check the following box if you want the above values to override any instruments or volumes already specified in a tune when playing:</p>'},
+    {name:'Override all MIDI programs and volumes in the ABC with the defaults when playing tunes',
+      id:'override',type:'checkbox',cssClass:'viewerInstrumentsCheckbox'}
+  ];
+  const result=await DayPilot.Modal.form(form,data,{
+    theme:'modal_flat',
+    top:Math.min(50,Math.max(8,Math.floor(window.innerHeight*.06))),
+    width:Math.max(280,Math.min(790,window.innerWidth-24)),
+    autoFocus:false,scrollWithPage:false
+  });
+  if(result?.canceled || !result?.result)return;
+  const values=result.result;
+  const soundfont=VIEWER_SOUNDFONTS.find(item=>item.url===values.soundfont);
+  const fields=['melody','bass','chords'];
+  const validPrograms=fields.every(key=>values[key]!==null && values[key]!==undefined && values[key]!=='' && Number.isInteger(Number(values[key])) && Number(values[key])>=0 && Number(values[key])<VIEWER_MIDI_PROGRAM_NAMES.length);
+  const validVolumes=['bassvol','chordvol'].every(key=>values[key]!==null && values[key]!==undefined && values[key]!=='' && Number.isInteger(Number(values[key])) && Number(values[key])>=0 && Number(values[key])<=127);
+  if(!soundfont||!validPrograms||!validVolumes){reportError('Choose valid MIDI programs and bass/chords volumes from 0 to 127.');return;}
+  const updated={soundfont:soundfont.token,melody:Number(values.melody),bass:Number(values.bass),chords:Number(values.chords),bassvol:Number(values.bassvol),chordvol:Number(values.chordvol),override:values.override===true||values.override==='true'||values.override===1};
+  const changed=Object.keys(updated).some(key=>updated[key]!==instruments[key]);
+  instruments=updated;
+  try{localStorage.setItem(INSTRUMENTS_KEY,JSON.stringify(instruments));}catch(_){}
+  if(changed && currentIndex>=0)void rebuild();
+}
+$('instrumentsBtn').addEventListener('click',()=>{void showInstrumentsDialog();});
+
 function installTempoWhenReady() {if(findTempoInput())installTempoBox();else {let count=0;const retry=()=>{if(findTempoInput())installTempoBox();else if(++count<15)setTimeout(retry,60);};setTimeout(retry,60);}}
 async function rebuild() {
   const token=++generation;
@@ -731,7 +1103,7 @@ async function rebuild() {
   $('score').replaceChildren();$('audio').replaceChildren();
   if(currentIndex<0||!tunes[currentIndex])return;
   $('placeholder').style.display='none';
-  const abc=tunes[currentIndex].abc,mode=$('displayMode').value;
+  const abc=withInstrumentOverrides(tunes[currentIndex].abc),mode=$('displayMode').value;
   try {
     if(!window.ABCJS?.renderAbc)throw new Error('The portable abcjs library did not load. Check your internet connection.');
     // Match the instrument players: honor the per-tune Irish-roll override.
