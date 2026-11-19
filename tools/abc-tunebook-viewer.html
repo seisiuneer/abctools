@@ -97,11 +97,14 @@
       font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     }
     .app button#instrumentsBtn:hover {background-color:#e6f0e8}
-    .scoreHeader {flex-wrap:wrap;row-gap:6px}
-    #tempoBtn,#openInABCTTBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
+    /* Keep controls on the right when the header wraps onto another row. */
+    .scoreHeader {flex-wrap:wrap;row-gap:6px;justify-content:flex-end}
+    /* The display selector itself stays on the left of the first row. */
+    #displayMode {margin-right:auto}
+    #tempoBtn,#openInABCTTBtn,#viewABCBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
     .count {margin-left:auto;color:#667b6c;font-size:14px;white-space:nowrap}
     .showTuneInfoOption {display:flex;align-items:center;gap:7px;flex:0 0 auto;margin:4px 8px 10px;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
-    .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent)}
+    .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent);margin-left:2px;}
     #fileInput {display:none}
     .search {position:relative;margin:0 8px 7px;flex:0 0 auto}
     #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:16px}
@@ -146,6 +149,76 @@
     .dialog p {margin:0 0 12px}
     .dialog ul {padding-left:24px;line-height:1.55}
     .dialog .buttons {display:flex;justify-content:center;margin-top:20px}
+
+    /* Tempo prompt: mirror the compact DayPilot prompt used in the instrument players.
+       Scoped to this prompt, leaving the Instruments and error dialogs unchanged. */
+    body.viewerTempoPromptOpen .modal_default_main {
+      box-sizing:border-box !important;
+      max-width:calc(100vw - 24px) !important;
+      border:1px solid #17241c !important;
+      box-shadow:0 8px 28px rgba(0,0,0,.18) !important;
+      color:#17241c !important;
+      font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif !important;
+    }
+    body.viewerTempoPromptOpen .modal_default_main .modal_default_content {
+      font-size:16px !important;line-height:1.45 !important;
+      text-align:center !important;
+    }
+    /* DayPilot's .modal_default_input can be a wrapper around the text field.
+       Styling both caused the double border around the Tempo input. */
+    body.viewerTempoPromptOpen .modal_default_main .modal_default_input:not(input) {
+      padding:0 !important;
+      border:0 !important;
+      border-radius:0 !important;
+      box-shadow:none !important;
+      outline:0 !important;
+      background:transparent !important;
+    }
+    body.viewerTempoPromptOpen .modal_default_main input[type="text"],
+    body.viewerTempoPromptOpen .modal_default_main input:not([type]) {
+      box-sizing:border-box !important;
+      max-width:100% !important;
+      padding:7px 9px !important;
+      border:1px solid #999 !important;border-radius:5px !important;
+      background:#fff !important;
+      box-shadow:none !important;
+      color:#17241c !important;-webkit-text-fill-color:#17241c !important;
+      font:16px/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif !important;
+      -webkit-appearance:none;appearance:none;
+    }
+    /* Match the other players: keep the focused input's border neutral.
+       The Viewer's general green focus ring should not affect this prompt. */
+    body.viewerTempoPromptOpen .modal_default_main input[type="text"]:focus,
+    body.viewerTempoPromptOpen .modal_default_main input[type="text"]:focus-visible,
+    body.viewerTempoPromptOpen .modal_default_main input:not([type]):focus,
+    body.viewerTempoPromptOpen .modal_default_main input:not([type]):focus-visible {
+      border-color:#999 !important;
+      outline:none !important;
+      box-shadow:none !important;
+    }
+    body.viewerTempoPromptOpen .modal_default_main .modal_default_buttons {
+      text-align:center !important;
+    }
+    body.viewerTempoPromptOpen .modal_default_main .modal_default_buttons table {
+      margin-left:auto !important;margin-right:auto !important;
+    }
+    body.viewerTempoPromptOpen .modal_default_main input[type="button"],
+    body.viewerTempoPromptOpen .modal_default_main input[type="submit"],
+    body.viewerTempoPromptOpen .modal_default_main button,
+    body.viewerTempoPromptOpen .modal_default_button {
+      -webkit-appearance:none !important;appearance:none !important;
+      color:#17241c !important;-webkit-text-fill-color:#17241c !important;
+      background:#f5f6f5 !important;border:1px solid #aebbb3 !important;
+      border-radius:6px !important;box-shadow:none !important;
+      font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif !important;
+      min-width:78px !important;width:auto !important;padding:6px 14px !important;
+      cursor:pointer;
+    }
+    body.viewerTempoPromptOpen .modal_default_main input[type="button"]:hover,
+    body.viewerTempoPromptOpen .modal_default_main input[type="submit"]:hover,
+    body.viewerTempoPromptOpen .modal_default_main button:hover {
+      background:#e4e8e5 !important;border-color:#81968a !important;
+    }
 
     /* Instruments DayPilot dialog: match the compact ABC Transcription Tools Player Settings.
        Scoped to its modal_flat theme; the Viewer's Tempo/alert dialogs are unaffected. */
@@ -243,19 +316,19 @@
     }
     #instructionsOverlay .dialog h2 {flex:0 0 auto;margin:0 0 4px}
     #instructionsOverlay .viewerVersion {
-      flex:0 0 auto;margin:0 0 18px;text-align:center;
+      flex:0 0 auto;margin:0 0 15px;text-align:center;
       font-size:13px;line-height:1.4;font-weight:600;color:#60746a
     }
     #instructionsOverlay .instructionsScroll {
       flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
       -webkit-overflow-scrolling:touch;padding:0 13px 0 2px;
-      font-size:15px;line-height:1.5
+      font-size:15px;line-height:1.45
     }
-    #instructionsOverlay .instructionsScroll h3 {margin:0 0 10px;font-size:17px;line-height:1.3}
+    #instructionsOverlay .instructionsScroll h3 {margin:0 0 8px;font-size:17px;line-height:1.3}
     #instructionsOverlay .instructionsScroll .aboutSection {text-align:center}
-    #instructionsOverlay .instructionsScroll p {margin:0 0 12px}
+    #instructionsOverlay .instructionsScroll p {margin:0 0 10px}
     #instructionsOverlay .instructionsScroll hr {
-      border:0;border-top:1px solid rgba(127,127,127,.25);margin:20px 0
+      border:0;border-top:1px solid rgba(127,127,127,.25);margin:17px 0
     }
     #instructionsOverlay .dialog .buttons {flex:0 0 auto;margin-top:15px}
     #instructionsOverlay #closeInstructions {
@@ -292,9 +365,99 @@
       .paneDivider::before {left:7px;right:7px;top:50%;bottom:auto;width:auto;height:2px;transform:translateY(-50%)}
       .paneDivider::after {width:38px;height:5px}
     }
-    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
-    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
+    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
+    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
     @media(max-height:540px) and (orientation:landscape) {header{flex-basis:42px;height:42px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
+    /* Read-only ABC source window. Kept separate from the DayPilot dialogs. */
+    .abcModalOverlay {
+      position:fixed;inset:0;z-index:2400;pointer-events:none;
+      background:transparent;
+    }
+    .abcModalOverlay[hidden] {display:none}
+    .abcModalWindow {
+      position:absolute;display:flex;flex-direction:column;min-width:0;min-height:0;
+      overflow:hidden;box-sizing:border-box;pointer-events:auto;
+      border:1px solid #8b9990;border-radius:7px;background:#fff;
+      color:#17241c;box-shadow:0 12px 36px rgba(0,0,0,.34);
+    }
+    .abcModalHeader {
+      position:relative;flex:0 0 auto;display:flex;align-items:center;justify-content:flex-start;
+      min-height:39px;padding:7px 14px;background:#f1f6f2;
+      border-bottom:1px solid #c9d5cb;cursor:move;touch-action:none;
+      user-select:none;-webkit-user-select:none;
+    }
+    .abcModalHeader h2 {
+      margin:0;font:650 15px/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      max-width:calc(100% - 215px);text-align:left;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap;
+    }
+    /* Match the notation pane's styled display-mode selector. Keep the
+       control independent of the draggable ABC title bar. */
+    .abcModalFontControl {
+      position:absolute;right:11px;top:50%;transform:translateY(-50%);
+      display:flex;align-items:center;gap:7px;cursor:default;
+      font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:#25362e;
+    }
+    .abcModalFontControl label {white-space:nowrap;cursor:default}
+    #abcModalFontSize {
+      box-sizing:border-box;appearance:none;-webkit-appearance:none;
+      width:108px;max-width:100%;min-height:31px;
+      border:1px solid #b8c6bb;border-radius:5px;
+      padding:4px 25px 4px 8px;color:#25362e;-webkit-text-fill-color:#25362e;
+      background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%2325362e' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 8px center;
+      font:normal 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      cursor:pointer;
+    }
+    .abcModalText {
+      flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
+      margin:0;padding:12px 14px;border:0;background:#fff;color:#18221d;
+      font:11pt/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      /* Preserve ABC line breaks but wrap long music lines inside the dialog. */
+      white-space:pre-wrap;tab-size:4;overflow-wrap:anywhere;word-break:normal;
+      -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+      user-select:text;-webkit-user-select:text;
+    }
+    .abcModalFooter {
+      flex:0 0 51px;display:grid;align-items:center;
+      grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+      /* Explicitly use one full-height row so Safari centers both footer items. */
+      grid-template-rows:minmax(0,1fr);
+      border-top:1px solid #d1d9d4;background:#fafcfa;
+    }
+    .abcModalFooterInfo {
+      grid-column:1;grid-row:1;align-self:center;justify-self:start;
+      min-width:0;padding-left:12px;
+      color:#65766b;font:11px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    .abcModalFooter button {grid-column:2;grid-row:1;align-self:center;justify-self:center}
+    .abcModalFooter button {
+      -webkit-appearance:none;appearance:none;min-width:96px;min-height:34px;
+      padding:7px 20px;border:1px solid #aebbb3;border-radius:6px;
+      background:#f5f8f5;color:#25362e;-webkit-text-fill-color:#25362e;
+      font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      cursor:pointer;
+    }
+    .abcModalFooter button:hover {background:#e6f0e8}
+    .abcModalFooter button:focus-visible,.abcModalResize:focus-visible {
+      outline:3px solid #85bda1;outline-offset:-2px;
+    }
+    .abcModalResize {
+      position:absolute;right:0;bottom:0;width:27px;height:27px;
+      cursor:nwse-resize;touch-action:none;z-index:1;
+      background:repeating-linear-gradient(135deg,transparent 0px,transparent 5px,#7e9184 6px,#7e9184 7px,transparent 8px,transparent 10px);
+      clip-path:polygon(100% 0,100% 100%,0 100%);
+      opacity:.75;
+    }
+    @media(max-width:525px) {
+      .abcModalHeader {min-height:37px;padding:7px 12px}
+      .abcModalHeader h2 {font-size:14px;max-width:calc(100% - 135px)}
+      .abcModalFontControl {right:9px}
+      .abcModalFontControl label {display:none}
+      #abcModalFontSize {width:108px}
+      .abcModalText {padding:10px 11px}
+      .abcModalFooter {flex-basis:49px}
+    }
   </style>
 </head>
 <body>
@@ -317,7 +480,7 @@
    <div class="scoreHeader"><label for="displayMode">Display mode</label>
     <select id="displayMode" aria-label="Display mode">
      <option value="noten">Notation</option><option value="notenames">Names</option><option value="mandolin">Mandolin (GDAE)</option><option value="gdad">GDAD</option><option value="cgda">CGDA</option><option value="cgdae">CGDAE</option><option value="dgdae">DGDAE</option><option value="guitare">Guitar</option><option value="guitard">DADGAD</option><option value="uke">Uke</option><option value="whistle">Whistle</option><option value="recorder">Recorder</option>
-    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><button id="openInABCTTBtn" class="subtle" type="button" title="Open the original selected tune in the ABC Transcription Tools editor" disabled>Open in ABCTT</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
+    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><button id="openInABCTTBtn" class="subtle" type="button" title="Open the original selected tune in the ABC Transcription Tools editor" disabled>Open in ABCTT</button><button id="viewABCBtn" class="subtle" type="button" title="Read the original ABC text for the selected tune" disabled>ABC</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
    </div>
    <div id="scoreScroll"><div id="placeholder">Select a tune from the list to view its notation.</div><div id="score"></div></div>
    <div id="audioHolder"><div id="audio" aria-label="Playback controls"></div></div>
@@ -389,6 +552,11 @@
     <p>The share link uses the original ABC (without any playback-only MIDI changes) and carries the current display mode.</p>
 
     <hr>
+    <h3>ABC</h3>
+    <p>Click <b>ABC</b> to view the selected tune's ABC text. It is read-only, but you can select and copy it.</p>
+    <p>Use <b>Font size</b> to adjust the text. Drag the title bar to move the window, or drag its bottom-right corner to resize it.</p>
+
+    <hr>
     <h3>Full page</h3>
     <p>Expand the notation and playback across the page.</p>
     <p>Click Close full page or press Escape to return.</p>
@@ -405,9 +573,30 @@
   <div class="buttons"><button id="closeInstructions" class="primary" type="button">Close</button></div>
 </div></div>
 <div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><div class="dialog"><h2 id="enableTitle">Enable Playback</h2><p>Tap below to enable audio playback for the tunes received from ABC Transcription Tools.</p><div class="buttons"><button id="enableBtn" class="primary" type="button">Enable Playback</button></div></div></div>
+<!-- A floating source dialog allows clicking another tune to close it automatically. -->
+<div id="abcModalOverlay" class="abcModalOverlay" hidden>
+  <section id="abcModalWindow" class="abcModalWindow" role="dialog" aria-labelledby="abcModalTitle" aria-modal="false" tabindex="-1">
+    <div id="abcModalHeader" class="abcModalHeader" title="Drag to move the ABC window">
+      <h2 id="abcModalTitle">ABC</h2>
+      <div class="abcModalFontControl">
+        <label for="abcModalFontSize">Font size</label>
+        <select id="abcModalFontSize" aria-label="ABC text font size" title="ABC text font size">
+          <option value="7">Smallest</option>
+          <option value="9">Small</option>
+          <option value="11" selected>Medium</option>
+          <option value="13">Large</option>
+          <option value="15">Largest</option>
+        </select>
+      </div>
+    </div>
+    <pre id="abcModalText" class="abcModalText" tabindex="0" aria-label="Original ABC text"></pre>
+    <div class="abcModalFooter"><span class="abcModalFooterInfo">Read-only (not editable)</span><button id="abcModalOK" type="button">Close</button></div>
+    <div id="abcModalResize" class="abcModalResize" role="button" tabindex="0" aria-label="Resize ABC window" title="Drag to resize the ABC window"></div>
+  </section>
+</div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.0.3';
+const VIEWER_VERSION = '1.1.0';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -424,6 +613,130 @@ fingeringCSS.textContent=gWhistleFont+gRecorderFont+
 document.head.appendChild(fingeringCSS);
 
 const $ = id => document.getElementById(id);
+// The original tune remains separate from the MIDI-augmented playback copy.
+// The ABC window is a movable, resizable, read-only floating dialog so the
+// user can choose another tune behind it; that action closes this dialog.
+const ABC_MODAL_GEOMETRY_KEY = 'abc-tunebook:abc-window-geometry';
+const ABC_MODAL_FONT_SIZE_KEY = 'abc-tunebook:abc-window-font-size';
+const ABC_MODAL_FONT_SIZES = new Set([7,9,11,13,15]);
+const ABC_MODAL_MARGIN = 10;
+let abcModalPointer = null;
+// Persist font size separately so resizing/clamping the window never resets it.
+function setABCModalFontSize(size,persist=false) {
+  const selected=Number(size);
+  const value=ABC_MODAL_FONT_SIZES.has(selected)?selected:11;
+  $('abcModalFontSize').value=String(value);
+  $('abcModalText').style.fontSize=value+'pt';
+  if(persist)try {localStorage.setItem(ABC_MODAL_FONT_SIZE_KEY,String(value));}catch(_){}
+}
+try {setABCModalFontSize(localStorage.getItem(ABC_MODAL_FONT_SIZE_KEY));}
+catch(_) {setABCModalFontSize(11);}
+$('abcModalFontSize').addEventListener('change',ev=>setABCModalFontSize(ev.target.value,true));
+function closeABCModal() {
+  const overlay=$('abcModalOverlay');
+  if (overlay.hidden) return;
+  const hadFocus=overlay.contains(document.activeElement);
+  overlay.hidden=true;
+  abcModalPointer=null;
+  if (hadFocus) $('viewABCBtn').focus({preventScroll:true});
+}
+// Keep all four edges inside the *current* viewport, even when restoring a
+// landscape-sized window on a portrait screen. Do not save automatic clamping:
+// the user's original larger dimensions remain available in landscape.
+function abcModalGeometry(left,top,width,height) {
+  const maxW=Math.max(1,window.innerWidth-2*ABC_MODAL_MARGIN);
+  const maxH=Math.max(1,window.innerHeight-2*ABC_MODAL_MARGIN);
+  const w=Math.min(maxW,Math.max(Math.min(300,maxW),width));
+  const h=Math.min(maxH,Math.max(Math.min(200,maxH),height));
+  const x=Math.max(ABC_MODAL_MARGIN,Math.min(left,window.innerWidth-w-ABC_MODAL_MARGIN));
+  const y=Math.max(ABC_MODAL_MARGIN,Math.min(top,window.innerHeight-h-ABC_MODAL_MARGIN));
+  const dialog=$('abcModalWindow');
+  Object.assign(dialog.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});
+}
+function savedABCModalGeometry() {
+  try {
+    const saved=JSON.parse(localStorage.getItem(ABC_MODAL_GEOMETRY_KEY));
+    if(saved&&['left','top','width','height'].every(k=>
+        Number.isFinite(saved[k])&&Math.abs(saved[k])<100000)&&
+        saved.width>0&&saved.height>0)return saved;
+  } catch(_) {}
+  return null;
+}
+function saveABCModalGeometry() {
+  const r=$('abcModalWindow').getBoundingClientRect();
+  const saved={left:Math.round(r.left),top:Math.round(r.top),
+    width:Math.round(r.width),height:Math.round(r.height)};
+  try {localStorage.setItem(ABC_MODAL_GEOMETRY_KEY,JSON.stringify(saved));}catch(_){}
+}
+function openABCModal() {
+  if (currentIndex<0||!tunes[currentIndex]) return;
+  const source=normalizeABC(tunes[currentIndex].abc);
+  // splitTunes() retains the tunebook-wide header; display only X: onward.
+  const match=/^[ \t]*X[ \t]*:/m.exec(source);
+  if (!match) return;
+  const tuneABC=source.slice(match.index+match[0].indexOf('X'));
+  $('abcModalText').textContent=tuneABC;
+  $('abcModalTitle').textContent='ABC — '+tunes[currentIndex].title;
+  const w=660,h=450;
+  const saved=savedABCModalGeometry();
+  abcModalGeometry(saved?.left??(window.innerWidth-w)/2,
+    saved?.top??Math.min(60,Math.max(ABC_MODAL_MARGIN,(window.innerHeight-h)/2)),
+    saved?.width??w,saved?.height??h);
+  $('abcModalOverlay').hidden=false;
+  $('abcModalText').scrollTop=0;
+  $('abcModalText').scrollLeft=0;
+  $('abcModalOK').focus({preventScroll:true});
+}
+$('abcModalOK').addEventListener('click',closeABCModal);
+$('viewABCBtn').addEventListener('click',openABCModal);
+for(const [handleName,isResize] of [['abcModalHeader',false],['abcModalResize',true]]) {
+  const handle=$(handleName);
+  handle.addEventListener('pointerdown',ev=>{
+    if(ev.pointerType==='mouse'&&ev.button!==0)return;
+    // Interacting with the font selector must not drag the modal.
+    if(!isResize&&ev.target.closest('.abcModalFontControl'))return;
+    ev.preventDefault();
+    const rect=$('abcModalWindow').getBoundingClientRect();
+    abcModalPointer={id:ev.pointerId,isResize,x:ev.clientX,y:ev.clientY,
+      left:rect.left,top:rect.top,width:rect.width,height:rect.height,changed:false};
+    handle.setPointerCapture(ev.pointerId);
+  });
+  handle.addEventListener('pointermove',ev=>{
+    const p=abcModalPointer;
+    if(!p||p.id!==ev.pointerId||p.isResize!==isResize)return;
+    const dx=ev.clientX-p.x,dy=ev.clientY-p.y;
+    if(!dx&&!dy)return;
+    p.changed=true;
+    if(isResize)abcModalGeometry(p.left,p.top,p.width+dx,p.height+dy);
+    else abcModalGeometry(p.left+dx,p.top+dy,p.width,p.height);
+  });
+  const endDrag=ev=>{
+    const p=abcModalPointer;
+    if(!p||p.id!==ev.pointerId)return;
+    abcModalPointer=null;
+    if(p.changed)saveABCModalGeometry();
+    if(handle.hasPointerCapture(ev.pointerId))handle.releasePointerCapture(ev.pointerId);
+  };
+  handle.addEventListener('pointerup',endDrag);
+  handle.addEventListener('pointercancel',endDrag);
+  handle.addEventListener('lostpointercapture',endDrag);
+}
+$('abcModalResize').addEventListener('keydown',ev=>{
+  if($('abcModalOverlay').hidden)return;
+  const dx=ev.key==='ArrowRight'?1:ev.key==='ArrowLeft'?-1:0;
+  const dy=ev.key==='ArrowDown'?1:ev.key==='ArrowUp'?-1:0;
+  if(!dx&&!dy)return;
+  ev.preventDefault();
+  const rect=$('abcModalWindow').getBoundingClientRect();
+  const step=ev.shiftKey?48:16;
+  abcModalGeometry(rect.left,rect.top,rect.width+dx*step,rect.height+dy*step);
+  saveABCModalGeometry();
+});
+window.addEventListener('resize',()=>{
+  if($('abcModalOverlay').hidden)return;
+  const rect=$('abcModalWindow').getBoundingClientRect();
+  abcModalGeometry(rect.left,rect.top,rect.width,rect.height);
+});
 const INSTRUMENTS_KEY = 'abc-tunebook:instruments';
 const DISPLAY_KEY = 'abc-tunebook:display-mode';
 const TEMPO_KEY = 'abc-tunebook:tempo-percent';
@@ -696,7 +1009,7 @@ function renderList() {
 function appendABC(text,{replace=false,source='ABC file'}={}) {
   const parts=splitTunes(text);
   if (!parts.length) throw new Error(`No ABC tunes were found in ${source}.`);
-  if (replace) { tunes=[]; currentIndex=-1; $('searchInput').value=''; }
+  if (replace) { closeABCModal(); tunes=[]; currentIndex=-1; $('searchInput').value=''; }
   const initial=tunes.length;
   for (const part of parts) tunes.push({abc:part,title:tuneTitle(part,tunes.length),info:tuneInfo(part)});
   renderList();
@@ -710,7 +1023,8 @@ function stopOldPlayer() {
 }
 function selectTune(index) {
   if (index<0||index>=tunes.length) return;
-  currentIndex=index;$('openInABCTTBtn').disabled=false;$('tempoBtn').disabled=false;renderList();
+  closeABCModal();
+  currentIndex=index;$('openInABCTTBtn').disabled=false;$('viewABCBtn').disabled=false;$('tempoBtn').disabled=false;renderList();
   $('selectedName').textContent=tunes[index].title;
   $('scoreScroll').scrollTop=0;
   void rebuild();
@@ -815,7 +1129,23 @@ function applyTempo(input,tempo) {
 async function promptTempo(input) {
   if(!input)return;
   if(!window.DayPilot?.Modal){reportError('Tempo dialog is unavailable.');return;}
-  const result=await DayPilot.Modal.prompt('Tempo percentage (10–200%):',String(tempoPercent),{top:140,width:440});
+  let result;
+  document.body.classList.add('viewerTempoPromptOpen');
+  try {
+    const pending=DayPilot.Modal.prompt('Tempo percentage (10–200%):',String(tempoPercent),{top:150,width:460});
+    // Match the players: focus and select the current tempo for easy replacement.
+    let attempts=0;
+    const selectValue=()=>{
+      const fields=document.querySelectorAll('.modal_default_main input[type="text"],.modal_default_main input:not([type])');
+      const field=fields.length?fields[fields.length-1]:null;
+      if(field){field.focus();field.select();return;}
+      if(++attempts<10)setTimeout(selectValue,20);
+    };
+    setTimeout(selectValue,0);
+    result=await pending;
+  } finally {
+    document.body.classList.remove('viewerTempoPromptOpen');
+  }
   if(result.canceled)return;
   const value=Number(result.result);
   if(!Number.isFinite(value)||!Number.isInteger(value)||value<10||value>200){reportError('Enter a tempo percentage from 10% to 200%.');return;}
@@ -1167,6 +1497,7 @@ async function enablePlayback() {
 }
 function fileNameOK(file){return /\.(?:abc|txt)$/i.test(file.name)||(!file.name&&file.type==='text/plain');}
 async function addFiles(files) {
+  if(files.length)closeABCModal();
   // One file-selection or drop is ONE replacement operation, even with multiple files.
   // Read all files before clearing, so an invalid selection cannot destroy the book.
   const serial=++fileLoadSerial, next=[], errors=[];
@@ -1251,7 +1582,7 @@ $('instructionsBtn').addEventListener('click',()=>$('instructionsOverlay').class
 $('closeInstructions').addEventListener('click',()=>$('instructionsOverlay').classList.remove('open'));
 $('instructionsOverlay').addEventListener('click',ev=>{if(ev.target===$('instructionsOverlay'))$('instructionsOverlay').classList.remove('open');});
 $('enableBtn').addEventListener('click',()=>{void enablePlayback();});
-document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){ $('instructionsOverlay').classList.remove('open');setFullPage(false); }});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){if(!$('abcModalOverlay').hidden){ev.preventDefault();closeABCModal();return;} $('instructionsOverlay').classList.remove('open');setFullPage(false); }});
 let dragDepth=0;
 document.addEventListener('dragenter',ev=>{if([...ev.dataTransfer?.types||[]].includes('Files')){ev.preventDefault();dragDepth++;$('dragOverlay').style.display='flex';}});
 document.addEventListener('dragover',ev=>{if([...ev.dataTransfer?.types||[]].includes('Files')){ev.preventDefault();if(ev.dataTransfer)ev.dataTransfer.dropEffect='copy';}});
