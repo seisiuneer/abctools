@@ -412,7 +412,7 @@
     .abcModalText {
       flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
       margin:0;padding:12px 14px;border:0;background:#fff;color:#18221d;
-      font:11pt/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font:13pt/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
       /* Preserve ABC line breaks but wrap long music lines inside the dialog. */
       white-space:pre-wrap;tab-size:4;overflow-wrap:anywhere;word-break:normal;
       -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
@@ -582,10 +582,12 @@
         <label for="abcModalFontSize">Font size</label>
         <select id="abcModalFontSize" aria-label="ABC text font size" title="ABC text font size">
           <option value="7">Smallest</option>
-          <option value="9">Small</option>
-          <option value="11" selected>Medium</option>
-          <option value="13">Large</option>
-          <option value="15">Largest</option>
+          <option value="9">Smaller</option>
+          <option value="11">Small</option>
+          <option value="13" selected>Medium</option>
+          <option value="15">Large</option>
+          <option value="17">Larger</option>
+          <option value="19">Largest</option>
         </select>
       </div>
     </div>
@@ -618,19 +620,19 @@ const $ = id => document.getElementById(id);
 // user can choose another tune behind it; that action closes this dialog.
 const ABC_MODAL_GEOMETRY_KEY = 'abc-tunebook:abc-window-geometry';
 const ABC_MODAL_FONT_SIZE_KEY = 'abc-tunebook:abc-window-font-size';
-const ABC_MODAL_FONT_SIZES = new Set([7,9,11,13,15]);
+const ABC_MODAL_FONT_SIZES = new Set([7,9,11,13,15,17,19]);
 const ABC_MODAL_MARGIN = 10;
 let abcModalPointer = null;
 // Persist font size separately so resizing/clamping the window never resets it.
 function setABCModalFontSize(size,persist=false) {
   const selected=Number(size);
-  const value=ABC_MODAL_FONT_SIZES.has(selected)?selected:11;
+  const value=ABC_MODAL_FONT_SIZES.has(selected)?selected:13;
   $('abcModalFontSize').value=String(value);
   $('abcModalText').style.fontSize=value+'pt';
   if(persist)try {localStorage.setItem(ABC_MODAL_FONT_SIZE_KEY,String(value));}catch(_){}
 }
 try {setABCModalFontSize(localStorage.getItem(ABC_MODAL_FONT_SIZE_KEY));}
-catch(_) {setABCModalFontSize(11);}
+catch(_) {setABCModalFontSize(13);}
 $('abcModalFontSize').addEventListener('change',ev=>setABCModalFontSize(ev.target.value,true));
 function closeABCModal() {
   const overlay=$('abcModalOverlay');
