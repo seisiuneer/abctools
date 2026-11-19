@@ -114,8 +114,18 @@
     #displayMode {margin-right:auto}
     #tempoBtn,#openInABCTTBtn,#viewABCBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
     .count {margin-left:auto;color:#667b6c;font-size:14px;white-space:nowrap}
-    .showTuneInfoOption {display:flex;align-items:center;gap:7px;flex:0 0 auto;margin:4px 8px 10px;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
+    .tuneListOptions {display:flex;align-items:center;gap:8px;flex:0 0 auto;margin:4px 8px 10px;min-width:0}
+    .showTuneInfoOption {display:flex;align-items:center;gap:7px;min-width:0;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
     .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent);margin-left:2px;}
+    #sortBtn {margin-left:auto;flex:0 0 auto;min-height:28px;padding:4px 11px;white-space:nowrap}
+    /* The Sort dialog uses the same flat DayPilot form as ABC Transcription Tools. */
+    .viewerSortHeading {display:block;box-sizing:border-box;width:100%;margin:4px 0 25px;padding:0;font:normal 23px/1.3 Helvetica,Arial,sans-serif;text-align:center;color:#111}
+    .viewerSortIntro {margin:32px 0 29px;font:16px/1.55 Helvetica,Arial,sans-serif;color:#111;text-align: center;}
+    .modal_flat_main .viewerSortSelect {display:flex;align-items:center;justify-content:center;gap:10px;margin:0;font:16px/1.4 Helvetica,Arial,sans-serif;color:#111}
+    .modal_flat_main .viewerSortSelect select,
+    .modal_flat_main select.viewerSortSelect {box-sizing:border-box;-webkit-appearance:none;appearance:none;flex:0 1 260px;width:260px;min-width:0;max-width:100%;height:35px;border:2px solid #888;border-radius:0;padding:4px 32px 4px 9px;background:#eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%238C98F2' d='M0 0h12L6 7z'/%3E%3C/svg%3E") no-repeat right 10px center;color:#111;-webkit-text-fill-color:#111;font:16px/1.2 Helvetica,Arial,sans-serif}
+    .modal_flat_main:has(.viewerSortHeading) .modal_flat_buttons {margin-top:38px}
+    @media(max-width:525px) {.viewerSortHeading {font-size:21px;margin-bottom:18px}.viewerSortIntro {margin:22px 0 19px}.modal_flat_main .viewerSortSelect {flex-wrap:wrap}}
     #fileInput {display:none}
     .search {position:relative;margin:0 8px 7px;flex:0 0 auto}
     #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:16px}
@@ -663,7 +673,7 @@
  <main class="workspace">
   <aside aria-label="Tune list">
    <div class="listActions"><button id="openBtn" type="button" class="primary">Open</button><span id="shareBtnWrap" class="shareBtnWrap" title="Open an ABC tunebook first."><button id="shareBtn" type="button" class="primary" title="Open an ABC tunebook first." disabled>Share</button></span><span id="tuneCount" class="count">0 tunes</span></div>
-   <label class="showTuneInfoOption"><input type="checkbox" id="showTuneInfo" checked>Show tune info</label>
+   <div class="tuneListOptions"><label class="showTuneInfoOption"><input type="checkbox" id="showTuneInfo" checked>Show tune info</label><button id="sortBtn" class="subtle" type="button" title="Open an ABC tunebook first." disabled>Sort</button></div>
    <input type="file" id="fileInput" accept=".abc,.ABC,.txt,.TXT,text/plain" multiple>
    <div class="search"><input id="searchInput" type="search" placeholder="Find a tune…" aria-label="Find a tune" autocomplete="off" spellcheck="false"><button id="clearSearch" type="button" aria-label="Clear search">×</button></div>
    <nav id="tuneList" aria-label="Tunebook tunes"><div class="emptyList">Open one or more ABC files, or drop them here.</div></nav>
@@ -720,6 +730,11 @@
     <p>When checked, the meter (M:), rhythm (R:), and normalized key (K:) appear below each tune title when available, for example 6/8 - Jig - E Dorian.</p>
     <p>Uncheck to show only titles.</p>
     <p>Your preference is saved in the browser.</p>
+
+    <hr>
+    <h3 id="sortInstructionsSection">Sort</h3>
+    <p>Click <b>Sort</b>, choose a tag, then click <b>Sort</b> to reorder the tunes.</p>
+    <p>Choose <b>Restore to Original Order</b> to return to the order in which the tunebook was loaded. The first tune is selected after sorting or restoring. Your original file is not changed.</p>
 
     <hr>
     <h3>Resize the tune list</h3>
@@ -859,7 +874,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.2.1';
+const VIEWER_VERSION = '1.4';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -1012,6 +1027,15 @@ const LIST_WIDTH_REFERENCE_KEY = 'abc-tunebook:list-width-reference-px';
 const LIST_HEIGHT_KEY = 'abc-tunebook:list-height-px';
 const VALID_MODES = new Set([...$('displayMode').options].map(option => option.value));
 let tunes = [], currentIndex = -1, player = null, playbackCursor = null;
+// Snapshot the loaded (not subsequently sorted) collection. Never persist it
+// across a new file, drag/drop, transfer, or incoming share/lesson load.
+let originalOrderSnapshot = [], originalOrderGeneration = 0;
+function snapshotTune(tune){return {abc:tune.abc,title:tune.title,info:tune.info};}
+function rememberOriginalOrder(items){
+  originalOrderSnapshot=items.map(snapshotTune);
+  originalOrderGeneration++;
+  lastViewerSortTag='T';
+}
 let generation = 0, playing = false, needsGesture = false, unlocked = false;
 let loopEnabled = false, lastSystemTop = null;
 let transferredIds = new Set(), fileLoadSerial = 0;
@@ -1197,6 +1221,132 @@ function tuneTitle(abc, i) {
   const match = abc.match(/^\s*T\s*:\s*(.*?)\s*$/m);
   return match && match[1].trim() || `Tune ${i+1}`;
 }
+// Sorting is matched to app.js SortTunes(), SortTunesByTag(), and the
+// two locale-aware comparators. Sort title-first; a stable second pass on the
+// selected tag retains title ordering inside equal-tag groups.
+const SORT_OPERATIONS = [
+  {name:'Sort by Title (T:)',id:'T'}, {name:'Sort by Key (K:)',id:'K'},
+  {name:'Sort by Meter (M:)',id:'M'}, {name:'Sort by Rhythm (R:)',id:'R'},
+  {name:'Sort by Composer (C:)',id:'C'}, {name:'Sort by Notes (N:)',id:'N'},
+  {name:'Sort by Origin (O:)',id:'O'},
+  {name:'Restore to Original Order',id:'original'}
+];
+const SORT_TITLE_PREFIXES = {
+  'The ':', The','Da ':', Da','An ':', An','A ':', A',
+  'Le ':', Le','La ':', La','Ye ':', Ye','Les ':', Les',
+  'an ':', an','Der ':', Der','Die ':', Die','Das ':', Das',
+  'Ein ':', Ein','Eine ':', Eine'
+};
+const SORT_METER_WEIGHTS = {
+  'C|':1,'C':2,'2/2':10,'3/2':11,'2/4':7,'3/4':8,'4/4':3,
+  '5/4':12,'6/4':9,'7/4':13,'2/8':14,'3/8':15,'5/8':16,
+  '6/8':4,'7/8':17,'9/8':5,'10/8':18,'11/8':19,'12/8':6
+};
+function sortTitleKey(title){
+  for(const [prefix,suffix] of Object.entries(SORT_TITLE_PREFIXES))
+    if(title.startsWith(prefix))return title.slice(prefix.length)+suffix;
+  return title;
+}
+function sortLocaleCompare(a,b){
+  const base=a.localeCompare(b,'en',{sensitivity:'base'});
+  return base||a.localeCompare(b,'en',{sensitivity:'variant',caseFirst:'lower'});
+}
+function compareSortedTitles(a,b){
+  const aNum=/^(\d+)\.\s*/.exec(a.title),bNum=/^(\d+)\.\s*/.exec(b.title);
+  if(aNum&&bNum){const diff=parseInt(aNum[1],10)-parseInt(bNum[1],10);if(diff)return diff;}
+  else if(aNum)return -1;
+  else if(bNum)return 1;
+  return sortLocaleCompare(a.title,b.title);
+}
+function firstSortTag(abc,tag){
+  // Like GetAllTuneTags(), take the FIRST matching field in the tune; missing
+  // fields sort as one blank space, rather than borrowing the file header.
+  const prefix=tag+':';
+  for(const line of abc.split('\n')){
+    const trimmed=line.trim();
+    if(trimmed.startsWith(prefix))return trimmed.slice(2).trim();
+  }
+  return tag==='T'?'No Title':' ';
+}
+function splitBookForSorting(book){
+  // Keep the pre-X: collection header in place. Only X: tune bodies move.
+  const matches=[...book.matchAll(/^[ \t]*X[ \t]*:[^\n]*$/gm)];
+  if(!matches.length)return {header:book,parts:[]};
+  return {header:book.slice(0,matches[0].index),parts:matches.map((m,i)=>
+    book.slice(m.index,i+1<matches.length?matches[i+1].index:book.length))};
+}
+function sortTunebookABC(book,tag){
+  if(tag==='original'||!SORT_OPERATIONS.some(op=>op.id===tag))throw new Error('Unknown sorting field.');
+  const {header,parts}=splitBookForSorting(book);
+  if(parts.length<2)return book;
+  const indexed=parts.map((abc,index)=>({
+    abc,index,title:sortTitleKey(firstSortTag(abc,'T'))
+  }));
+  indexed.sort((a,b)=>compareSortedTitles(a,b)||a.index-b.index);
+  if(tag!=='T'){
+    const numeric=tag==='M';
+    const ignoreCase=['R','C','N','O'].includes(tag);
+    indexed.forEach((item,i)=>{
+      let key=firstSortTag(item.abc,tag);
+      if(ignoreCase)key=key.toLowerCase();
+      item.key=numeric?(SORT_METER_WEIGHTS[key]??19):key;
+      item.titleRank=i;
+    });
+    indexed.sort((a,b)=>{
+      const cmp=numeric?a.key-b.key:sortLocaleCompare(a.key,b.key);
+      return cmp||a.titleRank-b.titleRank;
+    });
+  }
+  // Match ABCTT's blank-line-separated output without changing tune bodies.
+  return header+indexed.map(item=>item.abc.replace(/\n*$/,'')+'\n\n').join('').replace(/\n*$/,'')+'\n';
+}
+let lastViewerSortTag='T';
+async function showSortDialog(){
+  if(!tunes.length||tunebookShareLoading)return;
+  const collectionGeneration=originalOrderGeneration;
+  const form=[
+    {html:'<div class="viewerSortHeading">Sort Tunes by Tag</div>'},
+    {html:'<p class="viewerSortIntro">Select an ABC tag to sort by, or restore the original order:</p>'},
+    {name:'Operation:',id:'tag',type:'select',options:SORT_OPERATIONS,cssClass:'viewerSortSelect'},
+    {html:'<p style="height:10px;margin:0" aria-hidden="true"></p>'}
+  ];
+  const result=await DayPilot.Modal.form(form,{tag:lastViewerSortTag},{
+    theme:'modal_flat',top:Math.min(80,Math.max(12,Math.round(window.innerHeight*.06))),
+    width:Math.max(275,Math.min(500,window.innerWidth-24)),
+    okText:'Sort',cancelText:'Cancel',autoFocus:false,scrollWithPage:false
+  });
+  if(result?.canceled||!result?.result||!tunes.length||tunebookShareLoading
+     ||collectionGeneration!==originalOrderGeneration)return;
+  const tag=result.result.tag;
+  if(!SORT_OPERATIONS.some(op=>op.id===tag))return;
+  lastViewerSortTag=tag;
+  try{
+    let reordered;
+    if(tag==='original'){
+      // Restore the exact loaded tune data, including its file-level headers.
+      reordered=originalOrderSnapshot.map(snapshotTune);
+    } else {
+      // Keep the global collection header at the top, regardless of sort key.
+      const sorted=sortTunebookABC(originalTunebookABC(),tag);
+      const sortedParts=splitTunes(sorted);
+      reordered=sortedParts.map((abc,i)=>({abc,title:tuneTitle(abc,i),info:tuneInfo(abc)}));
+    }
+    if(reordered.length!==tunes.length)throw new Error('Tune count changed during sorting.');
+    // Sorting or restoring the order changes share/lesson payloads.
+    fileLoadSerial++; // Prevent an earlier pending file read replacing this order.
+    closeABCModal();
+    setModal('shareModal',false);setModal('lessonLinkModal',false);
+    tunes=reordered;
+    currentIndex=-1;
+    $('searchInput').value='';
+    $('tuneList').scrollTop=0;
+    $('scoreScroll').scrollTop=0;
+    invalidateTunebookShareCache();
+    selectTune(0);
+  }catch(error){reportError('Unable to sort tunes: '+(error?.message||error));}
+}
+$('sortBtn').addEventListener('click',()=>{if(!$('sortBtn').disabled)void showSortDialog();});
+
 // Normalize ABC key shorthand (Edor, Am, Dmix, etc.) for the tune list.
 // Keep unusual/nonstandard key signatures intelligible rather than guessing.
 function normalizedKey(value) {
@@ -1279,7 +1429,10 @@ function appendABC(text,{replace=false,source='ABC file'}={}) {
     tunes=[];currentIndex=-1;$('searchInput').value='';
   }
   const initial=tunes.length;
+  const initialOriginal=replace?[]:originalOrderSnapshot.map(snapshotTune);
   for (const part of parts) tunes.push({abc:part,title:tuneTitle(part,tunes.length),info:tuneInfo(part)});
+  // Append to the load-time order rather than a possibly re-sorted view.
+  rememberOriginalOrder(initialOriginal.concat(tunes.slice(initial)));
   invalidateTunebookShareCache();
   renderList();
   if (currentIndex<0) selectTune(0);
@@ -1807,6 +1960,7 @@ async function addFiles(files) {
     // Never allow a previously generated URL to represent the new collection.
     setModal('shareModal',false);setModal('lessonLinkModal',false);
     tunes=next;
+    rememberOriginalOrder(next);
     invalidateTunebookShareCache();
     currentIndex=-1;
     $('searchInput').value='';
@@ -1971,6 +2125,8 @@ function buildTunebookShareURL(mode=$('displayMode').value){
 function shareLinkFits(url){return !!url && url.length<=TUNEBOOK_SHARE_MAX_LEN;}
 function refreshTunebookShareState(){
   const button=$('shareBtn');if(!button)return;
+  const sortButton=$('sortBtn');
+  if(sortButton){sortButton.disabled=tunebookShareLoading||!tunes.length;sortButton.title=tunebookShareLoading?'Loading tunes…':tunes.length?'Sort the loaded tunes by an ABC tag.':'Open an ABC tunebook first.';}
   const link=tunebookShareLoading?'':buildTunebookShareURL();
   button.disabled=tunebookShareLoading||!shareLinkFits(link)||studentLessonMode;
   const tooltip=studentLessonMode?'Sharing is unavailable in student lesson mode.':tunebookShareLoading
