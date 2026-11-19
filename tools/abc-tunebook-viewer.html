@@ -45,7 +45,13 @@
     .corner {position:absolute;top:10px;height:30px;display:inline-flex;align-items:center;justify-content:center;min-width:79px;padding:3px 12px;color:#25362e;border:1px solid #abbab0;background:#f5f8f5;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px}
     .corner:hover {background:#e6f0e8}
     .corner.left {left:16px}.corner.right {right:16px}
-    .workspace {min-height:0;flex:1;display:grid;grid-template-columns:clamp(204px,23vw,282px) minmax(0,1fr);gap:7px;padding:7px}
+    .workspace {--default-list-width:clamp(204px,23vw,282px);min-height:0;flex:1;display:grid;grid-template-columns:var(--tune-list-width,var(--default-list-width)) 12px minmax(0,1fr);gap:0;padding:7px}
+    /* Drag the divider to expand the tune list; the notation shares the remaining space. */
+    .paneDivider {position:relative;min-width:0;min-height:0;cursor:col-resize;touch-action:none;user-select:none;-webkit-user-select:none}
+    .paneDivider::before {content:"";position:absolute;left:50%;top:7px;bottom:7px;width:2px;transform:translateX(-50%);border-radius:4px;background:#c0cbc3}
+    .paneDivider::after {content:"";position:absolute;left:50%;top:50%;width:5px;height:38px;transform:translate(-50%,-50%);border-radius:4px;background:#9cad9f}
+    .paneDivider:hover::after,.paneDivider.dragging::after,.paneDivider:focus-visible::after {background:var(--accent)}
+    .paneDivider:focus-visible {outline:2px solid #85bda1;outline-offset:-2px}
     aside,.scorePane {min-width:0;min-height:0;background:white;border:1px solid var(--border);border-radius:7px;overflow:hidden}
     aside {display:flex;flex-direction:column}
     .listActions {display:flex;align-items:center;gap:7px;padding:8px 8px 5px;flex:0 0 auto}
@@ -63,7 +69,7 @@
     }
     .app button.subtle,.app button.corner {color:#25362e;-webkit-text-fill-color:#25362e;background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;font-size:13px;font-weight:600;}
     .app button.primary {background-color:#176b43;color:#fff;-webkit-text-fill-color:#fff;}
-    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:16px;font-weight:400;}
+    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:15px;font-weight:400;}
     .app button.tune.active {background-color:#dceee0;color:#0c4c29;-webkit-text-fill-color:#0c4c29;font-weight:400;}
     .app button.tune:hover {background-color:#f0f5f1;}
     .app button.tune.active:hover {background-color:#dceee0;}
@@ -89,7 +95,7 @@
     .emptyList {color:#77857b;font-size:13px;text-align:center;padding:23px 10px}
     .scorePane {display:flex;flex-direction:column}
     /* In-page full view is supported on iPad/iPhone where the Fullscreen API is limited. */
-    .app.fullPage header,.app.fullPage aside {display:none}
+    .app.fullPage header,.app.fullPage aside,.app.fullPage .paneDivider {display:none}
     .app.fullPage .workspace {display:block;padding:0;gap:0}
     .app.fullPage .scorePane {width:100%;height:100%;border:0;border-radius:0}
     .app.fullPage #score {padding:9px 13px 26px}
@@ -116,13 +122,54 @@
     .overlay.open {display:flex}
     .dialog {box-shadow:0 10px 36px #0004;border:1px solid #acb5af;background:white;border-radius:8px;width:min(530px,95vw);padding:22px 25px 24px;text-align:left;max-height:78vh;overflow:auto}
     .dialog h2 {margin:0 0 14px;text-align:center;font-size:21px}
-    #instructionsOverlay .dialog h2 {margin-bottom:3px}
-    #instructionsOverlay .viewerVersion {margin:0 0 16px;text-align:center;font-size:12px;line-height:1.4;color:#60746a}
     .dialog p {margin:0 0 12px}
     .dialog ul {padding-left:24px;line-height:1.55}
     .dialog .buttons {display:flex;justify-content:center;margin-top:20px}
+    /* Instructions follow the standalone players: fixed heading/footer, scrolling body. */
+    #instructionsOverlay {padding:50px 12px 24px;overflow:hidden}
+    #instructionsOverlay .dialog {
+      display:flex;flex-direction:column;width:min(680px,calc(100vw - 24px));
+      height:calc(100vh - 74px);height:min(760px,calc(100dvh - 74px));
+      max-height:calc(100dvh - 74px);padding:20px 25px 22px;overflow:hidden
+    }
+    #instructionsOverlay .dialog h2 {flex:0 0 auto;margin:0 0 4px}
+    #instructionsOverlay .viewerVersion {
+      flex:0 0 auto;margin:0 0 18px;text-align:center;
+      font-size:13px;line-height:1.4;font-weight:600;color:#60746a
+    }
+    #instructionsOverlay .instructionsScroll {
+      flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;padding:0 13px 0 2px;
+      font-size:15px;line-height:1.5
+    }
+    #instructionsOverlay .instructionsScroll h3 {margin:0 0 10px;font-size:17px;line-height:1.3}
+    #instructionsOverlay .instructionsScroll .aboutSection {text-align:center}
+    #instructionsOverlay .instructionsScroll p {margin:0 0 12px}
+    #instructionsOverlay .instructionsScroll hr {
+      border:0;border-top:1px solid rgba(127,127,127,.25);margin:20px 0
+    }
+    #instructionsOverlay .dialog .buttons {flex:0 0 auto;margin-top:15px}
+    #instructionsOverlay #closeInstructions {
+      min-width:170px;min-height:40px;color:#25362e;background:#f5f8f5;
+      border:1px solid #abbab0;border-radius:6px
+    }
+    #instructionsOverlay #closeInstructions:hover {background:#e6f0e8}
+    @media (max-height:550px) {
+      #instructionsOverlay {padding-top:14px;padding-bottom:12px}
+      #instructionsOverlay .dialog {
+        height:calc(100dvh - 26px);max-height:calc(100dvh - 26px);
+        padding-top:12px;padding-bottom:12px
+      }
+      #instructionsOverlay .viewerVersion {margin-bottom:8px}
+      #instructionsOverlay .dialog .buttons {margin-top:8px}
+    }
+    @media (max-width:525px) {
+      #instructionsOverlay .dialog {padding-left:16px;padding-right:16px}
+      #instructionsOverlay .dialog h2 {font-size:19px}
+      #instructionsOverlay .instructionsScroll {padding-right:8px}
+    }
     #dragOverlay {position:fixed;inset:8px;z-index:1000;pointer-events:none;border:3px dashed #176b43;border-radius:13px;background:#e3f4e5dc;display:none;align-items:center;justify-content:center;color:#105832;font-size:23px;font-weight:650}
-    @media(max-width:730px) {.workspace{grid-template-columns:clamp(165px,34vw,225px) minmax(0,1fr);gap:4px;padding:4px} .scoreHeader{padding:5px 7px;gap:7px}.scoreHeader label{display:none} #displayMode{min-width:116px;max-width:43vw}#selectedName{display:none} .corner{min-width:70px} header h1{font-size:18px}}
+    @media(max-width:730px) {.workspace{--default-list-width:clamp(165px,34vw,225px);padding:4px} .scoreHeader{padding:5px 7px;gap:7px}.scoreHeader label{display:none} #displayMode{min-width:116px;max-width:43vw}#selectedName{display:none} .corner{min-width:70px} header h1{font-size:18px}}
     /* Keep the longer viewer title clear of the corner buttons on narrow phones. */
     @media(max-width:525px) and (orientation:portrait) {
       header h1 {font-size:clamp(13px,3.75vw,16px)}
@@ -130,7 +177,13 @@
       header .corner.left {left:8px}
       header .corner.right {right:8px}
     }
-    @media(max-width:525px) and (orientation:portrait) {.workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(130px,29dvh) minmax(0,1fr)} .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
+    @media(max-width:525px) and (orientation:portrait) {
+      .workspace {grid-template-columns:minmax(0,1fr);grid-template-rows:var(--tune-list-height,minmax(130px,29dvh)) 12px minmax(0,1fr)}
+      .paneDivider {cursor:row-resize}
+      .paneDivider::before {left:7px;right:7px;top:50%;bottom:auto;width:auto;height:2px;transform:translateY(-50%)}
+      .paneDivider::after {width:38px;height:5px}
+    }
+    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
     @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
     @media(max-height:540px) and (orientation:landscape) {header{flex-basis:42px;height:42px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
   </style>
@@ -150,6 +203,7 @@
    <div class="search"><input id="searchInput" type="search" placeholder="Find a tune…" aria-label="Find a tune" autocomplete="off" spellcheck="false"><button id="clearSearch" type="button" aria-label="Clear search">×</button></div>
    <nav id="tuneList" aria-label="Tunebook tunes"><div class="emptyList">Open one or more ABC files, or drop them here.</div></nav>
   </aside>
+  <div id="paneDivider" class="paneDivider" role="separator" aria-label="Resize tune list" aria-orientation="vertical" tabindex="0" title="Drag to expand the tune list; double-click to restore default size"></div>
   <section class="scorePane" aria-label="Tune notation and playback">
    <div class="scoreHeader"><label for="displayMode">Display mode</label>
     <select id="displayMode" aria-label="Display mode">
@@ -163,11 +217,70 @@
 </div>
 <div id="dragOverlay">Drop ABC files to replace the tunebook</div>
 <div id="instructionsOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="dialog">
- <h2 id="helpTitle">ABC Tunebook Viewer — Instructions</h2>
- <p id="viewerVersion" class="viewerVersion"></p>
- <p>Browse a collection of ABC tunes with the list on the left and the selected tune's notation and playback on the right.</p>
- <ul><li><b>Open:</b> Choose one or more .abc or .txt files. Their tunes replace the current tunebook. Drag and drop files anywhere on the page to do the same.</li><li><b>Show tune info:</b> When checked, show the meter (M:), rhythm (R:), and normalized key (K:) below each tune title when available, for example 6/8 - Jig - E Dorian. Uncheck to show only titles. This preference is saved in your browser.</li><li><b>Find:</b> Filter the list by title, then click a title to show that tune.</li><li><b>Display mode:</b> Choose notation, names, or instrument tablature. A manual choice is saved for your next visit. A mode sent from ABC Transcription Tools is temporary until you change it yourself.</li><li><b>Playback:</b> Use the controls below the notation to play/pause, restart, loop and seek. Click the tempo percentage field to set a value from 10% to 200%. Tempo is saved in this browser.</li><li><b>Tempo:</b> Opens the same tempo percentage dialog as the field in the playback bar.</li><li><b>Full page:</b> Expand the notation and playback across the page, then click Close full page or press Escape to return.</li></ul>
- <div class="buttons"><button id="closeInstructions" class="primary" type="button">Close</button></div></div></div>
+  <h2 id="helpTitle">ABC Tunebook Viewer — Instructions</h2>
+  <p id="viewerVersion" class="viewerVersion"></p>
+  <div class="instructionsScroll" tabindex="0" aria-label="Instructions content">
+    <h3>Introduction</h3>
+    <p>ABC Tunebook Viewer provides a simple way to browse and play tunes from an ABC tunebook.</p>
+    <p>Open ABC files directly, or use <b>Open in Tunebook Viewer</b> from the ABC Transcription Tools menu to send all the tunes currently loaded there.</p>
+
+    <hr>
+    <h3>Overview</h3>
+    <p>Browse a collection of ABC tunes with the tune list on the left and the selected tune's notation and playback on the right.</p>
+
+    <hr>
+    <h3>Open</h3>
+    <p>Choose one or more .abc or .txt files to load their tunes.</p>
+    <p>Opening files replaces the current tunebook.</p>
+    <p>You can also drag and drop .abc or .txt files anywhere on the page.</p>
+
+    <hr>
+    <h3>Show tune info</h3>
+    <p>When checked, the meter (M:), rhythm (R:), and normalized key (K:) appear below each tune title when available, for example 6/8 - Jig - E Dorian.</p>
+    <p>Uncheck to show only titles.</p>
+    <p>Your preference is saved in the browser.</p>
+
+    <hr>
+    <h3>Resize the tune list</h3>
+    <p>Drag the divider to make the list wider (or taller on phones).</p>
+    <p>Your setting is saved automatically.</p>
+    <p>Double-click or double-tap the divider to reset.</p>
+
+    <hr>
+    <h3>Find</h3>
+    <p>Filter the list by title, then select a title to show that tune.</p>
+
+    <hr>
+    <h3>Display mode</h3>
+    <p>Choose notation, names, or instrument tablature.</p>
+    <p>Your choice is saved for your next visit.</p>
+
+    <hr>
+    <h3>Playback</h3>
+    <p>Use the controls below the notation to play, pause, restart, loop, or seek within a tune.</p>
+    <p>Click the tempo percentage field to set playback speed from 10% to 200%.</p>
+    <p>The tempo setting is saved in this browser.</p>
+
+    <hr>
+    <h3>Tempo</h3>
+    <p>The Tempo button opens the same tempo percentage dialog as the playback bar.</p>
+
+    <hr>
+    <h3>Full page</h3>
+    <p>Expand the notation and playback across the page.</p>
+    <p>Click Close full page or press Escape to return.</p>
+
+    <hr>
+    <section class="aboutSection" aria-label="About">
+      <h3>About</h3>
+      <p>This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>
+      <p>If you find it useful, please consider a contribution via</p>
+      <p><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
+    </section>
+    <hr>
+  </div>
+  <div class="buttons"><button id="closeInstructions" class="primary" type="button">Close</button></div>
+</div></div>
 <div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><div class="dialog"><h2 id="enableTitle">Enable Playback</h2><p>Tap below to enable audio playback for the tunes received from ABC Transcription Tools.</p><div class="buttons"><button id="enableBtn" class="primary" type="button">Enable Playback</button></div></div></div>
 <script>
 'use strict';
@@ -192,6 +305,11 @@ const DISPLAY_KEY = 'abc-tunebook:display-mode';
 const TEMPO_KEY = 'abc-tunebook:tempo-percent';
 const LOOP_KEY = 'abc-tunebook:loop';
 const SHOW_TUNE_INFO_KEY = 'abc-tunebook:show-tune-info';
+const LIST_WIDTH_KEY = 'abc-tunebook:list-width-px';
+// Largest workspace width since the last manual adjustment. On window shrink,
+// reduce the expanded tune list first so the notation keeps its width.
+const LIST_WIDTH_REFERENCE_KEY = 'abc-tunebook:list-width-reference-px';
+const LIST_HEIGHT_KEY = 'abc-tunebook:list-height-px';
 const VALID_MODES = new Set([...$('displayMode').options].map(option => option.value));
 let tunes = [], currentIndex = -1, player = null, playbackCursor = null;
 let generation = 0, playing = false, needsGesture = false, unlocked = false;
@@ -205,6 +323,153 @@ function getSavedTempo() {
 }
 let tempoPercent = getSavedTempo();
 try { const m = localStorage.getItem(DISPLAY_KEY); if (VALID_MODES.has(m)) $('displayMode').value = m; } catch (_) {}
+// Remember user-extended list sizes separately for side-by-side and stacked layouts.
+// Their respective CSS defaults remain the minimum, regardless of saved values.
+const workspace = document.querySelector('.workspace');
+const listPane = workspace.querySelector('aside');
+const paneDivider = $('paneDivider');
+const paneStackedQuery = window.matchMedia('(max-width:525px) and (orientation:portrait)');
+const DIVIDER_PX = 12;
+function savedListSize(key) {
+  try {
+    const value = Number(localStorage.getItem(key));
+    return Number.isFinite(value) && value > 0 ? value : null;
+  } catch (_) { return null; }
+}
+let savedListWidth = savedListSize(LIST_WIDTH_KEY);
+let savedListWidthReference = savedListSize(LIST_WIDTH_REFERENCE_KEY);
+let savedListHeight = savedListSize(LIST_HEIGHT_KEY);
+let paneDrag = null;
+let lastDividerTouchTap = 0;
+function listIsStacked() { return paneStackedQuery.matches; }
+function paneLimits() {
+  const viewportWidth = window.innerWidth;
+  const stacked = listIsStacked();
+  const minimum = stacked
+    ? Math.max(130, 0.29 * window.innerHeight)
+    : viewportWidth <= 730
+      ? Math.min(225, Math.max(165, 0.34 * viewportWidth))
+      : Math.min(282, Math.max(204, 0.23 * viewportWidth));
+  const style = getComputedStyle(workspace);
+  const available = stacked
+    ? workspace.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+    : workspace.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+  // Keep a usable notation area even when a saved size exceeds a smaller viewport.
+  const notationMinimum = stacked ? 170 : viewportWidth <= 730 ? 190 : 240;
+  return {minimum, maximum:Math.max(minimum, available - DIVIDER_PX - notationMinimum), available};
+}
+function actualListSize() {
+  const rect = listPane.getBoundingClientRect();
+  return listIsStacked() ? rect.height : rect.width;
+}
+function updateDividerAccessibility() {
+  const stacked = listIsStacked(), limits = paneLimits();
+  paneDivider.setAttribute('aria-orientation', stacked ? 'horizontal' : 'vertical');
+  paneDivider.setAttribute('aria-valuemin', String(Math.round(limits.minimum)));
+  paneDivider.setAttribute('aria-valuemax', String(Math.round(limits.maximum)));
+  paneDivider.setAttribute('aria-valuenow', String(Math.round(actualListSize())));
+  paneDivider.setAttribute('aria-valuetext', 'Tune list ' + (stacked ? 'height' : 'width') + ': ' + Math.round(actualListSize()) + ' pixels');
+}
+function setListSize(value) {
+  const limits = paneLimits();
+  const clamped = Math.min(limits.maximum, Math.max(limits.minimum, value));
+  workspace.style.setProperty(listIsStacked() ? '--tune-list-height' : '--tune-list-width', clamped + 'px');
+  updateDividerAccessibility();
+  return clamped;
+}
+function applySavedListSizes() {
+  workspace.style.removeProperty('--tune-list-width');
+  workspace.style.removeProperty('--tune-list-height');
+  const stacked = listIsStacked();
+  const saved = stacked ? savedListHeight : savedListWidth;
+  if (saved === null) { updateDividerAccessibility(); return; }
+  if (stacked) { setListSize(saved); return; }
+
+  const {available} = paneLimits();
+  // Remember the widest layout the user has seen since setting the divider.
+  // Any loss of window width comes out of the *extra* tune-list width first;
+  // the notation only shrinks once the list reaches its responsive default.
+  // Preserve existing list-width preferences created before this key existed.
+  if (savedListWidthReference === null || available > savedListWidthReference) {
+    savedListWidthReference = available;
+    try { localStorage.setItem(LIST_WIDTH_REFERENCE_KEY, String(available)); } catch (_) {}
+  }
+  const widthLost = Math.max(0, savedListWidthReference - available);
+  setListSize(savedListWidth - widthLost);
+}
+function persistListSize(value) {
+  const {minimum} = paneLimits();
+  const stacked = listIsStacked();
+  const key = stacked ? LIST_HEIGHT_KEY : LIST_WIDTH_KEY;
+  const saved = value > minimum + 1 ? Math.round(value) : null;
+  if (stacked) savedListHeight = saved;
+  else {
+    savedListWidth = saved;
+    savedListWidthReference = saved === null ? null : paneLimits().available;
+  }
+  try {
+    if (saved === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, String(saved));
+    if (!stacked) {
+      if (saved === null) localStorage.removeItem(LIST_WIDTH_REFERENCE_KEY);
+      else localStorage.setItem(LIST_WIDTH_REFERENCE_KEY, String(savedListWidthReference));
+    }
+  } catch (_) {}
+  applySavedListSizes();
+}
+function resetListSizes() {
+  savedListWidth = null;
+  savedListWidthReference = null;
+  savedListHeight = null;
+  try { localStorage.removeItem(LIST_WIDTH_KEY); localStorage.removeItem(LIST_WIDTH_REFERENCE_KEY); localStorage.removeItem(LIST_HEIGHT_KEY); } catch (_) {}
+  applySavedListSizes();
+}
+paneDivider.addEventListener('pointerdown', event => {
+  if (paneDrag || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  if (document.querySelector('.app').classList.contains('fullPage')) return;
+  event.preventDefault();
+  const stacked = listIsStacked();
+  paneDrag = {id:event.pointerId, stacked, start:event[stacked ? 'clientY' : 'clientX'], size:actualListSize(), changed:false};
+  paneDivider.setPointerCapture(event.pointerId);
+  paneDivider.classList.add('dragging');
+});
+paneDivider.addEventListener('pointermove', event => {
+  if (!paneDrag || event.pointerId !== paneDrag.id) return;
+  const coord = event[paneDrag.stacked ? 'clientY' : 'clientX'];
+  if (Math.abs(coord - paneDrag.start) > 1) paneDrag.changed = true;
+  setListSize(paneDrag.size + coord - paneDrag.start);
+});
+function endDividerDrag(event, cancelled) {
+  if (!paneDrag || event.pointerId !== paneDrag.id) return;
+  const changed = paneDrag.changed;
+  paneDrag = null;
+  paneDivider.classList.remove('dragging');
+  if (paneDivider.hasPointerCapture(event.pointerId)) paneDivider.releasePointerCapture(event.pointerId);
+  if (!cancelled && changed) persistListSize(actualListSize());
+  else applySavedListSizes();
+  // Touch browsers do not consistently synthesize dblclick for double taps.
+  if (!cancelled && !changed && event.pointerType !== 'mouse') {
+    const now = Date.now();
+    if (now - lastDividerTouchTap < 400) { lastDividerTouchTap = 0; resetListSizes(); }
+    else lastDividerTouchTap = now;
+  } else lastDividerTouchTap = 0;
+}
+paneDivider.addEventListener('pointerup', event => endDividerDrag(event, false));
+paneDivider.addEventListener('pointercancel', event => endDividerDrag(event, true));
+paneDivider.addEventListener('lostpointercapture', event => endDividerDrag(event, true));
+paneDivider.addEventListener('dblclick', event => { event.preventDefault(); resetListSizes(); });
+paneDivider.addEventListener('keydown', event => {
+  const stacked = listIsStacked();
+  if (event.key === 'Home') { event.preventDefault(); resetListSizes(); return; }
+  const direction = stacked
+    ? event.key === 'ArrowDown' ? 1 : event.key === 'ArrowUp' ? -1 : 0
+    : event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+  if (!direction) return;
+  event.preventDefault();
+  persistListSize(setListSize(actualListSize() + direction * (event.shiftKey ? 48 : 16)));
+});
+window.addEventListener('resize', () => { if (!paneDrag) applySavedListSizes(); });
+applySavedListSizes();
 function reportError(message) {
   console.error(message);
   if (window.DayPilot && DayPilot.Modal) DayPilot.Modal.alert(String(message), {top:125,width:490});
