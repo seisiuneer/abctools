@@ -859,7 +859,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.2';
+const VIEWER_VERSION = '1.2.1';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -1737,7 +1737,7 @@ async function rebuild() {
     let initializing=false;
     const cursorControl={
       onStart(){if(initializing||token!==generation)return;playing=true;removeCursor();const svg=$('score').querySelector('svg');if(svg){playbackCursor=document.createElementNS('http://www.w3.org/2000/svg','line');playbackCursor.setAttribute('class','abcjs-cursor');svg.appendChild(playbackCursor);}},
-      onEvent(ev){if(initializing||!playing||token!==generation)return;if(playbackCursor&&ev&&ev.left!==undefined){playbackCursor.setAttribute('x1',String(ev.left-2));playbackCursor.setAttribute('x2',String(ev.left-2));playbackCursor.setAttribute('y1',String(ev.top));playbackCursor.setAttribute('y2',String(ev.top+ev.height));keepCursorVisible(ev);}},
+      onEvent(ev){if(initializing||!playing||token!==generation)return;if(playbackCursor&&ev&&ev.left!=null){playbackCursor.setAttribute('x1',String(ev.left-2));playbackCursor.setAttribute('x2',String(ev.left-2));playbackCursor.setAttribute('y1',String(ev.top));playbackCursor.setAttribute('y2',String(ev.top+ev.height));keepCursorVisible(ev);}},
       onFinished(){if(initializing||token!==generation)return;playing=false;removeCursor();}
     };
     const next=new ABCJS.synth.SynthController(abc);installLoopPersistence(next);
