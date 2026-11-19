@@ -40,6 +40,7 @@
   <link href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=20261010_0240" rel="stylesheet">
   <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=20261104_2218"></script>
   <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=20261010_0240"></script>
+  <script src="pako.min.js?cb=20260920_1125"></script>
   <script src="daypilot-modal.min-3.10.1.js?cb=20260920_1125"></script>
   <style>
     :root {color-scheme:light; --ink:#16241e; --border:#d1d9d4; --accent:#176b43; --shade:#eff4f0;}
@@ -51,7 +52,7 @@
     .app {display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0}
     header {position:relative;flex:0 0 51px;height:51px;display:flex;align-items:center;justify-content:center;background:white;border-bottom:1px solid var(--border)}
     header h1 {margin:0;font-size:21px;line-height:1.2;font-weight:650;white-space:nowrap}
-    .corner {position:absolute;top:10px;height:30px;display:inline-flex;align-items:center;justify-content:center;min-width:79px;padding:3px 12px;color:#25362e;border:1px solid #abbab0;background:#f5f8f5;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px}
+    .corner {position:absolute;top:10px;height:30px;display:inline-flex;align-items:center;justify-content:center;min-width:79px;padding:3px 12px;color:#25362e;border:1px solid #abbab0;background:#f5f8f5;border-radius:6px;text-decoration:none;font-weight:600;font-size:12px}
     .corner:hover {background:#e6f0e8}
     .corner.left {left:16px}.corner.right {right:16px}
     .workspace {--default-list-width:clamp(204px,23vw,282px);min-height:0;flex:1;display:grid;grid-template-columns:var(--tune-list-width,var(--default-list-width)) 12px minmax(0,1fr);gap:0;padding:7px}
@@ -76,9 +77,9 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       -webkit-text-fill-color:currentColor;line-height:1.2;
     }
-    .app button.subtle,.app button.corner {color:#25362e;-webkit-text-fill-color:#25362e;background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;font-size:13px;font-weight:600;}
+    .app button.subtle,.app button.corner {color:#25362e;-webkit-text-fill-color:#25362e;background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;font-size:12px;font-weight:600;}
     .app button.primary {background-color:#176b43;color:#fff;-webkit-text-fill-color:#fff;}
-    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:15px;font-weight:400;}
+    .app button.tune {background-color:transparent;color:#23382c;-webkit-text-fill-color:#23382c;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;font-size:16px;font-weight:400;}
     .app button.tune.active {background-color:#dceee0;color:#0c4c29;-webkit-text-fill-color:#0c4c29;font-weight:400;}
     .app button.tune:hover {background-color:#f0f5f1;}
     .app button.tune.active:hover {background-color:#dceee0;}
@@ -93,26 +94,26 @@
       background-color:#f5f8f5;border:1px solid #abbab0;border-radius:6px;
       color:#25362e;-webkit-text-fill-color:#25362e;
       box-shadow:none;text-shadow:none;letter-spacing:normal;
-      font:600 13px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     }
     .app button#instrumentsBtn:hover {background-color:#e6f0e8}
     .scoreHeader {flex-wrap:wrap;row-gap:6px}
-    #tempoBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
-    .count {margin-left:auto;color:#667b6c;font-size:12px;white-space:nowrap}
-    .showTuneInfoOption {display:flex;align-items:center;gap:7px;flex:0 0 auto;margin:4px 8px 10px;padding:2px 0;font-size:13px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
+    #tempoBtn,#openInABCTTBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
+    .count {margin-left:auto;color:#667b6c;font-size:14px;white-space:nowrap}
+    .showTuneInfoOption {display:flex;align-items:center;gap:7px;flex:0 0 auto;margin:4px 8px 10px;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
     .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent)}
     #fileInput {display:none}
     .search {position:relative;margin:0 8px 7px;flex:0 0 auto}
-    #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:15px}
+    #searchInput {width:100%;min-height:36px;border:1px solid #c3cfc6;border-radius:5px;padding:7px 32px 7px 9px;background:white;font-size:16px}
     #clearSearch {position:absolute;right:3px;top:3px;border:0;background:transparent;font-size:19px;line-height:28px;width:28px;height:29px;color:#777;display:none}
     #tuneList {overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;min-height:0;flex:1;padding:1px 5px 7px}
-    .tune {display:block;width:100%;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;text-align:left;background:transparent;padding:9px 8px;min-height:38px;line-height:1.3;color:#23382c;overflow-wrap:anywhere;font-size:15px}
+    .tune {display:block;width:100%;border:0;border-bottom:1px solid #f0f2f0;border-radius:3px;text-align:left;background:transparent;padding:9px 8px;min-height:38px;line-height:1.3;color:#23382c;overflow-wrap:anywhere;font-size:16px}
     .tune:hover {background:#f0f5f1}
     .tune.active {background:#dceee0;color:#0c4c29;font-weight:400}
     .tuneTitle {display:block}
-    .tuneInfo {display:block;margin-top:2px;color:#66796e;font-size:13px;line-height:1.3;font-weight:400}
+    .tuneInfo {display:block;margin-top:2px;color:#66796e;font-size:14px;line-height:1.3;font-weight:400}
     .tune.active .tuneInfo {color:#42664e}
-    .emptyList {color:#77857b;font-size:13px;text-align:center;padding:23px 10px}
+    .emptyList {color:#77857b;font-size:14px;text-align:center;padding:23px 10px}
     .scorePane {display:flex;flex-direction:column}
     /* In-page full view is supported on iPad/iPhone where the Fullscreen API is limited. */
     .app.fullPage header,.app.fullPage aside,.app.fullPage .paneDivider {display:none}
@@ -122,7 +123,7 @@
     .scoreHeader {flex:0 0 auto;min-height:45px;display:flex;align-items:center;gap:14px;padding:6px 12px;border-bottom:1px solid var(--border);background:#fafcfa}
     .scoreHeader label {font-size:13px;font-weight:600;white-space:nowrap}
     #displayMode {max-width:min(280px,48vw);min-width:155px;height:32px;border-radius:5px;border:1px solid #b8c6bb;padding:4px 6px;background:white;font-size:13px}
-    #selectedName {min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;font-size:13px;color:#60746a}
+    #selectedName {min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;font-size:14px;color:#60746a}
     #fullPageBtn {min-height:32px;min-width:86px;padding:4px 9px;white-space:nowrap;flex:0 0 auto}
     #scoreScroll {min-height:0;flex:1;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:white}
     #score {min-width:0;width:100%;padding:9px 8px 23px}
@@ -291,8 +292,8 @@
       .paneDivider::before {left:7px;right:7px;top:50%;bottom:auto;width:auto;height:2px;transform:translateY(-50%)}
       .paneDivider::after {width:38px;height:5px}
     }
-    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
-    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
+    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
+    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
     @media(max-height:540px) and (orientation:landscape) {header{flex-basis:42px;height:42px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
   </style>
 </head>
@@ -316,7 +317,7 @@
    <div class="scoreHeader"><label for="displayMode">Display mode</label>
     <select id="displayMode" aria-label="Display mode">
      <option value="noten">Notation</option><option value="notenames">Names</option><option value="mandolin">Mandolin (GDAE)</option><option value="gdad">GDAD</option><option value="cgda">CGDA</option><option value="cgdae">CGDAE</option><option value="dgdae">DGDAE</option><option value="guitare">Guitar</option><option value="guitard">DADGAD</option><option value="uke">Uke</option><option value="whistle">Whistle</option><option value="recorder">Recorder</option>
-    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage">Tempo</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
+    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><button id="openInABCTTBtn" class="subtle" type="button" title="Open the original selected tune in the ABC Transcription Tools editor" disabled>Open in ABCTT</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
    </div>
    <div id="scoreScroll"><div id="placeholder">Select a tune from the list to view its notation.</div><div id="score"></div></div>
    <div id="audioHolder"><div id="audio" aria-label="Playback controls"></div></div>
@@ -383,6 +384,11 @@
     <p>The Tempo button opens the same tempo percentage dialog as the playback bar.</p>
 
     <hr>
+    <h3>Open in ABCTT</h3>
+    <p>Open the selected tune in the ABC Transcription Tools editor in a new browser tab.</p>
+    <p>The share link uses the original ABC (without any playback-only MIDI changes) and carries the current display mode.</p>
+
+    <hr>
     <h3>Full page</h3>
     <p>Expand the notation and playback across the page.</p>
     <p>Click Close full page or press Escape to return.</p>
@@ -401,7 +407,7 @@
 <div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><div class="dialog"><h2 id="enableTitle">Enable Playback</h2><p>Tap below to enable audio playback for the tunes received from ABC Transcription Tools.</p><div class="buttons"><button id="enableBtn" class="primary" type="button">Enable Playback</button></div></div></div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.0.2';
+const VIEWER_VERSION = '1.0.3';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -704,7 +710,7 @@ function stopOldPlayer() {
 }
 function selectTune(index) {
   if (index<0||index>=tunes.length) return;
-  currentIndex=index;renderList();
+  currentIndex=index;$('openInABCTTBtn').disabled=false;$('tempoBtn').disabled=false;renderList();
   $('selectedName').textContent=tunes[index].title;
   $('scoreScroll').scrollTop=0;
   void rebuild();
@@ -838,6 +844,7 @@ function installTempoBox() {
   input.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' ')openTempo(ev);});
 }
 $('tempoBtn').addEventListener('click',()=>{
+  if(currentIndex<0||!tunes[currentIndex])return;
   const input=findTempoInput();
   if(!input){reportError('Playback controls are not ready yet.');return;}
   void promptTempo(input);
@@ -1192,6 +1199,40 @@ $('showTuneInfo').addEventListener('change',()=>{
   renderList();
 });
 $('clearSearch').addEventListener('click',()=>{$('searchInput').value='';renderList();$('searchInput').focus();});
+// Match the ABC Comhaltas Note Names Player's ABC Transcription Tools share-link
+// encoding. Use the stored ORIGINAL tune text, never the MIDI-overridden playback copy.
+const ABC_TOOLS_EDITOR_URL = 'https://michaeleskin.com/abctools/abctools.html';
+function bytesToABCTTBase64URL(bytes) {
+  let binary='';
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function buildCurrentTuneABCTTURL() {
+  const original=currentIndex>=0?tunes[currentIndex]?.abc:null;
+  if(!original||!original.trim())return '';
+  if(typeof pako==='undefined'||typeof pako.deflate!=='function')
+    throw new Error('The Pako compression library did not load. Please reload the Viewer.');
+  const compressed=pako.deflate(new TextEncoder().encode(original),{level:6});
+  const url=new URL(ABC_TOOLS_EDITOR_URL);
+  url.searchParams.set('def',bytesToABCTTBase64URL(compressed));
+  url.searchParams.set('format',$('displayMode').value);
+  url.searchParams.set('editor','1');
+  return url.toString();
+}
+function openCurrentTuneInABCTT() {
+  try {
+    const url=buildCurrentTuneABCTTURL();
+    if(!url)return;
+    // Mirror the dedicated players' anchor approach for opening in a new tab.
+    const link=document.createElement('a');
+    link.href=url;link.target='_blank';link.rel='noopener noreferrer';
+    document.body.appendChild(link);link.click();link.remove();
+  } catch(error) {
+    reportError('Unable to open this tune in ABC Transcription Tools: '+(error?.message||error));
+  }
+}
+$('openInABCTTBtn').addEventListener('click',openCurrentTuneInABCTT);
+
 $('displayMode').addEventListener('change',()=>{
   // Only direct user changes persist. Transfer-supplied modes are session-only.
   try{localStorage.setItem(DISPLAY_KEY,$('displayMode').value);}catch(_){}
