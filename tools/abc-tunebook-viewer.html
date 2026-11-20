@@ -537,6 +537,36 @@
     #instructionsOverlay .instructionsScroll h3 {margin:0 0 8px;font-size:17px;line-height:1.3}
     #instructionsOverlay .instructionsScroll .aboutSection {text-align:center}
     #instructionsOverlay .instructionsScroll p {margin:0 0 10px}
+    /* Two compact, touch-friendly demo links in the Instructions dialog. */
+    #instructionsOverlay .viewerVideoLinks {
+      display:grid;gap:10px;max-width:540px;margin:10px auto 20px;
+    }
+    #instructionsOverlay .viewerVideoLink {
+      display:flex;align-items:center;gap:14px;min-width:0;
+      padding:13px 15px;border:1px solid #c9dccf;border-radius:9px;
+      background:#f7faf8;color:#1c4530;text-decoration:none;
+      font:600 14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      transition:background .15s ease,border-color .15s ease,box-shadow .15s ease;
+    }
+    #instructionsOverlay .viewerVideoLink:hover,
+    #instructionsOverlay .viewerVideoLink:focus-visible {
+      background:#eaf5ed;border-color:#87b59a;
+      box-shadow:0 2px 8px rgba(20,83,47,.1);
+    }
+    #instructionsOverlay .viewerVideoLink:focus-visible {
+      outline:2px solid #176b43;outline-offset:2px;
+    }
+    #instructionsOverlay .viewerVideoPlay {
+      display:inline-flex;flex:0 0 36px;align-items:center;justify-content:center;
+      width:36px;height:36px;border-radius:50%;background:#176b43;
+      color:#fff;font-size:15px;line-height:1;padding-left:2px;
+    }
+    #instructionsOverlay .viewerVideoText {flex:1 1 auto;min-width:0;overflow-wrap:break-word;}
+    #instructionsOverlay .viewerVideoExternal {flex:0 0 auto;color:#59826a;font-size:18px;font-weight:400;}
+    @media (max-width:525px) {
+      #instructionsOverlay .viewerVideoLink {gap:11px;padding:11px 12px;font-size:13.5px;}
+      #instructionsOverlay .viewerVideoPlay {flex-basis:33px;width:33px;height:33px;}
+    }
     #instructionsOverlay .instructionsScroll hr {
       border:0;border-top:1px solid rgba(127,127,127,.25);margin:17px 0
     }
@@ -938,14 +968,21 @@
     <h3>Introduction</h3>
     <p>ABC Tunebook Viewer provides a simple way to browse and play tunes from an ABC tunebook.</p>
     <p>Open ABC files directly, or use <b>Open in Tunebook Viewer</b> from the ABC Transcription Tools menu to send all the tunes currently loaded there.</p>
-
+    <p>Once tunes are opened, the list of tunes is shown on the left and the selected tune's notation is on the right.</p>
     <hr>
-    <h3>Overview</h3>
-    <p>Browse a collection of ABC tunes with the tune list on the left and the selected tune's notation and playback on the right.</p>
-    <hr>
-    <h3>Demo videos</h3>
-    <p style="text-align: center;"><a href="https://youtu.be/t0ZgJiUpw2w" target="_blank" rel="noopener noreferrer">Complete Walkthrough</a></p>    
-    <p style="text-align: center;"><a href="https://youtu.be/TiXdBBNGkpM" target="_blank" rel="noopener noreferrer">Saving, Sharing, Creating Lessons, and Sending Tunes to Other ABC Tools</a></p>    
+    <h3>Demo Videos</h3>
+    <div class="viewerVideoLinks" aria-label="Demo videos">
+      <a class="viewerVideoLink" href="https://youtu.be/t0ZgJiUpw2w" target="_blank" rel="noopener noreferrer">
+        <span class="viewerVideoPlay" aria-hidden="true">▶</span>
+        <span class="viewerVideoText">Complete Walkthrough</span>
+        <span class="viewerVideoExternal" aria-hidden="true">↗</span>
+      </a>
+      <a class="viewerVideoLink" href="https://youtu.be/TiXdBBNGkpM" target="_blank" rel="noopener noreferrer">
+        <span class="viewerVideoPlay" aria-hidden="true">▶</span>
+        <span class="viewerVideoText">Saving, Sharing, Creating Lessons, and Sending Tunes to Other ABC Tools</span>
+        <span class="viewerVideoExternal" aria-hidden="true">↗</span>
+      </a>
+    </div>
     <hr>
     <h3>Open</h3>
     <p>Choose one or more .abc or .txt files to load their tunes.</p>
