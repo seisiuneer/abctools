@@ -1,29 +1,22 @@
-SmeggTuner v1.4.6 - self-hosted at /tools/smeggtuner/
+SmeggTuner v1.4.8 — self-hosted package for https://michaeleskin.com/tools/smeggtuner/index.html
 
-DEPLOYMENT
-Place the included smeggtuner folder into your server's /tools/ directory,
-replacing the prior SmeggTuner installation. Keep all subdirectories.
+Deploy the CONTENTS of this directory to /tools/smeggtuner/ on michaeleskin.com.
+This package preserves v1.4.8's own generated JavaScript/CSS, WebAssembly engine, build ID and other assets.
 
-URL
-https://michaeleskin.com/tools/smeggtuner/index.html
-https://michaeleskin.com/tools/smeggtuner/
+Changes from the upstream 1.4.8 web distribution:
+- HTML (index, 200, 404): /_nuxt/ references changed to /tools/smeggtuner/_nuxt/; Nuxt app baseURL changed.
+- Main Nuxt bundle: corrected engine, worker registration, manifest, icons, i18n and related absolute URLs;
+  added route alias for /index.html and explicit /tools/smeggtuner/ service worker scope.
+- manifest.webmanifest: start_url, scope and icons updated to subdirectory paths.
+- sw.js: navigation fallback, cache paths, fetch interception and cache namespace isolated to SmeggTuner;
+  versioned for v1.4.8 so the service worker updates correctly.
+- index.html: transferred title, description, canonical, Open Graph, Twitter/X and Google Analytics
+  metadata from the supplied index(20261120-171352).html (not the previous Nuxt bootstrap).
+- Rebuilt .gz and .br precompressed variants for every modified file.
 
-CHANGES
-- Updated all v1.4.6 HTML Nuxt asset URLs and app.baseURL.
-- Patched main JS bundle IToh6blh.js for the engine, service worker, manifest,
-  favicon/Apple icon, i18n, optional Wails/API paths and an /index.html route alias.
-- Replaced root-scoped service worker with /tools/smeggtuner/-limited handling.
-  Versioned SmeggTuner-only cache: 1.4.6-2496e676452c-subdir1.
-  Cache cleanup intentionally leaves unrelated apps such as ABC Tools untouched.
-- Updated PWA manifest scope, start_url and icon references.
-- Carried forward SEO, Open Graph and Twitter metadata from the supplied
-  customized v1.4.5 index.html to v1.4.6 index.html and 200.html.
-  Open Graph image: https://michaeleskin.com/tools/img/smeggtuner_og3.jpg
-  Twitter image: https://michaeleskin.com/tools/img/smeggtuner_og2.jpg
-- Preserved Google Analytics ID G-VM0N9HL3MK.
-- Regenerated matching .gz and .br assets for all modified files.
+Social images referenced in the metadata are external to this package:
+  https://michaeleskin.com/tools/img/smeggtuner_og3.jpg
+  https://michaeleskin.com/tools/img/smeggtuner_og2.jpg
 
-NOTE
-Static validation does not establish microphone/audio-analysis functionality.
-After deploying, verify microphone, worker, WASM, routing and offline loading
-in a browser. Existing cached files may require a hard refresh on upgrade.
+Testing: validated static asset references, compressed variants, JavaScript syntax, and local HTTP endpoints.
+Microphone behavior and measurement accuracy require testing on the live HTTPS deployment.

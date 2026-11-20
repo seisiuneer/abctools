@@ -1,8 +1,8 @@
-// SmeggTuner v1.4.6: isolated deployment under /tools/smeggtuner/
+// SmeggTuner v1.4.8: isolated deployment under /tools/smeggtuner/
 // Only manages its own cache namespace, preserving other applications' caches.
 const BASE = '/tools/smeggtuner/';
 const PREFIX = 'smeggtuner-tools-smeggtuner-';
-const CACHE = `${PREFIX}1.4.6-2496e676452c-subdir1`;
+const CACHE = `${PREFIX}1.4.8-a794aa883efe-subdir1`;
 const SHELL = [
   `${BASE}index.html`,
   `${BASE}engine/smeggtuner.wasm`,
