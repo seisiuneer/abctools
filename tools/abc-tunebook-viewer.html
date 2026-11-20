@@ -2404,7 +2404,7 @@ async function saveLessonText(name,text,type='text/plain'){
     try{
       const file=new File([blob],name,{type});
       if(typeof navigator.canShare!=='function'||navigator.canShare({files:[file]})){
-        await navigator.share({files:[file],title:name});return;
+        await navigator.share({files:[file]});return;
       }
     }catch(error){
       if(error?.name==='AbortError')return; // User dismissed the share sheet.
