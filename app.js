@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3394_111826_1400";
+var gVersionNumber = "3395_111926_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31438,13 +31438,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_18Nov2026;
+        var updatePresented = localStorage.sawUpdate_19Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_18Nov2026 = true;
+          localStorage.sawUpdate_19Nov2026 = true;
 
         }
 
@@ -61049,15 +61049,17 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 18 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 19 November 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added <strong>Open in Tunebook Viewer</strong> on the <strong>☰</strong> menu.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added <strong>Open in Tunebook Viewer</strong> to the top of the <strong>☰</strong> menu and to the <strong>Open Tunes in Another Tool</strong> dialog external tools collection.</p>';
   modal_msg += '<p style="font-size:12pt;">The new <strong>ABC Tunebook Viewer</strong> is a quick and easy way to navigate and play tunes in ABC tunebooks that have multiple ABC tunes.</p>';
-  modal_msg += '<p style="font-size:12pt;">Click the new menu item to open all the tunes in the <strong>ABC Tunebook Viewer</strong>.</p>'
+  modal_msg += '<p style="font-size:12pt;">Click the new item at the top of <strong>☰</strong> menu to send all the tunes in the ABC editor to the <strong>ABC Tunebook Viewer</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">Send the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong> to the <strong>ABC Tunebook Viewer</strong> by clicking <strong>Open Tune in...</strong> at the upper right corner.</p>';
+  modal_msg += '<p style="font-size:12pt;">Send all the tunes in the ABC editor from the <strong>Sharing Controls</strong> dialog to the <strong>ABC Tunebook Viewer</strong> by clicking <strong>Open Tunes in Another Tool</strong>.</p>';  
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -67878,13 +67880,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_18Nov2026;
+    var updatePresented = localStorage.sawUpdate_19Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_18Nov2026 = true;
+      localStorage.sawUpdate_19Nov2026 = true;
 
     }
 
@@ -71591,6 +71593,52 @@ function OpenInABCTakadimiPlayer(abcText,isFromPlayer){
   OpenInAdditionalFingeringPlayer(abcText,isFromPlayer,'ABC Takadimi Player','https://michaeleskin.com/tools/abc-takadimi-player.html','OpenInABCTakadimiPlayer');
 }
 
+// ABC Tunebook Viewer: single-tune sharing uses the Viewer's own
+// def=<Pako/Deflate Base64URL>&format=<display mode> URL protocol.
+// Complete tunebooks use the existing postMessage handoff, without a URL limit.
+function OpenInABCTunebookViewer(abcText, isFromPlayer) {
+  if (!isFromPlayer) {
+    OpenABCTunebookMode();
+    return;
+  }
+
+  if (!abcText || !/^\s*X\s*:/m.test(abcText)) {
+    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">There is no ABC tune to open in the ABC Tunebook Viewer.</p>', {
+      theme: 'modal_flat', top: 230, scrollWithPage: AllowDialogsToScroll()
+    });
+    return;
+  }
+
+  if (typeof pako === 'undefined' || typeof pako.deflate !== 'function') {
+    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">The compression library is unavailable. Please reload ABC Transcription Tools.</p>', {
+      theme: 'modal_flat', top: 230, scrollWithPage: AllowDialogsToScroll()
+    });
+    return;
+  }
+
+  // Include the same file-header directives as other individual-tune shares.
+  abcText = AggregateABCFileHeaderForShare(abcText);
+  var compressed = pako.deflate(new TextEncoder().encode(abcText), { level: 6 });
+  var encoded = def_bytesToBase64URL(compressed);
+  var mode = 'noten';
+  try { mode = GetRadioValue('notenodertab') || 'noten'; } catch (error) {}
+  var allowedModes = ['noten','notenames','mandolin','gdad','cgda','cgdae','dgdae','guitare','guitard','uke','whistle','recorder'];
+  if (allowedModes.indexOf(mode) === -1) mode = 'noten';
+
+  var url = new URL('https://michaeleskin.com/tools/abc-tunebook-viewer.html');
+  url.searchParams.set('def', encoded);
+  url.searchParams.set('format', mode);
+  var shareURL = url.toString();
+  if (shareURL.length > 8100) {
+    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Tunebook Viewer.</p>', {
+      theme: 'modal_flat', top: 230, scrollWithPage: AllowDialogsToScroll()
+    });
+    return;
+  }
+  sendGoogleAnalytics('action', 'OpenInABCTunebookViewer');
+  window.open(shareURL, '_blank');
+}
+
 // ------------------------------------------------------------
 // Open Tune(s) in Another Tool - independent My Tools favorites
 // ------------------------------------------------------------
@@ -72010,7 +72058,8 @@ function openInExternalTool(theABC, isFromPlayer){
         '</div>' +
         '<div id="external_tools_favorites_grid" style="display:grid;grid-template-columns:310px 310px;grid-auto-rows:196px;column-gap:32px;row-gap:8px;justify-content:center;height:532px;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;"></div>' +
       '</div>' +
-      '<div id="external_tools_panel_abc" style="display:none;grid-template-columns:310px 310px;grid-template-rows:repeat(7,196px);column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
+      '<div id="external_tools_panel_abc" style="display:none;grid-template-columns:310px 310px;grid-auto-rows:196px;column-gap:32px;row-gap:8px;justify-content:center;height:604px;overflow-y:scroll;overflow-x:hidden;scrollbar-gutter:stable;">' +
+        toolCard('external_tunebook_viewer', 'img/tool-tunebook-viewer-1.jpg', 'Open the selected tune or all tunes in the ABC Tunebook Viewer', 'ABC Tunebook Viewer', 'ABC Tunebook Viewer') +
         toolCard('external_chord_chart', 'img/tool_chordchart_other_1.jpg', 'Open the ABC in the ABC Chord Chart Generator', 'ABC Chord Chart Generator', 'ABC Chord Chart Generator') +
         toolCard('external_fretboard_player', 'img/tool-abc-fretboard-player-1.jpg', 'Open the ABC in the ABC Fretboard Player', 'ABC Fretboard Player', 'ABC Fretboard Player') +
         toolCard('external_irish_fiddle_player', 'img/tool-abc-irish-fiddle-player-1.jpg', 'Open the ABC in the ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player', 'ABC Irish Fiddle Fingering Player') +
@@ -72081,6 +72130,9 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_abcjs");
   if (elem) elem.onclick = function(){ OpenInABCJSQuickEditor(theABC); };
+
+  elem = document.getElementById("external_tunebook_viewer");
+  if (elem) elem.onclick = function(){ OpenInABCTunebookViewer(theABC,isFromPlayer); };
 
   elem = document.getElementById("external_chord_chart");
   if (elem) elem.onclick = function(){ OpenInABCChordChartGenerator(theABC,isFromPlayer); };
@@ -73727,6 +73779,14 @@ function OpenABCTunebookMode() {
   try { abcText = getABCEditorText(); } catch (error) { abcText = ''; }
   if (!/^\s*X\s*:/m.test(abcText)) {
     showTunebookViewerAlert('There are no ABC tunes in the editor to show in the Tunebook Viewer.', 190);
+    return;
+  }
+
+  // Full-tunebook postMessage transfers are restricted to the official hosted
+  // ABC Transcription Tools, as with the other external instrument players.
+  // Single-tune Deflate share links remain available from local copies.
+  if (!isRunningFromOfficialMichaeleskinDomain()) {
+    showTunebookViewerAlert('Direct ABC transfer to the ABC Tunebook Viewer is only available from the official online version at https://michaeleskin.com. Save the ABC file and open it manually in the viewer instead.', 150, 620);
     return;
   }
 
