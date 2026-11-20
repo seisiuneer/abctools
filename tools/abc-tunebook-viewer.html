@@ -693,7 +693,22 @@
     .lessonCloseRow {display:flex;justify-content:center;margin-top:34px}
     .lessonCloseRow button {min-width:78px;border-color:#aebbb3;background:#f5f6f5}
     .lessonCloseRow button:hover {background:#e4e8e5;border-color:#81968a}
-    #shareModal .lessonActions {margin-top:44px}
+    /* Three intentionally separate centered rows; buttons stay aligned on phones. */
+    #shareModal .lessonDialog {width:min(620px,calc(100vw - 28px));}
+    #shareModal .lessonDialog h2 {margin-bottom:25px;}
+    .shareActionRows {display:grid;gap:14px;max-width:548px;margin:0 auto;}
+    .shareActionRow {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;}
+    .shareActionRow button {appearance:none;-webkit-appearance:none;min-height:43px;width:100%;
+      padding:8px 7px;border:1px solid #a9aed8;border-radius:6px;background:#e6e8ff;
+      color:#17241c;-webkit-text-fill-color:#17241c;
+      font:400 14px/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      white-space:normal;cursor:pointer;}
+    .shareActionRow button:hover:not(:disabled) {background:#daddff;border-color:#8f96c8;}
+    .shareActionRow button:disabled {opacity:.43;cursor:default;}
+    #shareModal .lessonCloseRow {margin-top:27px;}
+    @media(max-width:480px){.shareActionRows{gap:11px}.shareActionRow{gap:9px}
+      .shareActionRow button{min-height:48px;padding:7px 5px;font-size:12px}}
+
     #lessonModal .lessonDialog {width:min(700px,calc(100vw - 28px));height:min(50dvh,520px);
       display:flex;flex-direction:column;overflow:hidden}
     #lessonModal .lessonDialog h2,#lessonModal .lessonDialog label,#lessonModal .lessonDialog input,
@@ -779,14 +794,16 @@
     <p>You can also drag and drop .abc or .txt files anywhere on the page.</p>
 
     <hr>
-    <h3 id="sharingInstructionsSection">Share Links</h3>
-    <p>Click <b>Share</b> to create a link for the complete loaded tunebook. The button is available only when all the tunes fit within a share link.</p>
-    <p>Choose <b>Share All Tunes</b>, then copy, save, or test the link. <b>Open in ABCTT</b> sends the complete tunebook to ABC Transcription Tools.</p>
-    <p>Opening a share link loads the collection and its saved display mode. You can choose a different display mode afterward.</p>
+    <h3 id="sharingInstructionsSection">Saving and Sharing Tunes</h3>
+    <p>Click <b>Share</b> to save tunes as an ABC file or create a share link.</p>
+    <p><b>Save Current Tune</b> saves only the tune selected in the sidebar, including its original ABC file header when present.</p>
+    <p><b>Save All Tunes</b> saves the entire loaded collection in the order shown in the sidebar. This is useful for saving a sorted tunebook or combining tunes opened from several files into one ABC file.</p>
+    <p>Both options preserve applicable ABC file headers and separate tunes with blank lines. Your original files are unchanged. On iPhone or iPad, use the share sheet to save the new file.</p>
+    <p><b>Share Current Tune</b> and <b>Share All Tunes</b> create links you can copy, save, or test. Sharing options are unavailable when the selected ABC is too large for a single or all ABC tunes link; saving ABC files remains available.</p>
 
     <hr>
     <h3 id="teacherLessonInstructionsSection">Lessons for Teachers</h3>
-    <p>Choose <b>Share → Configure Lesson</b>, enter a title and instructions, then click <b>Create Lesson Link</b> to share the full tunebook as a lesson.</p>
+    <p>Choose <b>Share → Configure Lesson (Current tune)</b> or <b>Configure Lesson (All tunes)</b>, enter a title and instructions, then click <b>Create Lesson Link</b>.</p>
     <p><b>Save Lesson Configuration</b> saves the tune collection and lesson settings to a file; use <b>Load Lesson Configuration</b> to restore it later. You can also open a saved lesson file using <b>Open</b>.</p>
 
     <hr>
@@ -901,9 +918,19 @@
   <div class="lessonDialog" id="shareChoiceDialog">
     <button id="shareHelpBtn" class="dialogHelpBtn" type="button" aria-label="Sharing help" title="Sharing help">?</button>
     <h2 id="shareModalTitle">Sharing Controls</h2>
-    <div class="lessonActions">
-      <button id="shareAllDialogBtn" type="button">Share All Tunes</button>
-      <button id="configureLessonBtn" type="button">Configure Lesson…</button>
+    <div class="shareActionRows">
+      <div class="shareActionRow">
+        <button id="saveCurrentTuneBtn" type="button">Save Current Tune</button>
+        <button id="saveAllTunesBtn" type="button">Save All Tunes</button>
+      </div>
+      <div class="shareActionRow">
+        <button id="shareCurrentDialogBtn" type="button">Share Current Tune</button>
+        <button id="shareAllDialogBtn" type="button">Share All Tunes</button>
+      </div>
+      <div class="shareActionRow">
+        <button id="configureCurrentLessonBtn" type="button">Configure Lesson (Current tune)…</button>
+        <button id="configureLessonBtn" type="button">Configure Lesson (All tunes)…</button>
+      </div>
     </div>
     <div class="lessonCloseRow"><button id="shareCloseBtn" type="button">Close</button></div>
   </div>
@@ -950,7 +977,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.4.3';
+const VIEWER_VERSION = '1.5.0';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -1103,6 +1130,7 @@ const LIST_WIDTH_REFERENCE_KEY = 'abc-tunebook:list-width-reference-px';
 const LIST_HEIGHT_KEY = 'abc-tunebook:list-height-px';
 const VALID_MODES = new Set([...$('displayMode').options].map(option => option.value));
 let tunes = [], currentIndex = -1, player = null, playbackCursor = null;
+let collectionSourceNames = []; // Successful file names or the incoming source, for ABC save suggestions.
 // Snapshot the loaded (not subsequently sorted) collection. Never persist it
 // across a new file, drag/drop, transfer, or incoming share/lesson load.
 let originalOrderSnapshot = [], originalOrderGeneration = 0;
@@ -1376,6 +1404,28 @@ function sortTunebookABC(book,tag){
   // Match ABCTT's blank-line-separated output without changing tune bodies.
   return header+indexed.map(item=>item.abc.replace(/\n*$/,'')+'\n\n').join('').replace(/\n*$/,'')+'\n';
 }
+// Sort the loaded tune records rather than serializing and splitting them again.
+// This keeps each tune's original pre-X: file header attached to that tune,
+// including when a collection was assembled from several ABC source files.
+function sortLoadedTuneEntries(entries,tag){
+  if(tag==='original'||!SORT_OPERATIONS.some(op=>op.id===tag))throw new Error('Unknown sorting field.');
+  const indexed=entries.map((tune,index)=>({tune,index,title:sortTitleKey(firstSortTag(tune.abc,'T'))}));
+  indexed.sort((a,b)=>compareSortedTitles(a,b)||a.index-b.index);
+  if(tag!=='T'){
+    const numeric=tag==='M',ignoreCase=['R','C','N','O'].includes(tag);
+    indexed.forEach((item,i)=>{
+      let key=firstSortTag(item.tune.abc,tag);
+      if(ignoreCase)key=key.toLowerCase();
+      item.key=numeric?(SORT_METER_WEIGHTS[key]??19):key;
+      item.titleRank=i;
+    });
+    indexed.sort((a,b)=>{
+      const cmp=numeric?a.key-b.key:sortLocaleCompare(a.key,b.key);
+      return cmp||a.titleRank-b.titleRank;
+    });
+  }
+  return indexed.map(item=>item.tune);
+}
 let lastViewerSortTag='T';
 async function showSortDialog(){
   if(!tunes.length||tunebookShareLoading)return;
@@ -1402,10 +1452,8 @@ async function showSortDialog(){
       // Restore the exact loaded tune data, including its file-level headers.
       reordered=originalOrderSnapshot.map(snapshotTune);
     } else {
-      // Keep the global collection header at the top, regardless of sort key.
-      const sorted=sortTunebookABC(originalTunebookABC(),tag);
-      const sortedParts=splitTunes(sorted);
-      reordered=sortedParts.map((abc,i)=>({abc,title:tuneTitle(abc,i),info:tuneInfo(abc)}));
+      // Preserve original tune records and each source file's header while sorting.
+      reordered=sortLoadedTuneEntries(tunes,tag);
     }
     if(reordered.length!==tunes.length)throw new Error('Tune count changed during sorting.');
     // Sorting or restoring the order changes share/lesson payloads.
@@ -1503,6 +1551,7 @@ function appendABC(text,{replace=false,source='ABC file'}={}) {
     if($('shareModal'))setModal('shareModal',false);
     if($('lessonLinkModal'))setModal('lessonLinkModal',false);
     tunes=[];currentIndex=-1;$('searchInput').value='';
+    collectionSourceNames=[source];
   }
   const initial=tunes.length;
   const initialOriginal=replace?[]:originalOrderSnapshot.map(snapshotTune);
@@ -1523,6 +1572,7 @@ function selectTune(index) {
   if (index<0||index>=tunes.length) return;
   closeABCModal();
   currentIndex=index;$('openInABCTTBtn').disabled=false;$('viewABCBtn').disabled=false;$('tempoBtn').disabled=false;renderList();
+  refreshTunebookShareState();
   $('selectedName').textContent=tunes[index].title;
   $('scoreScroll').scrollTop=0;
   void rebuild();
@@ -2019,7 +2069,7 @@ async function addFiles(files) {
   }
   // One file-selection or drop is ONE replacement operation, even with multiple files.
   // Read all files before clearing, so an invalid selection cannot destroy the book.
-  const serial=++fileLoadSerial, next=[], errors=[];
+  const serial=++fileLoadSerial, next=[], errors=[], successfulFiles=[];
   tunebookShareLoading=true;
   refreshTunebookShareState();
   for(const file of files) {
@@ -2027,6 +2077,7 @@ async function addFiles(files) {
     try {
       const parts=splitTunes(await file.text());
       if(!parts.length)throw new Error('No ABC tunes were found');
+      successfulFiles.push(file.name||'Tunebook');
       for(const abc of parts)next.push({abc,title:tuneTitle(abc,next.length),info:tuneInfo(abc)});
     } catch(error){errors.push(`${file.name}: ${error?.message||error}`);}
   }
@@ -2036,6 +2087,7 @@ async function addFiles(files) {
     // Never allow a previously generated URL to represent the new collection.
     setModal('shareModal',false);setModal('lessonLinkModal',false);
     tunes=next;
+    collectionSourceNames=successfulFiles;
     rememberOriginalOrder(next);
     invalidateTunebookShareCache();
     currentIndex=-1;
@@ -2159,12 +2211,14 @@ const TUNEBOOK_SHARE_MAX_LEN=8100;
 const TUNEBOOK_LESSON_DRAFT_KEY='abcTunebookViewerLessonDraftV1';
 const TUNEBOOK_LESSON_PLAYER='abc-tunebook-viewer.html';
 let tunebookShareCache=null;
+let currentTuneShareCache=null;
 let tunebookShareLoading=false;
 let shareLinkDialogKind='all';
+let lessonScope='all';
 let studentLessonMode=false;
 let lessonIntroductionPending=false;
 function setModal(id,show){$(id).classList.toggle('open',!!show);}
-function invalidateTunebookShareCache(){tunebookShareCache=null;refreshTunebookShareState();}
+function invalidateTunebookShareCache(){tunebookShareCache=null;currentTuneShareCache=null;refreshTunebookShareState();}
 function originalTunebookABC(){
   // splitTunes() retains each source file's global pre-X: header on every tune.
   // Emit a common global header only once, preserving tune-specific headers for
@@ -2182,41 +2236,78 @@ function originalTunebookABC(){
     return body.replace(/^([ \t]*X[ \t]*:[^\n]*)(\n|$)/m,(_m,xline,nl)=>xline+(nl||'\n')+before+'\n');
   }).join('\n\n');
 }
+// The file header remains before X:, with one blank line separating it from
+// the first tune. splitTunes() already retains each source header per tune.
+function separateABCHeader(text){
+  const abc=normalizeABC(text).trim();
+  const match=/^[ \t]*X[ \t]*:/m.exec(abc);
+  if(!match)return abc;
+  const header=abc.slice(0,match.index).trim();
+  const body=abc.slice(match.index).trim();
+  return header?header+'\n\n'+body:body;
+}
+function currentTuneExportABC(){
+  return currentIndex>=0&&tunes[currentIndex]?separateABCHeader(tunes[currentIndex].abc):'';
+}
+function allTunesExportABC(){return separateABCHeader(originalTunebookABC());}
+function compressedSharePayload(abc){
+  if(!abc||!window.pako?.deflate)return '';
+  return bytesToABCTTBase64URL(pako.deflate(new TextEncoder().encode(abc),{level:6}));
+}
 function tunebookSharePayload(){
   if(!tunes.length)return '';
   if(tunebookShareCache!==null)return tunebookShareCache;
-  if(!window.pako?.deflate)return '';
-  try{
-    const abc=originalTunebookABC();
-    tunebookShareCache=bytesToABCTTBase64URL(pako.deflate(new TextEncoder().encode(abc),{level:6}));
-    return tunebookShareCache;
-  }catch(error){console.warn('Unable to compress tunebook for sharing:',error);return '';}
+  try{tunebookShareCache=compressedSharePayload(originalTunebookABC());return tunebookShareCache;}
+  catch(error){console.warn('Unable to compress tunebook for sharing:',error);return '';}
 }
-function buildTunebookShareURL(mode=$('displayMode').value){
-  const payload=tunebookSharePayload();if(!payload)return '';
+function currentTuneSharePayload(){
+  const abc=currentTuneExportABC();if(!abc)return '';
+  if(currentTuneShareCache?.index===currentIndex&&currentTuneShareCache.abc===abc)
+    return currentTuneShareCache.payload;
+  try{
+    const payload=compressedSharePayload(abc);
+    currentTuneShareCache={index:currentIndex,abc,payload};return payload;
+  }catch(error){console.warn('Unable to compress selected tune for sharing:',error);return '';}
+}
+function makeTunebookShareURL(payload,mode=$('displayMode').value){
+  if(!payload)return '';
   const u=new URL(TUNEBOOK_SHARE_BASE_URL);
   u.searchParams.set('def',payload);
   u.searchParams.set('format',VALID_MODES.has(mode)?mode:'noten');
   return u.toString();
 }
+function buildTunebookShareURL(mode=$('displayMode').value){return makeTunebookShareURL(tunebookSharePayload(),mode);}
+function buildCurrentTuneShareURL(mode=$('displayMode').value){return makeTunebookShareURL(currentTuneSharePayload(),mode);}
 function shareLinkFits(url){return !!url && url.length<=TUNEBOOK_SHARE_MAX_LEN;}
+function lessonScopeShareURL(){return lessonScope==='current'?buildCurrentTuneShareURL():buildTunebookShareURL();}
+function lessonScopeABC(){return lessonScope==='current'?currentTuneExportABC():originalTunebookABC();}
 function refreshTunebookShareState(){
   const button=$('shareBtn');if(!button)return;
+  const busy=tunebookShareLoading, hasTunes=!!tunes.length;
+  const selected=hasTunes&&currentIndex>=0&&!!tunes[currentIndex];
+  const shareAllowed=!busy&&!studentLessonMode;
   const sortButton=$('sortBtn');
-  if(sortButton){sortButton.disabled=tunebookShareLoading||!tunes.length;sortButton.title=tunebookShareLoading?'Loading tunes…':tunes.length?'Sort the loaded tunes by an ABC tag.':'Open an ABC tunebook first.';}
-  const link=tunebookShareLoading?'':buildTunebookShareURL();
-  button.disabled=tunebookShareLoading||!shareLinkFits(link)||studentLessonMode;
-  const tooltip=studentLessonMode?'Sharing is unavailable in student lesson mode.':tunebookShareLoading
-    ?'Loading tunes and checking the share-link size…':!tunes.length
-      ?'Open an ABC tunebook first.':!window.pako?.deflate
-        ?'Sharing is unavailable because the compression library did not load. Reload the Viewer.':button.disabled
-          ?'The tunebook is too large to create a share link.'
-          :'Share all loaded tunes, or configure a lesson.';
+  if(sortButton){sortButton.disabled=busy||!hasTunes;
+    sortButton.title=busy?'Loading tunes…':hasTunes?'Sort the loaded tunes by an ABC tag.':'Open an ABC tunebook first.';}
+  // The Share dialog and ABC saves remain accessible even if every link is too large.
+  button.disabled=!shareAllowed||!hasTunes;
+  const tooltip=studentLessonMode?'Sharing is unavailable in student lesson mode.':busy
+    ?'Loading tunes…':!hasTunes?'Open an ABC tunebook first.':'Save, share, or configure lessons for the loaded tunes.';
   button.title=tooltip;
   const wrapper=$('shareBtnWrap');if(wrapper)wrapper.title=tooltip;
-  const count=$('lessonTuneCount');if(count)count.textContent=tunes.length+' '+(tunes.length===1?'tune':'tunes');
-  const create=$('lessonShareBtn');if(create)create.disabled=tunebookShareLoading||!shareLinkFits(link);
-  const save=$('lessonSaveConfigBtn');if(save)save.disabled=tunebookShareLoading||!tunes.length;
+  const allFits=shareAllowed&&hasTunes&&shareLinkFits(buildTunebookShareURL());
+  const currentFits=shareAllowed&&selected&&shareLinkFits(buildCurrentTuneShareURL());
+  const enable=(id,available)=>{const el=$(id);if(el)el.disabled=!available;};
+  enable('saveCurrentTuneBtn',shareAllowed&&selected);
+  enable('saveAllTunesBtn',shareAllowed&&hasTunes);
+  enable('shareCurrentDialogBtn',currentFits);
+  enable('shareAllDialogBtn',allFits);
+  enable('configureCurrentLessonBtn',currentFits);
+  enable('configureLessonBtn',allFits);
+  const count=$('lessonTuneCount');if(count)count.textContent=(lessonScope==='current'?'1':tunes.length)+' '+
+    ((lessonScope==='current'||tunes.length===1)?'tune':'tunes');
+  const create=$('lessonShareBtn');if(create)create.disabled=!shareAllowed||!(lessonScope==='current'?currentFits:allFits);
+  const save=$('lessonSaveConfigBtn');if(save)save.disabled=!shareAllowed||!hasTunes;
 }
 function validateIncomingABC(text){
   if(typeof text!=='string'||!splitTunes(text).length)throw new Error('No ABC tunes were found in the share link.');
@@ -2243,9 +2334,21 @@ function openWholeBookInABCTT(){
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';
   document.body.appendChild(a);a.click();a.remove();
 }
+function openSharedLinkInABCTT(){
+  try{
+    const shared=new URL($('lessonLinkOutput').value.trim());
+    const def=shared.searchParams.get('def');if(!def)return;
+    const url=new URL(ABC_TOOLS_EDITOR_URL);
+    url.searchParams.set('def',def);
+    url.searchParams.set('format',shared.searchParams.get('format')||'noten');
+    url.searchParams.set('editor','1');
+    const a=document.createElement('a');a.href=url.toString();a.target='_blank';a.rel='noopener noreferrer';
+    document.body.appendChild(a);a.click();a.remove();
+  }catch(e){reportError('Unable to open this ABC in ABCTT: '+(e?.message||e));}
+}
 function showShareLinkDialog(kind,url){
   shareLinkDialogKind=kind;
-  $('lessonLinkTitle').textContent=kind==='lesson'?'Lesson Share Link':'All Tunes Share Link';
+  $('lessonLinkTitle').textContent=kind==='lesson'?'Lesson Share Link':kind==='current'?'Current Tune Share Link':'All Tunes Share Link';
   $('lessonLinkOutput').value=url;
   $('lessonLinkCloseBtn').textContent=kind==='lesson'?'Back':'Close';
   if(kind!=='lesson')setModal('shareModal',false);
@@ -2276,7 +2379,7 @@ function incomingLessonData(params){
   return lessonMetadata(meta);
 }
 function lessonShareURL(title,instructions){
-  const basic=buildTunebookShareURL();if(!basic)return '';
+  const basic=lessonScopeShareURL();if(!basic)return '';
   const u=new URL(basic);
   const meta={title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')};
   u.searchParams.set('ldata',bytesToABCTTBase64URL(pako.deflate(new TextEncoder().encode(JSON.stringify(meta)),{level:6})));
@@ -2325,11 +2428,54 @@ async function askLessonFileName(promptText,defaultName){
   }
   return savedLessonBaseName(value)+'.txt';
 }
+function compactABCFileStem(name){
+  return String(name||'Tunebook').replace(/\.(abc|txt)$/i,'')
+    .replace(/[\\/:*?"<>|\x00-\x1f]+/g,'-').replace(/\s+/g,' ').trim().replace(/^[.\s]+|[.\s]+$/g,'')
+    .slice(0,55).trim()||'Tunebook';
+}
+function suggestedABCFileName(scope){
+  if(scope==='current')return compactABCFileStem(tunes[currentIndex]?.title||'Tune')+'.abc';
+  if(collectionSourceNames.length===1){
+    const source=collectionSourceNames[0];
+    if(source==='ABC Transcription Tools')return 'ABCTT-Tunebook.abc';
+    if(source==='share link')return 'Shared-Tunebook.abc';
+    if(source==='lesson link'||source==='lesson configuration')return 'Lesson-Tunebook.abc';
+    return compactABCFileStem(source)+'.abc';
+  }
+  if(collectionSourceNames.length>1)return compactABCFileStem(collectionSourceNames[0])+'-combined.abc';
+  return 'Tunebook.abc';
+}
+function normalizeABCSaveFileName(value,fallback){
+  let result=String(value||'').trim().replace(/[\\/:*?"<>|\x00-\x1f]+/g,'-').replace(/\s+/g,' ').trim();
+  if(!result||/^\.+$/.test(result))result=fallback;
+  if(/\.(abc|txt)$/i.test(result))return result;
+  // Replace an invalid extension, rather than saving e.g. MyTunes.pdf.abc.
+  result=result.replace(/\.[^.\s]+$/,'').replace(/\.+$/,'');
+  return (result||compactABCFileStem(fallback))+'.abc';
+}
+async function askABCFileName(defaultName){
+  let value=null;
+  document.body.classList.add('save-name-prompt-open');
+  try{
+    if(window.DayPilot?.Modal?.prompt){
+      const result=await DayPilot.Modal.prompt('Save ABC file name:',defaultName,{top:100,width:460});
+      if(!result||result.canceled)return null;
+      value=result.result;
+    }else {value=window.prompt('Save ABC file name:',defaultName);if(value===null)return null;}
+  }finally{document.body.classList.remove('save-name-prompt-open');}
+  return normalizeABCSaveFileName(value,defaultName);
+}
+async function saveABCFromViewer(scope){
+  const abc=scope==='current'?currentTuneExportABC():allTunesExportABC();
+  if(!abc)return;
+  const filename=await askABCFileName(suggestedABCFileName(scope));
+  if(filename)await saveLessonText(filename,abc+'\n','text/plain;charset=utf-8');
+}
 function lessonConfigObject(){
-  const url=buildTunebookShareURL();
+  const url=lessonScopeShareURL();
   return {format:'ABCPlayerLesson',version:2,player:TUNEBOOK_LESSON_PLAYER,
     title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,
-    abc:originalTunebookABC(),settings:Object.fromEntries(new URL(url).searchParams.entries())};
+    abc:lessonScopeABC(),settings:Object.fromEntries(new URL(url).searchParams.entries())};
 }
 function validateLessonConfigObject(config){
   if(!config||config.format!=='ABCPlayerLesson'||config.version!==2||typeof config!=='object')
@@ -2373,6 +2519,7 @@ async function loadLessonConfigFile(file){
     // Teacher configuration loading intentionally restores normal preferences.
     try{localStorage.setItem(DISPLAY_KEY,$('displayMode').value);}catch(_){}
   }
+  lessonScope='all'; // The imported configuration contains its complete lesson collection.
   fileLoadSerial++;
   $('enableOverlay').classList.remove('open');
   needsGesture=false;
@@ -2393,12 +2540,34 @@ function installTunebookShareUI(){
   $('shareHelpBtn').addEventListener('click',()=>openInstructionsAt('sharingInstructionsSection'));
   $('lessonHelpBtn').addEventListener('click',()=>openInstructionsAt('teacherLessonInstructionsSection'));
   $('studentLessonHelpBtn').addEventListener('click',()=>openInstructionsAt('studentLessonInstructionsSection'));
+  $('saveCurrentTuneBtn').addEventListener('click',async()=>{
+    if($('saveCurrentTuneBtn').disabled)return;
+    try{await saveABCFromViewer('current');}catch(e){reportError('Unable to save current tune: '+(e?.message||e));}
+  });
+  $('saveAllTunesBtn').addEventListener('click',async()=>{
+    if($('saveAllTunesBtn').disabled)return;
+    try{await saveABCFromViewer('all');}catch(e){reportError('Unable to save tunebook: '+(e?.message||e));}
+  });
+  $('shareCurrentDialogBtn').addEventListener('click',()=>{
+    if($('shareCurrentDialogBtn').disabled)return;
+    const link=buildCurrentTuneShareURL();
+    if(!shareLinkFits(link)){reportError('This tune is too large to share as a link.');return;}
+    showShareLinkDialog('current',link);
+  });
   $('shareAllDialogBtn').addEventListener('click',()=>{
+    if($('shareAllDialogBtn').disabled)return;
     const link=buildTunebookShareURL();if(!shareLinkFits(link)){reportError('The tunebook is too large to share as a link.');return;}
     showShareLinkDialog('all',link);
   });
-  $('configureLessonBtn').addEventListener('click',()=>{
+  const configureLesson=(scope)=>{
+    lessonScope=scope;
     setModal('shareModal',false);refreshTunebookShareState();setModal('lessonModal',true);
+  };
+  $('configureCurrentLessonBtn').addEventListener('click',()=>{
+    if(!$('configureCurrentLessonBtn').disabled)configureLesson('current');
+  });
+  $('configureLessonBtn').addEventListener('click',()=>{
+    if(!$('configureLessonBtn').disabled)configureLesson('all');
   });
   $('lessonCloseBtn').addEventListener('click',()=>setModal('lessonModal',false));
   restoreLessonDraft();
@@ -2432,14 +2601,15 @@ function installTunebookShareUI(){
   $('lessonSaveLinkBtn').addEventListener('click',async()=>{
     try{
       const filename=await askLessonFileName('Save share link file name:',shareLinkDialogKind==='lesson'
-        ? ($('lessonTitleInput').value||'Lesson')+' Lesson Link':'All Tunes Share Link');
+        ? ($('lessonTitleInput').value||'Lesson')+' Lesson Link'
+        :shareLinkDialogKind==='current'?(tunes[currentIndex]?.title||'Tune')+' Share Link':'All Tunes Share Link');
       if(filename)await saveLessonText(filename,$('lessonLinkOutput').value+'\n');
     }catch(e){reportError('Unable to save share link: '+(e?.message||e));}
   });
   $('lessonTestLinkBtn').addEventListener('click',()=>{
     const link=$('lessonLinkOutput').value.trim();if(link)window.open(link,'_blank','noopener');
   });
-  $('lessonOpenABCTTBtn').addEventListener('click',openWholeBookInABCTT);
+  $('lessonOpenABCTTBtn').addEventListener('click',openSharedLinkInABCTT);
   $('lessonLinkCloseBtn').addEventListener('click',()=>setModal('lessonLinkModal',false));
   $('studentLessonStartBtn').addEventListener('click',()=>{
     // This click is the audio-unlock gesture; never show a second modal.
