@@ -165,6 +165,75 @@
     #status {position:fixed;left:50%;bottom:5px;transform:translateX(-50%);padding:4px 10px;background:#f0f5f0;color:#536a58;border:1px solid #d3ded4;border-radius:4px;font-size:12px;pointer-events:none;display:none}
     .overlay {position:fixed;inset:0;z-index:2000;background:#0007;display:none;justify-content:center;align-items:flex-start;overflow:auto;padding:16vh 12px 24px}
     .overlay.open {display:flex}
+    /* Match the standalone player tools' audio-enable dialog, including its
+       speaker icon, green button, and one-third-down viewport placement. */
+    #enableOverlay {
+      z-index:30000;
+      justify-content:center;
+      align-items:center;
+      padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));
+      background:rgba(0,0,0,.64);
+    }
+    #enableOverlay .enablePlaybackDialog {
+      transform:translateY(-16.6667vh);
+      transform:translateY(-16.6667dvh);
+      width:min(380px,100%);
+      max-height:calc(100dvh - 32px);
+      overflow-y:auto;
+      box-sizing:border-box;
+      padding:30px 24px 28px;
+      border-radius:16px;
+      background:#fff;
+      color:#17251d;
+      box-shadow:0 22px 65px rgba(0,0,0,.38);
+      text-align:center;
+      font:16px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    #enableOverlay .enablePlaybackSymbol {
+      font-size:36px;
+      line-height:1;
+      margin-bottom:14px;
+    }
+    #enableOverlay .enablePlaybackDialog h2 {
+      margin:0 0 12px;
+      font-size:1.42rem;
+      line-height:1.2;
+    }
+    #enableOverlay .enablePlaybackDialog p {
+      margin:0 0 24px;
+      color:#46584b;
+    }
+    #enableOverlay #enableBtn {
+      display:block;
+      box-sizing:border-box;
+      width:100%;
+      min-height:56px;
+      padding:12px 18px;
+      border:0;
+      border-radius:10px;
+      color:#fff;
+      -webkit-text-fill-color:#fff;
+      background:#176b43;
+      box-shadow:none;
+      font:700 1.1rem/1.25 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      cursor:pointer;
+    }
+    #enableOverlay #enableBtn:hover:not(:disabled),
+    #enableOverlay #enableBtn:focus-visible {
+      background:#0d4c2f;
+      outline:3px solid #92c4a6;
+      outline-offset:2px;
+    }
+    #enableOverlay #enableBtn:disabled {
+      opacity:.72;
+      cursor:wait;
+    }
+    @media (max-height:540px) {
+      #enableOverlay .enablePlaybackDialog {transform:none;}
+    }
+    @media (max-width:480px) {
+      #enableOverlay .enablePlaybackDialog {padding:26px 20px 24px;}
+    }
     .dialog {box-shadow:0 10px 36px #0004;border:1px solid #acb5af;background:white;border-radius:8px;width:min(530px,95vw);padding:22px 25px 24px;text-align:left;max-height:78vh;overflow:auto}
     .dialog h2 {margin:0 0 14px;text-align:center;font-size:21px}
     .dialog p {margin:0 0 12px}
@@ -795,7 +864,14 @@
   </div>
   <div class="buttons"><button id="closeInstructions" class="primary" type="button">Close</button></div>
 </div></div>
-<div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><div class="dialog"><h2 id="enableTitle">Enable Playback</h2><p>Tap below to enable audio playback for the tunes received from ABC Transcription Tools.</p><div class="buttons"><button id="enableBtn" class="primary" type="button">Enable Playback</button></div></div></div>
+<div id="enableOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="enableTitle">
+  <div class="enablePlaybackDialog">
+    <div class="enablePlaybackSymbol" aria-hidden="true">&#128266;</div>
+    <h2 id="enableTitle">Enable Audio Playback</h2>
+    <p>Tap the button below to enable sound and use the playback controls.</p>
+    <button id="enableBtn" type="button">Enable Playback</button>
+  </div>
+</div>
 <!-- A floating source dialog allows clicking another tune to close it automatically. -->
 <div id="abcModalOverlay" class="abcModalOverlay" hidden>
   <section id="abcModalWindow" class="abcModalWindow" role="dialog" aria-labelledby="abcModalTitle" aria-modal="false" tabindex="-1">
@@ -874,7 +950,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '1.4';
+const VIEWER_VERSION = '1.4.3';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -2047,10 +2123,11 @@ document.addEventListener('dragover',ev=>{if([...ev.dataTransfer?.types||[]].inc
 document.addEventListener('dragleave',()=>{dragDepth=Math.max(0,dragDepth-1);if(!dragDepth)$('dragOverlay').style.display='none';});
 document.addEventListener('drop',ev=>{ev.preventDefault();dragDepth=0;$('dragOverlay').style.display='none';const files=[...ev.dataTransfer?.files||[]];if(files.length)void addFiles(files);});
 // Large tunebooks are transferred by postMessage, not by a length-limited URL.
-// A real window.opener match ties the transfer to the page that opened this tab.
-// It also permits locally hosted editors and the online editor to use the same tool.
+// Match the instrument players: accept full ABC transfers only from the
+// official hosted ABC Transcription Tools window that opened this tab.
+// Ordinary file imports and single-tune share/lesson links are unaffected.
 function trustedTransfer(event) {
-  return !!window.opener && event.source===window.opener;
+  return !!window.opener && event.source===window.opener && event.origin==='https://michaeleskin.com';
 }
 function notifyReady(){if(window.opener)try{window.opener.postMessage({type:'abcTunebookReady'},'*');}catch(error){console.warn(error);}}
 window.addEventListener('message',event=>{
