@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no">
   <title>ABC Tunebook Viewer</title>
-  <meta name="description" content="Browse, display, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
+  <meta name="description" content="Browse, display, edit, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
   <meta name="author" content="Michael Eskin">
   <link rel="canonical" href="https://michaeleskin.com/tools/abc-tunebook-viewer.html">
 
@@ -14,18 +14,18 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ABC Tunebook Viewer">
   <meta property="og:title" content="ABC Tunebook Viewer">
-  <meta property="og:description" content="Browse, display, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
+  <meta property="og:description" content="Browse, display, edit, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
   <meta property="og:url" content="https://michaeleskin.com/tools/abc-tunebook-viewer.html">
-  <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og2.jpg">
-  <meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og2.jpg">
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og3.jpg">
+  <meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og3.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:alt" content="ABC Tunebook Viewer music notation and searchable tune list">
 
   <!-- Social media sharing -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ABC Tunebook Viewer">
-  <meta name="twitter:description" content="Browse, display, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
-  <meta name="twitter:image" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og2.jpg">
+  <meta name="twitter:description" content="Browse, display, edit, and play ABC tune collections with a searchable tune list, notation and tablature views, synchronized playback, and adjustable tempo.">
+  <meta name="twitter:image" content="https://michaeleskin.com/tools/img/abc-tunebook-viewer-og3.jpg">
   <meta name="twitter:image:alt" content="ABC Tunebook Viewer music notation and searchable tune list">
   <link rel="icon" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
 
@@ -50,8 +50,10 @@
     button,select {cursor:pointer}
     button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid #85bda1;outline-offset:1px}
     .app {display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0}
-    header {position:relative;flex:0 0 51px;height:51px;display:flex;align-items:center;justify-content:center;background:white;border-bottom:1px solid var(--border)}
+    header {position:relative;flex:0 0 55px;height:55px;display:flex;align-items:center;justify-content:center;background:white;border-bottom:1px solid var(--border)}
+    .headerTitleBlock {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-width:0;pointer-events:none}
     header h1 {margin:0;font-size:21px;line-height:1.2;font-weight:650;white-space:nowrap}
+    .headerSourceStatus {display:block;max-width:calc(100vw - 24px);color:#667b6c;font-size:14px;line-height:1.15;font-weight:400;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .corner {position:absolute;top:10px;height:30px;display:inline-flex;align-items:center;justify-content:center;min-width:79px;padding:3px 12px;color:#25362e;border:1px solid #abbab0;background:#f5f8f5;border-radius:6px;text-decoration:none;font-weight:600;font-size:12px}
     .corner:hover {background:#e6f0e8}
     .corner.left {left:16px}.corner.right {right:16px}
@@ -63,7 +65,7 @@
     .paneDivider:hover::after,.paneDivider.dragging::after,.paneDivider:focus-visible::after {background:var(--accent)}
     .paneDivider:focus-visible {outline:2px solid #85bda1;outline-offset:-2px}
     aside,.scorePane {min-width:0;min-height:0;background:white;border:1px solid var(--border);border-radius:7px;overflow:hidden}
-    aside {display:flex;flex-direction:column}
+    aside {display:flex;flex-direction:column;container-type:inline-size}
     .listActions {display:flex;flex-wrap:wrap;align-items:center;column-gap:7px;row-gap:4px;padding:8px 8px 5px;flex:0 0 auto}
     #openBtn,#shareBtn {min-width:81px;min-height:34px;padding:6px 13px}
     /* Blue Share button matching Open's dimensions, with a tooltip-bearing
@@ -115,11 +117,33 @@
     #tempoBtn,#viewABCBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
     .tuneTransposeButtons {display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;white-space:nowrap;}
     .tuneTransposeButtons button.subtle {min-height:32px;padding:4px 9px;white-space:nowrap;}
-    .count {margin-left:auto;color:#667b6c;font-size:14px;white-space:nowrap}
-    .tuneListOptions {display:flex;align-items:center;gap:8px;flex:0 0 auto;margin:4px 8px 10px;min-width:0}
-    .showTuneInfoOption {display:flex;align-items:center;gap:7px;min-width:0;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
+
+    /* Use shared columns so Sort's right edge lines up with Clear below it. */
+    .tuneControls {display:grid;grid-template-columns:max-content max-content max-content;
+      align-items:center;justify-content:start;column-gap:7px;row-gap:10px;
+      flex:0 0 auto;margin:4px 8px 6px;}
+    .tuneListOptions,.tuneEditActions {display:contents;}
+    .showTuneInfoOption {grid-column:1 / span 2;display:flex;align-items:center;gap:7px;min-width:0;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
     .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent);margin-left:2px;}
-    #sortBtn {margin-left:auto;flex:0 0 auto;min-height:28px;padding:4px 11px;white-space:nowrap}
+    #sortBtn {grid-column:3;justify-self:end;min-height:28px;padding:4px 11px;white-space:nowrap}
+    /* Small tune-management buttons, kept at the left immediately above search. */
+    .tuneEditActions button {justify-self:start;min-height:28px;padding:4px 11px;white-space:nowrap;}
+    #clearTunesBtn {justify-self:end;}
+    .tuneEditActions button:disabled {opacity:.45;cursor:default;}
+    /* Keep Add, Delete, and Clear on one row even with a narrow resized sidebar. */
+    @container (max-width:245px) {
+      .tuneControls {column-gap:3px;margin-left:5px;margin-right:5px;}
+      .app .tuneEditActions button.subtle {padding-left:4px;padding-right:4px;font-size:11px;}
+      #sortBtn {padding-left:6px;padding-right:6px;font-size:11px;}
+      .showTuneInfoOption {font-size:13px;gap:4px;}
+    }
+    @media(max-width:730px) and (min-width:526px) {
+      .tuneControls {column-gap:5px;}
+      .showTuneInfoOption {font-size:12px;gap:4px;}
+      .showTuneInfoOption input {width:14px;height:14px;}
+      #sortBtn {padding:4px 7px;}
+      .tuneEditActions button {padding:4px 7px;font-size:12px;}
+    }
     /* The Sort dialog uses the same flat DayPilot form as ABC Transcription Tools. */
     .viewerSortHeading {display:block;box-sizing:border-box;width:100%;margin:4px 0 25px;padding:0;font:normal 23px/1.3 Helvetica,Arial,sans-serif;text-align:center;color:#111}
     .viewerSortIntro {margin:32px 0 29px;font:16px/1.55 Helvetica,Arial,sans-serif;color:#111;text-align: center;}
@@ -596,10 +620,15 @@
     @media(max-width:730px) {.workspace{--default-list-width:clamp(165px,34vw,225px);padding:4px} .scoreHeader{padding:5px 7px;gap:7px}.scoreHeader label{display:none} #displayMode{min-width:116px;max-width:43vw}#selectedName{display:none} .corner{min-width:70px} header h1{font-size:18px}}
     /* Keep the longer viewer title clear of the corner buttons on narrow phones. */
     @media(max-width:525px) and (orientation:portrait) {
-      header h1 {font-size:clamp(13px,3.75vw,16px)}
-      header .corner {min-width:0;padding:3px 7px;font-size:12px}
+      header {flex-basis:60px;height:60px}
+      .headerTitleBlock {gap:13px}
+      header h1 {font-size:clamp(12px,3.6vw,16px)}
+      header .corner {top:5px;min-width:0;padding:3px 7px;font-size:12px}
       header .corner.left {left:8px}
       header .corner.right {right:8px}
+    }
+    @media(max-width:360px) and (orientation:portrait) {
+      header .corner {padding-left:5px;padding-right:5px}
     }
     @media(max-width:525px) and (orientation:portrait) {
       .workspace {grid-template-columns:minmax(0,1fr);grid-template-rows:var(--tune-list-height,minmax(130px,29dvh)) 12px minmax(0,1fr)}
@@ -609,7 +638,7 @@
     }
     @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} .tuneTransposeButtons button.subtle{padding:4px 6px;font-size:11px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
     @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} .tuneTransposeButtons button.subtle{padding:4px 6px;font-size:11px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
-    @media(max-height:540px) and (orientation:landscape) {header{flex-basis:42px;height:42px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
+    @media(max-height:540px) and (orientation:landscape) {header{flex-basis:49px;height:49px} header h1{font-size:17px} .headerSourceStatus{font-size:12px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
     /* Read-only ABC source window. Kept separate from the DayPilot dialogs. */
     .abcModalOverlay {
       position:fixed;inset:0;z-index:2400;pointer-events:none;
@@ -652,14 +681,25 @@
       cursor:pointer;
     }
     .abcModalText {
-      flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
-      margin:0;padding:12px 14px;border:0;background:#fff;color:#18221d;
+      display:block;box-sizing:border-box;width:100%;flex:1 1 auto;
+      min-height:0;min-width:0;overflow:auto;resize:none;
+      margin:0;padding:12px 14px;border:0;outline:none;background:#fff;color:#18221d;
+      -webkit-text-fill-color:#18221d;
       font:13pt/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-      /* Preserve ABC line breaks but wrap long music lines inside the dialog. */
+      /* The native textarea preserves selections, Undo, and mobile editing. */
       white-space:pre-wrap;tab-size:4;overflow-wrap:anywhere;word-break:normal;
       -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
       user-select:text;-webkit-user-select:text;
     }
+    .abcModalText:focus-visible {outline:2px solid #85bda1;outline-offset:-2px}
+    .abcModalWarning {
+      position:absolute;z-index:3;top:43px;left:12px;right:12px;
+      padding:9px 12px;border:1px solid #ccaa65;border-radius:6px;
+      background:#fff5e5;color:#5d4216;box-shadow:0 3px 12px #0002;
+      font:600 13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      pointer-events:none;
+    }
+    .abcModalWarning[hidden] {display:none}
     .abcModalFooter {
       flex:0 0 51px;display:grid;align-items:center;
       grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
@@ -939,14 +979,17 @@
 <div class="app">
  <header>
   <a class="corner left" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a>
-  <h1>ABC Tunebook Viewer</h1>
+  <div class="headerTitleBlock"><h1>ABC Tunebook Viewer</h1><div id="sourceStatus" class="headerSourceStatus" role="status" aria-live="polite" aria-atomic="true" title="No tunes loaded">No tunes loaded</div></div>
   <button id="instructionsBtn" class="corner right" type="button">Instructions</button>
  </header>
  <main class="workspace">
   <aside aria-label="Tune list">
-   <div class="listActions"><button id="openBtn" type="button" class="primary">Open</button><span id="shareBtnWrap" class="shareBtnWrap" title="Open an ABC tunebook first."><button id="shareBtn" type="button" class="primary" title="Open an ABC tunebook first." disabled>Share</button></span><span id="tuneCount" class="count">0 tunes</span></div>
-   <div class="tuneListOptions"><label class="showTuneInfoOption"><input type="checkbox" id="showTuneInfo" checked>Show tune info</label><button id="sortBtn" class="subtle" type="button" title="Open an ABC tunebook first." disabled>Sort</button></div>
-   <input type="file" id="fileInput" accept=".abc,.ABC,.txt,.TXT,text/plain" multiple>
+   <div class="listActions"><button id="openBtn" type="button" class="primary">Open</button><span id="shareBtnWrap" class="shareBtnWrap" title="Open an ABC tunebook first."><button id="shareBtn" type="button" class="primary" title="Open an ABC tunebook first." disabled>Share</button></span></div>
+   <div class="tuneControls">
+    <div class="tuneListOptions"><label class="showTuneInfoOption"><input type="checkbox" id="showTuneInfo" checked>Show tune info</label><button id="sortBtn" class="subtle" type="button" title="Open an ABC tunebook first." disabled>Sort</button></div>
+    <input type="file" id="fileInput" accept=".abc,.ABC,.txt,.TXT,text/plain" multiple>
+    <div class="tuneEditActions"><button id="addTuneBtn" class="subtle" type="button" title="Add a new tune at the end of the list">Add Tune</button><button id="deleteTuneBtn" class="subtle" type="button" title="Select a tune to delete." disabled>Delete Tune</button><button id="clearTunesBtn" class="subtle" type="button" title="Open an ABC tunebook first." disabled>Clear</button></div>
+   </div>
    <div class="search"><input id="searchInput" type="search" placeholder="Find a tune…" aria-label="Find a tune" autocomplete="off" spellcheck="false"><button id="clearSearch" type="button" aria-label="Clear search">×</button></div>
    <nav id="tuneList" aria-label="Tunebook tunes"><div class="emptyList">Open one or more ABC files, or drop them here.</div></nav>
   </aside>
@@ -955,7 +998,7 @@
    <div class="scoreHeader"><label for="displayMode">Display mode</label>
     <select id="displayMode" aria-label="Display mode">
      <option value="noten">Notation</option><option value="notenames">Names</option><option value="mandolin">Mandolin (GDAE)</option><option value="gdad">GDAD</option><option value="cgda">CGDA</option><option value="cgdae">CGDAE</option><option value="dgdae">DGDAE</option><option value="guitare">Guitar</option><option value="guitard">DADGAD</option><option value="uke">Uke</option><option value="whistle">Whistle</option><option value="recorder">Recorder</option>
-    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><span class="tuneTransposeButtons" role="group" aria-label="Transpose selected tune"><button id="transposeDownBtn" class="subtle" type="button" title="Transpose the tune down one semitone. Shift-click: two semitones. Alt-click: one octave." disabled>Transpose ↓</button><button id="transposeUpBtn" class="subtle" type="button" title="Transpose the tune up one semitone. Shift-click: two semitones. Alt-click: one octave." disabled>Transpose ↑</button></span><button id="viewABCBtn" class="subtle" type="button" title="Read the current ABC text for the selected tune" disabled>ABC</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
+    </select><span id="selectedName"></span><button id="viewABCBtn" class="subtle" type="button" title="Edit the current ABC text for the selected tune" disabled>ABC</button><span class="tuneTransposeButtons" role="group" aria-label="Transpose selected tune"><button id="transposeDownBtn" class="subtle" type="button" title="Transpose the tune down one semitone. Shift-click: two semitones. Alt-click: one octave." disabled>Transpose ↓</button><button id="transposeUpBtn" class="subtle" type="button" title="Transpose the tune up one semitone. Shift-click: two semitones. Alt-click: one octave." disabled>Transpose ↑</button></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
    </div>
    <div id="scoreScroll"><div id="placeholder">Select a tune from the list to view its notation.</div><div id="score"></div></div>
    <div id="audioHolder"><div id="audio" aria-label="Playback controls"></div></div>
@@ -968,7 +1011,7 @@
   <p id="viewerVersion" class="viewerVersion"></p>
   <div class="instructionsScroll" tabindex="0" aria-label="Instructions content">
     <h3>Introduction</h3>
-    <p>ABC Tunebook Viewer provides a simple way to browse and play tunes from an ABC tunebook.</p>
+    <p>ABC Tunebook Viewer provides a simple way to browse, play, and edit tunes from an ABC tunebook.</p>
     <p>Open ABC files directly, or use <b>Open in Tunebook Viewer</b> from the ABC Transcription Tools menu to send all the tunes currently loaded there.</p>
     <p>Once tunes are opened, the list of tunes is shown on the left and the selected tune's notation is on the right.</p>
     <hr>
@@ -988,30 +1031,13 @@
     <hr>
     <h3>Open</h3>
     <p>Choose one or more .abc or .txt files to load their tunes.</p>
-    <p>Opening files replaces the current tunebook. If you have sorted or transposed any tunes, you will be asked before replacing them so your changes are not lost accidentally.</p>
+    <p>Opening files replaces the current tunebook.</p>
+    <p>If you have added, deleted, sorted, transposed, or edited any tunes, you will be asked before replacing them so your changes are not lost accidentally.</p>
     <p>You can also drag and drop .abc or .txt files anywhere on the page.</p>
-
-    <hr>
-    <h3 id="sharingInstructionsSection">Saving and Sharing Tunes</h3>
-    <p>Click <b>Share</b> to save tunes as an ABC file, create a share link, or create a lesson.</p>
-    <p><b>Save Current Tune to ABC File</b> saves only the tune selected in the sidebar, including its ABC file header when present and any transposition you made.</p>
-    <p><b>Save All Tunes to ABC File</b> saves the entire loaded collection, including any transposed tunes, in the order shown in the sidebar. This is useful for saving a sorted tunebook or combining tunes opened from several files into one ABC file.</p>
-    <p>Both options preserve applicable ABC file headers and separate tunes with blank lines. Your original files are unchanged. On iPhone or iPad, use the share sheet to save the new file.</p>
-    <p><b>Share Current Tune</b> and <b>Share All Tunes</b> create links you can copy, save, or test. Sharing options are unavailable when the selected ABC is too large for a single or all ABC tunes link; saving ABC files remains available.</p>
-    <p><b>Lessons</b> let you share a single tune or the complete tunebook along with a lesson title and instructions. Choose <b>Configure Lesson (Current tune)</b> or <b>Configure Lesson (All tunes)</b>, enter your instructions, then create a lesson link for your students.</p>
-    <p>When students open the link, they see your lesson title and instructions before selecting <b>Start Lesson</b> to browse and play the tunes. You can also save a lesson configuration to a file and reopen it later.</p>
-    <p>In the <b>Share</b> dialog, choose <b>Open in ABCTT (Current tune)</b> or <b>Open in ABCTT (All tunes)</b> to send tunes to ABC Transcription Tools for editing, provided the ABC fits in the share link.</p>
-    <p><b>Open in Tool (Current tune)</b> or <b>Open in Tool (All tunes)</b> sends your ABC to another music tool. For complete instructions and demonstration videos, see:</p>
-    <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" rel="noopener noreferrer">ABC Transcription Tools User Guide — Open Tunes in Another Tool</a>.</p>
-    <hr>
-    <h3 id="teacherLessonInstructionsSection">Lessons for Teachers</h3>
-    <p>Choose <b>Share → Configure Lesson (Current tune)</b> or <b>Configure Lesson (All tunes)</b>, enter a title and instructions, then click <b>Create Lesson Link</b>.</p>
-    <p><b>Save Lesson Configuration</b> saves the tune collection and lesson settings to a file; use <b>Load Lesson Configuration</b> to restore it later. You can also open a saved lesson file using <b>Open</b>.</p>
-
-    <hr>
-    <h3 id="studentLessonInstructionsSection">Lessons for Students</h3>
-    <p>Opening a lesson link displays the teacher's title and instructions. Click <b>Start Lesson</b> to enable playback and browse the tunes.</p>
-    <p>You can change the notation display mode during the lesson without changing your saved preference.</p>
+    <p>Use <b>Add Tune</b> above the search bar to add a tune at the end of the list.</p>
+    <p>Its ABC opens for editing with standard header fields ready to fill in.</p>
+    <p>Use <b>Delete Tune</b> to remove the selected tune after confirmation.</p>
+    <p>Use <b>Clear</b> to remove all tunes; unsaved changes require confirmation.</p>
 
     <hr>
     <h3>Show tune info</h3>
@@ -1020,9 +1046,15 @@
     <p>Your preference is saved in the browser.</p>
 
     <hr>
+    <h3>Find</h3>
+    <p>Filter the list by title, then select a title to show that tune.</p>
+
+    <hr>
     <h3 id="sortInstructionsSection">Sort</h3>
     <p>Click <b>Sort</b>, choose a tag, then click <b>Sort</b> to reorder the tunes.</p>
-    <p>Choose <b>Restore to Original Order</b> to return tunes to their loaded order without undoing any transpositions. Sorting uses the current transposed ABC, including updated keys. The first tune is selected after sorting or restoring. Your original file is not changed.</p>
+    <p>Choose <b>Restore to Original Order</b> to return tunes to their loaded order while preserving added or deleted tunes, ABC edits, and transpositions.</p>
+    <p>Sorting uses the current ABC, including updated titles and keys.</p>
+    <p>The first tune is selected after sorting or restoring.</p>
 
     <hr>
     <h3>Resize the tune list</h3>
@@ -1031,13 +1063,26 @@
     <p>Double-click or double-tap the divider to reset.</p>
 
     <hr>
-    <h3>Find</h3>
-    <p>Filter the list by title, then select a title to show that tune.</p>
-
-    <hr>
     <h3>Display mode</h3>
     <p>Choose notation, names, or instrument tablature.</p>
     <p>Your choice is saved for your next visit.</p>
+
+    <hr>
+    <h3>ABC</h3>
+    <p>Click <b>ABC</b> in the notation header, just to the left of the <b>Transpose</b> buttons, to edit the selected tune's ABC directly.</p>
+    <p>The notation updates shortly after you stop typing, making the Viewer a useful <b>light ABC editor</b>, though not as full-featured as ABC Transcription Tools.</p>
+    <p>Edits are kept when switching tunes and are included when saving or sharing.</p>
+    <p>The panel edits <b>one tune at a time</b>. To replace it, select all the ABC text and paste a complete single tune, including its <b>X:</b> line. The ABC must contain exactly one <b>X:</b> line; deleting it or pasting multiple tunes is not allowed.</p>
+    <p>Use <b>Font size</b> to adjust the text. Drag the title bar to move the window, or drag its bottom-right corner to resize it.</p>
+
+    <hr>
+    <h3>Transpose the selected tune</h3>
+    <p>Use <b>Transpose ↓</b> or <b>Transpose ↑</b> in the notation header.</p>
+    <p>Click to transpose the selected tune one semitone, <b>Shift-click</b> for two semitones, or <b>Alt-click</b> for one octave (12 semitones).</p>
+    <p>Alt takes priority if both modifier keys are held.</p>
+    <p>The notation, playback, key signature, and chord symbols are updated together.</p>
+    <p>Transpose changes are cumulative and kept for each tune when switching tunes, sorting, or restoring the original tune order.</p>
+    <p>Saving, sharing, creating lessons, and sending tunes to other tools all use the transposed ABC.</p>
 
     <hr>
     <h3>Instruments</h3>
@@ -1053,15 +1098,10 @@
     <p>The Tempo button opens the same tempo percentage dialog as the playback bar.</p>
 
     <hr>
-    <h3>Transpose the selected tune</h3>
-    <p>Use <b>Transpose ↓</b> or <b>Transpose ↑</b> in the notation header. Click to move the selected tune one semitone, <b>Shift-click</b> for two semitones, or <b>Alt-click</b> for one octave (12 semitones). Alt takes priority if both modifier keys are held. The notation, playback, key signature, and chord symbols are updated together.</p>
-    <p>Transpose changes are cumulative and kept for each tune when switching tunes, sorting, or restoring the original tune order.</p>
-    <p>Saving, sharing, creating lessons, and sending tunes to other tools all use the transposed ABC. The original file on your device is unchanged.</p>
-
-    <hr>
-    <h3>ABC</h3>
-    <p>Click <b>ABC</b> to view the selected tune's current ABC text, including any transposition. It is read-only, but you can select and copy it.</p>
-    <p>Use <b>Font size</b> to adjust the text. Drag the title bar to move the window, or drag its bottom-right corner to resize it.</p>
+    <h3>Playback</h3>
+    <p>Use the controls below the notation to play, pause, restart, loop, or seek within a tune.</p>
+    <p>Click the tempo percentage field to set playback speed from 10% to 200%.</p>
+    <p>The tempo setting is saved in this browser.</p>
 
     <hr>
     <h3>Full page</h3>
@@ -1069,12 +1109,39 @@
     <p>Click Close full page or press Escape to return.</p>
 
     <hr>
-    <h3>Playback</h3>
-    <p>Use the controls below the notation to play, pause, restart, loop, or seek within a tune.</p>
-    <p>Click the tempo percentage field to set playback speed from 10% to 200%.</p>
-    <p>The tempo setting is saved in this browser.</p>
+    <h3 id="sharingInstructionsSection">Saving and Sharing Tunes</h3>
+    <p>Click <b>Share</b> to save tunes as an ABC file, create a share link, or create a lesson.</p>
+    <p><b>Save Current Tune to ABC File</b> saves only the tune selected in the sidebar, including its ABC file header when present and any transposition you made.</p>
+    <p><b>Save All Tunes to ABC File</b> saves the entire loaded collection, including any transposed tunes, in the order shown in the sidebar.</p>
+    <p>This is useful for saving a sorted tunebook or combining tunes opened from several files into one ABC file.</p>
+    <p>Both options preserve applicable ABC file headers and separate tunes with blank lines.</p>
+    <p>On iPhone or iPad, use the share sheet to save the new file.</p>
+    <p><b>Share Current Tune</b> and <b>Share All Tunes</b> create links you can copy, save, or test.</p>
+    <p>Sharing options are unavailable when the selected ABC is too large for a single or all ABC tunes link; saving ABC files remains available.</p>
+    <p><b>Lessons</b> let you share a single tune or the complete tunebook along with a lesson title and instructions.</p>
+    <p>Choose <b>Configure Lesson (Current tune)</b> or <b>Configure Lesson (All tunes)</b>, enter your instructions, then create a lesson link for your students.</p>
+    <p>When students open the link, they see your lesson title and instructions before selecting <b>Start Lesson</b> to browse and play the tunes.</p>
+    <p>You can also save a lesson configuration to a file and reopen it later.</p>
+    <p>In the <b>Share</b> dialog, choose <b>Open in ABCTT (Current tune)</b> or <b>Open in ABCTT (All tunes)</b> to send tunes to ABC Transcription Tools for editing, provided the ABC fits in the share link.</p>
+    <p><b>Open in Tool (Current tune)</b> or <b>Open in Tool (All tunes)</b> sends your ABC to another music tool.</p>
+    <p style="text-align: center;">For complete instructions and demonstration videos, see:</p>
+    <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" rel="noopener noreferrer">ABC Transcription Tools User Guide — Open Tunes in Another Tool</a>.</p>
+    <hr>
+    <h3 id="teacherLessonInstructionsSection">Lessons for Teachers</h3>
+    <p>Choose <b>Share → Configure Lesson (Current tune)</b> or <b>Configure Lesson (All tunes)</b>, enter a title and instructions, then click <b>Create Lesson Link</b>.</p>
+    <p><b>Save Lesson Configuration</b> saves the tune collection and lesson settings to a file; use <b>Load Lesson Configuration</b> to restore it later.</p>
+    <p>You can also open a saved lesson file using <b>Open</b>.</p>
 
     <hr>
+
+    <h3 id="studentLessonInstructionsSection">Lessons for Students</h3>
+    <p>Opening a lesson link displays the teacher's title and instructions.</p>
+    <p>Click <b>Start Lesson</b> to enable playback and browse the tunes.</p>
+    <p>You can change the notation display mode during the lesson without changing your saved preference.</p>
+    <p><b>Add Tune</b>, <b>Delete Tune</b>, <b>Clear</b>, and editing ABC are disabled during lessons.</p>
+
+    <hr>
+
     <section class="aboutSection" aria-label="About">
       <h3>About</h3>
       <p>This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.</p>
@@ -1111,8 +1178,9 @@
         </select>
       </div>
     </div>
-    <pre id="abcModalText" class="abcModalText" tabindex="0" aria-label="Original ABC text"></pre>
-    <div class="abcModalFooter"><span class="abcModalFooterInfo">Read-only (not editable)</span><button id="abcModalOK" type="button">Close</button></div>
+    <div id="abcModalWarning" class="abcModalWarning" role="alert" hidden></div>
+    <textarea id="abcModalText" class="abcModalText" aria-label="Edit current ABC text" spellcheck="false" autocorrect="off" autocapitalize="off" wrap="soft"></textarea>
+    <div class="abcModalFooter"><button id="abcModalOK" type="button">Close</button></div>
     <div id="abcModalResize" class="abcModalResize" role="button" tabindex="0" aria-label="Resize ABC window" title="Drag to resize the ABC window"></div>
   </section>
 </div>
@@ -1189,7 +1257,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '2.1';
+const VIEWER_VERSION = '3.0';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -1206,14 +1274,131 @@ fingeringCSS.textContent=gWhistleFont+gRecorderFont+
 document.head.appendChild(fingeringCSS);
 
 const $ = id => document.getElementById(id);
-// The original tune remains separate from the MIDI-augmented playback copy.
-// The ABC window is a movable, resizable, read-only floating dialog so the
-// user can choose another tune behind it; that action closes this dialog.
+// Edit the current tune only. As with transposition, the live tune.abc record
+// is authoritative for notation, sorting, saves, shares, lessons and transfers.
+// The ABC window remains movable and resizable; selecting a tune closes it.
 const ABC_MODAL_GEOMETRY_KEY = 'abc-tunebook:abc-window-geometry';
 const ABC_MODAL_FONT_SIZE_KEY = 'abc-tunebook:abc-window-font-size';
 const ABC_MODAL_FONT_SIZES = new Set([7,9,11,13,15,17,19]);
 const ABC_MODAL_MARGIN = 10;
 let abcModalPointer = null;
+const ABC_EDIT_DEBOUNCE_MS = 280; // ABCTT no-syntax-highlighting editor delay.
+let abcEditTimer = null, abcEditWarningTimer = null;
+let abcEditListPending = false; // Coalesce sidebar metadata changes with the ABC redraw delay.
+let abcEditTuneId = null, abcEditFilePrefix = '';
+let abcEditLastValid = '', abcEditComposing = false;
+function cancelABCEditTimer(){
+  if(abcEditTimer!==null){clearTimeout(abcEditTimer);abcEditTimer=null;return true;}
+  return false;
+}
+function clearABCEditWarning(){
+  if(abcEditWarningTimer!==null)clearTimeout(abcEditWarningTimer);
+  abcEditWarningTimer=null;
+  $('abcModalWarning').hidden=true;
+}
+function showABCEditWarning(reason){
+  const el=$('abcModalWarning');
+  el.textContent=reason==='additional'
+    ?'Only one tune can be edited at a time. Pasting another X: tune is not allowed.'
+    :'The ABC must contain exactly one X: header. You cannot delete the only X: line.';
+  el.hidden=false;
+  if(abcEditWarningTimer!==null)clearTimeout(abcEditWarningTimer);
+  abcEditWarningTimer=setTimeout(()=>{el.hidden=true;abcEditWarningTimer=null;},3000);
+}
+// A tune replacement may supply a different X: number or preceding comments.
+// Accept exactly one X: header; reject deleting it or adding a second tune.
+// All other ABC (including temporarily incomplete notation) stays editable.
+function abcEditStructureIssue(text){
+  const xHeaders=[...text.matchAll(/^[ \t]*X[ \t]*:[^\r\n]*/gm)];
+  if(xHeaders.length>1)return 'additional';
+  if(xHeaders.length===0)return 'protected';
+  return '';
+}
+function prospectiveABCEdit(inserted){
+  const field=$('abcModalText');
+  return field.value.slice(0,field.selectionStart)+inserted+field.value.slice(field.selectionEnd);
+}
+function guardABCEdit(nextText,event){
+  const reason=abcEditStructureIssue(nextText);
+  if(!reason)return false;
+  event.preventDefault();
+  showABCEditWarning(reason);
+  return true;
+}
+function commitABCEdit(){
+  if(studentLessonMode||abcEditComposing||$('abcModalOverlay').hidden||abcEditTuneId===null)return;
+  const field=$('abcModalText'),text=field.value;
+  const issue=abcEditStructureIssue(text);
+  if(issue){
+    // Fallback for Undo, native mobile edits, and browsers that omit beforeinput.
+    const start=Math.min(field.selectionStart,abcEditLastValid.length);
+    field.value=abcEditLastValid;
+    field.setSelectionRange(start,start);
+    showABCEditWarning(issue);
+    return;
+  }
+  if(text===abcEditLastValid)return;
+  abcEditLastValid=text;
+  clearABCEditWarning();
+  const tune=tunes.find(item=>item.id===abcEditTuneId);
+  if(!tune)return;
+  const updated=abcEditFilePrefix+text;
+  if(updated===tune.abc)return;
+  tune.abc=updated;
+  const index=tunes.indexOf(tune);
+  const prevTitle=tune.title,prevInfo=tune.info;
+  tune.title=tuneTitle(updated,index);
+  tune.info=tuneInfo(updated);
+  const snapshot=originalOrderSnapshot.find(item=>item.id===tune.id);
+  if(snapshot){snapshot.abc=updated;snapshot.title=tune.title;snapshot.info=tune.info;}
+  viewerDirty=true;
+  // Invalidate *immediately*: even a Share click before the redraw must
+  // encode the edited ABC. Defer costly large-book compression until needed.
+  tunebookShareCache=null;currentTuneShareCache=null;allTunesABCTTPayloadCache=null;
+  if(currentIndex>=0&&tunes[currentIndex]?.id===tune.id){
+    $('selectedName').textContent=tune.title;
+    if(tune.title!==prevTitle||tune.info!==prevInfo)abcEditListPending=true;
+    // A stale synth initialization must never resume or play the prior ABC.
+    generation++;stopOldPlayer();$('audio').replaceChildren();
+  }
+  cancelABCEditTimer();
+  abcEditTimer=setTimeout(()=>{
+    abcEditTimer=null;
+    if(abcEditListPending){abcEditListPending=false;renderList();}
+    if(currentIndex>=0&&tunes[currentIndex]?.id===tune.id){
+      refreshTunebookShareState();
+      void rebuild();
+    }
+  },ABC_EDIT_DEBOUNCE_MS);
+}
+const abcEditor=$('abcModalText');
+abcEditor.addEventListener('beforeinput',event=>{
+  if(abcEditTuneId===null||abcEditComposing||event.isComposing||!event.cancelable)return;
+  const type=event.inputType||'';
+  if(type==='insertText'&&event.data!==null){guardABCEdit(prospectiveABCEdit(event.data),event);return;}
+  if(type==='insertLineBreak'||type==='insertParagraph'){guardABCEdit(prospectiveABCEdit('\n'),event);return;}
+  if(type==='deleteByCut'||type==='deleteContentBackward'||type==='deleteContentForward'){
+    const start=abcEditor.selectionStart,end=abcEditor.selectionEnd;
+    if(start!==end){guardABCEdit(prospectiveABCEdit(''),event);return;}
+    if(type==='deleteContentBackward'&&start>0){
+      guardABCEdit(abcEditor.value.slice(0,start-1)+abcEditor.value.slice(end),event);
+    }else if(type==='deleteContentForward'&&end<abcEditor.value.length){
+      guardABCEdit(abcEditor.value.slice(0,start)+abcEditor.value.slice(end+1),event);
+    }
+  }
+});
+abcEditor.addEventListener('paste',event=>{
+  if(abcEditTuneId===null)return;
+  const text=event.clipboardData?.getData('text/plain');
+  if(typeof text==='string')guardABCEdit(prospectiveABCEdit(text),event);
+});
+abcEditor.addEventListener('cut',event=>{
+  if(abcEditTuneId===null)return;
+  guardABCEdit(prospectiveABCEdit(''),event);
+});
+abcEditor.addEventListener('compositionstart',()=>{abcEditComposing=true;});
+abcEditor.addEventListener('compositionend',()=>{abcEditComposing=false;commitABCEdit();});
+abcEditor.addEventListener('input',commitABCEdit);
 // Persist font size separately so resizing/clamping the window never resets it.
 function setABCModalFontSize(size,persist=false) {
   const selected=Number(size);
@@ -1225,13 +1410,23 @@ function setABCModalFontSize(size,persist=false) {
 try {setABCModalFontSize(localStorage.getItem(ABC_MODAL_FONT_SIZE_KEY));}
 catch(_) {setABCModalFontSize(13);}
 $('abcModalFontSize').addEventListener('change',ev=>setABCModalFontSize(ev.target.value,true));
-function closeABCModal() {
+function closeABCModal({flushRedraw=false}={}) {
   const overlay=$('abcModalOverlay');
-  if (overlay.hidden) return;
+  if(overlay.hidden)return;
+  // The edit has already been saved to its tune; only the redraw was deferred.
+  const pending=cancelABCEditTimer();
+  const editedId=abcEditTuneId;
+  // If the editor closes or navigation cancels its timer, do not strand
+  // an updated title/rhythm/key in a stale tune list.
+  if(abcEditListPending){abcEditListPending=false;renderList();}
+  clearABCEditWarning();
   const hadFocus=overlay.contains(document.activeElement);
   overlay.hidden=true;
-  abcModalPointer=null;
-  if (hadFocus) $('viewABCBtn').focus({preventScroll:true});
+  abcModalPointer=null;abcEditTuneId=null;abcEditComposing=false;
+  if(hadFocus)$('viewABCBtn').focus({preventScroll:true});
+  if(pending&&flushRedraw&&currentIndex>=0&&tunes[currentIndex]?.id===editedId){
+    refreshTunebookShareState();void rebuild();
+  }
 }
 // Keep all four edges inside the *current* viewport, even when restoring a
 // landscape-sized window on a portrait screen. Do not save automatic clamping:
@@ -1262,13 +1457,20 @@ function saveABCModalGeometry() {
   try {localStorage.setItem(ABC_MODAL_GEOMETRY_KEY,JSON.stringify(saved));}catch(_){}
 }
 function openABCModal() {
-  if (currentIndex<0||!tunes[currentIndex]) return;
+  if (studentLessonMode||currentIndex<0||!tunes[currentIndex]) return;
   const source=normalizeABC(tunes[currentIndex].abc);
   // splitTunes() retains the tunebook-wide header; display only X: onward.
   const match=/^[ \t]*X[ \t]*:/m.exec(source);
   if (!match) return;
-  const tuneABC=source.slice(match.index+match[0].indexOf('X'));
-  $('abcModalText').textContent=tuneABC;
+  const xStart=match.index+match[0].indexOf('X');
+  const tuneABC=source.slice(xStart);
+  if(!/^[ \t]*X[ \t]*:/.test(tuneABC))return;
+  cancelABCEditTimer();abcEditListPending=false;clearABCEditWarning();
+  abcEditTuneId=tunes[currentIndex].id;
+  abcEditFilePrefix=source.slice(0,xStart);
+  abcEditLastValid=tuneABC;
+  abcEditComposing=false;
+  $('abcModalText').value=tuneABC;
   $('abcModalTitle').textContent='ABC — '+tunes[currentIndex].title;
   const w=660,h=450;
   const saved=savedABCModalGeometry();
@@ -1278,9 +1480,11 @@ function openABCModal() {
   $('abcModalOverlay').hidden=false;
   $('abcModalText').scrollTop=0;
   $('abcModalText').scrollLeft=0;
-  $('abcModalOK').focus({preventScroll:true});
+  // Avoid opening the touch keyboard until the user explicitly taps the editor.
+  if(window.matchMedia('(pointer:coarse)').matches)$('abcModalOK').focus({preventScroll:true});
+  else $('abcModalText').focus({preventScroll:true});
 }
-$('abcModalOK').addEventListener('click',closeABCModal);
+$('abcModalOK').addEventListener('click',()=>closeABCModal({flushRedraw:true}));
 $('viewABCBtn').addEventListener('click',openABCModal);
 for(const [handleName,isResize] of [['abcModalHeader',false],['abcModalResize',true]]) {
   const handle=$(handleName);
@@ -1343,15 +1547,33 @@ const LIST_HEIGHT_KEY = 'abc-tunebook:list-height-px';
 const VALID_MODES = new Set([...$('displayMode').options].map(option => option.value));
 let tunes = [], currentIndex = -1, player = null, playbackCursor = null;
 let collectionSourceNames = []; // Successful file names or the incoming source, for ABC save suggestions.
+// A collection's provenance stays fixed when tunes are added or deleted.
+let collectionSourceLabel = null;
+function viewerSourceLabel(source) {
+  if(source==='ABC Transcription Tools')return 'Transferred from ABCTT';
+  if(source==='share link')return 'Share link';
+  if(source==='lesson link')return 'Lesson link';
+  if(source==='lesson configuration')return 'Lesson configuration';
+  return String(source||'ABC file');
+}
+function updateSourceStatus() {
+  const label=collectionSourceLabel;
+  const text=label
+    ? `${label} - ${tunes.length} ${tunes.length===1?'tune':'tunes'}`
+    : 'No tunes loaded';
+  const element=$('sourceStatus');
+  if(element.textContent!==text)element.textContent=text;
+  element.title=text;
+}
 // Snapshot the loaded (not subsequently sorted) collection. Never persist it
 // across a new file, drag/drop, transfer, or incoming share/lesson load.
 let originalOrderSnapshot = [], originalOrderGeneration = 0;
-// Unsaved changes are sorting order changes or successful note transpositions.
+// Unsaved changes include adding/deleting tunes, reordering, transposition, and ABC edits.
 // No pitch-reset snapshot is retained; the original-order snapshot is needed only for sorting.
 let viewerDirty = false;
 async function confirmDiscardViewerChanges(){
   if(!viewerDirty || !tunes.length)return true;
-  const message="You have changed the tune order or transposed tunes. Loading new files will replace the current tunebook and these changes will be lost. Continue?";
+  const message="You have added, deleted, sorted, transposed, or edited tunes.<br/><br/>Loading new files will replace the current tunebook and these changes will be lost.<br/><br/>Continue?";
   if(window.DayPilot?.Modal?.confirm){
     const result=await DayPilot.Modal.confirm(message,{top:Math.min(125,Math.max(12,window.innerHeight*.08)),width:Math.min(520,window.innerWidth-24),scrollWithPage:false});
     return !!(result && !result.canceled && result.result);
@@ -1551,7 +1773,8 @@ function splitTunes(text) {
   return result.filter(Boolean);
 }
 function tuneTitle(abc, i) {
-  const match = abc.match(/^\s*T\s*:\s*(.*?)\s*$/m);
+  // Stay within the T: line: a blank title must not absorb the next field.
+  const match = abc.match(/^[ \t]*T[ \t]*:[ \t]*([^\r\n]*)/m);
   return match && match[1].trim() || `Tune ${i+1}`;
 }
 // Sorting is matched to app.js SortTunes(), SortTunesByTag(), and the
@@ -1734,10 +1957,12 @@ function tuneInfo(abc) {
   const x=/^\s*X\s*:/mi.exec(abc);
   const fileHeader=x?abc.slice(0,x.index):'';
   const tuneText=x?abc.slice(x.index):abc;
-  const firstKey=/^\s*K\s*:\s*([^\r\n]*)/mi.exec(tuneText);
+  // Stay within the K: line: an empty key must not absorb following music.
+  const firstKey=/^[ \t]*K[ \t]*:[ \t]*([^\r\n]*)/mi.exec(tuneText);
   const tuneHeader=firstKey?tuneText.slice(0,firstKey.index):tuneText;
   const field=(text,tag)=>{
-    const m=new RegExp('^\\s*'+tag+'\\s*:\\s*([^\\r\\n]*)','mi').exec(text);
+    // Only horizontal whitespace is allowed around tags; \s can consume a newline and treat M: as a blank R: value.
+    const m=new RegExp('^[ \\t]*'+tag+'[ \\t]*:[ \\t]*([^\\r\\n]*)','mi').exec(text);
     return m?m[1].split('%')[0].trim():'';
   };
   const meter=field(tuneHeader,'M')||field(fileHeader,'M');
@@ -1748,7 +1973,7 @@ function tuneInfo(abc) {
 }
 function renderList() {
   const list=$('tuneList'), query=$('searchInput').value.toLocaleLowerCase().trim();
-  $('tuneCount').textContent = `${tunes.length} ${tunes.length === 1 ? 'tune' : 'tunes'}`;
+  updateSourceStatus();
   $('clearSearch').style.display = query ? 'block' : 'none';
   list.replaceChildren();
   const fragment=document.createDocumentFragment();
@@ -1783,6 +2008,7 @@ function appendABC(text,{replace=false,source='ABC file'}={}) {
     if($('lessonLinkModal'))setModal('lessonLinkModal',false);
     tunes=[];currentIndex=-1;$('searchInput').value='';
     collectionSourceNames=[source];
+    collectionSourceLabel=viewerSourceLabel(source);
   }
   const initial=tunes.length;
   const initialOriginal=replace?[]:originalOrderSnapshot.map(snapshotTune);
@@ -1809,6 +2035,123 @@ function selectTune(index) {
   $('scoreScroll').scrollTop=0;
   void rebuild();
 }
+// Tune management is separate from the single-tune ABC editor. New tunes always
+// begin with X:1 (ABC reference numbers need not be unique within a tunebook).
+// The original-order snapshot is updated by stable record ID, so Restore to
+// Original Order never resurrects deleted tunes or loses newly added tunes.
+const NEW_TUNE_ABC = 'X:1\n% Edit the header as required for your tune:\nT:New Tune\nC:Traditional\nR:Reel\nM:4/4\nL:1/8\nQ:1/2=90\nK:C\n% ABC notes are entered immediately after the header:\nCDEF GABc|\n';
+function addNewTune(){
+  if(studentLessonMode||tunebookShareLoading)return;
+  // Stop any ongoing playback or stale asynchronous audio initialization.
+  generation++;stopOldPlayer();$('audio').replaceChildren();
+  closeABCModal();
+  const record=makeTuneRecord(NEW_TUNE_ABC,tunes.length);
+  if(!collectionSourceLabel)collectionSourceLabel='New tunebook';
+  tunes.push(record);
+  originalOrderSnapshot.push(snapshotTune(record));
+  originalOrderGeneration++;
+  viewerDirty=true;
+  // A search filter must not hide the tune that the user just added.
+  $('searchInput').value='';
+  fileLoadSerial++; // Supersede file reads that started before this edit.
+  invalidateTunebookShareCache();
+  selectTune(tunes.length-1);
+  const list=$('tuneList');list.scrollTop=list.scrollHeight;
+  openABCModal();
+  // Leave the X:1 reference intact; select only the placeholder title.
+  const field=$('abcModalText');
+  const position=field.value.indexOf('T:New Tune');
+  if(position>=0){
+    field.setSelectionRange(position+2,position+'T:New Tune'.length);
+    // On touch devices keep the existing behavior of not automatically opening
+    // the virtual keyboard, but make the placeholder ready to edit on tap.
+  }
+}
+async function deleteSelectedTune(){
+  if(studentLessonMode||tunebookShareLoading||currentIndex<0||!tunes[currentIndex])return;
+  const selected=tunes[currentIndex];
+  const message='Delete "'+selected.title+'" from this tunebook?<br/><br/>This cannot be undone.';
+  let confirmed=false;
+  try{
+    if(window.DayPilot?.Modal?.confirm){
+      const result=await DayPilot.Modal.confirm(message,{top:Math.min(125,Math.max(12,window.innerHeight*.08)),width:Math.min(490,window.innerWidth-24),scrollWithPage:false});
+      confirmed=!!(result&&!result.canceled&&result.result);
+    }else confirmed=window.confirm(message);
+  }catch(error){console.warn('Unable to confirm tune deletion:',error);return;}
+  if(!confirmed||studentLessonMode||tunebookShareLoading)return;
+  // If the user switched tunes while confirmation was open, do not delete
+  // a previously selected tune. Search filtering alone doesn't change selection.
+  const index=tunes.findIndex(item=>item.id===selected.id);
+  if(index<0||index!==currentIndex)return;
+  generation++;stopOldPlayer();$('audio').replaceChildren();
+  closeABCModal();
+  fileLoadSerial++;
+  tunes.splice(index,1);
+  originalOrderSnapshot=originalOrderSnapshot.filter(item=>item.id!==selected.id);
+  originalOrderGeneration++;
+  viewerDirty=true;
+  invalidateTunebookShareCache();
+  if(tunes.length){
+    // Clear a search that could hide the newly selected following tune.
+    $('searchInput').value='';
+    // Prefer the following tune, or the new last tune if we deleted the last.
+    currentIndex=-1;
+    selectTune(Math.min(index,tunes.length-1));
+  }else{
+    // Deleting the final tune must also exit an active student lesson.
+    endStudentLessonForFileLoad();
+    currentIndex=-1;
+    collectionSourceNames=[];
+    $('selectedName').textContent='';
+    $('tempoBtn').disabled=true;
+    $('viewABCBtn').disabled=true;
+    $('score').replaceChildren();
+    $('placeholder').style.display='';
+    $('scoreScroll').scrollTop=0;
+    $('searchInput').value='';
+    renderList();
+    refreshTunebookShareState();
+  }
+}
+// Clear is intentionally different from Delete Tune: no dialog for an unchanged
+// tunebook, but unsaved sort, transpose, edit, add, or delete work must be confirmed.
+async function clearAllTunes(){
+  if(studentLessonMode||tunebookShareLoading||!tunes.length)return;
+  const serial=fileLoadSerial, startingCollection=tunes;
+  if(viewerDirty){
+    const message='Clear all tunes?<br/><br/>Unsaved changes will be lost and this cannot be undone.';
+    let confirmed=false;
+    try{
+      if(window.DayPilot?.Modal?.confirm){
+        const result=await DayPilot.Modal.confirm(message,{top:Math.min(125,Math.max(12,window.innerHeight*.08)),width:Math.min(520,window.innerWidth-24),scrollWithPage:false});
+        confirmed=!!(result&&!result.canceled&&result.result);
+      }else confirmed=window.confirm(message);
+    }catch(error){console.warn('Unable to confirm clearing the tunebook:',error);return;}
+    // An overlapping file load or tune-management action must not be cleared.
+    if(!confirmed||studentLessonMode||serial!==fileLoadSerial||tunes!==startingCollection||tunebookShareLoading||!tunes.length)return;
+  }
+  if(studentLessonMode)return; // A lesson may have started while confirmation was open.
+  // Stop playback and invalidate in-flight rendering/audio and file reads.
+  fileLoadSerial++;generation++;stopOldPlayer();
+  closeABCModal();
+  setModal('shareModal',false);setModal('lessonLinkModal',false);
+  endStudentLessonForFileLoad();
+  $('enableOverlay').classList.remove('open');
+  tunes=[];currentIndex=-1;
+  rememberOriginalOrder([]);
+  collectionSourceNames=[];collectionSourceLabel=null;
+  viewerDirty=false;
+  $('fileInput').value='';$('searchInput').value='';
+  $('selectedName').textContent='';
+  $('tempoBtn').disabled=true;$('viewABCBtn').disabled=true;
+  $('score').replaceChildren();$('audio').replaceChildren();
+  $('placeholder').style.display='';$('scoreScroll').scrollTop=0;
+  renderList();invalidateTunebookShareCache();
+}
+$('addTuneBtn').addEventListener('click',addNewTune);
+$('deleteTuneBtn').addEventListener('click',()=>{void deleteSelectedTune();});
+$('clearTunesBtn').addEventListener('click',()=>{void clearAllTunes();});
+
 function tabParam(mode) {
   const params={responsive:'resize',expandToWidest:true,add_classes:true,selectionColor:'#ee0000',disallowTablatureOnly:true};
   const tab=(instrument,tuning,label,extra={})=>({instrument,tuning,label,highestNote:"f'",...extra});
@@ -2235,9 +2578,19 @@ async function rebuild() {
     // Match the instrument players: honor the per-tune Irish-roll override.
     if(ABCJS.eskinConfig?.setIrishRolls)ABCJS.eskinConfig.setIrishRolls(!/^\s*%irish_rolls_off\b/im.test(abc));
     if(ABCJS.eskinConfig?.setIrishRollOverrides)ABCJS.eskinConfig.setIrishRollOverrides(null);
-    const visuals=ABCJS.renderAbc('score',abc,tabParam(mode));
+    // abcjs reports routine ABC syntax warnings without throwing. Allow those;
+    // alert only if the rendering code actually throws an exception.
+    let visuals;
+    try { visuals=ABCJS.renderAbc('score',abc,tabParam(mode)); }
+    catch(renderError){
+      if(token!==generation)return;
+      reportError('A notation rendering issue occurred: '+(renderError?.message||renderError));
+      return;
+    }
     if(token!==generation)return;
-    if(!visuals?.length)throw new Error('The selected tune could not be rendered.');
+    // An incomplete light-editor tune may simply return no visual objects;
+    // that is not a renderer crash and should not interrupt the editor.
+    if(!visuals?.length){$('score').textContent='No notation available for the current ABC.';return;}
     postProcessTab(visuals[0],mode);
     if(needsGesture&&!unlocked) {
       // The student's Start Lesson click is the required playback gesture.
@@ -2281,7 +2634,7 @@ async function enablePlayback() {
 }
 function fileNameOK(file){return /\.(?:abc|txt)$/i.test(file.name)||(!file.name&&file.type==='text/plain');}
 async function addFiles(files) {
-  if(files.length)closeABCModal();
+  if(files.length)closeABCModal({flushRedraw:true});
   // A saved lesson file can be reopened with Open even when Share is idle
   // because no tunebook is loaded yet. Keep normal multi-file ABC loading as-is.
   if(files.length===1 && fileNameOK(files[0]) && /\.txt$/i.test(files[0].name)) {
@@ -2329,8 +2682,10 @@ async function addFiles(files) {
   if(next.length) {
     // Never allow a previously generated URL to represent the new collection.
     setModal('shareModal',false);setModal('lessonLinkModal',false);
+    endStudentLessonForFileLoad();
     tunes=next;
     collectionSourceNames=successfulFiles;
+    collectionSourceLabel=successfulFiles.length>1?'Multiple ABC files':(successfulFiles[0]||'ABC file');
     rememberOriginalOrder(next);
     viewerDirty=false;
     invalidateTunebookShareCache();
@@ -2566,7 +2921,7 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){
   if($('lessonLinkModal').classList.contains('open')){setModal('lessonLinkModal',false);return;}
   if($('lessonModal').classList.contains('open')){setModal('lessonModal',false);return;}
   if($('shareModal').classList.contains('open')){setModal('shareModal',false);return;}
-  if(!$('abcModalOverlay').hidden){ev.preventDefault();closeABCModal();return;}setFullPage(false); }});
+  if(!$('abcModalOverlay').hidden){ev.preventDefault();closeABCModal({flushRedraw:true});return;}setFullPage(false); }});
 let dragDepth=0;
 document.addEventListener('dragenter',ev=>{if([...ev.dataTransfer?.types||[]].includes('Files')){ev.preventDefault();dragDepth++;$('dragOverlay').style.display='flex';}});
 document.addEventListener('dragover',ev=>{if([...ev.dataTransfer?.types||[]].includes('Files')){ev.preventDefault();if(ev.dataTransfer)ev.dataTransfer.dropEffect='copy';}});
@@ -2616,6 +2971,15 @@ let shareLinkDialogKind='all';
 let lessonScope='all';
 let studentLessonMode=false;
 let lessonIntroductionPending=false;
+// A successfully loaded normal file (including an imported teacher lesson
+// configuration) exits student-lesson mode. Incoming lesson links are unchanged.
+function endStudentLessonForFileLoad(){
+  if(!studentLessonMode&&!lessonIntroductionPending)return;
+  studentLessonMode=false;
+  lessonIntroductionPending=false;
+  document.body.classList.remove('lessonMode');
+  setModal('studentLessonModal',false);
+}
 function setModal(id,show){$(id).classList.toggle('open',!!show);}
 function invalidateTunebookShareCache(){tunebookShareCache=null;currentTuneShareCache=null;allTunesABCTTPayloadCache=null;refreshTunebookShareState();}
 function originalTunebookABC(){
@@ -2719,13 +3083,31 @@ function refreshTunebookShareState(){
   const button=$('shareBtn');if(!button)return;
   const busy=tunebookShareLoading, hasTunes=!!tunes.length;
   const selected=hasTunes&&currentIndex>=0&&!!tunes[currentIndex];
-  const shareAllowed=!busy&&!studentLessonMode;
+  const shareAllowed=!busy;
+  const lessonRestricted=studentLessonMode;
+  const abcButton=$('viewABCBtn');
+  if(abcButton){
+    abcButton.disabled=busy||!selected||lessonRestricted;
+    abcButton.title=lessonRestricted?'ABC editing is disabled during lessons.':'Edit the current ABC text for the selected tune';
+  }
+  // Also protect the editing surface if lesson mode changes while it is open.
+  $('abcModalText').readOnly=lessonRestricted;
+  const addButton=$('addTuneBtn');if(addButton){
+    addButton.disabled=busy||lessonRestricted;
+    addButton.title=lessonRestricted?'Adding tunes is disabled during lessons.':'Add a new tune at the end of the list';
+  }
+  const deleteButton=$('deleteTuneBtn');
+  if(deleteButton){deleteButton.disabled=busy||!selected||lessonRestricted;
+    deleteButton.title=lessonRestricted?'Deleting tunes is disabled during lessons.':busy?'Loading tunes…':selected?'Delete the selected tune from the tunebook.':'Select a tune to delete.';}
+  const clearButton=$('clearTunesBtn');
+  if(clearButton){clearButton.disabled=busy||!hasTunes||lessonRestricted;
+    clearButton.title=lessonRestricted?'Clearing tunes is disabled during lessons.':busy?'Loading tunes…':hasTunes?'Clear all tunes from the Viewer.':'Open an ABC tunebook first.';}
   const sortButton=$('sortBtn');
   if(sortButton){sortButton.disabled=busy||!hasTunes;
     sortButton.title=busy?'Loading tunes…':hasTunes?'Sort the loaded tunes by an ABC tag.':'Open an ABC tunebook first.';}
   // The Share dialog and ABC saves remain accessible even if every link is too large.
   button.disabled=!shareAllowed||!hasTunes;
-  const tooltip=studentLessonMode?'Sharing is unavailable in student lesson mode.':busy
+  const tooltip=busy
     ?'Loading tunes…':!hasTunes?'Open an ABC tunebook first.':'Save, share, or configure lessons for the loaded tunes.';
   button.title=tooltip;
   const wrapper=$('shareBtnWrap');if(wrapper)wrapper.title=tooltip;
@@ -2944,8 +3326,8 @@ async function loadLessonConfigFile(file){
   const config=lessonConfigFromText(await file.text());
   if(tunes.length){
     const message=viewerDirty
-      ? `You have changed the tune order or transposed tunes. Loading this lesson will replace the ${tunes.length} currently loaded tunes and those changes will be lost. Continue?`
-      : `This lesson will replace the ${tunes.length} currently loaded tunes. Continue?`;
+      ? `You have added, deleted, sorted, transposed, or edited tunes.<br/><br/>Loading this lesson will replace the ${tunes.length} currently loaded tunes and those changes will be lost.<br/><br/>Continue?`
+      : `This lesson will replace the ${tunes.length} currently loaded tunes.<br/><br/>Continue?`;
     let yes=false;
     if(window.DayPilot?.Modal?.confirm){const result=await DayPilot.Modal.confirm(message,{top:125,width:520});yes=!!(result&&!result.canceled&&result.result);}
     else yes=window.confirm(message);
@@ -2963,7 +3345,8 @@ async function loadLessonConfigFile(file){
   fileLoadSerial++;
   $('enableOverlay').classList.remove('open');
   needsGesture=false;
-  appendABC(config.abc,{replace:true,source:'lesson configuration'});
+  endStudentLessonForFileLoad();
+  appendABC(config.abc,{replace:true,source:file?.name||'lesson configuration'});
   setModal('lessonLinkModal',false);setModal('shareModal',false);setModal('lessonModal',true);
 }
 function openInstructionsAt(sectionId){
@@ -3076,7 +3459,6 @@ function loadIncomingTunebookLink(){
     studentLessonMode=!!lesson;
     lessonIntroductionPending=!!lesson;
     document.body.classList.toggle('lessonMode',studentLessonMode);
-    if(studentLessonMode){$('shareBtn').hidden=true;$('shareBtnWrap').hidden=true;}
     fileLoadSerial++;needsGesture=!unlocked;
     appendABC(abc,{replace:true,source:lesson?'lesson link':'share link'});
     if(lesson){
@@ -3489,7 +3871,7 @@ function ExternalToolFavorites_OrderDialog() {
 
 
 function ViewerExternal_Open(scope){
-  if (!tunes.length || tunebookShareLoading || studentLessonMode) return;
+  if (!tunes.length || tunebookShareLoading) return;
   const theABC=scope==='current'?currentTuneExportABC():allTunesExportABC();
   if (!theABC) return;
   const isFromPlayer=scope==='current';
