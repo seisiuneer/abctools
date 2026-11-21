@@ -4494,7 +4494,7 @@
                 <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
                 <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
                 <p>When the <strong>Inject Only PDF Tunebook Play Features</strong> dialog is opened, if a <strong>% Start of PDF Tunebook Features / % End of PDF Tunebook Features</strong> block is found in the ABC, it will be parsed and the values in the features dialog populated with the existing values.</p>
-                <p>If you click <strong>Inject Only PDF Tunebook Play Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook playback feature commands.</p>
+                <p>If you click <strong>Inject Only PDF Tunebook Play Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook playback feature commands. The generated <strong>%add_all_playback_links</strong> directive has no <strong>player</strong>, <strong>editor</strong>, or <strong>viewer</strong> suffix; manually append one afterward only if you want a non-default destination.</p>
                 <p><strong>Note:</strong> If you add playback features to your tunebook using the dialog and then manually delete:</p>
                 <p class="code">% End of PDF Tunebook Features</p>
                 <p>from the ABC and click <strong>Inject Only PDF Tunebook Play Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
@@ -4514,7 +4514,7 @@
                 <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
                 <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
                 <p>When the <strong>Inject All PDF Tunebook Features</strong> dialog is opened, if a <strong>% Start of PDF Tunebook Features / % End of PDF Tunebook Features</strong> block is found in the ABC, it will be parsed and the values in the features dialog populated with the existing values.</p>
-                <p>If you click <strong>Inject All PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook feature commands.</p>
+                <p>If you click <strong>Inject All PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook feature commands. The generated <strong>%add_all_playback_links</strong> directive has no destination suffix; a previously added <strong>player</strong>, <strong>editor</strong>, or <strong>viewer</strong> suffix must be added again manually if desired.</p>
                 <p><strong>Note:</strong> If you add features to your tunebook using the dialog and then manually delete:</p>
                 <p class="code">% End of PDF Tunebook Features</p>
                 <p>from the ABC and click <strong>Inject All PDF Tunebook Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
@@ -4644,22 +4644,22 @@
                 <p><strong>QR Code for Each Tune</strong></p>
                 <p>A QR code for each tune containing the tune's Share URL is generated and put on its own page.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/AUL5oXykIDk" title="QR Code Tunebooks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>If play links are being added to the tunes in the PDF tunebook, clicking or scanning the QR code will open the tune in the Player.</p>
-                <p>The QR code can be clicked to open the tune or scanned and openend by a mobile device camera.</p>
-                <p>If the tune is too long for a valid QR Code, you can still click the image to open the tune.</p>
+                <p>If playback links are enabled, clicking or scanning the QR code opens the tune in the selected Player, Editor, or Viewer destination (Player by default).</p>
+                <p>The QR code can be clicked to open the tune or scanned and opened by a mobile device camera.</p>
+                <p>If a tune is too long for a QR code, a placeholder is shown. A valid clickable PDF link may still be available when playback links are enabled.</p>
                 <hr>
                 <p><strong>Notation+QR Code for Each Tune</strong></p>
                 <p>Each tune is rendered starting on its own page and then is followed by a QR code for the tune on its own page containing the tune's Share URL.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/O0EFgXutnpM" title="Notation+QR Code Tunebooks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>If play links are being added to the tunes in the PDF tunebook, clicking or scanning the QR code will open the tune in the Player.</p>
-                <p>The QR code can be clicked to open the tune or scanned and openend by a mobile device camera.</p>
-                <p>If the tune is too long for a valid QR Code, you can still click the image to open the tune.</p>
+                <p>If playback links are enabled, clicking or scanning the QR code opens the tune in the selected Player, Editor, or Viewer destination (Player by default).</p>
+                <p>The QR code can be clicked to open the tune or scanned and opened by a mobile device camera.</p>
+                <p>If a tune is too long for a QR code, a placeholder is shown. A valid clickable PDF link may still be available when playback links are enabled.</p>
                 <hr>
                 <p><strong>Individual PDF File for Each Tune</strong> (Desktop browsers only)</p>
                 <p>Each tune is saved in its own PDF file, named the same as the tune.</p>
                 <p>If play links have been requested for the PDF tunebook using:</p>
                 <p class="code">%add_all_playback_links</p>
-                <p>annotation in the ABC, then the individual tune PDFs will also play when the titles are clicked.</p>
+                <p>annotation in the ABC, clicking a tune title in its PDF opens the selected Player, Editor, or Viewer (Player by default).</p>
                 <hr>
                 <p><strong>Default is:</strong>&nbsp;&nbsp;One Tune per Page</p>
                 <hr>
@@ -5041,7 +5041,7 @@
                 <p></p>
                 <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody, bass, and chords by adding the following comment-based annotation anywhere in the ABC file:</p>
                 <p></p>
-                <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT</p>
+                <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT [player] [editor] [viewer]</p>
                 <p></p>
                 <p>The MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are optional.</p>
                 <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default MIDI soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
@@ -5049,7 +5049,16 @@
                 <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, bassprog, and chordprog information already in the tunes and do not want them overridden when played from the play link.</p>
                 <p>Example: To have all tunes played using the FatBoy MIDI soundfont and a Harpsichord sound on the melody and a Piano sound on the bass and chords:</p>
                 <p class="code">%add_all_playback_links 6 0 0 fatboy</p>
-                <p>Additionally, if %add_all_playback_links is specified in the PDF features, each tune in the PDF will have a %add_all_playback_links added to the header so that if the user exports a PDF of a tune played from the PDF tunebook, that exported PDF tune will also play if the title is clicked.</p>
+                <p><strong>Choosing where the PDF tune links open:</strong> Add one optional word to the end of <strong>%add_all_playback_links</strong>:</p>
+                <p><strong>player</strong> — Opens in the ABC Transcription Tools Player (the default if no destination is given).</p>
+                <p><strong>editor</strong> — Opens in the ABC Transcription Tools Editor.</p>
+                <p><strong>viewer</strong> — Opens the selected tune in the ABC Tunebook Viewer.</p>
+                <p class="code">%add_all_playback_links 0 0 0 fatboy viewer</p>
+                <p class="code">%add_all_playback_links editor</p>
+                <p>If multiple destinations are specified, <strong>player</strong> wins over <strong>editor</strong>, which wins over <strong>viewer</strong>.</p>
+                <p><strong>Overrides to watch for:</strong> The older <strong>%links_open_in_editor</strong> can override <strong>viewer</strong>; an explicit <strong>player</strong> takes precedence. <strong>%no_edit_allowed</strong> prevents opening directly in the Editor. Tune-specific <strong>%add_playback_link</strong> or <strong>%hyperlink</strong> directives can override an automatically generated link.</p>
+                <p>The two PDF feature injectors always insert the directive <strong>without</strong> a destination, and reinjecting features removes a previously added destination. Add <strong>editor</strong> or <strong>viewer</strong> manually afterward if desired. Browser Native Print-to-PDF with Play Links always uses the Player.</p>
+                <p><strong>Viewer notes:</strong> Each link opens one tune even if complete-tunebook links are requested. The Viewer's own instrument settings may override sounds specified in the ABC.</p>
                 <p>To specify the volumes for the bass and chords to the playback links also add:</p>
                 <p class="code">%add_all_playback_volumes BASS_VOLUME CHORD_VOLUME</p>
                 <p>Range for both BASS_VOLUME and CHORD_VOLUME is 0 to 127.</p>
@@ -5117,7 +5126,7 @@
                 <p>To force the tune links in the PDF to open in the Editor instead of the full screen view or Player, add:</p>
                 <p class="code">%links_open_in_editor</p>
                 <p>anywhere in the ABC file.</p>
-                <p>This works with the other PDF tunebook features like Title Page, Table of Contents, and Index pages, but will override any %add_all_playback_links annotation added to request that tunes in the PDF should open in the Player when you click their titles.</p>
+                <p>This works with the other PDF tunebook features like Title Page, Table of Contents, and Index pages. It overrides the default playback link destination and the <strong>viewer</strong> option, but an explicit <strong>player</strong> parameter on <strong>%add_all_playback_links</strong> overrides it for automatically generated links.</p>
                 <p></p>
                 <hr>
                 <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
@@ -6981,13 +6990,12 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Clicking the <strong>Sharing</strong> button brings up the Sharing Controls dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" style="width:700px;"src="img/share_controls_11.jpg"/>
+                    <img class="image" loading="lazy" style="width:700px;"src="img/share_controls_12.jpg"/>
                 </div>
                 <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
                 <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
-                <p>Share URLs and QR Codes also include the instrument selected, whether or not to show the top bar and links, display size, line spacing, PDF tunes/page setting, page number position, and page number on first page settings.</p>
-                <p>For stringed instrument tablatures, the link also includes the capo setting and whether or not to show the tablature name.</p>
-                <p><strong>Share URL</strong>: Copying and pasting this link in a browser address bar will open the ABC Tools website and copy in the tune set ABC and tablature settings.</p>
+                <p>ABC Transcription Tools Share URLs can also include the selected instrument and display settings, such as tablature, capo, and spacing. Viewer Share Links include the ABC tunes and a supported notation or tablature mode; other appearance and playback settings are controlled by the Viewer.</p>
+                <p><strong>Share URL</strong>: By default, opening this link loads the tunes in ABC Transcription Tools. Use <strong>Make Tunebook Viewer Share Link</strong> to generate a link that opens them in the ABC Tunebook Viewer instead.</p>
                 <p>If the Share URL link is too long to work in most browsers, the Share URL buttons will be disabled and you will see a message suggesting sharing fewer tunes.</p>
                 <p><strong>Test Share URL</strong> - Opens the Share URL in a new browser tab.</p>
                 <p><strong>Copy Share URL</strong> - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
@@ -6999,22 +7007,19 @@
                 <p>When exporting a PDF, the %hyperlink annotation on any tune, when the tune title is clicked, overrides all other injected hyperlinks requested at the PDF tunebook level, for example, play links.</p>
                 <p>If you want to have the shortened URL play when clicked using the %hyperlink injection, be sure to click <strong>Add Auto-Play</strong> in the Share dialog before shortening the URL.</p>
                 <p>This can be useful when you have ShareURLs that are longer than the Adobe Acrobat recommended limit.</p>
-                <p><strong>Generate QR Code</strong> - Once an Share URL is generated, if it is short enough to fit in a QR code (less than 2600 characters), this button is activated.</p>
-                <p>The QR Code is a visual representation of an Share URL that you can scan with the Camera app on your iOS or Android device.</p>
+                <p><strong>Generate QR Code</strong> - Once a Share URL is generated, if it is short enough to fit in a QR code (less than 2300 characters), this button is activated.</p>
+                <p>The QR Code is a visual representation of a Share URL that you can scan with the Camera app on your iOS or Android device.</p>
                 <p>Clicking the button will generate a QR code in .PNG format for the Share URL and open it in a new browser tab.</p>
                 <p>Even if the button is greyed out, Shift-click of the <strong>Generate QR Code</strong> button will attempt to generate a QR code for whatever text is present in the Share URL box.</p>
                 <p>This can be useful for generating QR codes from shortened Share URL links or for other arbitrary website URLs.</p>
                 <p>If the arbitrary text in the Share URL box is too long to generate a QR code, the tool will display an alert.</p>
                 <p>In the newly opened tab, you can click the link below the image to save the QR code to your system.</p>
-                <p><strong>Add Auto-Play</strong> - Adds &play=1 to the URL.</p>
-                <p>Link will open in the player.</p>
-                <p><strong>Add Open in Editor</strong> - Adds &editor=1 to the URL.</p>
-                <p>Share links will load in the editor. This setting overrides Add Auto-Play.</p>
-                <p><strong>Add Disable Editing</strong> - Adds &dx=1 to the URL.</p>
-                <p>Entering the editor from the full screen view of the tune shown when the share link is visited will be disabled. Also overrides Add Open in Editor.</p>
-                <p><strong>Add Hide UI</strong> - Adds &noui to the URL.</p>
-                <p>When the link is opened, hides the UI for responsive iframe embedding.</p>
-                <p>Overrides Add Open in Editor and Add Auto-Play.</p>
+                <p>The text below the generated QR code identifies ABC Transcription Tools or ABC Tunebook Viewer when the code points directly to either tool. For other URLs, it uses a general destination description.</p>
+                <p><strong>Add Auto-Play</strong> - Opens the link in the ABC Transcription Tools Player.</p>
+                <p><strong>Add Open in Editor</strong> - Opens the link in the ABC Transcription Tools Editor.</p>
+                <p>Each button replaces any previous Player or Editor selection, so only one destination is included in the Share URL.</p>
+                <p><strong>Make Tunebook Viewer Share Link</strong> - Creates a new Share URL from the current ABC tunes that opens in the <strong>ABC Tunebook Viewer</strong> instead of ABC Transcription Tools. It replaces the existing Share URL rather than adding an option to it.</p>
+                <p>To switch back to a Transcription Tools link, click <strong>Add Auto-Play</strong> or <strong>Add Open in Editor</strong>. Viewer links have the same Share URL length limit and may be too long for very large tunebooks.</p>
                 <p><strong>Open Tunes in Another Tool</strong> - Click this button to open the <a style="text-decoration:none;" href="#external_tools">Open Tunes in Another Tool</a> dialog, where you can send all the tunes in the editor to another ABC player or tool.</p>
                 <hr>
                 <p>On desktop browsers you can double-click on an embedded tune to start/pause/resume play, or shift-click to rewind play.</p>
@@ -7073,7 +7078,7 @@
                     <img class="image" loading="lazy" src="img/ug12.jpg"/>
                 </div>
                 <p></p>
-                <p>Note: If a QR code has been requested, and the Share URL is too long to generate a QR code (more than 2600 characters), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
+                <p>Note: If a QR code has been requested, and the Share URL is too long to generate a QR code (2300 characters or more), you will see an informative message at the end of the PDF export suggesting sharing fewer tunes.</p>
                 <p>If you are able to generate a QR code in the Sharing Controls, then the Share URL is short enough to embed a QR code in a PDF.</p>
                 <p></p>
                 <p>To override the default generated caption that is shown under the QR code added to a PDF file, add the following comment-based annotation anywhere in the ABC:</p>

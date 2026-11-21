@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3395_111926_1730";
+var gVersionNumber = "3396_112126_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -282,6 +282,7 @@ var gAddIndexLinkback = false;
 var gTuneHyperlinks = [];
 var gAddTheSessionHyperlinks = false;
 var gAddPlaybackHyperlinks = false;
+var gPlaybackHyperlinkMode = ""; // Explicit player/editor/viewer option; empty retains legacy behavior
 var gAddPlaybackHyperlinksIncludePrograms = false;
 var gPlaybackHyperlinkMelodyProgram = "";
 var gPlaybackHyperlinkBassProgram = "";
@@ -6229,9 +6230,9 @@ function processSingleTunePlaybackInjectsQR(theTune) {
     theTune = theTune.replace(searchRegExp, "");
 
     if (gAddPlaybackHyperlinkVolumes) {
-      theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI bassvol " + gPlaybackHyperlinkBassVolume + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%%MIDI chordvol " + gPlaybackHyperlinkChordVolume + "\n" + "%add_all_playback_links\n" + theTune;
+      theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI bassvol " + gPlaybackHyperlinkBassVolume + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%%MIDI chordvol " + gPlaybackHyperlinkChordVolume + "\n" + "%add_all_playback_links" + (gPlaybackHyperlinkMode ? " " + gPlaybackHyperlinkMode : "") + "\n" + theTune;
     } else {
-      theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%add_all_playback_links\n" + theTune;
+      theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%add_all_playback_links" + (gPlaybackHyperlinkMode ? " " + gPlaybackHyperlinkMode : "") + "\n" + theTune;
     }
 
   }
@@ -6796,6 +6797,34 @@ function injectAllFonts(theTune) {
   return theTune;
 }
 
+// Construct the Viewer's existing single-tune Deflate URL format for PDF links.
+// Use the selected display mode when supported, otherwise ordinary notation.
+function BuildABCTunebookViewerPDFShareURL(abcText) {
+  var compressed = pako.deflate(new TextEncoder().encode(abcText), { level: 6 });
+  var encoded = def_bytesToBase64URL(compressed);
+  var mode = "noten";
+  try { mode = GetRadioValue("notenodertab") || "noten"; } catch (error) {}
+  var allowedModes = ["noten", "notenames", "mandolin", "gdad", "cgda", "cgdae", "dgdae", "guitare", "guitard", "uke", "whistle", "recorder"];
+  if (allowedModes.indexOf(mode) === -1) mode = "noten";
+
+  var url = new URL("https://michaeleskin.com/tools/abc-tunebook-viewer.html");
+  url.searchParams.set("def", encoded);
+  url.searchParams.set("format", mode);
+  return url.toString();
+}
+
+// Resolve the destination for automatically generated PDF tune-title links.
+// Explicit player beats all other modes (including the older global editor
+// directive); explicit editor beats viewer. The existing %no_edit_allowed
+// restriction continues to prevent opening in the Transcription Tools editor.
+function GetPDFPlaybackLinkTarget() {
+  if (gPlaybackHyperlinkMode === "player") return "player";
+  if (gPlaybackHyperlinkMode === "editor") return gInjectEditDisabled ? "player" : "editor";
+  if (gOpenInEditor) return "editor";
+  if (gPlaybackHyperlinkMode === "viewer") return "viewer";
+  return "player";
+}
+
 function GetAllTuneHyperlinks(theLinks) {
 
   // Check for max URL length exceeded on a full tunebook hyperlink
@@ -6862,9 +6891,9 @@ function GetAllTuneHyperlinks(theLinks) {
       theTune = theTune.replace(searchRegExp, "");
 
       if (gAddPlaybackHyperlinkVolumes) {
-        theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI bassvol " + gPlaybackHyperlinkBassVolume + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%%MIDI chordvol " + gPlaybackHyperlinkChordVolume + "\n" + "%add_all_playback_links\n" + theTune;
+        theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI bassvol " + gPlaybackHyperlinkBassVolume + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%%MIDI chordvol " + gPlaybackHyperlinkChordVolume + "\n" + "%add_all_playback_links" + (gPlaybackHyperlinkMode ? " " + gPlaybackHyperlinkMode : "") + "\n" + theTune;
       } else {
-        theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%add_all_playback_links\n" + theTune;
+        theTune = "X:1\n%abcjs_soundfont " + gPlaybackHyperlinkSoundFont + "\n" + "%%MIDI program " + gPlaybackHyperlinkMelodyProgram + "\n" + "%%MIDI bassprog " + gPlaybackHyperlinkBassProgram + "\n" + "%%MIDI chordprog " + gPlaybackHyperlinkChordProgram + "\n" + "%add_all_playback_links" + (gPlaybackHyperlinkMode ? " " + gPlaybackHyperlinkMode : "") + "\n" + theTune;
       }
 
     }
@@ -6932,6 +6961,9 @@ function GetAllTuneHyperlinks(theLinks) {
   // Keep track of any tunes that exceed the Acrobat maximum length
   gAcrobatURLLimitExceeded = [];
 
+  var playbackLinkTarget = GetPDFPlaybackLinkTarget();
+  var useViewerLinks = playbackLinkTarget === "viewer";
+
   var nTunes = CountTunes();
 
   var theTitles;
@@ -6963,7 +6995,7 @@ function GetAllTuneHyperlinks(theLinks) {
 
       var tuneWithPatch = thisTune;
 
-      if (gAddTunebookPlaybackHyperlinks) {
+      if (gAddTunebookPlaybackHyperlinks && !useViewerLinks) {
 
         // Inject any tune swing and other per-tune modifications
         tuneWithPatch = processEntireTunebookPlaybackInjects();
@@ -6977,20 +7009,46 @@ function GetAllTuneHyperlinks(theLinks) {
 
       tuneWithPatch = AggregateABCFileHeaderForShare(tuneWithPatch);
 
-      // Create a share URL for this tune
-      // 2 Feb 2026 - Switch to Deflate
-      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false, null, true);
+      // Create a share URL for this tune. Leave the legacy Player URL unchanged.
+      // The Viewer accepts the same Deflate/Base64URL ABC payload, but on its
+      // own URL endpoint (without the Player-only play, index, and dx options).
+      var theURL = useViewerLinks
+        ? BuildABCTunebookViewerPDFShareURL(tuneWithPatch)
+        : FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false, null, true);
 
-      // Test max share URL length and one-time warn if too long
+      // Build the final URL before enforcing the link limit. The destination,
+      // complete-tunebook index, and edit restriction all count toward it.
+      // Viewer URLs already contain their destination and receive no additions.
+      if (playbackLinkTarget === "editor") {
+        theURL += "&editor=1";
+      } else if (playbackLinkTarget === "player") {
+        theURL += "&play=1";
+        if (gAddTunebookPlaybackHyperlinks) {
+          theURL += "&index=" + i;
+        }
+        if (gInjectEditDisabled) {
+          theURL += "&dx=1";
+        }
+      }
+
+      // Test the complete URL and warn only once if it is too long.
       if (theURL.length >= 8100) {
 
         if (!gGotURLLengthWarning) {
 
           gGotURLLengthWarning = true;
 
-          if (gAddTunebookPlaybackHyperlinks) {
+          if (gAddTunebookPlaybackHyperlinks && !useViewerLinks) {
 
             DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL for entire tunebook is too long to add to the tunes.</p>', {
+              theme: "modal_flat",
+              top: 230,
+              scrollWithPage: (AllowDialogsToScroll())
+            });
+
+          } else if (useViewerLinks) {
+
+            DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">A tune is too long to create an ABC Tunebook Viewer PDF link (8100-character URL limit).</p>', {
               theme: "modal_flat",
               top: 230,
               scrollWithPage: (AllowDialogsToScroll())
@@ -7000,51 +7058,14 @@ function GetAllTuneHyperlinks(theLinks) {
         }
       } else {
 
-        // MAE 11 July 2024 - For open in editor
-        if (!gOpenInEditor) {
-
-          // Add play link
-          theURL += "&play=1";
-
-          // If full tunebook play link, add tune index
-          if (gAddTunebookPlaybackHyperlinks) {
-            theURL += "&index=" + i;
-          }
-
-          // Add the play parameter
-          if (gInjectEditDisabled) {
-            theURL += "&dx=1"
-          }
-
-          // Warn if too large for Acrobat Reader
-          if (theURL.length > ACROBATMAXURLLENGTH) {
-
-            gAcrobatURLLimitExceeded.push({
-              name: theTitles[i],
-              urllength: theURL.length
-            });
-
-          }
-
-          theLinks[i].url = theURL;
-        } else {
-
-          // Add open in editor
-          theURL += "&editor=1";
-
-          // Warn if too large for Acrobat Reader
-          if (theURL.length > ACROBATMAXURLLENGTH) {
-
-            gAcrobatURLLimitExceeded.push({
-              name: theTitles[i],
-              urllength: theURL.length
-            });
-
-          }
-
-          theLinks[i].url = theURL;
-
+        // Warn if too large for Acrobat Reader
+        if (theURL.length > ACROBATMAXURLLENGTH) {
+          gAcrobatURLLimitExceeded.push({
+            name: theTitles[i],
+            urllength: theURL.length
+          });
         }
+        theLinks[i].url = theURL;
 
       }
 
@@ -7865,12 +7886,26 @@ function AppendPDFTuneQRCode(thePDF, paperStyle, theABC, theTitle, callback) {
 
   theABC = AggregateABCFileHeaderForShare(theABC);
 
-  // Can we make a QR code from the current share link URL?
-  theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false, null, true);
-
-  // Adding play links?
+  // Use the same destination selection as PDF tune-title hyperlinks.
+  // Without playback links, retain the original plain ABC share URL.
   if (gAddPlaybackHyperlinks) {
-    theURL += "&play=1";
+    var playbackLinkTarget = GetPDFPlaybackLinkTarget();
+
+    if (playbackLinkTarget === "viewer") {
+      theURL = BuildABCTunebookViewerPDFShareURL(theABC);
+    } else {
+      theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false, null, true);
+      if (playbackLinkTarget === "editor") {
+        theURL += "&editor=1";
+      } else {
+        theURL += "&play=1";
+        if (gInjectEditDisabled) {
+          theURL += "&dx=1";
+        }
+      }
+    }
+  } else {
+    theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false, null, true);
   }
 
   //console.log("theURL = "+theURL);
@@ -10397,6 +10432,7 @@ function ParseCommentCommands(theNotes) {
 
   // Include playback links for every tune
   gAddPlaybackHyperlinks = false;
+  gPlaybackHyperlinkMode = "";
 
   // Inject the MIDI program in the ABC before creating the link
   gAddPlaybackHyperlinksIncludePrograms = false;
@@ -10416,6 +10452,22 @@ function ParseCommentCommands(theNotes) {
     thePatch = thePatch.trim();
 
     var thePatches = thePatch.match(/\b(\w+)\b/g);
+
+    // Optional destination tokens are not MIDI parameters. Any combination is
+    // accepted, regardless of order; explicit precedence is player > editor > viewer.
+    // With no destination token, preserve the original Player behavior.
+    var destinations = [];
+    thePatches = (thePatches || []).filter(function (token) {
+      var destination = token.toLowerCase();
+      if (destination === "player" || destination === "editor" || destination === "viewer") {
+        destinations.push(destination);
+        return false;
+      }
+      return true;
+    });
+    gPlaybackHyperlinkMode = destinations.indexOf("player") !== -1 ? "player"
+      : destinations.indexOf("editor") !== -1 ? "editor"
+      : destinations.indexOf("viewer") !== -1 ? "viewer" : "";
 
     gPlaybackHyperlinkMelodyProgram = gTheMelodyProgram;
     gPlaybackHyperlinkBassProgram = gTheBassProgram;
@@ -10497,8 +10549,11 @@ function ParseCommentCommands(theNotes) {
       // Turn on link generation
       gAddPlaybackHyperlinks = true;
 
-      // But don't inject the play information
-      gAddPlaybackHyperlinksIncludePrograms = false;
+      // Legacy open-in-editor removes program overrides; an explicit "player"
+      // on %add_all_playback_links takes precedence for those generated links.
+      if (gPlaybackHyperlinkMode !== "player") {
+        gAddPlaybackHyperlinksIncludePrograms = false;
+      }
 
     }
   }
@@ -19271,6 +19326,10 @@ var gPDFTunebookConfig = {
   // Add playback links?
   bAdd_add_all_playback_links: true,
 
+  // Detect existing player/editor/viewer destinations; injection defaults to Player.
+  playbackLinkMode: "",
+  bPlaybackLinksNoPrograms: false,
+
   // Inject full tunebook
   bAdd_add_full_tunebook: false,
 
@@ -19339,6 +19398,10 @@ function resetPDFTunebookConfig() {
 
     // Add playback links?
     bAdd_add_all_playback_links: true,
+
+    // Detect existing player/editor/viewer destinations; injection defaults to Player.
+    playbackLinkMode: "",
+    bPlaybackLinksNoPrograms: false,
 
     // Inject full tunebook
     bAdd_add_full_tunebook: false,
@@ -19432,6 +19495,8 @@ function parsePDFTunebookFeaturesBlock(block) {
   // --- Reset playback-related toggles ---
   // (These will only be set true if found in the block)
   gPDFTunebookConfig.bAdd_add_all_playback_links = false;
+  gPDFTunebookConfig.playbackLinkMode = "";
+  gPDFTunebookConfig.bPlaybackLinksNoPrograms = false;
   gPDFTunebookConfig.bAdd_add_full_tunebook = false;
   gPDFTunebookConfig.bAdd_add_fonts = false;
   gPDFTunebookConfig.bInjectInstruments = false;
@@ -19494,19 +19559,33 @@ function parsePDFTunebookFeaturesBlock(block) {
         gPDFTunebookConfig.pagefooter = rest;
         break;
 
-      case "add_all_playback_links":
-        // Found → enable playback links
-        if (parts.length >= 5) {
-
-          gPDFTunebookConfig.bAdd_add_all_playback_links = true;
+      case "add_all_playback_links": {
+        // Read existing destinations to identify instrument tokens, but the
+        // PDF feature injectors always generate the default (no-mode) directive.
+        // Preserve whether the original directive omitted program overrides.
+        var requestedModes = [];
+        var programs = parts.slice(1).filter(function (token) {
+          var mode = token.toLowerCase();
+          if (mode === "player" || mode === "editor" || mode === "viewer") {
+            requestedModes.push(mode);
+            return false;
+          }
+          return true;
+        });
+        gPDFTunebookConfig.bAdd_add_all_playback_links = true;
+        gPDFTunebookConfig.playbackLinkMode = requestedModes.indexOf("player") !== -1 ? "player"
+          : requestedModes.indexOf("editor") !== -1 ? "editor"
+          : requestedModes.indexOf("viewer") !== -1 ? "viewer" : "";
+        gPDFTunebookConfig.bPlaybackLinksNoPrograms = programs.length === 0;
+        if (programs.length) {
           gPDFTunebookConfig.bInjectInstruments = true;
-
-          gPDFTunebookConfig.melody_instrument = parsePlaybackProgramFromDirective(parts[1]);
-          gPDFTunebookConfig.bass_instrument   = parsePlaybackProgramFromDirective(parts[2]);
-          gPDFTunebookConfig.chord_instrument  = parsePlaybackProgramFromDirective(parts[3]);
-          gPDFTunebookConfig.sound_font        = parts[4];
+          if (programs.length >= 1) gPDFTunebookConfig.melody_instrument = parsePlaybackProgramFromDirective(programs[0]);
+          if (programs.length >= 2) gPDFTunebookConfig.bass_instrument = parsePlaybackProgramFromDirective(programs[1]);
+          if (programs.length >= 3) gPDFTunebookConfig.chord_instrument = parsePlaybackProgramFromDirective(programs[2]);
+          if (programs.length >= 4) gPDFTunebookConfig.sound_font = programs[3];
         }
         break;
+      }
 
       case "add_all_playback_volumes":
         if (parts.length >= 3) {
@@ -19973,7 +20052,10 @@ function PDFTunebookBuilder() {
 
         var volChord = gPDFTunebookConfig.chord_volume;
 
-        header_to_add += "%add_all_playback_links " + progNumMelody + " " + progNumBass + " " + progNumChord + " " + soundFont + "\n";
+        header_to_add += (gPDFTunebookConfig.bPlaybackLinksNoPrograms
+          ? "%add_all_playback_links"
+          : "%add_all_playback_links " + progNumMelody + " " + progNumBass + " " + progNumChord + " " + soundFont)
+          + "\n";
         header_to_add += "%add_all_playback_volumes " + volBass + " " + volChord + "\n";
 
         // Will only add the full tunebook Share URL annotation if the playback links are also enabled
@@ -20033,18 +20115,11 @@ function PDFTunebookBuilder() {
 
       //debugger;
 
-      // Strip off any existing settings
-
-      var markerString = "% End of PDF Tunebook Features\n\n";
-
-      var startIndex = theNotes.indexOf(markerString);
-
-      if (startIndex != -1) {
-
-        startIndex += markerString.length;
-
-        theNotes = theNotes.substring(startIndex);
-
+      // Replace any previously injected PDF Features block, whether the end
+      // marker uses one or two line breaks (or CRLF on imported files).
+      var existingFeaturesEnd = /% End of PDF Tunebook Features\r?\n(?:[ \t]*\r?\n)?/.exec(theNotes);
+      if (existingFeaturesEnd) {
+        theNotes = theNotes.substring(existingFeaturesEnd.index + existingFeaturesEnd[0].length);
       }
 
       header_to_add += theNotes;
@@ -20277,7 +20352,10 @@ function PDFTunebookBuilderPlayOnly() {
       header_to_add += "%\n";
       header_to_add += "%pageheader Click the tune title to play\n";
       header_to_add += "%\n";
-      header_to_add += "%add_all_playback_links " + progNumMelody + " " + progNumBass + " " + progNumChord + " " + soundFont + "\n";
+      header_to_add += (gPDFTunebookConfig.bPlaybackLinksNoPrograms
+          ? "%add_all_playback_links"
+          : "%add_all_playback_links " + progNumMelody + " " + progNumBass + " " + progNumChord + " " + soundFont)
+          + "\n";
       header_to_add += "%add_all_playback_volumes " + volBass + " " + volChord + "\n";
 
       header_to_add += "%\n";
@@ -20293,30 +20371,11 @@ function PDFTunebookBuilderPlayOnly() {
 
       //debugger;
 
-      // Strip off any existing settings
-
-      var markerString = "% End of PDF Tunebook Features\n\n";
-
-      var startIndex = theNotes.indexOf(markerString);
-
-      if (startIndex != -1) {
-
-        startIndex += markerString.length;
-
-        theNotes = theNotes.substring(startIndex);
-
-      }
-
-      markerString = "% End of PDF Tunebook Features\n";
-
-      startIndex = theNotes.indexOf(markerString);
-
-      if (startIndex != -1) {
-
-        startIndex += markerString.length;
-
-        theNotes = theNotes.substring(startIndex);
-
+      // Replace a previous PDF Features block, regardless of line-ending
+      // format or number of blank lines following its end marker.
+      var existingFeaturesEnd = /% End of PDF Tunebook Features\r?\n(?:[ \t]*\r?\n)?/.exec(theNotes);
+      if (existingFeaturesEnd) {
+        theNotes = theNotes.substring(existingFeaturesEnd.index + existingFeaturesEnd[0].length);
       }
 
       header_to_add += theNotes;
@@ -25484,6 +25543,24 @@ function clearQRCode() {
 
 }
 
+// Identify the actual QR target from its URL, including manually pasted URLs.
+// Only the two official tool endpoints are labeled; external or shortened links
+// receive the generic caption without assuming their final destination.
+function GetShareQRCodeDestinationDescription(theURL) {
+  try {
+    var target = new URL(theURL.trim());
+    var host = target.hostname.toLowerCase().replace(/^www\./, "");
+    var path = target.pathname.toLowerCase().replace(/\/+$/, "");
+    if ((target.protocol === "https:" || target.protocol === "http:") && host === "michaeleskin.com") {
+      if (path === "/abctools/abctools.html") return "will open in the ABC Transcription Tools";
+      if (path === "/tools/abc-tunebook-viewer.html") return "will open in the ABC Tunebook Viewer";
+    }
+  } catch (e) {
+    // A pasted non-URL should not be mistaken for either tool.
+  }
+  return "will open in the target destination";
+}
+
 function GenerateQRCode(e) {
 
   // Keep track of dialogs
@@ -25662,8 +25739,7 @@ function GenerateQRCode(e) {
       theOutputHTML += '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><a href="' + theImageSource + '" download="' + theImageName + '.png" style="text-decoration:none;color:darkblue">Click here to download&nbsp;' + theImageName + '.png&nbsp;to your system.</a></p>';
       theOutputHTML += '<p style="font-family:times;font-size:16pt;margin-top:32px;margin-bottom:0px;"><strong>Use Your QR Code</strong></p>';
       theOutputHTML += '<p style="font-family:times;font-size:15pt;margin-top:30px;margin-bottom:0px;">Share QR Codes on social media or email them to friends like any other photo.</p>';
-      theOutputHTML += '<p style="font-family:times;font-size:15pt;margin-top:24px;margin-bottom:0px;">Scanning the code with the Camera app on any iOS or Android phone will load the</p>';
-      theOutputHTML += '<p style="font-family:times;font-size:15pt;margin-top:6px;margin-bottom:0px;">ABC Transcription Tool with your tune set into the browser on the device.</p>';
+      theOutputHTML += '<p style="font-family:times;font-size:15pt;margin-top:24px;margin-bottom:0px;">Scan the code with the Camera app on an iOS or Android phone. The link ' + GetShareQRCodeDestinationDescription(theURL) + '.</p>';
       theOutputHTML += '</div>';
 
       w.document.write(theOutputHTML);
@@ -31438,13 +31514,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_19Nov2026;
+        var updatePresented = localStorage.sawUpdate_21Nov2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_19Nov2026 = true;
+          localStorage.sawUpdate_21Nov2026 = true;
 
         }
 
@@ -50380,6 +50456,12 @@ function GetInitialConfigurationSettings() {
     if ((gPDFTunebookConfig.bAdd_add_fonts == undefined) || (gPDFTunebookConfig.bAdd_add_fonts == null)) {
       gPDFTunebookConfig.bAdd_add_fonts = false;
     }
+    if (gPDFTunebookConfig.playbackLinkMode == undefined) {
+      gPDFTunebookConfig.playbackLinkMode = gPDFTunebookConfig.bPlaybackLinksViewer ? "viewer" : "";
+    }
+    if (gPDFTunebookConfig.bPlaybackLinksNoPrograms == undefined) {
+      gPDFTunebookConfig.bPlaybackLinksNoPrograms = false;
+    }
   } else {
     resetPDFTunebookConfig();
   }
@@ -52719,20 +52801,123 @@ function updateShareLinkSize(){
 
 }
 
+// The Viewer uses a different URL endpoint. If a Player/Editor option is
+// selected after making a Viewer link, start over with an ABC Tools URL.
+function ResetViewerShareLinkForABCTools() {
+  if (urltextbox && (
+    /^https:\/\/michaeleskin\.com\/tools\/abc-tunebook-viewer\.html(?:\?|$)/i.test(urltextbox.value) ||
+    (!gAllowURLSave && urltextbox.value.indexOf(" *** The URL link would be too long") === 0)
+  )) {
+    CreateURLfromHTML();
+  }
+}
+
+// Generate a fresh, full-tunebook Viewer URL instead of modifying the URL
+// already in the Sharing Controls text box. This uses the same Viewer URL
+// format as the PDF links and independently recalculates share/QR limits.
+function MakeViewerShareLink() {
+  var abcText = getABCEditorText();
+  var theURL = BuildABCTunebookViewerPDFShareURL(abcText);
+  urltextbox = document.getElementById("urltextbox");
+  if (!urltextbox) return;
+
+  sendGoogleAnalytics("sharing", "make_viewer_share_link");
+
+  gAllowURLSave = (theURL.length < 8100);
+  gAllowQRCodeSave = gAllowURLSave && (theURL.length < MAXQRCODEURLLENGTH);
+
+  var shareControls = ["testurl", "copyurl", "saveurl", "shortenurl", "generateqrcode"];
+  shareControls.forEach(function(id) {
+    var elem = document.getElementById(id);
+    if (!elem) return;
+    var enabled = (id === "generateqrcode") ? gAllowQRCodeSave : gAllowURLSave;
+    elem.classList.toggle("urlcontrols", enabled);
+    elem.classList.toggle("urlcontrolsdisabled", !enabled);
+  });
+
+  urltextbox.value = gAllowURLSave ? theURL :
+    " *** The URL link would be too long to share. Please try sharing fewer tunes. ***";
+
+  var qr = document.getElementById("qrcode");
+  if (qr) qr.style.display = "none";
+  clearQRCode();
+
+  urltextbox.focus();
+  urltextbox.setSelectionRange(0, 0);
+  if (gAllowURLSave) {
+    updateShareLinkSize();
+  } else {
+    var caption = document.getElementById("shareurlcaption");
+    if (caption) caption.innerText = "Share URL";
+  }
+}
+
+// Replace the Share URL's Player/Editor destination, instead of appending
+// another mode. Also recognize older/manual &player=1 parameters. Leave all
+// unrelated query parameters (and any URL fragment) unchanged.
+function SetSharingControlsDestination(theURL, mode) {
+  var hashIndex = theURL.indexOf("#");
+  var fragment = hashIndex >= 0 ? theURL.slice(hashIndex) : "";
+  var urlWithoutFragment = hashIndex >= 0 ? theURL.slice(0, hashIndex) : theURL;
+  var queryIndex = urlWithoutFragment.indexOf("?");
+  var baseURL = queryIndex >= 0 ? urlWithoutFragment.slice(0, queryIndex) : urlWithoutFragment;
+  var query = queryIndex >= 0 ? urlWithoutFragment.slice(queryIndex + 1) : "";
+  var parameters = query ? query.split("&") : [];
+
+  parameters = parameters.filter(function(parameter) {
+    return parameter && !/^(?:play|player|editor)(?:=|$)/i.test(parameter);
+  });
+  parameters.push(mode === "editor" ? "editor=1" : "play=1");
+
+  return baseURL + "?" + parameters.join("&") + fragment;
+}
+
+// Recheck the complete Share URL whenever a Player/Editor option is changed.
+// The added parameter can put a previously valid URL over the QR or share limit.
+function RefreshSharingControlsDestinationLimits() {
+  if (!urltextbox) return;
+
+  var theURL = urltextbox.value;
+  gAllowURLSave = theURL.length < 8100;
+  gAllowQRCodeSave = gAllowURLSave && theURL.length < MAXQRCODEURLLENGTH;
+
+  ["testurl", "copyurl", "saveurl", "shortenurl", "generateqrcode"].forEach(function(id) {
+    var elem = document.getElementById(id);
+    if (!elem) return;
+    var enabled = id === "generateqrcode" ? gAllowQRCodeSave : gAllowURLSave;
+    elem.classList.toggle("urlcontrols", enabled);
+    elem.classList.toggle("urlcontrolsdisabled", !enabled);
+  });
+
+  // A previously generated QR image must not remain visible for the old URL.
+  var qr = document.getElementById("qrcode");
+  if (qr) qr.style.display = "none";
+  clearQRCode();
+
+  if (gAllowURLSave) {
+    updateShareLinkSize();
+  } else {
+    urltextbox.value = " *** The URL link would be too long to share. Please try sharing fewer tunes. ***";
+    var caption = document.getElementById("shareurlcaption");
+    if (caption) caption.innerText = "Share URL";
+  }
+}
+
 // Add the autoplay string to the URL
 function AddAutoPlay() {
 
+  ResetViewerShareLinkForABCTools();
+  if (!gAllowURLSave) return;
   var theURL = urltextbox.value;
 
-  // Check if a play directive already present
-  if (theURL.indexOf("&play=1") == -1) {
-    theURL += "&play=1";
-  }
+  // Exactly one destination: replace any existing Player/Editor option.
+  theURL = SetSharingControlsDestination(theURL, "play");
 
   urltextbox.value = theURL;
+  RefreshSharingControlsDestinationLimits();
 
   // Give some feedback
-  document.getElementById("addautoplay").value = "Auto-Play Added!";
+  document.getElementById("addautoplay").value = gAllowURLSave ? "Auto-Play Added!" : "URL Too Long!";
 
   setTimeout(function() {
 
@@ -52744,53 +52929,24 @@ function AddAutoPlay() {
 
   }, 500);
 
-  updateShareLinkSize();
-
-}
-
-// Add the disable editing param to the URL
-function AddDisableEditing() {
-
-  var theURL = urltextbox.value;
-
-  // Check if a disable editor directive already present
-  if (theURL.indexOf("&dx=1") == -1) {
-    theURL += "&dx=1";
-  }
-
-  urltextbox.value = theURL;
-
-  // Give some feedback
-  document.getElementById("adddisableediting").value = "Disable Editing Added!";
-
-  setTimeout(function() {
-
-    var elem = document.getElementById("adddisableediting");
-
-    if (elem) {
-      elem.value = "Add Disable Editing";
-    }
-
-  }, 500);
-
-  updateShareLinkSize();
 
 }
 
 // Add the open in editor parameter to the URL
 function AddOpenInEditor() {
 
+  ResetViewerShareLinkForABCTools();
+  if (!gAllowURLSave) return;
   var theURL = urltextbox.value;
 
-  // Check if a editor directive already present
-  if (theURL.indexOf("&editor=1") == -1) {
-    theURL += "&editor=1";
-  }
+  // Exactly one destination: replace any existing Player/Editor option.
+  theURL = SetSharingControlsDestination(theURL, "editor");
 
   urltextbox.value = theURL;
+  RefreshSharingControlsDestinationLimits();
 
   // Give some feedback
-  document.getElementById("addopenineditor").value = "Open in Editor Added!";
+  document.getElementById("addopenineditor").value = gAllowURLSave ? "Open in Editor Added!" : "URL Too Long!";
 
   setTimeout(function() {
 
@@ -52802,36 +52958,6 @@ function AddOpenInEditor() {
 
   }, 500);
 
-  updateShareLinkSize();
-
-}
-
-// Add the noui param to the URL
-function AddNoUI() {
-
-  var theURL = urltextbox.value;
-
-  // Check if the noui directive already present
-  if (theURL.indexOf("&noui") == -1) {
-    theURL += "&noui";
-  }
-
-  urltextbox.value = theURL;
-
-  // Give some feedback
-  document.getElementById("addnoui").value = "Hide UI Added!";
-
-  setTimeout(function() {
-
-    var elem = document.getElementById("addnoui");
-
-    if (elem) {
-      elem.value = "Add Hide UI";
-    }
-
-  }, 500);
-
-  updateShareLinkSize();
 
 }
 
@@ -52854,12 +52980,11 @@ function SharingControlsDialog() {
   modal_msg += '</textarea>';
   modal_msg += '</p>';
   modal_msg += '<p id="shareurlcaption">Share URL</p>';
-  // Keep all five URL option buttons on one row in the 800px Sharing Controls dialog.
+  // Share URL options (two ABC Tools append actions and one fresh Viewer link).
   modal_msg += '<div class="sharing-url-options-row">';
-  modal_msg += '<input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player.">';
-  modal_msg += '<input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play.">';
-  modal_msg += '<input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor.">';
-  modal_msg += '<input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">';
+  modal_msg += '<input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Opens the tune in the Player (&amp;play=1), replacing any existing Player or Editor option.">';
+  modal_msg += '<input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Opens the tune in the Editor (&amp;editor=1), replacing any existing Player or Editor option.">';
+  modal_msg += '<input id="makeviewersharelink" class="urlcontrols btn btn-urlcontrols" onclick="MakeViewerShareLink()" type="button" value="Make Tunebook Viewer Share Link" title="Rebuilds the Share URL from the current ABC tunes to open in the ABC Tunebook Viewer, discarding previously appended Player or Editor options.">';
   modal_msg += '<input id="external_tools_share" class="btn btn-urlcontrols" type="button" value="Open Tunes in Another Tool" title="Open all your ABC tunes in another ABC player or tool.">';
   modal_msg += '</div>';
 
@@ -53692,6 +53817,23 @@ function PDFExportDialog() {
 // Browser-based PDF export with play links
 //
 
+// Remove optional PDF-link destinations from pre-existing playback directives.
+// The browser-native PDF exporter always links to the Player. Preserve MIDI
+// instrument parameters while discarding viewer/editor/player mode overrides.
+// This is restricted to the native PDF path; ordinary PDF exports still honor
+// explicit destinations in manually authored ABC directives.
+function StripNativePDFPlaybackLinkDestinations(abcText) {
+  return abcText.replace(/^[ \t]*%add_all_playback_links\b[^\r\n]*/gmi, function (line) {
+    var parts = line.trim().split(/\s+/);
+    var argumentsWithoutDestinations = parts.slice(1).filter(function (token) {
+      return !/^(player|editor|viewer)$/i.test(token);
+    });
+    var indentation = line.match(/^[ \t]*/)[0];
+    return indentation + parts[0] + (argumentsWithoutDestinations.length
+      ? " " + argumentsWithoutDestinations.join(" ") : "");
+  });
+}
+
 //
 // Inject the MIDI parameters into this tune
 //
@@ -53800,6 +53942,10 @@ function BrowserPDFInjectInstruments(theTune) {
 
   // Inject chord volume
   theTune = InjectStringBelowTuneHeaderConditional(theTune, "%%MIDI chordvol " + volChord);
+
+  // Strip any old destination so native Print-to-PDF always embeds Player
+  // directives, even when the original tune was previously injected.
+  theTune = StripNativePDFPlaybackLinkDestinations(theTune);
 
   // Inject play link request for tune PDF export
   theTune = InjectStringBelowTuneHeaderConditional(theTune, "%add_all_playback_links");
@@ -54006,6 +54152,10 @@ function Do_Browser_PDF_Export() {
           thisTune = BrowserPDFInjectInstruments(thisTune);
 
           thisTune = AggregateABCFileHeaderForShare(thisTune);
+
+          // A file-level PDF Features block may also contain a destination;
+          // remove it after aggregation so native links stay Player-only.
+          thisTune = StripNativePDFPlaybackLinkDestinations(thisTune);
 
           var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
@@ -61037,32 +61187,33 @@ function initMIDI() {
 //
 function showWhatsNewScreen() {
 
-  // Keep track of dialogs
   sendGoogleAnalytics("dialog", "showWhatsNewScreen");
 
-  // --- Inline styles to keep this self-contained like your existing dialog ---
   var modal_msg = '';
   modal_msg += '<div style="font-family:helvetica; line-height:18pt;">';
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
-  modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
+  modal_msg += 'background:linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
+  modal_msg += 'box-shadow:0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 19 November 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 21 November 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">Added <strong>Open in Tunebook Viewer</strong> to the top of the <strong>☰</strong> menu and to the <strong>Open Tunes in Another Tool</strong> dialog external tools collection.</p>';
-  modal_msg += '<p style="font-size:12pt;">The new <strong>ABC Tunebook Viewer</strong> is a quick and easy way to navigate and play tunes in ABC tunebooks that have multiple ABC tunes.</p>';
-  modal_msg += '<p style="font-size:12pt;">Click the new item at the top of <strong>☰</strong> menu to send all the tunes in the ABC editor to the <strong>ABC Tunebook Viewer</strong>.</p>';
-  modal_msg += '<p style="font-size:12pt;">Send the current tune from the <strong>Player</strong> or <strong>Tune Trainer</strong> to the <strong>ABC Tunebook Viewer</strong> by clicking <strong>Open Tune in...</strong> at the upper right corner.</p>';
-  modal_msg += '<p style="font-size:12pt;">Send all the tunes in the ABC editor from the <strong>Sharing Controls</strong> dialog to the <strong>ABC Tunebook Viewer</strong> by clicking <strong>Open Tunes in Another Tool</strong>.</p>';  
-  modal_msg += '</div>';
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:6px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow:0 2px 10px rgba(0,0,0,0.06); font-size:12pt;">';
 
-  modal_msg += '</div>'; // wrapper
+  // PDF updates
+  modal_msg += '<p style="font-size:12pt; margin-bottom:6px;"><strong>PDF Tune Links</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>%add_all_playback_links</strong> directive now supports optional <strong>player</strong>, <strong>editor</strong>, and <strong>viewer</strong> destinations for clickable tune links and QR codes in exported PDFs. The default remains the Player.</p>';
+
+  // Sharing updates
+  modal_msg += '<p style="font-size:12pt; margin-bottom:6px;"><strong>Sharing Controls</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">New <strong>Make Tunebook Viewer Share Link</strong> button creates share links that open tunes directly in the <strong>ABC Tunebook Viewer</strong>. Auto-Play and Editor link options are now mutually exclusive, and generated QR codes identify their destination.</p>';
+
+  modal_msg += '</div>';
+  modal_msg += '</div>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
@@ -67880,13 +68031,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_19Nov2026;
+    var updatePresented = localStorage.sawUpdate_21Nov2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_19Nov2026 = true;
+      localStorage.sawUpdate_21Nov2026 = true;
 
     }
 
