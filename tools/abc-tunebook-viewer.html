@@ -155,6 +155,21 @@
       .tuneControls {column-gap:2px;margin-left:4px;margin-right:4px;}
       .app .tuneEditActions button.subtle {padding-left:2px;padding-right:2px;font-size:10px;}
     }
+    /* On iPad portrait / similarly narrow desktop sidebars, the compact
+       245px rule makes Open and Share needlessly tiny. Share the available
+       column space with Sort/Settings, without adding rows or widening the
+       entire sidebar. Keep iPhone landscape's shorter viewport unchanged. */
+    @media (min-width:731px) and (min-height:550px) {
+      @container (min-width:200px) and (max-width:245px) {
+        .tuneControls {
+          grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.65fr);
+          justify-content:stretch;
+        }
+        .tuneControls #openBtn,
+        .tuneControls #shareBtn {width:100%;font-size:14px;}
+        .tuneControls .shareBtnWrap {width:100%;}
+      }
+    }
     @media(max-width:730px) and (min-width:526px) {
       .tuneControls {column-gap:5px;}
       .showTuneInfoOption {font-size:12px;gap:4px;}
