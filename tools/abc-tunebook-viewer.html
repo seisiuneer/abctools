@@ -66,7 +66,8 @@
     .paneDivider:focus-visible {outline:2px solid #85bda1;outline-offset:-2px}
     aside,.scorePane {min-width:0;min-height:0;background:white;border:1px solid var(--border);border-radius:7px;overflow:hidden}
     aside {display:flex;flex-direction:column;container-type:inline-size}
-    .listActions {display:flex;flex-wrap:wrap;align-items:center;column-gap:7px;row-gap:4px;padding:8px 8px 5px;flex:0 0 auto}
+    /* The action buttons share the tune-controls grid to keep the gear above Sort. */
+    .listActions {display:contents;}
     #openBtn,#shareBtn {min-width:81px;min-height:34px;padding:6px 13px}
     /* Blue Share button matching Open's dimensions, with a tooltip-bearing
        wrapper because disabled buttons do not reliably show title on Safari. */
@@ -118,24 +119,41 @@
     .tuneTransposeButtons {display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;white-space:nowrap;}
     .tuneTransposeButtons button.subtle {min-height:32px;padding:4px 9px;white-space:nowrap;}
 
-    /* Use shared columns so Sort's right edge lines up with Clear below it. */
+    /* All three button rows use shared columns: Open / Share / Settings,
+       Show tune info / Sort, and Add / Delete / Clear. No dedicated gear row. */
     .tuneControls {display:grid;grid-template-columns:max-content max-content max-content;
-      align-items:center;justify-content:start;column-gap:7px;row-gap:10px;
-      flex:0 0 auto;margin:4px 8px 6px;}
+      align-items:center;justify-content:start;column-gap:7px;row-gap:4px;
+      flex:0 0 auto;margin:8px 8px 6px;}
     .tuneListOptions,.tuneEditActions {display:contents;}
-    .showTuneInfoOption {grid-column:1 / span 2;display:flex;align-items:center;gap:7px;min-width:0;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
+    #openBtn {grid-column:1;grid-row:1;justify-self:start;}
+    .shareBtnWrap {grid-column:2;grid-row:1;justify-self:start;}
+    /* A drawn (not font-dependent) gear is consistent on Safari, iOS, and desktop.
+       Share Sort's grid column and width; match Open/Share's 34px height. */
+    #tuneListSettingsBtn {grid-column:3;grid-row:1;justify-self:stretch;
+      display:inline-flex;align-items:center;justify-content:center;
+      box-sizing:border-box;width:100%;min-width:0;height:34px;min-height:34px;padding:0;}
+    #tuneListSettingsBtn .settingsGearIcon {display:block;flex:0 0 18px;width:18px;height:18px;
+      fill:currentColor;pointer-events:none;}
+    .showTuneInfoOption {grid-column:1 / span 2;grid-row:2;display:flex;align-items:center;gap:7px;min-width:0;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
     .showTuneInfoOption input {width:16px;height:16px;margin:0;accent-color:var(--accent);margin-left:2px;}
-    #sortBtn {grid-column:3;justify-self:end;min-height:28px;padding:4px 11px;white-space:nowrap}
+    #sortBtn {grid-column:3;grid-row:2;justify-self:end;width:100%;min-height:28px;padding:4px 11px;white-space:nowrap}
     /* Small tune-management buttons, kept at the left immediately above search. */
-    .tuneEditActions button {justify-self:start;min-height:28px;padding:4px 11px;white-space:nowrap;}
-    #clearTunesBtn {justify-self:end;}
+    .tuneEditActions button {grid-row:3;justify-self:start;min-height:28px;padding:4px 11px;white-space:nowrap;}
+    #addTuneBtn {grid-column:1;}
+    #deleteTuneBtn {grid-column:2;}
+    #clearTunesBtn {grid-column:3;justify-self:end;}
     .tuneEditActions button:disabled {opacity:.45;cursor:default;}
     /* Keep Add, Delete, and Clear on one row even with a narrow resized sidebar. */
     @container (max-width:245px) {
-      .tuneControls {column-gap:3px;margin-left:5px;margin-right:5px;}
+      .tuneControls {column-gap:3px;margin-left:5px;margin-right:5px;font-size:12px;}
+      .tuneControls #openBtn,.tuneControls #shareBtn {min-width:0;padding:6px 6px;}
       .app .tuneEditActions button.subtle {padding-left:4px;padding-right:4px;font-size:11px;}
       #sortBtn {padding-left:6px;padding-right:6px;font-size:11px;}
       .showTuneInfoOption {font-size:13px;gap:4px;}
+    }
+    @container (max-width:185px) {
+      .tuneControls {column-gap:2px;margin-left:4px;margin-right:4px;}
+      .app .tuneEditActions button.subtle {padding-left:2px;padding-right:2px;font-size:10px;}
     }
     @media(max-width:730px) and (min-width:526px) {
       .tuneControls {column-gap:5px;}
@@ -144,10 +162,14 @@
       #sortBtn {padding:4px 7px;}
       .tuneEditActions button {padding:4px 7px;font-size:12px;}
     }
-    /* The Sort dialog uses the same flat DayPilot form as ABC Transcription Tools. */
+    /* Tune-list title and metadata sizes are independent of the notation and ABC editor. */
+    #tuneList {--tune-title-font-size:16px;--tune-info-font-size:14px;}
+    #tuneList .tuneTitle {font-size:var(--tune-title-font-size);}
+    #tuneList .tuneInfo {font-size:var(--tune-info-font-size);}
+    /* The Sort and tune-list settings dialogs use the same styled DayPilot select. */
     .viewerSortHeading {display:block;box-sizing:border-box;width:100%;margin:4px 0 25px;padding:0;font:normal 23px/1.3 Helvetica,Arial,sans-serif;text-align:center;color:#111}
     .viewerSortIntro {margin:32px 0 29px;font:16px/1.55 Helvetica,Arial,sans-serif;color:#111;text-align: center;}
-    .modal_flat_main .viewerSortSelect {display:flex;align-items:center;justify-content:center;gap:10px;margin:0;font:16px/1.4 Helvetica,Arial,sans-serif;color:#111}
+    .modal_flat_main .viewerSortSelect {display:flex;align-items:center;justify-content:center;gap:10px;margin:0;font:16px/1.4 Helvetica,Arial,sans-serif;color:#111;white-space:nowrap}
     .modal_flat_main .viewerSortSelect select,
     .modal_flat_main select.viewerSortSelect {box-sizing:border-box;-webkit-appearance:none;appearance:none;flex:0 1 260px;width:260px;min-width:0;max-width:100%;height:35px;border:2px solid #888;border-radius:0;padding:4px 32px 4px 9px;background:#eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%238C98F2' d='M0 0h12L6 7z'/%3E%3C/svg%3E") no-repeat right 10px center;color:#111;-webkit-text-fill-color:#111;font:16px/1.2 Helvetica,Arial,sans-serif}
     .modal_flat_main:has(.viewerSortHeading) .modal_flat_buttons {margin-top:38px}
@@ -984,8 +1006,8 @@
  </header>
  <main class="workspace">
   <aside aria-label="Tune list">
-   <div class="listActions"><button id="openBtn" type="button" class="primary">Open</button><span id="shareBtnWrap" class="shareBtnWrap" title="Open an ABC tunebook first."><button id="shareBtn" type="button" class="primary" title="Open an ABC tunebook first." disabled>Share</button></span></div>
    <div class="tuneControls">
+    <div class="listActions"><button id="openBtn" type="button" class="primary">Open</button><span id="shareBtnWrap" class="shareBtnWrap" title="Open an ABC tunebook first."><button id="shareBtn" type="button" class="primary" title="Open an ABC tunebook first." disabled>Share</button></span><button id="tuneListSettingsBtn" class="subtle" type="button" title="Settings" aria-label="Settings"><svg class="settingsGearIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19.14 12.94a7.8 7.8 0 0 0 .06-.94c0-.32-.02-.63-.07-.94l2.03-1.58c.18-.14.23-.4.12-.62l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7 7 0 0 0-1.63-.95l-.36-2.53a.5.5 0 0 0-.49-.4h-3.82a.5.5 0 0 0-.49.4l-.36 2.53c-.6.25-1.14.57-1.63.95L5.23 5.32a.5.5 0 0 0-.6.22L2.72 8.86a.5.5 0 0 0 .12.62l2.03 1.58a7 7 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.62l1.92 3.32c.12.21.37.3.59.22l2.39-.96c.49.38 1.03.7 1.63.95l.36 2.53c.04.24.24.4.48.4h3.82c.24 0 .44-.16.48-.4l.36-2.53c.6-.25 1.14-.57 1.63-.95l2.39.96c.22.08.47-.01.59-.22l1.92-3.32c.12-.21.07-.47-.12-.62L19.14 12.94zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button></div>
     <div class="tuneListOptions"><label class="showTuneInfoOption"><input type="checkbox" id="showTuneInfo" checked>Show tune info</label><button id="sortBtn" class="subtle" type="button" title="Open an ABC tunebook first." disabled>Sort</button></div>
     <input type="file" id="fileInput" accept=".abc,.ABC,.txt,.TXT,text/plain" multiple>
     <div class="tuneEditActions"><button id="addTuneBtn" class="subtle" type="button" title="Add a new tune at the end of the list">Add Tune</button><button id="deleteTuneBtn" class="subtle" type="button" title="Select a tune to delete." disabled>Delete Tune</button><button id="clearTunesBtn" class="subtle" type="button" title="Open an ABC tunebook first." disabled>Clear</button></div>
@@ -1042,13 +1064,19 @@
     <p>Use <b>Add Tune</b> above the search bar to add a tune at the end of the list.</p>
     <p>Its ABC opens for editing with standard header fields ready to fill in.</p>
     <p>Use <b>Delete Tune</b> to remove the selected tune after confirmation.</p>
-    <p>Use <b>Clear</b> to remove all tunes; unsaved changes require confirmation.</p>
+    <p>Use <b>Clear</b> to remove all tunes. You will be asked to confirm, whether or not the tunebook has unsaved changes.</p>
 
     <hr>
     <h3>Show tune info</h3>
     <p>When checked, the meter (M:), rhythm (R:), and normalized key (K:) appear below each tune title when available, for example 6/8 - Jig - E Dorian.</p>
     <p>Uncheck to show only titles.</p>
     <p>Your preference is saved in the browser.</p>
+
+    <hr>
+    <h3>Tune list text size</h3>
+    <p>Click the gear icon to the right of <b>Share</b>, above <b>Sort</b>, to choose Smaller, Small, Medium, Large, or Larger text for tune titles and information.</p>
+    <p>Small is the default.</p> 
+    <p>Your choice is saved in the browser.</p>
 
     <hr>
     <h3>Find</h3>
@@ -1272,7 +1300,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '3.0';
+const VIEWER_VERSION = '3.0.1';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -1554,6 +1582,7 @@ const DISPLAY_KEY = 'abc-tunebook:display-mode';
 const TEMPO_KEY = 'abc-tunebook:tempo-percent';
 const LOOP_KEY = 'abc-tunebook:loop';
 const SHOW_TUNE_INFO_KEY = 'abc-tunebook:show-tune-info';
+const TUNE_LIST_TEXT_SIZE_KEY = 'abc-tunebook:tune-list-text-size';
 const LIST_WIDTH_KEY = 'abc-tunebook:list-width-px';
 // Largest workspace width since the last manual adjustment. On window shrink,
 // reduce the expanded tune list first so the notation keeps its width.
@@ -1611,6 +1640,23 @@ let loopEnabled = false, lastSystemTop = null;
 let transferredIds = new Set(), fileLoadSerial = 0;
 try { loopEnabled = localStorage.getItem(LOOP_KEY) === 'true'; } catch (_) {}
 try { $('showTuneInfo').checked = localStorage.getItem(SHOW_TUNE_INFO_KEY) !== 'false'; } catch (_) {}
+// Small exactly retains the original 16px title / 14px metadata display.
+const TUNE_LIST_FONT_SIZES = {
+  smaller:{title:14,info:12}, small:{title:16,info:14},
+  medium:{title:18,info:16}, large:{title:20,info:18},
+  larger:{title:22,info:20}
+};
+let tuneListTextSize='small';
+function applyTuneListTextSize(value,save=false){
+  const size=Object.hasOwn(TUNE_LIST_FONT_SIZES,value)?value:'small';
+  const fonts=TUNE_LIST_FONT_SIZES[size];
+  tuneListTextSize=size;
+  $('tuneList').style.setProperty('--tune-title-font-size',fonts.title+'px');
+  $('tuneList').style.setProperty('--tune-info-font-size',fonts.info+'px');
+  if(save)try{localStorage.setItem(TUNE_LIST_TEXT_SIZE_KEY,size);}catch(_){}
+}
+try{applyTuneListTextSize(localStorage.getItem(TUNE_LIST_TEXT_SIZE_KEY));}
+catch(_){applyTuneListTextSize('small');}
 function getSavedTempo() {
   try { const n = Number(localStorage.getItem(TEMPO_KEY)); if (Number.isFinite(n) && n >= 10 && n <= 200) return Math.round(n); } catch (_) {}
   return 100;
@@ -1939,6 +1985,26 @@ async function showSortDialog(){
   }catch(error){reportError('Unable to sort tunes: '+(error?.message||error));}
 }
 $('sortBtn').addEventListener('click',()=>{if(!$('sortBtn').disabled)void showSortDialog();});
+async function showTuneListSettingsDialog(){
+  if(!window.DayPilot?.Modal?.form){reportError('Tune list settings dialog is unavailable.');return;}
+  const form=[
+    {html:'<div class="viewerSortHeading">Settings</div>'},
+    {name:'Tune list text size',id:'textSize',type:'select',cssClass:'viewerSortSelect',options:[
+      {id:'smaller',name:'Smaller'}, {id:'small',name:'Small'},
+      {id:'medium',name:'Medium'}, {id:'large',name:'Large'},
+      {id:'larger',name:'Larger'}
+    ]}
+  ];
+  const result=await DayPilot.Modal.form(form,{textSize:tuneListTextSize},{
+    theme:'modal_flat',top:Math.min(90,Math.max(12,Math.round(window.innerHeight*.08))),
+    width:Math.max(275,Math.min(480,window.innerWidth-24)),
+    okText:'Save',cancelText:'Cancel',autoFocus:false,scrollWithPage:false
+  });
+  if(result?.canceled||!result?.result)return;
+  if(Object.hasOwn(TUNE_LIST_FONT_SIZES,result.result.textSize))
+    applyTuneListTextSize(result.result.textSize,true);
+}
+$('tuneListSettingsBtn').addEventListener('click',()=>{void showTuneListSettingsDialog();});
 
 // Normalize ABC key shorthand (Edor, Am, Dmix, etc.) for the tune list.
 // Keep unusual/nonstandard key signatures intelligible rather than guessing.
@@ -2128,23 +2194,22 @@ async function deleteSelectedTune(){
     refreshTunebookShareState();
   }
 }
-// Clear is intentionally different from Delete Tune: no dialog for an unchanged
-// tunebook, but unsaved sort, transpose, edit, add, or delete work must be confirmed.
+// Always confirm Clear, even when the current tunebook has no unsaved changes.
 async function clearAllTunes(){
   if(studentLessonMode||tunebookShareLoading||!tunes.length)return;
   const serial=fileLoadSerial, startingCollection=tunes;
-  if(viewerDirty){
-    const message='Clear all tunes?<br/><br/>Unsaved changes will be lost and this cannot be undone.';
-    let confirmed=false;
-    try{
-      if(window.DayPilot?.Modal?.confirm){
-        const result=await DayPilot.Modal.confirm(message,{top:Math.min(125,Math.max(12,window.innerHeight*.08)),width:Math.min(520,window.innerWidth-24),scrollWithPage:false});
-        confirmed=!!(result&&!result.canceled&&result.result);
-      }else confirmed=window.confirm(message);
-    }catch(error){console.warn('Unable to confirm clearing the tunebook:',error);return;}
-    // An overlapping file load or tune-management action must not be cleared.
-    if(!confirmed||studentLessonMode||serial!==fileLoadSerial||tunes!==startingCollection||tunebookShareLoading||!tunes.length)return;
-  }
+  const message=viewerDirty
+    ? 'Clear all tunes?<br/><br/>Unsaved changes will be lost and this cannot be undone.'
+    : 'Clear all tunes?<br/><br/>This cannot be undone.';
+  let confirmed=false;
+  try{
+    if(window.DayPilot?.Modal?.confirm){
+      const result=await DayPilot.Modal.confirm(message,{top:Math.min(125,Math.max(12,window.innerHeight*.08)),width:Math.min(520,window.innerWidth-24),scrollWithPage:false});
+      confirmed=!!(result&&!result.canceled&&result.result);
+    }else confirmed=window.confirm(message.replace(/<br\s*\/?>/gi,'\n'));
+  }catch(error){console.warn('Unable to confirm clearing the tunebook:',error);return;}
+  // An overlapping file load or tune-management action must not be cleared.
+  if(!confirmed||studentLessonMode||serial!==fileLoadSerial||tunes!==startingCollection||tunebookShareLoading||!tunes.length)return;
   if(studentLessonMode)return; // A lesson may have started while confirmation was open.
   // Stop playback and invalidate in-flight rendering/audio and file reads.
   fileLoadSerial++;generation++;stopOldPlayer();
