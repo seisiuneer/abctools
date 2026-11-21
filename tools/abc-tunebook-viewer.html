@@ -112,7 +112,9 @@
     .scoreHeader {flex-wrap:wrap;row-gap:6px;justify-content:flex-end}
     /* The display selector itself stays on the left of the first row. */
     #displayMode {margin-right:auto}
-    #tempoBtn,#openInABCTTBtn,#viewABCBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
+    #tempoBtn,#viewABCBtn {flex:0 0 auto;min-height:32px;padding:4px 12px;white-space:nowrap;}
+    .tuneTransposeButtons {display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;white-space:nowrap;}
+    .tuneTransposeButtons button.subtle {min-height:32px;padding:4px 9px;white-space:nowrap;}
     .count {margin-left:auto;color:#667b6c;font-size:14px;white-space:nowrap}
     .tuneListOptions {display:flex;align-items:center;gap:8px;flex:0 0 auto;margin:4px 8px 10px;min-width:0}
     .showTuneInfoOption {display:flex;align-items:center;gap:7px;min-width:0;padding:2px 0;font-size:15px;color:#354d3e;cursor:pointer;user-select:none;-webkit-user-select:none}
@@ -605,8 +607,8 @@
       .paneDivider::before {left:7px;right:7px;top:50%;bottom:auto;width:auto;height:2px;transform:translateY(-50%)}
       .paneDivider::after {width:38px;height:5px}
     }
-    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
-    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} #openInABCTTBtn{padding:4px 7px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
+    @media(max-width:525px) and (orientation:portrait) { .tune{min-height:32px;padding:6px 8px} .scoreHeader label{display:none} #displayMode{min-width:92px;max-width:35vw;flex:0 1 35vw} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} .tuneTransposeButtons button.subtle{padding:4px 6px;font-size:11px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:76px;padding:4px 7px} .listActions{padding:4px 7px}.search{margin-bottom:4px} }
+    @media(max-width:650px) and (orientation:landscape) { .scoreHeader{flex-wrap:wrap;column-gap:6px;row-gap:4px} #selectedName{display:none} #displayMode{min-width:105px;max-width:100%;flex:1 1 106px} #instrumentsBtn{padding:4px 7px} #tempoBtn{padding:4px 7px} .tuneTransposeButtons button.subtle{padding:4px 6px;font-size:11px} #viewABCBtn{padding:4px 7px} #fullPageBtn{min-width:78px;padding:4px 7px} }
     @media(max-height:540px) and (orientation:landscape) {header{flex-basis:42px;height:42px} .corner{top:6px} .workspace{padding:3px} .scoreHeader{min-height:37px;padding:3px 7px} .listActions{padding:4px 7px} #audioHolder{padding:1px 5px;min-height:54px} .overlay{padding-top:6vh}}
     /* Read-only ABC source window. Kept separate from the DayPilot dialogs. */
     .abcModalOverlay {
@@ -953,7 +955,7 @@
    <div class="scoreHeader"><label for="displayMode">Display mode</label>
     <select id="displayMode" aria-label="Display mode">
      <option value="noten">Notation</option><option value="notenames">Names</option><option value="mandolin">Mandolin (GDAE)</option><option value="gdad">GDAD</option><option value="cgda">CGDA</option><option value="cgdae">CGDAE</option><option value="dgdae">DGDAE</option><option value="guitare">Guitar</option><option value="guitard">DADGAD</option><option value="uke">Uke</option><option value="whistle">Whistle</option><option value="recorder">Recorder</option>
-    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><button id="openInABCTTBtn" class="subtle" type="button" title="Open the original selected tune in the ABC Transcription Tools editor" disabled>Open in ABCTT</button><button id="viewABCBtn" class="subtle" type="button" title="Read the original ABC text for the selected tune" disabled>ABC</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
+    </select><span id="selectedName"></span><button id="instrumentsBtn" class="subtle" type="button" title="Choose the soundfont, MIDI instruments, and accompaniment volumes">Instruments</button><button id="tempoBtn" class="subtle" type="button" title="Set the playback tempo percentage" disabled>Tempo</button><span class="tuneTransposeButtons" role="group" aria-label="Transpose selected tune"><button id="transposeDownBtn" class="subtle" type="button" title="Transpose the tune down one semitone. Shift-click: two semitones. Alt-click: one octave." disabled>Transpose ↓</button><button id="transposeUpBtn" class="subtle" type="button" title="Transpose the tune up one semitone. Shift-click: two semitones. Alt-click: one octave." disabled>Transpose ↑</button></span><button id="viewABCBtn" class="subtle" type="button" title="Read the current ABC text for the selected tune" disabled>ABC</button><button id="fullPageBtn" class="subtle" type="button" aria-pressed="false" title="Show just the notation and playback across the page">Full page</button>
    </div>
    <div id="scoreScroll"><div id="placeholder">Select a tune from the list to view its notation.</div><div id="score"></div></div>
    <div id="audioHolder"><div id="audio" aria-label="Playback controls"></div></div>
@@ -986,19 +988,19 @@
     <hr>
     <h3>Open</h3>
     <p>Choose one or more .abc or .txt files to load their tunes.</p>
-    <p>Opening files replaces the current tunebook.</p>
+    <p>Opening files replaces the current tunebook. If you have sorted or transposed any tunes, you will be asked before replacing them so your changes are not lost accidentally.</p>
     <p>You can also drag and drop .abc or .txt files anywhere on the page.</p>
 
     <hr>
     <h3 id="sharingInstructionsSection">Saving and Sharing Tunes</h3>
     <p>Click <b>Share</b> to save tunes as an ABC file, create a share link, or create a lesson.</p>
-    <p><b>Save Current Tune to ABC File</b> saves only the tune selected in the sidebar, including its original ABC file header when present.</p>
-    <p><b>Save All Tunes to ABC File</b> saves the entire loaded collection in the order shown in the sidebar. This is useful for saving a sorted tunebook or combining tunes opened from several files into one ABC file.</p>
+    <p><b>Save Current Tune to ABC File</b> saves only the tune selected in the sidebar, including its ABC file header when present and any transposition you made.</p>
+    <p><b>Save All Tunes to ABC File</b> saves the entire loaded collection, including any transposed tunes, in the order shown in the sidebar. This is useful for saving a sorted tunebook or combining tunes opened from several files into one ABC file.</p>
     <p>Both options preserve applicable ABC file headers and separate tunes with blank lines. Your original files are unchanged. On iPhone or iPad, use the share sheet to save the new file.</p>
     <p><b>Share Current Tune</b> and <b>Share All Tunes</b> create links you can copy, save, or test. Sharing options are unavailable when the selected ABC is too large for a single or all ABC tunes link; saving ABC files remains available.</p>
     <p><b>Lessons</b> let you share a single tune or the complete tunebook along with a lesson title and instructions. Choose <b>Configure Lesson (Current tune)</b> or <b>Configure Lesson (All tunes)</b>, enter your instructions, then create a lesson link for your students.</p>
     <p>When students open the link, they see your lesson title and instructions before selecting <b>Start Lesson</b> to browse and play the tunes. You can also save a lesson configuration to a file and reopen it later.</p>
-    <p><b>Open in ABCTT (Current tune)</b> or <b>Open in ABCTT (All tunes)</b> opens the selected tune or complete tunebook in ABC Transcription Tools for editing. Both use share links and are available when the ABC fits in the link.</p>
+    <p>In the <b>Share</b> dialog, choose <b>Open in ABCTT (Current tune)</b> or <b>Open in ABCTT (All tunes)</b> to send tunes to ABC Transcription Tools for editing, provided the ABC fits in the share link.</p>
     <p><b>Open in Tool (Current tune)</b> or <b>Open in Tool (All tunes)</b> sends your ABC to another music tool. For complete instructions and demonstration videos, see:</p>
     <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" rel="noopener noreferrer">ABC Transcription Tools User Guide — Open Tunes in Another Tool</a>.</p>
     <hr>
@@ -1020,7 +1022,7 @@
     <hr>
     <h3 id="sortInstructionsSection">Sort</h3>
     <p>Click <b>Sort</b>, choose a tag, then click <b>Sort</b> to reorder the tunes.</p>
-    <p>Choose <b>Restore to Original Order</b> to return to the order in which the tunebook was loaded. The first tune is selected after sorting or restoring. Your original file is not changed.</p>
+    <p>Choose <b>Restore to Original Order</b> to return tunes to their loaded order without undoing any transpositions. Sorting uses the current transposed ABC, including updated keys. The first tune is selected after sorting or restoring. Your original file is not changed.</p>
 
     <hr>
     <h3>Resize the tune list</h3>
@@ -1051,13 +1053,14 @@
     <p>The Tempo button opens the same tempo percentage dialog as the playback bar.</p>
 
     <hr>
-    <h3>Open in ABCTT</h3>
-    <p>Open the selected tune in the ABC Transcription Tools editor in a new browser tab.</p>
-    <p>The share link uses the original ABC (without any playback-only MIDI changes) and carries the current display mode.</p>
+    <h3>Transpose the selected tune</h3>
+    <p>Use <b>Transpose ↓</b> or <b>Transpose ↑</b> in the notation header. Click to move the selected tune one semitone, <b>Shift-click</b> for two semitones, or <b>Alt-click</b> for one octave (12 semitones). Alt takes priority if both modifier keys are held. The notation, playback, key signature, and chord symbols are updated together.</p>
+    <p>Transpose changes are cumulative and kept for each tune when switching tunes, sorting, or restoring the original tune order.</p>
+    <p>Saving, sharing, creating lessons, and sending tunes to other tools all use the transposed ABC. The original file on your device is unchanged.</p>
 
     <hr>
     <h3>ABC</h3>
-    <p>Click <b>ABC</b> to view the selected tune's ABC text. It is read-only, but you can select and copy it.</p>
+    <p>Click <b>ABC</b> to view the selected tune's current ABC text, including any transposition. It is read-only, but you can select and copy it.</p>
     <p>Use <b>Font size</b> to adjust the text. Drag the title bar to move the window, or drag its bottom-right corner to resize it.</p>
 
     <hr>
@@ -1186,7 +1189,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '2.0';
+const VIEWER_VERSION = '2.1';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -1343,7 +1346,24 @@ let collectionSourceNames = []; // Successful file names or the incoming source,
 // Snapshot the loaded (not subsequently sorted) collection. Never persist it
 // across a new file, drag/drop, transfer, or incoming share/lesson load.
 let originalOrderSnapshot = [], originalOrderGeneration = 0;
-function snapshotTune(tune){return {abc:tune.abc,title:tune.title,info:tune.info};}
+// Unsaved changes are sorting order changes or successful note transpositions.
+// No pitch-reset snapshot is retained; the original-order snapshot is needed only for sorting.
+let viewerDirty = false;
+async function confirmDiscardViewerChanges(){
+  if(!viewerDirty || !tunes.length)return true;
+  const message="You have changed the tune order or transposed tunes. Loading new files will replace the current tunebook and these changes will be lost. Continue?";
+  if(window.DayPilot?.Modal?.confirm){
+    const result=await DayPilot.Modal.confirm(message,{top:Math.min(125,Math.max(12,window.innerHeight*.08)),width:Math.min(520,window.innerWidth-24),scrollWithPage:false});
+    return !!(result && !result.canceled && result.result);
+  }
+  return window.confirm(message);
+}
+// Stable tune IDs identify original-order snapshots after sorting and pitch edits.
+let nextTuneIdentity=0;
+function makeTuneRecord(abc,index){
+  return {id:++nextTuneIdentity,abc,title:tuneTitle(abc,index),info:tuneInfo(abc)};
+}
+function snapshotTune(tune){return {...tune};}
 function rememberOriginalOrder(items){
   originalOrderSnapshot=items.map(snapshotTune);
   originalOrderGeneration++;
@@ -1665,6 +1685,8 @@ async function showSortDialog(){
       reordered=sortLoadedTuneEntries(tunes,tag);
     }
     if(reordered.length!==tunes.length)throw new Error('Tune count changed during sorting.');
+    const changedOrder=reordered.some((tune,index)=>tune.id!==tunes[index].id);
+    if(changedOrder)viewerDirty=true;
     // Sorting or restoring the order changes share/lesson payloads.
     fileLoadSerial++; // Prevent an earlier pending file read replacing this order.
     closeABCModal();
@@ -1764,9 +1786,10 @@ function appendABC(text,{replace=false,source='ABC file'}={}) {
   }
   const initial=tunes.length;
   const initialOriginal=replace?[]:originalOrderSnapshot.map(snapshotTune);
-  for (const part of parts) tunes.push({abc:part,title:tuneTitle(part,tunes.length),info:tuneInfo(part)});
+  for (const part of parts) tunes.push(makeTuneRecord(part,tunes.length));
   // Append to the load-time order rather than a possibly re-sorted view.
   rememberOriginalOrder(initialOriginal.concat(tunes.slice(initial)));
+  if(replace)viewerDirty=false;
   invalidateTunebookShareCache();
   renderList();
   if (currentIndex<0) selectTune(0);
@@ -1780,7 +1803,7 @@ function stopOldPlayer() {
 function selectTune(index) {
   if (index<0||index>=tunes.length) return;
   closeABCModal();
-  currentIndex=index;$('openInABCTTBtn').disabled=false;$('viewABCBtn').disabled=false;$('tempoBtn').disabled=false;renderList();
+  currentIndex=index;syncTransposeButtonState();$('viewABCBtn').disabled=false;$('tempoBtn').disabled=false;renderList();
   refreshTunebookShareState();
   $('selectedName').textContent=tunes[index].title;
   $('scoreScroll').scrollTop=0;
@@ -2287,10 +2310,21 @@ async function addFiles(files) {
       const parts=splitTunes(await file.text());
       if(!parts.length)throw new Error('No ABC tunes were found');
       successfulFiles.push(file.name||'Tunebook');
-      for(const abc of parts)next.push({abc,title:tuneTitle(abc,next.length),info:tuneInfo(abc)});
+      for(const abc of parts)next.push(makeTuneRecord(abc,next.length));
     } catch(error){errors.push(`${file.name}: ${error?.message||error}`);}
   }
   if(serial!==fileLoadSerial)return 0; // A newer load or transfer superseded this one.
+  if(next.length){
+    let proceed=false;
+    try{proceed=await confirmDiscardViewerChanges();}
+    catch(error){console.warn('Unable to confirm file replacement:',error);}
+    if(serial!==fileLoadSerial)return 0;
+    if(!proceed){
+      tunebookShareLoading=false;
+      refreshTunebookShareState();
+      return 0;
+    }
+  }
   tunebookShareLoading=false;
   if(next.length) {
     // Never allow a previously generated URL to represent the new collection.
@@ -2298,6 +2332,7 @@ async function addFiles(files) {
     tunes=next;
     collectionSourceNames=successfulFiles;
     rememberOriginalOrder(next);
+    viewerDirty=false;
     invalidateTunebookShareCache();
     currentIndex=-1;
     $('searchInput').value='';
@@ -2319,38 +2354,192 @@ $('showTuneInfo').addEventListener('change',()=>{
 });
 $('clearSearch').addEventListener('click',()=>{$('searchInput').value='';renderList();$('searchInput').focus();});
 // Match the ABC Comhaltas Note Names Player's ABC Transcription Tools share-link
-// encoding. Use the stored ORIGINAL tune text, never the MIDI-overridden playback copy.
+// encoding. Use the stored current tune text, never the MIDI-overridden playback copy.
 const ABC_TOOLS_EDITOR_URL = 'https://michaeleskin.com/abctools/abctools.html';
 function bytesToABCTTBase64URL(bytes) {
   let binary='';
   for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
   return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
-function buildCurrentTuneABCTTURL() {
-  const original=currentIndex>=0?tunes[currentIndex]?.abc:null;
-  if(!original||!original.trim())return '';
-  if(typeof pako==='undefined'||typeof pako.deflate!=='function')
-    throw new Error('The Pako compression library did not load. Please reload the Viewer.');
-  const compressed=pako.deflate(new TextEncoder().encode(original),{level:6});
-  const url=new URL(ABC_TOOLS_EDITOR_URL);
-  url.searchParams.set('def',bytesToABCTTBase64URL(compressed));
-  url.searchParams.set('format',$('displayMode').value);
-  url.searchParams.set('editor','1');
-  return url.toString();
-}
-function openCurrentTuneInABCTT() {
-  try {
-    const url=buildCurrentTuneABCTTURL();
-    if(!url)return;
-    // Mirror the dedicated players' anchor approach for opening in a new tab.
-    const link=document.createElement('a');
-    link.href=url;link.target='_blank';link.rel='noopener noreferrer';
-    document.body.appendChild(link);link.click();link.remove();
-  } catch(error) {
-    reportError('Unable to open this tune in ABC Transcription Tools: '+(error?.message||error));
+// Transposition uses ABC Transcription Tools' transposeSingleTune() algorithm
+// (ABCJS.strTranspose), including alternate-chord and directive handling.
+function viewerTransposeSingleTune(theTune, transposeAmount, params) {
+
+  // Find and replace any mixed alternate chords with "x" separators
+  theTune = theTune.replace(/"([^"]*)\(\s*([^"]*)\)"/g, '"$1"x"($2)"');
+
+  var lines = theTune.split('\n'); // Split input into lines
+
+  var quotedSubstrings = lines.map(line => {
+    // Extract substrings wrapped in double quotes
+    const matches = line.match(/"([^"]*)"/g) || [];
+    return matches.map(str => str.slice(1, -1)); // Remove the double quotes from each match
+  });
+
+  const hasParentheses = quotedSubstrings.map(substrings => {
+    return substrings.map(substring => {
+      return substring.startsWith('(') && substring.endsWith(')'); // Flag if the substring had parentheses
+    });
+  });
+
+  var hasAlternateChords = hasParentheses.some(subArray => subArray.includes(true));
+
+  if (hasAlternateChords) {
+
+    //console.log("Alternate chords detected");
+
+    //console.log(theTune);
+
+    const modifiedQuotedSubstrings = quotedSubstrings.map(substrings => {
+      return substrings.map(substring => {
+        if (substring.startsWith('(') && substring.endsWith(')')) {
+          return substring.replace(/\(|\)/g, ''); // Remove parentheses
+        }
+        return substring;
+      });
+    });
+
+    var modifiedStringBeforeFurtherChanges = lines.map((line, lineIndex) => {
+      let resultLine = line;
+      modifiedQuotedSubstrings[lineIndex].forEach((modifiedSubstring, index) => {
+        // Replace each occurrence in the order they appear, preserving quotes
+        resultLine = resultLine.replace(quotedSubstrings[lineIndex][index], modifiedSubstring);
+      });
+      return resultLine;
+    }).join('\n');
+
+    //console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+
+    // MAE 18 May 2025 - Disable custom abcjs rendering params 
+    modifiedStringBeforeFurtherChanges = modifiedStringBeforeFurtherChanges.replace(/^%abcjs_render_params/gm, '%foo_abcjs_render_params');
+
+    // MAE 24 May 2025 - Disable visualtranspose
+    modifiedStringBeforeFurtherChanges = modifiedStringBeforeFurtherChanges.replace(/^%%visualtranspose/gm, '%%foo_visualtranspose');
+
+    var visualObj = ABCJS.renderAbc("*", modifiedStringBeforeFurtherChanges, params);
+
+    //console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
+
+    var furtherModifiedString = ABCJS.strTranspose(modifiedStringBeforeFurtherChanges, visualObj, transposeAmount);
+
+    lines = furtherModifiedString.split('\n'); // Split input into lines
+
+    quotedSubstrings = lines.map(line => {
+      // Extract substrings wrapped in double quotes
+      const matches = line.match(/"([^"]*)"/g) || [];
+      return matches.map(str => str.slice(1, -1)); // Remove the double quotes from each match
+    });
+
+    const finalLines = furtherModifiedString.split('\n').map((line, lineIndex) => {
+      const parts = line.split(/("[^"]*")/); // Split line by quoted substrings, keeping quotes
+      let quotedIndex = 0;
+      return parts.map(part => {
+        if (part.startsWith('"') && part.endsWith('"')) {
+          const modifiedSubstring = quotedSubstrings[lineIndex][quotedIndex];
+          // If the original substring had parentheses, add them back
+          if (hasParentheses[lineIndex][quotedIndex]) {
+            quotedIndex++;
+            return `"(${modifiedSubstring})"`; // Add parentheses around modified substring
+          }
+          quotedIndex++;
+          return `"${modifiedSubstring}"`; // Keep the modified substring as is
+        }
+        return part; // Non-quoted part of the line, return unchanged
+      }).join('');
+    });
+
+    var ret = finalLines.join('\n'); // Return the final modified text
+
+    // Strip any injected mixed alternate chord strings
+    ret = ret.replaceAll('"x"', "");
+
+    // MAE 24 May 2025 - Reinstate visualtranspose
+    ret = ret.replace(/^%%foo_visualtranspose/gm, '%%visualtranspose')
+
+    // MAE 18 May 2025 - Reinstate custom abcjs rendering params 
+    ret = ret.replace(/^%foo_abcjs_render_params/gm, '%abcjs_render_params')
+
+    return ret;
+
+  } else {
+
+    //console.log("No alternate chords detected");
+
+    //console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+    // MAE 18 May 2025 - Disable custom abcjs rendering params 
+    theTune = theTune.replace(/^%abcjs_render_params/gm, '%foo_abcjs_render_params');
+
+    // MAE 24 May 2025 - Disable visualtranspose
+    theTune = theTune.replace(/^%%visualtranspose/gm, '%%foo_visualtranspose');
+
+
+    var visualObj = ABCJS.renderAbc("*", theTune, params);
+
+    //console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
+
+    theTune = ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+    // MAE 24 May 2025 - Reinstate visualtranspose
+    theTune = theTune.replace(/^%%foo_visualtranspose/gm, '%%visualtranspose')
+
+    // MAE 18 May 2025 - Reinstate custom abcjs rendering params 
+    theTune = theTune.replace(/^%foo_abcjs_render_params/gm, '%abcjs_render_params');
+
+    return theTune;
+
   }
 }
-$('openInABCTTBtn').addEventListener('click',openCurrentTuneInABCTT);
+
+
+function syncTransposeButtonState(){
+  const selected=currentIndex>=0&&!!tunes[currentIndex];
+  const editable=selected&&!tunebookShareLoading;
+  $('transposeDownBtn').disabled=!editable;
+  $('transposeUpBtn').disabled=!editable;
+}
+function transposeSelectedTune(semitones){
+  if(currentIndex<0||!tunes[currentIndex]||tunebookShareLoading)return;
+  const tune=tunes[currentIndex];
+  const source=tune.abc;
+  try {
+    if(typeof window.ABCJS?.renderAbc!=='function'||typeof window.ABCJS?.strTranspose!=='function')
+      throw new Error('The ABC transposition functions are unavailable in the current notation library.');
+    // Transpose the current saved ABC, just as ABCTT transposes its current editor
+    // contents. No separate original-pitch copy or reset state is needed.
+    // Preserve file-level directives and comments before the first X: unchanged.
+    const tuneStart=/^[ \t]*X[ \t]*:/m.exec(source);
+    if(!tuneStart)throw new Error('The selected ABC does not contain a tune.');
+    const fileHeader=source.slice(0,tuneStart.index);
+    const transposedBody=viewerTransposeSingleTune(source.slice(tuneStart.index),semitones,tabParam('noten'));
+    if(typeof transposedBody!=='string'||!transposedBody.trim()||
+       (transposedBody.match(/^[ \t]*X[ \t]*:/gm)||[]).length!==1)
+      throw new Error('The ABC transposer did not return a valid single tune.');
+    const updated=fileHeader+transposedBody;
+    if(updated===source)return;
+    // Commit only a successfully validated result, and mirror the new tune ABC
+    // in the original-order snapshot (which is NOT a pitch-reset snapshot).
+    tune.abc=updated;
+    tune.title=tuneTitle(updated,currentIndex);
+    tune.info=tuneInfo(updated);
+    const snapshot=originalOrderSnapshot.find(item=>item.id===tune.id);
+    if(snapshot){snapshot.abc=updated;snapshot.title=tune.title;snapshot.info=tune.info;}
+    viewerDirty=true;
+    closeABCModal();
+    $('selectedName').textContent=tune.title;
+    syncTransposeButtonState();
+    invalidateTunebookShareCache();
+    renderList();
+    void rebuild();
+  } catch(error) {
+    reportError('Unable to transpose this tune: '+(error?.message||error));
+  }
+}
+// ABCTT's click modifiers: Shift => two semitones; Alt overrides Shift => octave.
+function transposeStep(event,direction){
+  return direction*(event.altKey?12:event.shiftKey?2:1);
+}
+$('transposeDownBtn').addEventListener('click',event=>transposeSelectedTune(transposeStep(event,-1)));
+$('transposeUpBtn').addEventListener('click',event=>transposeSelectedTune(transposeStep(event,1)));
 
 $('displayMode').addEventListener('change',()=>{
   // Only direct user changes persist. Transfer-supplied modes are session-only.
@@ -2526,6 +2715,7 @@ function openABCTTFromSharing(scope){
 function lessonScopeShareURL(){return lessonScope==='current'?buildCurrentTuneShareURL():buildTunebookShareURL();}
 function lessonScopeABC(){return lessonScope==='current'?currentTuneExportABC():originalTunebookABC();}
 function refreshTunebookShareState(){
+  syncTransposeButtonState();
   const button=$('shareBtn');if(!button)return;
   const busy=tunebookShareLoading, hasTunes=!!tunes.length;
   const selected=hasTunes&&currentIndex>=0&&!!tunes[currentIndex];
@@ -2753,7 +2943,9 @@ function lessonConfigFromText(text){
 async function loadLessonConfigFile(file){
   const config=lessonConfigFromText(await file.text());
   if(tunes.length){
-    const message=`This lesson will replace the ${tunes.length} currently loaded tunes. Continue?`;
+    const message=viewerDirty
+      ? `You have changed the tune order or transposed tunes. Loading this lesson will replace the ${tunes.length} currently loaded tunes and those changes will be lost. Continue?`
+      : `This lesson will replace the ${tunes.length} currently loaded tunes. Continue?`;
     let yes=false;
     if(window.DayPilot?.Modal?.confirm){const result=await DayPilot.Modal.confirm(message,{top:125,width:520});yes=!!(result&&!result.canceled&&result.result);}
     else yes=window.confirm(message);
