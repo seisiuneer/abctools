@@ -2192,7 +2192,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Mountain Dulcimer Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.15</p>
+ <p class="help-version-subtitle">Version 4.16</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes to view standard notation, Mountain Dulcimer tablature, and a live three-course fingering display.</p>
@@ -2286,12 +2286,13 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
       <p>Enable <b>Metronome</b> for a steady beat, or <b>Count in?</b> for a countdown before playback.</p>
       <p>Use <b>Mute Dulcimer</b> to silence the melody, generated dulcimer chords, and open-string drones. The metronome remains audible when enabled. Piano bass-and-chord accompaniment remains audible only if the current tune has chord symbols and <b>Chord Playback and Display</b> is set to <b>Play Piano Bass and Chords</b>.</p>
-      <p>If the browser asks you to enable audio, click <b>Click to Enable Playback</b> before playing.</p>
+      
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="configurePlaybackInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Configure Sound and Tab</p>
       <p>Click <b>Configure Tab</b> in the Notation header to open <b>Configure Sound and Tab</b>, where you can choose the <b>Sound</b> and adjust tablature and playback settings.</p>
@@ -2389,7 +2390,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       <p>Open the lesson link provided by your teacher to load the assigned tune, lesson instructions, and dulcimer settings.</p>
       <p>Read the instructions and click <b>Start Lesson</b> to begin.</p>
-      <p>If prompted, click <b>Click to Enable Playback</b> to turn on the audio controls.</p>
+      
       <p>You can change <b>Notation display</b>, <b>Show notes</b>, and <b>Show names</b> during a lesson, but you cannot change any of the settings in <b>Configure Sound and Tab</b>.</p>
       <p>Your teacher's tuning, capo, fret configuration, instrument sound, octave-lower playback, open-string drones, chord playback mode, chord voicing, and maximum chord fret stretch settings remain locked during the lesson.</p>
       <p>You can use the notation, note navigation, playback, tempo, and display controls to practice.</p>
@@ -5282,7 +5283,7 @@ function loadABCFromABCTranscriptionTools(data,event){
 
   try{
     $("openFile").value="";
-    sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
     manualEntryCollection=false;
     currentSaveBaseName="transferred-fretboard-tunes";
     processLoadedABC(abcText,sourceName);
@@ -5465,7 +5466,7 @@ function loadShareLinkAfterStartup(){
       }
       manualEntryCollection=false;
       currentSaveBaseName="shared-fretboard-tunes";
-      sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+      sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
       processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
       showFileLoadError(err);
@@ -5615,8 +5616,8 @@ const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.tes
 const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
 let initialAudioRetry=false;
 
-// A real tap is required on some browsers before shared/transferred audio can start.
-// Keep the gate as a modal rather than a hard-to-find button inside the audio bar.
+// Only iPhone/iPad share and transfer launches require an additional audio-unlock tap.
+// Elsewhere, abcjs initializes audio from the normal Play click.
 let playbackUnlockInProgress=false;
 let playbackUnlockedThisPage=false;
 let lessonPlaybackStartRequested=false;

@@ -2332,7 +2332,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
     <h2 style="text-align:center;margin:0 0 24px">
      ABC Harmonica Player Instructions
     </h2>
- <p class="help-version-subtitle">Version 4.13</p>
+ <p class="help-version-subtitle">Version 4.14</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">
         Overview
@@ -2518,6 +2518,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">
         Playback
       </p>
+      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>
         Playback follows the notation cursor and harmonica display, highlighting the current harmonica hole and technique as the tune plays.
@@ -2610,13 +2611,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
         Opening a share link restores its harmonica tuning, key, octave shift, and playback transpose and displays the first tune encoded in the link.
       </p>
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
-      <p>
-        When tunes are opened from a share link, click the
-        <b>
-        Click to Enable Playback
-        </b>
-        button in the playback area before using the normal playback controls.
-      </p>
+      
       <p>
         This user action allows audio playback to be initialized on browsers that require a user gesture before starting audio.
       </p>
@@ -2843,7 +2838,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Your music teacher may provide you with a Harmonica Player lesson link.</p>
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
-      <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
+      
       <p>The lesson setup controls and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, hole number and technique display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
@@ -4456,7 +4451,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   if(!abcText.trim())return;
   try{
     if($("openFile"))$("openFile").value="";
-    sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
     manualEntryCollection=false;currentSaveBaseName="transferred-harmonica-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
@@ -4520,7 +4515,7 @@ function loadShareLinkAfterStartup(){
       // shared harmonica tuning, key, octave shift, or playback transpose as
       // the recipient's normal browser preferences.
       standardShareSettingsPending=params.get("lesson")!=="1";
-      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
       if(system==="8"&&sharedCustomTuningActive){
         const sharedTuningMessage =
           `<div style="max-width:100%;overflow-wrap:break-word;word-break:normal">` +
@@ -4688,8 +4683,8 @@ let initialAudioRetry=false;
 
 let sharePlaybackNeedsGesture=false;
 
-// A real tap is required on some browsers before shared/transferred audio can start.
-// Keep the gate as a modal rather than a hard-to-find button inside the audio bar.
+// Only iPhone/iPad share and transfer launches require an additional audio-unlock tap.
+// Elsewhere, abcjs initializes audio from the normal Play click.
 let playbackUnlockInProgress=false;
 let playbackUnlockedThisPage=false;
 let lessonPlaybackStartRequested=false;

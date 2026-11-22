@@ -2107,7 +2107,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
 <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.3)"><h2 style="flex:0 0 auto;text-align:center;margin:0;padding:20px 28px 24px">ABC Tremolo Harmonica Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.13</p>
+ <p class="help-version-subtitle">Version 4.14</p>
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
@@ -2183,6 +2183,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
+      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>Playback follows the notation cursor and tremolo display, highlighting the current position as the tune plays. The controls below the notation provide play/pause, restart, looping, seeking, and playback speed.</p>
       <p><b>Mute Melody</b> silences the melody while leaving accompaniment or metronome available. <b>Metronome</b> adds a click during playback. <b>Count in?</b> adds a five-second on-screen countdown.</p>
@@ -2227,7 +2228,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab with an ABCTT-compatible MScore harmonica (MIDI program 22) in place of the player's custom instrument, retaining the selected playback transpose. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>The link includes the selected tremolo model, key, octave shift, and playback transpose.</p>
       <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
-      <p>When opening a share link, click <b>Click to Enable Playback</b> before using the normal playback controls if your browser requires a user gesture to initialize audio.</p>
+      
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
       <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
@@ -2324,7 +2325,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Your music teacher may provide you with a Tremolo Harmonica Player lesson link.</p>
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
-      <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
+      
       <p>The lesson setup controls and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, hole number and technique display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
@@ -3696,7 +3697,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   if(!abcText.trim())return;
   try{
     if($("openFile"))$("openFile").value="";
-    sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
     manualEntryCollection=false;currentSaveBaseName="transferred-tremolo-harmonica-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
@@ -3756,7 +3757,7 @@ function loadShareLinkAfterStartup(){
       // Share-link settings are temporary for this session. Do not overwrite the
       // recipient's saved model/key/display/playback-transpose preferences.
       standardShareSettingsPending=params.get("lesson")!=="1";
-      manualEntryCollection=false;currentSaveBaseName="shared-tremolo-harmonica-tunes";sharePlaybackNeedsGesture=!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-tremolo-harmonica-tunes";sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
       if(system==="custom"&&sharedCustomTuningActive){const msg=`The custom tuning from the share link has been temporarily set to ${customHarmonica.name}.\n\nYour custom tuning saved in this browser has not been replaced.\n\nTo save this tuning, make any settings change or open the custom tuning dialog and click Save.`;void showPlayerAlert(msg)}
     }catch(err){
       showFileLoadError(err);
@@ -3911,8 +3912,8 @@ let initialAudioRetry=false;
 
 let sharePlaybackNeedsGesture=false;
 
-// A real tap is required on some browsers before shared/transferred audio can start.
-// Keep the gate as a modal rather than a hard-to-find button inside the audio bar.
+// Only iPhone/iPad share and transfer launches require an additional audio-unlock tap.
+// Elsewhere, abcjs initializes audio from the normal Play click.
 let playbackUnlockInProgress=false;
 let playbackUnlockedThisPage=false;
 let lessonPlaybackStartRequested=false;

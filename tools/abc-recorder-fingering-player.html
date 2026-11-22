@@ -1479,7 +1479,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Recorder Fingering Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.14</p>
+ <p class="help-version-subtitle">Version 4.15</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and an optional <b>recorder tablature</b> display.</p>
@@ -1555,6 +1555,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
+      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Recorder Fingering pane updates to that note.</p>
       <p>Playback uses <b>MIDI program 144</b> for Soprano Recorder or <b>MIDI program 145</b> for Alto Recorder, and program 0 for bass and chords, overriding matching playback directives in the source ABC.</p>
@@ -1599,7 +1600,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
       <p>In the <b>ABC Transcription Tools</b> you can switch between showing Baroque or German recorder fingerings on the <b>Tabs & Layout</b> tab in the tool's <b>Settings</b> dialog.</p>
-      <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p><p>When ABC arrives through a share link or direct transfer, click <b>Click to Enable Playback</b> if the browser requires a user gesture before audio can start.</p>
+      <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
       <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
@@ -1651,7 +1652,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Your music teacher may provide you with a Recorder Player lesson link.</p>
       <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
-      <p>After clicking <b>Start Lesson</b>, click <b>Click to Enable Playback</b> to enable the audio playback controls.</p>
+      
       <p>The lesson setup controls and the lesson tune selector are shown at the top of the player but are initially disabled so the teacher's lesson setup cannot be changed.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, fingering display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
@@ -4527,7 +4528,7 @@ function loadABCFromABCTranscriptionTools(data,event){
 
   try{
     $("openFile").value="";
-    sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
     manualEntryCollection=false;
     currentSaveBaseName="transferred-recorder-tunes";
     processLoadedABC(abcText,sourceName);
@@ -4661,7 +4662,7 @@ function loadShareLinkAfterStartup(){
       if(params.get('lesson')==='1'){if(window.INVALID_LESSON_ERROR)throw new Error(window.INVALID_LESSON_ERROR);validateLessonURLParams(params);}
       manualEntryCollection=false;
       currentSaveBaseName="shared-recorder-tunes";
-      sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+      sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
       processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
       showFileLoadError(err);
@@ -4811,8 +4812,8 @@ const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.tes
 const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
 let initialAudioRetry=false;
 
-// A real tap is required on some browsers before shared/transferred audio can start.
-// Keep the gate as a modal rather than a hard-to-find button inside the audio bar.
+// Only iPhone/iPad share and transfer launches require an additional audio-unlock tap.
+// Elsewhere, abcjs initializes audio from the normal Play click.
 let playbackUnlockInProgress=false;
 let playbackUnlockedThisPage=false;
 let lessonPlaybackStartRequested=false;

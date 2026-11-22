@@ -2047,7 +2047,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Irish Fiddle Fingering Player Instructions</h2>
- <p class="help-version-subtitle">Version 2.6</p>
+ <p class="help-version-subtitle">Version 2.7</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>The <b>ABC Irish Fiddle Fingering Player</b> displays ABC music with synchronized notation, fiddle or viola fingerings, and audio playback.</p>
@@ -2093,6 +2093,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>These fields remain unchanged in the ABC editor, saved files, and shared tunes.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Note Navigation and Playback</p>
+      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>Click a note head in the notation to select that note and display its selected instrument fingering.</p>
       <p>Use the previous and next note buttons beneath the fingerboard to step through the tune.</p>
@@ -2181,7 +2182,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
       <p>Open the lesson link provided by your teacher to load the assigned tune and lesson instructions.</p>
       <p>Read the instructions in the lesson dialog and click <b>Start Lesson</b>.</p>
-      <p>If the browser asks you to enable sound, click <b>Enable Playback</b> before playing.</p>
+      
       <p>You can change <b>Notation display</b>, <b>Orientation</b>, and <b>Show virtual frets</b> while practicing.</p>
       <p>You can use <b>Hide</b> to conceal or reveal the fingerings during the lesson.</p>
       <p>You can also use note navigation, tempo, playback, and other available practice controls.</p>
@@ -5401,7 +5402,7 @@ function loadABCFromABCTranscriptionTools(data,event){
 
   try{
     $("openFile").value="";
-    sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
     manualEntryCollection=false;
     currentSaveBaseName="transferred-fiddle-tunes";
     processLoadedABC(abcText,sourceName);
@@ -5595,7 +5596,7 @@ function loadShareLinkAfterStartup(){
       }
       manualEntryCollection=false;
       currentSaveBaseName="shared-fiddle-tunes";
-      sharePlaybackNeedsGesture=!playbackUnlockedThisPage;
+      sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
       processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
       showFileLoadError(err);
@@ -5745,8 +5746,8 @@ const IS_SAFARI=/^((?!chrome|chromium|android|crios|fxios|edgios).)*safari/i.tes
 const NEEDS_INITIAL_AUDIO_RETRY=IS_SAFARI&&!IS_IOS;
 let initialAudioRetry=false;
 
-// A real tap is required on some browsers before shared/transferred audio can start.
-// Keep the gate as a modal rather than a hard-to-find button inside the audio bar.
+// Only iPhone/iPad share and transfer launches require an additional audio-unlock tap.
+// Elsewhere, abcjs initializes audio from the normal Play click.
 let playbackUnlockInProgress=false;
 let playbackUnlockedThisPage=false;
 let lessonPlaybackStartRequested=false;
