@@ -6803,3 +6803,103 @@ body.flat-buttons .btn {
   margin: 0;
 }
 
+
+
+/* PDF Tunebook Features: tabbed injector only.
+   Keep these rules under its unique root ID so all other DayPilot dialogs,
+   including Settings and the play-only injector, retain their existing styles. */
+#pdf_tunebook_features_tabs_root {
+  width: 100%;
+  min-width: 0;
+}
+
+#pdf_tunebook_features_tabs_root .adv-tab-panels {
+  padding: 20px 18px 22px;
+  box-sizing: border-box;
+  max-height: max(240px, calc(100vh - 370px));
+  overflow-y: auto;
+}
+
+#pdf_tunebook_features_tabs_root #pdf_features_general > p {
+  margin: 0 0 20px !important;
+}
+
+/* The old full-width input layout uses absolute positioning (left: 200px).
+   Use ordinary two-column rows inside the new panels so the inputs stay
+   within the panel border on all three tabs. */
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text_wide,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text_wide2 {
+  position: relative;
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 36px;
+  line-height: 1.25;
+  margin: 0 0 14px !important;
+}
+
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text_wide > input,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text_wide2 > input {
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  width: 100% !important;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0 !important;
+}
+
+/* Even spacing and vertical centering for number, select, and checkbox rows. */
+#pdf_tunebook_features_tabs_root .configure_pdfquality_select,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text3,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_midi_program_select {
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 36px;
+  line-height: 1.25;
+  margin-top: 0 !important;
+  margin-bottom: 14px !important;
+}
+
+#pdf_tunebook_features_tabs_root .configure_pdfquality_select > select,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_midi_program_select > select {
+  margin-top: 0 !important;
+}
+
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text3 > input,
+#pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text > input {
+  margin-top: 0 !important;
+}
+
+/* Only the tune-title destination select needs extra room for the longer
+   ABC Transcription Tools option names. Keep the other MIDI selects at 220px.
+   Allow the select to shrink within narrow dialog layouts. */
+#pdf_tunebook_features_tabs_root select[name="playbackLinkMode"] {
+  width: 300px;
+  flex: 0 1 300px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-right: 32px;
+}
+
+#pdf_tunebook_features_tabs_root #pdf_features_qrcodes_fields_intro {
+  margin: 16px 0 18px !important;
+  line-height: 1.5;
+}
+
+#pdf_tunebook_features_tabs_root #pdf_features_general_fields > :last-child,
+#pdf_tunebook_features_tabs_root #pdf_features_links_fields > :last-child,
+#pdf_tunebook_features_tabs_root #pdf_features_qrcodes_fields > :last-child {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 700px) {
+  #pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text_wide,
+  #pdf_tunebook_features_tabs_root .configure_setuppdftunebook_form_text_wide2 {
+    grid-template-columns: minmax(130px, 37%) minmax(0, 1fr);
+  }
+}

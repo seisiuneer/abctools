@@ -2368,7 +2368,7 @@
                 <p>Tune page links back to the Index</p>
                 <p>Page header</p>
                 <p>Page footer</p>
-                <p>Play links on the tunes</p>
+                <p>Optional tune title share links (Player, Editor, or ABC Tunebook Viewer)</p>
                 <p>Full details on PDF tunebook features can be found in the <a style="text-decoration:none;" href="#inject_pdf_tunebook_features"><strong>Inject All PDF Tunebook Features</strong></a> section of <a style="text-decoration:none;" href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
                 <hr class="hidden-print" id="add_pdf_play_only_features_templates">
                 <h1 class="page_break_always">Example PDF Only Play Features Template</h1>
@@ -4494,38 +4494,110 @@
                 <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
                 <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
                 <p>When the <strong>Inject Only PDF Tunebook Play Features</strong> dialog is opened, if a <strong>% Start of PDF Tunebook Features / % End of PDF Tunebook Features</strong> block is found in the ABC, it will be parsed and the values in the features dialog populated with the existing values.</p>
-                <p>If you click <strong>Inject Only PDF Tunebook Play Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook playback feature commands. The generated <strong>%add_all_playback_links</strong> directive has no <strong>player</strong>, <strong>editor</strong>, or <strong>viewer</strong> suffix; manually append one afterward only if you want a non-default destination.</p>
+                <p>If you click <strong>Inject Only PDF Tunebook Play Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook playback feature commands. The generated <strong>%add_all_playback_links</strong> directive has no <strong>fullscreen</strong>, <strong>player</strong>, <strong>editor</strong>, or <strong>viewer</strong> suffix; manually append one afterward only if you want a non-default destination.</p>
                 <p><strong>Note:</strong> If you add playback features to your tunebook using the dialog and then manually delete:</p>
                 <p class="code">% End of PDF Tunebook Features</p>
                 <p>from the ABC and click <strong>Inject Only PDF Tunebook Play Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
                 <p>If this occurs, the new set of requested PDF tunebook playback features will just be added to the top of the ABC.</p>
                 <hr>
                 <p id="inject_pdf_tunebook_features"><strong>Inject All PDF Tunebook Features</strong></p>
-                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, instrument and volume information for playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
+                <p>This dialog creates the PDF tunebook feature commands at the top of your ABC, including optional page information, tune title links, and a QR code.</p>
+                <p>It has three tabs: <strong>General</strong>, <strong>Tune Title Share Links</strong>, and <strong>QR Codes</strong>.</p>
+                <p>Choose settings on any or all of the tabs and then click <strong>Inject</strong> to apply them.</p>
+                <p>Click <strong>Cancel</strong> to leave the ABC unchanged.</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_4.jpg"/>
+                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_5.jpg"/>
                 </div>
-                <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
-                <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
-                <p>Once added, you can modify the features values directly in the ABC if you wish.</p>
-                <p>Since the PDF features are part of the ABC, they will be saved along with the tunes if you save or share the ABC.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1zhCH1kdtww" title="PDF Features Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>The PDF features are separated by two marker lines:</p>
-                <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
-                <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
-                <p>When the <strong>Inject All PDF Tunebook Features</strong> dialog is opened, if a <strong>% Start of PDF Tunebook Features / % End of PDF Tunebook Features</strong> block is found in the ABC, it will be parsed and the values in the features dialog populated with the existing values.</p>
-                <p>If you click <strong>Inject All PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook feature commands. The generated <strong>%add_all_playback_links</strong> directive has no destination suffix; a previously added <strong>player</strong>, <strong>editor</strong>, or <strong>viewer</strong> suffix must be added again manually if desired.</p>
-                <p><strong>Note:</strong> If you add features to your tunebook using the dialog and then manually delete:</p>
-                <p class="code">% End of PDF Tunebook Features</p>
-                <p>from the ABC and click <strong>Inject All PDF Tunebook Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
-                <p>If this occurs, the new set of requested PDF tunebook features will just be added to the top of the ABC.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/TwkeBQPIN1Y" title="Inject All PDF Tunebook Features Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
-                <p style="text-align: center;"><strong>Note on use of "Playback links contain entire tunebook"</strong></p>
-                <p>Normally when play links are added to tunes in a tunebook, they just are for the individual tunes.</p>
-                <p>If adding playback links to all the tunes by checking <strong>"Add playback links to each tune to allow playing the tune by clicking the tune title"</strong> and this item is also checked, the tool will add annotation to the ABC to add the Share URL for the entire ABC tunebook to each tune.</p>
-                <p>If the entire tunebook playback Share URL is too large to be a valid URL link for opening in the tool (about 8100 characters), you will be presented with a warning when the PDF export is complete, and no playback links will be added to the tunes.</p>
-                <p>Additionally, if the complete tunebook playback Share URL is larger than the maximum allowed by Adobe Acrobat (2076 characters), after the PDF export is complete you will be presented with a warning that the links may not work in Adobe Acrobat but will work with browser-native and many other PDF readers.</p>
-                <p>This will probably happen quite frequently for tunebooks with 5 or more tunes.</p>
+                <h3 style="font-family:Helvetica;font-size:17pt;line-height:26px;margin:26px 0 10px;text-align:left;">General Tab</h3>
+                <p>Use this tab to set the PDF quality, spacing, title page, table of contents, index, and page headers or footers.</p>
+                <p>Leave optional text fields blank to omit those features.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">PDF quality</h4>
+                <p>Select the quality of the notation images in the exported PDF.</p>
+                <p><strong>High</strong> provides good quality; lower settings can reduce the PDF file size.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Space between tunes (in 1/72")</h4>
+                <p>Set the vertical space between tunes when multiple tunes appear on the same PDF page.</p>
+                <p>The value is measured in points (1/72 of an inch).</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Title Page title</h4>
+                <p>Enter the title to display on an optional PDF tunebook title page.</p>
+                <p>Leave it blank if no title page is wanted.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Title Page subtitle</h4>
+                <p>Enter optional smaller text below the title on the title page.</p>
+                <p>The subtitle appears only when a title page is included.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Table of Contents title</h4>
+                <p>Enter the heading for a table of contents listing the tunes and their page numbers.</p>
+                <p>Leave it blank to omit the table of contents.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Index title</h4>
+                <p>Enter the heading for the alphabetical tune index.</p>
+                <p>Leave it blank to omit the index.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Page Header</h4>
+                <p>Enter text to display at the top of the PDF tune pages.</p>
+                <p>Leave it blank to omit the page header.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Page Footer</h4>
+                <p>Enter text to display at the bottom of the PDF tune pages.</p>
+                <p>Leave it blank to omit the page footer.</p>
+                <hr>
+                <h3 style="font-family:Helvetica;font-size:17pt;line-height:26px;margin:26px 0 10px;text-align:left;">Tune Title Share Links Tab</h3>
+                <p>Use this tab to make PDF tune titles clickable and choose which tool opens when a reader clicks a tune's title in the exported PDF.</p>
+                <p>The instrument and volume controls determine the playback settings included in those links.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Add tune title share links</h4>
+                <p>Choose <strong>None</strong> (the default), <strong>ABC Transcription Tools Player</strong>, <strong>ABC Transcription Tools Editor</strong>, <strong>ABC Transcription Tools Fullscreen</strong>, or <strong>ABC Tunebook Viewer</strong>.</p>
+                <p><strong>None</strong> does not add automatic tune-title share links.</p>
+                <p><strong>ABC Transcription Tools Player</strong> opens the tune in the playback Player when the tune title in the PDF is clicked.</p>
+                <p><strong>ABC Transcription Tools Editor</strong> opens the tune in the Editor when the tune title in the PDF is clicked.</p>
+                <p><strong>ABC Transcription Tools Fullscreen</strong> opens the tune directly in the ABC Transcription Tools fullscreen notation view without automatically starting playback or opening the editor.</p>
+                <p><strong>ABC Tunebook Viewer</strong> opens the selected tune in the Viewer when the tune title in the PDF is clicked.</p>
+                <p>The selected destination is added to the <strong>%add_all_playback_links</strong> directive in the injected ABC.</p>
+                <p>The following playback-link settings are only relevant when a tune-title share-link destination other than <strong>None</strong> is selected:</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Soundfont for playback links</h4>
+                <p>Choose the MIDI soundfont to request when a tune is opened through a generated share link.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Melody instrument for playback links</h4>
+                <p>Choose the MIDI instrument program used for the melody.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Bass instrument for playback links</h4>
+                <p>Choose the MIDI instrument program used for the bass accompaniment.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Bass volume (0–127)</h4>
+                <p>Set the bass accompaniment volume included in the playback link.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Chord instrument for playback links</h4>
+                <p>Choose the MIDI instrument program used for chord accompaniment.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Chord volume (0–127)</h4>
+                <p>Set the chord accompaniment volume included in the playback link.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Playback links contain entire tunebook</h4>
+                <p>Normally, an automatically generated tune-title Share URL includes only the individual tune.</p>
+                <p>Check this box to include the entire ABC tunebook in each Player or Editor Share URL instead.</p>
+                <p>This adds <strong>%playback_links_are_complete_tunebook</strong> when a tune-title destination is selected.</p>
+                <p>Complete-tunebook Share URLs can become quite long, even for relatively small tunebooks.</p>
+                <p>If a URL exceeds about 8,100 characters, the PDF exporter warns that it is too long and omits those playback links.</p>
+                <p>Adobe Acrobat supports hyperlink URLs up to 2,076 characters.</p>
+                <p>The exporter warns about longer links, which may still work in browser-based and other PDF readers.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Inject all required fonts into the ABC in the playback links</h4>
+                <p>Check this box to include the current ABC font settings in the generated tune-title Share URLs.</p>
+                <hr>
+                <h3 style="font-family:Helvetica;font-size:17pt;line-height:26px;margin:26px 0 10px;text-align:left;">QR Codes Tab</h3>
+                <p>Use this tab to add a QR code as a final page of the exported PDF.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Add a QR Code to the end of the PDF</h4>
+                <p>Check this box to add a QR code page to the end of the PDF tunebook.</p>
+                <p>The QR code represents the complete tunebook Share URL unless a custom URL is entered.</p>
+                <p>The QR code image and its caption are clickable links to the encoded destination.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">Custom URL</h4>
+                <p>Enter a website address or shortened Share URL to use instead of the automatically generated tunebook Share URL.</p>
+                <p>Leave this field blank to use the default Share URL.</p>
+                <h4 style="font-family:Helvetica;font-size:14pt;line-height:24px;margin:17px 0 5px;padding:0;text-align:left;">QR Code caption</h4>
+                <p>Enter the text to appear beneath the QR code in the PDF.</p>
+                <p>Leave this field blank to use the default caption.</p>
+                <p>QR codes can encode URLs shorter than 2,300 characters.</p>
+                <p>If the URL is too long, the PDF exporter displays a warning and suggests using fewer tunes or a shorter URL.</p>
+                <hr>
+                <h3 style="font-family:Helvetica;font-size:17pt;line-height:26px;margin:26px 0 10px;text-align:left;">Saving and Reinjecting PDF Features</h3>
+                <p>Clicking <strong>Inject</strong> places the requested features at the top of the ABC as comment-based annotations.</p>
+                <p>You can edit those annotations directly in the ABC, and they are saved with the tunebook when you save or share it.</p>
+                <p>The injected features are enclosed between these markers:</p>
+                <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
+                <p>When you reopen the dialog, the existing feature block is parsed to restore its settings, including the selected tune-title destination.</p>
+                <p>Older <strong>%add_all_playback_links</strong> directives without a destination appear as <strong>Player</strong>.</p>
+                <p>Clicking <strong>Inject</strong> again replaces the existing feature block with the current settings from all three tabs.</p>
+                <p>Do not delete the <strong>% End of PDF Tunebook Features</strong> marker if you want subsequent injections to replace the existing block.</p>
+                <p>Without that marker, the dialog cannot locate the original block and a new set of features will be added at the top of the ABC.</p>
                 <hr id="browser_print_to_pdf">
                 <p><strong>Browser Native Print-to-PDF with Play Links</strong> (Desktop browsers only)</p>
                 <p>This is the fastest way to create the smallest possible vector-based PDF file that includes the ability to play the tunes by clicking the title.</p>
@@ -5041,7 +5113,7 @@
                 <p></p>
                 <p>You may automatically add a hyperlink for every tune back to the ABC Transcription Tools for playing the tune with a specific General MIDI instrument program number sound for the melody, bass, and chords by adding the following comment-based annotation anywhere in the ABC file:</p>
                 <p></p>
-                <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT [player] [editor] [viewer]</p>
+                <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT [fullscreen|player|editor|viewer]</p>
                 <p></p>
                 <p>The MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are optional.</p>
                 <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default MIDI soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
@@ -5050,15 +5122,19 @@
                 <p>Example: To have all tunes played using the FatBoy MIDI soundfont and a Harpsichord sound on the melody and a Piano sound on the bass and chords:</p>
                 <p class="code">%add_all_playback_links 6 0 0 fatboy</p>
                 <p><strong>Choosing where the PDF tune links open:</strong> Add one optional word to the end of <strong>%add_all_playback_links</strong>:</p>
+                <p><strong>fullscreen</strong> — Opens the ABC Transcription Tools fullscreen notation view without <strong>&amp;play=1</strong> or <strong>&amp;editor=1</strong>.</p>
                 <p><strong>player</strong> — Opens in the ABC Transcription Tools Player (the default if no destination is given).</p>
                 <p><strong>editor</strong> — Opens in the ABC Transcription Tools Editor.</p>
                 <p><strong>viewer</strong> — Opens the selected tune in the ABC Tunebook Viewer.</p>
+                <p class="code">%add_all_playback_links 0 0 0 fatboy fullscreen</p>
                 <p class="code">%add_all_playback_links 0 0 0 fatboy viewer</p>
                 <p class="code">%add_all_playback_links editor</p>
-                <p>If multiple destinations are specified, <strong>player</strong> wins over <strong>editor</strong>, which wins over <strong>viewer</strong>.</p>
-                <p><strong>Overrides to watch for:</strong> The older <strong>%links_open_in_editor</strong> can override <strong>viewer</strong>; an explicit <strong>player</strong> takes precedence. <strong>%no_edit_allowed</strong> prevents opening directly in the Editor. Tune-specific <strong>%add_playback_link</strong> or <strong>%hyperlink</strong> directives can override an automatically generated link.</p>
-                <p>The two PDF feature injectors always insert the directive <strong>without</strong> a destination, and reinjecting features removes a previously added destination. Add <strong>editor</strong> or <strong>viewer</strong> manually afterward if desired. Browser Native Print-to-PDF with Play Links always uses the Player.</p>
-                <p><strong>Viewer notes:</strong> Each link opens one tune even if complete-tunebook links are requested. The Viewer's own instrument settings may override sounds specified in the ABC.</p>
+                <p>If multiple destinations are specified, <strong>fullscreen</strong> takes precedence over <strong>player</strong>, followed by <strong>editor</strong> and <strong>viewer</strong>.</p>
+                <p><strong>Overrides to watch for:</strong> The older <strong>%links_open_in_editor</strong> can override <strong>viewer</strong>; explicit <strong>fullscreen</strong> or <strong>player</strong> destinations take precedence. <strong>%no_edit_allowed</strong> prevents opening directly in the Editor. Tune-specific <strong>%add_playback_link</strong> or <strong>%hyperlink</strong> directives can override an automatically generated link.</p>
+                <p><strong>Inject All PDF Tunebook Features</strong> includes a selector for <strong>None</strong>, <strong>ABC Transcription Tools Fullscreen</strong>, <strong>ABC Transcription Tools Player</strong>, <strong>ABC Transcription Tools Editor</strong>, or <strong>ABC Tunebook Viewer</strong>.</p>
+                <p><strong>Inject Only PDF Tunebook Play Features</strong> and Browser Native Print-to-PDF with Play Links continue to use the Player by default.</p>
+                <p><strong>Fullscreen and Viewer notes:</strong> Each link opens the selected individual tune even if the complete-tunebook option is enabled.</p>
+                <p>The Viewer's own instrument settings may override sounds specified in the ABC.</p>
                 <p>To specify the volumes for the bass and chords to the playback links also add:</p>
                 <p class="code">%add_all_playback_volumes BASS_VOLUME CHORD_VOLUME</p>
                 <p>Range for both BASS_VOLUME and CHORD_VOLUME is 0 to 127.</p>
@@ -5126,7 +5202,8 @@
                 <p>To force the tune links in the PDF to open in the Editor instead of the full screen view or Player, add:</p>
                 <p class="code">%links_open_in_editor</p>
                 <p>anywhere in the ABC file.</p>
-                <p>This works with the other PDF tunebook features like Title Page, Table of Contents, and Index pages. It overrides the default playback link destination and the <strong>viewer</strong> option, but an explicit <strong>player</strong> parameter on <strong>%add_all_playback_links</strong> overrides it for automatically generated links.</p>
+                <p>This works with the other PDF tunebook features like Title Page, Table of Contents, and Index pages.</p>
+                <p>It overrides the default playback link destination and the <strong>viewer</strong> option, but explicit <strong>fullscreen</strong> or <strong>player</strong> parameters on <strong>%add_all_playback_links</strong> take precedence for automatically generated links.</p>
                 <p></p>
                 <hr>
                 <p><strong>Disabling access to the tune editor from tunes linked from PDF tunebooks.</strong></p>
