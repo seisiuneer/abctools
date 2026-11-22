@@ -1476,7 +1476,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Irish Button Box Fingering Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.14</p>
+ <p class="help-version-subtitle">Version 4.15</p>
 
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
@@ -1582,7 +1582,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Click <b>Full-Page View</b> on the <b>ABC</b>, <b>Notation</b>, or <b>Button Diagram</b> pane to expand it to the full browser window. Click <b>Exit Full-Page</b> to return to the normal pane view.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
-      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
+      <p>On iPhone, iPad, and desktop Safari, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. In other browsers, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>As each melody note plays, the notation cursor follows the tune and the button diagram highlights the required accordion button and bellows direction.</p>
       <p><b>Red</b> means <b>Push</b> and <b>Green</b> means <b>Draw</b>.</p>
@@ -2578,6 +2578,14 @@ const $=id=>document.getElementById(id);
 // .abc as well as .txt files. Validate the selected filename after selection.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+// iOS/iPadOS and desktop Safari use the explicit playback-enable gesture
+// for incoming share links and direct transfers. Other browsers use Play directly.
+const REQUIRES_PLAYBACK_ENABLE_GESTURE = IS_IOS ||
+  (/(?:Macintosh|Mac OS X)/.test(navigator.userAgent) &&
+   /AppleWebKit\//.test(navigator.userAgent) &&
+   /Safari\//.test(navigator.userAgent) &&
+   !/(?:Chrome|Chromium|CriOS|FxiOS|Edg|EdgiOS|OPR|Opera|DuckDuckGo)\//.test(navigator.userAgent));
+
 
 // On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
 if (IS_IOS && navigator.audioSession) {
@@ -3541,7 +3549,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   if(!abcText.trim())return;
   try{
     if($("openFile"))$("openFile").value="";
-    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;
     manualEntryCollection=false;currentSaveBaseName="transferred-button-box-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
@@ -3589,7 +3597,7 @@ function loadShareLinkAfterStartup(){
       const tuning=params.get("tuning"); if(tuning==="bc"||tuning==="cd")$("system").value=tuning;
       // Standard share-link settings remain session-only until the user changes a persistent setting.
       standardShareSettingsPending=params.get("lesson")!=="1";
-      manualEntryCollection=false;currentSaveBaseName="shared-button-box-tunes";sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-button-box-tunes";sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
       showFileLoadError(err);
     }

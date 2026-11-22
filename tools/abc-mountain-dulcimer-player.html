@@ -2192,7 +2192,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Mountain Dulcimer Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.16</p>
+ <p class="help-version-subtitle">Version 4.17</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes to view standard notation, Mountain Dulcimer tablature, and a live three-course fingering display.</p>
@@ -2286,7 +2286,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
-      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
+      <p>On iPhone, iPad, and desktop Safari, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. In other browsers, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>Use the playback controls below the notation to play, pause, change tempo, or repeat the tune.</p>
       <p>During playback, the highlighted notation and dulcimer display follow the melody.</p>
@@ -2430,6 +2430,14 @@ MD.extra["6.5"]=[true,true,true];MD.extra["13.5"]=[true,true,true];
 
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+// iOS/iPadOS and desktop Safari use the explicit playback-enable gesture
+// for incoming share links and direct transfers. Other browsers use Play directly.
+const REQUIRES_PLAYBACK_ENABLE_GESTURE = IS_IOS ||
+  (/(?:Macintosh|Mac OS X)/.test(navigator.userAgent) &&
+   /AppleWebKit\//.test(navigator.userAgent) &&
+   /Safari\//.test(navigator.userAgent) &&
+   !/(?:Chrome|Chromium|CriOS|FxiOS|Edg|EdgiOS|OPR|Opera|DuckDuckGo)\//.test(navigator.userAgent));
+
 
 // On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
 if (IS_IOS && navigator.audioSession) {
@@ -5283,7 +5291,7 @@ function loadABCFromABCTranscriptionTools(data,event){
 
   try{
     $("openFile").value="";
-    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;
     manualEntryCollection=false;
     currentSaveBaseName="transferred-fretboard-tunes";
     processLoadedABC(abcText,sourceName);
@@ -5466,7 +5474,7 @@ function loadShareLinkAfterStartup(){
       }
       manualEntryCollection=false;
       currentSaveBaseName="shared-fretboard-tunes";
-      sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
+      sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;
       processLoadedABC(decompressABCDeflate(payload),"Share link");
     }catch(err){
       showFileLoadError(err);

@@ -2332,7 +2332,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
     <h2 style="text-align:center;margin:0 0 24px">
      ABC Harmonica Player Instructions
     </h2>
- <p class="help-version-subtitle">Version 4.14</p>
+ <p class="help-version-subtitle">Version 4.15</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">
         Overview
@@ -2518,7 +2518,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">
         Playback
       </p>
-      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
+      <p>On iPhone, iPad, and desktop Safari, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. In other browsers, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>
         Playback follows the notation cursor and harmonica display, highlighting the current harmonica hole and technique as the tune plays.
@@ -3198,6 +3198,14 @@ function harmonicaFingeringsGenerator(abc){
 // .abc as well as .txt files. Validate the selected filename after selection.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+// iOS/iPadOS and desktop Safari use the explicit playback-enable gesture
+// for incoming share links and direct transfers. Other browsers use Play directly.
+const REQUIRES_PLAYBACK_ENABLE_GESTURE = IS_IOS ||
+  (/(?:Macintosh|Mac OS X)/.test(navigator.userAgent) &&
+   /AppleWebKit\//.test(navigator.userAgent) &&
+   /Safari\//.test(navigator.userAgent) &&
+   !/(?:Chrome|Chromium|CriOS|FxiOS|Edg|EdgiOS|OPR|Opera|DuckDuckGo)\//.test(navigator.userAgent));
+
 
 // On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
 if (IS_IOS && navigator.audioSession) {
@@ -4451,7 +4459,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   if(!abcText.trim())return;
   try{
     if($("openFile"))$("openFile").value="";
-    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;
     manualEntryCollection=false;currentSaveBaseName="transferred-harmonica-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
@@ -4515,7 +4523,7 @@ function loadShareLinkAfterStartup(){
       // shared harmonica tuning, key, octave shift, or playback transpose as
       // the recipient's normal browser preferences.
       standardShareSettingsPending=params.get("lesson")!=="1";
-      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-harmonica-tunes";sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
       if(system==="8"&&sharedCustomTuningActive){
         const sharedTuningMessage =
           `<div style="max-width:100%;overflow-wrap:break-word;word-break:normal">` +

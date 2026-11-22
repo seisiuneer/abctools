@@ -2107,7 +2107,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
 <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.3)"><h2 style="flex:0 0 auto;text-align:center;margin:0;padding:20px 28px 24px">ABC Tremolo Harmonica Player Instructions</h2>
- <p class="help-version-subtitle">Version 4.14</p>
+ <p class="help-version-subtitle">Version 4.15</p>
 <div style="flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;line-height:1.48;padding:0 42px 20px 28px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and a simulated two-row tremolo harmonica. The active pair of reeds is highlighted while the symbol below it shows whether to blow or draw.</p>
@@ -2183,7 +2183,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback</p>
-      <p>On iPhone and iPad, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. On other devices, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
+      <p>On iPhone, iPad, and desktop Safari, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. In other browsers, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>Playback follows the notation cursor and tremolo display, highlighting the current position as the tune plays. The controls below the notation provide play/pause, restart, looping, seeking, and playback speed.</p>
       <p><b>Mute Melody</b> silences the melody while leaving accompaniment or metronome available. <b>Metronome</b> adds a click during playback. <b>Count in?</b> adds a five-second on-screen countdown.</p>
@@ -2782,6 +2782,14 @@ function installCustomTuningEditor(){restoreCustomHarmonica();buildCustomMatrix(
 // .abc as well as .txt files. Validate the selected filename after selection.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
   (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+// iOS/iPadOS and desktop Safari use the explicit playback-enable gesture
+// for incoming share links and direct transfers. Other browsers use Play directly.
+const REQUIRES_PLAYBACK_ENABLE_GESTURE = IS_IOS ||
+  (/(?:Macintosh|Mac OS X)/.test(navigator.userAgent) &&
+   /AppleWebKit\//.test(navigator.userAgent) &&
+   /Safari\//.test(navigator.userAgent) &&
+   !/(?:Chrome|Chromium|CriOS|FxiOS|Edg|EdgiOS|OPR|Opera|DuckDuckGo)\//.test(navigator.userAgent));
+
 
 // On iOS/iPadOS only, allow Web Audio playback when Silent Mode is enabled.
 if (IS_IOS && navigator.audioSession) {
@@ -3697,7 +3705,7 @@ function loadABCFromABCTranscriptionTools(data,event){
   if(!abcText.trim())return;
   try{
     if($("openFile"))$("openFile").value="";
-    sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;
+    sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;
     manualEntryCollection=false;currentSaveBaseName="transferred-tremolo-harmonica-tunes";processLoadedABC(abcText,sourceName);
     acknowledgeABCTranscriptionToolsLoad(event,data.messageId||"",tunes.length);
   }catch(error){
@@ -3757,7 +3765,7 @@ function loadShareLinkAfterStartup(){
       // Share-link settings are temporary for this session. Do not overwrite the
       // recipient's saved model/key/display/playback-transpose preferences.
       standardShareSettingsPending=params.get("lesson")!=="1";
-      manualEntryCollection=false;currentSaveBaseName="shared-tremolo-harmonica-tunes";sharePlaybackNeedsGesture=IS_IOS&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
+      manualEntryCollection=false;currentSaveBaseName="shared-tremolo-harmonica-tunes";sharePlaybackNeedsGesture=REQUIRES_PLAYBACK_ENABLE_GESTURE&&!playbackUnlockedThisPage;processLoadedABC(decompressABCDeflate(payload),"Share link");
       if(system==="custom"&&sharedCustomTuningActive){const msg=`The custom tuning from the share link has been temporarily set to ${customHarmonica.name}.\n\nYour custom tuning saved in this browser has not been replaced.\n\nTo save this tuning, make any settings change or open the custom tuning dialog and click Save.`;void showPlayerAlert(msg)}
     }catch(err){
       showFileLoadError(err);
