@@ -1148,6 +1148,7 @@
     <hr>
     <h3>Playback</h3>
     <p>Use the controls below the notation to play, pause, restart, loop, or seek within a tune.</p>
+    <p>On desktop and Android, playback controls appear immediately; click <b>Play</b> to start audio. On iPhone and iPad, opening a share link or receiving a tune from another tool may prompt you to tap <b>Enable Playback</b> first. A lesson's <b>Start Lesson</b> button enables playback without an additional prompt.</p>
     <p>Click the tempo percentage field to set playback speed from 10% to 200%.</p>
     <p>The tempo setting is saved in this browser.</p>
 
@@ -1184,7 +1185,7 @@
 
     <h3 id="studentLessonInstructionsSection">Lessons for Students</h3>
     <p>Opening a lesson link displays the teacher's title and instructions.</p>
-    <p>Click <b>Start Lesson</b> to enable playback and browse the tunes.</p>
+    <p>Click <b>Start Lesson</b> to browse the tunes. On iPhone and iPad, this also enables audio playback without a separate prompt.</p>
     <p>You can change the notation display mode during the lesson without changing your saved preference.</p>
     <p><b>Add Tune</b>, <b>Delete Tune</b>, <b>Clear</b>, and editing ABC are disabled during lessons.</p>
 
@@ -1315,7 +1316,7 @@
 </div>
 <script>
 'use strict';
-const VIEWER_VERSION = '3.0.1';
+const VIEWER_VERSION = '3.1.0';
 document.getElementById('viewerVersion').textContent = 'Version ' + VIEWER_VERSION;
 // Match the other instrument players on iOS/iPadOS: playback is allowed in Silent Mode.
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -2687,7 +2688,9 @@ async function rebuild() {
     // that is not a renderer crash and should not interrupt the editor.
     if(!visuals?.length){$('score').textContent='No notation available for the current ABC.';return;}
     postProcessTab(visuals[0],mode);
-    if(needsGesture&&!unlocked) {
+    if(IS_IOS&&needsGesture&&!unlocked) {
+      // Only iOS/iPadOS requires the explicit audio-enable step. On other
+      // platforms abcjs initializes playback when Play is clicked.
       // The student's Start Lesson click is the required playback gesture.
       if(!lessonIntroductionPending)$('enableOverlay').classList.add('open');
       return;
@@ -3043,7 +3046,7 @@ window.addEventListener('message',event=>{
     if(!count)throw new Error('The transferred text contains no ABC tunes.');
     if(VALID_MODES.has(data.displayMode))$('displayMode').value=data.displayMode;
     fileLoadSerial++; // Ignore any file reads started before this transfer.
-    needsGesture=!unlocked;
+    needsGesture=IS_IOS&&!unlocked;
     appendABC(data.abc,{replace:true,source:'ABC Transcription Tools'});
     if(data.messageId)transferredIds.add(data.messageId);
     event.source.postMessage({type:'abcTunebookABCLoaded',messageId:data.messageId||'',tuneCount:count},event.origin&&event.origin!=='null'?event.origin:'*');
@@ -3537,7 +3540,7 @@ function installTunebookShareUI(){
     // This click is the audio-unlock gesture; never show a second modal.
     lessonIntroductionPending=false;
     setModal('studentLessonModal',false);
-    if(needsGesture&&!unlocked)void enablePlayback();
+    if(IS_IOS&&needsGesture&&!unlocked)void enablePlayback();
     else if(currentIndex>=0)void rebuild();
   });
   refreshTunebookShareState();
@@ -3554,7 +3557,7 @@ function loadIncomingTunebookLink(){
     studentLessonMode=!!lesson;
     lessonIntroductionPending=!!lesson;
     document.body.classList.toggle('lessonMode',studentLessonMode);
-    fileLoadSerial++;needsGesture=!unlocked;
+    fileLoadSerial++;needsGesture=IS_IOS&&!unlocked;
     appendABC(abc,{replace:true,source:lesson?'lesson link':'share link'});
     if(lesson){
       $('studentLessonTitle').textContent=lesson.title||'Lesson';
