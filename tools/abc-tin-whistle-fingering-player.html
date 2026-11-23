@@ -472,6 +472,11 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 .whistleToolbar .control{min-width:0}
 .whistleToolbar .control select{width:100%;min-width:0;max-width:100%;text-overflow:ellipsis}
 
+/* Keep the key label on one line at iPad landscape widths. */
+#whistleFingeringHeaderTitle{white-space:nowrap;font-size:clamp(13px,1.2vw,16px)}
+/* Let the title and controls occupy separate lines on narrow phones. */
+@media(max-width:650px){.diagramHeader{flex-wrap:wrap}.diagramHeaderRight{margin-left:auto}}
+
 /* Tin Whistle player overrides */
 /* Limit the two display selector widths on wide screens so the ABC filename has more room. */
 .whistleToolbar{grid-template-columns:minmax(220px,1.55fr) minmax(128px,.18fr) minmax(252px,clamp(252px,18vw,260px)) minmax(242px,clamp(242px,19vw,270px)) minmax(195px,1.12fr) auto}
@@ -1424,7 +1429,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
  <div class="splitV" id="splitV" role="separator" aria-orientation="vertical" title="Drag to resize left and fingering panels; double-click to reset"></div>
- <section class="card diagramCard"><div class="diagramHeader"><span>Whistle Fingering</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
+ <section class="card diagramCard"><div class="diagramHeader"><span id="whistleFingeringHeaderTitle">Whistle Fingering - D (High)</span><span class="diagramHeaderRight"><label class="showNoteLabel" for="showNoteCheck"><input id="showNoteCheck" type="checkbox" disabled>Show note</label><label class="showNoteLabel" for="hideFingeringCheck"><input id="hideFingeringCheck" type="checkbox">Hide</label><button id="fullBtn" class="fullBtn" disabled>Full-Page View</button><button id="exitFull" class="exitFull">Exit Full-Page</button></span></div>
   <div class="diagramWrap whistleDiagramWrap">
    <div id="whistleLive" class="whistleLive" hidden>
     <div id="whistleTuneTitle" class="whistleTuneTitle"></div>
@@ -1470,7 +1475,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Tin Whistle Fingering Player Instructions</h2>
-    <p class="help-version-subtitle">Version 4.34</p>
+    <p class="help-version-subtitle">Version 5.0</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load ABC tunes to play them with synchronized notation, optional whistle tablature, and a large live fingering display.</p>
@@ -1749,6 +1754,19 @@ const WHISTLE_ORIGINAL_RENDER_TAB=[{
 // (legacy mode) or instead changes fingering positions at the written pitch.
 function whistleOriginalPitchMode(){
   return $("notationDisplay")?.value==="whistle-tab-original";
+}
+
+// The title describes the fingering pattern, not the sounding playback pitch.
+// Shift Pitch and Notation Only use standard D (High) whistle fingerings;
+// Original Pitch uses the physical whistle selected by the player.
+function updateWhistleFingeringHeaderTitle(){
+  const title=$("whistleFingeringHeaderTitle");
+  if(!title)return;
+  const selected=whistleOriginalPitchMode()
+    ? $("whistleKey")?.selectedOptions[0]?.textContent.trim() || "D (High)"
+    : "D (High)";
+  const wanted=`Whistle Fingering - ${selected}`;
+  if(title.textContent!==wanted)title.textContent=wanted;
 }
 
 // The physical whistle keys run from D (High) to D (Low), an octave apart.
@@ -6135,11 +6153,13 @@ $("editorTextSize").addEventListener("change",e=>{
 });
 
 $("whistleKey").addEventListener("change",()=>{
+  updateWhistleFingeringHeaderTitle();
   try{localStorage.setItem(WHISTLE_KEY_STORAGE_KEY,$("whistleKey").value)}catch(_){}
   if(tunes.length)scheduleRebuild();
 });
 
 $("notationDisplay").addEventListener("change",()=>{
+  updateWhistleFingeringHeaderTitle();
   saveWhistleDisplayPrefs();
   updatePlaybackRangeButtons();
   if(tunes.length)scheduleRebuild();
@@ -6159,6 +6179,8 @@ restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
 updatePlaybackRangeButtons();
 try{const key=localStorage.getItem(WHISTLE_KEY_STORAGE_KEY);if(key&&$("whistleKey").querySelector(`option[value="${key}"]`))$("whistleKey").value=key}catch(_){}
+updateWhistleFingeringHeaderTitle();
+window.addEventListener("pageshow",updateWhistleFingeringHeaderTitle);
 restoreShowNotePreference();
 restoreHideFingeringPreference();
 restoreMetronomePreference();
