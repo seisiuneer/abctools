@@ -1448,7 +1448,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="whistleKey">Whistle Key</label><select id="whistleKey" title="Pitch of your whistle; saved only on this device"><option value="74" selected>D (High)</option><option value="73">C♯</option><option value="72">C</option><option value="71">B</option><option value="70">B♭</option><option value="69">A</option><option value="68">A♭</option><option value="67">G</option><option value="66">F♯</option><option value="65">F</option><option value="64">E</option><option value="63">E♭</option><option value="62">D (Low)</option></select></div>
- <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notes+Tab (Shift Pitch)</option><option value="whistle-tab-original">Notes+Tab (Original Pitch)</option></select></div>
+ <div class="control"><label for="notationDisplay">Notation Display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notes+Tab (Shift Pitch)</option><option value="whistle-tab-original">Notes+Tab (Original Pitch)</option></select></div>
  <div class="control"><label for="octaveDisplay">Octave Display</label><select id="octaveDisplay"><option value="upper-prime">Uppercase + ' marks</option><option value="lower-upper">Lowercase / Uppercase</option><option value="color-upper-prime" selected>Color + Uppercase + '</option><option value="color-lower-upper">Color + Lower/Upper</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
@@ -1512,7 +1512,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Load ABC tunes to play them with synchronized notation, optional whistle tablature, and a large live fingering display.</p>
       <p>Select the key of your whistle using <b>Whistle Key</b> dropdown.</p>
       <p>The range is from D (High) through D (Low) in semitone steps; your selection is remembered on this device.</p>
-      <p>Use <b>Notation display</b> to choose how the tablature and playback work:</p>
+      <p>Use <b>Notation Display</b> to choose how the tablature and playback work:</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Demo Videos</p>
       <div class="viewerVideoLinks" aria-label="Demo videos">
@@ -1614,7 +1614,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
       <p>Use <b>Octave Display</b> to choose uppercase note names with ' marks, lowercase/uppercase note names by octave, or color-coded versions of either style.</p>
       <p>The two <b>Color-coded</b> choices draw the fingering glyph black below D5, dark red from D5 through C#6, and orange from D6 upward.</p>
-      <p><b>Whistle Key</b>, <b>Notation display</b>, and <b>Octave Display</b> are saved in your browser.</p>
+      <p><b>Whistle Key</b>, <b>Notation Display</b>, and <b>Octave Display</b> are saved in your browser.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
@@ -1656,7 +1656,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
       <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
-      <p>Share links carry the ABC tune or tunebook, not the sender's <b>Whistle Key</b>, <b>Notation display</b>, or <b>Octave Display</b> choices. Recipients use their own saved settings and can change them freely. Older share links containing display settings are also opened without applying those settings. <b>Browse</b> likewise loads the ABC without changing these preferences.</p>
+      <p>Share links carry the ABC tune or tunebook, not the sender's <b>Whistle Key</b>, <b>Notation Display</b>, or <b>Octave Display</b> choices. Recipients use their own saved settings and can change them freely. Older share links containing display settings are also opened without applying those settings. <b>Browse</b> likewise loads the ABC without changing these preferences.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
@@ -1697,7 +1697,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
       <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title and instructions, and the initial <b>Hide</b> setting for the fingering display.</p>
       <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
-      <p>Whistle Key, Notation display, and Octave Display are not saved in the lesson configuration; each student chooses their own.</p>
+      <p>Whistle Key, Notation Display, and Octave Display are not saved in the lesson configuration; each student chooses their own.</p>
       <p>You can also open a saved Lesson Configuration with the main ABC file Browse button.</p>
       <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
       <p>Loading a lesson configuration restores its tune, lesson title, instructions, and initial Hide setting.</p>
@@ -1712,7 +1712,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Open the lesson link in your web browser to load the tune and lesson instructions. Your teacher may also choose whether the fingering display is initially hidden.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
       
-      <p><b>Whistle Key</b>, <b>Notation display</b>, and <b>Octave Display</b> remain available during the lesson. Choose your own whistle key and switch between Shift Pitch and Original Pitch as needed. These choices are kept in your browser, not set by the teacher's link. The assigned tune selector remains locked during the lesson.</p>
+      <p><b>Whistle Key</b>, <b>Notation Display</b>, and <b>Octave Display</b> remain available during the lesson. Choose your own whistle key and switch between Shift Pitch and Original Pitch as needed. These choices are kept in your browser, not set by the teacher's link. The assigned tune selector remains locked during the lesson.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, fingering display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
