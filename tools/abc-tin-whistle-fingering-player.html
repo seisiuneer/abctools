@@ -33,15 +33,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ABC Tin Whistle Fingering Player</title>
-<meta name="description" content="Play ABC tunes with synchronized standard notation, D tin whistle tablature, audio playback, and a large live whistle fingering display." />
+<meta name="description" content="Play ABC tunes with synchronized standard notation, D tin whistle tablature, support for multiple whistle keys, audio playback, and a large live whistle fingering display." />
 <meta name="keywords" content="ABC notation, tin whistle, whistle fingering, tin whistle tablature, whistle playback, Irish traditional music, ABC Transcription Tools" />
 <meta name="author" content="Michael Eskin" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ABC Tin Whistle Fingering Player" />
-<meta property="og:description" content="Play ABC tunes with synchronized notation, D tin whistle tablature, audio playback, and a large live whistle fingering display." />
+<meta property="og:description" content="Play ABC tunes with synchronized notation, D tin whistle tablature, support for multiple whistle keys, audio playback, and a large live whistle fingering display." />
 <meta property="og:site_name" content="ABC Tin Whistle Fingering Player" />
 <meta property="og:url" content="https://michaeleskin.com/tools/abc-tin-whistle-fingering-player.html" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tin-whistle-fingering-player-2.jpg"/>
+<meta property="og:image" content="https://michaeleskin.com/tools/img/abc-tin-whistle-fingering-player-og3.jpg"/>
 <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
@@ -474,7 +474,7 @@ body:not(.save-name-prompt-open) .modal_default_main .modal_default_content{
 
 /* Tin Whistle player overrides */
 /* Limit the two display selector widths on wide screens so the ABC filename has more room. */
-.whistleToolbar{grid-template-columns:minmax(220px,1.55fr) minmax(128px,.18fr) minmax(226px,clamp(226px,18vw,260px)) minmax(242px,clamp(242px,19vw,270px)) minmax(195px,1.12fr) auto}
+.whistleToolbar{grid-template-columns:minmax(220px,1.55fr) minmax(128px,.18fr) minmax(252px,clamp(252px,18vw,260px)) minmax(242px,clamp(242px,19vw,270px)) minmax(195px,1.12fr) auto}
 .whistleToolbar .fileControl{grid-column:auto}
 /* Keep the whistle name visible before the toolbar becomes too narrow for six columns. */
 @media (min-width:1051px) and (max-width:1295px){.whistleToolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.whistleToolbar .fileControl{grid-column:1 / -1}}
@@ -941,8 +941,8 @@ body.lessonMode .toolbar{display:none!important}body.lessonMode .workspace{margi
   margin-top:0;
 }
 
-/* In a running lesson, keep the toolbar visible so the assigned setup can be
-   seen, but prevent the student from changing it. Hide Share. */
+/* In a running lesson, keep the toolbar visible and display choices editable.
+   The assigned tune remains fixed; hide Share. */
 body.lessonMode .toolbar{display:grid!important}
 body.lessonMode .workspace{margin-top:0}
 body.lessonMode .fileControl #openFile{visibility:visible!important;pointer-events:auto!important}
@@ -1170,6 +1170,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 #abcPanel .abcPracticeButtons{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;min-width:0}
 #abcPanel .abcPracticeButtons button{font:inherit;border:1px solid #9dbaf2;background:#e8f1ff;border-radius:6px;padding:5px 8px;font-size:12px;font-weight:650;line-height:1.2;cursor:pointer;color:#17241c;-webkit-text-fill-color:#17241c;white-space:nowrap}
 #abcPanel .abcPracticeButtons button:disabled{opacity:.45;cursor:default}
+#abcPanel .abcPracticeButtons button[hidden]{display:none!important}
 #abcPanel .abcPracticeButtons button:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
 /* The same distinct color marks both available Optimize and Clear actions. */
 #abcPanel .abcPracticeButtons #optimizeKeyBtn:not(:disabled){
@@ -1411,7 +1412,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="whistleKey">Whistle Key</label><select id="whistleKey" title="Pitch of your whistle; saved only on this device"><option value="74" selected>D (High)</option><option value="73">C♯</option><option value="72">C</option><option value="71">B</option><option value="70">B♭</option><option value="69">A</option><option value="68">A♭</option><option value="67">G</option><option value="66">F♯</option><option value="65">F</option><option value="64">E</option><option value="63">E♭</option><option value="62">D (Low)</option></select></div>
- <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notation + Whistle Tab</option></select></div>
+ <div class="control"><label for="notationDisplay">Notation display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notes+Tab (Shift Pitch)</option><option value="whistle-tab-original">Notes+Tab (Original Pitch)</option></select></div>
  <div class="control"><label for="octaveDisplay">Octave Display</label><select id="octaveDisplay"><option value="upper-prime">Uppercase + ' marks</option><option value="lower-upper">Lowercase / Uppercase</option><option value="color-upper-prime" selected>Color + Uppercase + '</option><option value="color-lower-upper">Color + Lower/Upper</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
@@ -1469,21 +1470,22 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Tin Whistle Fingering Player Instructions</h2>
-    <p class="help-version-subtitle">Version 4.29</p>
+    <p class="help-version-subtitle">Version 4.34</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
-      <p><b>Important:</b> This tool always displays <b>standard D-whistle fingerings</b>, regardless of which whistle key you select.</p>
-      <p>It does not show the different fingerings needed to play a tune at its original pitch on a whistle in another key. Instead, it lets you practice the tune using familiar D-whistle fingerings on whatever key whistle you have, with playback adjusted to match your whistle.</p>
-      <p><b>Optimize Key</b> can offer an alternative key for tunes that are difficult to play because they contain notes requiring half-holing, while still using the same D-whistle fingerings.</p>
+      <p>Load ABC tunes to play them with synchronized notation, optional whistle tablature, and a large live fingering display.</p>
+      <p>Select the key of your whistle using <b>Whistle Key</b> dropdown.</p>
+      <p>The range is from D (High) through D (Low) in semitone steps; your selection is remembered on this device.</p>
+      <p>Use <b>Notation display</b> to choose how the tablature and playback work:</p>
+
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:0 0 6px">Basic Operation</p>
-      <p>Load, type, or paste ABC tunes and play them with synchronized standard notation and an optional <b>D tin whistle tablature</b> display.</p>
-      <p>The Whistle Fingering pane shows the current tune title and, during playback, a large fingering diagram for the note being played with its note name to the right.</p>
-      <p>Choose the key of your instrument with <b>Whistle Key</b> (D (High) down to D (Low), default D (High)).</p>
-      <p>The player automatically adjusts the melody's playback tuning to match your whistle using standard high-D whistle fingerings.</p>
-      <p>Your Whistle Key is remembered on this device.</p>
-      <p>Use <b>Notation display</b> to choose standard notation alone or with D-whistle tablature.</p>
-      <p>The tablature and fingering display retain the standard D-whistle finger positions for every whistle key.</p>
+      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Notation Display: Playing Modes</p>
+      <p><b>Notation Only:</b> Shows standard notation without whistle tablature. Audio behaves as in Shift Pitch mode.</p>
+      <p><b>Notes+Tab (Shift Pitch):</b> Shows familiar D-whistle fingerings, whatever whistle key you select. The melody and accompaniment transpose to match your whistle, so you can use the same fingerings while playing along at the whistle's pitch.</p>
+      <p><b>Optimize Key</b> is available in this mode. It analyzes the tune's notes and offers an easier key when that can reduce half-holing or improve the playable range using D-whistle fingerings. The button is enabled only when a useful improvement is found. Click <b>Clear Optimize</b> to return to the original key.</p>
+      <p><b>Notes+Tab (Original Pitch):</b> Keeps the tune's written key and notation unchanged. The tablature and large diagram show how to play its notes on your selected whistle. For example, written G on a G whistle uses the same fingering as low D on a D whistle.</p>
+      <p>The player chooses a consistent melody octave suited to the tune and whistle, favoring the lower register when practical. Notes below the whistle's range are folded up an octave; the fingerings and melody audio match the resulting pitches.</p>
+      <p><b>Optimize Key is not available</b> in Original Pitch mode because it is based on D-whistle fingerings.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
@@ -1493,21 +1495,15 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">ABC Editing and Notation</p>
-      <p>The upper-left panel contains editable ABC. The lower-left panel shows abcjs notation and playback controls. The <b>Notation display</b> selector chooses whether D-whistle tablature is also shown.</p>
-      <p>Editing the ABC rebuilds the notation and audio. When whistle tablature is enabled it is rebuilt at the same time. Click a rendered note to select its corresponding ABC text and show that note in the fingering display.</p>
-      <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor text size and remembers the choice in this browser.</p>
-      <p>For some tunes with no sharps or flats, or with flats in the key signature, click <b>Optimize Key</b> in the ABC panel header to transpose the tune to a key that may be easier to play.</p>
-      <p>The button is enabled only when the player finds a change that improves playability.</p>
-      <p>Tunes that already avoid half-holing and fit the whistle note range do not need optimization.</p>
-      <p>Click <b>Clear Optimize</b> to return to the tune's original key.</p>
-      <p>The tablature and fingering diagram always use <b>standard D-whistle fingerings</b>, regardless of the Whistle Key selected.</p>
-      <p>Click on any note head in the notation and then use ← and → below the instrument display to step through the notes without playback.</p>
+      <p>The upper-left pane contains editable ABC; the lower-left pane contains the notation and playback controls. Editing the ABC rebuilds notation, audio, and any displayed tablature.</p>
+      <p>The <b>Small / Medium / Large / Largest</b> selector changes the ABC editor's text size and remembers your choice.</p>
+      <p>Click any note head in the notation to select its ABC text and see its fingering. Use ← and → below the fingering display to step through the tune without playback.</p>
 
       <p>Leave <strong>Use arrow keys?</strong> checked at the lower right of the instrument panel to navigate with the Left and Right Arrow keys, or jump to the first or last note with Home or End (including compatible Bluetooth keyboard foot pedals).</p>
 
-      <p>This option is on by default. Your choice is remembered in this browser, including when you open a shared tune or run a lesson. Share and lesson links do not change this setting.</p>
+      <p>This option is on by default. Your choice is remembered in this browser, including when you open a shared tune or run a lesson.</p>
 
-      <p>When enabled, unmodified Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
+      <p>When enabled, Left and Right Arrow keys step through notes, and Home and End jump to the first and last notes of the tune.</p>
 
       <p>These keys navigate notes instead of moving the ABC editor cursor.</p>
 
@@ -1547,20 +1543,19 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>Cancelling Phrase Builder or entering invalid settings leaves the ABC unchanged.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Whistle Fingering Display</p>
-      <p>The display uses standard D-whistle fingering. The note name appears to the right of the fingering symbol.</p>
+      <p>The large fingering display matches the selected tablature mode. The note name appears beside the fingering and shows the pitch written in the notation, even when the fingering or playback uses octave folding.</p>
       <p>Check <b>Show note</b> to also show the current pitch as a quarter note on a staff just below the note name. The Show note setting is remembered in this browser and is not included in share links.</p>
       <p>Note names are displayed using sharps or flats according to the tune's <b>K:</b> key and mode. When <b>Show note</b> is enabled, the notation below the note name uses the same sharp or flat naming.</p>
       <p>Check <b>Hide</b> to clear the instrument display; it can be used if you want to practice a tune without seeing the instrument fingerings. Uncheck Hide to reveal the display again. This setting is remembered during normal use and can be changed without saving during a lesson.</p>
       <p>Use <b>Octave Display</b> to choose uppercase note names with ' marks, lowercase/uppercase note names by octave, or color-coded versions of either style.</p>
       <p>The two <b>Color-coded</b> choices draw the fingering glyph black below D5, dark red from D5 through C#6, and orange from D6 upward.</p>
-      <p><b>Whistle Key</b> is remembered locally and is <b>not</b> included in share links, lessons, or saved lesson settings. <b>Notation display</b> and <b>Octave Display</b> remain shared display choices.</p>
+      <p><b>Whistle Key</b>, <b>Notation display</b>, and <b>Octave Display</b> are saved in your browser.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Playback and Tempo</p>
       <p>On iPhone, iPad, and desktop Safari, tap <b>Enable Playback</b> if prompted when opening a shared or transferred tune. In other browsers, use <b>Play</b> directly. For lessons, <b>Start Lesson</b> enables audio.</p>
       <p>The playback <b>Loop</b> setting is remembered in this browser and restored when you reopen the player (off by default).</p>
       <p>As each melody note plays, the notation cursor follows the tune and the Whistle Fingering pane updates to that note.</p>
-      <p><b>Whistle Key</b> adjusts the melody sound to match your whistle while keeping the accompaniment in a comfortable register.</p>
       <p>Check <b>Metronome</b> to add a meter-appropriate metronome click during playback. Changing this setting stops and rewinds the current tune. The metronome setting is remembered in this browser but is not included in share links.</p>
       <p>Check <b>Count in?</b> to show a five-second countdown before playback starts when you click Play while playback is stopped.</p>
       <p>The Count in setting is remembered in this browser.</p>
@@ -1596,21 +1591,15 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p><b>Share</b> opens the <b>Sharing Controls</b> dialog. Choose <b>Share Current Tune</b> for the current tune or <b>Share All Tunes</b> for the complete loaded collection. The Sharing Controls dialog closes and the selected link opens in a Share Link dialog where you can copy it, save it as a text file, test it in a new browser tab, or open the ABC in the ABC Transcription Tools. Click <b>Close</b> to close the Share Link dialog.</p>
       <p><b>Shortcut:</b> <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b> in a new browser tab, without opening the sharing dialogs.</p>
       <p><b>Open in ABCTT</b> opens the selected ABC in the <b>ABC Transcription Tools ABC Editor</b> in a new browser tab, using the player's normal instrument-specific conversion settings. For a Lesson Share Link, lesson-only information is omitted and only the tune and applicable instrument settings are sent to ABC Transcription Tools.</p>
-      <p>Settings received from a share link are used for that visit without changing your saved preferences. If you change any player setting, the current share-link settings become your saved preferences too. Opening a file with <b>Browse</b> loads its ABC only and does not change player settings.</p>
+      <p>Share links carry the ABC tune or tunebook, not the sender's <b>Whistle Key</b>, <b>Notation display</b>, or <b>Octave Display</b> choices. Recipients use their own saved settings and can change them freely. Older share links containing display settings are also opened without applying those settings. <b>Browse</b> likewise loads the ABC without changing these preferences.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p id="abcttPracticeInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Practice with the ABC Transcription Tools Tune Trainer</p>
       <p>To practice the current tune in the <b>ABC Transcription Tools</b>, first click <b>Share</b> in this player, choose <b>Share Current Tune</b>, and then click <b>Open in ABCTT</b> in the Share Link dialog. The tune opens in the <b>ABC Transcription Tools</b> in a new browser tab. Alternatively, <b>Option/Alt-click Share</b> to open the current tune directly in <b>ABC Transcription Tools</b>, skipping the Share dialogs.</p>
       <p>Once the tune is loaded, click <b>Train</b> above the ABC editor pane to start the <b>Tune Trainer</b>. To practice the tune phrase-by-phrase, click <b>Phrase Builder</b> in the <b>Tune Trainer</b>.</p>
       <p>To export an <b>MP3 audio file</b> of the tune, click <b>Play</b> in the <b>ABC Transcription Tools</b>, then click the <b>Export Audio, Image, or PDF</b> button in its <b>Player</b> and select the MP3 audio export option.</p>
-      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-      <p style="text-align:left;font-weight:700;margin:18px 0 6px">Using Other Whistle Keys</p>
-      <p>Select your instrument using <b>Whistle Key</b>.</p>
-      <p>The player automatically adjusts the melody playback to match your whistle, but the tablature and fingering diagram always show <b>standard D-whistle fingerings</b>.</p>
-      <p>For some tunes with no sharps or flats, or with flats in the key signature, <b>Optimize Key</b> can transpose the tune to a key that may be easier to play.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
-
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Export PDF</p>
       <p>Use <b>Export PDF</b> to save the current tune as a PDF containing the notation and any displayed tablature.</p>
       <p>If a Playback Range or Phrase Builder result is active, clicking the main <b>Export PDF</b> button first discards the temporary ABC and restores the full tune before preparing the PDF.</p>
@@ -1626,6 +1615,7 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>On other devices, the PDF downloads automatically.</p>
       <p>PDF export settings are saved locally and are not included in share or lesson links.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Printing Limitations</p>
       <p>While running this tool, you can use your browser's Print feature to print the music notation displayed in the notation pane.</p>
       <p>Tunes that are longer than one page may be cut off or clipped in the printout.</p>
@@ -1640,13 +1630,13 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p>A lesson uses the <b>current tune only</b>.</p>
       <p>Enter a lesson title and instructions in the Configure Lesson dialog.</p>
       <p>The lesson title and instructions are remembered in this browser while you work and are restored the next time you open Configure Lesson.</p>
-      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title, instructions, and the same player settings carried by a normal Tin Whistle Player share link.</p>
+      <p><b>Save Lesson Configuration</b> saves a reusable text file containing the current tune, lesson title and instructions, and the initial <b>Hide</b> setting for the fingering display.</p>
       <p><b>Load Lesson Configuration</b> can open either a saved Lesson Configuration file or a Lesson Link saved as a text file.</p>
-      <p>Those saved player settings are <b>Notation display and Octave Display</b>.</p>
-      <p>You can also open a saved Lesson Configuration with the main ABC file Browse button. In this case, only the ABC tune is loaded; the lesson title, instructions, and saved player settings are not applied.</p>
+      <p>Whistle Key, Notation display, and Octave Display are not saved in the lesson configuration; each student chooses their own.</p>
+      <p>You can also open a saved Lesson Configuration with the main ABC file Browse button.</p>
       <p>If one or more tunes are already loaded, the tool asks for confirmation before replacing them with the lesson tune.</p>
-      <p>Loading a lesson configuration restores its tune, lesson title, instructions, and saved player settings. The restored player settings also become your saved preferences for future use.</p>
-      <p><b>Create Lesson Link</b> creates a share link for the current tune containing the lesson title and instructions plus the same player settings carried by a normal share link.</p>
+      <p>Loading a lesson configuration restores its tune, lesson title, instructions, and initial Hide setting.</p>
+      <p><b>Create Lesson Link</b> creates a link containing the current tune, lesson title, instructions, and initial Hide setting.</p>
       <p>The generated lesson link opens in the same Share Link dialog, stacked over the Configure Lesson dialog, where it can be copied to the clipboard, saved as a text file, tested in a new browser tab, or opened in the ABC Transcription Tools with lesson-only parameters removed. Click <b>Back</b> to close the Lesson Share Link dialog and return to Configure Lesson.</p>
       <p>The <b>Hide</b> checkbox beside <b>Show note</b> lets you prepare a lesson with the instrument display initially hidden, so students can practice without seeing the instrument fingerings. Its checked or unchecked state is included in <b>Lesson Links</b> and saved <b>Lesson Configurations</b>. Students can change Hide during the lesson.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
@@ -1654,20 +1644,20 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
       <p id="studentLessonInstructionsSection" style="text-align:left;font-weight:700;margin:18px 0 6px">Lesson Information for Students</p>
 
       <p>Your music teacher may provide you with a Tin Whistle Player lesson link.</p>
-      <p>Open the lesson link in your web browser to load the tune, lesson instructions, and the player settings chosen by your teacher.</p>
+      <p>Open the lesson link in your web browser to load the tune and lesson instructions. Your teacher may also choose whether the fingering display is initially hidden.</p>
       <p>Read the lesson information that appears, then click <b>Start Lesson</b> when you are ready to begin.</p>
       
-      <p>The teacher's Notation Display, Octave Display, and tune selector are initially locked during a lesson. <b>Whistle Key</b> remains enabled so you can play the lesson on your own whistle; its selection stays on your device.</p>
+      <p><b>Whistle Key</b>, <b>Notation display</b>, and <b>Octave Display</b> remain available during the lesson. Choose your own whistle key and switch between Shift Pitch and Original Pitch as needed. These choices are kept in your browser, not set by the teacher's link. The assigned tune selector remains locked during the lesson.</p>
       <p>The <b>Browse</b> and <b>Save</b> controls remain available while you are using a lesson, but the <b>Share</b> control is hidden so you cannot create share links or lessons.</p>
       <p>You can use the normal notation, fingering display, playback, tempo, metronome, count-in, display, and full-page controls while working on the lesson.</p>
       <p>You can edit the ABC if your teacher asks you to make changes.</p>
       <p>Click <b>Save</b> to save your edited ABC.</p>
-      <p>You can use <b>Browse</b> to load a saved ABC file back into the player or open another ABC file. The teacher's display settings remain locked, but Whistle Key remains adjustable. After loading a file, the tune selector is unlocked.</p>
+      <p>You can use <b>Browse</b> to load a saved ABC file or open another tune. All three display selectors remain editable, and after loading a file, the tune selector is unlocked.</p>
       <p>The <b>Hide</b> checkbox beside <b>Show note</b> may be initially checked by your teacher to let you practice without seeing the instrument fingerings. Uncheck <b>Hide</b> whenever you want to reveal the instrument display, or check it again to practice without it. Changing Hide during a lesson does not change your saved preference for normal player use.</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 
       <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
-      <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/>based on a suggestion by Ephraim Schafli.<br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
+      <p style="text-align:center">This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
     </div>
     <button id="helpClose" style="margin:16px auto 0;width:220px;padding:10px;font:inherit;font-weight:650">Close</button>
@@ -1745,6 +1735,90 @@ const WHISTLE_RENDER_TAB=[{
   highestNote:"^a'",
   hideTabSymbol:true
 }];
+
+// Give Original Pitch mode a low C2 input tablature range so deeply low
+// ABC notes can still be folded to their correct selected-whistle fingerings.
+// The displayed glyphs remain from WHISTLE_GLYPH_MAP, not violin fret numbers.
+const WHISTLE_ORIGINAL_RENDER_TAB=[{
+  ...WHISTLE_RENDER_TAB[0],
+  tuning:["C,,"],
+  highestNote:"^a''"
+}];
+
+// The notation selector controls whether the whistle key changes playback pitch
+// (legacy mode) or instead changes fingering positions at the written pitch.
+function whistleOriginalPitchMode(){
+  return $("notationDisplay")?.value==="whistle-tab-original";
+}
+
+// The physical whistle keys run from D (High) to D (Low), an octave apart.
+// ABC whistle notation uses the high D's low D4 as the reference. In this
+// reference the lowest note of a G whistle is G3 (55), not G4 (67), and low
+// D starts at D3 (50). Keep the physical register when deriving fingerings.
+function whistleOriginalPitchBase(){
+  const selected=Number($("whistleKey")?.value);
+  return Number.isFinite(selected)?selected-12:62;
+}
+
+// Choose ONE register for the whole tune, not a separate octave for each
+// note. Unconditionally lowering all non-D whistles made C5 become C4 on a
+// C whistle while adjacent B4 stayed B4 (the Jimmy Ward's / Kesh bug).
+// Prefer the lower register when most melody notes can actually use it;
+// otherwise keep the written register. Notes BELOW the chosen register's
+// whistle bottom still fold upward, as before. Never shift accompaniment.
+let whistleOriginalSelectedOctaveShift=0;
+function whistleOriginalPitchOctaveShift(){
+  return Number($("whistleKey")?.value)===74?0:whistleOriginalSelectedOctaveShift;
+}
+function selectWhistleOriginalPitchRegister(sequence){
+  whistleOriginalSelectedOctaveShift=0;
+  if(!whistleOriginalPitchMode()||Number($("whistleKey")?.value)===74)return;
+  const boundary=Number($("whistleKey")?.value);
+  if(!Number.isFinite(boundary))return;
+  const melodyCount=verifyWhistleAccompanimentTrackBoundary(sequence);
+  let playableLow=0,total=0;
+  for(let i=0;i<melodyCount;i++){
+    const track=sequence.tracks[i];
+    if(!Array.isArray(track))continue;
+    for(const event of track){
+      if(event?.cmd!=="note"||!Number.isFinite(event.pitch)||event.instrument===128)continue;
+      total++;
+      if(event.pitch>=boundary)playableLow++;
+    }
+  }
+  // A majority by itself is not enough: nearby notes below the boundary
+  // would otherwise be forced upward while upper notes fell by an octave.
+  // Requiring 60% protects mixed-register tunes and keeps low G (and lower)
+  // available for tunes centered in those keys.
+  if(total&&playableLow/total>=0.6)whistleOriginalSelectedOctaveShift=-12;
+}
+
+// Octave-register selection followed by folding: both the live fingerings
+// and notation tablature use this exact same sounding-pitch calculation.
+function whistleFoldedSoundingMidi(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n)||!whistleOriginalPitchMode())return n;
+  const base=whistleOriginalPitchBase();
+  const shifted=n+whistleOriginalPitchOctaveShift();
+  return shifted<base?shifted+12*Math.ceil((base-shifted)/12):shifted;
+}
+
+function whistleFingeringMidi(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n)||!whistleOriginalPitchMode())return n;
+  return 62+(whistleFoldedSoundingMidi(n)-whistleOriginalPitchBase());
+}
+
+// MIDI notes describe the un-tuned Fatboy samples. In Original Pitch, the
+// voice tuning selects the physical whistle's octave; compensate that tuning
+// here so the audible pitch matches the fingerings after octave folding.
+// The Fatboy samples G3-C#4 are pre-folded an octave; handle those separately
+// in foldWhistleOriginalPitchMelodySequence rather than double-folding them.
+function whistlePlaybackFoldedMidi(midi){
+  const n=Math.round(Number(midi));
+  if(!Number.isFinite(n)||!whistleOriginalPitchMode())return n;
+  return whistleFoldedSoundingMidi(n)-whistleOriginalPitchOctaveShift();
+}
 
 const WHISTLE_GLYPH_MAP=[
   "g","m","a","i","b","c","j","d","k","e","f","l",
@@ -1895,6 +1969,11 @@ async function toggleMetronome(){
 // pitches. Never apply that visual shift a second time with %%MIDI transpose.
 // The selected whistle changes the melody's cents tuning, not the D samples.
 function whistlePlaybackTuningCents(){
+  // Original Pitch preserves the tune's key. All whistles below D (High)
+  // use their low register wherever playable, folding individual notes up
+  // when needed; the octave tuning is applied only to melody samples.
+  // Shift Pitch retains the previous D-whistle-sample cents adjustment.
+  if(whistleOriginalPitchMode())return whistleOriginalPitchOctaveShift()*100;
   // D (High) = 74 (0 cents); C = 72 (-200 cents); D (Low) = 62 (-1200 cents).
   return (Number($("whistleKey").value)-74)*100;
 }
@@ -1963,6 +2042,33 @@ function retuneWhistleAccompanimentSequence(sequence,tuningCents){
   return sequence;
 }
 
+function foldWhistleOriginalPitchMelodySequence(sequence){
+  const count=verifyWhistleAccompanimentTrackBoundary(sequence);
+  // Set cents on each generated melody note. The portable synth overrides
+  // individual event cents when a tune has %voice_tuning_cents, so Original
+  // Pitch deliberately does not inject that directive (see buildPlaybackABC).
+  const octaveCents=whistlePlaybackTuningCents();
+  for(let i=0;i<count;i++){
+    const track=sequence.tracks[i];
+    if(!Array.isArray(track)||track.some(e=>e&&e.instrument===128))continue;
+    for(const event of track){
+      if(!event||event.cmd!=="note"||!Number.isFinite(event.pitch))continue;
+      const folded=whistlePlaybackFoldedMidi(event.pitch);
+      if(folded<0||folded>127)continue;
+      event.pitch=folded;
+      // Fatboy's G3-C#4 samples are already an octave higher than their
+      // MIDI note numbers. Apply the whistle's lower-register cents shift to
+      // melody only, correcting those pre-folded samples when encountered.
+      // This also handles C4/C#4 correctly without altering the accompaniment.
+      const cents=(Number.isFinite(event.cents)?event.cents:0)+octaveCents
+        -(folded>=55&&folded<=61?1200:0);
+      if(cents)event.cents=cents;
+      else delete event.cents;
+    }
+  }
+  return sequence;
+}
+
 function installWhistleAccompanimentPlayback(visualObj,tuningCents){
   if(!visualObj||typeof visualObj.setUpAudio!=="function"){
     throw whistleAudioLibraryError("Portable abcjs audio library: audio-sequence generation is unavailable; playback disabled.");
@@ -1976,8 +2082,13 @@ function installWhistleAccompanimentPlayback(visualObj,tuningCents){
   // samples. Validate again in case the generation options differ at playback.
   // Patch only this freshly rendered tune, never shared ABCJS APIs.
   visualObj.setUpAudio=function(options){
-    return retuneWhistleAccompanimentSequence(
-      generateAudio.call(this,options),tuningCents);
+    const sequence=generateAudio.call(this,options);
+    if(whistleOriginalPitchMode()){
+      // Original Pitch must never modify the accompaniment, even transiently.
+      foldWhistleOriginalPitchMelodySequence(sequence);
+      return sequence;
+    }
+    return retuneWhistleAccompanimentSequence(sequence,tuningCents);
   };
 }
 
@@ -2005,10 +2116,14 @@ function buildPlaybackABC(abc){
 
   // %%visualtranspose already affects the portable library's playback pitches.
   // Override source MIDI transpose with zero to avoid double transposition.
-  // The selected physical whistle is tuned separately with cents on melody only.
-  // Never write either local directive back to the editor/share/lesson ABC.
+  // Shift Pitch retains its original injected tuning directive. Original
+  // Pitch uses per-note cents on the generated melody instead: abcjs's audio
+  // renderer overwrites event-level cents if %voice_tuning_cents is present,
+  // which would undo the pre-folded sample correction. The backing remains
+  // unmodified in Original Pitch. None of these controls reach saved ABC.
   const whistleTranspose="%%MIDI transpose 0\n";
-  const whistleTuning=`%voice_tuning_cents ${whistlePlaybackTuningCents()}\n`;
+  const whistleTuning=whistleOriginalPitchMode()?"":
+    `%voice_tuning_cents ${whistlePlaybackTuningCents()}\n`;
   const tuningKey=/^K\s*:.*$/mi.exec(playback);
   if(tuningKey){
     const end=playback.indexOf("\n",tuningKey.index);
@@ -2279,8 +2394,11 @@ function showWhistleLive(midi){
   }
 
   const n=currentLiveMidi;
-  glyph.textContent=whistleGlyphForMidi(n);
-  glyph.style.color=whistleGlyphColor(n);
+  // Fingerings may use a selected-whistle octave or folding, but the note
+  // label and small staff must always show the note written in the notation.
+  const finger=whistleFingeringMidi(n);
+  glyph.textContent=whistleGlyphForMidi(finger);
+  glyph.style.color=whistleGlyphColor(finger);
   note.textContent=formattedWhistleNoteName(n).replace(/#/g,"♯").replace(/b/g,"♭");
   renderWhistleStaffNote(n);
 }
@@ -2325,8 +2443,10 @@ function postProcessWhistleTab(visualObj,renderDivID){
     tspan.setAttribute("class","whistle");
     tspan.setAttribute("dy","-7");
     const index=parseInt(tspan.textContent,10);
-    if(!Number.isNaN(index)&&index>=0&&index<WHISTLE_GLYPH_MAP.length){
-      tspan.textContent=WHISTLE_GLYPH_MAP[index];
+    const mapped=whistleOriginalPitchMode()&&!Number.isNaN(index)
+      ?whistleFingeringMidi(index+36)-55:index;
+    if(!Number.isNaN(mapped)&&mapped>=0&&mapped<WHISTLE_GLYPH_MAP.length){
+      tspan.textContent=WHISTLE_GLYPH_MAP[mapped];
     }else{
       tspan.setAttribute("class","whistle_small");
       tspan.setAttribute("dy","-23");
@@ -4006,6 +4126,9 @@ function updatePlaybackRangeButtons(){
   setDisabledIfChanged(phrase,idle||playerPhraseBuilderApplied);
   const optimize=$("optimizeKeyBtn");
   if(optimize){
+    // The optimizer transposes the written tune and is not offered while the
+    // user is explicitly practicing at the original pitch.
+    optimize.hidden=whistleOriginalPitchMode();
     const canCheck=!!tunes.length&&!active&&!playerPhraseBuilderApplied&&hasMinimumABCForRender(ta.value);
     // A single opening visual transposition can be cleared without having to
     // record ownership comments or other metadata in the ABC itself.
@@ -4483,7 +4606,7 @@ function applyWhistleKeyOptimization(source,offset){
 
 async function optimizeWhistleKey(){
   const editor=$("abcText");
-  if($("optimizeKeyBtn").disabled||playbackRangeOriginalABC!==null||playerPhraseBuilderApplied)return;
+  if(whistleOriginalPitchMode()||$("optimizeKeyBtn").disabled||playbackRangeOriginalABC!==null||playerPhraseBuilderApplied)return;
   const original=editor.value;
   if(hasClearableWhistleOptimization(original)){
     const cleared=clearWhistleKeyOptimization(original);
@@ -4705,9 +4828,8 @@ function generateShareLink(abc){
   if(!abc||!abc.trim())return "";
   try{
     const params=new URLSearchParams();
+    // Display and whistle-key preferences belong to the recipient, not the link.
     params.set("def",compressABCDeflate(abc));
-    params.set("notation",$("notationDisplay").value);
-    params.set("octave",$("octaveDisplay").value);
     return `${SHARE_BASE_URL}?${params.toString()}`;
   }catch(_){
     return "";
@@ -5114,7 +5236,7 @@ function saveWhistleDisplayPrefs(){commitStandardShareSettingsIfPending();
 function restoreWhistleDisplayPrefs(){
   try{
     const prefs=JSON.parse(localStorage.getItem(WHISTLE_PREFS_KEY)||"{}");
-    if(prefs.notation==="notation"||prefs.notation==="whistle-tab"){
+    if(["notation","whistle-tab","whistle-tab-original"].includes(prefs.notation)){
       $("notationDisplay").value=prefs.notation;
     }
     if(["upper-prime","lower-upper","color-upper-prime","color-lower-upper"].includes(prefs.octave)){
@@ -5124,18 +5246,9 @@ function restoreWhistleDisplayPrefs(){
 }
 
 function applyWhistleShareSettings(){
-  const params=new URLSearchParams(location.search);
-  const notation=params.get("notation");
-  const octave=params.get("octave");
-
-  if(notation==="notation"||notation==="whistle-tab"){
-    $("notationDisplay").value=notation;
-  }
-  if(["upper-prime","lower-upper","color-upper-prime","color-lower-upper"].includes(octave)){
-    $("octaveDisplay").value=octave;
-  }
-  // URL settings are session-only until the user changes a persistent setting.
-  standardShareSettingsPending=!!params.get("def")&&params.get("lesson")!=="1";
+  // Ignore notation and octave parameters from older links too. Display choices
+  // always come from this browser's preferences and remain student-editable.
+  standardShareSettingsPending=false;
 }
 
 function loadShareLinkAfterStartup(){
@@ -5442,7 +5555,7 @@ async function rebuild(){
     configureIrishRollsForTune(tune);
     const playbackABC=buildPlaybackABC(tune);
 
-    const showWhistleTab=$("notationDisplay").value==="whistle-tab";
+    const showWhistleTab=$("notationDisplay").value!=="notation";
     const renderParams={
       responsive:"resize",
       expandToWidest:true,
@@ -5453,13 +5566,21 @@ async function rebuild(){
     if(showWhistleTab){
       renderParams.paddingbottom=16;
       renderParams.disallowTablatureOnly=true;
-      renderParams.tablature=WHISTLE_RENDER_TAB;
+      renderParams.tablature=whistleOriginalPitchMode()?WHISTLE_ORIGINAL_RENDER_TAB:WHISTLE_RENDER_TAB;
     }
 
     const visual=ABCJS.renderAbc("notation",playbackABC,renderParams);
     instrumentNavVisual=visual&&visual[0]||null;
     if(gen!==renderGeneration)return;
     if(!visual||!visual.length)throw new Error("No notation was rendered.");
+
+    // Select one stable octave from the actual generated melody pitches
+    // before creating notation tablature or preparing the audio sequence.
+    // This ensures playback, displayed tab, note clicks, arrow keys and
+    // All Fingerings use exactly the same register for the entire tune.
+    if(whistleOriginalPitchMode()){
+      selectWhistleOriginalPitchRegister(visual[0].setUpAudio({}));
+    }else whistleOriginalSelectedOctaveShift=0;
 
     if(showWhistleTab)postProcessWhistleTab(visual,"notation");
 
@@ -6020,6 +6141,7 @@ $("whistleKey").addEventListener("change",()=>{
 
 $("notationDisplay").addEventListener("change",()=>{
   saveWhistleDisplayPrefs();
+  updatePlaybackRangeButtons();
   if(tunes.length)scheduleRebuild();
   updateShareButtons();
 });
@@ -6035,6 +6157,7 @@ $("abcText").disabled=false;
 
 restoreEditorTextSize();
 restoreWhistleDisplayPrefs();
+updatePlaybackRangeButtons();
 try{const key=localStorage.getItem(WHISTLE_KEY_STORAGE_KEY);if(key&&$("whistleKey").querySelector(`option[value="${key}"]`))$("whistleKey").value=key}catch(_){}
 restoreShowNotePreference();
 restoreHideFingeringPreference();
@@ -6148,12 +6271,13 @@ function savedLessonLinkURLFromText(text){
 function lessonModeActive(){return new URLSearchParams(location.search).get('lesson')==='1'}
 function validateLessonABCText(abc){abc=String(abc||'');if(!/^\s*X\s*:/m.test(abc)||!/^\s*K\s*:/m.test(abc))throw new Error('Lesson ABC is missing a valid X: or K: field.');return abc}
 function validateLessonMetadataObject(meta){if(!meta||typeof meta!=='object'||Array.isArray(meta))throw new Error('Lesson information is invalid.');const title=typeof meta.title==='string'?meta.title:'';const instructions=typeof meta.instructions==='string'?meta.instructions:'';if(title.length>160||instructions.length>20000)throw new Error('Lesson information is too long.');return {title,instructions}}
-function validateLessonSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');const notation=params.get("notation"),octave=params.get("octave");if(notation!==null&&!['notation','whistle-tab'].includes(notation))throw new Error('Lesson notation setting is invalid.');if(octave!==null&&!['upper-prime','lower-upper','color-upper-prime','color-lower-upper'].includes(octave))throw new Error('Lesson octave display setting is invalid.');}
+function validateLessonSettingsParams(params){const hide=params.get("hide");if(hide!==null&&!['0','1'].includes(hide))throw new Error('Lesson Hide setting is invalid.');/* Ignore legacy notation/octave settings. */}
 function validateLessonURLParams(params){if(params.get('lesson')!=='1')return null;const payload=params.get('def'),ldata=params.get('ldata');if(!payload||!ldata)throw new Error('Lesson link is incomplete.');const abc=validateLessonABCText(decompressABCDeflate(payload));let meta;try{meta=JSON.parse(decompressABCDeflate(ldata))}catch(_){throw new Error('Lesson information could not be read.')}meta=validateLessonMetadataObject(meta);validateLessonSettingsParams(params);return {abc,meta}}
-function applyLessonSettingsParams(params){applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));validateLessonSettingsParams(params);const notation=params.get("notation"),octave=params.get("octave");
-  if(notation!==null&&!['notation','whistle-tab'].includes(notation))throw new Error('Lesson notation setting is invalid.');
-  if(octave!==null&&!['upper-prime','lower-upper','color-upper-prime','color-lower-upper'].includes(octave))throw new Error('Lesson octave display setting is invalid.');
-  if(notation)$('notationDisplay').value=notation;if(octave)$('octaveDisplay').value=octave;saveWhistleDisplayPrefs();}
+function applyLessonSettingsParams(params){
+  validateLessonSettingsParams(params);
+  // The teacher may set Hide; the student controls all three display selectors.
+  applyLessonHideFingering(new URLSearchParams("lesson=1&"+params.toString()));
+}
 function lessonDataFromURL(){const p=new URLSearchParams(location.search);if(p.get('lesson')!=='1')return null;return validateLessonURLParams(p).meta}
 function lessonABC(){syncCurrentTuneFromEditor();return currentFullTuneABC()}
 function buildLessonLink(title,instructions){const base=generateShareLink(lessonABC());if(!base)return '';const u=new URL(base);u.searchParams.set('hide',hideFingeringEnabled?'1':'0');u.searchParams.set('ldata',compressABCDeflate(JSON.stringify({title:String(title||'').trim()||'Lesson',instructions:String(instructions||'')})));u.searchParams.delete('lesson');u.searchParams.append('lesson','1');return u.toString()}
@@ -6167,7 +6291,7 @@ function refreshUnifiedShareState(){const btn=$('shareBtn');if(btn){btn.disabled
   const allURL=has?generateShareLink(tunes.join('\n\n')):'';
   $('shareCurrentDialogBtn').disabled=!currentURL||currentURL.length>SHARE_LINK_MAX_LEN;
   $('shareAllDialogBtn').disabled=!allURL||allURL.length>SHARE_LINK_MAX_LEN;$('lessonSaveConfigBtn').disabled=!has;$('lessonShareBtn').disabled=!has;const title=lessonTuneTitle();$('lessonTuneName').textContent=title;$('lessonSizeHint').style.display=has&&title?'block':'none';if(lessonModeActive())lockLessonTopControls()}
-function lessonConfigObject(){const abc=lessonABC(),u=new URL(generateShareLink(abc));return {format:'ABCPlayerLesson',version:2,player:'abc-tin-whistle-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{...Object.fromEntries(u.searchParams.entries()),hide:hideFingeringEnabled?'1':'0'}}}
+function lessonConfigObject(){const abc=lessonABC();return {format:'ABCPlayerLesson',version:2,player:'abc-tin-whistle-fingering-player.html',title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value,abc,settings:{hide:hideFingeringEnabled?'1':'0'}}}
 function validateLessonConfigObject(c){if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson'||c.version!==2)throw new Error('This is not a valid ABC Player lesson configuration file.');
   if(c.player!=='abc-tin-whistle-fingering-player.html')throw new Error('This lesson was created for a different ABC Player and cannot be loaded in this tool.');validateLessonABCText(c.abc);if(!c.settings||typeof c.settings!=='object'||Array.isArray(c.settings))throw new Error('Lesson player settings are missing or invalid.');const meta=validateLessonMetadataObject({title:c.title,instructions:c.instructions});const q=new URLSearchParams(c.settings);validateLessonSettingsParams(q);return {meta,q}}
 function parseLessonConfigText(text){let c;try{c=JSON.parse(String(text||''))}catch(_){return null}if(!c||typeof c!=='object'||Array.isArray(c)||c.format!=='ABCPlayerLesson')return null;validateLessonConfigObject(c);return c}
@@ -6200,7 +6324,14 @@ async function lessonCopy(text){try{await navigator.clipboard.writeText(text);re
 const LESSON_DRAFT_STORAGE_KEY='abctinWhistlePlayerLessonDraftV1';
 function saveLessonDraftPreferences(){try{localStorage.setItem(LESSON_DRAFT_STORAGE_KEY,JSON.stringify({title:$('lessonTitleInput').value,instructions:$('lessonInstructionsInput').value}))}catch(_){}}
 function restoreLessonDraftPreferences(){let d={};try{d=JSON.parse(localStorage.getItem(LESSON_DRAFT_STORAGE_KEY)||'{}')||{}}catch(_){}$('lessonTitleInput').value=typeof d.title==='string'?d.title:'';$('lessonInstructionsInput').value=typeof d.instructions==='string'?d.instructions:''}
-function lockLessonTopControls(){for(const id of ["notationDisplay", "octaveDisplay", "tuneSelect"]){const el=$(id);if(el)el.disabled=true}const save=$('saveAbcBtn');if(save){save.disabled=!tunes.length;save.textContent='Save'}}
+function lockLessonTopControls(){
+  // Keep the assigned tune fixed, but let students choose their whistle and displays.
+  const tune=$('tuneSelect');if(tune)tune.disabled=true;
+  for(const id of ['whistleKey','notationDisplay','octaveDisplay']){
+    const el=$(id);if(el)el.disabled=false;
+  }
+  const save=$('saveAbcBtn');if(save){save.disabled=!tunes.length;save.textContent='Save'}
+}
 function setupLessonMode(){if(!lessonModeActive())return;let d;try{d=lessonDataFromURL()}catch(err){window.INVALID_LESSON_ERROR=err&&err.message||String(err);return}document.body.classList.add('lessonMode');lockLessonTopControls();setTimeout(()=>{$('studentLessonTitle').textContent=d.title||'Lesson';$('studentLessonInstructions').textContent=d.instructions||'';setModal('studentLessonModal',true);lockLessonTopControls()},1050)}
 let shareLinkDialogKind='lesson';
 function shareLinkDialogTitle(kind){
@@ -6493,7 +6624,7 @@ async function printCurrentTuneFingerings(){
   // Match melody engraving to abcjs's source ranges, system by system;
   // never infer source correspondence from an unfiltered global SVG count.
   const PRINT_TOKENS=abcNoteTokens(abc);
-  const PRINT_SYMBOL=t=>{const n=clickedNotationMidi(t);const midi=n==null?null:n+notationVisualTransposeAt(t.start);const roll=abc[t.start-1]==='~';return `<div class="whistle">${esc(midi==null?'x':whistleGlyphForMidi(midi))}</div><div class="noteName">${esc(midi==null?'':formattedWhistleNoteName(midi))}</div>${roll?'<div class="rollMark">~</div>':''}`};
+  const PRINT_SYMBOL=t=>{const n=clickedNotationMidi(t);const midi=n==null?null:n+notationVisualTransposeAt(t.start);const roll=abc[t.start-1]==='~';return `<div class="whistle">${esc(midi==null?'x':whistleGlyphForMidi(whistleFingeringMidi(midi)))}</div><div class="noteName">${esc(midi==null?'':formattedWhistleNoteName(whistleFoldedSoundingMidi(midi)))}</div>${roll?'<div class="rollMark">~</div>':''}`};
   const PRINT_FONT=Array.from(document.styleSheets).map(sheet=>{try{return Array.from(sheet.cssRules).filter(r=>r.cssText.startsWith('@font-face')&&r.cssText.includes('TinWhistleFingering')).map(r=>r.cssText).join('')}catch(_){return ''}}).join('');
   const PRINT_EXTRA_CSS='.whistle{font-family:TinWhistleFingering;font-size:32pt;line-height:1.12}.noteName{font-size:9pt;margin-top:1.5mm}.rollMark{font-family:Arial,sans-serif;font-size:13pt;line-height:1;text-align:center;margin-top:0.5mm}';
   const PRINT_ROW_HEIGHT='37mm',PRINT_BAR_HEIGHT='24mm';
