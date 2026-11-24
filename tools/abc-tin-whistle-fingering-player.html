@@ -1177,18 +1177,74 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 #abcPanel .abcPracticeButtons button:disabled{opacity:.45;cursor:default}
 #abcPanel .abcPracticeButtons button[hidden]{display:none!important}
 #abcPanel .abcPracticeButtons button:not(:disabled):hover{background:#d6e6ff;border-color:#6f99e8}
-/* The same distinct color marks both available Optimize and Clear actions. */
-#abcPanel .abcPracticeButtons #optimizeKeyBtn:not(:disabled){
+
+/* Suggested whistle report: DayPilot owns the backdrop and dialog controls.
+   Keep the three choices comfortable to use without overflowing smaller screens. */
+body.whistle-suggest-open .modal_default_main {
+  top:25px !important;
+  max-width:calc(100vw - 24px) !important;
+  max-height:calc(100dvh - 50px) !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+body.whistle-suggest-open .modal_default_main .modal_default_content {
+  text-align:left !important;
+  line-height:1.4 !important;
+  max-height:calc(100dvh - 100px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.whistleSuggestReport {box-sizing:border-box;text-align:left;color:#17241c;font-size:15px;line-height:1.4;}
+.whistleSuggestReport * {box-sizing:border-box;}
+.whistleSuggestReport h2 {margin:0 0 6px;font-size:21px;font-weight:700;text-align:center;}
+.whistleSuggestReport .whistleSuggestTune {margin:0 0 3px;text-align:center;color:#4d5c54;font-size:14px;font-weight:600;overflow-wrap:anywhere;}
+.whistleSuggestReport .whistleSuggestIntro {margin:0 0 13px;text-align:center;color:#4d5c54;font-size:14px;}
+.whistleSuggestReport .whistleSuggestRow {
+  border:1px solid #d5e0d9;border-radius:8px;background:#f9fcfa;
+  margin:0 0 8px;padding:9px 11px;
+}
+.whistleSuggestReport .whistleSuggestRowTop {display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;}
+.whistleSuggestReport .whistleSuggestName {font-size:16px;font-weight:700;white-space:nowrap;}
+.whistleSuggestReport .whistleSuggestFit {font-size:13px;color:#486150;}
+.whistleSuggestReport .whistleSuggestChoose {
+  margin-left:auto;min-height:34px;padding:6px 11px!important;
+  white-space:nowrap;cursor:pointer;
+  border:1px solid #87b19a!important;border-radius:6px!important;
+  background:#e4f2e9!important;font-size:14px!important;
+  color:#173d29!important;-webkit-text-fill-color:#173d29!important;
+}
+.whistleSuggestReport .whistleSuggestChoose:hover {background:#cfe7d7!important;}
+.whistleSuggestReport .whistleSuggestChoose:focus-visible {outline:2px solid #176b43;outline-offset:2px;}
+.whistleSuggestReport .whistleSuggestReason {margin:4px 0 0;font-size:14px;line-height:1.35;color:#364a3e;}
+.whistleSuggestReport .whistleSuggestReasonLine {display:block;}
+@media (max-width:520px) {
+  .whistleSuggestReport h2 {font-size:19px;}
+  .whistleSuggestReport .whistleSuggestRow {padding:8px 9px;}
+  .whistleSuggestReport .whistleSuggestReason {font-size:13px;}
+  .whistleSuggestReport .whistleSuggestChoose {min-height:35px;}
+}
+@media (max-height:550px) {
+  body.whistle-suggest-open .modal_default_main {max-height:calc(100dvh - 50px)!important;}
+  body.whistle-suggest-open .modal_default_main .modal_default_content {max-height:calc(100dvh - 95px); }
+}
+
+/* Suggest Whistle uses the same green button style as Optimize Key. */
+#abcPanel .abcPracticeButtons #optimizeKeyBtn:not(:disabled),
+#abcPanel .abcPracticeButtons #suggestWhistlesBtn:not(:disabled){
   background:#d9f0cb;
   border-color:#659d66;
   color:#24472a;
   -webkit-text-fill-color:#24472a;
 }
-#abcPanel .abcPracticeButtons #optimizeKeyBtn:not(:disabled):hover{
+#abcPanel .abcPracticeButtons #optimizeKeyBtn:not(:disabled):hover,
+#abcPanel .abcPracticeButtons #suggestWhistlesBtn:not(:disabled):hover{
   background:#c6e7b5;
   border-color:#467e4e;
 }
-#abcPanel .abcPracticeButtons #optimizeKeyBtn:focus-visible{
+#abcPanel .abcPracticeButtons #optimizeKeyBtn:focus-visible,
+#abcPanel .abcPracticeButtons #suggestWhistlesBtn:focus-visible{
   outline:2px solid #377a47;
   outline-offset:2px;
 }
@@ -1327,7 +1383,7 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 @media(max-width:1050px) { .app-header #instructionsBtn { right:14px; top:10px; } }
     /* Match the ABC Tunebook Viewer demo-video links in the Instructions dialog. */
     #helpOverlay .viewerVideoLinks {
-      display:grid;gap:10px;max-width:540px;margin:10px auto 20px;
+      display:grid;gap:10px;max-width:540px;margin:16px auto 26px;
     }
     #helpOverlay .viewerVideoLink {
       display:flex;align-items:center;gap:14px;min-width:0;
@@ -1448,14 +1504,14 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div class="toolbar whistleToolbar">
  <div class="control fileControl"><label>ABC file</label><div class="fileControlRow"><input id="openFile" type="file" accept=".abc,.txt,text/plain"><button id="saveAbcBtn" type="button" disabled>Save</button></div></div>
  <div class="control"><label for="whistleKey">Whistle Key</label><select id="whistleKey" title="Pitch of your whistle; saved only on this device"><option value="74" selected>D (High)</option><option value="73">C♯</option><option value="72">C</option><option value="71">B</option><option value="70">B♭</option><option value="69">A</option><option value="68">A♭</option><option value="67">G</option><option value="66">F♯</option><option value="65">F</option><option value="64">E</option><option value="63">E♭</option><option value="62">D (Low)</option></select></div>
- <div class="control"><label for="notationDisplay">Notation Display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notes+Tab (Shift Pitch)</option><option value="whistle-tab-original">Notes+Tab (Original Pitch)</option></select></div>
+ <div class="control"><label for="notationDisplay">Notation Display</label><select id="notationDisplay"><option value="notation">Notation Only</option><option value="whistle-tab" selected>Notes + Tab (Shift Pitch)</option><option value="whistle-tab-original">Notes + Tab (Original Pitch)</option></select></div>
  <div class="control"><label for="octaveDisplay">Octave Display</label><select id="octaveDisplay"><option value="upper-prime">Uppercase + ' marks</option><option value="lower-upper">Lowercase / Uppercase</option><option value="color-upper-prime" selected>Color + Uppercase + '</option><option value="color-lower-upper">Color + Lower/Upper</option></select></div>
  <div class="control tuneControl"><label for="tuneSelect">Tune</label><select id="tuneSelect" disabled><option>No tune loaded</option></select></div>
  <div class="shareButtons"><button id="exportPdfBtn" type="button" disabled title="Open or enter ABC first.">Export PDF</button><button id="shareTuneBtn" disabled>Share Tune</button><button id="shareAllBtn" disabled>Share All Tunes</button></div>
 </div>
 <div class="workspace" id="workspace">
  <div class="leftPane" id="leftPane">
-  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">0 tunes</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span class="abcPracticeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Restore</button><button id="phraseBuilderBtn" type="button" disabled title="Build temporary call-and-response practice phrases">Phrase Builder</button><button id="optimizeKeyBtn" type="button" disabled title="Optimize key for D-whistle fingerings (prefer 2 sharps; displayed D4–B5)">Optimize Key</button></span><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
+  <section class="card panel" id="abcPanel"><div class="panelHeader"><span>ABC</span><span class="abcHeaderRight"><span id="fileLabel" style="font-weight:400;font-size:.82rem;color:#607068">0 tunes</span><select id="editorTextSize" disabled aria-label="Editor text size" title="Editor text size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="largest">Largest</option></select><span class="abcPracticeButtons"><button id="setPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Select ABC notes to set or narrow the playback range">Set Playback Range</button><button id="clearPlaybackRangeBtn" class="notationHeaderBtn" type="button" disabled title="Restore the full original tune">Restore</button><button id="phraseBuilderBtn" type="button" disabled title="Build temporary call-and-response practice phrases">Phrase Builder</button><button id="optimizeKeyBtn" type="button" disabled title="Optimize key for D-whistle fingerings (prefer 2 sharps; displayed D4–B5)">Optimize Key</button><button id="suggestWhistlesBtn" type="button" hidden disabled title="Find whistle keys that suit this tune at its written pitch">Suggest Whistle</button></span><button id="abcFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="abcWrap"><textarea id="abcText" spellcheck="false"></textarea></div></section>
   <div class="splitH" id="splitH" role="separator" aria-orientation="horizontal" title="Drag to resize ABC and notation panels; double-click to reset"></div>
   <section class="card panel" id="notationPanel"><div class="panelHeader"><span>Notation</span><span class="notationHeaderRight"><label class="countInLabel" for="metronomeCheck"><input id="metronomeCheck" type="checkbox" disabled>Metronome</label><label class="countInLabel" for="countInCheck"><input id="countInCheck" type="checkbox" disabled>Count in?</label><button id="muteMelodyBtn" class="notationHeaderBtn" type="button" disabled>Mute Melody</button><button id="tempoBtn" class="notationHeaderBtn" type="button" disabled>Tempo</button><button id="showAllFingeringsBtn" class="paneFullBtn" type="button" disabled>All Fingerings</button><button id="notationFullBtn" class="paneFullBtn" type="button" disabled>Full-Page View</button></span></div><div class="notationViewport"><div id="notation" class="notation"></div></div><div class="audioRow"><div id="audio"></div></div></section>
  </div>
@@ -1506,17 +1562,15 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
 <div id="helpOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:10000;padding:50px 24px 24px">
   <div style="max-width:680px;height:calc(100dvh - 74px);max-height:760px;margin:0 auto;background:#fff;display:flex;flex-direction:column;padding:20px 28px;box-shadow:0 15px 45px rgba(0,0,0,.3)">
     <h2 style="text-align:center;margin:0 0 24px">ABC Tin Whistle Fingering Player Instructions</h2>
-    <p class="help-version-subtitle">Version 5.0</p>
+    <p class="help-version-subtitle">Version 5.1</p>
     <div style="flex:1;min-height:0;overflow:auto;line-height:1.48;padding-right:14px">
       <p style="text-align:left;font-weight:700;margin:0 0 6px">Overview</p>
       <p>Load ABC tunes to play them with synchronized notation, optional whistle tablature, and a large live fingering display.</p>
-      <p>Select the key of your whistle using <b>Whistle Key</b> dropdown.</p>
+      <p>Select the key of your whistle using the <b>Whistle Key</b> dropdown.</p>
       <p>The range is from D (High) through D (Low) in semitone steps; your selection is remembered on this device.</p>
-      <p>Use <b>Notation Display</b> to choose how the tablature and playback work:</p>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Demo Videos</p>
       <div class="viewerVideoLinks" aria-label="Demo videos">
-        <br/>
         <a class="viewerVideoLink" href="https://youtu.be/a8ixWMLP_uE" target="_blank" rel="noopener noreferrer">
           <span class="viewerVideoPlay" aria-hidden="true">▶</span>
           <span class="viewerVideoText">Practice Tunes with Tin Whistle Fingering Tablature</span>
@@ -1537,20 +1591,26 @@ body.lessonMode .toolbar .shareButtons > button:not(#exportPdfBtn) {
           <span class="viewerVideoText">Phrase Builder - Practice Tunes One Phrase at a Time from the Instrument-Specific ABC Players</span>
           <span class="viewerVideoExternal" aria-hidden="true">↗</span>
         </a>
-        <br/>
       </div>
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Notation Display: Playing Modes</p>
+      <p>Use <b>Notation Display</b> to choose how the tablature and playback work.</p>
       <p><b>Notation Only:</b> Shows standard notation without whistle tablature. Audio behaves as in Shift Pitch mode.</p>
-      <p><b>Notes+Tab (Shift Pitch):</b> Shows familiar D-whistle fingerings, whatever whistle key you select. The melody and accompaniment transpose to match your whistle, so you can use the same fingerings while playing along at the whistle's pitch.</p>
-      <p><b>Optimize Key</b> is available in this mode. It analyzes the tune's notes and offers an easier key when that can reduce half-holing or improve the playable range using D-whistle fingerings. The button is enabled only when a useful improvement is found. Click <b>Clear Optimize</b> to return to the original key.</p>
-      <p><b>Notes+Tab (Original Pitch):</b> Keeps the tune's written key and notation unchanged. The tablature and large diagram show how to play its notes on your selected whistle. For example, written G on a G whistle uses the same fingering as low D on a D whistle.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p><b>Notes + Tab (Shift Pitch):</b> Shows familiar D-whistle fingerings, whatever whistle key you select. The melody and accompaniment transpose to match your whistle, so you can use the same fingerings while playing along at the whistle's pitch.</p>
+      <p><b>Optimize Key</b> is available only in this mode. It analyzes the tune's notes and offers an easier key when that can reduce half-holing or improve the playable range using D-whistle fingerings. The button is enabled only when a useful improvement is found. Click <b>Clear Optimize</b> to return to the original key.</p>
+      <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
+      <p><b>Notes + Tab (Original Pitch):</b> Keeps the tune's written key and notation unchanged. The tablature and large diagram show how to play its notes on your selected whistle. For example, written G on a G whistle uses the same fingering as low D on a D whistle.</p>
       <p>The player chooses a consistent melody octave suited to the tune and whistle, favoring the lower register when practical. Notes below the whistle's range are folded up an octave; the fingerings and melody audio match the resulting pitches.</p>
       <p>Keep in mind that the suggested fingerings are a starting point, not necessarily the best musical interpretation.</p>
       <p>Depending on the melody, you may find that individual notes or entire passages sound better played an octave higher, even when the lower fingerings are available.</p>
-      <p>You can make those choices yourself, using the same fingering patterns shifted up an octave.</p>
-      <p>The tool provides a playable solution, but you can experiment with octave placement to find what sounds and feels best on your whistle.</p>
-      <p><b>Optimize Key is not available</b> in Original Pitch mode because it is based on D-whistle fingerings.</p>
+      <p><b>Suggest Whistle</b> is available only in this mode.</p>
+      <p>Click <b>Suggest Whistle</b> in the ABC editor header to see the tune's title, starting key and mode, and three suggested whistle keys.</p>
+      <p>Each suggestion counts notes folded up an octave and notes that may require half-holing.</p>
+      <p>Whistles needing notes above the second-octave xoo ooo+ fingering (B5 on high D, or its equivalent on another whistle) rank lower, particularly for whistles other than high D.</p>
+      <p>A few folded notes may be easier to manage than half-holed or unusually high notes.</p>
+      <p>High and low D use the same fingerings, so only high D is included in the suggestions.</p>
+      <p>Click <b>Use</b> beside a suggested whistle key to select it, or <b>Close</b> to keep your current choice. Your tune is not changed.</p>
 
       <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
       <p style="text-align:left;font-weight:700;margin:18px 0 6px">Opening and Selecting Tunes</p>
@@ -4202,6 +4262,12 @@ function updatePlaybackRangeButtons(){
   setDisabledIfChanged(set,idle||!hasSelectedNotes);
   setDisabledIfChanged(clear,idle||!active);
   setDisabledIfChanged(phrase,idle||playerPhraseBuilderApplied);
+  const suggest=$("suggestWhistlesBtn");
+  if(suggest){
+    suggest.hidden=!whistleOriginalPitchMode();
+    setDisabledIfChanged(suggest,!whistleOriginalPitchMode()||!tunes.length||
+      !hasMinimumABCForRender(currentFullTuneABC()));
+  }
   const optimize=$("optimizeKeyBtn");
   if(optimize){
     // The optimizer transposes the written tune and is not offered while the
@@ -4710,6 +4776,175 @@ async function optimizeWhistleKey(){
   await showPlayerAlert(`Optimized key: ${keyDescription} (${shiftLabel}).<br/>`+
     (outside.length?`Note range warning: ${outside.join('; ')}.`:'All melody notes fit D4–B5.'),
     {top:150,width:540});
+}
+
+
+// Compare physical whistle keys using the same whole-melody register choice
+// and below-the-bottom octave folding used in Original Pitch mode.
+// The second-octave high-B fingering (xoo ooo+ on a D whistle) is the
+// comfortable upper target: 21 semitones above any whistle's lowest note.
+// Higher notes are especially troublesome on whistles other than high D.
+// Some folding is preferable to extra-high or awkwardly fingered notes.
+function rankWhistlesForOriginalPitch(abc){
+  const keyData=playerKeyChangeData(abc);
+  if(!keyData.keys.length)return {error:"This tune needs a K: key line before whistles can be suggested."};
+  if(/^[ \t]*V\s*:/mi.test(abc)||/\[V\s*:/i.test(abc))
+    return {error:"Suggestions are available for single-melody tunes."};
+  const notes=whistleMelodyNotes(abc,keyData);
+  if(!notes.length)return {error:"No melody notes were found in this tune."};
+  // High and low D use identical fingering patterns. Only compare high D.
+  const options=Array.from($("whistleKey").options).filter(option=>Number(option.value)!==62);
+  const commonKeys=[74,72,70,67,69,65,64,62,73,71,68,66,63];
+  const recommendations=options.map(option=>{
+    const value=Number(option.value),base=value-12;
+    // Mirror selectWhistleOriginalPitchRegister: for non-high-D whistles,
+    // lower the whole melody when at least 60% of notes can use that register.
+    const octaveShift=value!==74&&notes.filter(note=>note>=value).length/notes.length>=.6?-12:0;
+    let folded=0,above=0,veryHigh=0,halfHole=0,depth=0;
+    const halfHoleNotes=new Set();
+    for(const written of notes){
+      let pitch=written+octaveShift;
+      const needsFold=pitch<base;
+      if(needsFold){
+        folded++;
+        pitch+=12*Math.ceil((base-pitch)/12);
+      }
+      // +21 is B5 on high D, or the same fingering on another key.
+      // Count every higher note, including any above the two-octave range.
+      if(pitch>base+21)veryHigh++;
+      if(pitch>base+24){
+        above++;
+        depth+=pitch-(base+24);
+      }
+      const pitchClass=((pitch-base)%12+12)%12;
+      // Positions 1, 3, 6 and 8 are the only notes penalized for
+      // fingering difficulty: they may require half-holing. The standard
+      // flattened seventh (position 10, C natural on a D whistle) and all
+      // other non-half-holed fingerings have no fingering penalty.
+      if([1,3,6,8].includes(pitchClass)){
+        halfHole++;
+        halfHoleNotes.add(pitch%12);
+      }
+    }
+    const fit=above>0?"Some notes out of range":
+      veryHigh>0?"Very high notes":
+      folded>Math.max(4,Math.ceil(notes.length*.20))?"Many folded notes":
+      halfHole<=Math.max(1,Math.floor(notes.length*.05))&&
+      folded<=Math.max(1,Math.floor(notes.length*.05))?"Easy fit":"Good fit";
+    // Penalize each note above the high-B fingering. High D is usually
+    // easier to reach above B5 than other whistles, but still has a cost.
+    // Normal two-octave outliers cost still more; folding stays a modest cost.
+    const highNoteCost=value===74?25:55;
+    const score=folded*2+above*120+depth*14+veryHigh*highNoteCost+halfHole*25;
+    return {value,name:option.textContent.trim(),folded,above,outside:above,
+      veryHigh,halfHole,halfHoleNotes:[...halfHoleNotes],
+      score,fit,base,octaveShift,commonOrder:commonKeys.indexOf(value)};
+  });
+  recommendations.sort((a,b)=>(a.above>0)-(b.above>0)||
+    a.score-b.score||a.above-b.above||a.halfHole-b.halfHole||
+    a.commonOrder-b.commonOrder);
+  return {notes:notes.length,results:recommendations.slice(0,3)};
+}
+
+// Simple pitch names for the examples in the report, using flats on
+// the more usual flat-key whistles. The count is of note occurrences.
+function whistleSuggestionNoteName(midi,flats){
+  const pc=((midi%12)+12)%12;
+  const names=flats?
+    ["C","D♭","D","E♭","E","F","G♭","G","A♭","A","B♭","B"]:
+    ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
+  return names[pc]+(Math.floor(midi/12)-1);
+}
+function whistleSuggestionReason(item){
+  const flats=[63,65,68,70,72].includes(item.value);
+  const count=(number,singular,plural=singular+"s")=>`${number} ${number===1?singular:plural}`;
+  const pieces=[];
+  // Mention only actual playing challenges, not zero counts or reassuring
+  // statements that repeat the next line of the report.
+  if(item.folded)pieces.push(`${count(item.folded,"note")} folded up an octave`);
+  if(item.halfHole){
+    const names=item.halfHoleNotes.slice(0,2).map(pc=>whistleSuggestionNoteName(pc+60,flats).replace(/\d+$/,""));
+    pieces.push(`${count(item.halfHole,"note")} may require half-holing${names.length?` (${names.join(", ")})`:""}`);
+  }
+  if(item.veryHigh){
+    const limit=whistleSuggestionNoteName(item.base+21,flats);
+    pieces.push(`${count(item.veryHigh,"note")} higher than ${limit} (second-octave xoo ooo+ fingering)${item.above?`; ${count(item.above,"note")} beyond the whistle's usual two-octave range`:""}`);
+  }
+  return pieces.length?pieces.map(piece=>`<span class="whistleSuggestReasonLine">${piece}.</span>`).join(""):"All notes fit with standard fingerings.";
+}
+
+// Present the tune's first written key and its mode, not the selected whistle.
+// The report is about the original tune even when the melody changes key later.
+function whistleSuggestionKeyLabel(keyValue){
+  const key=String(keyValue||"").trim();
+  if(/^none(?=\s|$)/i.test(key))return "No key signature";
+  if(/^HP(?=\s|$)/i.test(key))return "Highland Bagpipe";
+  const match=/^([A-Ga-g])([#b]?)(.*)$/.exec(key);
+  if(!match)return key||"Key not specified";
+  const root=match[1].toUpperCase()+(match[2]||"");
+  const extra=match[3].trim();
+  const modeToken=((extra.match(/^([a-z]+)/i)||[])[1]||"").toLowerCase();
+  let mode="Major";
+  if(modeToken==="m"||modeToken.startsWith("min")||modeToken.startsWith("aeo"))mode="Minor";
+  else if(modeToken.startsWith("mix"))mode="Mixolydian";
+  else if(modeToken.startsWith("dor"))mode="Dorian";
+  else if(modeToken.startsWith("phr"))mode="Phrygian";
+  else if(modeToken.startsWith("lyd"))mode="Lydian";
+  else if(modeToken.startsWith("loc"))mode="Locrian";
+  else if(modeToken.startsWith("exp"))return `${root} (custom key)`;
+  else if(modeToken&&!/^(?:maj|ion|clef|bass|treble|alto|tenor|perc|staff|middle|octave|transpose)/.test(modeToken))
+    mode=modeToken[0].toUpperCase()+modeToken.slice(1);
+  return `${root} ${mode}`;
+}
+function whistleSuggestionTuneLabel(abc){
+  const startingKey=playerKeyChangeData(abc).keys[0]?.value||"";
+  return `${firstTitle(abc,currentTune+1)} - ${whistleSuggestionKeyLabel(startingKey)}`;
+}
+
+async function suggestWhistlesForOriginalPitch(){
+  if(!whistleOriginalPitchMode()||$("suggestWhistlesBtn").disabled)return;
+  const abc=currentFullTuneABC();
+  const recommendation=rankWhistlesForOriginalPitch(abc);
+  if(recommendation.error){await showPlayerAlert(recommendation.error,{top:65,width:460});return;}
+  const rows=recommendation.results.map((item,i)=>
+    `<div class="whistleSuggestRow">`+
+      `<div class="whistleSuggestRowTop">`+
+        `<strong class="whistleSuggestName">${i+1}. ${item.name}</strong>`+
+        `<span class="whistleSuggestFit">${item.fit}</span>`+
+        `<button type="button" class="whistleSuggestChoose" data-whistle-suggest-key="${item.value}" aria-label="Use ${item.name} whistle">Use</button>`+
+      `</div>`+
+      `<p class="whistleSuggestReason">${whistleSuggestionReason(item)}</p>`+
+    `</div>`).join("");
+  const noIdeal=recommendation.results[0]?.above>0;
+  const html=`<div class="whistleSuggestReport">`+
+    `<h2>Suggested Whistles</h2>`+
+    `<p class="whistleSuggestTune">${escapeHTML(whistleSuggestionTuneLabel(abc))}</p>`+
+    `<p class="whistleSuggestIntro">Best matches for playing the tune at its written pitch.${noIdeal?" None is a perfect fit.":""}</p>`+
+    rows+
+    `</div>`;
+  // DayPilot renders the HTML, overlay, and Close button. Buttons inside the
+  // report select the existing Whistle Key control and close that same modal.
+  const choose=e=>{
+    const button=e.target.closest?.(".whistleSuggestChoose");
+    if(!button||!button.closest(".whistleSuggestReport"))return;
+    const key=button.getAttribute("data-whistle-suggest-key");
+    if(!$("whistleKey").querySelector(`option[value="${key}"]`))return;
+    e.preventDefault();
+    $("whistleKey").value=key;
+    $("whistleKey").dispatchEvent(new Event("change",{bubbles:true}));
+    DayPilot.Modal.close();
+  };
+  document.body.classList.add("whistle-suggest-open");
+  document.addEventListener("click",choose,true);
+  try{
+    await DayPilot.Modal.alert(html,{
+      width:Math.max(280,Math.min(520,window.innerWidth-32)),top:25,
+      okText:"Close",scrollWithPage:false
+    });
+  }finally{
+    document.removeEventListener("click",choose,true);
+    document.body.classList.remove("whistle-suggest-open");
+  }
 }
 
 // Match abcjs visual transposition when a note is selected without playback.
@@ -6163,6 +6398,7 @@ $("setPlaybackRangeBtn").addEventListener("click",setPlaybackRangeFromSelection)
 $("clearPlaybackRangeBtn").addEventListener("click",clearPlaybackRange);
 $("phraseBuilderBtn").addEventListener("click",showPlayerPhraseBuilder);
 $("optimizeKeyBtn").addEventListener("click",optimizeWhistleKey);
+$("suggestWhistlesBtn").addEventListener("click",suggestWhistlesForOriginalPitch);
 
 $("metronomeCheck").addEventListener("change",toggleMetronome);
 $("countInCheck").addEventListener("change",saveCountInPreference);
