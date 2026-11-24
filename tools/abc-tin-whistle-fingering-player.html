@@ -1181,9 +1181,9 @@ body.diagram-full .arrowKeyNavLabel{top:calc(50% + 5px)}
 /* Suggested whistle report: DayPilot owns the backdrop and dialog controls.
    Keep the three choices comfortable to use without overflowing smaller screens. */
 body.whistle-suggest-open .modal_default_main {
-  top:25px !important;
+  top:50px !important;
   max-width:calc(100vw - 24px) !important;
-  max-height:calc(100dvh - 50px) !important;
+  max-height:calc(100dvh - 75px) !important;
   overflow-y:auto !important;
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
@@ -1191,7 +1191,7 @@ body.whistle-suggest-open .modal_default_main {
 body.whistle-suggest-open .modal_default_main .modal_default_content {
   text-align:left !important;
   line-height:1.4 !important;
-  max-height:calc(100dvh - 100px);
+  max-height:calc(100dvh - 125px);
   overflow-y:auto;
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
@@ -1226,8 +1226,8 @@ body.whistle-suggest-open .modal_default_main .modal_default_content {
   .whistleSuggestReport .whistleSuggestChoose {min-height:35px;}
 }
 @media (max-height:550px) {
-  body.whistle-suggest-open .modal_default_main {max-height:calc(100dvh - 50px)!important;}
-  body.whistle-suggest-open .modal_default_main .modal_default_content {max-height:calc(100dvh - 95px); }
+  body.whistle-suggest-open .modal_default_main {max-height:calc(100dvh - 75px)!important;}
+  body.whistle-suggest-open .modal_default_main .modal_default_content {max-height:calc(100dvh - 120px); }
 }
 
 /* Suggest Whistle uses the same green button style as Optimize Key. */
@@ -4846,28 +4846,25 @@ function rankWhistlesForOriginalPitch(abc){
   return {notes:notes.length,results:recommendations.slice(0,3)};
 }
 
-// Simple pitch names for the examples in the report, using flats on
-// the more usual flat-key whistles. The count is of note occurrences.
-function whistleSuggestionNoteName(midi,flats){
+// Use familiar whistle note names in suggestions: sharps except B-flat and
+// E-flat. Counts are occurrences of written melody notes.
+function whistleSuggestionNoteName(midi){
   const pc=((midi%12)+12)%12;
-  const names=flats?
-    ["C","D♭","D","E♭","E","F","G♭","G","A♭","A","B♭","B"]:
-    ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
+  const names=["C","C♯","D","E♭","E","F","F♯","G","G♯","A","B♭","B"];
   return names[pc]+(Math.floor(midi/12)-1);
 }
 function whistleSuggestionReason(item){
-  const flats=[63,65,68,70,72].includes(item.value);
   const count=(number,singular,plural=singular+"s")=>`${number} ${number===1?singular:plural}`;
   const pieces=[];
   // Mention only actual playing challenges, not zero counts or reassuring
   // statements that repeat the next line of the report.
   if(item.folded)pieces.push(`${count(item.folded,"note")} folded up an octave`);
   if(item.halfHole){
-    const names=item.halfHoleNotes.slice(0,2).map(pc=>whistleSuggestionNoteName(pc+60,flats).replace(/\d+$/,""));
+    const names=item.halfHoleNotes.slice(0,2).map(pc=>whistleSuggestionNoteName(pc+60).replace(/\d+$/,""));
     pieces.push(`${count(item.halfHole,"note")} may require half-holing${names.length?` (${names.join(", ")})`:""}`);
   }
   if(item.veryHigh){
-    const limit=whistleSuggestionNoteName(item.base+21,flats);
+    const limit=whistleSuggestionNoteName(item.base+21);
     pieces.push(`${count(item.veryHigh,"note")} higher than ${limit} (second-octave xoo ooo+ fingering)${item.above?`; ${count(item.above,"note")} beyond the whistle's usual two-octave range`:""}`);
   }
   return pieces.length?pieces.map(piece=>`<span class="whistleSuggestReasonLine">${piece}.</span>`).join(""):"All notes fit with standard fingerings.";
@@ -4938,7 +4935,7 @@ async function suggestWhistlesForOriginalPitch(){
   document.addEventListener("click",choose,true);
   try{
     await DayPilot.Modal.alert(html,{
-      width:Math.max(280,Math.min(520,window.innerWidth-32)),top:25,
+      width:Math.max(280,Math.min(520,window.innerWidth-32)),top:50,
       okText:"Close",scrollWithPage:false
     });
   }finally{
