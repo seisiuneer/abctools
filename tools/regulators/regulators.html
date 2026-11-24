@@ -219,7 +219,7 @@ function updateEnableDialog(){
     $('enable').textContent=audioTask||loading?'Loading samples…':'Enable Playback';
     $('enableError').textContent=audioError;
 }
-function updateStatus(){updateEnableDialog();const busy=loading||!!audioTask;$('status').textContent=busy?'Loading '+pitchNames[S.pitch]+' samples…':audioError|| (ready?pitchNames[S.pitch]+' pipes · '+(S.style?'Crowley':'Lynch')+' drones':(iosStartupPending?'Enable playback to begin.':'Touch a regulator key or the drone puck to play.'));$('modeHelp').textContent=S.mode===1?'Single regulators · Multi-touch':'Paired regulators · Slide to change chords';$('mode').querySelector('img').src=A+S.mode+'regbutton_60_45.png';$('mode').setAttribute('aria-label',S.mode===1?'Single regulators; Switch to Paired mode':'Paired regulators; Switch to Single mode')}
+function updateStatus(){updateEnableDialog();const busy=loading||!!audioTask;$('status').textContent=busy?'Loading '+pitchNames[S.pitch]+' samples…':audioError|| (ready?pitchNames[S.pitch]+' pipes · '+(S.style?'Crowley':'Lynch')+' drones':(iosStartupPending?'Enable playback to begin.':'Touch a regulator key or the drone puck to play.'));$('modeHelp').textContent=S.mode===1?'Single regulators':'Paired regulators';$('mode').querySelector('img').src=A+S.mode+'regbutton_60_45.png';$('mode').setAttribute('aria-label',S.mode===1?'Single regulators; Switch to Paired mode':'Paired regulators; Switch to Single mode')}
 // Decode the selected bank ahead of the first playing gesture without starting playback.
 function prewarm(){try{makeEngine();loadBank(S.pitch).catch(()=>{})}catch(e){audioError=e.message;updateStatus()}}
 // Resume directly within a playing gesture; never wait on fetching before unlocking audio.
