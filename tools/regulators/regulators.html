@@ -42,7 +42,7 @@
 #helpOverlay .help-scroll{min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:8px}
 #helpOverlay .panel h2,#helpOverlay .panel footer{flex:0 0 auto}
 #helpOverlay .panel h2{margin-bottom:3px}
-#helpOverlay .version{flex:0 0 auto;text-align:center;font-size:12px;line-height:1.4;color:#a99c89;margin:0 0 12px}
+#helpOverlay .version{flex:0 0 auto;text-align:center;font-size:14px;line-height:1.4;color:#a99c89;margin:0 0 12px}
 #helpOverlay .panel footer{margin-top:12px}
 #helpOverlay h3{font-size:17px;margin:0 0 10px}
 #helpOverlay .about{text-align:center}
@@ -79,6 +79,13 @@ main{flex:1 0 auto;justify-content:center;gap:9px}
 .board-frame[data-orientation="left"] .board{transform:translate(-50%,-50%) rotate(90deg) scaleX(-1)}
 .board-frame[data-orientation="right"] #settings img{transform:rotate(90deg)}
 .board-frame[data-orientation="left"] #settings img{transform:rotate(90deg) scaleX(-1)}
+/* Optional D-reference note labels, anchored to the original board coordinates. */
+.note-labels{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;user-select:none;-webkit-user-select:none}
+.board[data-labels="on"] .note-labels{display:block}
+.note-labels text{font:700 24px Arial,sans-serif;fill:#111;text-anchor:middle;pointer-events:none;transform-origin:0 0}
+/* Keep lettering upright while its anchor follows the board in every orientation. */
+.board-frame[data-orientation="right"] .note-labels text{transform:rotate(90deg)}
+.board-frame[data-orientation="left"] .note-labels text{transform:rotate(90deg) scaleX(-1)}
 /* Use equal spacing between the playboard and each visible status/footer line. */
 main .status,main .mode-help,main .footer{margin:0;color:#dacdb8;font-size:14px;line-height:19px}
 main .footer{text-align:center;font-size:14px}
@@ -111,9 +118,10 @@ main .footer{text-align:center;font-size:14px}
 <label for="bassVol">Bass:</label><div class="sliderline"><input id="bassVol" type="range" min="0" max="1" step="0.01"><output id="bassVolValue"></output></div>
 <label for="reverb">Reverb:</label><div class="sliderline"><input id="reverb" type="range" min="0" max="0.5" step="0.001"><output id="reverbValue"></output></div>
 <span>Orientation:</span><div class="segments" data-setting="orientation" role="group" aria-label="Instrument orientation"></div>
+<span>Labels:</span><div class="segments" data-setting="labels" role="group" aria-label="Regulator note labels"></div>
 </div><footer><button id="closeSettings" class="standard">Close</button></footer></section></div>
 <div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2>
-<p class="version">Version 1.0.1</p>
+<p class="version">Version 1.1</p>
 <div class="help-scroll">
 <h3>Introduction</h3>
 <p><b>Regulators</b> simulates the drones and the tenor, baritone, and bass regulators of a full set of Irish Uilleann pipes in five keys: D, C#, C, B, and Bb.</p>
@@ -128,12 +136,13 @@ main .footer{text-align:center;font-size:14px}
 <p>Slide along the keys to change notes, and lift your fingers to stop them.</p>
 <hr>
 <h3>Paired Regulator Mode</h3>
-<p>Tap the 1/2 regulator button to switch between single-regulator and paired-chord modes.</p>
+<p>Tap the regulator mode button next to the drone button to switch between single-regulator and paired-regulator modes.</p>
 <p>In paired mode, the tenor side plays tenor and baritone chords, and the bass side plays bass and baritone chords.</p>
 <p>Slide along the keys to change chords, and lift your finger to stop them.</p>
 <hr>
 <h3>Settings</h3>
-<p>Tap the information (i) button to select pitch, drone style, top chord, fine tuning, individual volumes, reverb, and instrument orientation.</p>
+<p>Tap the information (i) button to select pitch, drone style, top chord, fine tuning, individual volumes, reverb, instrument orientation, and note labels.</p>
+<p>Set Labels to On to show the note names on the regulator keys, referenced to a D set of pipes regardless of the selected pitch.</p>
 <p>All settings, including the playing mode, are saved automatically in your browser.</p>
 <hr>
 <h3>Instrument Orientation</h3>
@@ -165,12 +174,25 @@ main .footer{text-align:center;font-size:14px}
 'use strict';
 const BANK={"Bf": {"t1": "t_c_bf.wav", "t2": "t_b_bf.wav", "t3": "t_a_bf.wav", "t4": "t_g_bf.wav", "t5": "t_f_bf.wav", "b1": "b_a_bf.wav", "b2": "b_g_bf.wav", "b3": "b_f_bf.wav", "b4": "b_d_bf.wav", "s1": "bs_c_bf.wav", "s2": "bs_b_bf.wav", "s3": "bs_a_bf.wav", "s4": "bs_g_bf.wav", "lynch": "drone_bf.wav", "crowley": "drone_crowley_bf.wav"}, "B": {"t1": "t_c_b.wav", "t2": "t_b_b.wav", "t3": "t_a_b.wav", "t4": "t_g_b.wav", "t5": "t_f_b.wav", "b1": "b_a_b.wav", "b2": "b_g_b.wav", "b3": "b_f_b.wav", "b4": "b_d_b.wav", "s1": "bs_c_b.wav", "s2": "bs_b_b.wav", "s3": "bs_a_b.wav", "s4": "bs_g_b.wav", "lynch": "drone_b.wav", "crowley": "drone_crowley_b.wav"}, "C": {"t1": "t_c_c.wav", "t2": "t_b_c.wav", "t3": "t_a_c.wav", "t4": "t_g_c.wav", "t5": "t_f_c.wav", "b1": "b_a_c.wav", "b2": "b_g_c.wav", "b3": "b_f_c.wav", "b4": "b_d_c.wav", "s1": "bs_c_c.wav", "s2": "bs_b_c.wav", "s3": "bs_a_c.wav", "s4": "bs_g_c.wav", "lynch": "drone_c.wav", "crowley": "drone_crowley_c.wav"}, "CS": {"t1": "t_c_cs.wav", "t2": "t_b_cs.wav", "t3": "t_a_cs.wav", "t4": "t_g_cs.wav", "t5": "t_f_cs.wav", "b1": "b_a_cs.wav", "b2": "b_g_cs.wav", "b3": "b_f_cs.wav", "b4": "b_d_cs.wav", "s1": "bs_c_cs.wav", "s2": "bs_b_cs.wav", "s3": "bs_a_cs.wav", "s4": "bs_g_cs.wav", "lynch": "drone_cs.wav", "crowley": "drone_crowley_cs.wav"}, "D": {"t1": "t_c_d.wav", "t2": "t_b_d.wav", "t3": "t_a_d.wav", "t4": "t_g_d.wav", "t5": "t_f_d.wav", "b1": "b_a_d.wav", "b2": "b_g_d.wav", "b3": "b_f_d.wav", "b4": "b_d_d.wav", "s1": "bs_c_d.wav", "s2": "bs_b_d.wav", "s3": "bs_a_d.wav", "s4": "bs_g_d.wav", "lynch": "drone.wav", "crowley": "drone_crowley_d.wav"}};
 const A='regulators-assets/', $=id=>document.getElementById(id), pitches=['Bf','B','C','CS','D'], pitchNames=['Bb','B','C','C#','D'];
-const defaults={pitch:4,style:0,top:1,mode:1,tuning:0,droneVol:.4,tenorVol:.75,bariVol:.75,bassVol:.6,reverb:.02,orientation:1};
+const defaults={pitch:4,style:0,top:1,mode:1,tuning:0,droneVol:.4,tenorVol:.75,bariVol:.75,bassVol:.6,reverb:.02,orientation:1,labels:0};
 const storageKey='Regulators.web.settings.v1';
-function restore(){let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')||{}}catch(e){};const s={...defaults};for(const [k,v] of Object.entries(defaults)){const n=saved[k];if(typeof n!=='number'||!Number.isFinite(n))continue;const bounds={pitch:[0,4],style:[0,1],top:[0,1],mode:[1,2],tuning:[-.03,.03],reverb:[0,.5],orientation:[0,2]}[k]||[0,1];if(n>=bounds[0]&&n<=bounds[1]&&(!['pitch','style','top','mode','orientation'].includes(k)||Number.isInteger(n)))s[k]=n}return s}
+function restore(){let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')||{}}catch(e){};const s={...defaults};for(const [k,v] of Object.entries(defaults)){const n=saved[k];if(typeof n!=='number'||!Number.isFinite(n))continue;const bounds={pitch:[0,4],style:[0,1],top:[0,1],mode:[1,2],tuning:[-.03,.03],reverb:[0,.5],orientation:[0,2],labels:[0,1]}[k]||[0,1];if(n>=bounds[0]&&n<=bounds[1]&&(!['pitch','style','top','mode','orientation','labels'].includes(k)||Number.isInteger(n)))s[k]=n}return s}
 const S=restore();function save(){try{localStorage.setItem(storageKey,JSON.stringify(S))}catch(e){}}
 const board=$('board'),keys=new Map(),notes={t:['C','B','A','G','F#'],b:['A','G','F#','D'],s:['C','B','A','G']},art={t:'tenor',b:'bari',s:'bass'};
 for(const [col,x,count] of [['t',86,5],['b',164,4],['s',242,4]]){let y=0;for(let i=1;i<=count;i++){const h=i<3?100:i===3?96:col==='t'?92:184;const id=col+i,base=art[col]+'_reg'+i+'_',tail='_78_'+h+'.png';const img=new Image();img.className='key-art';img.alt='';img.draggable=false;img.style.cssText=`left:${x/3.2}%;top:${y/4.8}%;width:${78/3.2}%;height:${h/4.8}%`;img.src=A+base+'off'+tail;const on=A+base+'on'+tail;const preload=new Image();preload.src=on;keys.set(id,{img,on,off:A+base+'off'+tail});board.prepend(img);y+=h}}
+// Use the fixed D-set note names and the centers of the brass key heads.
+const noteLabelPositions={t:[[136,35],[136,125],[140,224],[141,320],[142,410]],b:[[210,32],[208,133],[210,224],[210,322]],s:[[287,32],[286,133],[287,224],[287,322]]};
+const svgNS='http://www.w3.org/2000/svg',noteLabelLayer=document.createElementNS(svgNS,'svg');
+noteLabelLayer.setAttribute('class','note-labels');
+noteLabelLayer.setAttribute('viewBox','0 0 320 480');
+noteLabelLayer.setAttribute('aria-hidden','true');
+for(const [col,positions] of Object.entries(noteLabelPositions))positions.forEach(([x,y],i)=>{
+    const group=document.createElementNS(svgNS,'g'),label=document.createElementNS(svgNS,'text');
+    group.setAttribute('transform',`translate(${x} ${y})`);
+    label.setAttribute('dy','.35em');label.textContent=notes[col][i];
+    group.append(label);noteLabelLayer.append(group);
+});
+board.append(noteLabelLayer);
 for(const f of ['drone_on.png','2regbutton_60_45.png']){const i=new Image();i.src=A+f}
 let ctx=null,dry,wet,convolver,master,ready=false,loading=false,droneOn=false,wakeLock=null,wakePending=false,active=true;
 const buffers=new Map(),banks=new Map(),voices=new Map(),owners=new Map();let chordOwner=null,chordId=null;const keyOwners=new Map();
@@ -219,11 +241,11 @@ function point(e){
 }
 const pointers=new Set();board.addEventListener('pointerdown',e=>{if(e.target.closest('button')||e.button!==0||loading)return;e.preventDefault();const id=point(e);if(!id)return;pointers.add(e.pointerId);board.setPointerCapture(e.pointerId);queueHit(e.pointerId,id,true)});board.addEventListener('pointermove',e=>{if(pointers.has(e.pointerId)){e.preventDefault();queueHit(e.pointerId,point(e))}});for(const event of ['pointerup','pointercancel','lostpointercapture'])board.addEventListener(event,e=>{const was=pointers.delete(e.pointerId);release(e.pointerId);if(was&&event==='pointerup'&&!ready)ensureAudio()});board.addEventListener('touchend',()=>{if(audioTask&&ctx&&ctx.state!=='running')ensureAudio()});board.addEventListener('contextmenu',e=>e.preventDefault());
 function switchMode(){stopRegs();pointers.clear();S.mode=S.mode===1?2:1;save();updateStatus()}
-function syncSettings(){$('boardFrame').dataset.orientation=['right','vertical','left'][S.orientation];for(const el of document.querySelectorAll('[data-setting]'))for(const b of el.children)b.setAttribute('aria-pressed',String(Number(b.dataset.value)===S[el.dataset.setting]));for(const k of ['tuning','droneVol','tenorVol','bariVol','bassVol','reverb']){$(k).value=S[k];$(k+'Value').textContent=k==='tuning'?Math.trunc(100*S.tuning/.05946309):Math.round(S[k]*100)+'%'}}
+function syncSettings(){board.dataset.labels=S.labels?'on':'off';$('boardFrame').dataset.orientation=['right','vertical','left'][S.orientation];for(const el of document.querySelectorAll('[data-setting]'))for(const b of el.children)b.setAttribute('aria-pressed',String(Number(b.dataset.value)===S[el.dataset.setting]));for(const k of ['tuning','droneVol','tenorVol','bariVol','bassVol','reverb']){$(k).value=S[k];$(k+'Value').textContent=k==='tuning'?Math.trunc(100*S.tuning/.05946309):Math.round(S[k]*100)+'%'}}
 async function setPitch(p){if(p===S.pitch||loading)return;stopRegs();const was=droneOn;stopVoice('drone');S.pitch=p;save();syncSettings();audioError='';if(!ready){prewarm();updateStatus();return}loading=true;updateStatus();setSettingsDisabled(true);try{await loadBank(p)}catch(e){ready=false;stopAll();audioError=e.message+' Try playing again.'}finally{loading=false;setSettingsDisabled(false);updateStatus()}if(ready&&was&&droneOn&&active)startVoice('drone')}
 function setSettingsDisabled(on){for(const el of $('settingsOverlay').querySelectorAll('button,input'))el.disabled=on}
 function setChoice(k,n){if(k==='pitch'){setPitch(n);return}if(S[k]===n)return;stopRegs();if(k==='orientation')pointers.clear();S[k]=n;save();syncSettings();if(k==='style'&&droneOn){stopVoice('drone');startVoice('drone')}updateStatus()}
-for(const [k,labels] of Object.entries({pitch:pitchNames,style:['Lynch','Crowley'],top:['C/G','A/C'],orientation:['Right','Vertical','Left']})){const el=document.querySelector('[data-setting="'+k+'"]');labels.forEach((text,i)=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.dataset.value=i;b.addEventListener('click',()=>setChoice(k,i));if(k==='orientation')el.prepend(b);else el.append(b)})}
+for(const [k,labels] of Object.entries({pitch:pitchNames,style:['Lynch','Crowley'],top:['C/G','A/C'],orientation:['Right','Vertical','Left'],labels:['Off','On']})){const el=document.querySelector('[data-setting="'+k+'"]');labels.forEach((text,i)=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.dataset.value=i;b.addEventListener('click',()=>setChoice(k,i));if(k==='orientation')el.prepend(b);else el.append(b)})}
 function setSlider(k,n){S[k]=n;save();syncSettings();if(k==='tuning'){for(const v of voices.values())v.source.playbackRate.setTargetAtTime(rate(),ctx.currentTime,.006)}else if(k==='reverb')applyReverb();else for(const [id,v] of voices)v.gain.gain.setTargetAtTime(vol(id),ctx.currentTime,.01)}
 for(const k of ['tuning','droneVol','tenorVol','bariVol','bassVol','reverb'])$(k).addEventListener('input',e=>setSlider(k,Number(e.target.value)));$('resetTuning').onclick=()=>setSlider('tuning',0);
 function openPanel(id){stopRegs();pointers.clear();$(id).hidden=false;$(id).querySelector('button').focus()}
