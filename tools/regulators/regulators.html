@@ -41,6 +41,8 @@
 @media (min-width:900px) and (hover:hover) and (pointer:fine){#helpOverlay .panel{width:min(620px,100%)}}
 #helpOverlay .help-scroll{min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:8px}
 #helpOverlay .panel h2,#helpOverlay .panel footer{flex:0 0 auto}
+#helpOverlay .panel h2{margin-bottom:3px}
+#helpOverlay .version{flex:0 0 auto;text-align:center;font-size:12px;line-height:1.4;color:#a99c89;margin:0 0 12px}
 #helpOverlay .panel footer{margin-top:12px}
 #helpOverlay h3{font-size:17px;margin:0 0 10px}
 #helpOverlay .about{text-align:center}
@@ -91,8 +93,9 @@ main .footer{text-align:center;font-size:14px}
 <label for="bariVol">Baritone:</label><div class="sliderline"><input id="bariVol" type="range" min="0" max="1" step="0.01"><output id="bariVolValue"></output></div>
 <label for="bassVol">Bass:</label><div class="sliderline"><input id="bassVol" type="range" min="0" max="1" step="0.01"><output id="bassVolValue"></output></div>
 <label for="reverb">Reverb:</label><div class="sliderline"><input id="reverb" type="range" min="0" max="0.5" step="0.001"><output id="reverbValue"></output></div>
-</div><footer><button id="closeSettings" class="standard">Go Back to Playing</button></footer></section></div>
+</div><footer><button id="closeSettings" class="standard">Close</button></footer></section></div>
 <div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2>
+<p class="version">Version 1.0</p>
 <div class="help-scroll">
 <h3>Playing the Drones</h3>
 <p>Tap the drone puck to turn the drones on or off.</p>
