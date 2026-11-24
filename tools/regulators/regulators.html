@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Play virtual Irish uilleann pipe regulators and drones in D, C#, C, B, and Bb, with original sampled regulator sounds, Lynch and Crowley drone styles, single or paired regulator playing, and adjustable fine tuning.">
+<meta name="author" content="Michael Eskin">
+<title>Regulators</title>
+<link rel="canonical" href="https://michaeleskin.com/tools/regulators/regulators.html">
+<!-- Open Graph metadata -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Regulators">
+<meta property="og:title" content="Regulators">
+<meta property="og:description" content="Play virtual Irish uilleann pipe regulators and drones in D, C#, C, B, and Bb, with original sampled regulator sounds, Lynch and Crowley drone styles, single or paired regulator playing, and adjustable fine tuning.">
+<meta property="og:url" content="https://michaeleskin.com/tools/regulators/regulators.html">
+<meta property="og:image" content="https://michaeleskin.com/tools/img/regulators-og1.jpg">
+<meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/regulators-og1.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="Regulators — virtual Irish uilleann pipe regulators and drones">
+<!-- Social media sharing -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Regulators">
+<meta name="twitter:description" content="Play virtual Irish uilleann pipe regulators and drones in D, C#, C, B, and Bb, with original sampled regulator sounds, Lynch and Crowley drone styles, single or paired regulator playing, and adjustable fine tuning.">
+<meta name="twitter:image" content="https://michaeleskin.com/tools/img/regulators-og1.jpg">
+<meta name="twitter:image:alt" content="Regulators — virtual Irish uilleann pipe regulators and drones">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+<style>
+*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:#171512;color:#f5ecdc;font:16px/1.4 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;min-height:100dvh}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e8ca86;outline-offset:2px}header{display:flex;align-items:center;justify-content:center;position:relative;min-height:48px;padding:6px 90px;text-align:center}h1{font-size:22px;margin:0}header button{position:absolute;right:10px;top:8px}button.standard,a.standard{background:#3b3329;border:1px solid #8a7659;border-radius:7px;padding:7px 12px}main{display:flex;flex-direction:column;align-items:center;padding:0 8px max(8px,env(safe-area-inset-bottom));gap:6px}.board{position:relative;width:min(100%,480px,calc((100dvh - 112px)*2/3));aspect-ratio:2/3;background:url('regulators-assets/full_set_background.png') center/100% 100% no-repeat;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overflow:hidden;box-shadow:0 0 0 1px #574332,0 8px 28px #0006}.key-art,.board-btn{position:absolute;display:block;border:0;background:none;padding:0;user-select:none;-webkit-user-select:none;touch-action:none}.key-art{pointer-events:none}.board-btn img{display:block;width:100%;height:100%;pointer-events:none}.board-btn:disabled{cursor:default;opacity:.65}.status{font-size:13px;color:#dacdb8;text-align:center;min-height:19px}.overlay{position:fixed;inset:0;background:#000a;z-index:10;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto}.overlay[hidden]{display:none}.panel{background:#29251f;border:1px solid #806d54;border-radius:12px;padding:20px;width:min(440px,100%);max-height:calc(100dvh - 24px);overflow:auto;box-shadow:0 10px 50px #0008}.panel h2{font-size:22px;margin:0 0 15px;text-align:center}.panel p{margin:0 0 12px}.settings-grid{display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center;gap:13px 10px}.settings-grid input[type=range]{width:100%;min-width:0;accent-color:#e4be75;margin:0}.segments{display:flex;gap:2px}.segments button{flex:1;min-width:0;padding:7px 3px;border:1px solid #8a7659;background:#3b3329;border-radius:5px}.segments button[aria-pressed=true]{background:#e4be75;color:#211a12;font-weight:700}.sliderline{display:flex;align-items:center;gap:8px}.sliderline output{min-width:40px;text-align:right;font-variant-numeric:tabular-nums;font-size:13px}.sliderline input{flex:1}.panel footer{display:flex;justify-content:center;gap:10px;margin-top:22px}.mode-help{font-size:12px;text-align:center;color:#d8c8b2}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(orientation:landscape) and (max-height:550px){header{min-height:38px;padding:3px 90px}h1{font-size:18px}header button{top:3px;padding:4px 10px}.board{width:min(100%,calc((100dvh - 77px)*2/3))}.mode-help{display:none}.settings-grid{gap:8px 10px}.panel{padding:14px}.panel h2{margin-bottom:8px}}@media(max-width:360px){header{padding-inline:75px}h1{font-size:19px}.panel{padding:14px}.settings-grid{grid-template-columns:75px minmax(0,1fr);gap:10px 8px}}
+
+/* Center the Instructions dialog, with internal scrolling. */
+#helpOverlay{align-items:center;justify-content:center}
+#helpOverlay .panel{max-height:60vh;max-height:60dvh;display:flex;flex-direction:column;overflow:hidden}
+/* A wider Instructions dialog on desktop without changing touch layouts. */
+@media (min-width:900px) and (hover:hover) and (pointer:fine){#helpOverlay .panel{width:min(620px,100%)}}
+#helpOverlay .help-scroll{min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:8px}
+#helpOverlay .panel h2,#helpOverlay .panel footer{flex:0 0 auto}
+#helpOverlay .panel footer{margin-top:12px}
+#helpOverlay h3{font-size:17px;margin:0 0 10px}
+#helpOverlay .about{text-align:center}
+main{padding-top:12px}
+/* Standard Donate button and matching About section. */
+header .tip{position:absolute;left:max(10px,env(safe-area-inset-left));top:8px;text-decoration:none;color:inherit;font:inherit;line-height:inherit;cursor:pointer}
+header .tip:focus-visible{outline:3px solid #e8ca86;outline-offset:2px}
+#helpOverlay a{color:#8ed6ff}
+#helpOverlay hr{border:0;border-top:1px solid rgba(127,127,127,.4);margin:18px 0}
+/* Center Settings and keep its contents scrollable on shorter screens. */
+#settingsOverlay{align-items:center;justify-content:center}
+#settingsOverlay .panel{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+@media(max-width:400px){header .tip{left:max(8px,env(safe-area-inset-left))}header #help{right:max(8px,env(safe-area-inset-right))}header .tip,header #help{font-size:13px;padding:7px 8px}header h1{font-size:19px}}
+@media(orientation:landscape) and (max-height:550px){header .tip{top:3px;padding:4px 10px}header #help{right:max(10px,env(safe-area-inset-right));padding:4px 10px}}
+/* Center the complete playing field in the space below the fixed-position header controls. */
+body{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+header{flex:0 0 auto}
+main{flex:1 0 auto;justify-content:center;gap:9px}
+.board{flex-shrink:0;width:min(100%,480px,calc((100dvh - 174px)*2/3))}
+/* Use equal spacing between the playboard and each visible status/footer line. */
+main .status,main .mode-help,main .footer{margin:0;color:#dacdb8;font-size:14px;line-height:19px}
+main .footer{text-align:center;font-size:14px}
+@media(orientation:landscape) and (max-height:550px){main{gap:7px}.board{width:min(100%,480px,calc((100dvh - 126px)*2/3))}}
+/* Only iOS/iPadOS users need a dedicated initial audio-unlock gesture. */
+#enableOverlay{z-index:20}
+#enableOverlay .panel{text-align:center;max-width:380px}
+#enableOverlay button{width:100%;background:#e4be75;color:#211a12;font-weight:700;min-height:48px}
+#enableOverlay button:disabled{opacity:.65;cursor:wait}
+#enableError{margin:10px 0 0;color:#f4ba9c}
+#enableError:empty{display:none}
+</style>
+</head>
+<body>
+<header><a class="tip standard" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>Regulators</h1><button id="help" class="standard">Instructions</button></header>
+<main><div id="board" class="board" aria-label="Uilleann pipe regulator keyboard">
+<button id="drone" class="board-btn" style="left:4.0625%;top:1.25%;width:20.3125%;height:13.541667%" aria-label="Toggle drones" aria-pressed="false"><img src="regulators-assets/drone_off.png" alt=""></button>
+<button id="mode" class="board-btn" style="left:4.6875%;top:26.6667%;width:18.75%;height:9.375%" aria-label="Switch playing mode"><img src="regulators-assets/1regbutton_60_45.png" alt=""></button>
+<button id="settings" class="board-btn" style="left:6.25%;top:89.5833%;width:15.625%;height:10.4167%" aria-label="Settings"><img src="regulators-assets/info.png" alt=""></button>
+</div><div class="status" id="status" role="status">Touch a regulator key or the drone puck to play.</div><div class="mode-help" id="modeHelp"></div><p class="footer">© 2026 Michael Eskin</p></main>
+<div id="enableOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><h2 id="enableTitle">🔊 Enable Playback</h2><p>Enable audio to play the regulators and drones.</p><button id="enable" class="standard" type="button">Enable Playback</button><p id="enableError" role="alert"></p></section></div>
+<div id="settingsOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><h2 id="settingsTitle">Settings</h2><div class="settings-grid">
+<span>Pitch:</span><div class="segments" data-setting="pitch" role="group" aria-label="Pitch"></div>
+<label for="tuning">Cents:</label><div class="sliderline"><input id="tuning" type="range" min="-0.03" max="0.03" step="0.0001"><output id="tuningValue"></output><button class="standard" id="resetTuning">Reset</button></div>
+<span>Drones:</span><div class="segments" data-setting="style" role="group" aria-label="Drone style"></div>
+<span>Top chord:</span><div class="segments" data-setting="top" role="group" aria-label="Top chord"></div>
+<label for="droneVol">Drones:</label><div class="sliderline"><input id="droneVol" type="range" min="0" max="1" step="0.01"><output id="droneVolValue"></output></div>
+<label for="tenorVol">Tenor:</label><div class="sliderline"><input id="tenorVol" type="range" min="0" max="1" step="0.01"><output id="tenorVolValue"></output></div>
+<label for="bariVol">Baritone:</label><div class="sliderline"><input id="bariVol" type="range" min="0" max="1" step="0.01"><output id="bariVolValue"></output></div>
+<label for="bassVol">Bass:</label><div class="sliderline"><input id="bassVol" type="range" min="0" max="1" step="0.01"><output id="bassVolValue"></output></div>
+<label for="reverb">Reverb:</label><div class="sliderline"><input id="reverb" type="range" min="0" max="0.5" step="0.001"><output id="reverbValue"></output></div>
+</div><footer><button id="closeSettings" class="standard">Go Back to Playing</button></footer></section></div>
+<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2>
+<div class="help-scroll">
+<h3>Playing the Drones</h3>
+<p>Tap the drone puck to turn the drones on or off.</p>
+<p>On iPhone and iPad, tap Enable Playback when first opening the tool.</p>
+<hr>
+<h3>Playing the Regulators</h3>
+<p>Play the virtual uilleann pipe regulators by touching or clicking the brass keys.</p>
+<p>In single-regulator mode, you can play one note in each of the three columns at the same time using multiple fingers.</p>
+<p>Slide along the keys to change notes, and lift your fingers to stop them.</p>
+<hr>
+<h3>Paired Regulator Mode</h3>
+<p>Tap the 1/2 regulator button to switch between single-regulator and paired-chord modes.</p>
+<p>In paired mode, the left half of the keys plays tenor and baritone chords, and the right half plays bass and baritone chords.</p>
+<p>Slide along the keys to change chords, and lift your finger to stop them.</p>
+<hr>
+<h3>Settings</h3>
+<p>Tap the information button on the lower left to select pitch, drone style, top chord, fine tuning, individual volumes, and reverb.</p>
+<p>All settings, including the playing mode, are saved automatically in your browser.</p>
+<hr>
+<h3>Computer Keyboard</h3>
+<p>Left hand: Q W E R T for tenor, A S D F for baritone, Z X C V for bass.</p>
+<p>Right hand: Y U I O P for tenor, H J K L for baritone, N M , . for bass.</p>
+<p>In paired mode, the tenor keys (Q–T or Y–P) play tenor/baritone pairs, and the baritone keys (A–F or H–L) play baritone/bass pairs.</p>
+<p>The bass keyboard keys are inactive in paired mode.</p>
+<p>Space toggles drones when the page body is focused.</p>
+<hr>
+<div class="about"><h3>About</h3>
+<p>This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a></p>
+<p>If you find it useful,<br/>please consider a contribution via</p>
+<p><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p></div>
+</div><footer><button id="closeHelp" class="standard">OK</button></footer></section></div>
+<script>
+'use strict';
+const BANK={"Bf": {"t1": "t_c_bf.wav", "t2": "t_b_bf.wav", "t3": "t_a_bf.wav", "t4": "t_g_bf.wav", "t5": "t_f_bf.wav", "b1": "b_a_bf.wav", "b2": "b_g_bf.wav", "b3": "b_f_bf.wav", "b4": "b_d_bf.wav", "s1": "bs_c_bf.wav", "s2": "bs_b_bf.wav", "s3": "bs_a_bf.wav", "s4": "bs_g_bf.wav", "lynch": "drone_bf.wav", "crowley": "drone_crowley_bf.wav"}, "B": {"t1": "t_c_b.wav", "t2": "t_b_b.wav", "t3": "t_a_b.wav", "t4": "t_g_b.wav", "t5": "t_f_b.wav", "b1": "b_a_b.wav", "b2": "b_g_b.wav", "b3": "b_f_b.wav", "b4": "b_d_b.wav", "s1": "bs_c_b.wav", "s2": "bs_b_b.wav", "s3": "bs_a_b.wav", "s4": "bs_g_b.wav", "lynch": "drone_b.wav", "crowley": "drone_crowley_b.wav"}, "C": {"t1": "t_c_c.wav", "t2": "t_b_c.wav", "t3": "t_a_c.wav", "t4": "t_g_c.wav", "t5": "t_f_c.wav", "b1": "b_a_c.wav", "b2": "b_g_c.wav", "b3": "b_f_c.wav", "b4": "b_d_c.wav", "s1": "bs_c_c.wav", "s2": "bs_b_c.wav", "s3": "bs_a_c.wav", "s4": "bs_g_c.wav", "lynch": "drone_c.wav", "crowley": "drone_crowley_c.wav"}, "CS": {"t1": "t_c_cs.wav", "t2": "t_b_cs.wav", "t3": "t_a_cs.wav", "t4": "t_g_cs.wav", "t5": "t_f_cs.wav", "b1": "b_a_cs.wav", "b2": "b_g_cs.wav", "b3": "b_f_cs.wav", "b4": "b_d_cs.wav", "s1": "bs_c_cs.wav", "s2": "bs_b_cs.wav", "s3": "bs_a_cs.wav", "s4": "bs_g_cs.wav", "lynch": "drone_cs.wav", "crowley": "drone_crowley_cs.wav"}, "D": {"t1": "t_c_d.wav", "t2": "t_b_d.wav", "t3": "t_a_d.wav", "t4": "t_g_d.wav", "t5": "t_f_d.wav", "b1": "b_a_d.wav", "b2": "b_g_d.wav", "b3": "b_f_d.wav", "b4": "b_d_d.wav", "s1": "bs_c_d.wav", "s2": "bs_b_d.wav", "s3": "bs_a_d.wav", "s4": "bs_g_d.wav", "lynch": "drone.wav", "crowley": "drone_crowley_d.wav"}};
+const A='regulators-assets/', $=id=>document.getElementById(id), pitches=['Bf','B','C','CS','D'], pitchNames=['Bb','B','C','C#','D'];
+const defaults={pitch:4,style:0,top:1,mode:1,tuning:0,droneVol:.4,tenorVol:.75,bariVol:.75,bassVol:.6,reverb:.02};
+const storageKey='Regulators.web.settings.v1';
+function restore(){let saved={};try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}')||{}}catch(e){};const s={...defaults};for(const [k,v] of Object.entries(defaults)){const n=saved[k];if(typeof n!=='number'||!Number.isFinite(n))continue;const bounds={pitch:[0,4],style:[0,1],top:[0,1],mode:[1,2],tuning:[-.03,.03],reverb:[0,.5]}[k]||[0,1];if(n>=bounds[0]&&n<=bounds[1]&&(!['pitch','style','top','mode'].includes(k)||Number.isInteger(n)))s[k]=n}return s}
+const S=restore();function save(){try{localStorage.setItem(storageKey,JSON.stringify(S))}catch(e){}}
+const board=$('board'),keys=new Map(),notes={t:['C','B','A','G','F#'],b:['A','G','F#','D'],s:['C','B','A','G']},art={t:'tenor',b:'bari',s:'bass'};
+for(const [col,x,count] of [['t',86,5],['b',164,4],['s',242,4]]){let y=0;for(let i=1;i<=count;i++){const h=i<3?100:i===3?96:col==='t'?92:184;const id=col+i,base=art[col]+'_reg'+i+'_',tail='_78_'+h+'.png';const img=new Image();img.className='key-art';img.alt='';img.draggable=false;img.style.cssText=`left:${x/3.2}%;top:${y/4.8}%;width:${78/3.2}%;height:${h/4.8}%`;img.src=A+base+'off'+tail;const on=A+base+'on'+tail;const preload=new Image();preload.src=on;keys.set(id,{img,on,off:A+base+'off'+tail});board.prepend(img);y+=h}}
+for(const f of ['drone_on.png','2regbutton_60_45.png']){const i=new Image();i.src=A+f}
+let ctx=null,dry,wet,convolver,master,ready=false,loading=false,droneOn=false,wakeLock=null,wakePending=false,active=true;
+const buffers=new Map(),banks=new Map(),voices=new Map(),owners=new Map();let chordOwner=null,chordId=null;const keyOwners=new Map();
+const pendingHits=new Map();let audioTask=null,audioError="";
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let iosStartupPending=IS_IOS;
+function configureSession(){if(!IS_IOS)return;try{if(navigator.audioSession&&navigator.audioSession.type!=='playback')navigator.audioSession.type='playback'}catch(e){}}
+configureSession();
+function makeEngine(){if(ctx)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Web Audio is not supported in this browser.');ctx=new C({latencyHint:'interactive'});dry=ctx.createGain();wet=ctx.createGain();master=ctx.createGain();master.gain.value=0.125;convolver=ctx.createConvolver();const length=Math.round(ctx.sampleRate*1.65),ir=ctx.createBuffer(2,length,ctx.sampleRate);let seed=123456;for(let ch=0;ch<2;ch++){const data=ir.getChannelData(ch);for(let i=0;i<length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const t=i/ctx.sampleRate;data[i]=(seed/4294967296*2-1)*Math.exp(-4.8*t)*(1-Math.exp(-t*100))}}convolver.buffer=ir;dry.connect(master);convolver.connect(wet);wet.connect(master);master.connect(ctx.destination);applyReverb();ctx.addEventListener('statechange',()=>{if(ctx.state==='interrupted'||(ready&&ctx.state!=='running')){ready=false;stopAll();updateStatus()}})}
+function applyReverb(){if(!ctx)return;dry.gain.setTargetAtTime(1-S.reverb,ctx.currentTime,.012);wet.gain.setTargetAtTime(S.reverb,ctx.currentTime,.012)}
+function rate(){return Math.trunc(100*S.tuning/.05946309)===0?1:1+S.tuning}
+function vol(id){return 2*S[id==='drone'?'droneVol':id[0]==='t'?'tenorVol':id[0]==='b'?'bariVol':'bassVol']}
+async function loadBank(p){if(banks.has(p))return banks.get(p);const task=Promise.all(Object.values(BANK[pitches[p]]).map(async f=>{if(buffers.has(f))return;const res=await fetch(A+f);if(!res.ok)throw Error('Unable to load '+f+' ('+res.status+')');buffers.set(f,await ctx.decodeAudioData(await res.arrayBuffer()))}));banks.set(p,task);try{await task}catch(e){banks.delete(p);throw e}}
+function sample(id){return BANK[pitches[S.pitch]][id==='drone'?(S.style?'crowley':'lynch'):id]}
+function startVoice(id){if(!ready||loading||!active||voices.has(id))return;const buffer=buffers.get(sample(id));if(!buffer)return;const source=ctx.createBufferSource(),gain=ctx.createGain(),now=ctx.currentTime;source.buffer=buffer;source.loop=true;source.playbackRate.value=rate();gain.gain.setValueAtTime(0,now);gain.gain.linearRampToValueAtTime(vol(id),now+.004);source.connect(gain);gain.connect(dry);gain.connect(convolver);source.onended=()=>{source.disconnect();gain.disconnect()};source.start(now);voices.set(id,{source,gain});paint(id,true)}
+function stopVoice(id){const v=voices.get(id);if(!v)return;voices.delete(id);const now=ctx.currentTime;v.gain.gain.cancelScheduledValues(now);v.gain.gain.setTargetAtTime(0,now,.002);try{v.source.stop(now+.012)}catch(e){}paint(id,false)}
+function paint(id,on){if(id==='drone'){$('drone').querySelector('img').src=A+'drone_'+(on?'on':'off')+'.png';$('drone').setAttribute('aria-pressed',String(on))}else{const k=keys.get(id);k.img.src=on?k.on:k.off}}
+function stopRegs(){pendingHits.clear();for(const id of [...voices.keys()])if(id!=='drone')stopVoice(id);owners.clear();keyOwners.clear();chordOwner=null;chordId=null}
+function stopAll(){stopRegs();droneOn=false;stopVoice('drone');paint('drone',false);releaseWake()}
+function updateEnableDialog(){
+    if(!iosStartupPending)return;
+    if(ready){iosStartupPending=false;$('enableOverlay').hidden=true;document.querySelector('header').inert=false;document.querySelector('main').inert=false;return}
+    $('enableOverlay').hidden=false;$('enable').disabled=!!audioTask||loading;
+    $('enable').textContent=audioTask||loading?'Loading samples…':'Enable Playback';
+    $('enableError').textContent=audioError;
+}
+function updateStatus(){updateEnableDialog();const busy=loading||!!audioTask;$('status').textContent=busy?'Loading '+pitchNames[S.pitch]+' samples…':audioError|| (ready?pitchNames[S.pitch]+' pipes · '+(S.style?'Crowley':'Lynch')+' drones':(iosStartupPending?'Enable playback to begin.':'Touch a regulator key or the drone puck to play.'));$('modeHelp').textContent=S.mode===1?'Single regulators · Multi-touch':'Paired regulators · Slide to change chords';$('mode').querySelector('img').src=A+S.mode+'regbutton_60_45.png';$('mode').setAttribute('aria-label',S.mode===1?'Single regulators; Switch to Paired mode':'Paired regulators; Switch to Single mode')}
+// Decode the selected bank ahead of the first playing gesture without starting playback.
+function prewarm(){try{makeEngine();loadBank(S.pitch).catch(()=>{})}catch(e){audioError=e.message;updateStatus()}}
+// Resume directly within a playing gesture; never wait on fetching before unlocking audio.
+function ensureAudio(){if(!active||loading)return;configureSession();if(ready&&ctx&&ctx.state==='running')return;ready=false;audioError='';let resume;try{makeEngine();resume=ctx.state==='running'?Promise.resolve():ctx.resume()}catch(e){audioError=e.message;stopAll();updateStatus();return}if(audioTask){Promise.resolve(resume).catch(()=>{});return}audioTask=(async()=>{try{await resume;let p;do{p=S.pitch;await loadBank(p)}while(p!==S.pitch);if(ctx.state!=='running')throw Error('Audio is not running. Touch a key or the drone puck to retry.');ready=true;if(active&&!document.hidden){if(droneOn)startVoice('drone');for(const [owner,id] of pendingHits)playHit(owner,id);requestWake()}}catch(e){ready=false;stopAll();audioError=(e.message||'Unable to start audio.')+' Try playing again.'}finally{pendingHits.clear();audioTask=null;updateStatus()}})();updateStatus()}
+function queueHit(owner,id,gesture=false){if(!id)return;if(ready&&ctx.state==='running'){playHit(owner,id);return}pendingHits.set(owner,id);if(gesture)ensureAudio()}
+async function requestWake(){if(wakePending||wakeLock||!ready||document.hidden||!navigator.wakeLock)return;wakePending=true;try{const lock=await navigator.wakeLock.request('screen');if(document.hidden||!ready){await lock.release();return}wakeLock=lock;lock.addEventListener('release',()=>{if(wakeLock===lock)wakeLock=null})}catch(e){}finally{wakePending=false}}
+function releaseWake(){if(wakeLock){const lock=wakeLock;wakeLock=null;lock.release().catch(()=>{})}}
+function toggleDrone(){if(loading||!active)return;configureSession();droneOn=!droneOn;if(!droneOn){stopVoice('drone');return}if(ready&&ctx.state==='running')startVoice('drone');else ensureAudio()}
+function hit(x,y){if(x<=86||x>=320||y<0||y>=480)return null;const row=(bounds)=>bounds.findIndex(b=>y<b)+1;if(S.mode===1){const col=x<164?'t':x<242?'b':'s';return col+row(col==='t'?[100,200,300,390,480]:[100,200,300,480])}return x<203?'l'+row([100,200,300,390,480]):'r'+row([100,200,300,480])}
+function chordNotes(id){const i=Number(id[1]),left=id[0]==='l';return [(left?'t':'s')+i,'b'+(i===1?(S.top===0?2:1):Math.min(i,4))]}
+function playHit(owner,id){if(!id||!ready||loading||!active||ctx.state!=='running')return;if(S.mode===1){const col=id[0],old=owners.get(col);if(old&&old.owner!==owner)return;if(old&&old.id===id)return;if(old)stopVoice(old.id);owners.set(col,{owner,id});startVoice(id)}else{if(chordOwner!==null&&chordOwner!==owner)return;if(chordId===id)return;chordOwner=owner;if(chordId)for(const n of chordNotes(chordId))stopVoice(n);chordId=id;for(const n of chordNotes(id))startVoice(n)}}
+function release(owner){pendingHits.delete(owner);for(const [col,v] of owners)if(v.owner===owner){stopVoice(v.id);owners.delete(col)}if(chordOwner===owner){if(chordId)for(const n of chordNotes(chordId))stopVoice(n);chordId=null;chordOwner=null}}
+function point(e){const r=board.getBoundingClientRect();return hit((e.clientX-r.left)*320/r.width,(e.clientY-r.top)*480/r.height)}
+const pointers=new Set();board.addEventListener('pointerdown',e=>{if(e.target.closest('button')||e.button!==0||loading)return;e.preventDefault();const id=point(e);if(!id)return;pointers.add(e.pointerId);board.setPointerCapture(e.pointerId);queueHit(e.pointerId,id,true)});board.addEventListener('pointermove',e=>{if(pointers.has(e.pointerId)){e.preventDefault();queueHit(e.pointerId,point(e))}});for(const event of ['pointerup','pointercancel','lostpointercapture'])board.addEventListener(event,e=>{const was=pointers.delete(e.pointerId);release(e.pointerId);if(was&&event==='pointerup'&&!ready)ensureAudio()});board.addEventListener('touchend',()=>{if(audioTask&&ctx&&ctx.state!=='running')ensureAudio()});board.addEventListener('contextmenu',e=>e.preventDefault());
+function switchMode(){stopRegs();pointers.clear();S.mode=S.mode===1?2:1;save();updateStatus()}
+function syncSettings(){for(const el of document.querySelectorAll('[data-setting]'))for(const b of el.children)b.setAttribute('aria-pressed',String(Number(b.dataset.value)===S[el.dataset.setting]));for(const k of ['tuning','droneVol','tenorVol','bariVol','bassVol','reverb']){$(k).value=S[k];$(k+'Value').textContent=k==='tuning'?Math.trunc(100*S.tuning/.05946309):Math.round(S[k]*100)+'%'}}
+async function setPitch(p){if(p===S.pitch||loading)return;stopRegs();const was=droneOn;stopVoice('drone');S.pitch=p;save();syncSettings();audioError='';if(!ready){prewarm();updateStatus();return}loading=true;updateStatus();setSettingsDisabled(true);try{await loadBank(p)}catch(e){ready=false;stopAll();audioError=e.message+' Try playing again.'}finally{loading=false;setSettingsDisabled(false);updateStatus()}if(ready&&was&&droneOn&&active)startVoice('drone')}
+function setSettingsDisabled(on){for(const el of $('settingsOverlay').querySelectorAll('button,input'))el.disabled=on}
+function setChoice(k,n){if(k==='pitch'){setPitch(n);return}if(S[k]===n)return;stopRegs();S[k]=n;save();syncSettings();if(k==='style'&&droneOn){stopVoice('drone');startVoice('drone')}updateStatus()}
+for(const [k,labels] of Object.entries({pitch:pitchNames,style:['Lynch','Crowley'],top:['C/G','A/C']})){const el=document.querySelector('[data-setting="'+k+'"]');labels.forEach((text,i)=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.dataset.value=i;b.addEventListener('click',()=>setChoice(k,i));el.append(b)})}
+function setSlider(k,n){S[k]=n;save();syncSettings();if(k==='tuning'){for(const v of voices.values())v.source.playbackRate.setTargetAtTime(rate(),ctx.currentTime,.006)}else if(k==='reverb')applyReverb();else for(const [id,v] of voices)v.gain.gain.setTargetAtTime(vol(id),ctx.currentTime,.01)}
+for(const k of ['tuning','droneVol','tenorVol','bariVol','bassVol','reverb'])$(k).addEventListener('input',e=>setSlider(k,Number(e.target.value)));$('resetTuning').onclick=()=>setSlider('tuning',0);
+function openPanel(id){stopRegs();pointers.clear();$(id).hidden=false;$(id).querySelector('button').focus()}
+function closePanel(id,trigger){$(id).hidden=true;$(trigger).focus()}
+$('enable').onclick=()=>{if(iosStartupPending&&!audioTask){configureSession();ensureAudio()}};
+$('drone').onclick=toggleDrone;$('mode').onclick=switchMode;$('settings').onclick=()=>{syncSettings();openPanel('settingsOverlay')};$('closeSettings').onclick=()=>closePanel('settingsOverlay','settings');$('help').onclick=()=>openPanel('helpOverlay');$('closeHelp').onclick=()=>closePanel('helpOverlay','help');
+const keyboard={q:'t1',w:'t2',e:'t3',r:'t4',t:'t5',a:'b1',s:'b2',d:'b3',f:'b4',z:'s1',x:'s2',c:'s3',v:'s4',y:'t1',u:'t2',i:'t3',o:'t4',p:'t5',h:'b1',j:'b2',k:'b3',l:'b4',n:'s1',m:'s2',',':'s3','.':'s4'};
+function keyboardKey(e){const k=e.key.toLowerCase();return k==='<'?',':k==='>'?'.':k}
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('helpOverlay').hidden)closePanel('helpOverlay','help');else if(!$('settingsOverlay').hidden&&!loading)closePanel('settingsOverlay','settings');return}if(e.repeat||loading||!active||iosStartupPending||!$('settingsOverlay').hidden||!$('helpOverlay').hidden||e.ctrlKey||e.metaKey||e.altKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;const k=keyboardKey(e);if(k===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();toggleDrone();return}let id=keyboard[k];if(!id)return;if(S.mode===2){if(id[0]==='s')return;id=(id[0]==='t'?'l':'r')+id[1]}e.preventDefault();keyOwners.set(k,id);queueHit('key:'+k,id,true)});window.addEventListener('keyup',e=>{const k=keyboardKey(e);if(keyOwners.has(k)){release('key:'+k);keyOwners.delete(k)}});
+function deactivate(){active=false;pointers.clear();stopAll();save()}
+window.addEventListener('blur',()=>{pointers.clear();stopRegs()});window.addEventListener('pagehide',deactivate);document.addEventListener('visibilitychange',()=>{if(document.hidden)deactivate();else{active=true;configureSession();if(ready&&ctx.state!=='running'){ready=false;updateStatus()}else if(ready)requestWake()}});window.addEventListener('pageshow',()=>{active=!document.hidden});
+syncSettings();
+if(iosStartupPending){document.querySelector('header').inert=true;document.querySelector('main').inert=true;}
+updateStatus();
+if(!IS_IOS)prewarm();
+</script>
+</body>
+</html>
