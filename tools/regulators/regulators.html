@@ -106,6 +106,11 @@ html,body{overscroll-behavior:none}
 /* Modal content remains selectable and scrollable; controls keep native behavior. */
 .overlay,.overlay *{-webkit-user-select:auto;user-select:auto;-webkit-touch-callout:default}
 .overlay button,.overlay select,.overlay input{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* Give Settings more breathing room, bounded by the vertical play board. */
+#settingsOverlay{--vertical-board-height:min(720px,calc((100vw - 16px) * 1.5),calc(100dvh - 184px))}
+#settingsOverlay .settings-grid{row-gap:clamp(8px,calc(5px + (var(--vertical-board-height) - 460px) * .05),18px)}
+body:has(#boardFrame[data-orientation="vertical"]) #settingsOverlay .panel{max-height:min(calc(100dvh - 24px),max(1px,calc(var(--vertical-board-height) - 12px)))}
+@media(orientation:landscape) and (max-height:550px){#settingsOverlay{--vertical-board-height:min(720px,calc((100vw - 16px) * 1.5),calc(100dvh - 126px))}}
 </style>
 </head>
 <body>
@@ -130,7 +135,7 @@ html,body{overscroll-behavior:none}
 <span>Labels:</span><div class="segments" data-setting="labels" role="group" aria-label="Regulator note labels"></div>
 </div><footer><button id="closeSettings" class="standard">Close</button></footer></section></div>
 <div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2>
-<p class="version">Version 1.2</p>
+<p class="version">Version 1.2.1</p>
 <div class="help-scroll">
 <h3>Introduction</h3>
 <p><b>Regulators</b> simulates the drones and the tenor, baritone, and bass regulators of a full set of Irish Uilleann pipes in five keys: D, C#, C, B, and Bb.</p>
