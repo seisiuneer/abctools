@@ -1,246 +1,1928 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Play a virtual 48-button English concertina using your computer keyboard, with authentic sampled concertina sounds, three selectable keyboard ranges, adjustable transposition, reverb, and optional note labels.">
-<meta name="author" content="Michael Eskin">
-<title>English Concertina</title>
-<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
-<link rel="canonical" href="https://michaeleskin.com/tools/concertina/english-concertina.html">
-<!-- Open Graph metadata -->
-<meta property="og:locale" content="en_US">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="English Concertina">
-<meta property="og:title" content="English Concertina">
-<meta property="og:description" content="Play a virtual 48-button English concertina using your computer keyboard, with authentic sampled concertina sounds, three selectable keyboard ranges, adjustable transposition, reverb, and optional note labels.">
-<meta property="og:url" content="https://michaeleskin.com/tools/concertina/english-concertina.html">
-<meta property="og:image" content="https://michaeleskin.com/tools/img/english-concertina-og1.jpg">
-<meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/english-concertina-og1.jpg">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:alt" content="English Concertina — virtual 48-button English concertina">
-<!-- Social media sharing -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="English Concertina">
-<meta name="twitter:description" content="Play a virtual 48-button English concertina using your computer keyboard, with authentic sampled concertina sounds, three selectable keyboard ranges, adjustable transposition, reverb, and optional note labels.">
-<meta name="twitter:image" content="https://michaeleskin.com/tools/img/english-concertina-og1.jpg">
-<meta name="twitter:image:alt" content="English Concertina — virtual 48-button English concertina">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-VM0N9HL3MK');
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="description" content="Play a virtual 48-button English concertina using your computer keyboard, with authentic sampled concertina sounds, three selectable keyboard ranges, adjustable transposition, reverb, and optional note labels.">
+        <meta name="author" content="Michael Eskin">
+        <title>English Concertina</title>
+        <link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+        <link rel="canonical" href="https://michaeleskin.com/tools/concertina/english-concertina.html">
+        <!-- Open Graph metadata -->
+        <meta property="og:locale" content="en_US">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="English Concertina">
+        <meta property="og:title" content="English Concertina">
+        <meta property="og:description" content="Play a virtual 48-button English concertina using your computer keyboard, with authentic sampled concertina sounds, three selectable keyboard ranges, adjustable transposition, reverb, and optional note labels.">
+        <meta property="og:url" content="https://michaeleskin.com/tools/concertina/english-concertina.html">
+        <meta property="og:image" content="https://michaeleskin.com/tools/img/english-concertina-og1.jpg">
+        <meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/english-concertina-og1.jpg">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:alt" content="English Concertina — virtual 48-button English concertina">
+        <!-- Social media sharing -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="English Concertina">
+        <meta name="twitter:description" content="Play a virtual 48-button English concertina using your computer keyboard, with authentic sampled concertina sounds, three selectable keyboard ranges, adjustable transposition, reverb, and optional note labels.">
+        <meta name="twitter:image" content="https://michaeleskin.com/tools/img/english-concertina-og1.jpg">
+        <meta name="twitter:image:alt" content="English Concertina — virtual 48-button English concertina">
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+        <script>
+window.dataLayer = window.dataLayer || [];
+function gtag() {
+    dataLayer.push(arguments);
+}
+gtag('js', new Date());
+gtag('config', 'G-VM0N9HL3MK');
 </script>
-<style>
-*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:#171512;color:#f5ecdc;font:16px/1.4 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;min-height:100dvh}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e8ca86;outline-offset:2px}header{display:flex;align-items:center;justify-content:center;position:relative;min-height:48px;padding:6px 90px;text-align:center}h1{font-size:22px;margin:0}header button{position:absolute;right:10px;top:8px}button.standard,a.standard{background:#3b3329;border:1px solid #8a7659;border-radius:7px;padding:7px 12px}main{display:flex;flex-direction:column;align-items:center;padding:0 8px max(8px,env(safe-area-inset-bottom));gap:6px}.board{position:relative;width:min(100%,480px,calc((100dvh - 112px)*2/3));aspect-ratio:2/3;background:url('regulators-assets/full_set_background.png') center/100% 100% no-repeat;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overflow:hidden;box-shadow:0 0 0 1px #574332,0 8px 28px #0006}.key-art,.board-btn{position:absolute;display:block;border:0;background:none;padding:0;user-select:none;-webkit-user-select:none;touch-action:none}.key-art{pointer-events:none}.board-btn img{display:block;width:100%;height:100%;pointer-events:none}.board-btn:disabled{cursor:default;opacity:.65}.status{font-size:13px;color:#dacdb8;text-align:center;min-height:19px}.overlay{position:fixed;inset:0;background:#000a;z-index:10;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto}.overlay[hidden]{display:none}.panel{background:#29251f;border:1px solid #806d54;border-radius:12px;padding:20px;width:min(440px,100%);max-height:calc(100dvh - 24px);overflow:auto;box-shadow:0 10px 50px #0008}.panel h2{font-size:22px;margin:0 0 15px;text-align:center}.panel p{margin:0 0 12px}.settings-grid{display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center;gap:13px 10px}.settings-grid input[type=range]{width:100%;min-width:0;accent-color:#e4be75;margin:0}.segments{display:flex;gap:2px}.segments button{flex:1;min-width:0;padding:7px 3px;border:1px solid #8a7659;background:#3b3329;border-radius:5px}.segments button[aria-pressed=true]{background:#e4be75;color:#211a12;font-weight:700}.sliderline{display:flex;align-items:center;gap:8px}.sliderline output{min-width:40px;text-align:right;font-variant-numeric:tabular-nums;font-size:13px}.sliderline input{flex:1}.panel footer{display:flex;justify-content:center;gap:10px;margin-top:22px}.mode-help{font-size:12px;text-align:center;color:#d8c8b2}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(orientation:landscape) and (max-height:550px){header{min-height:38px;padding:3px 90px}h1{font-size:18px}header button{top:3px;padding:4px 10px}.board{width:min(100%,calc((100dvh - 77px)*2/3))}.mode-help{display:none}.settings-grid{gap:8px 10px}.panel{padding:14px}.panel h2{margin-bottom:8px}}@media(max-width:360px){header{padding-inline:75px}h1{font-size:19px}.panel{padding:14px}.settings-grid{grid-template-columns:75px minmax(0,1fr);gap:10px 8px}}
+        <style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    color-scheme: dark;
+}
+
+body {
+    margin: 0;
+    background: #171512;
+    color: #f5ecdc;
+    font: 16px/1.4 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    min-height: 100dvh;
+}
+
+button,input,select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    color: inherit;
+}
+
+button:focus-visible,input:focus-visible,select:focus-visible {
+    outline: 3px solid #e8ca86;
+    outline-offset: 2px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 48px;
+    padding: 6px 90px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 22px;
+    margin: 0;
+}
+
+header button {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+}
+
+button.standard,a.standard {
+    background: #3b3329;
+    border: 1px solid #8a7659;
+    border-radius: 7px;
+    padding: 7px 12px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 8px max(8px,env(safe-area-inset-bottom));
+    gap: 6px;
+}
+
+.board {
+    position: relative;
+    width: min(100%,480px,calc((100dvh - 112px)*2/3));
+    aspect-ratio: 2/3;
+    background: url('regulators-assets/full_set_background.png') center/100% 100% no-repeat;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #574332,0 8px 28px #0006;
+}
+
+.key-art,.board-btn {
+    position: absolute;
+    display: block;
+    border: 0;
+    background: none;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.key-art {
+    pointer-events: none;
+}
+
+.board-btn img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.board-btn:disabled {
+    cursor: default;
+    opacity: .65;
+}
+
+.status {
+    font-size: 13px;
+    color: #dacdb8;
+    text-align: center;
+    min-height: 19px;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: #000a;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    overflow: auto;
+}
+
+.overlay[hidden] {
+    display: none;
+}
+
+.panel {
+    background: #29251f;
+    border: 1px solid #806d54;
+    border-radius: 12px;
+    padding: 20px;
+    width: min(440px,100%);
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+    box-shadow: 0 10px 50px #0008;
+}
+
+.panel h2 {
+    font-size: 22px;
+    margin: 0 0 15px;
+    text-align: center;
+}
+
+.panel p {
+    margin: 0 0 12px;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 90px minmax(0,1fr);
+    align-items: center;
+    gap: 13px 10px;
+}
+
+.settings-grid input[type=range] {
+    width: 100%;
+    min-width: 0;
+    accent-color: #e4be75;
+    margin: 0;
+}
+
+.segments {
+    display: flex;
+    gap: 2px;
+}
+
+.segments button {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 3px;
+    border: 1px solid #8a7659;
+    background: #3b3329;
+    border-radius: 5px;
+}
+
+.segments button[aria-pressed=true] {
+    background: #e4be75;
+    color: #211a12;
+    font-weight: 700;
+}
+
+.sliderline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sliderline output {
+    min-width: 40px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+}
+
+.sliderline input {
+    flex: 1;
+}
+
+.panel footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.mode-help {
+    font-size: 12px;
+    text-align: center;
+    color: #d8c8b2;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+@media(orientation:landscape) and (max-height:550px) {
+    header {
+        min-height: 38px;
+        padding: 3px 90px;
+    }
+    
+    h1 {
+        font-size: 18px;
+    }
+    
+    header button {
+        top: 3px;
+        padding: 4px 10px;
+    }
+    
+    .board {
+        width: min(100%,calc((100dvh - 77px)*2/3));
+    }
+    
+    .mode-help {
+        display: none;
+    }
+    
+    .settings-grid {
+        gap: 8px 10px;
+    }
+    
+    .panel {
+        padding: 14px;
+    }
+    
+    .panel h2 {
+        margin-bottom: 8px;
+    }
+}
+
+@media(max-width:360px) {
+    header {
+        padding-inline: 75px;
+    }
+    
+    h1 {
+        font-size: 19px;
+    }
+    
+    .panel {
+        padding: 14px;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 75px minmax(0,1fr);
+        gap: 10px 8px;
+    }
+}
 
 /* Center the Instructions dialog, with internal scrolling. */
-#helpOverlay{align-items:center;justify-content:center}
-#helpOverlay .panel{max-height:60vh;max-height:60dvh;display:flex;flex-direction:column;overflow:hidden}
+
+#helpOverlay {
+    align-items: center;
+    justify-content: center;
+}
+
+#helpOverlay .panel {
+    max-height: 60vh;
+    max-height: 60dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 /* A wider Instructions dialog on desktop without changing touch layouts. */
-@media (min-width:900px) and (hover:hover) and (pointer:fine){#helpOverlay .panel{width:min(620px,100%)}}
-#helpOverlay .help-scroll{min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:8px}
-#helpOverlay .panel h2,#helpOverlay .panel footer{flex:0 0 auto}
-#helpOverlay .panel h2{margin-bottom:3px}
-#helpOverlay .version{flex:0 0 auto;text-align:center;font-size:14px;line-height:1.4;color:#a99c89;margin:0 0 12px}
-#helpOverlay .panel footer{margin-top:12px}
-#helpOverlay h3{font-size:17px;margin:0 0 10px}
-#helpOverlay .about{text-align:center}
-main{padding-top:12px}
+
+@media (min-width:900px) and (hover:hover) and (pointer:fine) {
+    #helpOverlay .panel {
+        width: min(620px,100%);
+    }
+}
+
+#helpOverlay .help-scroll {
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 8px;
+}
+
+#helpOverlay .panel h2,#helpOverlay .panel footer {
+    flex: 0 0 auto;
+}
+
+#helpOverlay .panel h2 {
+    margin-bottom: 3px;
+}
+
+#helpOverlay .version {
+    flex: 0 0 auto;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #a99c89;
+    margin: 0 0 12px;
+}
+
+#helpOverlay .panel footer {
+    margin-top: 12px;
+}
+
+#helpOverlay h3 {
+    font-size: 17px;
+    margin: 0 0 10px;
+}
+
+#helpOverlay .about {
+    text-align: center;
+}
+
+main {
+    padding-top: 12px;
+}
+
 /* Standard Donate button and matching About section. */
-header .tip{position:absolute;left:max(10px,env(safe-area-inset-left));top:8px;text-decoration:none;color:inherit;font:inherit;line-height:inherit;cursor:pointer}
-header .tip:focus-visible{outline:3px solid #e8ca86;outline-offset:2px}
-#helpOverlay a{color:#8ed6ff}
-#helpOverlay hr{border:0;border-top:1px solid rgba(127,127,127,.4);margin:18px 0}
+
+header .tip {
+    position: absolute;
+    left: max(10px,env(safe-area-inset-left));
+    top: 8px;
+    text-decoration: none;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+
+header .tip:focus-visible {
+    outline: 3px solid #e8ca86;
+    outline-offset: 2px;
+}
+
+#helpOverlay a {
+    color: #8ed6ff;
+}
+
+#helpOverlay hr {
+    border: 0;
+    border-top: 1px solid rgba(127,127,127,.4);
+    margin: 18px 0;
+}
+
 /* Center Settings and keep its contents scrollable on shorter screens. */
-#settingsOverlay{align-items:center;justify-content:center}
-#settingsOverlay .panel{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
-#settingsOverlay [data-setting="orientation"] button{font-size:14px;white-space:nowrap}
-@media(max-width:400px){header .tip{left:max(8px,env(safe-area-inset-left))}header #help{right:max(8px,env(safe-area-inset-right))}header .tip,header #help{font-size:13px;padding:7px 8px}header h1{font-size:19px}}
-@media(orientation:landscape) and (max-height:550px){header .tip{top:3px;padding:4px 10px}header #help{right:max(10px,env(safe-area-inset-right));padding:4px 10px}}
+
+#settingsOverlay {
+    align-items: center;
+    justify-content: center;
+}
+
+#settingsOverlay .panel {
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+}
+
+#settingsOverlay [data-setting="orientation"] button {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+@media(max-width:400px) {
+    header .tip {
+        left: max(8px,env(safe-area-inset-left));
+    }
+    
+    header #help {
+        right: max(8px,env(safe-area-inset-right));
+    }
+    
+    header .tip,header #help {
+        font-size: 13px;
+        padding: 7px 8px;
+    }
+    
+    header h1 {
+        font-size: 19px;
+    }
+}
+
+@media(orientation:landscape) and (max-height:550px) {
+    header .tip {
+        top: 3px;
+        padding: 4px 10px;
+    }
+    
+    header #help {
+        right: max(10px,env(safe-area-inset-right));
+        padding: 4px 10px;
+    }
+}
+
 /* Center the complete playing field in the space below the fixed-position header controls. */
-body{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
-header{flex:0 0 auto;min-height:54px}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+header {
+    flex: 0 0 auto;
+    min-height: 54px;
+}
+
 /* Align the title and header buttons on the same vertical centerline. */
-header .tip,header #help{top:50%;transform:translateY(-50%)}
+
+header .tip,header #help {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 /* Equal-width header buttons for a symmetrical title. */
-header .tip,header #help{width:120px;text-align:center;white-space:nowrap}
-@media(max-width:400px){header .tip,header #help{width:96px;padding-inline:4px}}
-@media(orientation:landscape) and (max-height:550px) and (min-width:401px){header .tip,header #help{width:116px}}
-@media(orientation:landscape) and (max-height:550px){header{min-height:38px}}
-main{flex:1 0 auto;justify-content:center;gap:9px}
-.board-frame{position:relative;flex-shrink:0;width:min(100%,480px,calc((100dvh - 184px)*2/3));aspect-ratio:2/3}
-.board-frame .board{width:100%}
+
+header .tip,header #help {
+    width: 120px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media(max-width:400px) {
+    header .tip,header #help {
+        width: 96px;
+        padding-inline: 4px;
+    }
+}
+
+@media(orientation:landscape) and (max-height:550px) and (min-width:401px) {
+    header .tip,header #help {
+        width: 116px;
+    }
+}
+
+@media(orientation:landscape) and (max-height:550px) {
+    header {
+        min-height: 38px;
+    }
+}
+
+main {
+    flex: 1 0 auto;
+    justify-content: center;
+    gap: 9px;
+}
+
+.board-frame {
+    position: relative;
+    flex-shrink: 0;
+    width: min(100%,480px,calc((100dvh - 184px)*2/3));
+    aspect-ratio: 2/3;
+}
+
+.board-frame .board {
+    width: 100%;
+}
+
 /* Keep the transformed board inside a correctly sized layout box. */
-.board-frame[data-orientation="right"],.board-frame[data-orientation="left"]{width:min(100%,720px,calc((100dvh - 184px)*3/2));aspect-ratio:3/2}
-.board-frame[data-orientation="right"] .board,.board-frame[data-orientation="left"] .board{position:absolute;left:50%;top:50%;width:calc(100% * 2/3);height:150%;transform-origin:center}
-.board-frame[data-orientation="right"] .board{transform:translate(-50%,-50%) rotate(-90deg)}
+
+.board-frame[data-orientation="right"],.board-frame[data-orientation="left"] {
+    width: min(100%,720px,calc((100dvh - 184px)*3/2));
+    aspect-ratio: 3/2;
+}
+
+.board-frame[data-orientation="right"] .board,.board-frame[data-orientation="left"] .board {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(100% * 2/3);
+    height: 150%;
+    transform-origin: center;
+}
+
+.board-frame[data-orientation="right"] .board {
+    transform: translate(-50%,-50%) rotate(-90deg);
+}
+
 /* Left is a clockwise rotation followed by a screen-vertical reflection. */
-.board-frame[data-orientation="left"] .board{transform:translate(-50%,-50%) rotate(90deg) scaleX(-1)}
-.board-frame[data-orientation="right"] #settings img{transform:rotate(90deg)}
-.board-frame[data-orientation="left"] #settings img{transform:rotate(90deg) scaleX(-1)}
+
+.board-frame[data-orientation="left"] .board {
+    transform: translate(-50%,-50%) rotate(90deg) scaleX(-1);
+}
+
+.board-frame[data-orientation="right"] #settings img {
+    transform: rotate(90deg);
+}
+
+.board-frame[data-orientation="left"] #settings img {
+    transform: rotate(90deg) scaleX(-1);
+}
+
 /* Optional D-reference note labels, anchored to the original board coordinates. */
-.note-labels{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;user-select:none;-webkit-user-select:none}
-.board[data-labels="on"] .note-labels{display:block}
-.note-labels text{font:700 24px Arial,sans-serif;fill:#111;text-anchor:middle;pointer-events:none;transform-origin:0 0}
+
+.note-labels {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.board[data-labels="on"] .note-labels {
+    display: block;
+}
+
+.note-labels text {
+    font: 700 24px Arial,sans-serif;
+    fill: #111;
+    text-anchor: middle;
+    pointer-events: none;
+    transform-origin: 0 0;
+}
+
 /* Keep lettering upright while its anchor follows the board in every orientation. */
-.board-frame[data-orientation="right"] .note-labels text{transform:rotate(90deg)}
-.board-frame[data-orientation="left"] .note-labels text{transform:rotate(90deg) scaleX(-1)}
+
+.board-frame[data-orientation="right"] .note-labels text {
+    transform: rotate(90deg);
+}
+
+.board-frame[data-orientation="left"] .note-labels text {
+    transform: rotate(90deg) scaleX(-1);
+}
+
 /* Use equal spacing between the playboard and each visible status/footer line. */
-main .status,main .mode-help,main .footer{margin:0;color:#dacdb8;font-size:14px;line-height:19px}
-main .footer{text-align:center;font-size:14px}
-@media(orientation:landscape) and (max-height:550px){main{gap:7px}.board-frame{width:min(100%,480px,calc((100dvh - 126px)*2/3))}.board-frame[data-orientation="right"],.board-frame[data-orientation="left"]{width:min(100%,720px,calc((100dvh - 126px)*3/2))}}
+
+main .status,main .mode-help,main .footer {
+    margin: 0;
+    color: #dacdb8;
+    font-size: 14px;
+    line-height: 19px;
+}
+
+main .footer {
+    text-align: center;
+    font-size: 14px;
+}
+
+@media(orientation:landscape) and (max-height:550px) {
+    main {
+        gap: 7px;
+    }
+    
+    .board-frame {
+        width: min(100%,480px,calc((100dvh - 126px)*2/3));
+    }
+    
+    .board-frame[data-orientation="right"],.board-frame[data-orientation="left"] {
+        width: min(100%,720px,calc((100dvh - 126px)*3/2));
+    }
+}
+
 /* Only iOS/iPadOS users need a dedicated initial audio-unlock gesture. */
-#enableOverlay{z-index:20}
-#enableOverlay .panel{text-align:center;max-width:380px}
-#enableOverlay button{width:100%;background:#e4be75;color:#211a12;font-weight:700;min-height:48px}
-#enableOverlay button:disabled{opacity:.65;cursor:wait}
-#enableError{margin:10px 0 0;color:#f4ba9c}
-#enableError:empty{display:none}
 
-main{flex:1;min-height:0;padding:8px;justify-content:center}#instrument{position:relative;width:min(100%,1024px,calc((100dvh - 145px)*4/3));aspect-ratio:4/3;background:url(concertina_assets/skin1.png) center/100% 100% no-repeat;user-select:none;overflow:hidden;flex-shrink:0}#directionArt,#skin-info{position:absolute;left:0;width:100%;pointer-events:none}#directionArt{top:0;height:37.63020833%}#skin-info{top:39.58333333%;height:42.96875%}.note{position:absolute;transform:translate(-50%,-50%);width:6.8359375%;aspect-ratio:1;padding:0;border:0;border-radius:50%;background:transparent;color:white;font-weight:bold;font-size:clamp(9px,1.5vw,18px);text-shadow:0 1px 3px black;display:grid;place-items:center}.note.active{background:#e7b95c66;box-shadow:0 0 0 2px #ffda80 inset}.note small{background:#171717db;border-radius:4px;padding:1px 3px}#settings{position:absolute;left:48%;top:89%;width:4%;min-width:22px;aspect-ratio:1;background:#29251f;border:1px solid #b89a68;border-radius:50%;padding:0;color:#e4be75;font:bold 20px Georgia,serif}#loadOverlay{z-index:30}#loadOverlay .panel{text-align:center}progress{width:100%;accent-color:#e4be75}#loadError,#enableError{color:#f4ba9c}select{background:#3b3329;color:inherit;border:1px solid #8a7659;padding:6px;border-radius:5px}#status{min-height:19px}#enableOverlay .panel{text-align:center} @media(max-height:450px){#instrument{width:min(100%,calc((100dvh - 95px)*4/3))}}@media(max-width:500px){header h1{font-size:16px}header .tip,header #help{width:88px;font-size:12px;padding-inline:4px}}
+#enableOverlay {
+    z-index: 20;
+}
 
-#status[hidden]{display:none}
+#enableOverlay .panel {
+    text-align: center;
+    max-width: 380px;
+}
+
+#enableOverlay button {
+    width: 100%;
+    background: #e4be75;
+    color: #211a12;
+    font-weight: 700;
+    min-height: 48px;
+}
+
+#enableOverlay button:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+#enableError {
+    margin: 10px 0 0;
+    color: #f4ba9c;
+}
+
+#enableError:empty {
+    display: none;
+}
+
+main {
+    flex: 1;
+    min-height: 0;
+    padding: 8px;
+    justify-content: center;
+}
+
+#instrument {
+    position: relative;
+    width: min(100%,1024px,calc((100dvh - 145px)*4/3));
+    aspect-ratio: 4/3;
+    background: url(concertina_assets/skin1.png) center/100% 100% no-repeat;
+    user-select: none;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+#directionArt,#skin-info {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+#directionArt {
+    top: 0;
+    height: 37.63020833%;
+}
+
+#skin-info {
+    top: 39.58333333%;
+    height: 42.96875%;
+}
+
+.note {
+    position: absolute;
+    transform: translate(-50%,-50%);
+    width: 6.8359375%;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    font-weight: bold;
+    font-size: clamp(9px,1.5vw,18px);
+    text-shadow: 0 1px 3px black;
+    display: grid;
+    place-items: center;
+}
+
+.note.active {
+    background: #e7b95c66;
+    box-shadow: 0 0 0 2px #ffda80 inset;
+}
+
+.note small {
+    background: #171717db;
+    border-radius: 4px;
+    padding: 1px 3px;
+}
+
+#settings {
+    position: absolute;
+    left: 48%;
+    top: 89%;
+    width: 4%;
+    min-width: 22px;
+    aspect-ratio: 1;
+    background: #29251f;
+    border: 1px solid #b89a68;
+    border-radius: 50%;
+    padding: 0;
+    color: #e4be75;
+    font: bold 20px Georgia,serif;
+}
+
+#loadOverlay {
+    z-index: 30;
+}
+
+#loadOverlay .panel {
+    text-align: center;
+}
+
+progress {
+    width: 100%;
+    accent-color: #e4be75;
+}
+
+#loadError,#enableError {
+    color: #f4ba9c;
+}
+
+select {
+    background: #3b3329;
+    color: inherit;
+    border: 1px solid #8a7659;
+    padding: 6px;
+    border-radius: 5px;
+}
+
+#status {
+    min-height: 19px;
+}
+
+#enableOverlay .panel {
+    text-align: center;
+}
+
+@media(max-height:450px) {
+    #instrument {
+        width: min(100%,calc((100dvh - 95px)*4/3));
+    }
+}
+
+@media(max-width:500px) {
+    header h1 {
+        font-size: 16px;
+    }
+    
+    header .tip,header #help {
+        width: 88px;
+        font-size: 12px;
+        padding-inline: 4px;
+    }
+}
+
+#status[hidden] {
+    display: none;
+}
 
 /* Wider settings layout; keep labels on a single line. */
-#settingsOverlay .panel{width:min(560px,100%)}
-#settingsOverlay .settings-grid{grid-template-columns:max-content minmax(0,1fr)}
+
+#settingsOverlay .panel {
+    width: min(560px,100%);
+}
+
+#settingsOverlay .settings-grid {
+    grid-template-columns: max-content minmax(0,1fr);
+}
+
 /* Give settings controls more breathing room while retaining a compact short-screen layout. */
-#settingsOverlay .settings-grid{row-gap:19px}
-#settingsOverlay .panel h2{margin-bottom:19px}
-#settingsOverlay .panel footer{margin-top:26px}
-@media(max-height:420px){#settingsOverlay .settings-grid{row-gap:11px}#settingsOverlay .panel h2{margin-bottom:11px}#settingsOverlay .panel footer{margin-top:18px}}
-#settingsOverlay .settings-grid>label{white-space:nowrap}
+
+#settingsOverlay .settings-grid {
+    row-gap: 19px;
+}
+
+#settingsOverlay .panel h2 {
+    margin-bottom: 19px;
+}
+
+#settingsOverlay .panel footer {
+    margin-top: 26px;
+}
+
+@media(max-height:420px) {
+    #settingsOverlay .settings-grid {
+        row-gap: 11px;
+    }
+    
+    #settingsOverlay .panel h2 {
+        margin-bottom: 11px;
+    }
+    
+    #settingsOverlay .panel footer {
+        margin-top: 18px;
+    }
+}
+
+#settingsOverlay .settings-grid>label {
+    white-space: nowrap;
+}
+
 /* Use a consistent closed select appearance while retaining the native option picker. */
-#settingsOverlay select{-webkit-appearance:none;-moz-appearance:none;appearance:none;font:inherit;color:inherit;background:#3b3329 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%23f5ecdc' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center/14px 14px;border:1px solid #8a7659;border-radius:6px;padding:9px 36px 9px 14px;min-width:0;width:100%;min-height:40px;box-shadow:none;cursor:pointer}
-#settingsOverlay select:focus{outline:3px solid #e8ca86;outline-offset:2px}
-@media(max-height:420px){#settingsOverlay select{min-height:34px;padding-top:6px;padding-bottom:6px}}
-@media(max-width:420px){#settingsOverlay .settings-grid{font-size:13px;column-gap:8px}#settingsOverlay .panel{padding:12px}#settingsOverlay .sliderline{gap:4px}#settingsOverlay .sliderline output{min-width:30px}}
+
+#settingsOverlay select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font: inherit;
+    color: inherit;
+    background: #3b3329 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%23f5ecdc' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center/14px 14px;
+    border: 1px solid #8a7659;
+    border-radius: 6px;
+    padding: 9px 36px 9px 14px;
+    min-width: 0;
+    width: 100%;
+    min-height: 40px;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+#settingsOverlay select:focus {
+    outline: 3px solid #e8ca86;
+    outline-offset: 2px;
+}
+
+@media(max-height:420px) {
+    #settingsOverlay select {
+        min-height: 34px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+}
+
+@media(max-width:420px) {
+    #settingsOverlay .settings-grid {
+        font-size: 13px;
+        column-gap: 8px;
+    }
+    
+    #settingsOverlay .panel {
+        padding: 12px;
+    }
+    
+    #settingsOverlay .sliderline {
+        gap: 4px;
+    }
+    
+    #settingsOverlay .sliderline output {
+        min-width: 30px;
+    }
+}
+
 /* Bellows labels centered in the original colored indicator areas. */
-#instrument{container-type:inline-size}
-.bellows-label{position:absolute;top:21%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap;font-size:clamp(16px,3.6cqw,38px);font-weight:600;line-height:1;color:#e9e3dc;text-shadow:0 1px 3px #000b;visibility:hidden}
-#pushLabel{left:24.4%}#drawLabel{left:75.6%}
-#instrument[data-bellows="push"] #pushLabel,#instrument[data-bellows="draw"] #drawLabel{visibility:visible}
 
-#instrument{background-image:url(concertina_assets/english_skin_info.png)}
-#instrument[data-labels="off"]{background-image:url(concertina_assets/english_skin.png)}
-.note{width:5.85%;font-size:clamp(9px,2.3cqw,23px);text-shadow:none}
-.note.active{background:#e7b95c99;box-shadow:0 0 0 2px #ffda80 inset}
+#instrument {
+    container-type: inline-size;
+}
+
+.bellows-label {
+    position: absolute;
+    top: 21%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    white-space: nowrap;
+    font-size: clamp(16px,3.6cqw,38px);
+    font-weight: 600;
+    line-height: 1;
+    color: #e9e3dc;
+    text-shadow: 0 1px 3px #000b;
+    visibility: hidden;
+}
+
+#pushLabel {
+    left: 24.4%;
+}
+
+#drawLabel {
+    left: 75.6%;
+}
+
+#instrument[data-bellows="push"] #pushLabel,#instrument[data-bellows="draw"] #drawLabel {
+    visibility: visible;
+}
+
+#instrument {
+    background-image: url(concertina_assets/english_skin_info.png);
+}
+
+#instrument[data-labels="off"] {
+    background-image: url(concertina_assets/english_skin.png);
+}
+
+.note {
+    width: 5.85%;
+    font-size: clamp(9px,2.3cqw,23px);
+    text-shadow: none;
+}
+
+.note.active {
+    background: #e7b95c99;
+    box-shadow: 0 0 0 2px #ffda80 inset;
+}
+
 /* Dim notes outside the current keyboard range, without blocking touch or mouse playing. */
-#instrument[data-show-ranges="enabled"] .note:not(.range-extra):not(.active)::after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(0,0,0,.40);pointer-events:none}
-.keyboard-map{width:100%;border-collapse:collapse;font-size:clamp(10px,2.5vw,14px);text-align:center;margin:10px 0 15px;table-layout:fixed}.keyboard-map td,.keyboard-map th{border:1px solid #806d54;padding:4px 1px}.keyboard-map th{color:#e4be75}.keyboard-map small{display:block;color:#8ed6ff}.keyboard-map b{display:block}.range-chart td:nth-child(4),.range-chart th:first-child{border-right:3px solid #806d54}.range-chart td{padding:6px 1px}.range-chart b{font-size:1.15em}.range-chart td{white-space:nowrap}
+
+#instrument[data-show-ranges="enabled"] .note:not(.range-extra):not(.active)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(0,0,0,.40);
+    pointer-events: none;
+}
+
+.keyboard-map {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(10px,2.5vw,14px);
+    text-align: center;
+    margin: 10px 0 15px;
+    table-layout: fixed;
+}
+
+.keyboard-map td,.keyboard-map th {
+    border: 1px solid #806d54;
+    padding: 4px 1px;
+}
+
+.keyboard-map th {
+    color: #e4be75;
+}
+
+.keyboard-map small {
+    display: block;
+    color: #8ed6ff;
+}
+
+.keyboard-map b {
+    display: block;
+}
+
+.range-chart td:nth-child(4),.range-chart th:first-child {
+    border-right: 3px solid #806d54;
+}
+
+.range-chart td {
+    padding: 6px 1px;
+}
+
+.range-chart b {
+    font-size: 1.15em;
+}
+
+.range-chart td {
+    white-space: nowrap;
+}
+
 /* Prevent browser gestures on the playing surface, not on the surrounding page. */
-#instrument{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none}
+
+#instrument {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
+
 /* Prevent iOS text selection and long-press callouts during playing. */
-html,body,header,header *,main,main *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+
+html,body,header,header *,main,main * {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
 /* Disable pinch, double-tap zoom and native panning on the performance screen. */
-header,main,#instrument,.note{touch-action:none}
-#instrument img{-webkit-user-drag:none}
+
+header,main,#instrument,.note {
+    touch-action: none;
+}
+
+#instrument img {
+    -webkit-user-drag: none;
+}
+
 /* The page background is not a scrolling surface; dialogs scroll internally. */
-html,body{overscroll-behavior:none}
+
+html,body {
+    overscroll-behavior: none;
+}
+
 /* Keep modal content selectable and its scrolling and controls native. */
-.overlay,.overlay *{-webkit-user-select:auto;user-select:auto;-webkit-touch-callout:default}
-.overlay button,.overlay select,.overlay input{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-</style></head><body><header><a class="tip standard" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>English Concertina</h1><button id="help" class="standard">Instructions</button></header><main><div id="instrument" aria-label="48-button English concertina" data-labels="notes" data-show-ranges="enabled"><button id="settings" aria-label="Settings" title="Settings">i</button></div><div id="status" class="status" role="status" hidden></div><div class="mode-help" id="bellowsHelp">Middle range · T/Y High · G/H Middle · B/N Low · Space cycles ranges</div><p class="footer">© 2026 Michael Eskin</p></main>
-<div id="loadOverlay" class="overlay"><section class="panel" role="dialog" aria-modal="true" aria-labelledby="loadTitle"><h2 id="loadTitle">Loading Samples</h2><p>Preparing the concertina sounds.</p><progress id="progress" value="0" max="42"></progress><p id="loadCount" role="status">0 of 42 samples</p><p id="loadError" role="alert"></p><button id="retry" class="standard" hidden>Retry</button></section></div>
-<div id="enableOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><h2 id="enableTitle">🔊 Enable Playback</h2><p>Enable audio to play the concertina.</p><button id="enable" class="standard">Enable Playback</button><p id="enableError" role="alert"></p></section></div>
-<div id="settingsOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><h2 id="settingsTitle">Settings</h2><div class="settings-grid"><label for="transpose">Transpose (semitones):</label><select id="transpose"></select><label for="volume">Volume:</label><div class="sliderline"><input id="volume" type="range" min="0" max="100" value="75"><output id="volumeValue">75%</output></div><label for="reverb">Reverb:</label><div class="sliderline"><input id="reverb" type="range" min="0" max="0.5" step="0.001" value="0.10"><output id="reverbValue">10%</output></div><label for="labels">Labels:</label><select id="labels"><option value="off">Off</option><option value="notes" selected>On</option></select><label for="showRanges">Show Ranges:</label><select id="showRanges"><option value="enabled" selected>Enabled</option><option value="disabled">Disabled</option></select></div><footer><button id="closeSettings" class="standard">Close</button></footer></section></div>
-<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.0</p><div class="help-scroll"><h3>Overview</h3><p><b>English Concertina</b> is a web-based port of Englitina XL for iOS, simulating a 48-button English concertina using the original sampled instrument sounds.</p><p>Play using a computer keyboard, mouse, or touchscreen.</p><hr><h3>Computer Keyboard</h3><p>Each hand uses four computer keys per row to match the four buttons in each instrument row.</p><p>Low covers the lowest four rows, Middle covers the middle four rows, and High covers the highest four rows.</p><p>The instrument starts in the Middle range each time it is opened.</p><p>Select a range instantly using either hand:</p><table class="keyboard-map" aria-label="Keyboard range selection"><thead><tr><th>Left hand</th><th>Range</th><th>Right hand</th></tr></thead><tbody><tr><td><b>T</b></td><td>High</td><td><b>Y</b></td></tr><tr><td><b>G</b></td><td>Middle</td><td><b>H</b></td></tr><tr><td><b>B</b></td><td>Low</td><td><b>N</b></td></tr></tbody></table><p>Press Space to cycle from Low to Middle to High and back to Low.</p><p>The selected range stays active until you select another range.</p><p>The charts below show the fixed note assignments, regardless of the transposition setting.</p><h3>Low range</h3><table class="keyboard-map range-chart" aria-label="Low range keyboard fingering chart"><thead><tr><th colspan="4" scope="colgroup">Left hand</th><th colspan="4" scope="colgroup">Right hand</th></tr></thead><tbody><tr><td><b>1</b>F♯5</td><td><b>2</b>F5</td><td><b>3</b>A5</td><td><b>4</b>A♭5</td><td><b>7</b>E♭5</td><td><b>8</b>E5</td><td><b>9</b>G5</td><td><b>0</b>G♯5</td></tr><tr><td><b>Q</b>B♭4</td><td><b>W</b>B4</td><td><b>E</b>D5</td><td><b>R</b>D♯5</td><td><b>U</b>A♭4</td><td><b>I</b>A4</td><td><b>O</b>C5</td><td><b>P</b>C♯5</td></tr><tr><td><b>A</b>E♭4</td><td><b>S</b>E4</td><td><b>D</b>G4</td><td><b>F</b>G♯4</td><td><b>J</b>D♯4</td><td><b>K</b>D4</td><td><b>L</b>F4</td><td><b>;</b>F♯4</td></tr><tr><td><b>Z</b>A♭3</td><td><b>X</b>A3</td><td><b>C</b>C4</td><td><b>V</b>C♯4</td><td><b>M</b>G♯3</td><td><b>,</b>G3</td><td><b>.</b>B3</td><td><b>/</b>B♭3</td></tr></tbody></table><h3>Middle range</h3><table class="keyboard-map range-chart" aria-label="Middle range keyboard fingering chart"><thead><tr><th colspan="4" scope="colgroup">Left hand</th><th colspan="4" scope="colgroup">Right hand</th></tr></thead><tbody><tr><td><b>1</b>C♯6</td><td><b>2</b>C6</td><td><b>3</b>E6</td><td><b>4</b>E♭6</td><td><b>7</b>B♭5</td><td><b>8</b>B5</td><td><b>9</b>D6</td><td><b>0</b>E♭6</td></tr><tr><td><b>Q</b>F♯5</td><td><b>W</b>F5</td><td><b>E</b>A5</td><td><b>R</b>A♭5</td><td><b>U</b>E♭5</td><td><b>I</b>E5</td><td><b>O</b>G5</td><td><b>P</b>G♯5</td></tr><tr><td><b>A</b>B♭4</td><td><b>S</b>B4</td><td><b>D</b>D5</td><td><b>F</b>D♯5</td><td><b>J</b>A♭4</td><td><b>K</b>A4</td><td><b>L</b>C5</td><td><b>;</b>C♯5</td></tr><tr><td><b>Z</b>E♭4</td><td><b>X</b>E4</td><td><b>C</b>G4</td><td><b>V</b>G♯4</td><td><b>M</b>D♯4</td><td><b>,</b>D4</td><td><b>.</b>F4</td><td><b>/</b>F♯4</td></tr></tbody></table><h3>High range</h3><table class="keyboard-map range-chart" aria-label="High range keyboard fingering chart"><thead><tr><th colspan="4" scope="colgroup">Left hand</th><th colspan="4" scope="colgroup">Right hand</th></tr></thead><tbody><tr><td><b>1</b>G♯6</td><td><b>2</b>G6</td><td><b>3</b>B6</td><td><b>4</b>B♭6</td><td><b>7</b>F♯6</td><td><b>8</b>F6</td><td><b>9</b>C7</td><td><b>0</b>A6</td></tr><tr><td><b>Q</b>C♯6</td><td><b>W</b>C6</td><td><b>E</b>E6</td><td><b>R</b>E♭6</td><td><b>U</b>B♭5</td><td><b>I</b>B5</td><td><b>O</b>D6</td><td><b>P</b>E♭6</td></tr><tr><td><b>A</b>F♯5</td><td><b>S</b>F5</td><td><b>D</b>A5</td><td><b>F</b>A♭5</td><td><b>J</b>E♭5</td><td><b>K</b>E5</td><td><b>L</b>G5</td><td><b>;</b>G♯5</td></tr><tr><td><b>Z</b>B♭4</td><td><b>X</b>B4</td><td><b>C</b>D5</td><td><b>V</b>D♯5</td><td><b>M</b>A♭4</td><td><b>,</b>A4</td><td><b>.</b>C5</td><td><b>/</b>C♯5</td></tr></tbody></table><p>By default, buttons outside the selected computer keyboard range are dimmed, but remain playable by touch or mouse.</p><p>Notes already sounding continue unchanged until their playing keys are released.</p><p>All 48 buttons remain available to the mouse and touchscreen in every keyboard range.</p><hr><h3>Mouse and Touchscreen</h3><p>Click and hold a button with the mouse or touch it with a finger to play a note.</p><p>Slide between buttons without lifting your finger or releasing the mouse button to change notes.</p><p>Moving off the buttons stops the note until you slide onto another button.</p><p>On a touchscreen, use multiple fingers to play chords or slide between notes independently.</p><hr><h3>Keyboard Rollover and Polyphony</h3><p>English Concertina can play multiple notes at once, but some computer keyboards cannot detect every combination of keys pressed together.</p><p>For best results playing chords, use a keyboard with full N-key rollover (NKRO).</p><hr><h3>Settings</h3><p>Click the information (i) button to adjust transposition, volume, reverb, and note labels.</p><p>Transposition changes only the playback pitch; the original note labels and keyboard mappings remain unchanged.</p><p>Set Show Ranges to Disabled to remove the range dimming, which may be useful when playing on a touchscreen.</p><p>This setting affects only the visual appearance, not the keyboard range or the highlighting of sounding notes.</p><p>All settings are saved automatically in your browser.</p><hr><h3>iOS and Android</h3><p>All 48 buttons can be played directly on the touchscreen, without a physical keyboard.</p><p>You can also use a physical keyboard connected to your device.</p><p>On iPhone and iPad, tap Enable Playback after the samples have loaded.</p><hr><h3>Try the Anglo Concertina Version</h3><p>Try the 30-button C/G Anglo Concertina, which plays different notes on the push and draw of the bellows.</p><p style="text-align:center"><a href="https://michaeleskin.com/tools/concertina/anglo-concertina.html" target="_blank" rel="noopener noreferrer">Anglo Concertina</a></p><hr><div class="about"><h3>About</h3><p>This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a></p><p>If you find it useful,<br>please consider a contribution via</p><p><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p></div><hr></div><footer><button id="closeHelp" class="standard">OK</button></footer></section></div><script>
+
+.overlay,.overlay * {
+    -webkit-user-select: auto;
+    user-select: auto;
+    -webkit-touch-callout: default;
+}
+
+.overlay button,.overlay select,.overlay input {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+</style>
+    </head>
+    <body>
+        <header>
+            <a class="tip standard" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a>
+            <h1>English Concertina</h1>
+            <button id="help" class="standard">Instructions</button>
+        </header>
+        <main>
+            <div id="instrument" aria-label="48-button English concertina" data-labels="notes" data-show-ranges="enabled">
+                <button id="settings" aria-label="Settings" title="Settings">i</button>
+            </div>
+            <div id="status" class="status" role="status" hidden>
+            </div>
+            <div class="mode-help" id="bellowsHelp">
+                Middle range · T/Y High · G/H Middle · B/N Low · Space cycles ranges
+            </div>
+            <p class="footer">© 2026 Michael Eskin</p>
+        </main>
+        <div id="loadOverlay" class="overlay">
+            <section class="panel" role="dialog" aria-modal="true" aria-labelledby="loadTitle">
+                <h2 id="loadTitle">Loading Samples</h2>
+                <p>Preparing the concertina sounds.</p>
+                <progress id="progress" value="0" max="42">
+                </progress>
+                <p id="loadCount" role="status">0 of 42 samples</p>
+                <p id="loadError" role="alert"></p>
+                <button id="retry" class="standard" hidden>Retry</button>
+            </section>
+        </div>
+        <div id="enableOverlay" class="overlay" hidden>
+            <section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle">
+                <h2 id="enableTitle">🔊 Enable Playback</h2>
+                <p>Enable audio to play the concertina.</p>
+                <button id="enable" class="standard">Enable Playback</button>
+                <p id="enableError" role="alert"></p>
+            </section>
+        </div>
+        <div id="settingsOverlay" class="overlay" hidden>
+            <section class="panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+                <h2 id="settingsTitle">Settings</h2>
+                <div class="settings-grid">
+                    <label for="transpose">Transpose (semitones):</label>
+                    <select id="transpose">
+                    </select>
+                    <label for="volume">Volume:</label>
+                    <div class="sliderline">
+                        <input id="volume" type="range" min="0" max="100" value="75">
+                        <output id="volumeValue">75%</output>
+                    </div>
+                    <label for="reverb">Reverb:</label>
+                    <div class="sliderline">
+                        <input id="reverb" type="range" min="0" max="0.5" step="0.001" value="0.10">
+                        <output id="reverbValue">10%</output>
+                    </div>
+                    <label for="labels">Labels:</label>
+                    <select id="labels">
+                        <option value="off">Off</option>
+                        <option value="notes" selected>On</option>
+                    </select>
+                    <label for="showRanges">Show Ranges:</label>
+                    <select id="showRanges">
+                        <option value="enabled" selected>Enabled</option>
+                        <option value="disabled">Disabled</option>
+                    </select>
+                </div>
+                <footer>
+                    <button id="closeSettings" class="standard">Close</button>
+                </footer>
+            </section>
+        </div>
+        <div id="helpOverlay" class="overlay" hidden>
+            <section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+                <h2 id="helpTitle">Instructions</h2>
+                <p class="version">Version 1.0</p>
+                <div class="help-scroll">
+                    <h3>Overview</h3>
+                    <p><b>English Concertina</b> is a web-based port of Englitina XL for iOS, simulating a 48-button English concertina using the original sampled instrument sounds.</p>
+                    <p>Play using a computer keyboard, mouse, or touchscreen.</p>
+                    <hr>
+                    <h3>Computer Keyboard</h3>
+                    <p>Each hand uses four computer keys per row to match the four buttons in each instrument row.</p>
+                    <p>Low covers the lowest four rows, Middle covers the middle four rows, and High covers the highest four rows.</p>
+                    <p>The instrument starts in the Middle range each time it is opened.</p>
+                    <p>Select a range instantly using either hand:</p>
+                    <table class="keyboard-map" aria-label="Keyboard range selection">
+                        <thead>
+                            <tr>
+                                <th>Left hand</th>
+                                <th>Range</th>
+                                <th>Right hand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>T</b></td>
+                                <td>High</td>
+                                <td><b>Y</b></td>
+                            </tr>
+                            <tr>
+                                <td><b>G</b></td>
+                                <td>Middle</td>
+                                <td><b>H</b></td>
+                            </tr>
+                            <tr>
+                                <td><b>B</b></td>
+                                <td>Low</td>
+                                <td><b>N</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>Press Space to cycle from Low to Middle to High and back to Low.</p>
+                    <p>The selected range stays active until you select another range.</p>
+                    <p>The charts below show the fixed note assignments, regardless of the transposition setting.</p>
+                    <h3>Low range</h3>
+                    <table class="keyboard-map range-chart" aria-label="Low range keyboard fingering chart">
+                        <thead>
+                            <tr>
+                                <th colspan="4" scope="colgroup">Left hand</th>
+                                <th colspan="4" scope="colgroup">Right hand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>1</b>F♯5</td>
+                                <td><b>2</b>F5</td>
+                                <td><b>3</b>A5</td>
+                                <td><b>4</b>A♭5</td>
+                                <td><b>7</b>E♭5</td>
+                                <td><b>8</b>E5</td>
+                                <td><b>9</b>G5</td>
+                                <td><b>0</b>G♯5</td>
+                            </tr>
+                            <tr>
+                                <td><b>Q</b>B♭4</td>
+                                <td><b>W</b>B4</td>
+                                <td><b>E</b>D5</td>
+                                <td><b>R</b>D♯5</td>
+                                <td><b>U</b>A♭4</td>
+                                <td><b>I</b>A4</td>
+                                <td><b>O</b>C5</td>
+                                <td><b>P</b>C♯5</td>
+                            </tr>
+                            <tr>
+                                <td><b>A</b>E♭4</td>
+                                <td><b>S</b>E4</td>
+                                <td><b>D</b>G4</td>
+                                <td><b>F</b>G♯4</td>
+                                <td><b>J</b>D♯4</td>
+                                <td><b>K</b>D4</td>
+                                <td><b>L</b>F4</td>
+                                <td><b>;</b>F♯4</td>
+                            </tr>
+                            <tr>
+                                <td><b>Z</b>A♭3</td>
+                                <td><b>X</b>A3</td>
+                                <td><b>C</b>C4</td>
+                                <td><b>V</b>C♯4</td>
+                                <td><b>M</b>G♯3</td>
+                                <td><b>,</b>G3</td>
+                                <td><b>.</b>B3</td>
+                                <td><b>/</b>B♭3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>Middle range</h3>
+                    <table class="keyboard-map range-chart" aria-label="Middle range keyboard fingering chart">
+                        <thead>
+                            <tr>
+                                <th colspan="4" scope="colgroup">Left hand</th>
+                                <th colspan="4" scope="colgroup">Right hand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>1</b>C♯6</td>
+                                <td><b>2</b>C6</td>
+                                <td><b>3</b>E6</td>
+                                <td><b>4</b>E♭6</td>
+                                <td><b>7</b>B♭5</td>
+                                <td><b>8</b>B5</td>
+                                <td><b>9</b>D6</td>
+                                <td><b>0</b>E♭6</td>
+                            </tr>
+                            <tr>
+                                <td><b>Q</b>F♯5</td>
+                                <td><b>W</b>F5</td>
+                                <td><b>E</b>A5</td>
+                                <td><b>R</b>A♭5</td>
+                                <td><b>U</b>E♭5</td>
+                                <td><b>I</b>E5</td>
+                                <td><b>O</b>G5</td>
+                                <td><b>P</b>G♯5</td>
+                            </tr>
+                            <tr>
+                                <td><b>A</b>B♭4</td>
+                                <td><b>S</b>B4</td>
+                                <td><b>D</b>D5</td>
+                                <td><b>F</b>D♯5</td>
+                                <td><b>J</b>A♭4</td>
+                                <td><b>K</b>A4</td>
+                                <td><b>L</b>C5</td>
+                                <td><b>;</b>C♯5</td>
+                            </tr>
+                            <tr>
+                                <td><b>Z</b>E♭4</td>
+                                <td><b>X</b>E4</td>
+                                <td><b>C</b>G4</td>
+                                <td><b>V</b>G♯4</td>
+                                <td><b>M</b>D♯4</td>
+                                <td><b>,</b>D4</td>
+                                <td><b>.</b>F4</td>
+                                <td><b>/</b>F♯4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>High range</h3>
+                    <table class="keyboard-map range-chart" aria-label="High range keyboard fingering chart">
+                        <thead>
+                            <tr>
+                                <th colspan="4" scope="colgroup">Left hand</th>
+                                <th colspan="4" scope="colgroup">Right hand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>1</b>G♯6</td>
+                                <td><b>2</b>G6</td>
+                                <td><b>3</b>B6</td>
+                                <td><b>4</b>B♭6</td>
+                                <td><b>7</b>F♯6</td>
+                                <td><b>8</b>F6</td>
+                                <td><b>9</b>C7</td>
+                                <td><b>0</b>A6</td>
+                            </tr>
+                            <tr>
+                                <td><b>Q</b>C♯6</td>
+                                <td><b>W</b>C6</td>
+                                <td><b>E</b>E6</td>
+                                <td><b>R</b>E♭6</td>
+                                <td><b>U</b>B♭5</td>
+                                <td><b>I</b>B5</td>
+                                <td><b>O</b>D6</td>
+                                <td><b>P</b>E♭6</td>
+                            </tr>
+                            <tr>
+                                <td><b>A</b>F♯5</td>
+                                <td><b>S</b>F5</td>
+                                <td><b>D</b>A5</td>
+                                <td><b>F</b>A♭5</td>
+                                <td><b>J</b>E♭5</td>
+                                <td><b>K</b>E5</td>
+                                <td><b>L</b>G5</td>
+                                <td><b>;</b>G♯5</td>
+                            </tr>
+                            <tr>
+                                <td><b>Z</b>B♭4</td>
+                                <td><b>X</b>B4</td>
+                                <td><b>C</b>D5</td>
+                                <td><b>V</b>D♯5</td>
+                                <td><b>M</b>A♭4</td>
+                                <td><b>,</b>A4</td>
+                                <td><b>.</b>C5</td>
+                                <td><b>/</b>C♯5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>By default, buttons outside the selected computer keyboard range are dimmed, but remain playable by touch or mouse.</p>
+                    <p>Notes already sounding continue unchanged until their playing keys are released.</p>
+                    <p>All 48 buttons remain available to the mouse and touchscreen in every keyboard range.</p>
+                    <hr>
+                    <h3>Mouse and Touchscreen</h3>
+                    <p>Click and hold a button with the mouse or touch it with a finger to play a note.</p>
+                    <p>Slide between buttons without lifting your finger or releasing the mouse button to change notes.</p>
+                    <p>Moving off the buttons stops the note until you slide onto another button.</p>
+                    <p>On a touchscreen, use multiple fingers to play chords or slide between notes independently.</p>
+                    <hr>
+                    <h3>Keyboard Rollover and Polyphony</h3>
+                    <p>English Concertina can play multiple notes at once, but some computer keyboards cannot detect every combination of keys pressed together.</p>
+                    <p>For best results playing chords, use a keyboard with full N-key rollover (NKRO).</p>
+                    <hr>
+                    <h3>Settings</h3>
+                    <p>Click the information (i) button to adjust transposition, volume, reverb, and note labels.</p>
+                    <p>Transposition changes only the playback pitch; the original note labels and keyboard mappings remain unchanged.</p>
+                    <p>Set Show Ranges to Disabled to remove the range dimming, which may be useful when playing on a touchscreen.</p>
+                    <p>This setting affects only the visual appearance, not the keyboard range or the highlighting of sounding notes.</p>
+                    <p>All settings are saved automatically in your browser.</p>
+                    <hr>
+                    <h3>iOS and Android</h3>
+                    <p>All 48 buttons can be played directly on the touchscreen, without a physical keyboard.</p>
+                    <p>You can also use a physical keyboard connected to your device.</p>
+                    <p>On iPhone and iPad, tap Enable Playback after the samples have loaded.</p>
+                    <hr>
+                    <h3>Try the Anglo Concertina Version</h3>
+                    <p>Try the 30-button C/G Anglo Concertina, which plays different notes on the push and draw of the bellows.</p>
+                    <p style="text-align:center"><a href="https://michaeleskin.com/tools/concertina/anglo-concertina.html" target="_blank" rel="noopener noreferrer">Anglo Concertina</a></p>
+                    <hr>
+                    <div class="about">
+                        <h3>About</h3>
+                        <p>This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a></p>
+                        <p>If you find it useful,<br>please consider a contribution via</p>
+                        <p><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
+                    </div>
+                    <hr>
+                </div>
+                <footer>
+                    <button id="closeHelp" class="standard">OK</button>
+                </footer>
+            </section>
+        </div>
+        <script>
 'use strict';
-const notes=["Gs3", "A3", "C4", "Cs4", "Ds4", "E4", "G4", "Gs4", "As4", "B4", "D5", "Ds5", "Fs5", "F5", "A5", "Gs5", "Cs6", "C6", "E6", "Ds6", "Gs6", "G6", "B6", "As6", "Gs3", "G3", "B3", "As3", "Ds4", "D4", "F4", "Fs4", "Gs4", "A4", "C5", "Cs5", "Ds5", "E5", "G5", "Gs5", "As5", "B5", "D6", "Ds6", "Fs6", "F6", "C7", "A6"], coords=[[59.0, 550.0], [127.0, 591.0], [213.0, 602.0], [282.0, 641.0], [93.0, 491.0], [158.0, 534.0], [245.0, 544.0], [314.0, 585.0], [127.0, 432.0], [194.0, 474.0], [279.0, 485.0], [347.0, 525.0], [161.0, 377.0], [224.0, 416.0], [313.0, 425.0], [378.0, 468.0], [193.0, 321.0], [259.0, 359.0], [345.0, 368.0], [413.0, 406.0], [227.0, 263.0], [294.0, 303.0], [376.0, 310.0], [446.0, 352.0], [775.0, 699.0], [846.0, 659.0], [896.0, 591.0], [964.0, 550.0], [741.0, 642.0], [809.0, 600.0], [864.0, 534.0], [930.0, 491.0], [710.0, 585.0], [778.0, 544.0], [829.0, 474.0], [895.0, 432.0], [676.0, 525.0], [744.0, 484.0], [799.0, 417.0], [862.0, 375.0], [645.0, 467.0], [710.0, 425.0], [764.0, 360.0], [829.0, 322.0], [609.0, 406.0], [677.0, 369.0], [646.0, 311.0], [729.0, 303.0]];
-const rangeMaps=[{"KeyZ":0,"KeyX":1,"KeyC":2,"KeyV":3,"KeyA":4,"KeyS":5,"KeyD":6,"KeyF":7,"KeyQ":8,"KeyW":9,"KeyE":10,"KeyR":11,"Digit1":12,"Digit2":13,"Digit3":14,"Digit4":15,"KeyM":24,"Comma":25,"Period":26,"Slash":27,"KeyJ":28,"KeyK":29,"KeyL":30,"Semicolon":31,"KeyU":32,"KeyI":33,"KeyO":34,"KeyP":35,"Digit7":36,"Digit8":37,"Digit9":38,"Digit0":39},{"KeyZ":4,"KeyX":5,"KeyC":6,"KeyV":7,"KeyA":8,"KeyS":9,"KeyD":10,"KeyF":11,"KeyQ":12,"KeyW":13,"KeyE":14,"KeyR":15,"Digit1":16,"Digit2":17,"Digit3":18,"Digit4":19,"KeyM":28,"Comma":29,"Period":30,"Slash":31,"KeyJ":32,"KeyK":33,"KeyL":34,"Semicolon":35,"KeyU":36,"KeyI":37,"KeyO":38,"KeyP":39,"Digit7":40,"Digit8":41,"Digit9":42,"Digit0":43},{"KeyZ":8,"KeyX":9,"KeyC":10,"KeyV":11,"KeyA":12,"KeyS":13,"KeyD":14,"KeyF":15,"KeyQ":16,"KeyW":17,"KeyE":18,"KeyR":19,"Digit1":20,"Digit2":21,"Digit3":22,"Digit4":23,"KeyM":32,"Comma":33,"Period":34,"Slash":35,"KeyJ":36,"KeyK":37,"KeyL":38,"Semicolon":39,"KeyU":40,"KeyI":41,"KeyO":42,"KeyP":43,"Digit7":44,"Digit8":45,"Digit9":46,"Digit0":47}], rangeNames=["Low","Middle","High"], rangeSelectors={KeyB:0,KeyN:0,KeyG:1,KeyH:1,KeyT:2,KeyY:2}, sampleFiles={"A3": "english_A3.wav", "A4": "english_A4.wav", "A5": "english_A5.wav", "A6": "english_A6.wav", "As3": "english_As3.wav", "As4": "english_As4.wav", "As5": "english_As5.wav", "As6": "english_As6.wav", "B3": "english_B3.wav", "B4": "english_B4.wav", "B5": "english_B5.wav", "B6": "english_B6.wav", "C4": "english_C4.wav", "C5": "english_C5.wav", "C6": "english_C6.wav", "C7": "english_C7.wav", "Cs4": "english_Cs4.wav", "Cs5": "english_Cs5.wav", "Cs6": "english_Cs6.wav", "D4": "english_D4.wav", "D5": "english_D5.wav", "D6": "english_D6.wav", "Ds4": "english_Ds4.wav", "Ds5": "english_Ds5.wav", "Ds6": "english_Ds6.wav", "E4": "english_E4.wav", "E5": "english_E5.wav", "E6": "english_E6.wav", "F4": "english_F4.wav", "F5": "english_F5.wav", "F6": "english_F6.wav", "Fs4": "english_Fs4.wav", "Fs5": "english_Fs5.wav", "Fs6": "english_Fs6.wav", "G3": "english_G3.wav", "G4": "english_G4.wav", "G5": "english_G5.wav", "G6": "english_G6.wav", "Gs3": "english_Gs3.wav", "Gs4": "english_Gs4.wav", "Gs5": "english_Gs5.wav", "Gs6": "english_Gs6.wav"};
-const $=id=>document.getElementById(id), buttons=[],held=new Map(),voices=new Map(),buffers=new Map();
-const names=[...new Set(notes)], A='concertina_assets/', IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-let ctx,master,dry,wet,convolver,ready=false,loading=false,iosPending=IS_IOS,keyboardRange=1;
-const notePointers=new Set();
-for(let i=12;i>=-12;i--)$('transpose').add(new Option(i>0?'+'+i:String(i),i,i===0,i===0));
-try{const s=JSON.parse(localStorage.getItem('EnglishConcertina.settings.v1')||'{}');if(['off','notes'].includes(s.labels))$('labels').value=s.labels;if(['enabled','disabled'].includes(s.showRanges))$('showRanges').value=s.showRanges;if(Number.isInteger(s.transpose)&&Math.abs(s.transpose)<=12)$('transpose').value=s.transpose;if(Number.isFinite(s.volume)&&s.volume>=0&&s.volume<=100)$('volume').value=s.volume;if(Number.isFinite(s.reverb)&&s.reverb>=0&&s.reverb<=.5)$('reverb').value=s.reverb}catch(e){}
-function save(){try{localStorage.setItem('EnglishConcertina.settings.v1',JSON.stringify({labels:$('labels').value,showRanges:$('showRanges').value,transpose:+$('transpose').value,volume:+$('volume').value,reverb:+$('reverb').value}))}catch(e){}}
-function note(i){return notes[i]}
-function label(n){let m=n.match(/^([A-G])(s?)(\d)$/), names=['C','C♯','D','E♭','E','F','F♯','G','G♯','A','B♭','B'], v=12*(+m[3]+1)+({C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]])+(m[2]?1:0);return names[v%12]+(Math.floor(v/12)-1)}
-
-function render(){const labels=$('labels').value==='notes';const board=$('instrument');board.dataset.labels=labels?'notes':'off';board.dataset.showRanges=$('showRanges').value;const rangeButtons=new Set(Object.values(rangeMaps[keyboardRange]));buttons.forEach((b,i)=>{b.classList.toggle('active',[...held.values()].includes(i));b.classList.toggle('range-extra',rangeButtons.has(i));b.setAttribute('aria-label',label(note(i)))});$('volumeValue').textContent=$('volume').value+'%';$('reverbValue').textContent=Math.round(100*Number($('reverb').value))+'%';$('bellowsHelp').textContent=rangeNames[keyboardRange]+' range · T/Y High · G/H Middle · B/N Low · Space cycles ranges'}
-for(let i=0;i<48;i++){const b=document.createElement('button');b.className='note';b.style.left=coords[i][0]/1024*100+'%';b.style.top=coords[i][1]/768*100+'%';b.dataset.index=i;b.tabIndex=-1;$('instrument').append(b);buttons.push(b)}
-for(const f of ['english_skin.png','english_skin_info.png']){const im=new Image();im.src=A+f}
-function configureSession(){if(IS_IOS)try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}}
-function engine(){if(ctx)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Web Audio is not supported.');ctx=new C({latencyHint:'interactive'});master=ctx.createGain();master.gain.value=+$('volume').value/100*.42;dry=ctx.createGain();wet=ctx.createGain();convolver=ctx.createConvolver();const length=Math.round(ctx.sampleRate*1.65),ir=ctx.createBuffer(2,length,ctx.sampleRate);let seed=123456;for(let ch=0;ch<2;ch++){const data=ir.getChannelData(ch);for(let i=0;i<length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const t=i/ctx.sampleRate;data[i]=(seed/4294967296*2-1)*Math.exp(-4.8*t)*(1-Math.exp(-t*100))}}convolver.buffer=ir;dry.connect(master);convolver.connect(wet);wet.connect(master);applyReverb();master.connect(ctx.createDynamicsCompressor()).connect(ctx.destination);ctx.addEventListener('statechange',()=>{if(ctx.state!=='running')clear()})}
-function applyReverb(){if(!ctx)return;const amount=+$('reverb').value;dry.gain.setTargetAtTime(1-amount,ctx.currentTime,.012);wet.gain.setTargetAtTime(amount,ctx.currentTime,.012)}
-function blocked(){return !ready||iosPending||!$('settingsOverlay').hidden||!$('helpOverlay').hidden}
-function inert(on){document.querySelector('header').inert=on;document.querySelector('main').inert=on}
-async function preload(){if(loading)return;loading=true;ready=false;inert(true);$('loadOverlay').hidden=false;$('retry').hidden=true;$('loadError').textContent='';let done=buffers.size;$('progress').max=names.length;$('progress').value=done;$('loadCount').textContent=`${done} of ${names.length} samples`;try{engine();let queue=names.filter(n=>!buffers.has(n)),errors=[];await Promise.all(Array.from({length:6},async()=>{while(queue.length){const n=queue.shift();try{const res=await fetch(A+sampleFiles[n],{cache:'default'});if(!res.ok)throw Error(n+' ('+res.status+')');buffers.set(n,await ctx.decodeAudioData(await res.arrayBuffer()));$('progress').value=++done;$('loadCount').textContent=`${done} of ${names.length} samples`}catch(e){errors.push(e)}}}));if(errors.length)throw errors[0];ready=true;$('loadOverlay').hidden=true;$('enableOverlay').hidden=!iosPending;inert(iosPending);render()}catch(e){$('loadError').textContent='Unable to load samples: '+e.message+'. Open the tool from a web server and check the assets directory.';$('retry').hidden=false}finally{loading=false}}
-function resume(){configureSession();if(ctx.state==='running')return Promise.resolve();return ctx.resume()}
-$('enable').onclick=async()=>{$('enable').disabled=true;try{await resume();if(ctx.state!=='running')throw Error('Audio is not running.');iosPending=false;$('enableOverlay').hidden=true;inert(false)}catch(e){$('enableError').textContent=e.message}finally{$('enable').disabled=false}};
-$('retry').onclick=preload;
-function stop(i){const v=voices.get(i);if(!v)return;voices.delete(i);const t=ctx.currentTime;v.g.gain.cancelScheduledValues(t);v.g.gain.setTargetAtTime(0,t,.006);v.s.stop(t+.045)}
-function sync(){render();if(!ready||ctx.state!=='running')return;const active=new Set(held.values());for(const [i,v] of voices)if(!active.has(i)||v.n!==note(i))stop(i);for(const i of active)if(!voices.has(i)){const n=note(i),s=ctx.createBufferSource(),g=ctx.createGain();s.buffer=buffers.get(n);s.loop=true;s.playbackRate.value=2**(+$('transpose').value/12);g.gain.value=0;s.connect(g);g.connect(dry);g.connect(convolver);s.onended=()=>{s.disconnect();g.disconnect()};g.gain.setTargetAtTime(1,ctx.currentTime,.003);s.start();voices.set(i,{s,g,n})}}
-
-function clear(){held.clear();const captures=[...notePointers];notePointers.clear();for(const p of captures){if(instrument.hasPointerCapture(p))instrument.releasePointerCapture(p)}for(const i of [...voices.keys()])stop(i);render()}
-function start(id,i){if(blocked())return;$('status').hidden=true;held.set(id,i);resume().then(()=>sync()).catch(e=>{$('status').hidden=false;$('status').textContent=e.message;clear()});sync()}
-function end(id){held.delete(id);sync()}
-function openPanel(id){clear();$(id).hidden=false;inert(true);$(id).querySelector('button').focus()}
-function closePanel(id){$(id).hidden=true;inert(false);document.activeElement.blur()}
-$('settings').onclick=()=>openPanel('settingsOverlay');$('help').onclick=()=>openPanel('helpOverlay');$('closeSettings').onclick=()=>closePanel('settingsOverlay');$('closeHelp').onclick=()=>closePanel('helpOverlay');
-$('labels').onchange=$('showRanges').onchange=()=>{save();render()};$('transpose').onchange=()=>{save();for(const i of voices.keys())stop(i);sync()};$('volume').oninput=()=>{save();render();if(master)master.gain.setTargetAtTime(+$('volume').value/100*.42,ctx.currentTime,.015)};
-$('reverb').oninput=()=>{save();render();applyReverb()};
-function editing(e){return /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)||e.target.isContentEditable}
-function plain(e){return !editing(e)&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.isComposing}
+const notes = [
+    "Gs3", "A3", "C4", "Cs4", "Ds4", "E4", "G4", "Gs4", "As4", "B4", "D5", "Ds5", "Fs5", "F5", "A5", "Gs5", "Cs6", "C6", "E6", "Ds6", "Gs6", "G6", "B6", "As6", "Gs3", "G3", "B3", "As3", "Ds4", "D4", "F4", "Fs4", "Gs4", "A4", "C5", "Cs5", "Ds5", "E5", "G5", "Gs5", "As5", "B5", "D6", "Ds6", "Fs6", "F6", "C7", "A6"
+], coords = [
+    [
+        59.0, 550.0
+    ], [
+        127.0, 591.0
+    ], [
+        213.0, 602.0
+    ], [
+        282.0, 641.0
+    ], [
+        93.0, 491.0
+    ], [
+        158.0, 534.0
+    ], [
+        245.0, 544.0
+    ], [
+        314.0, 585.0
+    ], [
+        127.0, 432.0
+    ], [
+        194.0, 474.0
+    ], [
+        279.0, 485.0
+    ], [
+        347.0, 525.0
+    ], [
+        161.0, 377.0
+    ], [
+        224.0, 416.0
+    ], [
+        313.0, 425.0
+    ], [
+        378.0, 468.0
+    ], [
+        193.0, 321.0
+    ], [
+        259.0, 359.0
+    ], [
+        345.0, 368.0
+    ], [
+        413.0, 406.0
+    ], [
+        227.0, 263.0
+    ], [
+        294.0, 303.0
+    ], [
+        376.0, 310.0
+    ], [
+        446.0, 352.0
+    ], [
+        775.0, 699.0
+    ], [
+        846.0, 659.0
+    ], [
+        896.0, 591.0
+    ], [
+        964.0, 550.0
+    ], [
+        741.0, 642.0
+    ], [
+        809.0, 600.0
+    ], [
+        864.0, 534.0
+    ], [
+        930.0, 491.0
+    ], [
+        710.0, 585.0
+    ], [
+        778.0, 544.0
+    ], [
+        829.0, 474.0
+    ], [
+        895.0, 432.0
+    ], [
+        676.0, 525.0
+    ], [
+        744.0, 484.0
+    ], [
+        799.0, 417.0
+    ], [
+        862.0, 375.0
+    ], [
+        645.0, 467.0
+    ], [
+        710.0, 425.0
+    ], [
+        764.0, 360.0
+    ], [
+        829.0, 322.0
+    ], [
+        609.0, 406.0
+    ], [
+        677.0, 369.0
+    ], [
+        646.0, 311.0
+    ], [
+        729.0, 303.0
+    ]
+];
+const rangeMaps = [
+    {
+        "KeyZ": 0, "KeyX": 1, "KeyC": 2, "KeyV": 3, "KeyA": 4, "KeyS": 5, "KeyD": 6, "KeyF": 7, "KeyQ": 8, "KeyW": 9, "KeyE": 10, "KeyR": 11, "Digit1": 12, "Digit2": 13, "Digit3": 14, "Digit4": 15, "KeyM": 24, "Comma": 25, "Period": 26, "Slash": 27, "KeyJ": 28, "KeyK": 29, "KeyL": 30, "Semicolon": 31, "KeyU": 32, "KeyI": 33, "KeyO": 34, "KeyP": 35, "Digit7": 36, "Digit8": 37, "Digit9": 38, "Digit0": 39
+    }, {
+        "KeyZ": 4, "KeyX": 5, "KeyC": 6, "KeyV": 7, "KeyA": 8, "KeyS": 9, "KeyD": 10, "KeyF": 11, "KeyQ": 12, "KeyW": 13, "KeyE": 14, "KeyR": 15, "Digit1": 16, "Digit2": 17, "Digit3": 18, "Digit4": 19, "KeyM": 28, "Comma": 29, "Period": 30, "Slash": 31, "KeyJ": 32, "KeyK": 33, "KeyL": 34, "Semicolon": 35, "KeyU": 36, "KeyI": 37, "KeyO": 38, "KeyP": 39, "Digit7": 40, "Digit8": 41, "Digit9": 42, "Digit0": 43
+    }, {
+        "KeyZ": 8, "KeyX": 9, "KeyC": 10, "KeyV": 11, "KeyA": 12, "KeyS": 13, "KeyD": 14, "KeyF": 15, "KeyQ": 16, "KeyW": 17, "KeyE": 18, "KeyR": 19, "Digit1": 20, "Digit2": 21, "Digit3": 22, "Digit4": 23, "KeyM": 32, "Comma": 33, "Period": 34, "Slash": 35, "KeyJ": 36, "KeyK": 37, "KeyL": 38, "Semicolon": 39, "KeyU": 40, "KeyI": 41, "KeyO": 42, "KeyP": 43, "Digit7": 44, "Digit8": 45, "Digit9": 46, "Digit0": 47
+    }
+], rangeNames = [
+    "Low", "Middle", "High"
+], rangeSelectors = {
+    KeyB: 0, KeyN: 0, KeyG: 1, KeyH: 1, KeyT: 2, KeyY: 2
+}, sampleFiles = {
+    "A3": "english_A3.wav", "A4": "english_A4.wav", "A5": "english_A5.wav", "A6": "english_A6.wav", "As3": "english_As3.wav", "As4": "english_As4.wav", "As5": "english_As5.wav", "As6": "english_As6.wav", "B3": "english_B3.wav", "B4": "english_B4.wav", "B5": "english_B5.wav", "B6": "english_B6.wav", "C4": "english_C4.wav", "C5": "english_C5.wav", "C6": "english_C6.wav", "C7": "english_C7.wav", "Cs4": "english_Cs4.wav", "Cs5": "english_Cs5.wav", "Cs6": "english_Cs6.wav", "D4": "english_D4.wav", "D5": "english_D5.wav", "D6": "english_D6.wav", "Ds4": "english_Ds4.wav", "Ds5": "english_Ds5.wav", "Ds6": "english_Ds6.wav", "E4": "english_E4.wav", "E5": "english_E5.wav", "E6": "english_E6.wav", "F4": "english_F4.wav", "F5": "english_F5.wav", "F6": "english_F6.wav", "Fs4": "english_Fs4.wav", "Fs5": "english_Fs5.wav", "Fs6": "english_Fs6.wav", "G3": "english_G3.wav", "G4": "english_G4.wav", "G5": "english_G5.wav", "G6": "english_G6.wav", "Gs3": "english_Gs3.wav", "Gs4": "english_Gs4.wav", "Gs5": "english_Gs5.wav", "Gs6": "english_Gs6.wav"
+};
+const $ = id => document.getElementById(id), buttons = [], held = new Map(), voices = new Map(), buffers = new Map();
+const names = [
+    ...new Set(notes)
+], A = 'concertina_assets/', IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let ctx, master, dry, wet, convolver, ready = false, loading = false, iosPending = IS_IOS, keyboardRange = 1;
+const notePointers = new Set();
+for (let i = 12; i >= -12; i--)
+    $('transpose').add(new Option(i > 0 ? '+' + i : String(i), i, i === 0, i === 0));
+try {
+    const s = JSON.parse(localStorage.getItem('EnglishConcertina.settings.v1') || '{}');
+    if ([
+        'off', 'notes'
+    ].includes(s.labels))
+        $('labels').value = s.labels;
+    if ([
+        'enabled', 'disabled'
+    ].includes(s.showRanges))
+        $('showRanges').value = s.showRanges;
+    if (Number.isInteger(s.transpose) && Math.abs(s.transpose) <= 12)
+        $('transpose').value = s.transpose;
+    if (Number.isFinite(s.volume) && s.volume >= 0 && s.volume <= 100)
+        $('volume').value = s.volume;
+    if (Number.isFinite(s.reverb) && s.reverb >= 0 && s.reverb <= .5)
+        $('reverb').value = s.reverb;
+}
+catch (e) {
+}
+function save() {
+    try {
+        localStorage.setItem('EnglishConcertina.settings.v1', JSON.stringify({
+            labels: $('labels').value, showRanges: $('showRanges').value, transpose: +$('transpose').value, volume: +$('volume').value, reverb: +$('reverb').value
+        }));
+    }
+    catch (e) {
+    }
+}
+function note(i) {
+    return notes[i];
+}
+function label(n) {
+    let m = n.match(/^([A-G])(s?)(\d)$/), names = [
+        'C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'B♭', 'B'
+    ], v = 12 * (+m[3] + 1) + ({
+        C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11
+    }[m[1]]) + (m[2] ? 1 : 0);
+    return names[v % 12] + (Math.floor(v / 12) - 1);
+}
+function render() {
+    const labels = $('labels').value === 'notes';
+    const board = $('instrument');
+    board.dataset.labels = labels ? 'notes' : 'off';
+    board.dataset.showRanges = $('showRanges').value;
+    const rangeButtons = new Set(Object.values(rangeMaps[keyboardRange]));
+    buttons.forEach((b, i) => {
+        b.classList.toggle('active', [
+            ...held.values()
+        ].includes(i));
+        b.classList.toggle('range-extra', rangeButtons.has(i));
+        b.setAttribute('aria-label', label(note(i)));
+    });
+    $('volumeValue').textContent = $('volume').value + '%';
+    $('reverbValue').textContent = Math.round(100 * Number($('reverb').value)) + '%';
+    $('bellowsHelp').textContent = rangeNames[keyboardRange] + ' range · T/Y High · G/H Middle · B/N Low · Space cycles ranges';
+}
+for (let i = 0; i < 48; i++) {
+    const b = document.createElement('button');
+    b.className = 'note';
+    b.style.left = coords[i][0] / 1024 * 100 + '%';
+    b.style.top = coords[i][1] / 768 * 100 + '%';
+    b.dataset.index = i;
+    b.tabIndex = -1;
+    $('instrument').append(b);
+    buttons.push(b);
+}
+for (const f of [
+    'english_skin.png', 'english_skin_info.png'
+]) {
+    const im = new Image();
+    im.src = A + f;
+}
+function configureSession() {
+    if (IS_IOS)
+        try {
+            if (navigator.audioSession)
+                navigator.audioSession.type = 'playback';
+        }
+        catch (e) {
+        }
+}
+function engine() {
+    if (ctx)
+        return;
+    const C = window.AudioContext || window.webkitAudioContext;
+    if (!C)
+        throw Error('Web Audio is not supported.');
+    ctx = new C({
+        latencyHint: 'interactive'
+    });
+    master = ctx.createGain();
+    master.gain.value = +$('volume').value / 100 * .42;
+    dry = ctx.createGain();
+    wet = ctx.createGain();
+    convolver = ctx.createConvolver();
+    const length = Math.round(ctx.sampleRate * 1.65), ir = ctx.createBuffer(2, length, ctx.sampleRate);
+    let seed = 123456;
+    for (let ch = 0; ch < 2; ch++) {
+        const data = ir.getChannelData(ch);
+        for (let i = 0; i < length; i++) {
+            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+            const t = i / ctx.sampleRate;
+            data[i] = (seed / 4294967296 * 2 - 1) * Math.exp(-4.8 * t) * (1 - Math.exp(-t * 100));
+        }
+    }
+    convolver.buffer = ir;
+    dry.connect(master);
+    convolver.connect(wet);
+    wet.connect(master);
+    applyReverb();
+    master.connect(ctx.createDynamicsCompressor()).connect(ctx.destination);
+    ctx.addEventListener('statechange', () => {
+        if (ctx.state !== 'running')
+            clear();
+    });
+}
+function applyReverb() {
+    if (!ctx)
+        return;
+    const amount = +$('reverb').value;
+    dry.gain.setTargetAtTime(1 - amount, ctx.currentTime, .012);
+    wet.gain.setTargetAtTime(amount, ctx.currentTime, .012);
+}
+function blocked() {
+    return !ready || iosPending || !$('settingsOverlay').hidden || !$('helpOverlay').hidden;
+}
+function inert(on) {
+    document.querySelector('header').inert = on;
+    document.querySelector('main').inert = on;
+}
+async function preload() {
+    if (loading)
+        return;
+    loading = true;
+    ready = false;
+    inert(true);
+    $('loadOverlay').hidden = false;
+    $('retry').hidden = true;
+    $('loadError').textContent = '';
+    let done = buffers.size;
+    $('progress').max = names.length;
+    $('progress').value = done;
+    $('loadCount').textContent = `${done} of ${names.length} samples`;
+    try {
+        engine();
+        let queue = names.filter(n => !buffers.has(n)), errors = [];
+        await Promise.all(Array.from({
+            length: 6
+        }, async () => {
+            while (queue.length) {
+                const n = queue.shift();
+                try {
+                    const res = await fetch(A + sampleFiles[n], {
+                        cache: 'default'
+                    });
+                    if (!res.ok)
+                        throw Error(n + ' (' + res.status + ')');
+                    buffers.set(n, await ctx.decodeAudioData(await res.arrayBuffer()));
+                    $('progress').value = ++done;
+                    $('loadCount').textContent = `${done} of ${names.length} samples`;
+                }
+                catch (e) {
+                    errors.push(e);
+                }
+            }
+        }));
+        if (errors.length)
+            throw errors[0];
+        ready = true;
+        $('loadOverlay').hidden = true;
+        $('enableOverlay').hidden = !iosPending;
+        inert(iosPending);
+        render();
+    }
+    catch (e) {
+        $('loadError').textContent = 'Unable to load samples: ' + e.message + '. Open the tool from a web server and check the assets directory.';
+        $('retry').hidden = false;
+    }
+    finally {
+        loading = false;
+    }
+}
+function resume() {
+    configureSession();
+    if (ctx.state === 'running')
+        return Promise.resolve();
+    return ctx.resume();
+}
+$('enable').onclick = async () => {
+    $('enable').disabled = true;
+    try {
+        await resume();
+        if (ctx.state !== 'running')
+            throw Error('Audio is not running.');
+        iosPending = false;
+        $('enableOverlay').hidden = true;
+        inert(false);
+    }
+    catch (e) {
+        $('enableError').textContent = e.message;
+    }
+    finally {
+        $('enable').disabled = false;
+    }
+};
+$('retry').onclick = preload;
+function stop(i) {
+    const v = voices.get(i);
+    if (!v)
+        return;
+    voices.delete(i);
+    const t = ctx.currentTime;
+    v.g.gain.cancelScheduledValues(t);
+    v.g.gain.setTargetAtTime(0, t, .006);
+    v.s.stop(t + .045);
+}
+function sync() {
+    render();
+    if (!ready || ctx.state !== 'running')
+        return;
+    const active = new Set(held.values());
+    for (const [i, v] of voices)
+        if (!active.has(i) || v.n !== note(i))
+            stop(i);
+    for (const i of active)
+        if (!voices.has(i)) {
+            const n = note(i), s = ctx.createBufferSource(), g = ctx.createGain();
+            s.buffer = buffers.get(n);
+            s.loop = true;
+            s.playbackRate.value = 2 ** (+$('transpose').value / 12);
+            g.gain.value = 0;
+            s.connect(g);
+            g.connect(dry);
+            g.connect(convolver);
+            s.onended = () => {
+                s.disconnect();
+                g.disconnect();
+            };
+            g.gain.setTargetAtTime(1, ctx.currentTime, .003);
+            s.start();
+            voices.set(i, {
+                s, g, n
+            });
+        }
+}
+function clear() {
+    held.clear();
+    const captures = [
+        ...notePointers
+    ];
+    notePointers.clear();
+    for (const p of captures) {
+        if (instrument.hasPointerCapture(p))
+            instrument.releasePointerCapture(p);
+    }
+    for (const i of [
+        ...voices.keys()
+    ])
+        stop(i);
+    render();
+}
+function start(id, i) {
+    if (blocked())
+        return;
+    $('status').hidden = true;
+    held.set(id, i);
+    resume().then(() => sync()).catch(e => {
+        $('status').hidden = false;
+        $('status').textContent = e.message;
+        clear();
+    });
+    sync();
+}
+function end(id) {
+    held.delete(id);
+    sync();
+}
+function openPanel(id) {
+    clear();
+    $(id).hidden = false;
+    inert(true);
+    $(id).querySelector('button').focus();
+}
+function closePanel(id) {
+    $(id).hidden = true;
+    inert(false);
+    document.activeElement.blur();
+}
+$('settings').onclick = () => openPanel('settingsOverlay');
+$('help').onclick = () => openPanel('helpOverlay');
+$('closeSettings').onclick = () => closePanel('settingsOverlay');
+$('closeHelp').onclick = () => closePanel('helpOverlay');
+$('labels').onchange = $('showRanges').onchange = () => {
+    save();
+    render();
+};
+$('transpose').onchange = () => {
+    save();
+    for (const i of voices.keys())
+        stop(i);
+    sync();
+};
+$('volume').oninput = () => {
+    save();
+    render();
+    if (master)
+        master.gain.setTargetAtTime(+$('volume').value / 100 * .42, ctx.currentTime, .015);
+};
+$('reverb').oninput = () => {
+    save();
+    render();
+    applyReverb();
+};
+function editing(e) {
+    return /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName) || e.target.isContentEditable;
+}
+function plain(e) {
+    return !editing(e) && !e.metaKey && !e.ctrlKey && !e.altKey && !e.isComposing;
+}
 // Prevent Firefox Quick Find and Quick Find (links only) for slash and quote,
 // even during loading, modal dialogs and auto-repeat. Preserve editable controls and browser shortcuts.
-function suppressQuickFind(e){if(plain(e)&&(e.code==='Slash'||e.code==='Quote'||e.key==='/'||e.key==='?'||e.key==="'"||e.key==='"')&&e.cancelable)e.preventDefault()}
-for(const type of ['keydown','keypress','keyup'])window.addEventListener(type,suppressQuickFind,{capture:true,passive:false});
-window.addEventListener('keydown',e=>{if(e.code==='Escape'){clear();if(!$('helpOverlay').hidden)closePanel('helpOverlay');else if(!$('settingsOverlay').hidden)closePanel('settingsOverlay');return}if(blocked()||!plain(e))return;const i=rangeMaps[keyboardRange][e.code],selected=rangeSelectors[e.code];if(i===undefined&&selected===undefined&&e.code!=='Space')return;e.preventDefault();if(e.repeat)return;if(document.activeElement instanceof HTMLButtonElement)document.activeElement.blur();if(e.code==='Space'){keyboardRange=(keyboardRange+1)%rangeMaps.length;render()}else if(selected!==undefined){keyboardRange=selected;render()}else if(!held.has(e.code))start(e.code,i)},true);
-window.addEventListener('keyup',e=>{if(held.has(e.code)){e.preventDefault();end(e.code)}},true);
-const instrument=$('instrument');
-// Track each mouse, touch or pen pointer independently, including while sliding.
-function pointerNote(e){const hit=document.elementFromPoint(e.clientX,e.clientY);const b=hit&&hit.closest('.note');return b&&instrument.contains(b)?+b.dataset.index:null}
-function releasePointer(e){if(notePointers.delete(e.pointerId))end('pointer:'+e.pointerId)}
-instrument.addEventListener('pointerdown',e=>{
-    if(blocked()||e.button!==0||e.target.closest('#settings'))return;
-    const i=pointerNote(e);if(i===null)return;
-    e.preventDefault();instrument.setPointerCapture(e.pointerId);
-    notePointers.add(e.pointerId);start('pointer:'+e.pointerId,i);
-});
-instrument.addEventListener('pointermove',e=>{
-    if(!notePointers.has(e.pointerId))return;
-    if(e.pointerType==='mouse'&&!(e.buttons&1)){releasePointer(e);return}
+function suppressQuickFind(e) {
+    if (plain(e) && (e.code === 'Slash' || e.code === 'Quote' || e.key === '/' || e.key === '?' || e.key === "'" || e.key === '"') && e.cancelable)
+        e.preventDefault();
+}
+for (const type of [
+    'keydown', 'keypress', 'keyup'
+])
+    window.addEventListener(type, suppressQuickFind, {
+        capture: true, passive: false
+    });
+window.addEventListener('keydown', e => {
+    if (e.code === 'Escape') {
+        clear();
+        if (!$('helpOverlay').hidden)
+            closePanel('helpOverlay');
+        else if (!$('settingsOverlay').hidden)
+            closePanel('settingsOverlay');
+        return;
+    }
+    if (blocked() || !plain(e))
+        return;
+    const i = rangeMaps[keyboardRange][e.code], selected = rangeSelectors[e.code];
+    if (i === undefined && selected === undefined && e.code !== 'Space')
+        return;
     e.preventDefault();
-    const id='pointer:'+e.pointerId,i=pointerNote(e);
-    if(i===null){if(held.has(id))end(id)}
-    else if(held.get(id)!==i)start(id,i);
+    if (e.repeat)
+        return;
+    if (document.activeElement instanceof HTMLButtonElement)
+        document.activeElement.blur();
+    if (e.code === 'Space') {
+        keyboardRange = (keyboardRange + 1) % rangeMaps.length;
+        render();
+    }
+    else if (selected !== undefined) {
+        keyboardRange = selected;
+        render();
+    }
+    else if (!held.has(e.code))
+        start(e.code, i);
+}, true);
+window.addEventListener('keyup', e => {
+    if (held.has(e.code)) {
+        e.preventDefault();
+        end(e.code);
+    }
+}, true);
+const instrument = $('instrument');
+// Track each mouse, touch or pen pointer independently, including while sliding.
+function pointerNote(e) {
+    const hit = document.elementFromPoint(e.clientX, e.clientY);
+    const b = hit && hit.closest('.note');
+    return b && instrument.contains(b) ? +b.dataset.index : null;
+}
+function releasePointer(e) {
+    if (notePointers.delete(e.pointerId))
+        end('pointer:' + e.pointerId);
+}
+instrument.addEventListener('pointerdown', e => {
+    if (blocked() || e.button !== 0 || e.target.closest('#settings'))
+        return;
+    const i = pointerNote(e);
+    if (i === null)
+        return;
+    e.preventDefault();
+    instrument.setPointerCapture(e.pointerId);
+    notePointers.add(e.pointerId);
+    start('pointer:' + e.pointerId, i);
 });
-for(const event of ['pointerup','pointercancel','lostpointercapture'])instrument.addEventListener(event,releasePointer);
+instrument.addEventListener('pointermove', e => {
+    if (!notePointers.has(e.pointerId))
+        return;
+    if (e.pointerType === 'mouse' && !(e.buttons & 1)) {
+        releasePointer(e);
+        return;
+    }
+    e.preventDefault();
+    const id = 'pointer:' + e.pointerId, i = pointerNote(e);
+    if (i === null) {
+        if (held.has(id))
+            end(id);
+    }
+    else if (held.get(id) !== i)
+        start(id, i);
+});
+for (const event of [
+    'pointerup', 'pointercancel', 'lostpointercapture'
+])
+    instrument.addEventListener(event, releasePointer);
 // Suppress native selection and callouts across the main screen, including header links.
 // Leave modal content, scrolling and native settings controls unaffected.
-for(const type of ['contextmenu','selectstart','dragstart'])document.addEventListener(type,e=>{
-    if(e.target instanceof Element && e.target.closest('.overlay'))return;
-    if(e.cancelable)e.preventDefault();
-},true);
-
+for (const type of [
+    'contextmenu', 'selectstart', 'dragstart'
+])
+    document.addEventListener(type, e => {
+        if (e.target instanceof Element && e.target.closest('.overlay'))
+            return;
+        if (e.cancelable)
+            e.preventDefault();
+    }, true);
 // iPad Safari can still recognize native pinch gestures across multiple elements.
 // Cancel them explicitly, without interfering with single taps or modal controls.
-function onPlayingScreen(e){
+function onPlayingScreen(e) {
     return !(e.target instanceof Element && e.target.closest('.overlay')) &&
         $('loadOverlay').hidden && $('enableOverlay').hidden &&
         $('settingsOverlay').hidden && $('helpOverlay').hidden;
 }
-function preventNativeGesture(e){
-    if(onPlayingScreen(e)&&e.cancelable)e.preventDefault();
+function preventNativeGesture(e) {
+    if (onPlayingScreen(e) && e.cancelable)
+        e.preventDefault();
 }
-for(const type of ['gesturestart','gesturechange','gestureend'])
-    document.addEventListener(type,preventNativeGesture,{capture:true,passive:false});
+for (const type of [
+    'gesturestart', 'gesturechange', 'gestureend'
+])
+    document.addEventListener(type, preventNativeGesture, {
+        capture: true, passive: false
+    });
 // Safari's Touch Events can trigger native magnification even when Pointer
 // Events are captured. Cancel native touch gestures on the performance surface.
 // Pointer Events still drive the notes; allow ordinary single taps
 // on the three actual UI controls (Donate, Instructions and Settings).
-function preventPlayingTouch(e){
-    if(!onPlayingScreen(e)||!e.cancelable)return;
-    const control=e.target instanceof Element && e.target.closest('header a,header button,#settings');
-    if(e.type==='touchstart'&&e.touches.length===1&&control)return;
+function preventPlayingTouch(e) {
+    if (!onPlayingScreen(e) || !e.cancelable)
+        return;
+    const control = e.target instanceof Element && e.target.closest('header a,header button,#settings');
+    if (e.type === 'touchstart' && e.touches.length === 1 && control)
+        return;
     e.preventDefault();
 }
-for(const type of ['touchstart','touchmove'])
-    document.addEventListener(type,preventPlayingTouch,{capture:true,passive:false});
-
-window.addEventListener('blur',clear);document.addEventListener('visibilitychange',()=>{if(document.hidden)clear()});window.addEventListener('pagehide',clear);configureSession();render();preload();
-</script></body></html>
+for (const type of [
+    'touchstart', 'touchmove'
+])
+    document.addEventListener(type, preventPlayingTouch, {
+        capture: true, passive: false
+    });
+window.addEventListener('blur', clear);
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden)
+        clear();
+});
+window.addEventListener('pagehide', clear);
+configureSession();
+render();
+preload();
+</script>
+    </body>
+</html>
