@@ -112,7 +112,10 @@ main{flex:1;min-height:0;padding:8px;justify-content:center}#instrument{position
 #settingsOverlay .panel footer{margin-top:26px}
 @media(max-height:420px){#settingsOverlay .settings-grid{row-gap:11px}#settingsOverlay .panel h2{margin-bottom:11px}#settingsOverlay .panel footer{margin-top:18px}}
 #settingsOverlay .settings-grid>label{white-space:nowrap}
-#settingsOverlay select{min-width:0;width:100%}
+/* Use a consistent closed select appearance while retaining the native option picker. */
+#settingsOverlay select{-webkit-appearance:none;-moz-appearance:none;appearance:none;font:inherit;color:inherit;background:#3b3329 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%23f5ecdc' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center/14px 14px;border:1px solid #8a7659;border-radius:6px;padding:9px 36px 9px 14px;min-width:0;width:100%;min-height:40px;box-shadow:none;cursor:pointer}
+#settingsOverlay select:focus{outline:3px solid #e8ca86;outline-offset:2px}
+@media(max-height:420px){#settingsOverlay select{min-height:34px;padding-top:6px;padding-bottom:6px}}
 @media(max-width:420px){#settingsOverlay .settings-grid{font-size:13px;column-gap:8px}#settingsOverlay .panel{padding:12px}#settingsOverlay .sliderline{gap:4px}#settingsOverlay .sliderline output{min-width:30px}}
 /* Bellows labels centered in the original colored indicator areas. */
 #instrument{container-type:inline-size}
