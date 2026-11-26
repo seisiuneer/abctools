@@ -37,6 +37,10 @@
 #helpOverlay .help-scroll .about{text-align:center}
 #helpOverlay .panel footer{margin-top:12px;flex-wrap:wrap}
 @media(max-height:420px),(max-width:550px){#helpOverlay .panel{padding:10px}#helpOverlay .panel h2{font-size:19px}#helpOverlay .panel .version{margin-bottom:6px}#helpOverlay .panel footer{margin-top:6px}#helpOverlay .panel footer button{padding:5px 10px}}
+/* Give phone users more reading room in portrait; retain the board-height cap elsewhere. */
+@media(max-width:550px) and (orientation:portrait){
+  #helpOverlay .panel{max-height:78vh;max-height:min(78dvh,calc(100dvh - 24px))}
+}
 /* Spacious Start Over dialog, with compact spacing on short screens. */
 #restartOverlay .panel{position:relative;width:min(600px,100%);padding:30px 28px}
 #restartOverlay .restart-heading{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:4px;margin-bottom:22px}
