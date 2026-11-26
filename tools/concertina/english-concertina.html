@@ -712,17 +712,24 @@ main {
 
 #settings {
     position: absolute;
-    left: 48%;
-    top: 89%;
-    width: 4%;
-    min-width: 22px;
-    aspect-ratio: 1;
+    left: 50%;
+    top: 94.1%;
+    transform: translate(-50%, -50%);
+    -webkit-appearance: none;
+    appearance: none;
+    width: max(26px, 4.8%);
+    height: max(26px, 6.4%);
+    min-width: 0;
+    min-height: 0;
     background: #29251f;
     border: 1px solid #b89a68;
     border-radius: 50%;
     padding: 0;
     color: #e4be75;
-    font: bold 20px Georgia,serif;
+    font: bold 20px/1 Georgia, serif;
+    font-size: max(18px, 3.1cqw);
+    display: grid;
+    place-items: center;
 }
 
 #loadOverlay {
