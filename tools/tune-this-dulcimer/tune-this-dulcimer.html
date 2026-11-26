@@ -1085,7 +1085,7 @@ main[data-festival="on"] #stage {
                     <hr>
                     <h3>Tuning the Dulcimer</h3>
                     <p>Tap or click the note you want to tune.</p>
-                    <p>The selected note is marked <b class="red">Red</b> when out of tune or <b class="green">Green</b> when in tune.</p>
+                    <p>The selected note is highlighted in <b class="red">Red</b> when out of tune or in <b class="green">Green</b> when in tune.</p>
                     <p>Use the <b>Tune Up</b> or <b>Tune Down</b> arrows to bring the selected note into tune.</p>
                     <p>Compare notes by ear using the dulcimer's repeated pitches and musical intervals.</p>
                     <p><b>Left to Tune</b> shows how many notes are still out of tune.</p>
@@ -1093,9 +1093,10 @@ main[data-festival="on"] #stage {
                     <p>Use the sound icon to stop all sounds.</p>
                     <hr>
                     <h3>Best Times</h3>
-                    <p>Your best time for the current level appears below the timer once you complete a game at that level.</p>
-                    <p>Each difficulty level has its own best time, which is preserved when you switch levels.</p>
-                    <p>Use <b>Reset Best Time for This Level</b> in the startup or <b>Start Over</b> dialog to reset the selected level's best time after confirmation.</p>
+                    <p>Your best time for the current level appears below the timer once you complete a game at that level, except in <b>Random</b> mode.</p>
+                    <p>Each difficulty level except <b>Random</b> has its own best time, which is preserved when you switch levels.</p>
+                    <p>Use <b>Reset Best Time for This Level</b> in the startup or <b>Start Over</b> dialog to reset the selected level's best time after confirmation when available.</p>
+                    <p><b>Random</b> mode does not track best times because the number of detuned strings varies from game to game.</p>
                     <p>Your selected difficulty and best times are saved in your browser.</p>
                     <hr>
                     <h3>Phones and Tablets</h3>
@@ -1321,7 +1322,7 @@ let ctx,
     acceptAction = null,
     cancelAction = null;
 const difficulties = ['Spot Tuning', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Outdoor Festival', 'Random'];
-const bestTimes = { 'Spot Tuning': null, 'Very Easy': null, Easy: null, Medium: null, Hard: null, 'Outdoor Festival': null, Random: null };
+const bestTimes = { 'Spot Tuning': null, 'Very Easy': null, Easy: null, Medium: null, Hard: null, 'Outdoor Festival': null };
 // Festival scheduling uses active game time, not wall-clock time.
 const festivalEvents = [
     "The sun came out from behind a cloud. There goes another string!",
@@ -1481,7 +1482,7 @@ try {
     const s = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (s && difficulties.includes(s.difficulty)) {
         difficulty = s.difficulty;
-        for (const d of difficulties) {
+        for (const d of Object.keys(bestTimes)) {
             const v = s.bestTimes?.[d];
             if (Number.isFinite(v) && v >= 0)
                 bestTimes[d] = Math.floor(v);
@@ -1530,7 +1531,7 @@ for (let i = 0; i < 44; i++) {
         select(i); });
 }
 
-function render(updateClock = true) { $('remaining').textContent = remaining(); const best = bestTimes[difficulty]; $('modeLabel').textContent = (difficulty === 'Spot Tuning' ? 'Spot' : difficulty === 'Outdoor Festival' ? 'Festival' : difficulty); $('bestBlock').hidden = best === null; $('best').textContent = best === null ? '—' : formatTime(best); $('up').disabled = $('down').disabled = last < 0 || finished; const mark = $('strike'); mark.hidden = last < 0; if (last >= 0) {
+function render(updateClock = true) { $('remaining').textContent = remaining(); const best = bestTimes[difficulty] ?? null; $('modeLabel').textContent = (difficulty === 'Spot Tuning' ? 'Spot' : difficulty === 'Outdoor Festival' ? 'Festival' : difficulty); $('bestBlock').hidden = best === null; $('best').textContent = best === null ? '—' : formatTime(best); $('up').disabled = $('down').disabled = last < 0 || finished; const mark = $('strike'); mark.hidden = last < 0; if (last >= 0) {
     setRect(mark, strikes[last]);
     mark.style.backgroundImage = 'url(resources/' + (inTune(last) ? 'good' : 'bad') + '.png)';
     mark.style.opacity = inTune(last) ? '.5' : '.6';
@@ -1689,7 +1690,7 @@ $('cancelMessage').onclick = () => dismiss(false);
 
 function newGame(next = difficulty) { stopAll(); difficulty = next; randomize(); launchPending = false; $('restartOverlay').hidden = true; setInert(false); document.activeElement.blur(); render(); save(); }
 
-function refreshRestart() { const d = $('difficultyChoice').value; const text = { 'Spot Tuning': '3 strings of 44 will be out of tune.', 'Very Easy': '6 strings of 44 will be out of tune.', Easy: '11 strings of 44 will be out of tune.', Medium: '22 strings of 44 will be out of tune.', Hard: '44 strings of 44 will be out of tune.', 'Outdoor Festival': '6 strings of 44 will be out of tune initially,\nwith unexpected detuning events during the game.', Random: '1–44 strings of 44 will be out of tune.' }; $('difficultyDetail').textContent = text[d]; const best = bestTimes[d]; $('selectedBest').hidden = best === null; $('selectedBest').textContent = best === null ? '' : 'Best time for ' + d + ': ' + formatTime(best); $('resetBest').disabled = best === null; }
+function refreshRestart() { const d = $('difficultyChoice').value; const text = { 'Spot Tuning': '3 strings of 44 will be out of tune.', 'Very Easy': '6 strings of 44 will be out of tune.', Easy: '11 strings of 44 will be out of tune.', Medium: '22 strings of 44 will be out of tune.', Hard: '44 strings of 44 will be out of tune.', 'Outdoor Festival': '6 strings of 44 will be out of tune initially,\nwith unexpected detuning events during the game.', Random: '1–44 strings of 44 will be out of tune.' }; $('difficultyDetail').textContent = text[d]; const best = bestTimes[d] ?? null; $('resetBest').hidden = d === 'Random'; $('selectedBest').hidden = best === null; $('selectedBest').textContent = best === null ? '' : 'Best time for ' + d + ': ' + formatTime(best); $('resetBest').disabled = best === null; }
 
 function openRestart() { stopAll(); $('restartTitle').textContent = launchPending ? "Let's Get in Tune!" : 'Start Over'; $('restartIntro').textContent = launchPending ? 'Choose your challenge and see how quickly you can tune all 44 strings.' : 'Choose a difficulty level for your next game.'; $('confirmRestart').textContent = launchPending ? 'Start Tuning' : 'Start Over'; $('difficultyChoice').value = difficulty; $('cancelRestart').hidden = launchPending || finished; $('resetBest').hidden = false; refreshRestart(); $('restartOverlay').hidden = false; setInert(true); clock(); $('restartTitle').focus({ preventScroll: true }); }
 
@@ -1700,7 +1701,7 @@ function restartConfirmation(title, text, action) { $('restartOverlay').inert = 
 $('difficultyChoice').onchange = refreshRestart;
 $('cancelRestart').onclick = closeRestart;
 $('confirmRestart').onclick = () => newGame($('difficultyChoice').value);
-$('resetBest').onclick = () => { const d = $('difficultyChoice').value; if (bestTimes[d] === null)
+$('resetBest').onclick = () => { const d = $('difficultyChoice').value; if (d === 'Random' || bestTimes[d] === null)
     return; restartConfirmation('Reset Best Time?', 'Reset the best time for ' + d + '?', () => { bestTimes[d] = null; refreshRestart(); render(); save(); $('restartTitle').focus({ preventScroll: true }); }); };
 
 function adjust(delta) { if (blocked() || last < 0 || finished)
@@ -1715,7 +1716,7 @@ function adjust(delta) { if (blocked() || last < 0 || finished)
     finished = true;
     stopAll();
     clock();
-    const old = bestTimes[difficulty], newBest = old === null || Math.floor(elapsed) < old;
+    const old = bestTimes[difficulty], newBest = difficulty !== 'Random' && (old === null || Math.floor(elapsed) < old);
     if (newBest)
         bestTimes[difficulty] = Math.floor(elapsed);
     render();
