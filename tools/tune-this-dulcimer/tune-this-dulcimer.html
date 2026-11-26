@@ -47,12 +47,16 @@
 #restartOverlay .restart-heading h2{grid-column:2}
 #restartOverlay .panel p{margin-bottom:22px}
 #restartOverlay .difficulty-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:22px 0}
-#difficultyChoice{font:inherit;color:inherit;background:#3b3329;border:1px solid #8a7659;border-radius:6px;padding:9px 14px;min-width:150px;max-width:100%}
+/* Use a consistent closed select appearance while retaining the native option picker. */
+#difficultyChoice{-webkit-appearance:none;-moz-appearance:none;appearance:none;font:inherit;color:inherit;background:#3b3329 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%23f5ecdc' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center/14px 14px;border:1px solid #8a7659;border-radius:6px;padding:9px 36px 9px 14px;min-width:150px;max-width:100%;min-height:40px;box-shadow:none;cursor:pointer}
+#difficultyChoice:focus{outline:none}
+#difficultyChoice:focus-visible{outline:2px solid #e8ca86;outline-offset:2px}
+#difficultyChoice option{background:#3b3329;color:#f5ecdc}
 #difficultyDetail{color:#dacdb8;font-size:18px}
 #selectedBest{font-size:18px}
 #restartOverlay .panel footer{flex-wrap:wrap;margin-top:26px}
 @media(max-width:420px){#restartOverlay .panel{padding:22px 14px}}
-@media(max-height:480px){#restartOverlay .panel{padding:14px}#restartOverlay .restart-heading,#restartOverlay .panel p{margin-bottom:10px}#restartOverlay .difficulty-row{margin:10px 0}#difficultyDetail,#selectedBest{font-size:16px}#restartOverlay .panel footer{margin-top:14px}#difficultyChoice{padding:6px 12px}}
+@media(max-height:480px){#restartOverlay .panel{padding:14px}#restartOverlay .restart-heading,#restartOverlay .panel p{margin-bottom:10px}#restartOverlay .difficulty-row{margin:10px 0}#difficultyDetail,#selectedBest{font-size:16px}#restartOverlay .panel footer{margin-top:14px}#difficultyChoice{padding:6px 36px 6px 12px;min-height:34px}}
 #messageOverlay{z-index:15}
 #messageText{white-space:pre-line}
 #messageTitle:focus{outline:none}
@@ -145,7 +149,7 @@ $('difficultyChoice').onchange=refreshRestart;
 $('cancelRestart').onclick=closeRestart;
 $('confirmRestart').onclick=()=>newGame($('difficultyChoice').value);
 $('resetBest').onclick=()=>{const d=$('difficultyChoice').value;if(bestTimes[d]===null)return;restartConfirmation('Reset Best Time?','Reset the best time for '+d+'?',()=>{bestTimes[d]=null;refreshRestart();render();save();$('difficultyChoice').focus()})};
-function adjust(delta){if(blocked()||last<0||finished)return;pitch[last]=Math.max(900,pitch[last]+delta);if(pitch[last]>=1034){finished=true;stopAll();render();play('effect','string_break',1,1,.03);message('You Broke the String!','You need more practice tuning!','Start Over',openRestart);return}render();if(remaining()===0){finished=true;stopAll();clock();const old=bestTimes[difficulty],newBest=old===null||Math.floor(elapsed)<old;if(newBest)bestTimes[difficulty]=Math.floor(elapsed);render();play('effect',newBest?'fanfare2':'fanfare',1,1,.03);message(newBest?'New Best Time!':'You are a Hammered Dulcimer Tuning Master!','Your dulcimer is now in tune!\nYour time was '+formatTime(elapsed)+(newBest&&old!==null?'\nYou beat your previous best by '+formatTime(old-bestTimes[difficulty]):''),'Play Again',openRestart);save()}else pluck(last)}
+function adjust(delta){if(blocked()||last<0||finished)return;pitch[last]=Math.max(900,pitch[last]+delta);if(pitch[last]>=1034){finished=true;stopAll();render();play('effect','string_break',1,1,.03);message('You Broke the String!','You need more practice tuning!','Start Over',openRestart);return}render();if(remaining()===0){finished=true;stopAll();clock();const old=bestTimes[difficulty],newBest=old===null||Math.floor(elapsed)<old;if(newBest)bestTimes[difficulty]=Math.floor(elapsed);render();play('effect',newBest?'fanfare2':'fanfare',1,1,.03);message(newBest?'New Best Time!':'You are a Hammered Dulcimer Tuning Master!','Your dulcimer is now in tune!\nYour time was '+formatTime(elapsed)+'.'+(newBest&&old!==null?'\nYou beat your previous best by '+formatTime(old-bestTimes[difficulty])+'.':''),'Play Again',openRestart);save()}else pluck(last)}
 function tuneClick(button,delta){if(blocked()||last<0||finished)return;button.classList.remove('tune-flash');void button.offsetWidth;button.classList.add('tune-flash');adjust(delta)}
 $('up').onclick=()=>tuneClick($('up'),1);$('down').onclick=()=>tuneClick($('down'),-1);$('quiet').onclick=stopAll;$('help').onclick=openHelp;$('restartHelp').onclick=openHelp;$('closeHelp').onclick=closeHelp;$('restart').onclick=openRestart;
 function hit(e){const el=document.elementFromPoint(e.clientX,e.clientY)?.closest('.string');return el&&board.contains(el)?Number(el.dataset.index):-1}
