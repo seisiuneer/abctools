@@ -247,6 +247,24 @@ main {
     white-space: nowrap;
 }
 
+#modeLabel {
+    white-space: nowrap;
+}
+
+@media(max-width:550px) and (orientation:portrait) {
+    #modeLabel {
+        font-size: 12px;
+        grid-column: 3;
+        grid-row: 1;
+        align-self: start;
+    }
+    #controlPanel > div:has(#timeLabel) {
+        grid-column: 3;
+        grid-row: 1;
+        padding-top: 16px;
+    }
+}
+
 .tune {
     display: flex;
     justify-content: center;
@@ -872,7 +890,7 @@ header,main,#board,.string {
 
 #festivalBanner {
     display: none;
-    width: min(100%,680px);
+    width: min(100%,960px);
     height: 88px;
     flex: 0 0 88px;
     align-items: center;
@@ -907,6 +925,7 @@ main[data-festival="on"] #festivalBanner {
 
 #festivalEvent {
     display: block;
+    white-space: nowrap;
     font-weight: 600;
     color: #f5ecdc;
 }
@@ -951,6 +970,29 @@ main[data-festival="on"] #stage {
     }
 }
 
+/* Small decorative event illustrations, scaled to fit the banner. */
+#festivalNotice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+}
+.festival-art {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-size: clamp(20px, 4.5vw, 38px);
+    line-height: 1;
+    user-select: none;
+}
+#festivalArtLeft { transform: rotate(-10deg); }
+#festivalArtRight { transform: rotate(10deg); }
+@media(max-width:550px) {
+    #festivalNotice { gap: 4px; }
+    .festival-art { font-size: clamp(18px, 5vw, 27px); }
+}
+@media(orientation:landscape) and (max-height:550px) {
+    .festival-art { font-size: 26px; }
+}
+
 @media(prefers-reduced-motion:reduce) {
     #festivalNotice {
         transition: none;
@@ -967,8 +1009,12 @@ main[data-festival="on"] #stage {
         <main>
             <div id="festivalBanner" data-visible="false">
                 <div id="festivalNotice" role="status" aria-live="polite" aria-atomic="true">
-                    <span id="festivalEvent"></span>
-                    <span id="festivalResult"></span>
+                    <span id="festivalArtLeft" class="festival-art" aria-hidden="true"></span>
+                    <div>
+                        <span id="festivalEvent"></span>
+                        <span id="festivalResult"></span>
+                    </div>
+                    <span id="festivalArtRight" class="festival-art" aria-hidden="true"></span>
                 </div>
             </div>
             <div id="stage">
@@ -981,8 +1027,9 @@ main[data-festival="on"] #stage {
                     <div id="controlPanel">
                         <button id="restart">Start Over</button>
                         <div>Left to Tune<output id="remaining">44</output></div>
+                        <div id="modeLabel">Very Easy</div>
                         <div>
-                            <div id="timeLabel">Time · Very Easy</div>
+                            <div id="timeLabel">Time</div>
                             <output id="elapsed" class="timer">00:00</output>
                             <div id="bestBlock" hidden>Best: <output id="best">—</output></div>
                         </div>
@@ -1298,13 +1345,59 @@ const festivalEvents = [
     "“At least you’re nearly finished tuning!” Never say that.",
     "The organizer says you're on in five minutes. Naturally."
 ];
+// Illustrations keyed by message so the shuffled event always has matching artwork.
+const festivalArtwork = new Map([
+    ["The sun came out from behind a cloud. There goes another string!", ["🌤️", "☀️"]],
+    ["A lovely warm breeze. Lovely for everyone except your dulcimer.", ["🍃", "💨"]],
+    ["The sun went behind a cloud. Your dulcimer noticed.", ["☁️", "🌥️"]],
+    ["A tuning pin has decided to retire early.", ["🔩", "🏖️"]],
+    ["A curious spectator turned a tuning pin. How helpful!", ["👀", "🔧"]],
+    ["The temperature dropped. Apparently, so did one of your notes.", ["🌡️", "❄️"]],
+    ["The humidity changed. Your dulcimer is taking it personally.", ["💧", "😤"]],
+    ["Someone bumped your dulcimer stand. Thanks for that!", ["💥", "🪑"]],
+    ["Nobody touched it. It went out of tune. It's a hammered dulcimer.", ["🤷", "🎶"]],
+    ["A sudden gust of wind. Mother Nature is now assisting with the tuning.", ["🌬️", "🍃"]],
+    ["Someone moved the shade canopy. Your dulcimer preferred it where it was.", ["⛱️", "☀️"]],
+    ["A few drops of rain. Just enough to cause trouble.", ["🌧️", "💧"]],
+    ["A string has decided to explore an alternative tuning.", ["🎵", "🧭"]],
+    ["Your dulcimer has finally acclimated to yesterday's weather.", ["📅", "🌦️"]],
+    ["Someone asked how long tuning takes. A little longer now!", ["⏱️", "🙋"]],
+    ["A passing dog bumped your stand. At least the dog is having fun.", ["🐕", "🐾"]],
+    ["A tuning pin is experiencing a moment of indecision.", ["🔩", "❓"]],
+    ["The weather forecast said steady temperatures. Your dulcimer disagrees.", ["🌡️", "🤨"]],
+    ["“At least you’re nearly finished tuning!” Never say that.", ["🤫", "😬"]],
+    ["The organizer says you're on in five minutes. Naturally.", ["📣", "⏰"]]
+]);
 let nextFestivalAt = Infinity, festivalUntil = 0, festivalPool = [], lastFestivalEvent = null;
+
+// Keep the event message on one line, using the normal font size whenever possible.
+function fitFestivalEvent() {
+    const event = $('festivalEvent');
+    event.style.fontSize = '';
+    if (!event.textContent || !event.clientWidth)
+        return;
+    const baseSize = parseFloat(getComputedStyle(event).fontSize);
+    if (event.scrollWidth > event.clientWidth) {
+        event.style.fontSize = Math.floor(baseSize * event.clientWidth / event.scrollWidth * 100) / 100 + 'px';
+        // Account for rounding and differences in font metrics.
+        while (event.scrollWidth > event.clientWidth && parseFloat(event.style.fontSize) > 1)
+            event.style.fontSize = (parseFloat(event.style.fontSize) - 0.25) + 'px';
+    }
+}
+window.addEventListener('resize', fitFestivalEvent);
+if (typeof ResizeObserver !== 'undefined') {
+    const festivalResizeObserver = new ResizeObserver(fitFestivalEvent);
+    festivalResizeObserver.observe($('festivalEvent').parentElement);
+}
+
 
 function clearFestivalNotice(reset = false) {
     $('festivalBanner').dataset.visible = 'false';
     if (reset) {
         $('festivalEvent').textContent = '';
         $('festivalResult').textContent = '';
+        $('festivalArtLeft').textContent = '';
+        $('festivalArtRight').textContent = '';
     }
     festivalUntil = 0;
 }
@@ -1356,8 +1449,13 @@ function festivalTick(now) {
     const i = eligible[Math.floor(Math.random() * eligible.length)];
     pitch[i] = detunedPitch();
     $('festivalBanner').dataset.visible = 'true';
-    $('festivalEvent').textContent = nextFestivalMessage();
+    const message = nextFestivalMessage();
+    $('festivalEvent').textContent = message;
+    const [left, right] = festivalArtwork.get(message) || ['🎵', '🎶'];
+    $('festivalArtLeft').textContent = left;
+    $('festivalArtRight').textContent = right;
     $('festivalResult').textContent = 'Another string is out of tune!';
+    fitFestivalEvent();
     festivalUntil = now + 7.5;
     render(false);
 }
@@ -1432,7 +1530,7 @@ for (let i = 0; i < 44; i++) {
         select(i); });
 }
 
-function render(updateClock = true) { $('remaining').textContent = remaining(); const best = bestTimes[difficulty]; $('timeLabel').textContent = 'Time · ' + (difficulty === 'Spot Tuning' ? 'Spot' : difficulty === 'Outdoor Festival' ? 'Festival' : difficulty); $('bestBlock').hidden = best === null; $('best').textContent = best === null ? '—' : formatTime(best); $('up').disabled = $('down').disabled = last < 0 || finished; const mark = $('strike'); mark.hidden = last < 0; if (last >= 0) {
+function render(updateClock = true) { $('remaining').textContent = remaining(); const best = bestTimes[difficulty]; $('modeLabel').textContent = (difficulty === 'Spot Tuning' ? 'Spot' : difficulty === 'Outdoor Festival' ? 'Festival' : difficulty); $('bestBlock').hidden = best === null; $('best').textContent = best === null ? '—' : formatTime(best); $('up').disabled = $('down').disabled = last < 0 || finished; const mark = $('strike'); mark.hidden = last < 0; if (last >= 0) {
     setRect(mark, strikes[last]);
     mark.style.backgroundImage = 'url(resources/' + (inTune(last) ? 'good' : 'bad') + '.png)';
     mark.style.opacity = inTune(last) ? '.5' : '.6';
