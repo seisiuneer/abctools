@@ -266,7 +266,48 @@ progress { width: 100%; accent-color: #e4be75; }
 <p>Click or tap the central drone switch, or press Spacebar, to turn the drones on or off.</p>
 <hr>
 <h3>Playing the Regulators</h3>
-<p>Play the four regulator chords using the upper or lower parts of the two leftmost piano keys, or use either hand on the green computer keys in the home row below.</p>
+<p>Tap or click the upper or lower part of the first white key or first black key to play the four regulator chords.</p>
+<svg class="piano-map" style="max-width:330px;margin:10px auto 15px" viewBox="0 0 330 245" role="img" aria-labelledby="regulatorTouchTitle regulatorTouchDescription" xmlns="http://www.w3.org/2000/svg">
+<title id="regulatorTouchTitle">Regulator touch and mouse playing areas</title>
+<desc id="regulatorTouchDescription">First white key: upper blue area D–G, lower red area D–F♯. First black key: upper blue area G–B, lower red area F♯–A. The neighboring white key plays the chanter.</desc>
+<!-- Uniformly scaled instrument coordinates; splits at y=675 (white) and y=425 (black). -->
+<g transform="translate(132 8) scale(.45)">
+  <!-- Adjacent chanter white key, for context only. -->
+  <rect x="74" y="0" width="72" height="508" rx="5" fill="#faf9f6" stroke="#858585" stroke-width="2"/>
+  <!-- First white key: blue and red playing areas divided at 675 - 260 = 415. -->
+  <rect x="0" y="0" width="74" height="508" rx="5" fill="#0724ff" stroke="#858585" stroke-width="2"/>
+  <path d="M1 415 H73 V503 Q73 507 68 507 H6 Q1 507 1 503 Z" fill="#ff0b07"/>
+  <line x1="1" y1="415" x2="73" y2="415" stroke="#ffffff" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <!-- First black key follows its measured taper; split at 425 - 260 = 165. -->
+  <path d="M44 0 H91 L93 10 L91 15 L91 40 L90 90 L90 140 L89 190 L89 240 L88 290 L88 320 L87 331 L87 333 H46 L45 331 L44 320 L44 290 L44 240 L44 190 L45 140 L45 90 L45 40 L44 15 L42 10 Z" fill="#0724ff" stroke="#202020" stroke-width="3"/>
+  <path d="M44.5 165 H89.5 L89 190 L89 240 L88 290 L88 320 L87 331 L87 333 H46 L45 331 L44 320 L44 290 L44 240 L44 190 Z" fill="#ff0b07"/>
+  <line x1="44.5" y1="165" x2="89.5" y2="165" stroke="#ffffff" stroke-width="3" stroke-dasharray="6 4"/>
+</g>
+<!-- Leaders point to the centers of the four actual touch areas. -->
+<g fill="none" stroke="#dacdb8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M109 101 H143"/>
+  <path d="M109 216 H148"/>
+  <path d="M221 45 H162"/>
+  <path d="M221 120 H162"/>
+</g>
+<g fill="#f5ecdc" stroke="#29251f" stroke-width="1">
+  <circle cx="143" cy="101" r="3"/><circle cx="148" cy="216" r="3"/>
+  <circle cx="162" cy="45" r="3"/><circle cx="162" cy="120" r="3"/>
+</g>
+<g fill="#f5ecdc" font-size="14" font-weight="600">
+  <text x="102" y="97" text-anchor="end">D–G</text>
+  <text x="102" y="212" text-anchor="end">D–F♯</text>
+  <text x="228" y="41" text-anchor="start">G–B</text>
+  <text x="228" y="116" text-anchor="start">F♯–A</text>
+</g>
+<g fill="#dacdb8" font-size="11">
+  <text x="102" y="111" text-anchor="end">Upper white</text>
+  <text x="102" y="226" text-anchor="end">Lower white</text>
+  <text x="228" y="55" text-anchor="start">Upper black</text>
+  <text x="228" y="130" text-anchor="start">Lower black</text>
+</g>
+</svg>
+<p>On a computer keyboard, use either hand on the green keys in the home row below.</p>
 <svg class="piano-map" viewBox="0 302 546 47" role="img" aria-labelledby="regulatorChartTitle regulatorChartDescription" xmlns="http://www.w3.org/2000/svg">
 <title id="regulatorChartTitle">Regulator keyboard shortcuts</title>
 <desc id="regulatorChartDescription">S or H plays D–F♯, D or J plays D–G, F or K plays F♯–A, G or L plays G–B.</desc>
