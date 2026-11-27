@@ -66,13 +66,18 @@ header,main,#instrument,.play { touch-action: none; }
 #pitchSelector button:last-child { border-right: 0; border-radius: 0 3px 3px 0; }
 #pitchSelector button[aria-pressed="true"] { background: white; color: #10164c; font-weight: 600; }
 #pitchSelector button:focus-visible { position: relative; z-index: 1; }
-#whiteKeySelectors { display:flex; align-items:center; justify-content:center; gap:12px; width:var(--instrument-width); container-type:inline-size; flex-shrink:0; color:#dacdb8; }
-.white-key-group { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:max(24px,calc(3.4cqw - 2px)) auto; width:max(117.6px,19.145cqw); gap:0; border:1px solid #8a7659; border-radius:4px; overflow:hidden; }
+#whiteKeySelectors { display:flex; align-items:stretch; justify-content:center; gap:12px; width:var(--instrument-width); container-type:inline-size; flex-shrink:0; color:#dacdb8; }
+.latch-control { flex:1 1 0; min-width:0; padding:0; background:#25221d; color:#a99c89; border:1px solid #51483b; border-radius:4px; font-size:max(11px,1.6cqw); line-height:1; touch-action:none; -webkit-tap-highlight-color:transparent; }
+.latch-control[aria-pressed="true"], .stop-control.is-pressed, .stop-control:active { background:#59482c; color:#e4c997; border-color:#a88c56; }
+.latch-control:focus-visible { outline-offset:-3px; }
+.white-key-group { flex:0 0 auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:max(24px,calc(3.4cqw - 2px)) auto; width:max(117.6px,19.145cqw); gap:0; border:1px solid #8a7659; border-radius:4px; overflow:hidden; }
 .white-key-title { grid-column:1 / -1; background:#29251f; color:#dacdb8; text-align:center; font-size:15px; line-height:1.2; padding:2px 4px; border-top:1px solid #8a7659; }
 .white-key-group button { background:#3b3329; color:#f5ecdc; border:0; padding:0; min-width:0; font-size:max(12px,1.85cqw); line-height:1; touch-action:none; }
 .white-key-group button+button { border-left:1px solid #8a7659; }
 .white-key-group button[aria-pressed="true"] { background:#e4be75; color:#211a12; font-weight:600; }
 .white-key-group button:focus-visible { outline-offset:-3px; }
+@media(max-width:500px) { #whiteKeySelectors { gap:4px; } .white-key-group { width:min(117.6px,25cqw); } }
+@media(orientation:landscape) and (max-height:450px) { #whiteKeySelectors { gap:4px; } .white-key-group { width:min(117.6px,25cqw); } }
 .footer,.mode-help { margin: 0; font-size: 13px; color: #dacdb8; text-align: center; }
 #status:empty { display: none; }
 .overlay { position: fixed; inset: 0; z-index: 10; background: #000a; display: flex; align-items: center; justify-content: center; padding: 12px; overflow: auto; }
@@ -152,7 +157,9 @@ progress { width: 100%; accent-color: #e4be75; }
     <div id="bendRight" class="bend" title="Pitch bend (drag vertically)"><img src="uilleann_pipes_keyboard_assets/pitchbend_off.png" alt="Pitch bend"></div>
 </div>
 <div id="status" role="status"></div>
-<div id="whiteKeySelectors" aria-label="White-key accidentals">
+<div id="whiteKeySelectors" aria-label="Chanter Hold, Stop and white-key accidentals">
+    <button type="button" class="latch-control" id="latchLeft" aria-pressed="true" title="Toggle Chanter Hold (D or K)">Hold</button>
+    <button type="button" class="latch-control stop-control" id="stopLeft" title="Stop chanter notes (F or J)">Stop</button>
     <div class="white-key-group" role="group" aria-labelledby="fKeyTitle">
         <button type="button" data-family="f" data-sharp="false" aria-pressed="false" title="F natural (toggle with G)">F♮</button>
         <button type="button" data-family="f" data-sharp="true" aria-pressed="true" title="F sharp (toggle with G)">F♯</button>
@@ -163,12 +170,14 @@ progress { width: 100%; accent-color: #e4be75; }
         <button type="button" data-family="c" data-sharp="true" aria-pressed="false" title="C sharp (toggle with H)">C♯</button>
         <div class="white-key-title" id="cKeyTitle">C Key</div>
     </div>
+    <button type="button" class="latch-control stop-control" id="stopRight" title="Stop chanter notes (F or J)">Stop</button>
+    <button type="button" class="latch-control" id="latchRight" aria-pressed="true" title="Toggle Chanter Hold (D or K)">Hold</button>
 </div>
 </main>
 <div id="loadOverlay" class="overlay"><section class="panel" role="dialog" aria-modal="true" aria-labelledby="loadTitle"><h2 id="loadTitle">Loading Samples</h2><p id="loadDescription">Preparing the pipe sounds.</p><progress id="progress" value="0" max="27"></progress><p id="loadCount" role="status">0 of 27 samples</p><p id="loadError" role="alert"></p><button id="retry" class="standard" hidden>Retry</button></section></div>
 <div id="enableOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><h2 id="enableTitle">🔊 Enable Playback</h2><p>Enable audio to play the pipes.</p><button id="enable" class="standard">Enable Playback</button><p id="enableError" role="alert"></p></section></div>
 <div id="resetOverlay" class="overlay" hidden><section class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetMessage"><h2 id="resetTitle">Reset Settings</h2><p id="resetMessage">Reset all settings to their defaults?</p><footer><button id="cancelReset" type="button" class="standard">Cancel</button><button id="confirmReset" type="button" class="standard">Reset</button></footer></section></div>
-<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.0</p><div class="help-scroll">
+<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.1</p><div class="help-scroll">
 <h3>Overview</h3>
 <p>Uilleann Pipes Keyboard is a virtual musical instrument that lets you experience the sound of a full set of Irish Uilleann Pipes using a computer keyboard, mouse or touchscreen.</p>
 <p>Based on my original iPad app, the tool features authentic samples recorded from actual instruments in four pitches: B, C, C♯ and D.</p>
@@ -181,12 +190,19 @@ progress { width: 100%; accent-color: #e4be75; }
 <p>Play the piano keys with your mouse, fingers or computer keyboard.</p>
 <p>Slide between piano keys to change notes without lifting your finger or releasing the mouse button.</p>
 <p>Move your mouse or finger toward the bottom of a melody key to bend the note down.</p>
-<p>Use either vertical strip beside the upper controls to bend notes up or down.</p><hr>
+<p>Use either vertical strip beside the upper controls to bend notes up or down.</p>
+<hr>
+<h3>Chanter Hold and Stop</h3>
+<p>Click or tap either Hold button, or press D or K on your computer keyboard, to turn Hold on or off.</p>
+<p>When Hold is on, the last chanter note continues sounding after release until you play another note, turn Hold off or use Stop.</p>
+<p>Play a sounding note again to restart it from the beginning.</p>
+<p>Click or tap either Stop button, or press F or J, to stop all chanter notes without changing the Hold setting.</p>
+<p>Hold and Stop do not affect the regulators or drones.</p><hr>
 <h3>Piano Keys to Computer Keyboard Mapping</h3>
-<p>The diagrams below how to play the instrument from a US QWERTY keyboard:</p>
-<svg class="piano-map" viewBox="0 0 546 493" role="img" aria-labelledby="fullKeyboardChartTitle fullKeyboardChartDescription" xmlns="http://www.w3.org/2000/svg">
+<p>The diagrams below show how to play the instrument using a US QWERTY keyboard:</p>
+<svg class="piano-map" viewBox="0 0 546 505" role="img" aria-labelledby="fullKeyboardChartTitle fullKeyboardChartDescription" xmlns="http://www.w3.org/2000/svg">
 <title id="fullKeyboardChartTitle">Full computer keyboard mapping</title>
-<desc id="fullKeyboardChartDescription">Piano melody: Tab, Q W E R T Y U I O P left bracket right bracket are white keys; 1 3 4 5 7 8 0 minus equals are black keys. G toggles F natural or sharp, H toggles C natural or sharp. X or N plays D–F♯, C or M plays D–G, V or comma plays F♯–A, B or period plays G–B. Enter or Space toggles the drones. Escape stops all sounds.</desc>
+<desc id="fullKeyboardChartDescription">Piano melody: Tab, Q W E R T Y U I O P left bracket right bracket are white keys; 1 3 4 5 7 8 0 minus equals are black keys. D or K toggles Chanter Hold. F or J stops chanter notes only. G toggles F natural or sharp, H toggles C natural or sharp. X or N plays D–F♯, C or M plays D–G, V or comma plays F♯–A, B or period plays G–B. Enter or Space toggles the drones. Escape stops all sounds.</desc>
 <rect x="13" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="32.5" y="148" font-size="16" font-weight="bold" fill="#222">Tab</text><text x="32.5" y="175" font-size="11" fill="#555">D4</text><rect x="53" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="72.5" y="148" font-size="16" font-weight="bold" fill="#222">Q</text><text x="72.5" y="175" font-size="11" fill="#555">E4</text><rect x="93" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="112.5" y="148" font-size="16" font-weight="bold" fill="#222">W</text><text x="112.5" y="175" font-size="11" fill="#555">F4</text><rect x="133" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="152.5" y="148" font-size="16" font-weight="bold" fill="#222">E</text><text x="152.5" y="175" font-size="11" fill="#555">G4</text><rect x="173" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="192.5" y="148" font-size="16" font-weight="bold" fill="#222">R</text><text x="192.5" y="175" font-size="11" fill="#555">A4</text><rect x="213" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="232.5" y="148" font-size="16" font-weight="bold" fill="#222">T</text><text x="232.5" y="175" font-size="11" fill="#555">B4</text><rect x="253" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="272.5" y="148" font-size="16" font-weight="bold" fill="#222">Y</text><text x="272.5" y="175" font-size="11" fill="#555">C5</text><rect x="293" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="312.5" y="148" font-size="16" font-weight="bold" fill="#222">U</text><text x="312.5" y="175" font-size="11" fill="#555">D5</text><rect x="333" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="352.5" y="148" font-size="16" font-weight="bold" fill="#222">I</text><text x="352.5" y="175" font-size="11" fill="#555">E5</text><rect x="373" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="392.5" y="148" font-size="16" font-weight="bold" fill="#222">O</text><text x="392.5" y="175" font-size="11" fill="#555">F5</text><rect x="413" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="432.5" y="148" font-size="16" font-weight="bold" fill="#222">P</text><text x="432.5" y="175" font-size="11" fill="#555">G5</text><rect x="453" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="472.5" y="148" font-size="16" font-weight="bold" fill="#222">[</text><text x="472.5" y="175" font-size="11" fill="#555">A5</text><rect x="493" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="512.5" y="148" font-size="16" font-weight="bold" fill="#222">]</text><text x="512.5" y="175" font-size="11" fill="#555">B5</text><rect x="39" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="52.5" y="65" font-size="16" font-weight="bold" fill="white">1</text><text x="52.5" y="91" font-size="9" fill="#ddd">D♯4</text><rect x="119" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="132.5" y="65" font-size="16" font-weight="bold" fill="white">3</text><text x="132.5" y="91" font-size="9" fill="#ddd">F♯4</text><rect x="159" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="172.5" y="65" font-size="16" font-weight="bold" fill="white">4</text><text x="172.5" y="91" font-size="9" fill="#ddd">G♯4</text><rect x="199" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="212.5" y="65" font-size="16" font-weight="bold" fill="white">5</text><text x="212.5" y="91" font-size="9" fill="#ddd">B♭4</text><rect x="279" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="292.5" y="65" font-size="16" font-weight="bold" fill="white">7</text><text x="292.5" y="91" font-size="9" fill="#ddd">C♯5</text><rect x="319" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="332.5" y="65" font-size="16" font-weight="bold" fill="white">8</text><text x="332.5" y="91" font-size="9" fill="#ddd">D♯5</text><rect x="399" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="412.5" y="65" font-size="16" font-weight="bold" fill="white">0</text><text x="412.5" y="91" font-size="9" fill="#ddd">F♯5</text><rect x="439" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="452.5" y="65" font-size="16" font-weight="bold" fill="white">-</text><text x="452.5" y="91" font-size="9" fill="#ddd">G♯5</text><rect x="479" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="492.5" y="65" font-size="16" font-weight="bold" fill="white">=</text><text x="492.5" y="91" font-size="9" fill="#ddd">B♭5</text>
 <text x="273" y="219" fill="#f5ecdc" font-size="16" font-weight="bold"> </text>
 <rect x="18.00" y="230" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
@@ -251,20 +267,24 @@ progress { width: 100%; accent-color: #e4be75; }
 <text x="93.00" y="330" fill="#a99c89" font-size="14" font-weight="600">A</text>
 <rect x="111.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="127.00" y="330" fill="#a99c89" font-size="14" font-weight="600">S</text>
-<rect x="145.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="161.00" y="330" fill="#a99c89" font-size="14" font-weight="600">D</text>
-<rect x="179.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="195.00" y="330" fill="#a99c89" font-size="14" font-weight="600">F</text>
+<rect x="145.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="161.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">D</text>
+<text x="161.00" y="336" fill="#f5ecdc" font-size="9.5">Hold</text>
+<rect x="179.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="195.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">F</text>
+<text x="195.00" y="336" fill="#f5ecdc" font-size="9.5">Stop</text>
 <rect x="213.50" y="308" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
 <text x="229.00" y="323" fill="#211a12" font-size="14" font-weight="600">G</text>
 <text x="229.00" y="336" fill="#211a12" font-size="9.5">F/F♯</text>
 <rect x="247.50" y="308" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
 <text x="263.00" y="323" fill="#211a12" font-size="14" font-weight="600">H</text>
 <text x="263.00" y="336" fill="#211a12" font-size="9.5">C/C♯</text>
-<rect x="281.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="297.00" y="330" fill="#a99c89" font-size="14" font-weight="600">J</text>
-<rect x="315.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="331.00" y="330" fill="#a99c89" font-size="14" font-weight="600">K</text>
+<rect x="281.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="297.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">J</text>
+<text x="297.00" y="336" fill="#f5ecdc" font-size="9.5">Stop</text>
+<rect x="315.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="331.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">K</text>
+<text x="331.00" y="336" fill="#f5ecdc" font-size="9.5">Hold</text>
 <rect x="349.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="365.00" y="330" fill="#a99c89" font-size="14" font-weight="600">L</text>
 <rect x="383.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
@@ -317,12 +337,13 @@ progress { width: 100%; accent-color: #e4be75; }
 <text x="416.00" y="408" fill="#a99c89" font-size="14" font-weight="600">Alt</text>
 <rect x="443.00" y="386" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="467.00" y="408" fill="#a99c89" font-size="12" font-weight="600">Ctrl</text>
-<rect x="15" y="433" width="14" height="14" rx="2" fill="#faf9f6" stroke="#a99c89"/><text x="34" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">White melody</text>
-<rect x="148" y="433" width="14" height="14" rx="2" fill="#151515" stroke="#a99c89"/><text x="167" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">Black melody</text>
-<rect x="282" y="433" width="14" height="14" rx="2" fill="#386e59" stroke="#a99c89"/><text x="301" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">Regulators</text>
-<rect x="408" y="433" width="14" height="14" rx="2" fill="#e4be75" stroke="#a99c89"/><text x="427" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">F/C toggles</text>
-<text x="273" y="464" fill="#dacdb8" font-size="12">Enter or Space: Toggle Drones · Escape: Stop all sounds</text>
-<text x="273" y="482" fill="#dacdb8" font-size="12">F and C white notes follow their selector settings.</text>
+<rect x="15" y="433" width="14" height="14" rx="2" fill="#faf9f6" stroke="#a99c89"/><text x="34" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">White melody</text>
+<rect x="128" y="433" width="14" height="14" rx="2" fill="#151515" stroke="#a99c89"/><text x="147" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">Black melody</text>
+<rect x="241" y="433" width="14" height="14" rx="2" fill="#386e59" stroke="#a99c89"/><text x="260" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">Regulators</text>
+<rect x="341" y="433" width="14" height="14" rx="2" fill="#e4be75" stroke="#a99c89"/><text x="360" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">F/C toggles</text>
+<rect x="445" y="433" width="14" height="14" rx="2" fill="#345e8c" stroke="#86acd2"/><text x="464" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">Hold/Stop</text>
+<text x="273" y="476" fill="#dacdb8" font-size="12">Enter or Space: Toggle Drones · Escape: Stop all sounds</text>
+<text x="273" y="494" fill="#dacdb8" font-size="12">F and C white notes follow their selector settings.</text>
 </svg>
 <p>The note names are shown for the D set, but the same computer keys work in all four tunings.</p><hr>
 <h3>F and C Key Selectors</h3>
@@ -401,6 +422,12 @@ const melodyShortcuts = {
 const shortcuts = {...regulatorShortcuts, ...melodyShortcuts};
 const accidentalShortcuts = {KeyG:'f',KeyH:'c'};
 const held = new Map(), notePointers = new Set(), voices = new Map(), highlights = [];
+let latchEnabled = true, latchedNote = null, latchedRate = 1;
+const latchButtons = [$('latchLeft'), $('latchRight')];
+const stopButtons = [$('stopLeft'), $('stopRight')], stopPressed = new Set();
+// Phase-matched loop points measured from the original 44.1 kHz chanter recordings.
+const chanterLoops = {"D4_D":[0.35,9.827052154],"Ds4_D":[0.35,7.124739229],"E4_D":[0.725011338,7.028276644],"F4_D":[0.35,7.133378685],"Fs4_D":[0.35,10.606734694],"G4_D":[1.425011338,6.305555556],"Gs4_D":[1.45,5.891247166],"A4_D":[1.0,5.896984127],"As4_D":[1.075011338,5.885804989],"B4_D":[1.3,4.820657596],"C5_D":[0.35,7.84185941],"Cs5_D":[0.35,7.84138322],"D5_D":[0.35,5.759931973],"Ds5_D":[0.35,6.080340136],"E5_D":[0.35,7.019002268],"F5_D":[0.35,7.019274376],"Fs5_D":[0.35,7.019546485],"G5_D":[0.35,6.049138322],"Gs5_D":[0.35,7.018027211],"A5_D":[1.1,7.181201814],"As5_D":[1.15,7.196621315],"B5_D":[1.275011338,7.143628118],"D4_Cs":[1.375011338,9.809569161],"Ds4_Cs":[0.375011338,7.124829932],"E4_Cs":[0.35,7.083038549],"F4_Cs":[0.35,7.13047619],"Fs4_Cs":[0.35,10.607460317],"G4_Cs":[1.4,6.308571429],"Gs4_Cs":[1.4,5.983582766],"A4_Cs":[1.6,5.268730159],"As4_Cs":[0.4,5.900566893],"B4_Cs":[1.375011338,4.973129252],"C5_Cs":[0.35,7.841655329],"Cs5_Cs":[0.35,7.841496599],"D5_Cs":[1.55,6.168253968],"Ds5_Cs":[0.35,6.080204082],"E5_Cs":[0.35,7.01845805],"F5_Cs":[1.175011338,7.019206349],"Fs5_Cs":[0.4,7.018435374],"G5_Cs":[0.35,5.165396825],"Gs5_Cs":[0.35,7.018004535],"A5_Cs":[1.15,7.484557823],"As5_Cs":[1.15,7.196666667],"B5_Cs":[1.125011338,7.169954649],"D4_C":[1.55,9.824421769],"Ds4_C":[0.8,7.124603175],"E4_C":[0.35,7.08276644],"F4_C":[0.35,7.131927438],"Fs4_C":[0.4,10.606734694],"G4_C":[1.4,6.308344671],"Gs4_C":[1.55,5.9830839],"A4_C":[1.6,5.298548753],"As4_C":[0.425011338,5.90324263],"B4_C":[1.6,5.292947846],"C5_C":[0.35,7.766870748],"Cs5_C":[0.35,7.841723356],"D5_C":[0.35,5.652358277],"Ds5_C":[0.575011338,5.305578231],"E5_C":[0.35,7.019818594],"F5_C":[1.275011338,7.018639456],"Fs5_C":[1.25,7.018639456],"G5_C":[0.35,5.169410431],"Gs5_C":[0.35,7.019183673],"A5_C":[1.15,7.138072562],"As5_C":[1.2,7.330861678],"B5_C":[1.0,7.139954649],"D4_B":[1.575011338,9.822675737],"Ds4_B":[1.0,7.123605442],"E4_B":[0.35,7.080249433],"F4_B":[0.35,7.133219955],"Fs4_B":[0.35,7.081768707],"G4_B":[1.35,6.307505669],"Gs4_B":[1.525011338,5.983287982],"A4_B":[1.6,5.208276644],"As4_B":[0.35,5.897709751],"B4_B":[1.525011338,5.269818594],"C5_B":[0.35,7.760929705],"Cs5_B":[0.35,7.841428571],"D5_B":[0.35,5.933378685],"Ds5_B":[0.6,5.048344671],"E5_B":[0.35,7.019410431],"F5_B":[1.275011338,7.018820862],"Fs5_B":[1.25,7.019501134],"G5_B":[0.35,5.208503401],"Gs5_B":[0.35,7.017369615],"A5_B":[1.125011338,7.137573696],"As5_B":[1.175011338,7.333038549],"B5_B":[1.05,7.319251701]};
+let latchBuffers = new Map();
 let buffers = new Map(), ctx, master, dry, wet, convolver, buses = {}, ready = false, loading = false, unlockPending = IS_IOS || IS_SAFARI;
 let bank = null, drones = [], droneEnabled = false, restartDrone = false, bendPointer = null, bendRate = 1, noteRate = 1;
 const whiteKeySharps = {f:true,c:false};
@@ -411,6 +438,7 @@ const defaultSettings = Object.fromEntries(settings.map(id => [id,$(id).value]))
 const defaultWhiteKeySharps = {...whiteKeySharps};
 try {
     const s = JSON.parse(localStorage.getItem('UilleannPipesKeyboard.settings.v1') || '{}');
+    latchEnabled = s.latchEnabled !== false;
     whiteKeySharps.f = s.whiteKeyFSharp !== false;
     whiteKeySharps.c = s.whiteKeyCSharp === true;
     for (const id of settings) {
@@ -420,7 +448,7 @@ try {
     }
 } catch(e) {}
 function save() {
-    try { localStorage.setItem('UilleannPipesKeyboard.settings.v1',JSON.stringify({...Object.fromEntries(settings.map(id => [id,id==='pitch'?$(id).value:+$(id).value])),whiteKeyFSharp:whiteKeySharps.f,whiteKeyCSharp:whiteKeySharps.c})); } catch(e) {}
+    try { localStorage.setItem('UilleannPipesKeyboard.settings.v1',JSON.stringify({...Object.fromEntries(settings.map(id => [id,id==='pitch'?$(id).value:+$(id).value])),whiteKeyFSharp:whiteKeySharps.f,whiteKeyCSharp:whiteKeySharps.c,latchEnabled})); } catch(e) {}
 }
 function position(e,x,y,w,h) { Object.assign(e.style,{left:x/1024*100+'%',top:y/768*100+'%',width:w/1024*100+'%',height:h/768*100+'%'}); }
 // Highlight only the flat playing face of each black key, independently of its hit region.
@@ -532,13 +560,16 @@ for (const [i,art] of data.art.entries()) {
     });
 }
 function render() {
-    for (const button of $('whiteKeySelectors').querySelectorAll('button')) {
+    for (const button of $('whiteKeySelectors').querySelectorAll('button[data-family]')) {
         button.setAttribute('aria-pressed',String(whiteKeySharps[button.dataset.family] === (button.dataset.sharp==='true')));
     }
     for (const button of $('pitchSelector').querySelectorAll('button')) {
         button.setAttribute('aria-pressed', String(button.dataset.pitch === $('pitch').value));
     }
+    for(const button of latchButtons) button.setAttribute('aria-pressed',String(latchEnabled));
+    for(const button of stopButtons) button.classList.toggle('is-pressed',stopPressed.size>0);
     const active = new Set(held.values());
+    if(latchedNote!==null) active.add(latchedNote);
     highlights.forEach((group,i) => group.forEach(im => im.classList.toggle('active',active.has(i))));
     $('drone').setAttribute('aria-pressed',String(droneEnabled));
     $('drone').firstElementChild.src=A+(droneEnabled?'drone_on.png':'drone_off.png');
@@ -583,7 +614,7 @@ async function preload() {
             while(queue.length) { const name=queue.shift(); try { const r=await fetch(A+name+'.wav',{cache:'default'}); if(!r.ok) throw Error(name+' ('+r.status+')'); next.set(name,await ctx.decodeAudioData(await r.arrayBuffer())); $('progress').value=++done; $('loadCount').textContent=done+' of 27 samples'; } catch(e){errors.push(e);} }
         }));
         if(errors.length) throw errors[0];
-        buffers=next; bank=selected; ready=true; $('loadOverlay').hidden=true; $('enableOverlay').hidden=!unlockPending; inert(unlockPending);
+        buffers=next; latchBuffers=new Map(); bank=selected; ready=true; $('loadOverlay').hidden=true; $('enableOverlay').hidden=!unlockPending; inert(unlockPending);
         if(restartDrone && !unlockPending && ctx.state==='running') { droneEnabled=true; syncDrones(); }
         restartDrone=false; render();
     } catch(e) { $('loadError').textContent='Unable to load samples: '+e.message+'. Open the tool from a web server and check the assets directory.'; $('retry').hidden=false; }
@@ -591,19 +622,58 @@ async function preload() {
 }
 $('retry').onclick=preload;
 $('enable').onclick=async()=>{ $('enable').disabled=true; $('enableError').textContent=''; try { await resume(); unlockPending=false; $('enableOverlay').hidden=true; inert(false); } catch(e) { $('enableError').textContent=e.message; } finally { $('enable').disabled=false; } };
-function voice(name,bus,loop,rate=1,pan=null) {
-    const s=ctx.createBufferSource(), g=ctx.createGain(); s.buffer=buffers.get(name); s.loop=loop; s.playbackRate.value=rate; g.gain.value=0;
+// A separate buffer preserves the normal samples. Blend the end of the loop
+// into the waveform immediately preceding its start; append that start's
+// original continuation so disabling looping while held has a natural tail.
+function preparedChanter(name) {
+    if(latchBuffers.has(name)) return latchBuffers.get(name);
+    const original=buffers.get(name), sr=original.sampleRate;
+    const [start,end]=chanterLoops[name].map(t=>Math.round(t*sr));
+    const fade=Math.min(Math.round(sr*.025),start,end-start);
+    const buffer=ctx.createBuffer(original.numberOfChannels,end+original.length-start,sr);
+    for(let ch=0;ch<original.numberOfChannels;ch++) {
+        const src=original.getChannelData(ch), dst=buffer.getChannelData(ch);
+        dst.set(src.subarray(0,end)); dst.set(src.subarray(start),end);
+        for(let j=0;j<fade;j++) {
+            const t=j/Math.max(1,fade-1), w=t*t*(3-2*t);
+            dst[end-fade+j]=src[end-fade+j]*(1-w)+src[start-fade+j]*w;
+        }
+    }
+    const prepared={buffer,start:start/sr,end:end/sr};
+    latchBuffers.set(name,prepared); return prepared;
+}
+function voice(name,bus,loop,rate=1,pan=null,offset=0) {
+    const s=ctx.createBufferSource(), g=ctx.createGain();
+    const prepared=bus==='chanter'&&loop?preparedChanter(name):null;
+    s.buffer=prepared?prepared.buffer:buffers.get(name);
+    if(prepared) { s.loopStart=prepared.start; s.loopEnd=prepared.end;
+        if(offset>=prepared.end) offset=prepared.start+(offset-prepared.start)%(prepared.end-prepared.start);
+    }
+    s.loop=loop; s.playbackRate.value=rate; g.gain.value=0;
     s.connect(g); let p=null;
     if(pan!==null && ctx.createStereoPanner){p=ctx.createStereoPanner(); p.pan.value=pan; g.connect(p); p.connect(buses[bus]);} else g.connect(buses[bus]);
-    g.gain.setTargetAtTime(pan===null?1:.6,ctx.currentTime,.004); s.start();
-    const v={s,g,p,ended:false}; s.onended=()=>{v.ended=true; s.disconnect();g.disconnect();if(p)p.disconnect();}; return v;
+    g.gain.setTargetAtTime(pan===null?1:.6,ctx.currentTime,.004); s.start(0,offset);
+    const v={s,g,p,ended:false,prepared:!!prepared,startedAt:ctx.currentTime,offset}; s.onended=()=>{v.ended=true; s.disconnect();g.disconnect();if(p)p.disconnect();}; return v;
 }
 function stopVoice(v) { if(!v||v.ended) return; const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,.006); try {v.s.stop(t+.045);} catch(e){} }
-function sync() {
+function sync(retrigger = null) {
     render(); if(!ready||ctx.state!=='running') return;
     const active=new Set([...held.values()].map(soundingNote));
+    if(latchedNote!==null) active.add(soundingNote(latchedNote));
     for(const [i,v] of voices) if(!active.has(i)){stopVoice(v);voices.delete(i);}
-    for(const i of active) if(!voices.has(i)) voices.set(i,voice(data.banks[bank][i],i<4?'regulator':'chanter',i<4,i<4?1:melodyRate(i)));
+    for(const i of active) {
+        const v=voices.get(i), name=data.banks[bank][i];
+        if(i<4) { if(!v) voices.set(i,voice(name,'regulator',true)); continue; }
+        if(latchEnabled && i===retrigger && v) {
+            // A new physical press of the sounding pitch replays the original attack.
+            // Use the resolved pitch so white/black accidental aliases share one voice.
+            stopVoice(v); voices.set(i,voice(name,'chanter',true,melodyRate(i)));
+        } else if(!v || v.ended) {
+            // Chanter sustain is independent of Hold: a physically held note
+            // loops indefinitely, and Hold controls only release ownership.
+            voices.set(i,voice(name,'chanter',true,melodyRate(i)));
+        }
+    }
     updateMelodyPitch(); syncDrones();
 }
 function syncDrones() {
@@ -615,32 +685,112 @@ function melodyRate(i) {
     // Keyboard-owned notes must not inherit a stale or simultaneous pointer bend.
     // The dedicated bend strips remain global melody controls.
     const keyboardOwned = Object.keys(melodyShortcuts).some(code => held.has(code) && soundingNote(held.get(code))===i);
-    return bendPointer!==null ? bendRate : keyboardOwned ? 1 : noteRate;
+    return bendPointer!==null ? bendRate : keyboardOwned ? 1 : latchedNote!==null && soundingNote(latchedNote)===i ? latchedRate : noteRate;
 }
 function updateMelodyPitch() {
     if(!ctx)return;
     for(const [i,v] of voices) if(i>=4&&!v.ended) v.s.playbackRate.setTargetAtTime(melodyRate(i),ctx.currentTime,.005);
 }
 function clear(stopDrones=true) {
+    stopPressed.clear();
+    latchedNote=null; latchedRate=1;
     held.clear(); const captures=[...notePointers]; notePointers.clear(); if(bendPointer!==null) captures.push(bendPointer); bendPointer=null; bendRate=noteRate=1;
     for(const p of captures) if(instrument.hasPointerCapture(p)) instrument.releasePointerCapture(p);
     for(const v of voices.values()) stopVoice(v); voices.clear();
     if(stopDrones){droneEnabled=false;for(const v of drones)stopVoice(v);drones=[];} render();
 }
-function start(id,i) { if(blocked()) return; held.set(id,i); $('status').textContent=''; if(ctx.state==='running')sync();else resume().then(sync).catch(e=>{$('status').textContent=e.message;clear();}); }
-function end(id) { if(held.delete(id))sync(); }
+function hasHeldMelody() { return [...held.values()].some(i=>i>=4); }
+function rememberReleased(id,i) {
+    if(latchEnabled && i>=4 && !hasHeldMelody()) {
+        latchedNote=i; latchedRate=Object.hasOwn(melodyShortcuts,id)?1:noteRate;
+    }
+}
+function start(id,i) {
+    if(blocked()) return;
+    const previous=held.get(id);
+    held.set(id,i);
+    if(i>=4) { latchedNote=null; latchedRate=1; }
+    else if(previous>=4) rememberReleased(id,previous);
+    const retrigger = latchEnabled && i>=4 && previous!==i ? soundingNote(i) : null;
+    $('status').textContent='';
+    if(ctx.state==='running')sync(retrigger);else resume().then(()=>sync(retrigger)).catch(e=>{$('status').textContent=e.message;clear();});
+}
+function end(id,allowLatch=true) {
+    const i=held.get(id);
+    if(!held.delete(id)) return;
+    if(allowLatch) rememberReleased(id,i);
+    sync();
+}
+// Stop is a momentary chanter-only command, not a setting. Remove physical
+// melody ownership as well, so release or a stationary touch cannot re-latch.
+function stopChanter() {
+    if(blocked()) return;
+    latchedNote=null; latchedRate=1; noteRate=1;
+    for(const [id,i] of held) if(i>=4) held.delete(id);
+    for(const p of [...notePointers]) {
+        // Keep regulator touches captured; discard melody and off-key touches.
+        if(held.has('pointer:'+p)) continue;
+        notePointers.delete(p);
+        if(instrument.hasPointerCapture(p)) instrument.releasePointerCapture(p);
+    }
+    for(const [i,v] of voices) if(i>=4) { stopVoice(v); voices.delete(i); }
+    render();
+}
+function pressStop(id) {
+    if(blocked() || stopPressed.has(id)) return;
+    stopPressed.add(id); stopChanter();
+}
+function releaseStop(id) {
+    if(stopPressed.delete(id)) render();
+}
+function toggleLatch() {
+    if(blocked()) return;
+    latchEnabled=!latchEnabled;
+    if(!latchEnabled) { latchedNote=null; latchedRate=1; }
+    save(); sync();
+}
+for(const button of latchButtons) {
+    // Pointer contact works even for a secondary touch; cancel the touch
+    // default so no compatibility click can toggle it a second time.
+    button.addEventListener('pointerdown',e=>{
+        if(e.pointerType!=='touch' || e.button!==0 || blocked()) return;
+        e.preventDefault(); button.blur(); toggleLatch();
+    });
+    button.addEventListener('touchstart',e=>{if(e.cancelable)e.preventDefault();},{passive:false});
+    button.addEventListener('click',e=>{
+        if(e.pointerType==='touch'||(e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents))return;
+        button.blur(); toggleLatch();
+    });
+}
+for(const button of stopButtons) {
+    button.addEventListener('pointerdown',e=>{
+        if(e.button!==0 || blocked()) return;
+        e.preventDefault(); button.blur();
+        button.setPointerCapture(e.pointerId);
+        pressStop('stop-pointer:'+e.pointerId);
+    });
+    for(const type of ['pointerup','pointercancel','lostpointercapture'])
+        button.addEventListener(type,e=>releaseStop('stop-pointer:'+e.pointerId));
+    button.addEventListener('touchstart',e=>{if(e.cancelable)e.preventDefault();},{passive:false});
+    // Native keyboard/assistive activation is a click with no pointer press.
+    button.addEventListener('click',e=>{
+        if(e.detail!==0 || e.pointerType==='touch' || (e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents)) return;
+        button.blur(); stopChanter();
+    });
+}
 function toggleDrone() { if(blocked()) return; droneEnabled=!droneEnabled; render(); if(ctx.state==='running')syncDrones();else resume().then(sync).catch(e=>{$('status').textContent=e.message;clear();}); }
 function setWhiteKeySharp(family,value) {
     if(blocked() || whiteKeySharps[family]===value) return;
     whiteKeySharps[family]=value; save(); sync();
 }
-for(const button of $('whiteKeySelectors').querySelectorAll('button')) {
+for(const button of $('whiteKeySelectors').querySelectorAll('button[data-family]')) {
     button.addEventListener('click',()=>{button.blur();setWhiteKeySharp(button.dataset.family,button.dataset.sharp==='true');});
 }
 function resetSettings() {
     if(blocked() || loading) return;
     for(const id of settings) $(id).value=defaultSettings[id];
     Object.assign(whiteKeySharps,defaultWhiteKeySharps);
+    latchEnabled=true; latchedNote=null; latchedRate=1;
     save();
     applySettings();
     if($('pitch').value!==bank) {
@@ -762,6 +912,8 @@ window.addEventListener('keydown',e=>{
     if(blocked()||!plain(e))return;
     // Keep Tab navigation when a native control has been explicitly focused.
     if(e.code==='Tab' && e.target instanceof Element && e.target.closest('button,a,input,select,textarea,[contenteditable]'))return;
+    if(e.code==='KeyD'||e.code==='KeyK') { e.preventDefault(); if(!e.repeat) toggleLatch(); return; }
+    if(e.code==='KeyF'||e.code==='KeyJ') { e.preventDefault(); if(!e.repeat) pressStop(e.code); return; }
     const accidental = accidentalShortcuts[e.code];
     if(accidental) {
         e.preventDefault();
@@ -776,6 +928,7 @@ window.addEventListener('keydown',e=>{
     if(droneShortcut)toggleDrone();else if(!held.has(e.code))start(e.code,i);
 },true);
 window.addEventListener('keyup',e=>{
+    if(stopPressed.has(e.code)) { e.preventDefault(); releaseStop(e.code); }
     if(held.has(e.code)){e.preventDefault();end(e.code);}
 },true);
 // Black-key outlines measured from the original 1024 × 768 skin.png.
@@ -829,7 +982,7 @@ instrument.addEventListener('pointerdown',e=>{
     if(bend){if(bendPointer!==null)return;e.preventDefault();instrument.setPointerCapture(e.pointerId);bendPointer=e.pointerId;setBend(p.y);return;}
     if(!hit(p.x,p.y))return;e.preventDefault();instrument.setPointerCapture(e.pointerId);notePointers.add(e.pointerId);handleNote(e);
 });
-function releasePointer(e){if(bendPointer===e.pointerId){bendPointer=null;bendRate=noteRate=1;updateMelodyPitch();render();}if(notePointers.delete(e.pointerId))end('pointer:'+e.pointerId);}
+function releasePointer(e){if(bendPointer===e.pointerId){bendPointer=null;bendRate=noteRate=1;updateMelodyPitch();render();}if(notePointers.delete(e.pointerId)) { const cancelled=e.type==='pointercancel'||e.type==='lostpointercapture'; if(cancelled&&held.get('pointer:'+e.pointerId)>=4){latchedNote=null;latchedRate=1;} end('pointer:'+e.pointerId,!cancelled); if(cancelled)sync(); }}
 instrument.addEventListener('pointermove',e=>{if(bendPointer!==e.pointerId&&!notePointers.has(e.pointerId))return;if(e.pointerType==='mouse'&&!(e.buttons&1)){releasePointer(e);return;}e.preventDefault();if(bendPointer===e.pointerId)setBend(point(e).y);else handleNote(e);});
 for(const type of ['pointerup','pointercancel','lostpointercapture'])instrument.addEventListener(type,releasePointer);
 // Match the English Concertina gesture and Firefox Quick Find filtering.
