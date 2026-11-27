@@ -31,7 +31,7 @@
 <style>
 * { box-sizing: border-box; }
 html { color-scheme: dark; overscroll-behavior: none; }
-body { margin: 0; background: #171512; color: #f5ecdc; font: 16px/1.4 system-ui,-apple-system,BlinkMacSystemFont,sans-serif; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overscroll-behavior: none; }
+body { --settings-footer-space: calc(44px + env(safe-area-inset-bottom, 0px)); margin: 0; background: #171512; color: #f5ecdc; font: 16px/1.4 system-ui,-apple-system,BlinkMacSystemFont,sans-serif; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overscroll-behavior: none; }
 button,input,select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible { outline: 3px solid #e8ca86; outline-offset: 2px; }
@@ -41,7 +41,7 @@ h1 { font-size: 22px; margin: 0; }
 header .standard { position: absolute; top: 50%; transform: translateY(-50%); width: 120px; text-align: center; white-space: nowrap; }
 header .tip { left: max(10px,env(safe-area-inset-left)); text-decoration: none; }
 header #help { right: max(10px,env(safe-area-inset-right)); }
-main { --instrument-width: min(100%,1024px,calc((100dvh - 137px)*4/3)); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 8px max(8px,env(safe-area-inset-bottom)); }
+main { --instrument-width: min(100%,1024px,calc((100dvh - 145px - var(--settings-footer-space))*4/3)); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 8px max(8px,env(safe-area-inset-bottom)); }
 #instrument { position: relative; width: var(--instrument-width); aspect-ratio: 4/3; background: #08052a url(uilleann_pipes_keyboard_assets/skin.png) center/100% 100% no-repeat; container-type: inline-size; flex-shrink: 0; overflow: hidden; box-shadow: 0 0 0 1px #574332,0 8px 28px #0006; }
 html,body,header,header *,main,main * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 header,main,#instrument,.play { touch-action: none; }
@@ -69,8 +69,9 @@ header,main,#instrument,.play { touch-action: none; }
 #whiteKeySelectors { display:flex; align-items:stretch; justify-content:center; gap:12px; width:var(--instrument-width); container-type:inline-size; flex-shrink:0; color:#dacdb8; }
 .latch-control { flex:1 1 0; min-width:0; padding:0; background:#25221d; color:#a99c89; border:1px solid #51483b; border-radius:4px; font-size:max(11px,1.6cqw); line-height:1; touch-action:none; -webkit-tap-highlight-color:transparent; }
 .latch-control[aria-pressed="true"], .stop-control.is-pressed, .stop-control:active { background:#59482c; color:#e4c997; border-color:#a88c56; }
+.latch-control { white-space:nowrap; font-size:clamp(8px,2.6cqw,16px); }
 .latch-control:focus-visible { outline-offset:-3px; }
-.white-key-group { flex:0 0 auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:max(24px,calc(3.4cqw - 2px)) auto; width:max(117.6px,19.145cqw); gap:0; border:1px solid #8a7659; border-radius:4px; overflow:hidden; }
+.white-key-group { flex:0 0 auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:max(32px,calc(3.4cqw + 6px)) auto; width:max(117.6px,19.145cqw); gap:0; border:1px solid #8a7659; border-radius:4px; overflow:hidden; }
 .white-key-title { grid-column:1 / -1; background:#29251f; color:#dacdb8; text-align:center; font-size:15px; line-height:1.2; padding:2px 4px; border-top:1px solid #8a7659; }
 .white-key-group button { background:#3b3329; color:#f5ecdc; border:0; padding:0; min-width:0; font-size:max(12px,1.85cqw); line-height:1; touch-action:none; }
 .white-key-group button+button { border-left:1px solid #8a7659; }
@@ -78,6 +79,14 @@ header,main,#instrument,.play { touch-action: none; }
 .white-key-group button:focus-visible { outline-offset:-3px; }
 @media(max-width:500px) { #whiteKeySelectors { gap:4px; } .white-key-group { width:min(117.6px,25cqw); } }
 @media(orientation:landscape) and (max-height:450px) { #whiteKeySelectors { gap:4px; } .white-key-group { width:min(117.6px,25cqw); } }
+.hold-stop-group { flex:1 1 0; width:auto; min-width:0; }
+.hold-stop-group button { font-size:max(11px,1.85cqw); }
+.hold-stop-group button[aria-pressed="true"], .hold-stop-group button.is-pressed, .hold-stop-group .stop-control:active { background:#59482c; color:#e4c997; font-weight:600; }
+@container (max-width:420px) {
+    #whiteKeySelectors .white-key-group { width:20cqw; }
+    #whiteKeySelectors .hold-stop-group { width:auto; }
+    #whiteKeySelectors .white-key-title { font-size:clamp(11px,3.4cqw,15px); }
+}
 .footer,.mode-help { margin: 0; font-size: 13px; color: #dacdb8; text-align: center; }
 #status:empty { display: none; }
 .overlay { position: fixed; inset: 0; z-index: 10; background: #000a; display: flex; align-items: center; justify-content: center; padding: 12px; overflow: auto; }
@@ -109,12 +118,12 @@ header,main,#instrument,.play { touch-action: none; }
 progress { width: 100%; accent-color: #e4be75; }
 #loadError,#enableError,#status { color: #f4ba9c; }
 @media(max-width:500px) { header { padding-inline: 89px; } h1 { font-size: 16px; } header .standard { width: 82px; font-size: 12px; padding-inline: 4px; } .mode-help { font-size: 11px; } }
-@media(orientation:landscape) and (max-height:550px) { header { min-height: 38px; padding-block: 3px; } h1 { font-size: 18px; } header .standard { padding-block: 4px; } main { --instrument-width: min(100%,1024px,calc((100dvh - 110px)*4/3)); gap: 4px; padding-block: 4px; } .footer,.mode-help { font-size: 11px; line-height: 15px; } }
+@media(orientation:landscape) and (max-height:550px) { header { min-height: 38px; padding-block: 3px; } h1 { font-size: 18px; } header .standard { padding-block: 4px; } main { --instrument-width: min(100%,1024px,calc((100dvh - 118px - var(--settings-footer-space))*4/3)); gap: 4px; padding-block: 4px; } .footer,.mode-help { font-size: 11px; line-height: 15px; } }
 /* Keep the accidentals clear of the iPad home indicator in landscape. */
 @media (orientation: landscape) {
     html.is-ipad main {
         --ipad-bottom-space: max(24px,calc(env(safe-area-inset-bottom, 0px) + 8px));
-        --instrument-width: min(100%,1024px,calc((100dvh - 137px - var(--ipad-bottom-space) + 8px)*4/3));
+        --instrument-width: min(100%,1024px,calc((100dvh - 145px - var(--ipad-bottom-space) + 8px - var(--settings-footer-space))*4/3));
         padding-top: 4px;
         padding-bottom: var(--ipad-bottom-space);
     }
@@ -126,6 +135,32 @@ progress { width: 100%; accent-color: #e4be75; }
 .ipad-range-hit { position: absolute; top: 50%; left: -6px; right: -6px;
     height: max(36px,3.5cqw); transform: translateY(-50%); z-index: 1;
     touch-action: none; cursor: ew-resize; -webkit-tap-highlight-color: transparent; }
+#settingsFooter { flex: 0 0 var(--settings-footer-space); display: flex; align-items: flex-start; justify-content: space-between; padding: 3px max(10px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(10px,env(safe-area-inset-left)); touch-action: none; -webkit-user-select: none; user-select: none; }
+#defaultsButton, #settingsButton { width: 120px; text-align: center; white-space: nowrap; }
+@media(max-width:500px) { #defaultsButton, #settingsButton { width:82px; font-size:12px; padding-inline:4px; } }
+/* On sufficiently wide screens the footer fits beside the instrument. */
+@media(min-width: 900px) and (min-aspect-ratio: 3/2), (min-width: 1300px) { body { --settings-footer-space: 0px; } #settingsFooter { position:fixed; bottom:0; left:0; right:0; padding-bottom:max(8px,env(safe-area-inset-bottom)); pointer-events:none; } #settingsFooter button { pointer-events:auto; } }
+#settingsOverlay .panel { width:min(540px,100%); display:flex; flex-direction:column; overflow:hidden; max-height: min(780px,calc(100dvh - 24px)); }
+#expressionForm { display:flex; flex-direction:column; min-height:0; }
+#settingsOverlay .settings-scroll { overflow:auto; min-height:0; padding:3px 5px 3px 3px; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+#settingsOverlay h3 { margin: 8px 0 10px; font-size:17px; }
+#settingsOverlay .setting-note { font-size:14px; color:#dacdb8; }
+#settingsOverlay .expression-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin: 0 0 10px; }
+#settingsOverlay .expression-row label { flex:1; }
+#settingsOverlay input[type="number"] { appearance:none; -webkit-appearance:none; -moz-appearance:textfield; width:78px; min-width:0; height:34px; margin:0; padding:6px; border:1px solid #806d54; border-radius:5px; background:#171512; color:#f5ecdc; caret-color:#f5ecdc; box-shadow:none; font:400 16px/20px system-ui,-apple-system,BlinkMacSystemFont,sans-serif; font-variant-numeric:tabular-nums; text-align:right; }
+#settingsOverlay input[type="number"]::-webkit-inner-spin-button,
+#settingsOverlay input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+#settingsOverlay input[type="number"]:focus-visible { outline:2px solid #e8ca86; outline-offset:1px; }
+#settingsOverlay .settings-range-note { text-align:center; font-size:13px; color:#dacdb8; margin:0 0 12px; flex-shrink:0; }
+#settingsOverlay .unit { width:42px; font-size:13px; color:#dacdb8; }
+#bendSettings { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(11,auto); grid-auto-flow:column; gap:8px 20px; }
+#bendSettings .expression-row { margin:0; }
+#settingsOverlay footer { flex-wrap:wrap; gap:8px; flex-shrink:0; margin-top:20px; }
+#settingsOverlay footer button { min-height:38px; min-width:80px; }
+#confirmExpression { background:#e4be75; color:#211a12; font-weight:600; }
+#expressionError { color:#f4ba9c; font-size:14px; margin:8px 0 0; }
+#expressionError:empty { display:none; }
+@media(max-width:400px) { #bendSettings { gap:8px 12px; } #settingsOverlay .panel { padding:14px; } #settingsOverlay input[type="number"] { width:65px; } }
 </style>
 </head>
 <body>
@@ -137,7 +172,7 @@ progress { width: 100%; accent-color: #e4be75; }
         <div class="setting"><label for="regulator">Regulator Volume <output id="regulatorValue"></output></label><input id="regulator" type="range" min="0" max="2" step=".01" value="1.5"></div>
         <div class="setting"><label for="droneVolume">Drones Volume <output id="droneVolumeValue"></output></label><input id="droneVolume" type="range" min="0" max="2" step=".01" value="1.5"></div>
     </div>
-    <button id="drone" class="drone" aria-label="Toggle drones" aria-pressed="false" title="Toggle drones (Enter or Spacebar). Shift+Alt/Option-click to reset all settings."><img src="uilleann_pipes_keyboard_assets/drone_off.png" alt="Drones"></button>
+    <button id="drone" class="drone" aria-label="Toggle drones" aria-pressed="false" title="Toggle drones (Spacebar)."><img src="uilleann_pipes_keyboard_assets/drone_off.png" alt="Drones"></button>
 
     <div id="rightControls" class="controls">
         <div class="setting"><label for="reverb">Reverb Level <output id="reverbValue"></output></label><input id="reverb" type="range" min="0" max=".75" step=".01" value=".4"></div>
@@ -157,26 +192,55 @@ progress { width: 100%; accent-color: #e4be75; }
     <div id="bendRight" class="bend" title="Pitch bend (drag vertically)"><img src="uilleann_pipes_keyboard_assets/pitchbend_off.png" alt="Pitch bend"></div>
 </div>
 <div id="status" role="status"></div>
-<div id="whiteKeySelectors" aria-label="Chanter Hold, Stop and white-key accidentals">
-    <button type="button" class="latch-control" id="latchLeft" aria-pressed="true" title="Toggle Chanter Hold (D or K)">Hold</button>
-    <button type="button" class="latch-control stop-control" id="stopLeft" title="Stop chanter notes (F or J)">Stop</button>
+<div id="whiteKeySelectors" aria-label="Regulator and chanter Hold, Stop and white-key accidentals">
+    <div class="white-key-group hold-stop-group" role="group" aria-labelledby="regulatorGroupTitle">
+        <button type="button" class="latch-control" id="latchLeft" aria-pressed="false" aria-label="Regulator Hold" title="Toggle Regulator Hold (C)">Hold</button>
+        <button type="button" class="latch-control stop-control" id="stopLeft" aria-label="Regulator Stop" title="Stop regulators (V)">Stop</button>
+        <div class="white-key-title" id="regulatorGroupTitle">Regulators</div>
+    </div>
     <div class="white-key-group" role="group" aria-labelledby="fKeyTitle">
-        <button type="button" data-family="f" data-sharp="false" aria-pressed="false" title="F natural (toggle with G)">F♮</button>
-        <button type="button" data-family="f" data-sharp="true" aria-pressed="true" title="F sharp (toggle with G)">F♯</button>
+        <button type="button" data-family="f" data-sharp="false" aria-pressed="false" title="F natural (toggle with B)">F♮</button>
+        <button type="button" data-family="f" data-sharp="true" aria-pressed="true" title="F sharp (toggle with B)">F♯</button>
         <div class="white-key-title" id="fKeyTitle">F Key</div>
     </div>
     <div class="white-key-group" role="group" aria-labelledby="cKeyTitle">
-        <button type="button" data-family="c" data-sharp="false" aria-pressed="true" title="C natural (toggle with H)">C♮</button>
-        <button type="button" data-family="c" data-sharp="true" aria-pressed="false" title="C sharp (toggle with H)">C♯</button>
+        <button type="button" data-family="c" data-sharp="false" aria-pressed="true" title="C natural (toggle with N)">C♮</button>
+        <button type="button" data-family="c" data-sharp="true" aria-pressed="false" title="C sharp (toggle with N)">C♯</button>
         <div class="white-key-title" id="cKeyTitle">C Key</div>
     </div>
-    <button type="button" class="latch-control stop-control" id="stopRight" title="Stop chanter notes (F or J)">Stop</button>
-    <button type="button" class="latch-control" id="latchRight" aria-pressed="true" title="Toggle Chanter Hold (D or K)">Hold</button>
+    <div class="white-key-group hold-stop-group" role="group" aria-labelledby="chanterGroupTitle">
+        <button type="button" class="latch-control stop-control" id="stopRight" aria-label="Chanter Stop" title="Stop chanter notes (M)">Stop</button>
+        <button type="button" class="latch-control" id="latchRight" aria-pressed="true" aria-label="Chanter Hold" title="Toggle Chanter Hold (Comma)">Hold</button>
+        <div class="white-key-title" id="chanterGroupTitle">Chanter</div>
+    </div>
 </div>
 </main>
+<div id="settingsFooter"><button id="defaultsButton" type="button" class="standard">Defaults</button><button id="settingsButton" type="button" class="standard">Settings</button></div>
 <div id="loadOverlay" class="overlay"><section class="panel" role="dialog" aria-modal="true" aria-labelledby="loadTitle"><h2 id="loadTitle">Loading Samples</h2><p id="loadDescription">Preparing the pipe sounds.</p><progress id="progress" value="0" max="27"></progress><p id="loadCount" role="status">0 of 27 samples</p><p id="loadError" role="alert"></p><button id="retry" class="standard" hidden>Retry</button></section></div>
 <div id="enableOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><h2 id="enableTitle">🔊 Enable Playback</h2><p>Enable audio to play the pipes.</p><button id="enable" class="standard">Enable Playback</button><p id="enableError" role="alert"></p></section></div>
-<div id="resetOverlay" class="overlay" hidden><section class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetMessage"><h2 id="resetTitle">Reset Settings</h2><p id="resetMessage">Reset all settings to their defaults?</p><footer><button id="cancelReset" type="button" class="standard">Cancel</button><button id="confirmReset" type="button" class="standard">Reset</button></footer></section></div>
+<div id="resetOverlay" class="overlay" hidden><section class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetMessage"><h2 id="resetTitle">Reset Settings</h2><p id="resetMessage">Reset all settings, including volume, effects, finger vibrato, note bends and Shift-key slides, to their defaults?</p><footer><button id="cancelReset" type="button" class="standard">Cancel</button><button id="confirmReset" type="button" class="standard">Reset</button></footer></section></div>
+<div id="settingsOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+<h2 id="settingsTitle">Settings</h2>
+<p class="settings-range-note">All bend values: 0–100 cents; vibrato rate: 0–10 Hz; slide time: 0–1000 ms.</p>
+<form id="expressionForm">
+<div class="settings-scroll">
+<h3>Finger Vibrato</h3>
+<div class="expression-row"><label for="vibratoRateSetting">Rate</label><input id="vibratoRateSetting" type="number" min="0" max="10" step="any" inputmode="decimal" required><span class="unit">Hz</span></div>
+<div class="expression-row"><label for="vibratoDepthSetting">Bend offset</label><input id="vibratoDepthSetting" type="number" min="0" max="100" step="any" inputmode="decimal" required><span class="unit">cents</span></div>
+<p class="setting-note">A rate or offset of zero disables finger vibrato.</p>
+<hr>
+<h3>Maximum Key Bend (cents)</h3>
+<p class="setting-note">Set the downward bend for each chanter note (D-set note names):</p>
+<div id="bendSettings"></div>
+<hr>
+<h3>Shift Key Slide</h3>
+<div class="expression-row"><label for="slideDepthSetting">Start offset</label><input id="slideDepthSetting" type="number" min="0" max="100" step="any" inputmode="decimal" required><span class="unit">cents</span></div>
+<div class="expression-row"><label for="slideTimeSetting">Bend time</label><input id="slideTimeSetting" type="number" min="0" max="1000" step="any" inputmode="decimal" required><span class="unit">ms</span></div>
+<p class="setting-note">A start offset or bend time of zero disables Shift-key slides.</p>
+</div>
+<p id="expressionError" role="alert"></p>
+<footer><button id="expressionDefaults" type="button" class="standard">Defaults</button><button id="cancelExpression" type="button" class="standard">Cancel</button><button id="confirmExpression" type="submit" class="standard">OK</button></footer>
+</form></section></div>
 <div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.1</p><div class="help-scroll">
 <h3>Overview</h3>
 <p>Uilleann Pipes Keyboard is a virtual musical instrument that lets you experience the sound of a full set of Irish Uilleann Pipes using a computer keyboard, mouse or touchscreen.</p>
@@ -186,24 +250,68 @@ progress { width: 100%; accent-color: #e4be75; }
 <p>Adjust the individual instrument volumes, reverb and stereo drone chorus to create your own preferred sound.</p>
 <p>The tool is designed for both casual musical exploration and expressive playing on computers and tablets.</p>
 <hr>
-<h3>Playing the Melody</h3>
-<p>Play the piano keys with your mouse, fingers or computer keyboard.</p>
-<p>Slide between piano keys to change notes without lifting your finger or releasing the mouse button.</p>
-<p>Move your mouse or finger toward the bottom of a melody key to bend the note down.</p>
-<p>Use either vertical strip beside the upper controls to bend notes up or down.</p>
-<p>Hold either Shift key while starting a chanter note on the computer keyboard to slide up into its pitch over 150 milliseconds.</p>
+<h3>Setting the Pitch of the Set</h3>
+<p>Use the Pitch selector to choose B, C, C♯ or D as the key of the set.</p>
 <hr>
-<h3>Chanter Hold and Stop</h3>
-<p>Click or tap either Hold button, or press D or K on your computer keyboard, to turn Hold on or off.</p>
-<p>When Hold is on, the last chanter note continues sounding after release until you play another note, turn Hold off or use Stop.</p>
-<p>Play a sounding note again to restart it from the beginning.</p>
-<p>Click or tap either Stop button, or press F or J, to stop all chanter notes without changing the Hold setting.</p>
-<p>Hold and Stop do not affect the regulators or drones.</p><hr>
+<h3>Playing the Chanter</h3>
+<p>Play the chanter on the piano keys with your mouse, fingers or computer keyboard.</p>
+<p>Slide between piano keys to change notes without lifting your finger or releasing the mouse button.</p>
+<p>Move your mouse or finger toward the bottom of a chanter piano key to bend the note down.</p>
+<p>Use either vertical strip beside the upper controls to bend notes up or down.</p>
+<p>Hold either Shift key while starting a chanter note on the computer keyboard to slide up into its pitch.</p>
+<p>Hold Z or / on your computer keyboard to add finger vibrato, alternating between normal pitch and a slightly lower pitch.</p>
+<hr>
+<h3>Playing the Drones</h3>
+<p>Click or tap the central drone switch, or press Spacebar, to turn the drones on or off.</p>
+<hr>
+<h3>Playing the Regulators</h3>
+<p>Play the four regulator chords using the upper or lower parts of the two leftmost piano keys, or use either hand on the green computer keys in the home row below.</p>
+<svg class="piano-map" viewBox="0 302 546 47" role="img" aria-labelledby="regulatorChartTitle regulatorChartDescription" xmlns="http://www.w3.org/2000/svg">
+<title id="regulatorChartTitle">Regulator keyboard shortcuts</title>
+<desc id="regulatorChartDescription">S or H plays D–F♯, D or J plays D–G, F or K plays F♯–A, G or L plays G–B.</desc>
+<rect x="18.00" y="308" width="56.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="46.25" y="330" fill="#a99c89" font-size="11" font-weight="600">Caps Lock</text>
+<rect x="77.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="93.00" y="330" fill="#a99c89" font-size="14" font-weight="600">A</text>
+<rect x="111.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="127.00" y="323" fill="#fff" font-size="14" font-weight="600">S</text>
+<text x="127.00" y="336" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="145.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="161.00" y="323" fill="#fff" font-size="14" font-weight="600">D</text>
+<text x="161.00" y="336" fill="#fff" font-size="9.5">D–G</text>
+<rect x="179.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="195.00" y="323" fill="#fff" font-size="14" font-weight="600">F</text>
+<text x="195.00" y="336" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="213.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="229.00" y="323" fill="#fff" font-size="14" font-weight="600">G</text>
+<text x="229.00" y="336" fill="#fff" font-size="9.5">G–B</text>
+<rect x="247.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="263.00" y="323" fill="#fff" font-size="14" font-weight="600">H</text>
+<text x="263.00" y="336" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="281.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="297.00" y="323" fill="#fff" font-size="14" font-weight="600">J</text>
+<text x="297.00" y="336" fill="#fff" font-size="9.5">D–G</text>
+<rect x="315.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="331.00" y="323" fill="#fff" font-size="14" font-weight="600">K</text>
+<text x="331.00" y="336" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="349.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="365.00" y="323" fill="#fff" font-size="14" font-weight="600">L</text>
+<text x="365.00" y="336" fill="#fff" font-size="9.5">G–B</text>
+<rect x="383.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="399.00" y="330" fill="#a99c89" font-size="14" font-weight="600">;</text>
+<rect x="417.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="433.00" y="330" fill="#a99c89" font-size="14" font-weight="600">'</text>
+<rect x="451.50" y="308" width="73.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="488.25" y="330" fill="#a99c89" font-size="12" font-weight="600">Enter</text>
+</svg>
+<p>Hold a regulator key to sustain its chord while playing the chanter, or enable Hold in the Regulators group to sustain the last chord after release.</p>
+<p>Press C to toggle regulator Hold and V to stop the regulators.</p>
+<hr>
 <h3>Piano Keys to Computer Keyboard Mapping</h3>
 <p>The diagrams below show how to play the instrument using a US QWERTY keyboard:</p>
-<svg class="piano-map" viewBox="0 0 546 523" role="img" aria-labelledby="fullKeyboardChartTitle fullKeyboardChartDescription" xmlns="http://www.w3.org/2000/svg">
+<svg class="piano-map" viewBox="0 0 546 528" role="img" aria-labelledby="fullKeyboardChartTitle fullKeyboardChartDescription" xmlns="http://www.w3.org/2000/svg">
 <title id="fullKeyboardChartTitle">Full computer keyboard mapping</title>
-<desc id="fullKeyboardChartDescription">Piano melody: Tab, Q W E R T Y U I O P left bracket right bracket are white keys; 1 3 4 5 7 8 0 minus equals are black keys. Hold either Shift key while starting a melody note to slide up into pitch. D or K toggles Chanter Hold. F or J stops chanter notes only. G toggles F natural or sharp, H toggles C natural or sharp. X or N plays D–F♯, C or M plays D–G, V or comma plays F♯–A, B or period plays G–B. Enter or Space toggles the drones. Escape stops all sounds.</desc>
+<desc id="fullKeyboardChartDescription">Piano chanter: Tab, Q W E R T Y U I O P left bracket right bracket are white keys; 1 3 4 5 7 8 0 minus equals are black keys. Hold either Shift key while starting a chanter note to slide up into pitch. Hold Z or slash for finger vibrato. C toggles Regulator Hold, V stops regulators, Comma toggles Chanter Hold, M stops chanter notes. B toggles F natural or sharp, N toggles C natural or sharp. S or H plays D–F♯, D or J plays D–G, F or K plays F♯–A, G or L plays G–B. Space toggles the drones. Enter or Escape stops all sounds.</desc>
 <rect x="13" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="32.5" y="148" font-size="16" font-weight="bold" fill="#222">Tab</text><text x="32.5" y="175" font-size="11" fill="#555">D4</text><rect x="53" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="72.5" y="148" font-size="16" font-weight="bold" fill="#222">Q</text><text x="72.5" y="175" font-size="11" fill="#555">E4</text><rect x="93" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="112.5" y="148" font-size="16" font-weight="bold" fill="#222">W</text><text x="112.5" y="175" font-size="11" fill="#555">F4</text><rect x="133" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="152.5" y="148" font-size="16" font-weight="bold" fill="#222">E</text><text x="152.5" y="175" font-size="11" fill="#555">G4</text><rect x="173" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="192.5" y="148" font-size="16" font-weight="bold" fill="#222">R</text><text x="192.5" y="175" font-size="11" fill="#555">A4</text><rect x="213" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="232.5" y="148" font-size="16" font-weight="bold" fill="#222">T</text><text x="232.5" y="175" font-size="11" fill="#555">B4</text><rect x="253" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="272.5" y="148" font-size="16" font-weight="bold" fill="#222">Y</text><text x="272.5" y="175" font-size="11" fill="#555">C5</text><rect x="293" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="312.5" y="148" font-size="16" font-weight="bold" fill="#222">U</text><text x="312.5" y="175" font-size="11" fill="#555">D5</text><rect x="333" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="352.5" y="148" font-size="16" font-weight="bold" fill="#222">I</text><text x="352.5" y="175" font-size="11" fill="#555">E5</text><rect x="373" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="392.5" y="148" font-size="16" font-weight="bold" fill="#222">O</text><text x="392.5" y="175" font-size="11" fill="#555">F5</text><rect x="413" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="432.5" y="148" font-size="16" font-weight="bold" fill="#222">P</text><text x="432.5" y="175" font-size="11" fill="#555">G5</text><rect x="453" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="472.5" y="148" font-size="16" font-weight="bold" fill="#222">[</text><text x="472.5" y="175" font-size="11" fill="#555">A5</text><rect x="493" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="512.5" y="148" font-size="16" font-weight="bold" fill="#222">]</text><text x="512.5" y="175" font-size="11" fill="#555">B5</text><rect x="39" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="52.5" y="65" font-size="16" font-weight="bold" fill="white">1</text><text x="52.5" y="91" font-size="9" fill="#ddd">D♯4</text><rect x="119" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="132.5" y="65" font-size="16" font-weight="bold" fill="white">3</text><text x="132.5" y="91" font-size="9" fill="#ddd">F♯4</text><rect x="159" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="172.5" y="65" font-size="16" font-weight="bold" fill="white">4</text><text x="172.5" y="91" font-size="9" fill="#ddd">G♯4</text><rect x="199" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="212.5" y="65" font-size="16" font-weight="bold" fill="white">5</text><text x="212.5" y="91" font-size="9" fill="#ddd">B♭4</text><rect x="279" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="292.5" y="65" font-size="16" font-weight="bold" fill="white">7</text><text x="292.5" y="91" font-size="9" fill="#ddd">C♯5</text><rect x="319" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="332.5" y="65" font-size="16" font-weight="bold" fill="white">8</text><text x="332.5" y="91" font-size="9" fill="#ddd">D♯5</text><rect x="399" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="412.5" y="65" font-size="16" font-weight="bold" fill="white">0</text><text x="412.5" y="91" font-size="9" fill="#ddd">F♯5</text><rect x="439" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="452.5" y="65" font-size="16" font-weight="bold" fill="white">-</text><text x="452.5" y="91" font-size="9" fill="#ddd">G♯5</text><rect x="479" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="492.5" y="65" font-size="16" font-weight="bold" fill="white">=</text><text x="492.5" y="91" font-size="9" fill="#ddd">B♭5</text>
 <text x="273" y="219" fill="#f5ecdc" font-size="16" font-weight="bold"> </text>
 <rect x="18.00" y="230" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
@@ -263,69 +371,71 @@ progress { width: 100%; accent-color: #e4be75; }
 <rect x="477.00" y="269" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="501.00" y="291" fill="#a99c89" font-size="14" font-weight="600">\</text>
 <rect x="18.00" y="308" width="56.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="46.25" y="330" fill="#a99c89" font-size="12" font-weight="600">Caps Lock</text>
+<text x="46.25" y="330" fill="#a99c89" font-size="11" font-weight="600">Caps Lock</text>
 <rect x="77.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="93.00" y="330" fill="#a99c89" font-size="14" font-weight="600">A</text>
-<rect x="111.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="127.00" y="330" fill="#a99c89" font-size="14" font-weight="600">S</text>
-<rect x="145.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
-<text x="161.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">D</text>
-<text x="161.00" y="336" fill="#f5ecdc" font-size="9.5">Hold</text>
-<rect x="179.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
-<text x="195.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">F</text>
-<text x="195.00" y="336" fill="#f5ecdc" font-size="9.5">Stop</text>
-<rect x="213.50" y="308" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
-<text x="229.00" y="323" fill="#211a12" font-size="14" font-weight="600">G</text>
-<text x="229.00" y="336" fill="#211a12" font-size="9.5">F/F♯</text>
-<rect x="247.50" y="308" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
-<text x="263.00" y="323" fill="#211a12" font-size="14" font-weight="600">H</text>
-<text x="263.00" y="336" fill="#211a12" font-size="9.5">C/C♯</text>
-<rect x="281.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
-<text x="297.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">J</text>
-<text x="297.00" y="336" fill="#f5ecdc" font-size="9.5">Stop</text>
-<rect x="315.50" y="308" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
-<text x="331.00" y="323" fill="#f5ecdc" font-size="14" font-weight="600">K</text>
-<text x="331.00" y="336" fill="#f5ecdc" font-size="9.5">Hold</text>
-<rect x="349.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="365.00" y="330" fill="#a99c89" font-size="14" font-weight="600">L</text>
+<rect x="111.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="127.00" y="323" fill="#fff" font-size="14" font-weight="600">S</text>
+<text x="127.00" y="336" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="145.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="161.00" y="323" fill="#fff" font-size="14" font-weight="600">D</text>
+<text x="161.00" y="336" fill="#fff" font-size="9.5">D–G</text>
+<rect x="179.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="195.00" y="323" fill="#fff" font-size="14" font-weight="600">F</text>
+<text x="195.00" y="336" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="213.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="229.00" y="323" fill="#fff" font-size="14" font-weight="600">G</text>
+<text x="229.00" y="336" fill="#fff" font-size="9.5">G–B</text>
+<rect x="247.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="263.00" y="323" fill="#fff" font-size="14" font-weight="600">H</text>
+<text x="263.00" y="336" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="281.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="297.00" y="323" fill="#fff" font-size="14" font-weight="600">J</text>
+<text x="297.00" y="336" fill="#fff" font-size="9.5">D–G</text>
+<rect x="315.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="331.00" y="323" fill="#fff" font-size="14" font-weight="600">K</text>
+<text x="331.00" y="336" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="349.50" y="308" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="365.00" y="323" fill="#fff" font-size="14" font-weight="600">L</text>
+<text x="365.00" y="336" fill="#fff" font-size="9.5">G–B</text>
 <rect x="383.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="399.00" y="330" fill="#a99c89" font-size="14" font-weight="600">;</text>
 <rect x="417.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="433.00" y="330" fill="#a99c89" font-size="14" font-weight="600">&#x27;</text>
-<rect x="451.50" y="308" width="73.50" height="35" rx="3" fill="#80612b" stroke="#d8b77b"/>
-<text x="488.25" y="323" fill="#fff" font-size="12" font-weight="600">Enter</text>
-<text x="488.25" y="336" fill="#fff" font-size="9.5">Drones</text>
+<text x="433.00" y="330" fill="#a99c89" font-size="14" font-weight="600">'</text>
+<rect x="451.50" y="308" width="73.50" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="488.25" y="323" fill="#f5ecdc" font-size="12" font-weight="600">Enter</text>
+<text x="488.25" y="336" fill="#f5ecdc" font-size="9.5">Stop all</text>
 <rect x="18.00" y="347" width="73.50" height="35" rx="3" fill="#665078" stroke="#a58ab9"/>
 <text x="54.75" y="362" fill="#fff" font-size="12" font-weight="600">Shift</text>
 <text x="54.75" y="375" fill="#fff" font-size="9.5">Slide up</text>
-<rect x="94.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="110.00" y="369" fill="#a99c89" font-size="14" font-weight="600">Z</text>
-<rect x="128.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="144.00" y="362" fill="#fff" font-size="14" font-weight="600">X</text>
-<text x="144.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="94.50" y="347" width="31.00" height="35" rx="3" fill="#8b4839" stroke="#d29480"/>
+<text x="110.00" y="362" fill="#fff" font-size="14" font-weight="600">Z</text>
+<text x="110.00" y="375" fill="#fff" font-size="8">Vibrato</text>
+<rect x="128.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="144.00" y="369" fill="#a99c89" font-size="14" font-weight="600">X</text>
 <rect x="162.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
 <text x="178.00" y="362" fill="#fff" font-size="14" font-weight="600">C</text>
-<text x="178.00" y="375" fill="#fff" font-size="9.5">D–G</text>
+<text x="178.00" y="375" fill="#fff" font-size="9.5">Hold</text>
 <rect x="196.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
 <text x="212.00" y="362" fill="#fff" font-size="14" font-weight="600">V</text>
-<text x="212.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
-<rect x="230.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="246.00" y="362" fill="#fff" font-size="14" font-weight="600">B</text>
-<text x="246.00" y="375" fill="#fff" font-size="9.5">G–B</text>
-<rect x="264.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="280.00" y="362" fill="#fff" font-size="14" font-weight="600">N</text>
-<text x="280.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
-<rect x="298.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="314.00" y="362" fill="#fff" font-size="14" font-weight="600">M</text>
-<text x="314.00" y="375" fill="#fff" font-size="9.5">D–G</text>
-<rect x="332.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="348.00" y="362" fill="#fff" font-size="14" font-weight="600">, &lt;</text>
-<text x="348.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
-<rect x="366.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="382.00" y="362" fill="#fff" font-size="14" font-weight="600">. &gt;</text>
-<text x="382.00" y="375" fill="#fff" font-size="9.5">G–B</text>
-<rect x="400.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="416.00" y="369" fill="#a99c89" font-size="14" font-weight="600">/</text>
+<text x="212.00" y="375" fill="#fff" font-size="9.5">Stop</text>
+<rect x="230.50" y="347" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
+<text x="246.00" y="362" fill="#211a12" font-size="14" font-weight="600">B</text>
+<text x="246.00" y="375" fill="#211a12" font-size="9.5">F/F♯</text>
+<rect x="264.50" y="347" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
+<text x="280.00" y="362" fill="#211a12" font-size="14" font-weight="600">N</text>
+<text x="280.00" y="375" fill="#211a12" font-size="9.5">C/C♯</text>
+<rect x="298.50" y="347" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="314.00" y="362" fill="#f5ecdc" font-size="14" font-weight="600">M</text>
+<text x="314.00" y="375" fill="#f5ecdc" font-size="9.5">Stop</text>
+<rect x="332.50" y="347" width="31.00" height="35" rx="3" fill="#345e8c" stroke="#86acd2"/>
+<text x="348.00" y="362" fill="#f5ecdc" font-size="14" font-weight="600">,</text>
+<text x="348.00" y="375" fill="#f5ecdc" font-size="9.5">Hold</text>
+<rect x="366.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="382.00" y="369" fill="#a99c89" font-size="14" font-weight="600">.</text>
+<rect x="400.50" y="347" width="31.00" height="35" rx="3" fill="#8b4839" stroke="#d29480"/>
+<text x="416.00" y="362" fill="#fff" font-size="14" font-weight="600">/</text>
+<text x="416.00" y="375" fill="#fff" font-size="8">Vibrato</text>
 <rect x="434.50" y="347" width="90.50" height="35" rx="3" fill="#665078" stroke="#a58ab9"/>
 <text x="479.75" y="362" fill="#fff" font-size="12" font-weight="600">Shift</text>
 <text x="479.75" y="375" fill="#fff" font-size="9.5">Slide up</text>
@@ -340,67 +450,51 @@ progress { width: 100%; accent-color: #e4be75; }
 <text x="416.00" y="408" fill="#a99c89" font-size="14" font-weight="600">Alt</text>
 <rect x="443.00" y="386" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
 <text x="467.00" y="408" fill="#a99c89" font-size="12" font-weight="600">Ctrl</text>
-<rect x="15" y="433" width="14" height="14" rx="2" fill="#faf9f6" stroke="#a99c89"/><text x="34" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">White melody</text>
-<rect x="128" y="433" width="14" height="14" rx="2" fill="#151515" stroke="#a99c89"/><text x="147" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">Black melody</text>
-<rect x="241" y="433" width="14" height="14" rx="2" fill="#386e59" stroke="#a99c89"/><text x="260" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">Regulators</text>
-<rect x="341" y="433" width="14" height="14" rx="2" fill="#e4be75" stroke="#a99c89"/><text x="360" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">F/C toggles</text>
-<rect x="445" y="433" width="14" height="14" rx="2" fill="#345e8c" stroke="#86acd2"/><text x="464" y="444" text-anchor="start" fill="#f5ecdc" font-size="11">Hold/Stop</text>
-<text x="273" y="476" fill="#dacdb8" font-size="12">Enter or Space: Toggle Drones · Escape: Stop all sounds</text>
-<text x="273" y="494" fill="#dacdb8" font-size="12">F and C white notes follow their selector settings.</text>
-<text x="273" y="512" fill="#dacdb8" font-size="12">Shift + melody key: Slide up into pitch (150 ms)</text>
+<text x="273" y="445" fill="#dacdb8" font-size="12">Space: Toggle drones · Enter or Escape: Stop all</text>
+<text x="273" y="463" fill="#dacdb8" font-size="12">F and C white notes follow their selector settings.</text>
+<text x="273" y="481" fill="#dacdb8" font-size="12">Shift + chanter key: Slide up into pitch (adjustable in Settings)</text>
+<text x="273" y="499" fill="#dacdb8" font-size="12">Hold Z or /: Finger vibrato (adjustable in Settings)</text>
+<text x="273" y="517" fill="#dacdb8" font-size="12">C / V: Regulator Hold / Stop · , / M: Chanter Hold / Stop</text>
 </svg>
-<p>The note names are shown for the D set, but the same computer keys work in all four tunings.</p><hr>
+<p>The note names are shown for the D set, but the same computer keys work in all four tunings.</p>
+<hr>
+<h3>Chanter and Regulator Hold and Stop</h3>
+<p>Click or tap Hold in the Regulators group, or press C, to turn regulator Hold on or off.</p>
+<p>Click or tap Hold in the Chanter group, or press the comma key, to turn chanter Hold on or off.</p>
+<p>Chanter Hold is enabled by default and regulator Hold is disabled by default.</p>
+<p>When Hold is on, the last note or chord in that section continues sounding after release until you play another in that section, turn its Hold off or use its Stop button.</p>
+<p>With Hold enabled, play a sounding note or chord again to restart it from the beginning.</p>
+<p>When Hold is off, notes or chords in that section stop when you release their keys.</p>
+<p>Click or tap Stop in the Regulators group, or press V, to stop the regulators without changing regulator Hold.</p>
+<p>Click or tap Stop in the Chanter group, or press M, to stop the chanter without changing chanter Hold.</p>
+<p>Press Enter or Escape to stop all sounds, including the drones, without changing either Hold setting.</p>
+<hr>
 <h3>F and C Key Selectors</h3>
 <p>Use the selectors below the piano to choose whether the white F and C keys play natural or sharp notes.</p>
-<p>Press G to toggle F / F♯ and H to toggle C / C♯.</p>
+<p>Press B to toggle F / F♯ and N to toggle C / C♯.</p>
 <p>For D major, select F♯ and C♯; for G major, select F♯ and C♮.</p>
-<p>You can still play the black keys normally.</p><hr>
-<h3>Playing the Regulators</h3>
-<p>Play the four regulator chords using the upper or lower parts of the two leftmost piano keys, or use either hand on the green computer keys below.</p>
-<svg class="piano-map" viewBox="0 341 546 47" role="img" aria-labelledby="regulatorChartTitle regulatorChartDescription" xmlns="http://www.w3.org/2000/svg">
-<title id="regulatorChartTitle">Regulator keyboard shortcuts</title>
-<desc id="regulatorChartDescription">X or N plays D–F♯, C or M plays D–G, V or comma plays F♯–A, B or period plays G–B.</desc>
-<rect x="18.00" y="347" width="73.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="54.75" y="369" fill="#a99c89" font-size="12" font-weight="600">Shift</text>
-<rect x="94.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="110.00" y="369" fill="#a99c89" font-size="14" font-weight="600">Z</text>
-<rect x="128.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="144.00" y="362" fill="#fff" font-size="14" font-weight="600">X</text>
-<text x="144.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
-<rect x="162.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="178.00" y="362" fill="#fff" font-size="14" font-weight="600">C</text>
-<text x="178.00" y="375" fill="#fff" font-size="9.5">D–G</text>
-<rect x="196.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="212.00" y="362" fill="#fff" font-size="14" font-weight="600">V</text>
-<text x="212.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
-<rect x="230.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="246.00" y="362" fill="#fff" font-size="14" font-weight="600">B</text>
-<text x="246.00" y="375" fill="#fff" font-size="9.5">G–B</text>
-<rect x="264.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="280.00" y="362" fill="#fff" font-size="14" font-weight="600">N</text>
-<text x="280.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
-<rect x="298.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="314.00" y="362" fill="#fff" font-size="14" font-weight="600">M</text>
-<text x="314.00" y="375" fill="#fff" font-size="9.5">D–G</text>
-<rect x="332.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="348.00" y="362" fill="#fff" font-size="14" font-weight="600">, &lt;</text>
-<text x="348.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
-<rect x="366.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
-<text x="382.00" y="362" fill="#fff" font-size="14" font-weight="600">. &gt;</text>
-<text x="382.00" y="375" fill="#fff" font-size="9.5">G–B</text>
-<rect x="400.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="416.00" y="369" fill="#a99c89" font-size="14" font-weight="600">/</text>
-<rect x="434.50" y="347" width="90.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
-<text x="479.75" y="369" fill="#a99c89" font-size="12" font-weight="600">Shift</text>
-</svg>
-<p>Hold a regulator key to sustain its chord while playing the melody.</p><hr>
-<h3>Drones and Settings</h3>
-<p>Click or tap the central drone switch, or press Enter or Spacebar, to turn the drones on or off.</p>
+<p>You can still play the black keys normally.</p>
+<hr>
+<h3>Setting the Volume and Effects Levels</h3>
 <p>Adjust the volume, reverb and drone chorus controls to taste.</p>
-<p>Use the Pitch selector to choose B, C, C♯ or D.</p>
 <p>Your settings are saved automatically.</p>
-<p>To restore the defaults, Shift+Alt-click (Shift+Option-click on Mac) the drone switch and choose Reset.</p>
-<p>Press Escape to stop all sounds, including the drones.</p>
+<hr>
+<h3>Finger Vibrato and Pitch Bend Settings</h3>
+<p>Click or tap <b>Settings</b> at the lower right to adjust the finger vibrato rate (Hz), downward bend offset (cents), and maximum downward bend for each chanter note (cents).</p>
+<p>The individual note bend settings follow the sounding note when using the F and C selectors.</p>
+<p>Use the Shift Key Slide settings to choose the starting offset below the note (cents) and the time it takes to slide up into pitch (milliseconds), independently of the individual note bends.</p>
+<p>The default Shift-key slide starts 20 cents below the note and takes 150 milliseconds.</p>
+<p>Set the slide start offset from 0 to 100 cents and the bend time from 0 to 1000 milliseconds; setting either to zero disables Shift-key slides.</p>
+<p>Use a vibrato rate from 0 to 10 Hz and bend values from 0 to 100 cents; a vibrato rate or offset of zero disables vibrato, and a key bend of zero disables that note’s downward key bend.</p>
+<p>Click <b>Defaults</b> in this dialog to restore only the finger vibrato, individual note bend and Shift-key slide values.</p>
+<p>This does not change the pitch, volumes, reverb, chorus, either Hold setting or F and C selectors on the main screen.</p>
+<p>Click <b>OK</b> to apply and save your changes, or <b>Cancel</b> to leave the current settings unchanged.</p>
+<hr>
+<h3>Resetting All Settings to Defaults</h3>
+<p>Click or tap <b>Defaults</b> at the lower left of the screen, then choose <b>Reset</b> to restore all settings to their original values.</p>
+<p>This resets the pitch of the set, volume and effects levels, both Hold settings, F and C selectors, finger vibrato rate and bend offset, all individual note bend settings, and Shift-key slide offset and time.</p>
+<p>The restored settings are saved automatically.</p>
+<p>Choose <b>Cancel</b> to leave your settings unchanged.</p>
 <hr>
 <h3>iOS and Safari</h3>
 <p>On iPhone, iPad and desktop Safari, click or tap Enable Playback before playing.</p>
@@ -416,7 +510,7 @@ const IS_IPAD = /iPad/.test(navigator.userAgent) || (navigator.platform === 'Mac
 if (IS_IPAD) document.documentElement.classList.add('is-ipad');
 const IS_SAFARI = /Safari\//.test(navigator.userAgent) && !/Chrome|Chromium|CriOS|Edg|OPR|FxiOS|Android/.test(navigator.userAgent);
 // Physical US-QWERTY codes: regulator shortcuts and the entire chromatic melody range.
-const regulatorShortcuts = {KeyX:0,KeyC:1,KeyV:2,KeyB:3,KeyN:0,KeyM:1,Comma:2,Period:3};
+const regulatorShortcuts = {KeyS:0,KeyD:1,KeyF:2,KeyG:3,KeyH:0,KeyJ:1,KeyK:2,KeyL:3};
 const melodyShortcuts = {
     Tab:4, Digit1:5, KeyQ:6, KeyW:7, Digit3:8, KeyE:9,
     Digit4:10, KeyR:11, Digit5:12, KeyT:13, KeyY:14, Digit7:15,
@@ -424,11 +518,14 @@ const melodyShortcuts = {
     Minus:22, BracketLeft:23, Equal:24, BracketRight:25
 };
 const shortcuts = {...regulatorShortcuts, ...melodyShortcuts};
-const accidentalShortcuts = {KeyG:'f',KeyH:'c'};
+const accidentalShortcuts = {KeyB:'f',KeyN:'c'};
 const held = new Map(), notePointers = new Set(), voices = new Map(), highlights = [];
 let latchEnabled = true, latchedNote = null, latchedRate = 1;
+let regulatorLatchEnabled = false, latchedRegulator = null;
+const vibratoKeys = new Set();
+let vibratoSource = null, vibratoBuffer = null;
 const latchButtons = [$('latchLeft'), $('latchRight')];
-const stopButtons = [$('stopLeft'), $('stopRight')], stopPressed = new Set();
+const stopButtons = [$('stopLeft'), $('stopRight')], stopPressed = new Map();
 // Phase-matched loop points measured from the original 44.1 kHz chanter recordings.
 const chanterLoops = {"D4_D":[0.35,9.827052154],"Ds4_D":[0.35,7.124739229],"E4_D":[0.725011338,7.028276644],"F4_D":[0.35,7.133378685],"Fs4_D":[0.35,10.606734694],"G4_D":[1.425011338,6.305555556],"Gs4_D":[1.45,5.891247166],"A4_D":[1.0,5.896984127],"As4_D":[1.075011338,5.885804989],"B4_D":[1.3,4.820657596],"C5_D":[0.35,7.84185941],"Cs5_D":[0.35,7.84138322],"D5_D":[0.35,5.759931973],"Ds5_D":[0.35,6.080340136],"E5_D":[0.35,7.019002268],"F5_D":[0.35,7.019274376],"Fs5_D":[0.35,7.019546485],"G5_D":[0.35,6.049138322],"Gs5_D":[0.35,7.018027211],"A5_D":[1.1,7.181201814],"As5_D":[1.15,7.196621315],"B5_D":[1.275011338,7.143628118],"D4_Cs":[1.375011338,9.809569161],"Ds4_Cs":[0.375011338,7.124829932],"E4_Cs":[0.35,7.083038549],"F4_Cs":[0.35,7.13047619],"Fs4_Cs":[0.35,10.607460317],"G4_Cs":[1.4,6.308571429],"Gs4_Cs":[1.4,5.983582766],"A4_Cs":[1.6,5.268730159],"As4_Cs":[0.4,5.900566893],"B4_Cs":[1.375011338,4.973129252],"C5_Cs":[0.35,7.841655329],"Cs5_Cs":[0.35,7.841496599],"D5_Cs":[1.55,6.168253968],"Ds5_Cs":[0.35,6.080204082],"E5_Cs":[0.35,7.01845805],"F5_Cs":[1.175011338,7.019206349],"Fs5_Cs":[0.4,7.018435374],"G5_Cs":[0.35,5.165396825],"Gs5_Cs":[0.35,7.018004535],"A5_Cs":[1.15,7.484557823],"As5_Cs":[1.15,7.196666667],"B5_Cs":[1.125011338,7.169954649],"D4_C":[1.55,9.824421769],"Ds4_C":[0.8,7.124603175],"E4_C":[0.35,7.08276644],"F4_C":[0.35,7.131927438],"Fs4_C":[0.4,10.606734694],"G4_C":[1.4,6.308344671],"Gs4_C":[1.55,5.9830839],"A4_C":[1.6,5.298548753],"As4_C":[0.425011338,5.90324263],"B4_C":[1.6,5.292947846],"C5_C":[0.35,7.766870748],"Cs5_C":[0.35,7.841723356],"D5_C":[0.35,5.652358277],"Ds5_C":[0.575011338,5.305578231],"E5_C":[0.35,7.019818594],"F5_C":[1.275011338,7.018639456],"Fs5_C":[1.25,7.018639456],"G5_C":[0.35,5.169410431],"Gs5_C":[0.35,7.019183673],"A5_C":[1.15,7.138072562],"As5_C":[1.2,7.330861678],"B5_C":[1.0,7.139954649],"D4_B":[1.575011338,9.822675737],"Ds4_B":[1.0,7.123605442],"E4_B":[0.35,7.080249433],"F4_B":[0.35,7.133219955],"Fs4_B":[0.35,7.081768707],"G4_B":[1.35,6.307505669],"Gs4_B":[1.525011338,5.983287982],"A4_B":[1.6,5.208276644],"As4_B":[0.35,5.897709751],"B4_B":[1.525011338,5.269818594],"C5_B":[0.35,7.760929705],"Cs5_B":[0.35,7.841428571],"D5_B":[0.35,5.933378685],"Ds5_B":[0.6,5.048344671],"E5_B":[0.35,7.019410431],"F5_B":[1.275011338,7.018820862],"Fs5_B":[1.25,7.019501134],"G5_B":[0.35,5.208503401],"Gs5_B":[0.35,7.017369615],"A5_B":[1.125011338,7.137573696],"As5_B":[1.175011338,7.333038549],"B5_B":[1.05,7.319251701]};
 let latchBuffers = new Map();
@@ -440,9 +537,28 @@ const settings = ['chanter','regulator','droneVolume','reverb','chorus','pitch']
 // Capture the original control values before restoring saved settings.
 const defaultSettings = Object.fromEntries(settings.map(id => [id,$(id).value]));
 const defaultWhiteKeySharps = {...whiteKeySharps};
+// Bend values are keyed by sounding note, relative to the D set, across all tunings.
+const expressionDefaults = {
+    vibratoRate:4.5, vibratoDepth:15,
+    slideDepth:20, slideTime:150,
+    keyBends:Array.from({length:22},(_,n)=>Math.min(50,Math.round(-180000*Math.log2(n+4===14?.980:n+4<20?.992:.990))/100))
+};
+function validExpressionValue(value,max) { return Number.isFinite(value) && value>=0 && value<=max; }
+function validatedExpression(value) {
+    return {
+        vibratoRate:validExpressionValue(value?.vibratoRate,10)?value.vibratoRate:expressionDefaults.vibratoRate,
+        vibratoDepth:validExpressionValue(value?.vibratoDepth,100)?value.vibratoDepth:expressionDefaults.vibratoDepth,
+        slideDepth:validExpressionValue(value?.slideDepth,100)?value.slideDepth:expressionDefaults.slideDepth,
+        slideTime:validExpressionValue(value?.slideTime,1000)?value.slideTime:expressionDefaults.slideTime,
+        keyBends:expressionDefaults.keyBends.map((d,i)=>validExpressionValue(value?.keyBends?.[i],100)?value.keyBends[i]:d)
+    };
+}
+let expression = validatedExpression(null);
 try {
-    const s = JSON.parse(localStorage.getItem('UilleannPipesKeyboard.settings.v1') || '{}');
+    const s = JSON.parse(localStorage.getItem('UilleannPipesKeyboard.settings.v4') || '{}');
+    expression = validatedExpression(s.expression);
     latchEnabled = s.latchEnabled !== false;
+    regulatorLatchEnabled = s.regulatorLatchEnabled === true;
     whiteKeySharps.f = s.whiteKeyFSharp !== false;
     whiteKeySharps.c = s.whiteKeyCSharp === true;
     for (const id of settings) {
@@ -452,7 +568,7 @@ try {
     }
 } catch(e) {}
 function save() {
-    try { localStorage.setItem('UilleannPipesKeyboard.settings.v1',JSON.stringify({...Object.fromEntries(settings.map(id => [id,id==='pitch'?$(id).value:+$(id).value])),whiteKeyFSharp:whiteKeySharps.f,whiteKeyCSharp:whiteKeySharps.c,latchEnabled})); } catch(e) {}
+    try { localStorage.setItem('UilleannPipesKeyboard.settings.v4',JSON.stringify({...Object.fromEntries(settings.map(id => [id,id==='pitch'?$(id).value:+$(id).value])),whiteKeyFSharp:whiteKeySharps.f,whiteKeyCSharp:whiteKeySharps.c,latchEnabled,regulatorLatchEnabled,expression})); } catch(e) {}
 }
 function position(e,x,y,w,h) { Object.assign(e.style,{left:x/1024*100+'%',top:y/768*100+'%',width:w/1024*100+'%',height:h/768*100+'%'}); }
 // Highlight only the flat playing face of each black key, independently of its hit region.
@@ -570,10 +686,12 @@ function render() {
     for (const button of $('pitchSelector').querySelectorAll('button')) {
         button.setAttribute('aria-pressed', String(button.dataset.pitch === $('pitch').value));
     }
-    for(const button of latchButtons) button.setAttribute('aria-pressed',String(latchEnabled));
-    for(const button of stopButtons) button.classList.toggle('is-pressed',stopPressed.size>0);
+    latchButtons[0].setAttribute('aria-pressed',String(regulatorLatchEnabled));
+    latchButtons[1].setAttribute('aria-pressed',String(latchEnabled));
+    stopButtons.forEach((button,i)=>button.classList.toggle('is-pressed',[...stopPressed.values()].some(scope=>scope==='both'||scope===(i===0?'regulator':'chanter'))));
     const active = new Set(held.values());
     if(latchedNote!==null) active.add(latchedNote);
+    if(latchedRegulator!==null) active.add(latchedRegulator);
     highlights.forEach((group,i) => group.forEach(im => im.classList.toggle('active',active.has(i))));
     $('drone').setAttribute('aria-pressed',String(droneEnabled));
     $('drone').firstElementChild.src=A+(droneEnabled?'drone_on.png':'drone_off.png');
@@ -602,8 +720,8 @@ function applySettings() {
     for(const [id,g] of Object.entries(buses)) g.gain.setTargetAtTime(+$(id).value,t,.015);
     for(const [i,v] of drones.entries()) v.s.playbackRate.setTargetAtTime(1+(i===0?1:-1)*+$('chorus').value/100000,t,.015);
 }
-function blocked() { return !ready || unlockPending || !$('helpOverlay').hidden || !$('resetOverlay').hidden; }
-function inert(on) { document.querySelector('header').inert=on; document.querySelector('main').inert=on; }
+function blocked() { return !ready || unlockPending || !$('helpOverlay').hidden || !$('resetOverlay').hidden || !$('settingsOverlay').hidden; }
+function inert(on) { document.querySelector('header').inert=on; document.querySelector('main').inert=on; $('settingsFooter').inert=on; }
 async function resume() { configureSession(); if(ctx.state!=='running') await ctx.resume(); if(ctx.state!=='running') throw Error('Audio is not running.'); }
 async function preload() {
     if(loading) return;
@@ -646,6 +764,33 @@ function preparedChanter(name) {
     const prepared={buffer,start:start/sr,end:end/sr};
     latchBuffers.set(name,prepared); return prepared;
 }
+// One shared audio-clock square wave offsets chanter detune by the configured downward offset or zero.
+// It is additive to the independent Shift slide and live playback-rate bends.
+function startVibrato() {
+    if(vibratoSource || !ctx || expression.vibratoRate===0 || expression.vibratoDepth===0) return;
+    if(!vibratoBuffer) {
+        const period=Math.max(2,Math.round(ctx.sampleRate/Math.max(expression.vibratoRate,.01)));
+        vibratoBuffer=ctx.createBuffer(1,period,ctx.sampleRate);
+        vibratoBuffer.getChannelData(0).fill(-expression.vibratoDepth,0,Math.round(period/2));
+    }
+    const source=ctx.createBufferSource();
+    source.buffer=vibratoBuffer; source.loop=true;
+    source.playbackRate.value=expression.vibratoRate*vibratoBuffer.duration;
+    for(const [i,v] of voices) if(i>=4&&!v.ended) source.connect(v.s.detune);
+    vibratoSource=source; source.start();
+}
+function stopVibrato() {
+    if(!vibratoSource) return;
+    const source=vibratoSource; vibratoSource=null;
+    source.disconnect(); source.stop();
+}
+function pressVibrato(code) {
+    if(blocked() || vibratoKeys.has(code)) return;
+    vibratoKeys.add(code); startVibrato();
+}
+function releaseVibrato(code) {
+    if(vibratoKeys.delete(code) && !vibratoKeys.size) stopVibrato();
+}
 function voice(name,bus,loop,rate=1,pan=null,offset=0,slideCents=0) {
     const s=ctx.createBufferSource(), g=ctx.createGain();
     const prepared=bus==='chanter'&&loop?preparedChanter(name):null;
@@ -659,29 +804,40 @@ function voice(name,bus,loop,rate=1,pan=null,offset=0,slideCents=0) {
     const t=ctx.currentTime;
     // A per-source detune envelope leaves the existing live pitch-bend controls
     // and updates to playbackRate independent of the keyboard attack slide.
-    if(slideCents!==0) {
+    if(slideCents!==0 && expression.slideTime>0) {
         s.detune.setValueAtTime(slideCents,t);
-        s.detune.linearRampToValueAtTime(0,t+.150);
+        s.detune.linearRampToValueAtTime(0,t+expression.slideTime/1000);
     }
+    if(bus==='chanter' && vibratoSource) vibratoSource.connect(s.detune);
     g.gain.setTargetAtTime(pan===null?1:.6,t,.004); s.start(0,offset);
-    const v={s,g,p,ended:false,prepared:!!prepared,startedAt:ctx.currentTime,offset}; s.onended=()=>{v.ended=true; s.disconnect();g.disconnect();if(p)p.disconnect();}; return v;
+    const v={s,g,p,ended:false,prepared:!!prepared,startedAt:ctx.currentTime,offset};
+    s.onended=()=>{
+        v.ended=true;
+        if(bus==='chanter' && vibratoSource) {
+            try { vibratoSource.disconnect(s.detune); } catch(e) {}
+        }
+        s.disconnect();g.disconnect();if(p)p.disconnect();
+    }; return v;
 }
 function stopVoice(v) { if(!v||v.ended) return; const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,.006); try {v.s.stop(t+.045);} catch(e){} }
 function chanterVoice(i,slide) {
-    // Match the minimum downward bend of the sounding note's piano key,
-    // including when the F/C selectors resolve a white key to a sharp.
-    const r=slide?data.regions.find(region=>region[4]===i):null;
-    const cents=r?1200*Math.log2(pitchFor(r,r[1]+r[3])):0;
+    // Shift slides use their own configured starting offset, independent of piano-key bends.
+    const cents=slide?-expression.slideDepth:0;
     return voice(data.banks[bank][i],'chanter',true,melodyRate(i),null,0,cents);
 }
 function sync(retrigger = null, slideNote = null) {
     render(); if(!ready||ctx.state!=='running') return;
     const active=new Set([...held.values()].map(soundingNote));
     if(latchedNote!==null) active.add(soundingNote(latchedNote));
+    if(latchedRegulator!==null) active.add(latchedRegulator);
     for(const [i,v] of voices) if(!active.has(i)){stopVoice(v);voices.delete(i);}
     for(const i of active) {
         const v=voices.get(i), name=data.banks[bank][i];
-        if(i<4) { if(!v) voices.set(i,voice(name,'regulator',true)); continue; }
+        if(i<4) {
+            if(regulatorLatchEnabled && i===retrigger && v) { stopVoice(v); voices.set(i,voice(name,'regulator',true)); }
+            else if(!v || v.ended) voices.set(i,voice(name,'regulator',true));
+            continue;
+        }
         if(latchEnabled && i===retrigger && v) {
             // A new physical press of the sounding pitch replays the original attack.
             // Use the resolved pitch so white/black accidental aliases share one voice.
@@ -710,8 +866,9 @@ function updateMelodyPitch() {
     for(const [i,v] of voices) if(i>=4&&!v.ended) v.s.playbackRate.setTargetAtTime(melodyRate(i),ctx.currentTime,.005);
 }
 function clear(stopDrones=true) {
+    vibratoKeys.clear(); stopVibrato();
     stopPressed.clear();
-    latchedNote=null; latchedRate=1;
+    latchedNote=null; latchedRate=1; latchedRegulator=null;
     held.clear(); const captures=[...notePointers]; notePointers.clear(); if(bendPointer!==null) captures.push(bendPointer); bendPointer=null; bendRate=noteRate=1;
     for(const p of captures) if(instrument.hasPointerCapture(p)) instrument.releasePointerCapture(p);
     for(const v of voices.values()) stopVoice(v); voices.clear();
@@ -721,15 +878,22 @@ function hasHeldMelody() { return [...held.values()].some(i=>i>=4); }
 function rememberReleased(id,i) {
     if(latchEnabled && i>=4 && !hasHeldMelody()) {
         latchedNote=i; latchedRate=Object.hasOwn(melodyShortcuts,id)?1:noteRate;
+    } else if(regulatorLatchEnabled && i<4 && ![...held.values()].some(n=>n<4)) {
+        latchedRegulator=i;
     }
 }
 function start(id,i,slide=false) {
     if(blocked()) return;
     const previous=held.get(id);
     held.set(id,i);
-    if(i>=4) { latchedNote=null; latchedRate=1; }
-    else if(previous>=4) rememberReleased(id,previous);
-    const retrigger = latchEnabled && i>=4 && previous!==i ? soundingNote(i) : null;
+    if(i>=4) {
+        latchedNote=null; latchedRate=1;
+        if(previous<4) rememberReleased(id,previous);
+    } else {
+        latchedRegulator=null;
+        if(previous>=4) rememberReleased(id,previous);
+    }
+    const retrigger = (i>=4?latchEnabled:regulatorLatchEnabled) && previous!==i ? soundingNote(i) : null;
     $('status').textContent='';
     const slideNote=slide&&i>=4?soundingNote(i):null;
     if(ctx.state==='running')sync(retrigger,slideNote);else resume().then(()=>sync(retrigger,slideNote)).catch(e=>{$('status').textContent=e.message;clear();});
@@ -740,53 +904,60 @@ function end(id,allowLatch=true) {
     if(allowLatch) rememberReleased(id,i);
     sync();
 }
-// Stop is a momentary chanter-only command, not a setting. Remove physical
-// melody ownership as well, so release or a stationary touch cannot re-latch.
-function stopChanter() {
+// Stop removes physical and latched ownership only in the requested section.
+function stopSection(scope) {
     if(blocked()) return;
-    latchedNote=null; latchedRate=1; noteRate=1;
-    for(const [id,i] of held) if(i>=4) held.delete(id);
+    const matches=i=>scope==='both'||(scope==='chanter'?i>=4:i<4);
+    if(scope!=='regulator') { latchedNote=null; latchedRate=1; noteRate=1; }
+    if(scope!=='chanter') latchedRegulator=null;
+    for(const [id,i] of held) if(matches(i)) held.delete(id);
     for(const p of [...notePointers]) {
-        // Keep regulator touches captured; discard melody and off-key touches.
         if(held.has('pointer:'+p)) continue;
         notePointers.delete(p);
         if(instrument.hasPointerCapture(p)) instrument.releasePointerCapture(p);
     }
-    for(const [i,v] of voices) if(i>=4) { stopVoice(v); voices.delete(i); }
+    for(const [i,v] of voices) if(matches(i)) { stopVoice(v); voices.delete(i); }
     render();
 }
-function pressStop(id) {
+function pressStop(id,scope) {
     if(blocked() || stopPressed.has(id)) return;
-    stopPressed.add(id); stopChanter();
+    stopPressed.set(id,scope); stopSection(scope);
 }
 function releaseStop(id) {
     if(stopPressed.delete(id)) render();
 }
-function toggleLatch() {
+function toggleLatch(scope) {
     if(blocked()) return;
-    latchEnabled=!latchEnabled;
-    if(!latchEnabled) { latchedNote=null; latchedRate=1; }
+    if(scope==='regulator') {
+        regulatorLatchEnabled=!regulatorLatchEnabled;
+        if(!regulatorLatchEnabled) latchedRegulator=null;
+    } else {
+        latchEnabled=!latchEnabled;
+        if(!latchEnabled) { latchedNote=null; latchedRate=1; }
+    }
     save(); sync();
 }
 for(const button of latchButtons) {
+    const scope=button===latchButtons[0]?'regulator':'chanter';
     // Pointer contact works even for a secondary touch; cancel the touch
     // default so no compatibility click can toggle it a second time.
     button.addEventListener('pointerdown',e=>{
         if(e.pointerType!=='touch' || e.button!==0 || blocked()) return;
-        e.preventDefault(); button.blur(); toggleLatch();
+        e.preventDefault(); button.blur(); toggleLatch(scope);
     });
     button.addEventListener('touchstart',e=>{if(e.cancelable)e.preventDefault();},{passive:false});
     button.addEventListener('click',e=>{
         if(e.pointerType==='touch'||(e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents))return;
-        button.blur(); toggleLatch();
+        button.blur(); toggleLatch(scope);
     });
 }
 for(const button of stopButtons) {
+    const scope=button===stopButtons[0]?'regulator':'chanter';
     button.addEventListener('pointerdown',e=>{
         if(e.button!==0 || blocked()) return;
         e.preventDefault(); button.blur();
         button.setPointerCapture(e.pointerId);
-        pressStop('stop-pointer:'+e.pointerId);
+        pressStop('stop-pointer:'+e.pointerId,scope);
     });
     for(const type of ['pointerup','pointercancel','lostpointercapture'])
         button.addEventListener(type,e=>releaseStop('stop-pointer:'+e.pointerId));
@@ -794,7 +965,7 @@ for(const button of stopButtons) {
     // Native keyboard/assistive activation is a click with no pointer press.
     button.addEventListener('click',e=>{
         if(e.detail!==0 || e.pointerType==='touch' || (e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents)) return;
-        button.blur(); stopChanter();
+        button.blur(); stopSection(scope);
     });
 }
 function toggleDrone() { if(blocked()) return; droneEnabled=!droneEnabled; render(); if(ctx.state==='running')syncDrones();else resume().then(sync).catch(e=>{$('status').textContent=e.message;clear();}); }
@@ -809,7 +980,9 @@ function resetSettings() {
     if(blocked() || loading) return;
     for(const id of settings) $(id).value=defaultSettings[id];
     Object.assign(whiteKeySharps,defaultWhiteKeySharps);
+    expression=validatedExpression(null); vibratoBuffer=null;
     latchEnabled=true; latchedNote=null; latchedRate=1;
+    regulatorLatchEnabled=false; latchedRegulator=null;
     save();
     applySettings();
     if($('pitch').value!==bank) {
@@ -833,6 +1006,7 @@ function closeReset(confirm) {
     inert(false);
     if(confirm) resetSettings();
 }
+$('defaultsButton').onclick=openReset;
 $('cancelReset').onclick=()=>closeReset(false);
 $('confirmReset').onclick=()=>closeReset(true);
 // iOS: switch drones on initial contact, not on the delayed synthetic click.
@@ -846,11 +1020,7 @@ if (IS_IOS) $('drone').addEventListener('touchstart',e=>{
 $('drone').onclick=e=>{
     if(IS_IOS && e.pointerType==='touch')return;
     document.activeElement.blur();
-    if(e.shiftKey && e.altKey) {
-        e.preventDefault();
-        openReset();
-    }
-    else toggleDrone();
+    toggleDrone();
 };
 for(const id of settings.filter(id=>id!=='pitch')) { $(id).oninput=()=>{save();render();applySettings();}; $(id).addEventListener('pointerup',()=>$(id).blur()); }
 // Safari on iPad can magnify small native controls. Retain the native slider
@@ -909,14 +1079,60 @@ for (const button of $('pitchSelector').querySelectorAll('button')) {
         preload();
     });
 }
+const bendInputs=data.banks.D.slice(4).map((name,i)=>{
+    const row=document.createElement('div'); row.className='expression-row';
+    const label=document.createElement('label'); label.htmlFor='keyBend'+i;
+    label.textContent=name.split('_')[0].replace('As','B♭').replace('s','♯');
+    const input=document.createElement('input'); input.id=label.htmlFor; input.type='number'; input.min='0'; input.max='100'; input.step='any'; input.required=true; input.inputMode='decimal';
+    row.append(label,input); $('bendSettings').append(row); return input;
+});
+function fillExpressionForm(values) {
+    $('vibratoRateSetting').value=values.vibratoRate;
+    $('vibratoDepthSetting').value=values.vibratoDepth;
+    $('slideDepthSetting').value=values.slideDepth;
+    $('slideTimeSetting').value=values.slideTime;
+    bendInputs.forEach((input,i)=>input.value=values.keyBends[i]);
+    $('expressionError').textContent='';
+}
+function openExpressionSettings() {
+    if(blocked()) return;
+    clear(false); // Preserve drones, but release notes and vibrato while editing.
+    fillExpressionForm(expression);
+    $('settingsOverlay').hidden=false; inert(true);
+    $('settingsOverlay').querySelector('.settings-scroll').scrollTop=0;
+    $('cancelExpression').focus({preventScroll:true});
+}
+function closeExpressionSettings(apply) {
+    if($('settingsOverlay').hidden) return;
+    if(apply) {
+        const values=[$('vibratoRateSetting'),$('vibratoDepthSetting'),$('slideDepthSetting'),$('slideTimeSetting'),...bendInputs].map(input=>input.valueAsNumber);
+        if(!values.every((value,i)=>validExpressionValue(value,i===0?10:i===3?1000:100))) { $('expressionError').textContent='Enter a vibrato rate from 0 to 10 Hz, bend values from 0 to 100 cents and a slide time from 0 to 1000 ms.'; return; }
+        expression={vibratoRate:values[0],vibratoDepth:values[1],slideDepth:values[2],slideTime:values[3],keyBends:values.slice(4)};
+        vibratoBuffer=null; save();
+    }
+    document.activeElement.blur(); $('settingsOverlay').hidden=true; inert(false);
+}
+$('settingsButton').onclick=openExpressionSettings;
+$('expressionDefaults').onclick=()=>fillExpressionForm(expressionDefaults);
+$('cancelExpression').onclick=()=>closeExpressionSettings(false);
+$('expressionForm').onsubmit=e=>{e.preventDefault();closeExpressionSettings(true);};
 function openHelp(){clear();$('helpOverlay').hidden=false;inert(true);$('closeHelp').focus();}
 function closeHelp(){ $('helpOverlay').hidden=true;inert(false);document.activeElement.blur(); }
 $('help').onclick=openHelp; $('closeHelp').onclick=closeHelp;
 function editing(e) { return /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)||e.target.isContentEditable; }
 function plain(e) { return !editing(e)&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.isComposing; }
-function suppressQuickFind(e) { if(plain(e)&&(e.code==='Slash'||e.code==='Quote'||['/','?',"'",'"'].includes(e.key))&&e.cancelable)e.preventDefault(); }
+function suppressQuickFind(e) { if($('settingsOverlay').hidden&&plain(e)&&(e.code==='Slash'||e.code==='Quote'||['/','?',"'",'"'].includes(e.key))&&e.cancelable)e.preventDefault(); }
 for(const type of ['keydown','keypress','keyup'])window.addEventListener(type,suppressQuickFind,{capture:true,passive:false});
 window.addEventListener('keydown',e=>{
+    if(!$('settingsOverlay').hidden) {
+        if(e.code==='Escape') { e.preventDefault(); closeExpressionSettings(false); }
+        else if(e.code==='Tab') {
+            const fields=[...$('settingsOverlay').querySelectorAll('input,button')], first=fields[0], last=fields[fields.length-1];
+            if(e.shiftKey && document.activeElement===first) { e.preventDefault(); last.focus(); }
+            else if(!e.shiftKey && document.activeElement===last) { e.preventDefault(); first.focus(); }
+        }
+        return;
+    }
     if(!$('resetOverlay').hidden) {
         if(e.code==='Escape') { e.preventDefault(); closeReset(false); return; }
         if(e.code==='Tab') {
@@ -925,28 +1141,36 @@ window.addEventListener('keydown',e=>{
         } else if(e.repeat && (e.code==='Enter'||e.code==='Space')) e.preventDefault();
         return;
     }
-    if(e.code==='Escape'){clear();restartDrone=false;if(!$('helpOverlay').hidden)closeHelp();return;}
+    if(e.code==='Escape'){e.preventDefault();clear();restartDrone=false;if(!$('helpOverlay').hidden)closeHelp();return;}
     // Preserve browser shortcuts involving Command, Control or Alt.
     if(e.metaKey||e.ctrlKey||e.altKey)return;
-    if(blocked()||!plain(e))return;
+    // Performance shortcuts override native button activation, but not modal dialogs.
+    if((e.code==='Enter'||e.code==='NumpadEnter') && $('helpOverlay').hidden && !e.isComposing) {
+        e.preventDefault(); clear(); restartDrone=false; return;
+    }
+    if(blocked())return;
+    if(e.code==='Space' && !e.isComposing && (!editing(e)||e.target.type==='range')) {
+        e.preventDefault(); if(!e.repeat) { if(document.activeElement instanceof HTMLElement)document.activeElement.blur(); toggleDrone(); } return;
+    }
+    if(!plain(e))return;
     // Keep Tab navigation when a native control has been explicitly focused.
     if(e.code==='Tab' && e.target instanceof Element && e.target.closest('button,a,input,select,textarea,[contenteditable]'))return;
-    if(e.code==='KeyD'||e.code==='KeyK') { e.preventDefault(); if(!e.repeat) toggleLatch(); return; }
-    if(e.code==='KeyF'||e.code==='KeyJ') { e.preventDefault(); if(!e.repeat) pressStop(e.code); return; }
+    if(e.code==='KeyZ'||e.code==='Slash') { e.preventDefault(); if(!e.repeat) pressVibrato(e.code); return; }
+    if(e.code==='KeyC'||e.code==='Comma') { e.preventDefault(); if(!e.repeat) toggleLatch(e.code==='KeyC'?'regulator':'chanter'); return; }
+    if(e.code==='KeyV'||e.code==='KeyM') { e.preventDefault(); if(!e.repeat) pressStop(e.code,e.code==='KeyV'?'regulator':'chanter'); return; }
     const accidental = accidentalShortcuts[e.code];
     if(accidental) {
         e.preventDefault();
         if(!e.repeat) setWhiteKeySharp(accidental,!whiteKeySharps[accidental]);
         return;
     }
-    const i=shortcuts[e.code], droneShortcut=e.code==='Enter'||e.code==='Space';
-    if(i===undefined&&!droneShortcut)return;
-    // Permit native keyboard activation when a pitch button was explicitly focused.
-    if(droneShortcut && e.target instanceof Element && e.target.closest('#pitchSelector button,#whiteKeySelectors button')) { if(e.repeat)e.preventDefault(); return; }
+    const i=shortcuts[e.code];
+    if(i===undefined)return;
     e.preventDefault(); if(e.repeat)return; if(document.activeElement instanceof HTMLButtonElement)document.activeElement.blur();
-    if(droneShortcut)toggleDrone();else if(!held.has(e.code))start(e.code,i,e.shiftKey && i>=4);
+    if(!held.has(e.code))start(e.code,i,e.shiftKey && i>=4);
 },true);
 window.addEventListener('keyup',e=>{
+    if(vibratoKeys.has(e.code)) { e.preventDefault(); releaseVibrato(e.code); }
     if(stopPressed.has(e.code)) { e.preventDefault(); releaseStop(e.code); }
     if(held.has(e.code)){e.preventDefault();end(e.code);}
 },true);
@@ -990,7 +1214,15 @@ function hit(x,y) {
     // Exposed white-key areas remain playable throughout the height of the keyboard.
     return whiteKeyRegions.find(([l,t,w,h,i])=>x>=l&&x<l+w&&(i===0?y>=675:i===1?y<675:true))||null;
 }
-function pitchFor(r,y) {const i=r[4], height=r[3], fraction=Math.max(0,Math.min(1,(r[1]+height-y)/height));return Math.min(.99999,Math.pow(fraction*(i===14?.024:i<20?.018:.020)+(i===14?.980:i<20?.992:.990),1.5));}
+function pitchFor(r,y) {
+    const i=soundingNote(r[4]), height=r[3], fraction=Math.max(0,Math.min(1,(r[1]+height-y)/height));
+    const maxCents=expression.keyBends[i-4]||0;
+    if(maxCents===0) return 1;
+    // Retain the original bend curve, normalized to the selected maximum.
+    const base=i===14?.980:i<20?.992:.990, span=i===14?.024:i<20?.018:.020;
+    const amount=Math.max(0,Math.min(1,Math.log(Math.min(1,base+fraction*span))/Math.log(base)));
+    return Math.pow(2,-maxCents*amount/1200);
+}
 // Halve the original strip bend in cents (the square root of the original playback rate).
 function setBend(y){bendRate=Math.sqrt(.9438745+Math.max(0,Math.min(1,(256-y)/256))*.11225098);updateMelodyPitch();render();}
 function handleNote(e) { const p=point(e), r=hit(p.x,p.y), id='pointer:'+e.pointerId; if(!r){end(id);return;} if(r[4]>=4){noteRate=pitchFor(r,p.y);updateMelodyPitch();} if(held.get(id)!==r[4])start(id,r[4]); }
@@ -1001,14 +1233,14 @@ instrument.addEventListener('pointerdown',e=>{
     if(bend){if(bendPointer!==null)return;e.preventDefault();instrument.setPointerCapture(e.pointerId);bendPointer=e.pointerId;setBend(p.y);return;}
     if(!hit(p.x,p.y))return;e.preventDefault();instrument.setPointerCapture(e.pointerId);notePointers.add(e.pointerId);handleNote(e);
 });
-function releasePointer(e){if(bendPointer===e.pointerId){bendPointer=null;bendRate=noteRate=1;updateMelodyPitch();render();}if(notePointers.delete(e.pointerId)) { const cancelled=e.type==='pointercancel'||e.type==='lostpointercapture'; if(cancelled&&held.get('pointer:'+e.pointerId)>=4){latchedNote=null;latchedRate=1;} end('pointer:'+e.pointerId,!cancelled); if(cancelled)sync(); }}
+function releasePointer(e){if(bendPointer===e.pointerId){bendPointer=null;bendRate=noteRate=1;updateMelodyPitch();render();}if(notePointers.delete(e.pointerId)) { const cancelled=e.type==='pointercancel'||e.type==='lostpointercapture'; if(cancelled){const i=held.get('pointer:'+e.pointerId);if(i>=4){latchedNote=null;latchedRate=1;}else if(i<4)latchedRegulator=null;} end('pointer:'+e.pointerId,!cancelled); if(cancelled)sync(); }}
 instrument.addEventListener('pointermove',e=>{if(bendPointer!==e.pointerId&&!notePointers.has(e.pointerId))return;if(e.pointerType==='mouse'&&!(e.buttons&1)){releasePointer(e);return;}e.preventDefault();if(bendPointer===e.pointerId)setBend(point(e).y);else handleNote(e);});
 for(const type of ['pointerup','pointercancel','lostpointercapture'])instrument.addEventListener(type,releasePointer);
 // Match the English Concertina gesture and Firefox Quick Find filtering.
 for(const type of ['contextmenu','selectstart','dragstart'])document.addEventListener(type,e=>{if(e.target instanceof Element&&e.target.closest('.overlay'))return;if(e.cancelable)e.preventDefault();},true);
-function onPlayingScreen(e){return !(e.target instanceof Element&&e.target.closest('.overlay'))&&$('loadOverlay').hidden&&$('enableOverlay').hidden&&$('helpOverlay').hidden&&$('resetOverlay').hidden;}
+function onPlayingScreen(e){return !(e.target instanceof Element&&e.target.closest('.overlay'))&&$('loadOverlay').hidden&&$('enableOverlay').hidden&&$('helpOverlay').hidden&&$('resetOverlay').hidden&&$('settingsOverlay').hidden;}
 for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,e=>{if(onPlayingScreen(e)&&e.cancelable)e.preventDefault();},{capture:true,passive:false});
-function preventPlayingTouch(e){if(!onPlayingScreen(e)||!e.cancelable)return;const control=e.target instanceof Element&&e.target.closest('header a,header button,#drone,#pitchSelector button,#whiteKeySelectors button,input,select');if(e.touches.length===1&&control&&(e.type==='touchstart'||control.matches('input,select')))return;e.preventDefault();}
+function preventPlayingTouch(e){if(!onPlayingScreen(e)||!e.cancelable)return;const control=e.target instanceof Element&&e.target.closest('header a,header button,#settingsButton,#defaultsButton,#drone,#pitchSelector button,#whiteKeySelectors button,input,select');if(e.touches.length===1&&control&&(e.type==='touchstart'||control.matches('input,select')))return;e.preventDefault();}
 for(const type of ['touchstart','touchmove'])document.addEventListener(type,preventPlayingTouch,{capture:true,passive:false});
 window.addEventListener('blur',()=>{restartDrone=false;clear();});document.addEventListener('visibilitychange',()=>{if(document.hidden){restartDrone=false;clear();}});window.addEventListener('pagehide',()=>{restartDrone=false;clear();});
 configureSession();render();preload();
