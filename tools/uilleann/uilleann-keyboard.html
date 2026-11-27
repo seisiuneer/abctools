@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="author" content="Michael Eskin">
+<meta name="description" content="Uilleann Pipes Keyboard — play sampled uilleann pipes on a piano keyboard with regulator chords, drones, four pipe tunings, pitch bend and reverb.">
+<title>Uilleann Pipes Keyboard</title>
+<link rel="icon" href="uilleann_pipes_keyboard_assets/icon152.png">
+<link rel="canonical" href="https://michaeleskin.com/tools/uilleann/uilleann-keyboard.html">
+<!-- Open Graph metadata -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Uilleann Pipes Keyboard">
+<meta property="og:title" content="Uilleann Pipes Keyboard">
+<meta property="og:description" content="Play the chanter, drones, and regulators of a full set of Uilleann pipes using a piano-style keyboard and authentic sampled instrument sounds, with four pipe tunings, pitch bending, reverb, and keyboard regulator accompaniment.">
+<meta property="og:url" content="https://michaeleskin.com/tools/uilleann/uilleann-keyboard.html">
+<meta property="og:image" content="https://michaeleskin.com/tools/img/uilleann-keyboard-og1.jpg">
+<meta property="og:image:secure_url" content="https://michaeleskin.com/tools/img/uilleann-keyboard-og1.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1536">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:alt" content="Uilleann Pipes Keyboard — virtual Uilleann pipes with a piano-style playing surface">
+<!-- Social media sharing -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Uilleann Pipes Keyboard">
+<meta name="twitter:description" content="Play the chanter, drones, and regulators of a full set of Uilleann pipes using a piano-style keyboard and authentic sampled instrument sounds, with four pipe tunings, pitch bending, reverb, and keyboard regulator accompaniment.">
+<meta name="twitter:image" content="https://michaeleskin.com/tools/img/uilleann-keyboard-og1.jpg">
+<meta name="twitter:image:alt" content="Uilleann Pipes Keyboard — virtual Uilleann pipes with a piano-style playing surface">
+
+<style>
+* { box-sizing: border-box; }
+html { color-scheme: dark; overscroll-behavior: none; }
+body { margin: 0; background: #171512; color: #f5ecdc; font: 16px/1.4 system-ui,-apple-system,BlinkMacSystemFont,sans-serif; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overscroll-behavior: none; }
+button,input,select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible { outline: 3px solid #e8ca86; outline-offset: 2px; }
+header { display: flex; align-items: center; justify-content: center; position: relative; min-height: 54px; padding: 6px 130px; text-align: center; }
+h1 { font-size: 22px; margin: 0; }
+.standard { background: #3b3329; border: 1px solid #8a7659; border-radius: 7px; padding: 7px 12px; color: inherit; }
+header .standard { position: absolute; top: 50%; transform: translateY(-50%); width: 120px; text-align: center; white-space: nowrap; }
+header .tip { left: max(10px,env(safe-area-inset-left)); text-decoration: none; }
+header #help { right: max(10px,env(safe-area-inset-right)); }
+main { --instrument-width: min(100%,1024px,calc((100dvh - 137px)*4/3)); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 8px max(8px,env(safe-area-inset-bottom)); }
+#instrument { position: relative; width: var(--instrument-width); aspect-ratio: 4/3; background: #08052a url(uilleann_pipes_keyboard_assets/skin.png) center/100% 100% no-repeat; container-type: inline-size; flex-shrink: 0; overflow: hidden; box-shadow: 0 0 0 1px #574332,0 8px 28px #0006; }
+html,body,header,header *,main,main * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+header,main,#instrument,.play { touch-action: none; }
+#instrument img { pointer-events: none; -webkit-user-drag: none; }
+.art,.bend,.drone,.controls { position: absolute; }
+.art { display: none; pointer-events: none; }
+.art.active { display: block; }
+.bend,.drone { padding: 0; border: 0; background: transparent; touch-action: none; }
+.bend img,.drone img { display: block; width: 100%; height: 100%; }
+.bend { top: 0; width: 4.8828125%; height: 33.333333%; cursor: ns-resize; }
+#bendLeft { left: 0; } #bendRight { right: 0; }
+.drone { left: 40.332%; top: 3.776%; width: 19.336%; height: 25.781%; }
+.controls { top: 3.4%; width: 27.35%; height: 26.5%; display: grid; grid-template-rows: repeat(3,minmax(0,1fr)); align-items: center; gap: .7cqw; font-size: 1.85cqw; color: white; }
+#leftControls { left: 9.766%; } #rightControls { left: 63.574%; }
+.setting { display: grid; gap: .15cqw; min-width: 0; }
+.setting label { display: flex; justify-content: space-between; white-space: nowrap; line-height: 1.25; }
+.setting output { font-variant-numeric: tabular-nums; color: #ffe2ab; }
+.setting input { width: 100%; min-width: 0; height: 2.4cqw; margin: 0; accent-color: #e4be75; touch-action: none; }
+#pitchSelector { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); width: 100%; height: 3.4cqw; border: 1px solid #9e9bb7; border-radius: 4px; }
+#pitchSelector button { appearance: none; -webkit-appearance: none; min-width: 0; padding: 0; background: #10164c; color: white; border: 0; border-right: 1px solid #9e9bb7; border-radius: 0; line-height: 1; font-size: 1.85cqw; touch-action: none; }
+#pitchSelector button:first-child { border-radius: 3px 0 0 3px; }
+#pitchSelector button:last-child { border-right: 0; border-radius: 0 3px 3px 0; }
+#pitchSelector button[aria-pressed="true"] { background: white; color: #10164c; font-weight: 600; }
+#pitchSelector button:focus-visible { position: relative; z-index: 1; }
+#whiteKeySelectors { display:flex; align-items:center; justify-content:center; gap:12px; width:var(--instrument-width); container-type:inline-size; flex-shrink:0; color:#dacdb8; }
+.white-key-group { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:max(24px,calc(3.4cqw - 2px)) auto; width:max(117.6px,19.145cqw); gap:0; border:1px solid #8a7659; border-radius:4px; overflow:hidden; }
+.white-key-title { grid-column:1 / -1; background:#29251f; color:#dacdb8; text-align:center; font-size:15px; line-height:1.2; padding:2px 4px; border-top:1px solid #8a7659; }
+.white-key-group button { background:#3b3329; color:#f5ecdc; border:0; padding:0; min-width:0; font-size:max(12px,1.85cqw); line-height:1; touch-action:none; }
+.white-key-group button+button { border-left:1px solid #8a7659; }
+.white-key-group button[aria-pressed="true"] { background:#e4be75; color:#211a12; font-weight:600; }
+.white-key-group button:focus-visible { outline-offset:-3px; }
+.footer,.mode-help { margin: 0; font-size: 13px; color: #dacdb8; text-align: center; }
+#status:empty { display: none; }
+.overlay { position: fixed; inset: 0; z-index: 10; background: #000a; display: flex; align-items: center; justify-content: center; padding: 12px; overflow: auto; }
+.overlay[hidden] { display: none; }
+.overlay,.overlay * { -webkit-user-select: auto; user-select: auto; -webkit-touch-callout: default; }
+.panel { width: min(560px,100%); background: #29251f; border: 1px solid #806d54; border-radius: 12px; padding: 20px; max-height: calc(100dvh - 24px); overflow: auto; box-shadow: 0 10px 50px #0008; }
+.panel h2 { text-align: center; margin: 0 0 12px; font-size: 22px; }
+.panel p { margin: 0 0 12px; }
+.panel footer { display: flex; justify-content: center; margin-top: 12px; }
+#resetOverlay .panel { width: min(400px,100%); text-align: center; }
+#resetOverlay footer { gap: 12px; }
+#resetOverlay footer button { min-width: 108px; min-height: 40px; }
+#confirmReset { background: #e4be75; color: #211a12; font-weight: 600; }
+#helpOverlay .panel { max-height: 60vh; max-height: 60dvh; display: flex; flex-direction: column; overflow: hidden; }
+@media (min-width: 700px) and (min-height: 600px) { #helpOverlay .panel { width: min(644px,100%); } }
+#helpOverlay .help-scroll { overflow: auto; min-height: 0; padding-right: 8px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+#helpOverlay h2 { margin-bottom: 3px; }
+#helpOverlay h3 { font-size: 17px; margin: 0 0 10px; }
+#helpOverlay .version { text-align: center; color: #a99c89; font-size: 14px; }
+#helpOverlay a { color: #8ed6ff; }
+#helpOverlay hr { border: 0; border-top: 1px solid #806d54; margin: 18px 0; }
+.about { text-align: center; }
+.piano-map { display: block; width: 100%; height: auto; margin: 10px 0 15px; font-family: system-ui, sans-serif; text-anchor: middle; }
+.keyboard-map { border-collapse: collapse; width: 100%; text-align: center; margin: 10px 0 15px; }
+.keyboard-map td,.keyboard-map th { border: 1px solid #806d54; padding: 5px; }
+.keyboard-map th { color: #e4be75; }
+#loadOverlay,#enableOverlay { text-align: center; z-index: 20; }
+#enable { width: 100%; background: #e4be75; color: #211a12; font-weight: 700; min-height: 48px; }
+progress { width: 100%; accent-color: #e4be75; }
+#loadError,#enableError,#status { color: #f4ba9c; }
+@media(max-width:500px) { header { padding-inline: 89px; } h1 { font-size: 16px; } header .standard { width: 82px; font-size: 12px; padding-inline: 4px; } .mode-help { font-size: 11px; } }
+@media(orientation:landscape) and (max-height:550px) { header { min-height: 38px; padding-block: 3px; } h1 { font-size: 18px; } header .standard { padding-block: 4px; } main { --instrument-width: min(100%,1024px,calc((100dvh - 110px)*4/3)); gap: 4px; padding-block: 4px; } .footer,.mode-help { font-size: 11px; line-height: 15px; } }
+/* Keep the accidentals clear of the iPad home indicator in landscape. */
+@media (orientation: landscape) {
+    html.is-ipad main {
+        --ipad-bottom-space: max(24px,calc(env(safe-area-inset-bottom, 0px) + 8px));
+        --instrument-width: min(100%,1024px,calc((100dvh - 137px - var(--ipad-bottom-space) + 8px)*4/3));
+        padding-top: 4px;
+        padding-bottom: var(--ipad-bottom-space);
+    }
+}
+/* Keep native range inputs for accessibility and keyboard adjustment.
+   On iPad, route direct pointing through a larger, non-native target. */
+.ipad-range-wrap { position: relative; display: grid; min-width: 0; }
+.ipad-range-wrap input[type="range"] { pointer-events: none; }
+.ipad-range-hit { position: absolute; top: 50%; left: -6px; right: -6px;
+    height: max(36px,3.5cqw); transform: translateY(-50%); z-index: 1;
+    touch-action: none; cursor: ew-resize; -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<header><a class="tip standard" href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Donate</a><h1>Uilleann Pipes Keyboard</h1><button id="help" class="standard">Instructions</button></header>
+<main>
+<div id="instrument" aria-label="Uilleann Pipes Keyboard">
+    <div id="leftControls" class="controls">
+        <div class="setting"><label for="chanter">Chanter Volume <output id="chanterValue"></output></label><input id="chanter" type="range" min="0" max="2" step=".01" value="1.6"></div>
+        <div class="setting"><label for="regulator">Regulator Volume <output id="regulatorValue"></output></label><input id="regulator" type="range" min="0" max="2" step=".01" value="1.5"></div>
+        <div class="setting"><label for="droneVolume">Drones Volume <output id="droneVolumeValue"></output></label><input id="droneVolume" type="range" min="0" max="2" step=".01" value="1.5"></div>
+    </div>
+    <button id="drone" class="drone" aria-label="Toggle drones" aria-pressed="false" title="Toggle drones (Enter or Spacebar). Shift+Alt/Option-click to reset all settings."><img src="uilleann_pipes_keyboard_assets/drone_off.png" alt="Drones"></button>
+
+    <div id="rightControls" class="controls">
+        <div class="setting"><label for="reverb">Reverb Level <output id="reverbValue"></output></label><input id="reverb" type="range" min="0" max=".75" step=".01" value=".4"></div>
+        <div class="setting"><label for="chorus">Drone Chorus <output id="chorusValue"></output></label><input id="chorus" type="range" min="0" max="200" step="1" value="50"></div>
+        <div class="setting">
+            <label id="pitchLabel">Pitch</label>
+            <input id="pitch" type="hidden" value="D">
+            <div id="pitchSelector" role="group" aria-labelledby="pitchLabel">
+                <button type="button" data-pitch="B" aria-pressed="false">B</button>
+                <button type="button" data-pitch="C" aria-pressed="false">C</button>
+                <button type="button" data-pitch="Cs" aria-pressed="false">C♯</button>
+                <button type="button" data-pitch="D" aria-pressed="true">D</button>
+            </div>
+        </div>
+    </div>
+    <div id="bendLeft" class="bend" title="Pitch bend (drag vertically)"><img src="uilleann_pipes_keyboard_assets/pitchbend_off.png" alt="Pitch bend"></div>
+    <div id="bendRight" class="bend" title="Pitch bend (drag vertically)"><img src="uilleann_pipes_keyboard_assets/pitchbend_off.png" alt="Pitch bend"></div>
+</div>
+<div id="status" role="status"></div>
+<div id="whiteKeySelectors" aria-label="White-key accidentals">
+    <div class="white-key-group" role="group" aria-labelledby="fKeyTitle">
+        <button type="button" data-family="f" data-sharp="false" aria-pressed="false" title="F natural (toggle with G)">F♮</button>
+        <button type="button" data-family="f" data-sharp="true" aria-pressed="true" title="F sharp (toggle with G)">F♯</button>
+        <div class="white-key-title" id="fKeyTitle">F Key</div>
+    </div>
+    <div class="white-key-group" role="group" aria-labelledby="cKeyTitle">
+        <button type="button" data-family="c" data-sharp="false" aria-pressed="true" title="C natural (toggle with H)">C♮</button>
+        <button type="button" data-family="c" data-sharp="true" aria-pressed="false" title="C sharp (toggle with H)">C♯</button>
+        <div class="white-key-title" id="cKeyTitle">C Key</div>
+    </div>
+</div>
+</main>
+<div id="loadOverlay" class="overlay"><section class="panel" role="dialog" aria-modal="true" aria-labelledby="loadTitle"><h2 id="loadTitle">Loading Samples</h2><p id="loadDescription">Preparing the pipe sounds.</p><progress id="progress" value="0" max="27"></progress><p id="loadCount" role="status">0 of 27 samples</p><p id="loadError" role="alert"></p><button id="retry" class="standard" hidden>Retry</button></section></div>
+<div id="enableOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><h2 id="enableTitle">🔊 Enable Playback</h2><p>Enable audio to play the pipes.</p><button id="enable" class="standard">Enable Playback</button><p id="enableError" role="alert"></p></section></div>
+<div id="resetOverlay" class="overlay" hidden><section class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetMessage"><h2 id="resetTitle">Reset Settings</h2><p id="resetMessage">Reset all settings to their defaults?</p><footer><button id="cancelReset" type="button" class="standard">Cancel</button><button id="confirmReset" type="button" class="standard">Reset</button></footer></section></div>
+<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.0</p><div class="help-scroll">
+<h3>Overview</h3>
+<p>Uilleann Pipes Keyboard is a virtual musical instrument that lets you experience the sound of a full set of Irish Uilleann Pipes using a computer keyboard, mouse or touchscreen.</p>
+<p>Based on my original iPad app, the tool features authentic samples recorded from actual instruments in four pitches: B, C, C♯ and D.</p>
+<p>Play melodies on the piano-style keyboard, bend notes for expressive playing, accompany yourself with four regulator chords, and turn the drones on or off as you play.</p>
+<p>Special F and C key selectors make it easier to play traditional Irish tunes using just the white piano keys, while the black keys provide access to the full chromatic range.</p>
+<p>Adjust the individual instrument volumes, reverb and stereo drone chorus to create your own preferred sound.</p>
+<p>The tool is designed for both casual musical exploration and expressive playing on computers and tablets.</p>
+<hr>
+<h3>Playing the Melody</h3>
+<p>Play the piano keys with your mouse, fingers or computer keyboard.</p>
+<p>Slide between piano keys to change notes without lifting your finger or releasing the mouse button.</p>
+<p>Move your mouse or finger toward the bottom of a melody key to bend the note down.</p>
+<p>Use either vertical strip beside the upper controls to bend notes up or down.</p><hr>
+<h3>Piano Keys to Computer Keyboard Mapping</h3>
+<p>The diagrams below how to play the instrument from a US QWERTY keyboard:</p>
+<svg class="piano-map" viewBox="0 0 546 493" role="img" aria-labelledby="fullKeyboardChartTitle fullKeyboardChartDescription" xmlns="http://www.w3.org/2000/svg">
+<title id="fullKeyboardChartTitle">Full computer keyboard mapping</title>
+<desc id="fullKeyboardChartDescription">Piano melody: Tab, Q W E R T Y U I O P left bracket right bracket are white keys; 1 3 4 5 7 8 0 minus equals are black keys. G toggles F natural or sharp, H toggles C natural or sharp. X or N plays D–F♯, C or M plays D–G, V or comma plays F♯–A, B or period plays G–B. Enter or Space toggles the drones. Escape stops all sounds.</desc>
+<rect x="13" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="32.5" y="148" font-size="16" font-weight="bold" fill="#222">Tab</text><text x="32.5" y="175" font-size="11" fill="#555">D4</text><rect x="53" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="72.5" y="148" font-size="16" font-weight="bold" fill="#222">Q</text><text x="72.5" y="175" font-size="11" fill="#555">E4</text><rect x="93" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="112.5" y="148" font-size="16" font-weight="bold" fill="#222">W</text><text x="112.5" y="175" font-size="11" fill="#555">F4</text><rect x="133" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="152.5" y="148" font-size="16" font-weight="bold" fill="#222">E</text><text x="152.5" y="175" font-size="11" fill="#555">G4</text><rect x="173" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="192.5" y="148" font-size="16" font-weight="bold" fill="#222">R</text><text x="192.5" y="175" font-size="11" fill="#555">A4</text><rect x="213" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="232.5" y="148" font-size="16" font-weight="bold" fill="#222">T</text><text x="232.5" y="175" font-size="11" fill="#555">B4</text><rect x="253" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="272.5" y="148" font-size="16" font-weight="bold" fill="#222">Y</text><text x="272.5" y="175" font-size="11" fill="#555">C5</text><rect x="293" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="312.5" y="148" font-size="16" font-weight="bold" fill="#222">U</text><text x="312.5" y="175" font-size="11" fill="#555">D5</text><rect x="333" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="352.5" y="148" font-size="16" font-weight="bold" fill="#222">I</text><text x="352.5" y="175" font-size="11" fill="#555">E5</text><rect x="373" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="392.5" y="148" font-size="16" font-weight="bold" fill="#222">O</text><text x="392.5" y="175" font-size="11" fill="#555">F5</text><rect x="413" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="432.5" y="148" font-size="16" font-weight="bold" fill="#222">P</text><text x="432.5" y="175" font-size="11" fill="#555">G5</text><rect x="453" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="472.5" y="148" font-size="16" font-weight="bold" fill="#222">[</text><text x="472.5" y="175" font-size="11" fill="#555">A5</text><rect x="493" y="10" width="39" height="182" rx="3" fill="#faf9f6" stroke="#858585"/><text x="512.5" y="148" font-size="16" font-weight="bold" fill="#222">]</text><text x="512.5" y="175" font-size="11" fill="#555">B5</text><rect x="39" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="52.5" y="65" font-size="16" font-weight="bold" fill="white">1</text><text x="52.5" y="91" font-size="9" fill="#ddd">D♯4</text><rect x="119" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="132.5" y="65" font-size="16" font-weight="bold" fill="white">3</text><text x="132.5" y="91" font-size="9" fill="#ddd">F♯4</text><rect x="159" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="172.5" y="65" font-size="16" font-weight="bold" fill="white">4</text><text x="172.5" y="91" font-size="9" fill="#ddd">G♯4</text><rect x="199" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="212.5" y="65" font-size="16" font-weight="bold" fill="white">5</text><text x="212.5" y="91" font-size="9" fill="#ddd">B♭4</text><rect x="279" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="292.5" y="65" font-size="16" font-weight="bold" fill="white">7</text><text x="292.5" y="91" font-size="9" fill="#ddd">C♯5</text><rect x="319" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="332.5" y="65" font-size="16" font-weight="bold" fill="white">8</text><text x="332.5" y="91" font-size="9" fill="#ddd">D♯5</text><rect x="399" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="412.5" y="65" font-size="16" font-weight="bold" fill="white">0</text><text x="412.5" y="91" font-size="9" fill="#ddd">F♯5</text><rect x="439" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="452.5" y="65" font-size="16" font-weight="bold" fill="white">-</text><text x="452.5" y="91" font-size="9" fill="#ddd">G♯5</text><rect x="479" y="10" width="27" height="112" rx="3" fill="#222" stroke="#111"/><text x="492.5" y="65" font-size="16" font-weight="bold" fill="white">=</text><text x="492.5" y="91" font-size="9" fill="#ddd">B♭5</text>
+<text x="273" y="219" fill="#f5ecdc" font-size="16" font-weight="bold"> </text>
+<rect x="18.00" y="230" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="33.50" y="252" fill="#a99c89" font-size="14" font-weight="600">`</text>
+<rect x="52.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="67.50" y="252" fill="#fff" font-size="14" font-weight="600">1</text>
+<rect x="86.00" y="230" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="101.50" y="252" fill="#a99c89" font-size="14" font-weight="600">2</text>
+<rect x="120.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="135.50" y="252" fill="#fff" font-size="14" font-weight="600">3</text>
+<rect x="154.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="169.50" y="252" fill="#fff" font-size="14" font-weight="600">4</text>
+<rect x="188.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="203.50" y="252" fill="#fff" font-size="14" font-weight="600">5</text>
+<rect x="222.00" y="230" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="237.50" y="252" fill="#a99c89" font-size="14" font-weight="600">6</text>
+<rect x="256.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="271.50" y="252" fill="#fff" font-size="14" font-weight="600">7</text>
+<rect x="290.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="305.50" y="252" fill="#fff" font-size="14" font-weight="600">8</text>
+<rect x="324.00" y="230" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="339.50" y="252" fill="#a99c89" font-size="14" font-weight="600">9</text>
+<rect x="358.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="373.50" y="252" fill="#fff" font-size="14" font-weight="600">0</text>
+<rect x="392.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="407.50" y="252" fill="#fff" font-size="14" font-weight="600">-</text>
+<rect x="426.00" y="230" width="31.00" height="35" rx="3" fill="#151515" stroke="#b3aa9a"/>
+<text x="441.50" y="252" fill="#fff" font-size="14" font-weight="600">=</text>
+<rect x="460.00" y="230" width="65.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="492.50" y="252" fill="#a99c89" font-size="12" font-weight="600">Backspace</text>
+<rect x="18.00" y="269" width="48.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="42.00" y="291" fill="#222" font-size="14" font-weight="600">Tab</text>
+<rect x="69.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="84.50" y="291" fill="#222" font-size="14" font-weight="600">Q</text>
+<rect x="103.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="118.50" y="291" fill="#222" font-size="14" font-weight="600">W</text>
+<rect x="137.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="152.50" y="291" fill="#222" font-size="14" font-weight="600">E</text>
+<rect x="171.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="186.50" y="291" fill="#222" font-size="14" font-weight="600">R</text>
+<rect x="205.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="220.50" y="291" fill="#222" font-size="14" font-weight="600">T</text>
+<rect x="239.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="254.50" y="291" fill="#222" font-size="14" font-weight="600">Y</text>
+<rect x="273.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="288.50" y="291" fill="#222" font-size="14" font-weight="600">U</text>
+<rect x="307.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="322.50" y="291" fill="#222" font-size="14" font-weight="600">I</text>
+<rect x="341.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="356.50" y="291" fill="#222" font-size="14" font-weight="600">O</text>
+<rect x="375.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="390.50" y="291" fill="#222" font-size="14" font-weight="600">P</text>
+<rect x="409.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="424.50" y="291" fill="#222" font-size="14" font-weight="600">[</text>
+<rect x="443.00" y="269" width="31.00" height="35" rx="3" fill="#faf9f6" stroke="#aaa299"/>
+<text x="458.50" y="291" fill="#222" font-size="14" font-weight="600">]</text>
+<rect x="477.00" y="269" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="501.00" y="291" fill="#a99c89" font-size="14" font-weight="600">\</text>
+<rect x="18.00" y="308" width="56.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="46.25" y="330" fill="#a99c89" font-size="12" font-weight="600">Caps Lock</text>
+<rect x="77.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="93.00" y="330" fill="#a99c89" font-size="14" font-weight="600">A</text>
+<rect x="111.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="127.00" y="330" fill="#a99c89" font-size="14" font-weight="600">S</text>
+<rect x="145.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="161.00" y="330" fill="#a99c89" font-size="14" font-weight="600">D</text>
+<rect x="179.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="195.00" y="330" fill="#a99c89" font-size="14" font-weight="600">F</text>
+<rect x="213.50" y="308" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
+<text x="229.00" y="323" fill="#211a12" font-size="14" font-weight="600">G</text>
+<text x="229.00" y="336" fill="#211a12" font-size="9.5">F/F♯</text>
+<rect x="247.50" y="308" width="31.00" height="35" rx="3" fill="#e4be75" stroke="#d6b77c"/>
+<text x="263.00" y="323" fill="#211a12" font-size="14" font-weight="600">H</text>
+<text x="263.00" y="336" fill="#211a12" font-size="9.5">C/C♯</text>
+<rect x="281.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="297.00" y="330" fill="#a99c89" font-size="14" font-weight="600">J</text>
+<rect x="315.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="331.00" y="330" fill="#a99c89" font-size="14" font-weight="600">K</text>
+<rect x="349.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="365.00" y="330" fill="#a99c89" font-size="14" font-weight="600">L</text>
+<rect x="383.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="399.00" y="330" fill="#a99c89" font-size="14" font-weight="600">;</text>
+<rect x="417.50" y="308" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="433.00" y="330" fill="#a99c89" font-size="14" font-weight="600">&#x27;</text>
+<rect x="451.50" y="308" width="73.50" height="35" rx="3" fill="#80612b" stroke="#d8b77b"/>
+<text x="488.25" y="323" fill="#fff" font-size="12" font-weight="600">Enter</text>
+<text x="488.25" y="336" fill="#fff" font-size="9.5">Drones</text>
+<rect x="18.00" y="347" width="73.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="54.75" y="369" fill="#a99c89" font-size="12" font-weight="600">Shift</text>
+<rect x="94.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="110.00" y="369" fill="#a99c89" font-size="14" font-weight="600">Z</text>
+<rect x="128.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="144.00" y="362" fill="#fff" font-size="14" font-weight="600">X</text>
+<text x="144.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="162.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="178.00" y="362" fill="#fff" font-size="14" font-weight="600">C</text>
+<text x="178.00" y="375" fill="#fff" font-size="9.5">D–G</text>
+<rect x="196.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="212.00" y="362" fill="#fff" font-size="14" font-weight="600">V</text>
+<text x="212.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="230.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="246.00" y="362" fill="#fff" font-size="14" font-weight="600">B</text>
+<text x="246.00" y="375" fill="#fff" font-size="9.5">G–B</text>
+<rect x="264.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="280.00" y="362" fill="#fff" font-size="14" font-weight="600">N</text>
+<text x="280.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="298.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="314.00" y="362" fill="#fff" font-size="14" font-weight="600">M</text>
+<text x="314.00" y="375" fill="#fff" font-size="9.5">D–G</text>
+<rect x="332.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="348.00" y="362" fill="#fff" font-size="14" font-weight="600">, &lt;</text>
+<text x="348.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="366.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="382.00" y="362" fill="#fff" font-size="14" font-weight="600">. &gt;</text>
+<text x="382.00" y="375" fill="#fff" font-size="9.5">G–B</text>
+<rect x="400.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="416.00" y="369" fill="#a99c89" font-size="14" font-weight="600">/</text>
+<rect x="434.50" y="347" width="90.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="479.75" y="369" fill="#a99c89" font-size="12" font-weight="600">Shift</text>
+<rect x="52.00" y="386" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="76.00" y="408" fill="#a99c89" font-size="12" font-weight="600">Ctrl</text>
+<rect x="103.00" y="386" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="127.00" y="408" fill="#a99c89" font-size="14" font-weight="600">Alt</text>
+<rect x="154.00" y="386" width="235.00" height="35" rx="3" fill="#80612b" stroke="#d8b77b"/>
+<text x="271.50" y="401" fill="#fff" font-size="12" font-weight="600">Space</text>
+<text x="271.50" y="414" fill="#fff" font-size="9.5">Drones</text>
+<rect x="392.00" y="386" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="416.00" y="408" fill="#a99c89" font-size="14" font-weight="600">Alt</text>
+<rect x="443.00" y="386" width="48.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="467.00" y="408" fill="#a99c89" font-size="12" font-weight="600">Ctrl</text>
+<rect x="15" y="433" width="14" height="14" rx="2" fill="#faf9f6" stroke="#a99c89"/><text x="34" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">White melody</text>
+<rect x="148" y="433" width="14" height="14" rx="2" fill="#151515" stroke="#a99c89"/><text x="167" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">Black melody</text>
+<rect x="282" y="433" width="14" height="14" rx="2" fill="#386e59" stroke="#a99c89"/><text x="301" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">Regulators</text>
+<rect x="408" y="433" width="14" height="14" rx="2" fill="#e4be75" stroke="#a99c89"/><text x="427" y="444" text-anchor="start" fill="#f5ecdc" font-size="12">F/C toggles</text>
+<text x="273" y="464" fill="#dacdb8" font-size="12">Enter or Space: Toggle Drones · Escape: Stop all sounds</text>
+<text x="273" y="482" fill="#dacdb8" font-size="12">F and C white notes follow their selector settings.</text>
+</svg>
+<p>The note names are shown for the D set, but the same computer keys work in all four tunings.</p><hr>
+<h3>F and C Key Selectors</h3>
+<p>Use the selectors below the piano to choose whether the white F and C keys play natural or sharp notes.</p>
+<p>Press G to toggle F / F♯ and H to toggle C / C♯.</p>
+<p>For D major, select F♯ and C♯; for G major, select F♯ and C♮.</p>
+<p>You can still play the black keys normally.</p><hr>
+<h3>Playing the Regulators</h3>
+<p>Play the four regulator chords using the upper or lower parts of the two leftmost piano keys, or use either hand on the green computer keys below.</p>
+<svg class="piano-map" viewBox="0 341 546 47" role="img" aria-labelledby="regulatorChartTitle regulatorChartDescription" xmlns="http://www.w3.org/2000/svg">
+<title id="regulatorChartTitle">Regulator keyboard shortcuts</title>
+<desc id="regulatorChartDescription">X or N plays D–F♯, C or M plays D–G, V or comma plays F♯–A, B or period plays G–B.</desc>
+<rect x="18.00" y="347" width="73.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="54.75" y="369" fill="#a99c89" font-size="12" font-weight="600">Shift</text>
+<rect x="94.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="110.00" y="369" fill="#a99c89" font-size="14" font-weight="600">Z</text>
+<rect x="128.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="144.00" y="362" fill="#fff" font-size="14" font-weight="600">X</text>
+<text x="144.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="162.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="178.00" y="362" fill="#fff" font-size="14" font-weight="600">C</text>
+<text x="178.00" y="375" fill="#fff" font-size="9.5">D–G</text>
+<rect x="196.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="212.00" y="362" fill="#fff" font-size="14" font-weight="600">V</text>
+<text x="212.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="230.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="246.00" y="362" fill="#fff" font-size="14" font-weight="600">B</text>
+<text x="246.00" y="375" fill="#fff" font-size="9.5">G–B</text>
+<rect x="264.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="280.00" y="362" fill="#fff" font-size="14" font-weight="600">N</text>
+<text x="280.00" y="375" fill="#fff" font-size="9.5">D–F♯</text>
+<rect x="298.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="314.00" y="362" fill="#fff" font-size="14" font-weight="600">M</text>
+<text x="314.00" y="375" fill="#fff" font-size="9.5">D–G</text>
+<rect x="332.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="348.00" y="362" fill="#fff" font-size="14" font-weight="600">, &lt;</text>
+<text x="348.00" y="375" fill="#fff" font-size="9.5">F♯–A</text>
+<rect x="366.50" y="347" width="31.00" height="35" rx="3" fill="#386e59" stroke="#baac98"/>
+<text x="382.00" y="362" fill="#fff" font-size="14" font-weight="600">. &gt;</text>
+<text x="382.00" y="375" fill="#fff" font-size="9.5">G–B</text>
+<rect x="400.50" y="347" width="31.00" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="416.00" y="369" fill="#a99c89" font-size="14" font-weight="600">/</text>
+<rect x="434.50" y="347" width="90.50" height="35" rx="3" fill="#312d27" stroke="#70675b"/>
+<text x="479.75" y="369" fill="#a99c89" font-size="12" font-weight="600">Shift</text>
+</svg>
+<p>Hold a regulator key to sustain its chord while playing the melody.</p><hr>
+<h3>Drones and Settings</h3>
+<p>Click or tap the central drone switch, or press Enter or Spacebar, to turn the drones on or off.</p>
+<p>Adjust the volume, reverb and drone chorus controls to taste.</p>
+<p>Use the Pitch selector to choose B, C, C♯ or D.</p>
+<p>Your settings are saved automatically.</p>
+<p>To restore the defaults, Shift+Alt-click (Shift+Option-click on Mac) the drone switch and choose Reset.</p>
+<p>Press Escape to stop all sounds, including the drones.</p>
+<hr>
+<h3>iOS and Safari</h3>
+<p>On iPhone, iPad and desktop Safari, click or tap Enable Playback before playing.</p>
+<hr>
+<div class="about"><h3>About</h3><p>This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a></p><p>If you find it useful,<br>please consider a contribution via</p><p><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p></div><hr>
+</div><footer><button id="closeHelp" class="standard">OK</button></footer></section></div>
+<script>
+'use strict';
+const data = {"banks": {"D": ["df_D", "dg_D", "fa_D", "gb_D", "D4_D", "Ds4_D", "E4_D", "F4_D", "Fs4_D", "G4_D", "Gs4_D", "A4_D", "As4_D", "B4_D", "C5_D", "Cs5_D", "D5_D", "Ds5_D", "E5_D", "F5_D", "Fs5_D", "G5_D", "Gs5_D", "A5_D", "As5_D", "B5_D"], "Cs": ["df_Cs", "dg_Cs", "fa_Cs", "gb_Cs", "D4_Cs", "Ds4_Cs", "E4_Cs", "F4_Cs", "Fs4_Cs", "G4_Cs", "Gs4_Cs", "A4_Cs", "As4_Cs", "B4_Cs", "C5_Cs", "Cs5_Cs", "D5_Cs", "Ds5_Cs", "E5_Cs", "F5_Cs", "Fs5_Cs", "G5_Cs", "Gs5_Cs", "A5_Cs", "As5_Cs", "B5_Cs"], "C": ["df_C", "dg_C", "fa_C", "gb_C", "D4_C", "Ds4_C", "E4_C", "F4_C", "Fs4_C", "G4_C", "Gs4_C", "A4_C", "As4_C", "B4_C", "C5_C", "Cs5_C", "D5_C", "Ds5_C", "E5_C", "F5_C", "Fs5_C", "G5_C", "Gs5_C", "A5_C", "As5_C", "B5_C"], "B": ["df_B", "dg_B", "fa_B", "gb_B", "D4_B", "Ds4_B", "E4_B", "F4_B", "Fs4_B", "G4_B", "Gs4_B", "A4_B", "As4_B", "B4_B", "C5_B", "Cs5_B", "D5_B", "Ds5_B", "E5_B", "F5_B", "Fs5_B", "G5_B", "Gs5_B", "A5_B", "As5_B", "B5_B"]}, "regions": [[34, 265, 60, 160, 3], [34, 415, 60, 160, 2], [125, 265, 60, 320, 5], [250, 265, 60, 320, 8], [336, 265, 60, 320, 10], [419, 265, 60, 320, 12], [544, 265, 60, 320, 15], [636, 265, 60, 320, 17], [760, 265, 60, 320, 20], [846, 265, 60, 320, 22], [929, 265, 60, 320, 24], [0, 585, 74, 90, 1], [0, 675, 74, 93, 0], [74, 585, 72, 183, 4], [146, 585, 74, 183, 6], [220, 585, 72, 183, 7], [292, 585, 74, 183, 9], [366, 585, 72, 183, 11], [438, 585, 74, 183, 13], [512, 585, 74, 183, 14], [586, 585, 72, 183, 16], [658, 585, 74, 183, 18], [732, 585, 72, 183, 19], [804, 585, 73, 183, 21], [877, 585, 70, 183, 23], [947, 585, 77, 183, 25]], "art": [[[2.0, 592.0, 71.0, 174.0, "white_on_bot_reg.png"], [2.0, 263.0, 43.0, 329.0, "white_on_reg.png"]], [[2.0, 592.0, 71.0, 174.0, "white_on_bot_reg2.png"], [2.0, 263.0, 43.0, 329.0, "white_on_reg2.png"]], [[30.0, 274.0, 72.0, 290.0, "black_on_reg.png"]], [[30.0, 274.0, 72.0, 290.0, "black_on_reg2.png"]], [[75.0, 593.0, 70.0, 174.0, "white_on_bot.png"], [87.0, 263.0, 47.0, 331.0, "white_on.png"]], [[122.0, 274.0, 72.0, 290.0, "black_on.png"]], [[148.0, 593.0, 71.0, 174.0, "white_on_bot.png"], [179.0, 263.0, 40.0, 331.0, "white_on.png"]], [[221.0, 593.0, 70.0, 174.0, "white_on_bot.png"], [221.0, 263.0, 38.0, 331.0, "white_on.png"]], [[246.0, 274.0, 73.0, 290.0, "black_on.png"]], [[294.0, 593.0, 70.0, 174.0, "white_on_bot.png"], [305.0, 263.0, 38.0, 331.0, "white_on.png"]], [[329.0, 274.0, 72.0, 290.0, "black_on.png"]], [[367.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [389.0, 263.0, 38.0, 331.0, "white_on.png"]], [[414.0, 273.0, 72.0, 290.0, "black_on.png"]], [[440.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [472.0, 263.0, 37.0, 331.0, "white_on.png"]], [[513.0, 593.0, 70.0, 174.0, "white_on_bot.png"], [513.0, 263.0, 39.0, 331.0, "white_on.png"]], [[540.0, 274.0, 72.0, 290.0, "black_on.png"]], [[587.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [598.0, 263.0, 46.0, 331.0, "white_on.png"]], [[632.0, 273.0, 72.0, 290.0, "black_on.png"]], [[660.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [690.0, 263.0, 39.0, 331.0, "white_on.png"]], [[733.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [733.0, 263.0, 37.0, 331.0, "white_on.png"]], [[757.0, 274.0, 72.0, 290.0, "black_on.png"]], [[806.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [816.0, 263.0, 38.0, 331.0, "white_on.png"]], [[841.0, 273.0, 72.0, 290.0, "black_on.png"]], [[879.0, 593.0, 69.0, 174.0, "white_on_bot.png"], [900.0, 263.0, 38.0, 331.0, "white_on.png"]], [[925.0, 273.0, 72.0, 290.0, "black_on.png"]], [[951.0, 593.0, 72.0, 174.0, "white_on_bot.png"], [982.0, 263.0, 41.0, 331.0, "white_on.png"]]]};
+const $ = id => document.getElementById(id), instrument = $('instrument'), A = 'uilleann_pipes_keyboard_assets/';
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_IPAD = /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (IS_IPAD) document.documentElement.classList.add('is-ipad');
+const IS_SAFARI = /Safari\//.test(navigator.userAgent) && !/Chrome|Chromium|CriOS|Edg|OPR|FxiOS|Android/.test(navigator.userAgent);
+// Physical US-QWERTY codes: regulator shortcuts and the entire chromatic melody range.
+const regulatorShortcuts = {KeyX:0,KeyC:1,KeyV:2,KeyB:3,KeyN:0,KeyM:1,Comma:2,Period:3};
+const melodyShortcuts = {
+    Tab:4, Digit1:5, KeyQ:6, KeyW:7, Digit3:8, KeyE:9,
+    Digit4:10, KeyR:11, Digit5:12, KeyT:13, KeyY:14, Digit7:15,
+    KeyU:16, Digit8:17, KeyI:18, KeyO:19, Digit0:20, KeyP:21,
+    Minus:22, BracketLeft:23, Equal:24, BracketRight:25
+};
+const shortcuts = {...regulatorShortcuts, ...melodyShortcuts};
+const accidentalShortcuts = {KeyG:'f',KeyH:'c'};
+const held = new Map(), notePointers = new Set(), voices = new Map(), highlights = [];
+let buffers = new Map(), ctx, master, dry, wet, convolver, buses = {}, ready = false, loading = false, unlockPending = IS_IOS || IS_SAFARI;
+let bank = null, drones = [], droneEnabled = false, restartDrone = false, bendPointer = null, bendRate = 1, noteRate = 1;
+const whiteKeySharps = {f:true,c:false};
+function soundingNote(i) { return ((i===7||i===19)&&whiteKeySharps.f)||(i===14&&whiteKeySharps.c) ? i+1 : i; }
+const settings = ['chanter','regulator','droneVolume','reverb','chorus','pitch'];
+// Capture the original control values before restoring saved settings.
+const defaultSettings = Object.fromEntries(settings.map(id => [id,$(id).value]));
+const defaultWhiteKeySharps = {...whiteKeySharps};
+try {
+    const s = JSON.parse(localStorage.getItem('UilleannPipesKeyboard.settings.v1') || '{}');
+    whiteKeySharps.f = s.whiteKeyFSharp !== false;
+    whiteKeySharps.c = s.whiteKeyCSharp === true;
+    for (const id of settings) {
+        const e = $(id);
+        if (id === 'pitch') { if (Object.hasOwn(data.banks,s[id])) e.value = s[id]; }
+        else if (Number.isFinite(s[id]) && s[id] >= +e.min && s[id] <= +e.max) e.value = s[id];
+    }
+} catch(e) {}
+function save() {
+    try { localStorage.setItem('UilleannPipesKeyboard.settings.v1',JSON.stringify({...Object.fromEntries(settings.map(id => [id,id==='pitch'?$(id).value:+$(id).value])),whiteKeyFSharp:whiteKeySharps.f,whiteKeyCSharp:whiteKeySharps.c})); } catch(e) {}
+}
+function position(e,x,y,w,h) { Object.assign(e.style,{left:x/1024*100+'%',top:y/768*100+'%',width:w/1024*100+'%',height:h/768*100+'%'}); }
+// Highlight only the flat playing face of each black key, independently of its hit region.
+// Coordinates and tapered contours are measured in the original 1024 × 768 skin.
+// Both regulator assignments share the first black key's face.
+const blackHighlightFaces = {
+    "2": [
+        54.5,
+        273,
+        25.0,
+        279.5,
+        "polygon(12.000% 0.000%, 92.000% 0.000%, 100.000% 0.358%, 96.000% 2.504%, 96.000% 9.660%, 92.000% 27.549%, 88.000% 45.438%, 88.000% 63.327%, 84.000% 81.216%, 84.000% 93.739%, 84.000% 97.317%, 84.000% 99.463%, 76.000% 100.000%, 8.000% 100.000%, 0.000% 99.463%, 0.000% 97.317%, 4.000% 93.739%, 4.000% 81.216%, 4.000% 63.327%, 4.000% 45.438%, 4.000% 27.549%, 4.000% 9.660%, 4.000% 2.504%, 4.000% 0.358%)"
+    ],
+    "3": [
+        54.5,
+        273,
+        25.0,
+        279.5,
+        "polygon(12.000% 0.000%, 92.000% 0.000%, 100.000% 0.358%, 96.000% 2.504%, 96.000% 9.660%, 92.000% 27.549%, 88.000% 45.438%, 88.000% 63.327%, 84.000% 81.216%, 84.000% 93.739%, 84.000% 97.317%, 84.000% 99.463%, 76.000% 100.000%, 8.000% 100.000%, 0.000% 99.463%, 0.000% 97.317%, 4.000% 93.739%, 4.000% 81.216%, 4.000% 63.327%, 4.000% 45.438%, 4.000% 27.549%, 4.000% 9.660%, 4.000% 2.504%, 4.000% 0.358%)"
+    ],
+    "5": [
+        145.5,
+        273,
+        25.0,
+        279.5,
+        "polygon(16.000% 0.000%, 92.000% 0.000%, 100.000% 0.358%, 100.000% 2.504%, 96.000% 9.660%, 96.000% 27.549%, 92.000% 45.438%, 88.000% 63.327%, 88.000% 81.216%, 84.000% 93.739%, 84.000% 97.317%, 88.000% 99.463%, 80.000% 100.000%, 8.000% 100.000%, 0.000% 99.463%, 4.000% 97.317%, 4.000% 93.739%, 4.000% 81.216%, 4.000% 63.327%, 8.000% 45.438%, 8.000% 27.549%, 8.000% 9.660%, 8.000% 2.504%, 8.000% 0.358%)"
+    ],
+    "8": [
+        271.5,
+        273,
+        23.0,
+        279.5,
+        "polygon(8.696% 0.000%, 91.304% 0.000%, 100.000% 0.358%, 100.000% 2.504%, 100.000% 9.660%, 95.652% 27.549%, 95.652% 45.438%, 95.652% 63.327%, 91.304% 81.216%, 91.304% 93.739%, 91.304% 97.317%, 91.304% 99.463%, 82.609% 100.000%, 8.696% 100.000%, 0.000% 99.463%, 0.000% 97.317%, 4.348% 93.739%, 4.348% 81.216%, 4.348% 63.327%, 0.000% 45.438%, 0.000% 27.549%, 0.000% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "10": [
+        354.5,
+        273,
+        24.0,
+        279.5,
+        "polygon(8.333% 0.000%, 91.667% 0.000%, 100.000% 0.358%, 100.000% 2.504%, 95.833% 9.660%, 95.833% 27.549%, 91.667% 45.438%, 91.667% 63.327%, 91.667% 81.216%, 87.500% 93.739%, 87.500% 97.317%, 87.500% 99.463%, 79.167% 100.000%, 8.333% 100.000%, 0.000% 99.463%, 4.167% 97.317%, 4.167% 93.739%, 4.167% 81.216%, 4.167% 63.327%, 4.167% 45.438%, 4.167% 27.549%, 4.167% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "12": [
+        438.5,
+        273,
+        23.0,
+        279.5,
+        "polygon(8.696% 0.000%, 91.304% 0.000%, 100.000% 0.358%, 100.000% 2.504%, 100.000% 9.660%, 95.652% 27.549%, 95.652% 45.438%, 91.304% 63.327%, 91.304% 81.216%, 91.304% 93.739%, 91.304% 97.317%, 91.304% 99.463%, 82.609% 100.000%, 8.696% 100.000%, 0.000% 99.463%, 0.000% 97.317%, 0.000% 93.739%, 0.000% 81.216%, 0.000% 63.327%, 0.000% 45.438%, 0.000% 27.549%, 0.000% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "15": [
+        564.5,
+        273,
+        24.0,
+        279.5,
+        "polygon(8.333% 0.000%, 91.667% 0.000%, 100.000% 0.358%, 95.833% 2.504%, 95.833% 9.660%, 95.833% 27.549%, 95.833% 45.438%, 95.833% 63.327%, 95.833% 81.216%, 95.833% 93.739%, 95.833% 97.317%, 95.833% 99.463%, 87.500% 100.000%, 16.667% 100.000%, 8.333% 99.463%, 8.333% 97.317%, 8.333% 93.739%, 8.333% 81.216%, 8.333% 63.327%, 4.167% 45.438%, 4.167% 27.549%, 4.167% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "17": [
+        656.5,
+        273,
+        23.0,
+        279.5,
+        "polygon(8.696% 0.000%, 91.304% 0.000%, 100.000% 0.358%, 100.000% 2.504%, 100.000% 9.660%, 95.652% 27.549%, 95.652% 45.438%, 95.652% 63.327%, 95.652% 81.216%, 95.652% 93.739%, 95.652% 97.317%, 95.652% 99.463%, 86.957% 100.000%, 13.043% 100.000%, 4.348% 99.463%, 4.348% 97.317%, 4.348% 93.739%, 8.696% 81.216%, 4.348% 63.327%, 4.348% 45.438%, 4.348% 27.549%, 0.000% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "20": [
+        780.5,
+        273,
+        24.0,
+        279.5,
+        "polygon(8.333% 0.000%, 87.500% 0.000%, 95.833% 0.358%, 95.833% 2.504%, 95.833% 9.660%, 95.833% 27.549%, 95.833% 45.438%, 95.833% 63.327%, 100.000% 81.216%, 100.000% 93.739%, 100.000% 97.317%, 100.000% 99.463%, 91.667% 100.000%, 20.833% 100.000%, 12.500% 99.463%, 12.500% 97.317%, 12.500% 93.739%, 12.500% 81.216%, 8.333% 63.327%, 8.333% 45.438%, 4.167% 27.549%, 4.167% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "22": [
+        863.5,
+        273,
+        24.0,
+        279.5,
+        "polygon(8.333% 0.000%, 91.667% 0.000%, 100.000% 0.358%, 100.000% 2.504%, 95.833% 9.660%, 95.833% 27.549%, 95.833% 45.438%, 100.000% 63.327%, 100.000% 81.216%, 100.000% 93.739%, 100.000% 97.317%, 100.000% 99.463%, 91.667% 100.000%, 20.833% 100.000%, 12.500% 99.463%, 12.500% 97.317%, 12.500% 93.739%, 12.500% 81.216%, 12.500% 63.327%, 8.333% 45.438%, 4.167% 27.549%, 4.167% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ],
+    "24": [
+        947.5,
+        273,
+        24.0,
+        279.5,
+        "polygon(8.333% 0.000%, 87.500% 0.000%, 95.833% 0.358%, 95.833% 2.504%, 95.833% 9.660%, 95.833% 27.549%, 95.833% 45.438%, 95.833% 63.327%, 95.833% 81.216%, 100.000% 93.739%, 100.000% 97.317%, 100.000% 99.463%, 91.667% 100.000%, 20.833% 100.000%, 12.500% 99.463%, 12.500% 97.317%, 12.500% 93.739%, 12.500% 81.216%, 8.333% 63.327%, 8.333% 45.438%, 4.167% 27.549%, 4.167% 9.660%, 0.000% 2.504%, 0.000% 0.358%)"
+    ]
+};
+// A single composited image per white regulator color avoids a fractional-pixel seam
+// between the original upper and lower images at non-native display sizes.
+const whiteRegulatorHighlights = [
+    "data:image/png;base64,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EBxAcADBARAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEExyEABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBcQgAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwHAJAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAchwAQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQTHIQAEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMFxCADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAcAkBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEByHABAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBMchAAQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwXEIAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcBwCQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHIcAEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEExyEABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBcQgAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwHAJAcADBAbhX1TbXmsMAmOEAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggNwZMZJpsP/a+EN4Ci0hbeMk0wWZjsjwQGOODjTJLM+OJW1/XcDHK0uSTefxoz3JzSVpKkOcMTqYNE0Tmtv9rlpZ9PqoVTOZCFBC/8HuNPy6dZ2tHyQzH6b1PtJWrXNtVfSMkrX/iQtryb1x6kaJW2Utr+hbG8HuFNspkNuRklN09o0af+aynczqx+nMh3XzZ3XkqSdXWuZtBczumVPZzKEZuR4AncwHcoxTg1v09zMqN6oGzvfSxbPw2ltNZWzSc3XXLMku0N0bO4Ad5rhTIZmzPqGVFI5m9ZW5zcat2R1f8nU6heZzf4g1W0mWU9ydghPF/s5wEeHZj55Wd+fxMzadtrsZlr9ImnV+o9NR3+RbCTZy/p4J7O8m8pPU+nS8lS6mk93pkm2hy9uPweYx2Y3yU6SUapG6Sppaal8L8lfJ/VaxvVWdqbvJVkbJ5lVspv3dt5J8k57Jv+U/1zbTuV8WvujpFbSnyC4loMzkZvowImPTQ1tGA1vk7S2l+TfM8t38vju39TPsrvwCSvVktXKwTuTpK2tPZlxXU/atSQvpXI9VcMJym2S5P+Hb9At/Ou6LFhes+FtuvDvqVSN98/ha/lRkh8k9ZNM2o9qZ+ftQ4VaHc9j04ZSVbJTOztvZydvt/X1x1LTm0keTeryQtEW34DlN59UzC+Hqv3f/5aW1t5Ny9+njf6qtrd/uRCZtSTTSiaV7C4Go5J0LRnXcH1VbW//sm2sfDeprSTPpuVPU/V0Kqf2J1Vp822j3UM/4OKJg8Dx8VG/u6v9JkolNUw2+ksyf57K60l+mrQfHIrNeIjUbP6+8cJ32Ev/Nr9hVbKXrb03k/wkGyvPJLWTVhfT1Wb/FVuG2nVmO7DkS6qWWdIOLoeatZtJ+35a+8ts7f1saEFaspKkDROXyeIXuV0kRumfMp9Vv1bbzdbem21j9e9SuZmW00NwWqouJ/lGqr60v41sXgPLMc+Z/z639n9JfpjW3t2/OKpyIy3/XP2kZH7TUfpTbT4Um48Lzm6S3Tqcjq3dH+Z03kh3dpgivZ9MV15J6nSSF62iYFlXV+3fkva3Ge+91p+el2T2fpeb/apo4dbTlmzd7quNb/Mt5rsz88saRuk3fd7LjSE086Ktj19PN7uQWf4nXZtPvua72ON4+hyOk/kZw6N06ZLW78BUvZ7Z6PW6ufe7xd//hVnN/MX8pvUxs476hD9B3e6LtKTLmTMPZG/v9KEf+q6+B3DfBOfDv7srKzfywQf/WwsbwJ+0EbmXGAyznQ+9KmD1ZxkCJ6NGa4fiNE2/1/uJ9lLqHr5hfdTyCzgRwflUv/91BD/AfP3mJSxgeU3T7+NOP80X+T13yzKd2cWJDgAAAABJRU5ErkJggg==",
+    "data:image/png;base64,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OIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAIIDIDiA4AAIDiA4gOAACA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAwgOgOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOIDgAAgOIDgAggMIDiA4AIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMIDoDgAIIDIDiA4ACCAyA4gOAACA4gOACCAwgOIDgAggMIDoDgAIIDCA6A4ACCAyA4gOAAggMgOIDgAAgOIDiA4AAIDiA4AIIDCA4gOACCAwgOgOAAggMgOIDgAIIDcOPa1skqhwEwwwEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAAwQEQHEBwAAQHEBxAcAAEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHEBwAwQEEB0BwAMEBBAdAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcQHAABAcQHADBAQQHQHAAwQEEB0BwAMEBEBxAcADBARAcQHAABAcQHEBwAAQHEBwAwQEEBxAcAMEBBAdAcADBAQQHQHAAwQEQHEBwAMEBEBxAcAAEBxAcAMEBBAcQHADBAQQHQHAAwQEEB+BdMyRZzX9va38A3g219idDKsu92U5LLzjAuxqcyirJOAWnz9brWgTwbmjp0l3duhladzU2VWvhMc8B3slCam5IW9uoGWqRf03SKrm7Jfem5a50SSptbb4jP8D1ZGZ3XlOpJGN+OY75eUteTVJDuvxpxvSp/FZ1ea61/Gbr0teYPuO8oWxvB3ir2NTciy5967KqMatKvpMxX07Lt9JlNWx/v301SbY+UlUt5zJka57hJC3LeabTO57AW1ilpdIypM+QliGLvNbGfHP7P9tXphbt5qllM8ndrUvmfZ0xY3aSLGMrGXjr5dRybsa41pG757YkSYacqc3cnT4/S2vJD8dFTnR97khyOF3uznQ6q4v9HOCNQzNNXloOp02TmFrm8rjKa63lh9Wn5ak6nFez6vPBPzuSRRbDmO1UfpSW78xbPo+0jbTWpWXMKpXLqZT9HGAvNtOMZjstfRvStz7JmErLV1L561b5auvy4mqZV7LK1pCtjPm3trOdvJTkpZypr21t53KS+2vMb7RkIy1Dkq1cvRLZiXMws2lpGdLSp6VPZVmVRcb8e8Z8aWcrX8z5trP3Ex+vjSHLLK75b863nTxcX2tbuVTJE5U8k5an2pAhY1KrLFO5kmkjuUvSz9Mo92XBwTWmMiZ7Vw2v0nKoDRnSJbVKKvl2kq+3lv+o7fxLfrAWmyRZZnF1lnKuhvw4fS607d1/OvxoPbga84ep/FHX53haWq2SVK6k5l1o4Hab2yzTskzLodYnqdS4yo/S8pd9l7+6/N328t73nqytPJRVvtGWSdaCcTEtV9LlXA27X7z83fbyxsfqyy25lMrjqfx263IqfQ7t3gZR4zy5mtZy69YvHAT2j9f/7nbZTJvPPLV5sjHNdb6X5PlUvlOVr1/+/lpsztWQH6TLxek+qvzKfZhzNeRiWl5oi6S6nMmwsciZNuaPW/L7bTN3pKZp1Hzzp+UU3A7LqpahzaeNaievVfI31eUvFhs5n/NZJm3M2drInandicv/L9nrnaytHMmQR3Mlf9t2H1+RzRP1XEuebZu5M2MyrlKt5XiST7ch9+ydPN/9Y1sZ9uOS6dqH1YxJLfO/Sf65Kj/q5l3b2snFSv5p56X25b2f/UL1+W4O5VKW69szbx6c1O5tV9dOq07U0QzZuHuYpkivJtnYzmda8ietz7k2zEusUXBg3wdnvnivlkmt8o1K/nyxla/ePX/bq8t0WWaRl9or19WPa/Zwru1Q7f3gufTTZnKWu//xq+v/waP1/LjMsYz5ae3uYVfGVFbzprLswH7KzbQp3KfS1bSQSkue74c8vzjf/ufV1/9In5MZps3hrN4oNG8xw3mjGc+v+k+qu+uxfGBxJXfm8PxP22sbTqPgwL7Rrf3ubs2/u5eTjUO5+MsX84ukjW+/EW87OHvTpC5n0mdn7efeYJ0GHFAn6+oD+zZTOb97XU67rjPSNzD7qPbGyy/gNlhxvaPf/3dhuTOv315LnweTvOwlgQNj93f6jqxyIcvk6lnrG/F/oCLrm8I4LwYAAAAASUVORK5CYII="
+];
+for (const [i,art] of data.art.entries()) {
+    if (i < 2) {
+        const im = new Image(); im.src = whiteRegulatorHighlights[i]; im.className = "art"; im.alt = "";
+        position(im, 2, 263, 71, 503);
+        instrument.append(im); highlights[i] = [im];
+        continue;
+    }
+    highlights[i] = art.map(([x,y,w,h,file]) => {
+        const im = new Image(); im.src = A+file; im.className='art'; im.alt='';
+        const face = blackHighlightFaces[i];
+        if (face) {
+            position(im, ...face.slice(0,4));
+            im.style.clipPath = face[4];
+            im.style.webkitClipPath = face[4];
+        } else {
+            position(im,x,y,w,h);
+        }
+        instrument.append(im); return im;
+    });
+}
+function render() {
+    for (const button of $('whiteKeySelectors').querySelectorAll('button')) {
+        button.setAttribute('aria-pressed',String(whiteKeySharps[button.dataset.family] === (button.dataset.sharp==='true')));
+    }
+    for (const button of $('pitchSelector').querySelectorAll('button')) {
+        button.setAttribute('aria-pressed', String(button.dataset.pitch === $('pitch').value));
+    }
+    const active = new Set(held.values());
+    highlights.forEach((group,i) => group.forEach(im => im.classList.toggle('active',active.has(i))));
+    $('drone').setAttribute('aria-pressed',String(droneEnabled));
+    $('drone').firstElementChild.src=A+(droneEnabled?'drone_on.png':'drone_off.png');
+    for (const id of ['bendLeft','bendRight']) $(id).firstElementChild.src=A+(bendPointer!==null?'pitchbend_on.png':'pitchbend_off.png');
+    for (const id of settings.filter(id=>id!=='pitch')) $(id+'Value').textContent = id==='chorus'?$(id).value:Math.round(+$(id).value*(id==='reverb'?100:50))+'%';
+}
+function configureSession() { if(IS_IOS) try { if(navigator.audioSession) navigator.audioSession.type='playback'; } catch(e) {} }
+function engine() {
+    if(ctx) return;
+    const C=window.AudioContext||window.webkitAudioContext;
+    if(!C) throw Error('Web Audio is not supported.');
+    ctx=new C({latencyHint:'interactive'});
+    master=ctx.createGain(); master.gain.value=.38;
+    dry=ctx.createGain(); wet=ctx.createGain(); convolver=ctx.createConvolver();
+    const ir=ctx.createBuffer(2,Math.round(ctx.sampleRate*1.65),ctx.sampleRate); let seed=123456;
+    for(let ch=0;ch<2;ch++) { const d=ir.getChannelData(ch); for(let i=0;i<d.length;i++){ seed=(Math.imul(seed,1664525)+1013904223)>>>0; const t=i/ctx.sampleRate; d[i]=(seed/4294967296*2-1)*Math.exp(-4.8*t)*(1-Math.exp(-t*100)); } }
+    convolver.buffer=ir; dry.connect(master); convolver.connect(wet); wet.connect(master); master.connect(ctx.createDynamicsCompressor()).connect(ctx.destination);
+    for(const id of ['chanter','regulator','droneVolume']) { const g=ctx.createGain(); g.connect(dry); g.connect(convolver); buses[id]=g; }
+    applySettings();
+    ctx.addEventListener('statechange',()=>{if(ctx.state!=='running') clear();});
+}
+function applySettings() {
+    if(!ctx) return;
+    const t=ctx.currentTime, r=+$('reverb').value;
+    dry.gain.setTargetAtTime(1-r,t,.015); wet.gain.setTargetAtTime(r,t,.015);
+    for(const [id,g] of Object.entries(buses)) g.gain.setTargetAtTime(+$(id).value,t,.015);
+    for(const [i,v] of drones.entries()) v.s.playbackRate.setTargetAtTime(1+(i===0?1:-1)*+$('chorus').value/100000,t,.015);
+}
+function blocked() { return !ready || unlockPending || !$('helpOverlay').hidden || !$('resetOverlay').hidden; }
+function inert(on) { document.querySelector('header').inert=on; document.querySelector('main').inert=on; }
+async function resume() { configureSession(); if(ctx.state!=='running') await ctx.resume(); if(ctx.state!=='running') throw Error('Audio is not running.'); }
+async function preload() {
+    if(loading) return;
+    loading=true; ready=false; const selected=$('pitch').value;
+    clear(); inert(true); $('loadOverlay').hidden=false; $('retry').hidden=true; $('loadError').textContent='';
+    const names=[...data.banks[selected],'drone_'+selected], next=new Map(); let done=0;
+    $('loadDescription').textContent='Preparing the '+(selected==='Cs'?'C♯':selected)+' pipe sounds.';
+    $('progress').value=0; $('loadCount').textContent='0 of 27 samples';
+    try {
+        engine(); const queue=[...names], errors=[];
+        await Promise.all(Array.from({length:4},async()=>{
+            while(queue.length) { const name=queue.shift(); try { const r=await fetch(A+name+'.wav',{cache:'default'}); if(!r.ok) throw Error(name+' ('+r.status+')'); next.set(name,await ctx.decodeAudioData(await r.arrayBuffer())); $('progress').value=++done; $('loadCount').textContent=done+' of 27 samples'; } catch(e){errors.push(e);} }
+        }));
+        if(errors.length) throw errors[0];
+        buffers=next; bank=selected; ready=true; $('loadOverlay').hidden=true; $('enableOverlay').hidden=!unlockPending; inert(unlockPending);
+        if(restartDrone && !unlockPending && ctx.state==='running') { droneEnabled=true; syncDrones(); }
+        restartDrone=false; render();
+    } catch(e) { $('loadError').textContent='Unable to load samples: '+e.message+'. Open the tool from a web server and check the assets directory.'; $('retry').hidden=false; }
+    finally { loading=false; }
+}
+$('retry').onclick=preload;
+$('enable').onclick=async()=>{ $('enable').disabled=true; $('enableError').textContent=''; try { await resume(); unlockPending=false; $('enableOverlay').hidden=true; inert(false); } catch(e) { $('enableError').textContent=e.message; } finally { $('enable').disabled=false; } };
+function voice(name,bus,loop,rate=1,pan=null) {
+    const s=ctx.createBufferSource(), g=ctx.createGain(); s.buffer=buffers.get(name); s.loop=loop; s.playbackRate.value=rate; g.gain.value=0;
+    s.connect(g); let p=null;
+    if(pan!==null && ctx.createStereoPanner){p=ctx.createStereoPanner(); p.pan.value=pan; g.connect(p); p.connect(buses[bus]);} else g.connect(buses[bus]);
+    g.gain.setTargetAtTime(pan===null?1:.6,ctx.currentTime,.004); s.start();
+    const v={s,g,p,ended:false}; s.onended=()=>{v.ended=true; s.disconnect();g.disconnect();if(p)p.disconnect();}; return v;
+}
+function stopVoice(v) { if(!v||v.ended) return; const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,.006); try {v.s.stop(t+.045);} catch(e){} }
+function sync() {
+    render(); if(!ready||ctx.state!=='running') return;
+    const active=new Set([...held.values()].map(soundingNote));
+    for(const [i,v] of voices) if(!active.has(i)){stopVoice(v);voices.delete(i);}
+    for(const i of active) if(!voices.has(i)) voices.set(i,voice(data.banks[bank][i],i<4?'regulator':'chanter',i<4,i<4?1:melodyRate(i)));
+    updateMelodyPitch(); syncDrones();
+}
+function syncDrones() {
+    if(!ready||ctx.state!=='running')return;
+    if(!droneEnabled){for(const v of drones)stopVoice(v);drones=[];return;}
+    if(drones.length===0) { const c=+$('chorus').value/100000; drones=[voice('drone_'+bank,'droneVolume',true,1+c,-1),voice('drone_'+bank,'droneVolume',true,1-c,1)]; }
+}
+function melodyRate(i) {
+    // Keyboard-owned notes must not inherit a stale or simultaneous pointer bend.
+    // The dedicated bend strips remain global melody controls.
+    const keyboardOwned = Object.keys(melodyShortcuts).some(code => held.has(code) && soundingNote(held.get(code))===i);
+    return bendPointer!==null ? bendRate : keyboardOwned ? 1 : noteRate;
+}
+function updateMelodyPitch() {
+    if(!ctx)return;
+    for(const [i,v] of voices) if(i>=4&&!v.ended) v.s.playbackRate.setTargetAtTime(melodyRate(i),ctx.currentTime,.005);
+}
+function clear(stopDrones=true) {
+    held.clear(); const captures=[...notePointers]; notePointers.clear(); if(bendPointer!==null) captures.push(bendPointer); bendPointer=null; bendRate=noteRate=1;
+    for(const p of captures) if(instrument.hasPointerCapture(p)) instrument.releasePointerCapture(p);
+    for(const v of voices.values()) stopVoice(v); voices.clear();
+    if(stopDrones){droneEnabled=false;for(const v of drones)stopVoice(v);drones=[];} render();
+}
+function start(id,i) { if(blocked()) return; held.set(id,i); $('status').textContent=''; if(ctx.state==='running')sync();else resume().then(sync).catch(e=>{$('status').textContent=e.message;clear();}); }
+function end(id) { if(held.delete(id))sync(); }
+function toggleDrone() { if(blocked()) return; droneEnabled=!droneEnabled; render(); if(ctx.state==='running')syncDrones();else resume().then(sync).catch(e=>{$('status').textContent=e.message;clear();}); }
+function setWhiteKeySharp(family,value) {
+    if(blocked() || whiteKeySharps[family]===value) return;
+    whiteKeySharps[family]=value; save(); sync();
+}
+for(const button of $('whiteKeySelectors').querySelectorAll('button')) {
+    button.addEventListener('click',()=>{button.blur();setWhiteKeySharp(button.dataset.family,button.dataset.sharp==='true');});
+}
+function resetSettings() {
+    if(blocked() || loading) return;
+    for(const id of settings) $(id).value=defaultSettings[id];
+    Object.assign(whiteKeySharps,defaultWhiteKeySharps);
+    save();
+    applySettings();
+    if($('pitch').value!==bank) {
+        restartDrone=droneEnabled;
+        preload();
+    } else {
+        sync();
+    }
+}
+function openReset() {
+    if(blocked() || loading) return;
+    clear(false); // Release held notes; preserve the current drone state.
+    $('resetOverlay').hidden=false;
+    inert(true);
+    $('cancelReset').focus();
+}
+function closeReset(confirm) {
+    if($('resetOverlay').hidden) return;
+    document.activeElement.blur();
+    $('resetOverlay').hidden=true;
+    inert(false);
+    if(confirm) resetSettings();
+}
+$('cancelReset').onclick=()=>closeReset(false);
+$('confirmReset').onclick=()=>closeReset(true);
+// iOS: switch drones on initial contact, not on the delayed synthetic click.
+// Cancel the touch default to avoid a second click after the finger is lifted.
+if (IS_IOS) $('drone').addEventListener('touchstart',e=>{
+    if(e.cancelable)e.preventDefault();
+    if(blocked() || e.targetTouches.length!==1)return;
+    if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+    toggleDrone();
+},{passive:false});
+$('drone').onclick=e=>{
+    if(IS_IOS && e.pointerType==='touch')return;
+    document.activeElement.blur();
+    if(e.shiftKey && e.altKey) {
+        e.preventDefault();
+        openReset();
+    }
+    else toggleDrone();
+};
+for(const id of settings.filter(id=>id!=='pitch')) { $(id).oninput=()=>{save();render();applySettings();}; $(id).addEventListener('pointerup',()=>$(id).blur()); }
+// Safari on iPad can magnify small native controls. Retain the native slider
+// for keyboard/assistive access, but handle touch and pointer drags ourselves.
+if (IS_IPAD) for (const id of settings.filter(id=>id!=='pitch')) {
+    const input = $(id), wrap = document.createElement('div'), target = document.createElement('div');
+    wrap.className = 'ipad-range-wrap';
+    target.className = 'ipad-range-hit';
+    target.setAttribute('aria-hidden','true');
+    input.before(wrap); wrap.append(input,target);
+    let pointer = null;
+    function adjust(e) {
+        const rect = input.getBoundingClientRect();
+        const inset = Math.min(9,rect.width/4);
+        const fraction = Math.max(0,Math.min(1,(e.clientX-rect.left-inset)/(rect.width-2*inset)));
+        const min = +input.min, max = +input.max, step = +input.step;
+        const value = Math.max(min,Math.min(max,min+Math.round((max-min)*fraction/step)*step));
+        const previous = input.value;
+        input.value = value;
+        if (input.value !== previous) input.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    target.addEventListener('pointerdown',e=>{
+        if (blocked() || e.button!==0 || pointer!==null) return;
+        e.preventDefault();
+        if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
+        pointer=e.pointerId;
+        target.setPointerCapture(pointer);
+        adjust(e);
+    });
+    target.addEventListener('pointermove',e=>{
+        if(e.pointerId!==pointer)return;
+        e.preventDefault();
+        adjust(e);
+    });
+    function release(e) {
+        if(e.pointerId!==pointer)return;
+        pointer=null;
+        if(target.hasPointerCapture(e.pointerId)) target.releasePointerCapture(e.pointerId);
+    }
+    for(const type of ['pointerup','pointercancel','lostpointercapture'])target.addEventListener(type,release);
+    function cancelDrag() { if(pointer!==null)release({pointerId:pointer}); }
+    window.addEventListener('blur',cancelDrag);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelDrag();});
+    // Also prevent WebKit's native touch handling and synthetic clicks on the range.
+    for(const type of ['touchstart','touchmove','touchend','touchcancel'])
+        target.addEventListener(type,e=>{if(e.cancelable)e.preventDefault();},{passive:false});
+}
+
+for (const button of $('pitchSelector').querySelectorAll('button')) {
+    button.addEventListener('click', () => {
+        button.blur();
+        if (blocked() || loading || button.dataset.pitch === bank) return;
+        $('pitch').value = button.dataset.pitch;
+        restartDrone = droneEnabled;
+        save();
+        preload();
+    });
+}
+function openHelp(){clear();$('helpOverlay').hidden=false;inert(true);$('closeHelp').focus();}
+function closeHelp(){ $('helpOverlay').hidden=true;inert(false);document.activeElement.blur(); }
+$('help').onclick=openHelp; $('closeHelp').onclick=closeHelp;
+function editing(e) { return /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)||e.target.isContentEditable; }
+function plain(e) { return !editing(e)&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.isComposing; }
+function suppressQuickFind(e) { if(plain(e)&&(e.code==='Slash'||e.code==='Quote'||['/','?',"'",'"'].includes(e.key))&&e.cancelable)e.preventDefault(); }
+for(const type of ['keydown','keypress','keyup'])window.addEventListener(type,suppressQuickFind,{capture:true,passive:false});
+window.addEventListener('keydown',e=>{
+    if(!$('resetOverlay').hidden) {
+        if(e.code==='Escape') { e.preventDefault(); closeReset(false); return; }
+        if(e.code==='Tab') {
+            e.preventDefault();
+            (document.activeElement===$('cancelReset') ? $('confirmReset') : $('cancelReset')).focus();
+        } else if(e.repeat && (e.code==='Enter'||e.code==='Space')) e.preventDefault();
+        return;
+    }
+    if(e.code==='Escape'){clear();restartDrone=false;if(!$('helpOverlay').hidden)closeHelp();return;}
+    // Preserve browser shortcuts involving Command, Control or Alt.
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(blocked()||!plain(e))return;
+    // Keep Tab navigation when a native control has been explicitly focused.
+    if(e.code==='Tab' && e.target instanceof Element && e.target.closest('button,a,input,select,textarea,[contenteditable]'))return;
+    const accidental = accidentalShortcuts[e.code];
+    if(accidental) {
+        e.preventDefault();
+        if(!e.repeat) setWhiteKeySharp(accidental,!whiteKeySharps[accidental]);
+        return;
+    }
+    const i=shortcuts[e.code], droneShortcut=e.code==='Enter'||e.code==='Space';
+    if(i===undefined&&!droneShortcut)return;
+    // Permit native keyboard activation when a pitch button was explicitly focused.
+    if(droneShortcut && e.target instanceof Element && e.target.closest('#pitchSelector button,#whiteKeySelectors button')) { if(e.repeat)e.preventDefault(); return; }
+    e.preventDefault(); if(e.repeat)return; if(document.activeElement instanceof HTMLButtonElement)document.activeElement.blur();
+    if(droneShortcut)toggleDrone();else if(!held.has(e.code))start(e.code,i);
+},true);
+window.addEventListener('keyup',e=>{
+    if(held.has(e.code)){e.preventDefault();end(e.code);}
+},true);
+// Black-key outlines measured from the original 1024 × 768 skin.png.
+// Each row is [y, left, right, ...] for the ten black keys, left to right.
+// Interpolate the edges between rows to follow the slight taper of the artwork.
+const blackKeyEdges = [
+    [260, 44,91, 134,183, 259,308, 340,391, 422,473, 551,600, 643,691, 767,816, 849,899, 933,981],
+    [270, 42,93, 132,184, 257,310, 339,393, 423,476, 548,602, 640,694, 765,820, 849,902, 933,984],
+    [275, 44,91, 134,183, 259,308, 340,391, 422,473, 551,600, 643,691, 767,816, 849,899, 933,981],
+    [300, 45,91, 135,182, 260,307, 343,390, 426,473, 552,600, 643,691, 768,816, 851,899, 935,981],
+    [350, 45,90, 135,181, 260,306, 343,390, 427,472, 552,599, 644,690, 769,815, 852,899, 936,981],
+    [400, 45,90, 135,181, 260,306, 343,389, 426,472, 552,599, 644,691, 769,815, 852,899, 936,982],
+    [450, 44,89, 134,181, 259,306, 343,389, 426,472, 552,599, 644,691, 769,816, 853,899, 936,982],
+    [500, 44,89, 134,180, 259,306, 343,389, 426,472, 552,599, 644,691, 769,816, 853,899, 936,982],
+    [550, 44,88, 133,180, 259,305, 342,389, 426,472, 552,599, 644,691, 769,816, 853,900, 937,983],
+    [580, 44,88, 134,180, 259,305, 343,388, 426,472, 552,599, 644,690, 770,816, 854,899, 937,983],
+    [591, 45,87, 134,179, 260,304, 343,388, 427,472, 553,598, 645,690, 770,815, 854,899, 938,983],
+    [593, 46,87, 135,179, 261,304, 343,388, 430,471, 553,598, 645,690, 771,815, 854,898, 938,982]
+];
+// Keep the original note IDs and pitch-bend rectangles separate from hit geometry.
+const whiteKeyRegions = data.regions.slice(11);
+function point(e) {const r=instrument.getBoundingClientRect();return {x:(e.clientX-r.left)*1024/r.width,y:(e.clientY-r.top)*768/r.height};}
+function hit(x,y) {
+    if(x<0||x>=1024||y<260||y>=768)return null;
+    // Black keys take precedence only inside their visible outlines, including their tips.
+    if(y<593) {
+        let row=1;
+        while(y>=blackKeyEdges[row][0])row++;
+        const a=blackKeyEdges[row-1], b=blackKeyEdges[row];
+        const f=(y-a[0])/(b[0]-a[0]);
+        for(let k=0;k<10;k++) {
+            const j=1+2*k;
+            const left=a[j]+(b[j]-a[j])*f, right=a[j+1]+(b[j+1]-a[j+1])*f;
+            if(x>=left&&x<right) {
+                // Preserve the original effective upper/lower regulator split at y=425.
+                return data.regions[k===0?(y<425?0:1):k+1];
+            }
+        }
+    }
+    // Exposed white-key areas remain playable throughout the height of the keyboard.
+    return whiteKeyRegions.find(([l,t,w,h,i])=>x>=l&&x<l+w&&(i===0?y>=675:i===1?y<675:true))||null;
+}
+function pitchFor(r,y) {const i=r[4], height=r[3], fraction=Math.max(0,Math.min(1,(r[1]+height-y)/height));return Math.min(.99999,Math.pow(fraction*(i===14?.024:i<20?.018:.020)+(i===14?.980:i<20?.992:.990),1.5));}
+// Halve the original strip bend in cents (the square root of the original playback rate).
+function setBend(y){bendRate=Math.sqrt(.9438745+Math.max(0,Math.min(1,(256-y)/256))*.11225098);updateMelodyPitch();render();}
+function handleNote(e) { const p=point(e), r=hit(p.x,p.y), id='pointer:'+e.pointerId; if(!r){end(id);return;} if(r[4]>=4){noteRate=pitchFor(r,p.y);updateMelodyPitch();} if(held.get(id)!==r[4])start(id,r[4]); }
+instrument.addEventListener('pointerdown',e=>{
+    if(blocked()||e.button!==0||e.target.closest('button,input,select,.controls'))return;
+    const p=point(e), bend=e.target.closest('.bend');
+    if((bend||hit(p.x,p.y)) && document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    if(bend){if(bendPointer!==null)return;e.preventDefault();instrument.setPointerCapture(e.pointerId);bendPointer=e.pointerId;setBend(p.y);return;}
+    if(!hit(p.x,p.y))return;e.preventDefault();instrument.setPointerCapture(e.pointerId);notePointers.add(e.pointerId);handleNote(e);
+});
+function releasePointer(e){if(bendPointer===e.pointerId){bendPointer=null;bendRate=noteRate=1;updateMelodyPitch();render();}if(notePointers.delete(e.pointerId))end('pointer:'+e.pointerId);}
+instrument.addEventListener('pointermove',e=>{if(bendPointer!==e.pointerId&&!notePointers.has(e.pointerId))return;if(e.pointerType==='mouse'&&!(e.buttons&1)){releasePointer(e);return;}e.preventDefault();if(bendPointer===e.pointerId)setBend(point(e).y);else handleNote(e);});
+for(const type of ['pointerup','pointercancel','lostpointercapture'])instrument.addEventListener(type,releasePointer);
+// Match the English Concertina gesture and Firefox Quick Find filtering.
+for(const type of ['contextmenu','selectstart','dragstart'])document.addEventListener(type,e=>{if(e.target instanceof Element&&e.target.closest('.overlay'))return;if(e.cancelable)e.preventDefault();},true);
+function onPlayingScreen(e){return !(e.target instanceof Element&&e.target.closest('.overlay'))&&$('loadOverlay').hidden&&$('enableOverlay').hidden&&$('helpOverlay').hidden&&$('resetOverlay').hidden;}
+for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,e=>{if(onPlayingScreen(e)&&e.cancelable)e.preventDefault();},{capture:true,passive:false});
+function preventPlayingTouch(e){if(!onPlayingScreen(e)||!e.cancelable)return;const control=e.target instanceof Element&&e.target.closest('header a,header button,#drone,#pitchSelector button,#whiteKeySelectors button,input,select');if(e.touches.length===1&&control&&(e.type==='touchstart'||control.matches('input,select')))return;e.preventDefault();}
+for(const type of ['touchstart','touchmove'])document.addEventListener(type,preventPlayingTouch,{capture:true,passive:false});
+window.addEventListener('blur',()=>{restartDrone=false;clear();});document.addEventListener('visibilitychange',()=>{if(document.hidden){restartDrone=false;clear();}});window.addEventListener('pagehide',()=>{restartDrone=false;clear();});
+configureSession();render();preload();
+</script>
+</body>
+</html>
