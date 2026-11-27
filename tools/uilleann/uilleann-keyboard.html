@@ -136,10 +136,11 @@ progress { width: 100%; accent-color: #e4be75; }
     height: max(36px,3.5cqw); transform: translateY(-50%); z-index: 1;
     touch-action: none; cursor: ew-resize; -webkit-tap-highlight-color: transparent; }
 #settingsFooter { flex: 0 0 var(--settings-footer-space); display: flex; align-items: flex-start; justify-content: space-between; padding: 3px max(10px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(10px,env(safe-area-inset-left)); touch-action: none; -webkit-user-select: none; user-select: none; }
-#defaultsButton, #settingsButton { width: 120px; text-align: center; white-space: nowrap; }
-@media(max-width:500px) { #defaultsButton, #settingsButton { width:82px; font-size:12px; padding-inline:4px; } }
-/* On sufficiently wide screens the footer fits beside the instrument. */
-@media(min-width: 900px) and (min-aspect-ratio: 3/2), (min-width: 1300px) { body { --settings-footer-space: 0px; } #settingsFooter { position:fixed; bottom:0; left:0; right:0; padding-bottom:max(8px,env(safe-area-inset-bottom)); pointer-events:none; } #settingsFooter button { pointer-events:auto; } }
+#defaultsButton, #stopAllButton, #settingsButton { width: 120px; text-align: center; white-space: nowrap; }
+#stopAllButton { width:180px; background:#593830; border-color:#a87562; touch-action:none; -webkit-tap-highlight-color:transparent; }
+#stopAllButton:active { background:#75483d; }
+@media(max-width:500px) { #defaultsButton, #stopAllButton, #settingsButton { width:82px; font-size:12px; padding-inline:4px; } #stopAllButton { width:123px; } }
+/* Reserve footer space on every screen so Stop All cannot overlap the instrument. */
 #settingsOverlay .panel { width:min(540px,100%); display:flex; flex-direction:column; overflow:hidden; max-height: min(780px,calc(100dvh - 24px)); }
 #expressionForm { display:flex; flex-direction:column; min-height:0; }
 #settingsOverlay .settings-scroll { overflow:auto; min-height:0; padding:3px 5px 3px 3px; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
@@ -215,7 +216,7 @@ progress { width: 100%; accent-color: #e4be75; }
     </div>
 </div>
 </main>
-<div id="settingsFooter"><button id="defaultsButton" type="button" class="standard">Defaults</button><button id="settingsButton" type="button" class="standard">Settings</button></div>
+<div id="settingsFooter"><button id="defaultsButton" type="button" class="standard">Defaults</button><button id="stopAllButton" type="button" class="standard" title="Stop all sounds (Enter or Escape)">Stop All</button><button id="settingsButton" type="button" class="standard">Settings</button></div>
 <div id="loadOverlay" class="overlay"><section class="panel" role="dialog" aria-modal="true" aria-labelledby="loadTitle"><h2 id="loadTitle">Loading Samples</h2><p id="loadDescription">Preparing the pipe sounds.</p><progress id="progress" value="0" max="27"></progress><p id="loadCount" role="status">0 of 27 samples</p><p id="loadError" role="alert"></p><button id="retry" class="standard" hidden>Retry</button></section></div>
 <div id="enableOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="enableTitle"><h2 id="enableTitle">🔊 Enable Playback</h2><p>Enable audio to play the pipes.</p><button id="enable" class="standard">Enable Playback</button><p id="enableError" role="alert"></p></section></div>
 <div id="resetOverlay" class="overlay" hidden><section class="panel" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetMessage"><h2 id="resetTitle">Reset Settings</h2><p id="resetMessage">Reset all settings, including volume, effects, finger vibrato, note bends and Shift-key slides, to their defaults?</p><footer><button id="cancelReset" type="button" class="standard">Cancel</button><button id="confirmReset" type="button" class="standard">Reset</button></footer></section></div>
@@ -241,7 +242,7 @@ progress { width: 100%; accent-color: #e4be75; }
 <p id="expressionError" role="alert"></p>
 <footer><button id="expressionDefaults" type="button" class="standard">Defaults</button><button id="cancelExpression" type="button" class="standard">Cancel</button><button id="confirmExpression" type="submit" class="standard">OK</button></footer>
 </form></section></div>
-<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.1</p><div class="help-scroll">
+<div id="helpOverlay" class="overlay" hidden><section class="panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><h2 id="helpTitle">Instructions</h2><p class="version">Version 1.3</p><div class="help-scroll">
 <h3>Overview</h3>
 <p>Uilleann Pipes Keyboard is a virtual musical instrument that lets you experience the sound of a full set of Irish Uilleann Pipes using a computer keyboard, mouse or touchscreen.</p>
 <p>Based on my original iPad app, the tool features authentic samples recorded from actual instruments in four pitches: B, C, C♯ and D.</p>
@@ -467,7 +468,7 @@ progress { width: 100%; accent-color: #e4be75; }
 <p>When Hold is off, notes or chords in that section stop when you release their keys.</p>
 <p>Click or tap Stop in the Regulators group, or press V, to stop the regulators without changing regulator Hold.</p>
 <p>Click or tap Stop in the Chanter group, or press M, to stop the chanter without changing chanter Hold.</p>
-<p>Press Enter or Escape to stop all sounds, including the drones, without changing either Hold setting.</p>
+<p>Click or tap <b>Stop All</b> at the bottom center of the screen, or press Enter or Escape, to stop the chanter, regulators and drones without changing either Hold setting.</p>
 <hr>
 <h3>F and C Key Selectors</h3>
 <p>Use the selectors below the piano to choose whether the white F and C keys play natural or sharp notes.</p>
@@ -874,6 +875,7 @@ function clear(stopDrones=true) {
     for(const v of voices.values()) stopVoice(v); voices.clear();
     if(stopDrones){droneEnabled=false;for(const v of drones)stopVoice(v);drones=[];} render();
 }
+function stopAll() { clear(); restartDrone=false; }
 function hasHeldMelody() { return [...held.values()].some(i=>i>=4); }
 function rememberReleased(id,i) {
     if(latchEnabled && i>=4 && !hasHeldMelody()) {
@@ -1007,6 +1009,18 @@ function closeReset(confirm) {
     if(confirm) resetSettings();
 }
 $('defaultsButton').onclick=openReset;
+// Stop immediately on primary contact, including a secondary touchscreen finger.
+// Use the same cleanup as Enter/Escape; suppress compatibility touch clicks.
+const stopAllButton=$('stopAllButton');
+stopAllButton.addEventListener('pointerdown',e=>{
+    if(e.button!==0 || blocked()) return;
+    e.preventDefault(); stopAllButton.blur(); stopAll();
+});
+stopAllButton.addEventListener('touchstart',e=>{if(e.cancelable)e.preventDefault();},{passive:false});
+stopAllButton.addEventListener('click',e=>{
+    if(e.detail!==0 || e.pointerType==='touch' || (e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents) || blocked()) return;
+    stopAllButton.blur(); stopAll();
+});
 $('cancelReset').onclick=()=>closeReset(false);
 $('confirmReset').onclick=()=>closeReset(true);
 // iOS: switch drones on initial contact, not on the delayed synthetic click.
@@ -1141,12 +1155,12 @@ window.addEventListener('keydown',e=>{
         } else if(e.repeat && (e.code==='Enter'||e.code==='Space')) e.preventDefault();
         return;
     }
-    if(e.code==='Escape'){e.preventDefault();clear();restartDrone=false;if(!$('helpOverlay').hidden)closeHelp();return;}
+    if(e.code==='Escape'){e.preventDefault();stopAll();if(!$('helpOverlay').hidden)closeHelp();return;}
     // Preserve browser shortcuts involving Command, Control or Alt.
     if(e.metaKey||e.ctrlKey||e.altKey)return;
     // Performance shortcuts override native button activation, but not modal dialogs.
     if((e.code==='Enter'||e.code==='NumpadEnter') && $('helpOverlay').hidden && !e.isComposing) {
-        e.preventDefault(); clear(); restartDrone=false; return;
+        e.preventDefault(); stopAll(); return;
     }
     if(blocked())return;
     if(e.code==='Space' && !e.isComposing && (!editing(e)||e.target.type==='range')) {
