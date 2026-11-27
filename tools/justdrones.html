@@ -45,6 +45,14 @@ body{padding-top:calc(env(safe-area-inset-top,0px) + 66px)}
 @media (min-width:900px) and (min-height:1050px){main{zoom:1.3}}
 @media (min-width:900px) and (min-height:1130px){main{zoom:1.4}}
 @media (min-width:900px) and (min-height:1210px){main{zoom:1.5}}
+
+/* More readable Instructions dialog on large desktop displays. */
+@media (min-width:900px) and (hover:hover) and (pointer:fine){
+    #instructions{width:min(92vw,620px);font-size:17px;padding:24px;max-height:calc(100dvh - 32px);overflow:auto}
+    #instructions h2{font-size:22px}
+    #instructions p{font-size:17px}
+    #instructions button{font-size:17px}
+}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 <script>
@@ -78,7 +86,7 @@ body{padding-top:calc(env(safe-area-inset-top,0px) + 66px)}
 <dialog id="instructions"><h2 style="text-align: center;">JustDrones</h2><p>Tap the drone puck to start or stop the drones.</p><p>Select a pitch and adjust the first drone's volume.</p><p>Select an optional second drone interval and adjust its volume independently.</p><p>The second drone uses the original just-intonation interval samples.</p><p>Use Fine Tuning to adjust both drones together, and Reset to return to the original tuning.</p><p>Your settings are saved in this browser when available.</p><p>Playback stops when you leave or hide the page; tap the drone puck to restart it.</p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 <p style="text-align:center;font-weight:700;margin:18px 0 6px">About</p>
-<p style="text-align:center">This tool was created by<br/><a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
+<p style="text-align:center">This tool was created by<br/><br/><a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br><br>If you find it useful, please consider a contribution via<br><br><a href="https://michaeleskin.com/tipjars.html" target="_blank" rel="noopener noreferrer">Support Michael Eskin's Music Tools</a></p>
 <hr style="border:0;border-top:1px solid rgba(127,127,127,.25);margin:18px 0">
 <form method="dialog"><button>OK</button></form></dialog>
 <script>
