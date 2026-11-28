@@ -71,6 +71,7 @@ main { width:min(100%,440px); margin:0 auto; display:grid; gap:14px; align-items
 .global { display:grid; gap:12px; min-width:0; }
 .settings { display:grid; gap:10px; min-width:0; align-items:start; }
 .base-controls { display:grid; gap:10px; min-width:0; }
+.settings-left { display:grid; gap:10px; min-width:0; }
 .sound-controls { display:grid; gap:12px; min-width:0; }
 .subtitle { text-align:center; color:#bdbdbd; margin:0; font-size:14px; }
 .power { display:grid; justify-items:center; gap:3px; }
@@ -149,13 +150,33 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
     main { width:min(100%,860px); gap:20px; }
     .global { gap:10px; }
     .settings { grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
-    .base-controls, .controls { gap:12px; }
+    .settings-left, .base-controls, .controls { gap:12px; }
     .power button { width:200px; }
 }
 @media(min-width:1100px) and (min-height:850px) { main { width:min(100%,960px); gap:24px; } .settings { gap:32px; } .drone { padding:16px 18px; } .power button { width:220px; } }
 @media(orientation:landscape) and (max-height:550px) { body { padding-top:calc(env(safe-area-inset-top,0px) + 46px); } .tool-header { min-height:38px; } .tool-header h1 { font-size:19px; } .tool-header .standard { font-size:13px; padding:4px 10px; } .power button { width:min(190px,44vh); } }
 @media(max-height:700px) and (orientation:portrait) { .power button { width:min(200px,55vw); } main { gap:10px; } }
 @media(min-width:900px) and (hover:hover) and (pointer:fine) { dialog { width:min(92vw,620px); padding:24px; } dialog h2 { font-size:22px; } dialog p,dialog button { font-size:17px; } }
+
+/* Compact three-column layout for shorter, wide laptop and tablet screens. */
+@media (min-width:1024px) and (max-height:1199px) and (orientation:landscape) {
+    main {
+        width:min(100%,1240px);
+        grid-template-columns:minmax(180px, .58fr) repeat(2,minmax(0,1fr));
+        grid-template-rows:max-content max-content max-content 1fr max-content;
+        gap:14px 24px;
+    }
+    .global, .settings, .settings-left { display:contents; }
+    .subtitle { grid-column:1/-1; grid-row:1; }
+    .power { grid-column:1; grid-row:2; align-self:start; }
+    .power button { width:min(200px,100%); }
+    .settings-files { grid-column:1; grid-row:3; grid-template-columns:minmax(0,1fr); width:100%; }
+    .sound-controls { grid-column:1; grid-row:4; align-self:start; }
+    .base-controls { grid-column:2; grid-row:2/5; align-self:start; }
+    .controls { grid-column:3; grid-row:2/5; align-self:start; }
+    .footer { grid-column:1/-1; grid-row:5; }
+    .drone { padding:12px 14px; }
+}
 
 /* Instructions: scroll only the text, with the heading and OK button always visible. */
 #instructions { position:fixed; inset:0; margin:auto; width:min(92vw,420px); height:60vh; height:60dvh; max-height:60vh; max-height:60dvh; padding:20px; overflow:hidden; }
@@ -210,7 +231,7 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
         <p id="fileStatus" class="file-status" role="status" aria-live="polite"></p>
     </div>
     <div class="settings">
-        <div id="baseControls" class="base-controls">
+        <div class="settings-left">
             <div class="sound-controls">
                 <div class="field">
                     <label for="sound">Drone Sound</label>
@@ -218,6 +239,7 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
                 </div>
                 <p id="audioError" class="error" role="alert"></p>
             </div>
+            <div id="baseControls" class="base-controls">
             <section class="drone" id="drone0" aria-labelledby="title0">
                 <div class="heading"><h2 id="title0">Base Drone</h2><label class="enabled"><input type="checkbox" id="enable0" aria-label="Enable base drone">Enabled</label></div>
                 <div class="shortcuts">
@@ -236,6 +258,7 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
                 </div>
                 <div id="baseVolume"></div>
             </section>
+            </div>
         </div>
         <div id="additionalDrones" class="controls"></div>
     </div>
@@ -258,7 +281,7 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
 </dialog>
 <dialog id="instructions">
     <h2>DroneLab</h2>
-    <p class="instructions-version">Version 1.2</p>
+    <p class="instructions-version">Version 1.2.1</p>
     <div class="instructions-scroll" tabindex="0" aria-label="DroneLab instructions">
     <p>DroneLab provides steady, precisely tunable bagpipe-style drones and classic waveforms for instrument tuning, practice chanters, intonation training, and musical experimentation.</p>
     <hr>
