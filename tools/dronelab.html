@@ -271,21 +271,25 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
     <h3>Setting the Base Frequency</h3>
     <p>Select a note and octave as a shortcut to its equal-tempered frequency (A4 = 440 Hz), from C1 through C6.</p>
     <p>Use Reset to Note to return to the exact shortcut pitch after editing the frequency.</p>
-    <p>Enter a frequency in Hertz directly, using up to three decimal places, and press Enter or leave the field to apply it.</p>
+    <p>Enter a frequency in Hertz directly, using up to three decimal places; valid frequencies are applied and saved as you type.</p>
     <p>Use the minus and plus buttons to adjust the frequency by 0.1 Hz at a time, or hold either button for repeated adjustment.</p>
     <p>All additional drones follow the base frequency, even when the base drone itself is disabled.</p>
+    <p>Invalid frequency entries leave the last valid pitch playing until corrected; press Escape or use Reset to Note to discard an invalid entry.</p>
     <hr>
     <h3>Adding Ratio Drones</h3>
     <p>Enable any of the three additional drones and select a just intonation interval or enter a custom ratio using two positive whole numbers.</p>
     <p>The first number is the numerator and the second number is the denominator.</p>
     <p>For example, with a base frequency of 240 Hz, a ratio of 3/2 produces 360 Hz and a ratio of 1/2 produces 120 Hz.</p>
-    <p>Press Enter or leave both ratio fields to apply a custom ratio.</p>
+    <p>Custom ratios are applied and saved as soon as both fields contain a valid ratio; incomplete or invalid entries do not change the sounding pitch.</p>
     <p>All enabled drones must have frequencies between 16 and 5000 Hz.</p>
+    <p>A pending custom ratio is checked again when the base frequency changes, and is applied if it becomes valid.</p>
+    <p>Press Escape in a ratio field to restore its last valid value.</p>
     <p>Adjust each drone's volume independently, and disable any drone you do not need.</p>
     <p>All settings can be changed while the drones are playing.</p>
     <hr>
     <h3>Saving and Loading Settings</h3>
     <p>Use Save Settings to save your current drone sound, base frequency, note and octave, and all four drone settings in a text file.</p>
+    <p>Correct any invalid frequency or ratio entries before saving.</p>
     <p>Edit the suggested file name if you wish, then tap OK to save or Cancel to return to the tool.</p>
     <p>On iPhone and iPad, choose Save to Files from the share sheet when available.</p>
     <p>Use Load Settings to open a previously saved DroneLab text file and restore the complete configuration, including any disabled drones.</p>
@@ -600,10 +604,10 @@ function setupUI() {
     renderBase();
     for (let i=0;i<4;i++) { if (i) renderRatio(i); renderVolume(i); }
 }
-function renderBase() {
+function renderBase(keepField=false) {
     $('note').value=settings.note; $('octave').value=settings.octave;
     for (const o of $('note').options) o.disabled=settings.octave===6 && o.value!=='0';
-    $('baseFrequency').value=formatHz(settings.base);
+    if (!keepField) $('baseFrequency').value=formatHz(settings.base);
     const et=etFrequency(settings.note,settings.octave), custom=Math.abs(settings.base-et)>1e-9;
     $('baseHint').textContent=custom?'Custom':`${NOTES[settings.note]}${settings.octave} • Equal temperament (A4 = 440 Hz)`;
     $('resetNote').hidden=!custom;
@@ -635,6 +639,7 @@ function renderVolume(i) {
 function setBaseError(message='') {
     $('baseError').textContent=message;
     if (message) $('baseFrequency').setAttribute('aria-invalid','true'); else $('baseFrequency').removeAttribute('aria-invalid');
+    $('resetNote').hidden=!baseDirty && Math.abs(settings.base-etFrequency(settings.note,settings.octave))<=1e-9;
 }
 function setRatioError(i,message='') {
     $(`ratioError${i}`).textContent=message;
@@ -642,34 +647,77 @@ function setRatioError(i,message='') {
         if (message && (settings.drones[i].enabled||editingDisabled[i])) $(id).setAttribute('aria-invalid','true'); else $(id).removeAttribute('aria-invalid');
     }
 }
-function commitBase(value,note=settings.note,octave=settings.octave) {
-    if (!validHz(value)) { renderBase(); setBaseError(`Enter a frequency from ${MIN_HZ} to ${MAX_HZ} Hz.`); return false; }
+// Dirty flags describe unresolved edits, not valid values already committed.
+let baseDirty=false;
+const ratioDirty=[false,false,false,false];
+const editingDisabled=[false,false,false,false];
+const baseSaveError='Correct the invalid base frequency before saving.';
+const ratioSaveError=i=>`Correct the invalid ratio for Drone ${i+1} before saving.`;
+function clearValidationFileStatus() {
+    const message=$('fileStatus').textContent;
+    if ((message===baseSaveError && !baseDirty) ||
+        [1,2,3].some(i=>message===ratioSaveError(i)&&!ratioDirty[i])) setFileStatus();
+}
+function readRatioFields(i) {
+    const n=$(`num${i}`).value.trim(), d=$(`den${i}`).value.trim();
+    if (!/^\d+$/.test(n)||!/^\d+$/.test(d)||!validInteger(Number(n))||!validInteger(Number(d))) return null;
+    return {n:Number(n),d:Number(d)};
+}
+function ratioEntryError(i,base=settings.base) {
+    const pair=readRatioFields(i);
+    if (!pair) return 'Both ratio values must be positive whole numbers.';
+    return validHz(base*(pair.n/pair.d))?'':`The resulting frequency must be ${MIN_HZ}–${MAX_HZ} Hz.`;
+}
+function applyRatioValue(i,n,d,preset) {
+    const voice=settings.drones[i]; voice.n=n; voice.d=d;
+    voice.preset=preset==='custom'?'custom':knownRatio(n,d)?ratioKey(n,d):'custom';
+    ratioDirty[i]=false;
+}
+function commitBase(value,note=settings.note,octave=settings.octave,keepField=false) {
+    function reject(message) {
+        if (!keepField) renderBase();
+        setBaseError(message); return false;
+    }
+    if (!validHz(value)) return reject(`Enter a frequency from ${MIN_HZ} to ${MAX_HZ} Hz.`);
+    // Evaluate pending ratio drafts at the proposed base before validating the
+    // enabled voices. Commit the new base and any newly valid ratios together.
+    const drafts=[null,null,null,null];
     for (let i=1;i<4;i++) {
         const d=settings.drones[i];
-        if (d.enabled && !validHz(value*(d.n/d.d))) {
-            renderBase(); setBaseError(`Drone ${i+1} would be outside ${MIN_HZ}–${MAX_HZ} Hz. Disable it or change its ratio first.`); return false;
+        if (ratioDirty[i] && !ratioEntryError(i,value)) drafts[i]=readRatioFields(i);
+        const pair=drafts[i]||d;
+        if (d.enabled && !validHz(value*(pair.n/pair.d))) {
+            return reject(`Drone ${i+1} would be outside ${MIN_HZ}–${MAX_HZ} Hz. Disable it or change its ratio first.`);
         }
     }
     settings.base=value; settings.note=note; settings.octave=octave;
-    renderBase(); setBaseError();
-    for (let i=1;i<4;i++) { renderRatioFrequency(i); if (!settings.drones[i].enabled) setRatioError(i); }
-    save(); retune(); return true;
-}
-let baseDirty=false;
-function commitBaseField() {
-    if (!baseDirty) return true;
-    baseDirty=false;
-    const raw=$('baseFrequency').value.trim().replace(',','.');
-    // Decimal input only; reject zero, negatives, exponents and more than three decimals.
-    if (!/^(?:\d+(?:\.\d{0,3})?|\.\d{1,3})$/.test(raw)) {
-        renderBase(); setBaseError('Enter a positive frequency with up to three decimal places.'); return false;
+    baseDirty=false; renderBase(keepField); setBaseError();
+    for (let i=1;i<4;i++) {
+        if (drafts[i]) {
+            applyRatioValue(i,drafts[i].n,drafts[i].d);
+            $(`preset${i}`).value=settings.drones[i].preset;
+        }
+        renderRatioFrequency(i);
+        setRatioError(i,ratioDirty[i]?ratioEntryError(i):'');
     }
-    return commitBase(Number(raw));
+    clearValidationFileStatus(); save(); retune(); return true;
+}
+function commitBaseField(finalize=false) {
+    if (!baseDirty) { if(finalize) renderBase(); return true; }
+    const raw=$('baseFrequency').value.trim().replace(',','.');
+    // Keep incomplete and invalid input visible so it cannot silently be saved.
+    if (!/^(?:\d+(?:\.\d{0,3})?|\.\d{1,3})$/.test(raw)) {
+        setBaseError('Enter a positive frequency with up to three decimal places.'); return false;
+    }
+    const ok=commitBase(Number(raw),settings.note,settings.octave,true);
+    if (ok && finalize) renderBase();
+    return ok;
 }
 function useShortcut() {
-    baseDirty=false;
     const octave=Number($('octave').value), note=octave===6?0:Number($('note').value);
+    baseDirty=false;
     commitBase(etFrequency(note,octave),note,octave);
+    clearValidationFileStatus();
 }
 function nudge(delta) {
     if (baseDirty && !commitBaseField()) return false;
@@ -677,32 +725,36 @@ function nudge(delta) {
     if (next===settings.base) return false;
     return commitBase(next);
 }
-const ratioDirty=[false,false,false,false];
-const editingDisabled=[false,false,false,false];
-function commitRatio(i,n,d,preset) {
+function commitRatio(i,n,d,preset,keepFields=false) {
     if (!validInteger(n)||!validInteger(d)) {
-        renderRatio(i); setRatioError(i,'Both ratio values must be positive whole numbers.'); return false;
+        if (!keepFields) renderRatio(i); setRatioError(i,'Both ratio values must be positive whole numbers.'); return false;
     }
     const f=settings.base*(n/d);
     if (!validHz(f)) {
-        renderRatio(i); setRatioError(i,`The resulting frequency must be ${MIN_HZ}–${MAX_HZ} Hz.`); return false;
+        if (!keepFields) renderRatio(i); setRatioError(i,`The resulting frequency must be ${MIN_HZ}–${MAX_HZ} Hz.`); return false;
     }
-    const voice=settings.drones[i]; voice.n=n; voice.d=d;
-    voice.preset=preset==='custom'?'custom':knownRatio(n,d)?ratioKey(n,d):'custom';
-    ratioDirty[i]=false; renderRatio(i); setRatioError(i); save(); retune([i]); return true;
+    applyRatioValue(i,n,d,preset);
+    if (keepFields) {
+        $(`preset${i}`).value=settings.drones[i].preset;
+        renderRatioFrequency(i);
+    } else renderRatio(i);
+    setRatioError(i); clearValidationFileStatus();
+    save(); retune([i]); return true;
 }
 function commitRatioFields(i) {
     if (!ratioDirty[i]) return true;
-    ratioDirty[i]=false;
-    const n=$(`num${i}`).value.trim(), d=$(`den${i}`).value.trim();
-    if (!/^\d+$/.test(n)||!/^\d+$/.test(d)) {
-        renderRatio(i); setRatioError(i,'Both ratio values must be positive whole numbers.'); return false;
-    }
-    return commitRatio(i,Number(n),Number(d));
+    // A ratio edit may also make a pending base edit valid.
+    if (baseDirty && commitBaseField() && !ratioDirty[i]) return true;
+    const error=ratioEntryError(i);
+    if (error) { setRatioError(i,error); return false; }
+    const {n,d}=readRatioFields(i);
+    const ok=commitRatio(i,n,d,undefined,true);
+    if (ok && baseDirty) commitBaseField();
+    return ok;
 }
 function changeEnabled(i,enabled) {
     const d=settings.drones[i];
-    if (i && enabled && !validHz(droneFrequency(settings,i))) {
+    if (i && enabled && (!commitRatioFields(i) || !validHz(droneFrequency(settings,i)))) {
         // Let the user fix a formerly disabled, now out-of-range ratio by choosing a valid ratio.
         // Open the controls without enabling any unsafe pitch.
         editingDisabled[i]=true;
@@ -712,7 +764,9 @@ function changeEnabled(i,enabled) {
         return;
     }
     d.enabled=enabled; editingDisabled[i]=false;
-    if (i) { renderRatio(i); setRatioError(i); } else { $('enable0').checked=enabled; $('drone0').classList.toggle('disabled',!enabled); }
+    if (i) { ratioDirty[i]=false; renderRatio(i); setRatioError(i); } else { $('enable0').checked=enabled; $('drone0').classList.toggle('disabled',!enabled); }
+    clearValidationFileStatus();
+    if (baseDirty) commitBaseField();
     save(); retune([i]); adjustLevel(i); if (active) setPowerUI();
 }
 function setupNudge(id,delta) {
@@ -735,11 +789,11 @@ setupUI();
 $('sound').addEventListener('change',()=>{settings.sound=$('sound').value;save();changeSound();});
 $('note').addEventListener('change',useShortcut); $('octave').addEventListener('change',useShortcut);
 $('resetNote').addEventListener('click',useShortcut);
-$('baseFrequency').addEventListener('input',()=>{baseDirty=true;setBaseError();});
-$('baseFrequency').addEventListener('blur',commitBaseField);
+$('baseFrequency').addEventListener('input',()=>{baseDirty=true;commitBaseField();});
+$('baseFrequency').addEventListener('blur',()=>commitBaseField(true));
 $('baseFrequency').addEventListener('keydown',e=>{
-    if (e.key==='Enter') { e.preventDefault(); commitBaseField(); $('baseFrequency').blur(); }
-    else if (e.key==='Escape') { e.preventDefault(); baseDirty=false; renderBase(); setBaseError(); $('baseFrequency').blur(); }
+    if (e.key==='Enter') { e.preventDefault(); if(commitBaseField(true)) $('baseFrequency').blur(); }
+    else if (e.key==='Escape') { e.preventDefault(); baseDirty=false; renderBase(); setBaseError(); clearValidationFileStatus(); $('baseFrequency').blur(); }
 });
 setupNudge('minus',-.1); setupNudge('plus',.1);
 for (let i=0;i<4;i++) {
@@ -749,15 +803,19 @@ for (let i=0;i<4;i++) {
     });
     if (!i) continue;
     $(`preset${i}`).addEventListener('change',e=>{
-        ratioDirty[i]=false; const value=e.target.value, d=settings.drones[i];
+        const value=e.target.value, d=settings.drones[i];
         if (value==='custom') { d.preset='custom'; renderRatioFrequency(i); save(); $(`num${i}`).focus(); $(`num${i}`).select(); }
-        else { const [n,den]=value.split('/').map(Number); commitRatio(i,n,den); }
+        else {
+            ratioDirty[i]=false; const [n,den]=value.split('/').map(Number);
+            commitRatio(i,n,den); clearValidationFileStatus();
+            if (baseDirty) commitBaseField();
+        }
     });
     for (const id of [`num${i}`,`den${i}`]) {
-        $(id).addEventListener('input',()=>{ ratioDirty[i]=true;setRatioError(i); });
+        $(id).addEventListener('input',()=>{ ratioDirty[i]=true; commitRatioFields(i); });
         $(id).addEventListener('keydown',e=>{
-            if(e.key==='Enter'){e.preventDefault();commitRatioFields(i);$(id).blur();}
-            else if(e.key==='Escape'){e.preventDefault();ratioDirty[i]=false;renderRatio(i);setRatioError(i);$(id).blur();}
+            if(e.key==='Enter'){e.preventDefault();if(commitRatioFields(i))$(id).blur();}
+            else if(e.key==='Escape'){e.preventDefault();ratioDirty[i]=false;renderRatio(i);setRatioError(i);clearValidationFileStatus();$(id).blur();}
         });
     }
     $(`ratioRow${i}`).addEventListener('focusout',e=>{
@@ -876,9 +934,16 @@ function normalizeSettingsFilename(raw) {
 $('saveSettings').addEventListener('click',()=>{
     if (fileBusy) return;
     // Flush valid pending edits before suggesting the name.
-    commitBaseField();
-    for (let i=1;i<4;i++) commitRatioFields(i);
-    setFilenameError();
+    if (!commitBaseField(true)) {
+        setFileStatus(baseSaveError,true); $('baseFrequency').focus(); return;
+    }
+    for (let i=1;i<4;i++) {
+        if (!commitRatioFields(i)) {
+            setFileStatus(ratioSaveError(i),true);
+            $(`num${i}`).focus(); return;
+        }
+    }
+    setFileStatus(); setFilenameError();
     $('settingsFilename').value=suggestedSettingsFilename();
     $('saveSettingsDialog').showModal();
     $('settingsFilename').focus();
