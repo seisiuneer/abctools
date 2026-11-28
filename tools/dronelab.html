@@ -196,6 +196,10 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
     #instructions h2 { font-size:22px; }
     #instructions h3, #instructions p, #instructions button { font-size:17px; }
 }
+/* Taller Instructions dialog on landscape tablets. */
+@media (orientation:landscape) and (min-width:700px) and (min-height:600px) and (pointer:coarse) {
+    #instructions { height:75vh; height:75dvh; max-height:75vh; max-height:75dvh; }
+}
 @media (max-height:440px) {
     #instructions { padding:12px 18px; }
     #instructions > h2 { margin-bottom:8px; }
@@ -281,7 +285,7 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
 </dialog>
 <dialog id="instructions">
     <h2>DroneLab</h2>
-    <p class="instructions-version">Version 1.2.1</p>
+    <p class="instructions-version">Version 1.2</p>
     <div class="instructions-scroll" tabindex="0" aria-label="DroneLab instructions">
     <p>DroneLab provides steady, precisely tunable bagpipe-style drones and classic waveforms for instrument tuning, practice chanters, intonation training, and musical experimentation.</p>
     <hr>
