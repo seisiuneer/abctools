@@ -163,13 +163,14 @@ dialog button { background:#444; border:1px solid #888; border-radius:7px; paddi
 #instructions > h2 { flex:0 0 auto; margin:0 0 4px; }
 #instructions > .instructions-version { flex:0 0 auto; text-align:center; color:#aaa; font-size:.85em; margin:0 0 12px; }
 #instructions .instructions-scroll { flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding-right:4px; }
+#instructions .instructions-scroll:focus { outline:none; }
 #instructions .instructions-scroll p { margin:0 0 1em; }
 #instructions .instructions-scroll p:last-child { margin-bottom:0; }
 #instructions .instructions-scroll h3 { margin:0 0 10px; }
 #instructions hr { border:0; border-top:1px solid rgba(127,127,127,.25); margin:18px 0; }
 #instructions > form { flex:0 0 auto; margin:18px 0 0; padding-top:18px; border-top:1px solid rgba(127,127,127,.25); }
 #instructions > form button { margin:0 auto; padding:9px 18px; }
-@media (min-width:900px) and (hover:hover) and (pointer:fine) {
+@media (min-width:700px) and (min-height:600px), (min-width:900px) and (hover:hover) and (pointer:fine) {
     #instructions { width:min(92vw,620px); padding:24px; font-size:17px; }
     #instructions h2 { font-size:22px; }
     #instructions h3, #instructions p, #instructions button { font-size:17px; }

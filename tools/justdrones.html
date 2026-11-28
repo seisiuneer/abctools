@@ -46,8 +46,8 @@ body{padding-top:calc(env(safe-area-inset-top,0px) + 66px)}
 @media (min-width:900px) and (min-height:1130px){main{zoom:1.4}}
 @media (min-width:900px) and (min-height:1210px){main{zoom:1.5}}
 
-/* More readable Instructions dialog on large desktop displays. */
-@media (min-width:900px) and (hover:hover) and (pointer:fine){
+/* More readable Instructions dialog on desktop and tablet-sized viewports. */
+@media (min-width:900px) and (hover:hover) and (pointer:fine), (min-width:700px) and (min-height:600px){
     #instructions{width:min(92vw,620px);font-size:17px;padding:24px;max-height:calc(100dvh - 32px);overflow:auto}
     #instructions h2{font-size:22px}
     #instructions p{font-size:17px}
